@@ -1,0 +1,974 @@
+<!DOCTYPE html>
+<!-- saved from url=(0141)file:///C:/Users/yushe/Documents/kimi/workspace/%E6%A1%88%E4%BE%8B%E5%BA%93%20-%20%E6%96%87%E4%B9%A6%E4%BA%A4%E4%BB%98%E7%B3%BB%E7%BB%9F.html -->
+<html lang="zh-CN"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>案例库 - 文书交付系统</title>
+  <script src="./案例库 - 文书交付系统_files/saved_resource"></script>
+  <style>
+    /* PBS留学CRM系统 - 企业级设计规范 */
+    :root {
+      --color-primary: #2563EB;
+      --color-primary-light: #3B82F6;
+      --color-primary-dark: #1D4ED8;
+      --color-primary-bg: #EFF6FF;
+      --color-success: #10B981;
+      --color-warning: #F59E0B;
+      --color-error: #EF4444;
+      --color-gray-50: #F9FAFB;
+      --color-gray-100: #F3F4F6;
+      --color-gray-200: #E5E7EB;
+      --color-text-primary: #1F2937;
+      --color-text-secondary: #6B7280;
+      --color-text-tertiary: #9CA3AF;
+      --color-border: #E5E7EB;
+      --font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif;
+    }
+    body { font-family: var(--font-family); background: var(--color-gray-50); }
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-thumb { background: #D1D5DB; border-radius: 3px; }
+    .case-drawer { transition: transform 300ms ease; }
+    @keyframes pulse-soft { 0%,100% { opacity: 1; } 50% { opacity: .45; } }
+    .parsing-dot { animation: pulse-soft 1.4s ease-in-out infinite; }
+  </style>
+<style>*, ::before, ::after{--tw-border-spacing-x:0;--tw-border-spacing-y:0;--tw-translate-x:0;--tw-translate-y:0;--tw-rotate:0;--tw-skew-x:0;--tw-skew-y:0;--tw-scale-x:1;--tw-scale-y:1;--tw-pan-x: ;--tw-pan-y: ;--tw-pinch-zoom: ;--tw-scroll-snap-strictness:proximity;--tw-gradient-from-position: ;--tw-gradient-via-position: ;--tw-gradient-to-position: ;--tw-ordinal: ;--tw-slashed-zero: ;--tw-numeric-figure: ;--tw-numeric-spacing: ;--tw-numeric-fraction: ;--tw-ring-inset: ;--tw-ring-offset-width:0px;--tw-ring-offset-color:#fff;--tw-ring-color:rgb(59 130 246 / 0.5);--tw-ring-offset-shadow:0 0 #0000;--tw-ring-shadow:0 0 #0000;--tw-shadow:0 0 #0000;--tw-shadow-colored:0 0 #0000;--tw-blur: ;--tw-brightness: ;--tw-contrast: ;--tw-grayscale: ;--tw-hue-rotate: ;--tw-invert: ;--tw-saturate: ;--tw-sepia: ;--tw-drop-shadow: ;--tw-backdrop-blur: ;--tw-backdrop-brightness: ;--tw-backdrop-contrast: ;--tw-backdrop-grayscale: ;--tw-backdrop-hue-rotate: ;--tw-backdrop-invert: ;--tw-backdrop-opacity: ;--tw-backdrop-saturate: ;--tw-backdrop-sepia: ;--tw-contain-size: ;--tw-contain-layout: ;--tw-contain-paint: ;--tw-contain-style: }::backdrop{--tw-border-spacing-x:0;--tw-border-spacing-y:0;--tw-translate-x:0;--tw-translate-y:0;--tw-rotate:0;--tw-skew-x:0;--tw-skew-y:0;--tw-scale-x:1;--tw-scale-y:1;--tw-pan-x: ;--tw-pan-y: ;--tw-pinch-zoom: ;--tw-scroll-snap-strictness:proximity;--tw-gradient-from-position: ;--tw-gradient-via-position: ;--tw-gradient-to-position: ;--tw-ordinal: ;--tw-slashed-zero: ;--tw-numeric-figure: ;--tw-numeric-spacing: ;--tw-numeric-fraction: ;--tw-ring-inset: ;--tw-ring-offset-width:0px;--tw-ring-offset-color:#fff;--tw-ring-color:rgb(59 130 246 / 0.5);--tw-ring-offset-shadow:0 0 #0000;--tw-ring-shadow:0 0 #0000;--tw-shadow:0 0 #0000;--tw-shadow-colored:0 0 #0000;--tw-blur: ;--tw-brightness: ;--tw-contrast: ;--tw-grayscale: ;--tw-hue-rotate: ;--tw-invert: ;--tw-saturate: ;--tw-sepia: ;--tw-drop-shadow: ;--tw-backdrop-blur: ;--tw-backdrop-brightness: ;--tw-backdrop-contrast: ;--tw-backdrop-grayscale: ;--tw-backdrop-hue-rotate: ;--tw-backdrop-invert: ;--tw-backdrop-opacity: ;--tw-backdrop-saturate: ;--tw-backdrop-sepia: ;--tw-contain-size: ;--tw-contain-layout: ;--tw-contain-paint: ;--tw-contain-style: }/* ! tailwindcss v3.4.17 | MIT License | https://tailwindcss.com */*,::after,::before{box-sizing:border-box;border-width:0;border-style:solid;border-color:#e5e7eb}::after,::before{--tw-content:''}:host,html{line-height:1.5;-webkit-text-size-adjust:100%;-moz-tab-size:4;tab-size:4;font-family:ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";font-feature-settings:normal;font-variation-settings:normal;-webkit-tap-highlight-color:transparent}body{margin:0;line-height:inherit}hr{height:0;color:inherit;border-top-width:1px}abbr:where([title]){-webkit-text-decoration:underline dotted;text-decoration:underline dotted}h1,h2,h3,h4,h5,h6{font-size:inherit;font-weight:inherit}a{color:inherit;text-decoration:inherit}b,strong{font-weight:bolder}code,kbd,pre,samp{font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;font-feature-settings:normal;font-variation-settings:normal;font-size:1em}small{font-size:80%}sub,sup{font-size:75%;line-height:0;position:relative;vertical-align:baseline}sub{bottom:-.25em}sup{top:-.5em}table{text-indent:0;border-color:inherit;border-collapse:collapse}button,input,optgroup,select,textarea{font-family:inherit;font-feature-settings:inherit;font-variation-settings:inherit;font-size:100%;font-weight:inherit;line-height:inherit;letter-spacing:inherit;color:inherit;margin:0;padding:0}button,select{text-transform:none}button,input:where([type=button]),input:where([type=reset]),input:where([type=submit]){-webkit-appearance:button;background-color:transparent;background-image:none}:-moz-focusring{outline:auto}:-moz-ui-invalid{box-shadow:none}progress{vertical-align:baseline}::-webkit-inner-spin-button,::-webkit-outer-spin-button{height:auto}[type=search]{-webkit-appearance:textfield;outline-offset:-2px}::-webkit-search-decoration{-webkit-appearance:none}::-webkit-file-upload-button{-webkit-appearance:button;font:inherit}summary{display:list-item}blockquote,dd,dl,figure,h1,h2,h3,h4,h5,h6,hr,p,pre{margin:0}fieldset{margin:0;padding:0}legend{padding:0}menu,ol,ul{list-style:none;margin:0;padding:0}dialog{padding:0}textarea{resize:vertical}input::placeholder,textarea::placeholder{opacity:1;color:#9ca3af}[role=button],button{cursor:pointer}:disabled{cursor:default}audio,canvas,embed,iframe,img,object,svg,video{display:block;vertical-align:middle}img,video{max-width:100%;height:auto}[hidden]:where(:not([hidden=until-found])){display:none}.fixed{position:fixed}.absolute{position:absolute}.relative{position:relative}.sticky{position:sticky}.inset-0{inset:0px}.left-1\/2{left:50%}.right-0{right:0px}.right-1\.5{right:0.375rem}.right-6{right:1.5rem}.top-0{top:0px}.top-1\.5{top:0.375rem}.top-1\/2{top:50%}.top-16{top:4rem}.z-50{z-index:50}.z-\[60\]{z-index:60}.z-\[70\]{z-index:70}.mx-auto{margin-left:auto;margin-right:auto}.mb-2{margin-bottom:0.5rem}.mb-3{margin-bottom:0.75rem}.mb-6{margin-bottom:1.5rem}.ml-1{margin-left:0.25rem}.ml-2{margin-left:0.5rem}.ml-8{margin-left:2rem}.mr-2{margin-right:0.5rem}.mt-0\.5{margin-top:0.125rem}.mt-1{margin-top:0.25rem}.mt-1\.5{margin-top:0.375rem}.mt-2{margin-top:0.5rem}.mt-2\.5{margin-top:0.625rem}.mt-3{margin-top:0.75rem}.mt-4{margin-top:1rem}.mt-5{margin-top:1.25rem}.block{display:block}.flex{display:flex}.inline-flex{display:inline-flex}.grid{display:grid}.hidden{display:none}.h-1\.5{height:0.375rem}.h-10{height:2.5rem}.h-11{height:2.75rem}.h-12{height:3rem}.h-14{height:3.5rem}.h-2{height:0.5rem}.h-3\.5{height:0.875rem}.h-4{height:1rem}.h-5{height:1.25rem}.h-6{height:1.5rem}.h-7{height:1.75rem}.h-8{height:2rem}.h-9{height:2.25rem}.h-full{height:100%}.max-h-\[86vh\]{max-height:86vh}.min-h-\[calc\(100vh-56px\)\]{min-height:calc(100vh - 56px)}.min-h-screen{min-height:100vh}.w-1\.5{width:0.375rem}.w-10{width:2.5rem}.w-11{width:2.75rem}.w-12{width:3rem}.w-2{width:0.5rem}.w-28{width:7rem}.w-3\.5{width:0.875rem}.w-32{width:8rem}.w-36{width:9rem}.w-4{width:1rem}.w-40{width:10rem}.w-44{width:11rem}.w-48{width:12rem}.w-5{width:1.25rem}.w-56{width:14rem}.w-6{width:1.5rem}.w-7{width:1.75rem}.w-8{width:2rem}.w-9{width:2.25rem}.w-\[400px\]{width:400px}.w-\[560px\]{width:560px}.w-\[880px\]{width:880px}.w-full{width:100%}.w-px{width:1px}.min-w-0{min-width:0px}.min-w-\[200px\]{min-width:200px}.max-w-\[92vw\]{max-width:92vw}.max-w-\[95vw\]{max-width:95vw}.flex-1{flex:1 1 0%}.flex-shrink-0{flex-shrink:0}.-translate-x-1\/2{--tw-translate-x:-50%;transform:translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))}.-translate-y-1\/2{--tw-translate-y:-50%;transform:translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))}.cursor-pointer{cursor:pointer}.grid-cols-2{grid-template-columns:repeat(2, minmax(0, 1fr))}.grid-cols-4{grid-template-columns:repeat(4, minmax(0, 1fr))}.flex-col{flex-direction:column}.flex-wrap{flex-wrap:wrap}.items-end{align-items:flex-end}.items-center{align-items:center}.justify-center{justify-content:center}.justify-between{justify-content:space-between}.gap-1{gap:0.25rem}.gap-1\.5{gap:0.375rem}.gap-2{gap:0.5rem}.gap-2\.5{gap:0.625rem}.gap-3{gap:0.75rem}.gap-4{gap:1rem}.gap-x-6{column-gap:1.5rem}.gap-y-2{row-gap:0.5rem}.gap-y-3{row-gap:0.75rem}.space-y-1 > :not([hidden]) ~ :not([hidden]){--tw-space-y-reverse:0;margin-top:calc(0.25rem * calc(1 - var(--tw-space-y-reverse)));margin-bottom:calc(0.25rem * var(--tw-space-y-reverse))}.space-y-2 > :not([hidden]) ~ :not([hidden]){--tw-space-y-reverse:0;margin-top:calc(0.5rem * calc(1 - var(--tw-space-y-reverse)));margin-bottom:calc(0.5rem * var(--tw-space-y-reverse))}.space-y-6 > :not([hidden]) ~ :not([hidden]){--tw-space-y-reverse:0;margin-top:calc(1.5rem * calc(1 - var(--tw-space-y-reverse)));margin-bottom:calc(1.5rem * var(--tw-space-y-reverse))}.divide-y > :not([hidden]) ~ :not([hidden]){--tw-divide-y-reverse:0;border-top-width:calc(1px * calc(1 - var(--tw-divide-y-reverse)));border-bottom-width:calc(1px * var(--tw-divide-y-reverse))}.divide-gray-100 > :not([hidden]) ~ :not([hidden]){--tw-divide-opacity:1;border-color:rgb(243 244 246 / var(--tw-divide-opacity, 1))}.overflow-hidden{overflow:hidden}.overflow-y-auto{overflow-y:auto}.truncate{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.break-all{word-break:break-all}.rounded{border-radius:0.25rem}.rounded-2xl{border-radius:1rem}.rounded-full{border-radius:9999px}.rounded-lg{border-radius:0.5rem}.rounded-md{border-radius:0.375rem}.rounded-xl{border-radius:0.75rem}.rounded-b-2xl{border-bottom-right-radius:1rem;border-bottom-left-radius:1rem}.border{border-width:1px}.border-2{border-width:2px}.border-b{border-bottom-width:1px}.border-l{border-left-width:1px}.border-r{border-right-width:1px}.border-t{border-top-width:1px}.border-dashed{border-style:dashed}.border-blue-100{--tw-border-opacity:1;border-color:rgb(219 234 254 / var(--tw-border-opacity, 1))}.border-blue-300{--tw-border-opacity:1;border-color:rgb(147 197 253 / var(--tw-border-opacity, 1))}.border-gray-100{--tw-border-opacity:1;border-color:rgb(243 244 246 / var(--tw-border-opacity, 1))}.border-gray-200{--tw-border-opacity:1;border-color:rgb(229 231 235 / var(--tw-border-opacity, 1))}.border-gray-300{--tw-border-opacity:1;border-color:rgb(209 213 219 / var(--tw-border-opacity, 1))}.border-gray-50{--tw-border-opacity:1;border-color:rgb(249 250 251 / var(--tw-border-opacity, 1))}.bg-amber-50{--tw-bg-opacity:1;background-color:rgb(255 251 235 / var(--tw-bg-opacity, 1))}.bg-black{--tw-bg-opacity:1;background-color:rgb(0 0 0 / var(--tw-bg-opacity, 1))}.bg-blue-100{--tw-bg-opacity:1;background-color:rgb(219 234 254 / var(--tw-bg-opacity, 1))}.bg-blue-50{--tw-bg-opacity:1;background-color:rgb(239 246 255 / var(--tw-bg-opacity, 1))}.bg-blue-50\/30{background-color:rgb(239 246 255 / 0.3)}.bg-blue-50\/50{background-color:rgb(239 246 255 / 0.5)}.bg-blue-500{--tw-bg-opacity:1;background-color:rgb(59 130 246 / var(--tw-bg-opacity, 1))}.bg-blue-600{--tw-bg-opacity:1;background-color:rgb(37 99 235 / var(--tw-bg-opacity, 1))}.bg-cyan-50{--tw-bg-opacity:1;background-color:rgb(236 254 255 / var(--tw-bg-opacity, 1))}.bg-gray-100{--tw-bg-opacity:1;background-color:rgb(243 244 246 / var(--tw-bg-opacity, 1))}.bg-gray-200{--tw-bg-opacity:1;background-color:rgb(229 231 235 / var(--tw-bg-opacity, 1))}.bg-gray-300{--tw-bg-opacity:1;background-color:rgb(209 213 219 / var(--tw-bg-opacity, 1))}.bg-gray-50{--tw-bg-opacity:1;background-color:rgb(249 250 251 / var(--tw-bg-opacity, 1))}.bg-gray-50\/60{background-color:rgb(249 250 251 / 0.6)}.bg-gray-800{--tw-bg-opacity:1;background-color:rgb(31 41 55 / var(--tw-bg-opacity, 1))}.bg-green-100{--tw-bg-opacity:1;background-color:rgb(220 252 231 / var(--tw-bg-opacity, 1))}.bg-green-50{--tw-bg-opacity:1;background-color:rgb(240 253 244 / var(--tw-bg-opacity, 1))}.bg-orange-50{--tw-bg-opacity:1;background-color:rgb(255 247 237 / var(--tw-bg-opacity, 1))}.bg-purple-50{--tw-bg-opacity:1;background-color:rgb(250 245 255 / var(--tw-bg-opacity, 1))}.bg-red-100{--tw-bg-opacity:1;background-color:rgb(254 226 226 / var(--tw-bg-opacity, 1))}.bg-red-50{--tw-bg-opacity:1;background-color:rgb(254 242 242 / var(--tw-bg-opacity, 1))}.bg-red-500{--tw-bg-opacity:1;background-color:rgb(239 68 68 / var(--tw-bg-opacity, 1))}.bg-white{--tw-bg-opacity:1;background-color:rgb(255 255 255 / var(--tw-bg-opacity, 1))}.bg-yellow-50{--tw-bg-opacity:1;background-color:rgb(254 252 232 / var(--tw-bg-opacity, 1))}.bg-opacity-30{--tw-bg-opacity:0.3}.bg-gradient-to-br{background-image:linear-gradient(to bottom right, var(--tw-gradient-stops))}.from-blue-500{--tw-gradient-from:#3b82f6 var(--tw-gradient-from-position);--tw-gradient-to:rgb(59 130 246 / 0) var(--tw-gradient-to-position);--tw-gradient-stops:var(--tw-gradient-from), var(--tw-gradient-to)}.from-blue-600{--tw-gradient-from:#2563eb var(--tw-gradient-from-position);--tw-gradient-to:rgb(37 99 235 / 0) var(--tw-gradient-to-position);--tw-gradient-stops:var(--tw-gradient-from), var(--tw-gradient-to)}.to-blue-400{--tw-gradient-to:#60a5fa var(--tw-gradient-to-position)}.to-purple-500{--tw-gradient-to:#a855f7 var(--tw-gradient-to-position)}.p-1{padding:0.25rem}.p-2{padding:0.5rem}.p-3{padding:0.75rem}.p-4{padding:1rem}.p-5{padding:1.25rem}.p-6{padding:1.5rem}.p-8{padding:2rem}.px-1\.5{padding-left:0.375rem;padding-right:0.375rem}.px-2{padding-left:0.5rem;padding-right:0.5rem}.px-2\.5{padding-left:0.625rem;padding-right:0.625rem}.px-3{padding-left:0.75rem;padding-right:0.75rem}.px-4{padding-left:1rem;padding-right:1rem}.px-5{padding-left:1.25rem;padding-right:1.25rem}.px-6{padding-left:1.5rem;padding-right:1.5rem}.py-0\.5{padding-top:0.125rem;padding-bottom:0.125rem}.py-1{padding-top:0.25rem;padding-bottom:0.25rem}.py-1\.5{padding-top:0.375rem;padding-bottom:0.375rem}.py-10{padding-top:2.5rem;padding-bottom:2.5rem}.py-2{padding-top:0.5rem;padding-bottom:0.5rem}.py-2\.5{padding-top:0.625rem;padding-bottom:0.625rem}.py-3{padding-top:0.75rem;padding-bottom:0.75rem}.py-4{padding-top:1rem;padding-bottom:1rem}.pb-2{padding-bottom:0.5rem}.pl-11{padding-left:2.75rem}.pl-3{padding-left:0.75rem}.pr-4{padding-right:1rem}.pt-4{padding-top:1rem}.text-left{text-align:left}.text-center{text-align:center}.text-2xl{font-size:1.5rem;line-height:2rem}.text-\[10px\]{font-size:10px}.text-base{font-size:1rem;line-height:1.5rem}.text-lg{font-size:1.125rem;line-height:1.75rem}.text-sm{font-size:0.875rem;line-height:1.25rem}.text-xs{font-size:0.75rem;line-height:1rem}.font-bold{font-weight:700}.font-medium{font-weight:500}.font-normal{font-weight:400}.font-semibold{font-weight:600}.leading-tight{line-height:1.25}.text-amber-700{--tw-text-opacity:1;color:rgb(180 83 9 / var(--tw-text-opacity, 1))}.text-blue-600{--tw-text-opacity:1;color:rgb(37 99 235 / var(--tw-text-opacity, 1))}.text-blue-700{--tw-text-opacity:1;color:rgb(29 78 216 / var(--tw-text-opacity, 1))}.text-cyan-700{--tw-text-opacity:1;color:rgb(14 116 144 / var(--tw-text-opacity, 1))}.text-gray-300{--tw-text-opacity:1;color:rgb(209 213 219 / var(--tw-text-opacity, 1))}.text-gray-400{--tw-text-opacity:1;color:rgb(156 163 175 / var(--tw-text-opacity, 1))}.text-gray-500{--tw-text-opacity:1;color:rgb(107 114 128 / var(--tw-text-opacity, 1))}.text-gray-600{--tw-text-opacity:1;color:rgb(75 85 99 / var(--tw-text-opacity, 1))}.text-gray-700{--tw-text-opacity:1;color:rgb(55 65 81 / var(--tw-text-opacity, 1))}.text-gray-800{--tw-text-opacity:1;color:rgb(31 41 55 / var(--tw-text-opacity, 1))}.text-gray-900{--tw-text-opacity:1;color:rgb(17 24 39 / var(--tw-text-opacity, 1))}.text-green-400{--tw-text-opacity:1;color:rgb(74 222 128 / var(--tw-text-opacity, 1))}.text-green-600{--tw-text-opacity:1;color:rgb(22 163 74 / var(--tw-text-opacity, 1))}.text-green-800{--tw-text-opacity:1;color:rgb(22 101 52 / var(--tw-text-opacity, 1))}.text-orange-500{--tw-text-opacity:1;color:rgb(249 115 22 / var(--tw-text-opacity, 1))}.text-purple-600{--tw-text-opacity:1;color:rgb(147 51 234 / var(--tw-text-opacity, 1))}.text-purple-700{--tw-text-opacity:1;color:rgb(126 34 206 / var(--tw-text-opacity, 1))}.text-red-500{--tw-text-opacity:1;color:rgb(239 68 68 / var(--tw-text-opacity, 1))}.text-red-700{--tw-text-opacity:1;color:rgb(185 28 28 / var(--tw-text-opacity, 1))}.text-white{--tw-text-opacity:1;color:rgb(255 255 255 / var(--tw-text-opacity, 1))}.text-yellow-600{--tw-text-opacity:1;color:rgb(202 138 4 / var(--tw-text-opacity, 1))}.shadow-2xl{--tw-shadow:0 25px 50px -12px rgb(0 0 0 / 0.25);--tw-shadow-colored:0 25px 50px -12px var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}.shadow-sm{--tw-shadow:0 1px 2px 0 rgb(0 0 0 / 0.05);--tw-shadow-colored:0 1px 2px 0 var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}.shadow-xl{--tw-shadow:0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);--tw-shadow-colored:0 20px 25px -5px var(--tw-shadow-color), 0 8px 10px -6px var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}.transition-colors{transition-property:color, background-color, border-color, fill, stroke, -webkit-text-decoration-color;transition-property:color, background-color, border-color, text-decoration-color, fill, stroke;transition-property:color, background-color, border-color, text-decoration-color, fill, stroke, -webkit-text-decoration-color;transition-timing-function:cubic-bezier(0.4, 0, 0.2, 1);transition-duration:150ms}.transition-transform{transition-property:transform;transition-timing-function:cubic-bezier(0.4, 0, 0.2, 1);transition-duration:150ms}.hover\:border-blue-400:hover{--tw-border-opacity:1;border-color:rgb(96 165 250 / var(--tw-border-opacity, 1))}.hover\:border-gray-400:hover{--tw-border-opacity:1;border-color:rgb(156 163 175 / var(--tw-border-opacity, 1))}.hover\:border-red-200:hover{--tw-border-opacity:1;border-color:rgb(254 202 202 / var(--tw-border-opacity, 1))}.hover\:bg-blue-50:hover{--tw-bg-opacity:1;background-color:rgb(239 246 255 / var(--tw-bg-opacity, 1))}.hover\:bg-blue-50\/40:hover{background-color:rgb(239 246 255 / 0.4)}.hover\:bg-blue-700:hover{--tw-bg-opacity:1;background-color:rgb(29 78 216 / var(--tw-bg-opacity, 1))}.hover\:bg-gray-100:hover{--tw-bg-opacity:1;background-color:rgb(243 244 246 / var(--tw-bg-opacity, 1))}.hover\:bg-gray-50:hover{--tw-bg-opacity:1;background-color:rgb(249 250 251 / var(--tw-bg-opacity, 1))}.hover\:bg-red-50:hover{--tw-bg-opacity:1;background-color:rgb(254 242 242 / var(--tw-bg-opacity, 1))}.hover\:bg-red-600:hover{--tw-bg-opacity:1;background-color:rgb(220 38 38 / var(--tw-bg-opacity, 1))}.hover\:text-blue-600:hover{--tw-text-opacity:1;color:rgb(37 99 235 / var(--tw-text-opacity, 1))}.hover\:text-blue-700:hover{--tw-text-opacity:1;color:rgb(29 78 216 / var(--tw-text-opacity, 1))}.hover\:text-blue-800:hover{--tw-text-opacity:1;color:rgb(30 64 175 / var(--tw-text-opacity, 1))}.hover\:text-gray-600:hover{--tw-text-opacity:1;color:rgb(75 85 99 / var(--tw-text-opacity, 1))}.hover\:text-gray-700:hover{--tw-text-opacity:1;color:rgb(55 65 81 / var(--tw-text-opacity, 1))}.hover\:text-gray-800:hover{--tw-text-opacity:1;color:rgb(31 41 55 / var(--tw-text-opacity, 1))}.hover\:text-red-500:hover{--tw-text-opacity:1;color:rgb(239 68 68 / var(--tw-text-opacity, 1))}.hover\:text-red-600:hover{--tw-text-opacity:1;color:rgb(220 38 38 / var(--tw-text-opacity, 1))}.focus\:border-blue-500:focus{--tw-border-opacity:1;border-color:rgb(59 130 246 / var(--tw-border-opacity, 1))}.focus\:ring-1:focus{--tw-ring-offset-shadow:var(--tw-ring-inset) 0 0 0 var(--tw-ring-offset-width) var(--tw-ring-offset-color);--tw-ring-shadow:var(--tw-ring-inset) 0 0 0 calc(1px + var(--tw-ring-offset-width)) var(--tw-ring-color);box-shadow:var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow, 0 0 #0000)}.focus\:ring-2:focus{--tw-ring-offset-shadow:var(--tw-ring-inset) 0 0 0 var(--tw-ring-offset-width) var(--tw-ring-offset-color);--tw-ring-shadow:var(--tw-ring-inset) 0 0 0 calc(2px + var(--tw-ring-offset-width)) var(--tw-ring-color);box-shadow:var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow, 0 0 #0000)}.focus\:ring-blue-500:focus{--tw-ring-opacity:1;--tw-ring-color:rgb(59 130 246 / var(--tw-ring-opacity, 1))}.disabled\:opacity-50:disabled{opacity:0.5}</style></head>
+<body class="min-h-screen bg-gray-50">
+  <!-- 顶部导航栏 -->
+  <header class="bg-white border-b border-gray-200 sticky top-0 z-50">
+    <div class="h-14 flex items-center justify-between px-4">
+      <div class="flex items-center gap-4">
+        <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-blue-600 to-blue-400 flex items-center justify-center flex-shrink-0">
+          <span class="text-white text-sm font-bold">P</span>
+        </div>
+        <span class="text-base font-semibold text-gray-800">留学申请管理系统</span>
+        <div class="w-px h-6 bg-gray-200"></div>
+        <h1 class="text-sm font-semibold text-gray-900">文书交付 · 案例库</h1>
+      </div>
+      <div class="flex items-center gap-3">
+        <button class="relative p-2 text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded-lg" title="系统消息">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path>
+          </svg>
+          <span class="absolute top-1.5 right-1.5 w-2 h-2 bg-red-500 rounded-full"></span>
+        </button>
+        <div class="flex items-center gap-2 pl-3 border-l border-gray-200 cursor-pointer">
+          <div class="w-7 h-7 bg-gradient-to-br from-blue-500 to-purple-500 rounded-full flex items-center justify-center">
+            <span class="text-white text-xs font-medium">王</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <div class="flex">
+    <!-- 左侧菜单 -->
+    <aside id="pbs-sidebar" class="w-56 bg-white border-r border-gray-200 min-h-[calc(100vh-56px)] flex flex-col flex-shrink-0">
+      <nav class="p-4 space-y-1 flex-1">
+        <a href="管理员工作台 - 留学申请管理系统.html" class="flex items-center gap-3 px-4 py-3 rounded-lg font-medium transition-colors text-gray-600 hover:text-gray-800 hover:bg-gray-50"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l9-9 9 9M5 10v10a1 1 0 001 1h3a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1h3a1 1 0 001-1V10"></path></svg><span>工作台首页</span></a>
+        <div><div class="flex items-center gap-3 px-4 py-3 rounded-lg font-medium text-gray-700"><svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V8a2 2 0 00-2-2h-5m-4 0V5a2 2 0 114 0v1m-4 0a2 2 0 104 0m-5 8a2 2 0 100-4 2 2 0 000 4zm0 0c1.306 0 2.417.835 2.83 2M9 14a3.001 3.001 0 00-2.83 2"></path></svg><span>学生档案</span></div><div class="ml-8 mt-1 space-y-1"><a href="学生档案列表页 - 留学申请管理系统.html" class="flex items-center gap-2 px-4 py-2 rounded-lg text-sm transition-colors text-gray-600 hover:bg-gray-50 hover:text-gray-800"><span class="w-1.5 h-1.5 rounded-full bg-gray-300"></span>学生档案列表</a></div></div>
+        <div><div class="flex items-center gap-3 px-4 py-3 rounded-lg font-medium text-gray-700"><svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"></path></svg><span>PMO监控台</span></div><div class="ml-8 mt-1 space-y-1"><a href="项目池列表页 - 留学申请管理系统.html" class="flex items-center gap-2 px-4 py-2 rounded-lg text-sm transition-colors text-gray-600 hover:bg-gray-50 hover:text-gray-800"><span class="w-1.5 h-1.5 rounded-full bg-gray-300"></span>项目池列表</a><a href="PMO看板 - 留学申请管理系统.html" class="flex items-center gap-2 px-4 py-2 rounded-lg text-sm transition-colors text-gray-600 hover:bg-gray-50 hover:text-gray-800"><span class="w-1.5 h-1.5 rounded-full bg-gray-300"></span>PMO看板</a></div></div>
+        <div><div class="flex items-center gap-3 px-4 py-3 rounded-lg font-medium text-gray-700"><svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg><span>项目管理</span></div><div class="ml-8 mt-1 space-y-1"><a href="我的项目列表页 - 留学申请管理系统.html" class="flex items-center gap-2 px-4 py-2 rounded-lg text-sm transition-colors text-gray-600 hover:bg-gray-50 hover:text-gray-800"><span class="w-1.5 h-1.5 rounded-full bg-gray-300"></span>我的项目列表</a></div></div>
+        <div><div class="flex items-center gap-3 px-4 py-3 rounded-lg font-medium text-gray-700"><svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg><span>文书交付</span></div><div class="ml-8 mt-1 space-y-1"><a href="任务列表页 - 文书交付系统.html" class="flex items-center gap-2 px-4 py-2 rounded-lg text-sm transition-colors text-gray-600 hover:bg-gray-50 hover:text-gray-800"><span class="w-1.5 h-1.5 rounded-full bg-gray-300"></span>任务列表</a><a href="模板库列表 - 文书交付系统.html" class="flex items-center gap-2 px-4 py-2 rounded-lg text-sm transition-colors text-gray-600 hover:bg-gray-50 hover:text-gray-800"><span class="w-1.5 h-1.5 rounded-full bg-gray-300"></span>模板库</a><a href="案例库 - 文书交付系统.html" class="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-colors bg-blue-50 text-blue-600"><span class="w-1.5 h-1.5 rounded-full bg-blue-600"></span>案例库</a></div></div>
+        <div><div class="flex items-center gap-3 px-4 py-3 rounded-lg font-medium text-gray-700"><svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg><span>网申管理</span></div><div class="ml-8 mt-1 space-y-1"><a href="网申任务列表页 - 留学申请管理系统.html" class="flex items-center gap-2 px-4 py-2 rounded-lg text-sm transition-colors text-gray-600 hover:bg-gray-50 hover:text-gray-800"><span class="w-1.5 h-1.5 rounded-full bg-gray-300"></span>网申任务列表</a></div></div>
+        <div><div class="flex items-center gap-3 px-4 py-3 rounded-lg font-medium text-gray-700"><svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg><span>监控管理</span></div><div class="ml-8 mt-1 space-y-1"><a href="监控任务列表 - PBS留学CRM.html" class="flex items-center gap-2 px-4 py-2 rounded-lg text-sm transition-colors text-gray-600 hover:bg-gray-50 hover:text-gray-800"><span class="w-1.5 h-1.5 rounded-full bg-gray-300"></span>监控任务列表</a></div></div>
+        <div><div class="flex items-center gap-3 px-4 py-3 rounded-lg font-medium text-gray-700"><svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4"></path></svg><span>结项归档</span></div><div class="ml-8 mt-1 space-y-1"><a href="结项归档列表 - PBS留学CRM系统.html" class="flex items-center gap-2 px-4 py-2 rounded-lg text-sm transition-colors text-gray-600 hover:bg-gray-50 hover:text-gray-800"><span class="w-1.5 h-1.5 rounded-full bg-gray-300"></span>结项归档列表</a></div></div>
+        <div><div class="flex items-center gap-3 px-4 py-3 rounded-lg font-medium text-gray-700"><svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"></path></svg><span>文书审核</span></div><div class="ml-8 mt-1 space-y-1"><a href="文书审核列表页 - 留学申请管理系统.html" class="flex items-center gap-2 px-4 py-2 rounded-lg text-sm transition-colors text-gray-600 hover:bg-gray-50 hover:text-gray-800"><span class="w-1.5 h-1.5 rounded-full bg-gray-300"></span>文书审核列表</a></div></div>
+        <div><div class="flex items-center gap-3 px-4 py-3 rounded-lg font-medium text-gray-700"><svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14l9-5-9-5-9 5 9 5zm0 0l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z"></path></svg><span>选校工作台</span></div><div class="ml-8 mt-1 space-y-1"><a href="选校订单池页 - 留学申请管理系统.html" class="flex items-center gap-2 px-4 py-2 rounded-lg text-sm transition-colors text-gray-600 hover:bg-gray-50 hover:text-gray-800"><span class="w-1.5 h-1.5 rounded-full bg-gray-300"></span>选校订单池</a><a href="选校任务列表页 - 留学申请管理系统.html" class="flex items-center gap-2 px-4 py-2 rounded-lg text-sm transition-colors text-gray-600 hover:bg-gray-50 hover:text-gray-800"><span class="w-1.5 h-1.5 rounded-full bg-gray-300"></span>选校任务列表</a><a href="选校工作台页 - 留学申请管理系统.html" class="flex items-center gap-2 px-4 py-2 rounded-lg text-sm transition-colors text-gray-600 hover:bg-gray-50 hover:text-gray-800"><span class="w-1.5 h-1.5 rounded-full bg-gray-300"></span>选校工作台</a></div></div>
+        <div><div class="flex items-center gap-3 px-4 py-3 rounded-lg font-medium text-gray-700"><svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path></svg><span>用户管理</span></div><div class="ml-8 mt-1 space-y-1"><a href="用户管理 - 留学申请管理系统.html" class="flex items-center gap-2 px-4 py-2 rounded-lg text-sm transition-colors text-gray-600 hover:bg-gray-50 hover:text-gray-800"><span class="w-1.5 h-1.5 rounded-full bg-gray-300"></span>用户管理</a><a href="角色权限管理 - 留学申请管理系统.html" class="flex items-center gap-2 px-4 py-2 rounded-lg text-sm transition-colors text-gray-600 hover:bg-gray-50 hover:text-gray-800"><span class="w-1.5 h-1.5 rounded-full bg-gray-300"></span>角色权限管理</a><a href="操作日志审计 - 留学申请管理系统.html" class="flex items-center gap-2 px-4 py-2 rounded-lg text-sm transition-colors text-gray-600 hover:bg-gray-50 hover:text-gray-800"><span class="w-1.5 h-1.5 rounded-full bg-gray-300"></span>操作日志审计</a></div></div>
+        <a href="人员管理 - PBS留学CRM系统.html" class="flex items-center gap-3 px-4 py-3 rounded-lg font-medium transition-colors text-gray-600 hover:text-gray-800 hover:bg-gray-50"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path></svg><span>人员管理</span></a>
+      </nav>
+      <div class="p-4 border-t border-gray-100">
+        <p class="text-xs text-gray-400 text-center">PBS留学CRM v2.5</p>
+      </div>
+    </aside>
+
+    <!-- 主内容区 -->
+    <main class="flex-1 p-6 min-w-0">
+      <div class="flex items-center justify-between mb-6">
+        <div>
+          <h1 class="text-2xl font-semibold text-gray-800">案例库</h1>
+          <p class="text-sm text-gray-400 mt-1">管理过往文书案例资产，支持批量上传与 AI 解析，为模板生成和文书写作提供参考</p>
+        </div>
+        <div class="flex items-center gap-3">
+          <button class="flex items-center gap-1.5 px-4 py-2 text-sm bg-white border border-blue-300 text-blue-600 rounded-lg hover:bg-blue-50 font-medium" onclick="batchParse()" title="勾选案例后批量提交 AI 解析">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09zM18.259 8.715L18 9.75l-.259-1.035a3.375 3.375 0 00-2.455-2.456L14.25 6l1.036-.259a3.375 3.375 0 002.455-2.456L18 2.25l.259 1.035a3.375 3.375 0 002.456 2.456L21.75 6l-1.035.259a3.375 3.375 0 00-2.456 2.456z"></path></svg>
+            批量解析
+          </button>
+          <button class="flex items-center gap-1.5 px-4 py-2 text-sm bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium" onclick="openUploadModal()">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path></svg>
+            上传案例包
+          </button>
+        </div>
+      </div>
+
+      <!-- 数据概览 -->
+      <div class="grid grid-cols-4 gap-4 mb-6">
+        <div class="bg-white rounded-xl p-5 shadow-sm border border-gray-100 flex items-center gap-4">
+          <div class="w-11 h-11 rounded-lg bg-blue-50 flex items-center justify-center flex-shrink-0">
+            <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path></svg>
+          </div>
+          <div>
+            <p class="text-sm text-gray-500">案例总数</p>
+            <p class="text-2xl font-semibold text-gray-800 leading-tight">128</p>
+            <p class="text-xs text-green-600 mt-0.5">本月新增 +12</p>
+          </div>
+        </div>
+        <div class="bg-white rounded-xl p-5 shadow-sm border border-gray-100 flex items-center gap-4">
+          <div class="w-11 h-11 rounded-lg bg-green-50 flex items-center justify-center flex-shrink-0">
+            <svg class="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09zM18.259 8.715L18 9.75l-.259-1.035a3.375 3.375 0 00-2.455-2.456L14.25 6l1.036-.259a3.375 3.375 0 002.455-2.456L18 2.25l.259 1.035a3.375 3.375 0 002.456 2.456L21.75 6l-1.035.259a3.375 3.375 0 00-2.456 2.456z"></path></svg>
+          </div>
+          <div>
+            <p class="text-sm text-gray-500">已解析案例</p>
+            <p class="text-2xl font-semibold text-gray-800 leading-tight">92</p>
+            <p class="text-xs text-gray-400 mt-0.5">解析覆盖率 71.9%</p>
+          </div>
+        </div>
+        <div class="bg-white rounded-xl p-5 shadow-sm border border-gray-100 flex items-center gap-4">
+          <div class="w-11 h-11 rounded-lg bg-orange-50 flex items-center justify-center flex-shrink-0">
+            <svg class="w-5 h-5 text-orange-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+          </div>
+          <div>
+            <p class="text-sm text-gray-500">待处理</p>
+            <p class="text-2xl font-semibold text-gray-800 leading-tight">32</p>
+            <p class="text-xs text-gray-400 mt-0.5">未解析 24 · 解析中 4 · 失败 4</p>
+          </div>
+        </div>
+        <div class="bg-white rounded-xl p-5 shadow-sm border border-gray-100 flex items-center gap-4">
+          <div class="w-11 h-11 rounded-lg bg-purple-50 flex items-center justify-center flex-shrink-0">
+            <svg class="w-5 h-5 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 5a1 1 0 011-1h14a1 1 0 011 1v2a1 1 0 01-1 1H5a1 1 0 01-1-1V5zM4 13a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H5a1 1 0 01-1-1v-6zM16 13a1 1 0 011-1h2a1 1 0 011 1v6a1 1 0 01-1 1h-2a1 1 0 01-1-1v-6z"></path></svg>
+          </div>
+          <div>
+            <p class="text-sm text-gray-500">生成模板</p>
+            <p class="text-2xl font-semibold text-gray-800 leading-tight">15</p>
+            <p class="text-xs text-gray-400 mt-0.5">模板累计被引用 86 次</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- 高级筛选区 -->
+      <div class="bg-white rounded-xl p-5 mb-6 shadow-sm border border-gray-100">
+        <div class="flex items-end gap-4 flex-wrap">
+          <div class="flex-1 min-w-[200px]">
+            <label class="block text-sm text-gray-600 mb-2">关键词搜索</label>
+            <input id="flt-kw" type="text" placeholder="搜索案例名称/来源学生/录取院校..." class="w-full h-10 px-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm">
+          </div>
+          <div>
+            <label class="block text-sm text-gray-600 mb-2">文书类型</label>
+            <select id="flt-type" class="w-28 h-10 px-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm">
+              <option value="">全部</option>
+              <option>PS</option>
+              <option>CV</option>
+              <option>RP</option>
+              <option>推荐信</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-sm text-gray-600 mb-2">申请层次</label>
+            <select id="flt-level" class="w-32 h-10 px-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm">
+              <option value="">全部</option>
+              <option>本科申请</option>
+              <option>硕士申请</option>
+              <option>博士申请</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-sm text-gray-600 mb-2">解析状态</label>
+            <select id="flt-status" class="w-32 h-10 px-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm">
+              <option value="">全部</option>
+              <option>已解析</option>
+              <option>未解析</option>
+              <option>解析中</option>
+              <option>解析失败</option>
+              <option>已归档</option>
+            </select>
+          </div>
+        </div>
+        <!-- 展开更多筛选项 -->
+        <div id="flt-more" class="flex items-end gap-4 flex-wrap mt-4 pt-4 border-t border-gray-100">
+          <div>
+            <label class="block text-sm text-gray-600 mb-2">申请方向</label>
+            <select id="flt-direction" class="w-40 h-10 px-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm">
+              <option value="">全部</option>
+              <option>CS/人工智能</option>
+              <option>数据科学</option>
+              <option>电子工程</option>
+              <option>机械工程</option>
+              <option>商科/金融</option>
+              <option>商科/市场营销</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-sm text-gray-600 mb-2">录取院校</label>
+            <input id="flt-school" type="text" placeholder="录取院校" class="w-44 h-10 px-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm">
+          </div>
+          <div>
+            <label class="block text-sm text-gray-600 mb-2">上传人</label>
+            <input id="flt-uploader" type="text" placeholder="上传人" class="w-36 h-10 px-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm">
+          </div>
+          <div>
+            <label class="block text-sm text-gray-600 mb-2">上传时间</label>
+            <input id="flt-time" type="text" placeholder="如 2026-07-28" class="w-40 h-10 px-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm">
+          </div>
+        </div>
+        <div class="flex items-center gap-3 mt-4">
+          <button onclick="applyFilter()" class="px-6 h-10 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm">搜索</button>
+          <button onclick="resetFilter()" class="px-6 h-10 bg-white border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors text-sm">重置</button>
+          <button id="flt-toggle" onclick="toggleMore()" class="px-4 h-10 text-blue-600 hover:text-blue-800 text-sm font-medium flex items-center gap-1">收起筛选<svg id="flt-toggle-icon" class="w-4 h-4 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="transform: rotate(180deg);"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+          </button>
+        </div>
+      </div>
+
+      <!-- 案例列表表格 -->
+      <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+        <!-- 表格工具栏 / 批量操作 -->
+        <div class="flex items-center justify-between px-5 py-3 border-b border-gray-100 bg-gray-50/60">
+          <div class="flex items-center gap-3">
+            <span class="text-sm text-gray-600">共 <span class="font-medium text-gray-800">128</span> 个案例</span>
+            <span id="batch-hint" class="text-sm text-blue-600">已选 <span id="selected-count">1</span> 项</span>
+          </div>
+          <div class="flex items-center gap-2">
+            <button onclick="batchParse()" class="px-3 py-1.5 text-xs bg-white border border-gray-300 text-gray-600 rounded-lg hover:bg-gray-50 hover:text-blue-600">批量解析</button>
+            <button onclick="showToast(&#39;已导出所选案例清单（Excel）&#39;)" class="px-3 py-1.5 text-xs bg-white border border-gray-300 text-gray-600 rounded-lg hover:bg-gray-50 hover:text-blue-600">批量导出</button>
+            <button onclick="openDeleteModal(&#39;所选 1 个案例&#39;)" class="px-3 py-1.5 text-xs bg-white border border-gray-300 text-gray-600 rounded-lg hover:bg-red-50 hover:text-red-600 hover:border-red-200">批量删除</button>
+          </div>
+        </div>
+        <table class="w-full">
+          <thead class="bg-gray-50">
+            <tr>
+              <th class="px-4 py-4 w-10"><input type="checkbox" id="check-all" class="rounded border-gray-300 text-blue-600" onclick="toggleCheckAll()"></th>
+              <th class="px-5 py-4 text-left text-sm font-medium text-gray-500">案例名称</th>
+              <th class="px-5 py-4 text-left text-sm font-medium text-gray-500">文书类型</th>
+              <th class="px-5 py-4 text-left text-sm font-medium text-gray-500">申请方向</th>
+              <th class="px-5 py-4 text-left text-sm font-medium text-gray-500">申请层次</th>
+              <th class="px-5 py-4 text-left text-sm font-medium text-gray-500">录取院校</th>
+              <th class="px-5 py-4 text-left text-sm font-medium text-gray-500">来源学生</th>
+              <th class="px-5 py-4 text-left text-sm font-medium text-gray-500">解析状态</th>
+              <th class="px-5 py-4 text-left text-sm font-medium text-gray-500">关联模板</th>
+              <th class="px-5 py-4 text-left text-sm font-medium text-gray-500">上传时间</th>
+              <th class="px-5 py-4 text-left text-sm font-medium text-gray-500">操作</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-gray-100" id="caseTbody">
+            <tr class="hover:bg-gray-50 transition-colors bg-blue-50/30" data-kw="张同学cs方向ps终稿卡内基梅隆大学张王志强" data-type="PS" data-level="硕士申请" data-status="已解析" data-direction="CS/人工智能" data-school="卡内基梅隆大学" data-uploader="王志强" data-time="2026-07-28">
+              <td class="px-4 py-4"><input type="checkbox" class="row-check rounded border-gray-300 text-blue-600" checked="" onclick="updateSelected()"></td>
+              <td class="px-5 py-4">
+                <div class="flex items-center gap-3">
+                  <div class="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                    <svg class="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                  </div>
+                  <div>
+                    <p class="text-sm font-medium text-gray-900">张同学-CS方向-PS终稿.docx</p>
+                    <p class="text-xs text-gray-400 mt-0.5">186 KB · 美国 · 2025Fall</p>
+                  </div>
+                </div>
+              </td>
+              <td class="px-5 py-4"><span class="inline-flex items-center px-2 py-0.5 rounded-md text-xs font-medium bg-blue-50 text-blue-700">PS</span></td>
+              <td class="px-5 py-4 text-sm text-gray-600">CS/人工智能</td>
+              <td class="px-5 py-4 text-sm text-gray-600">硕士申请</td>
+              <td class="px-5 py-4 text-sm text-gray-600">卡内基梅隆大学</td>
+              <td class="px-5 py-4 text-sm text-gray-600">张**<span class="ml-1 text-[10px] px-1.5 py-0.5 bg-gray-100 text-gray-400 rounded">已脱敏</span></td>
+              <td class="px-5 py-4"><span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">已解析</span></td>
+              <td class="px-5 py-4"><button class="text-blue-600 hover:text-blue-800 text-sm" onclick="showToast(&#39;跳转至模板库编辑：AI方向PS标准模板&#39;)">AI方向PS标准模板</button></td>
+              <td class="px-5 py-4 text-sm text-gray-500">2026-07-28 14:30</td>
+              <td class="px-5 py-4">
+                <div class="flex items-center gap-3">
+                  <button class="text-blue-600 hover:text-blue-800 text-sm font-medium" onclick="openDrawer()">详情</button>
+                  <button class="text-gray-500 hover:text-gray-700 text-sm" onclick="showToast(&#39;原文下载已开始&#39;)">下载</button>
+                  <button class="text-gray-500 hover:text-red-600 text-sm" onclick="openDeleteModal(&#39;张同学-CS方向-PS终稿.docx&#39;)">删除</button>
+                </div>
+              </td>
+            </tr>
+            <tr class="hover:bg-gray-50 transition-colors" data-kw="李同学ai方向ps录取版帝国理工学院李王志强" data-type="PS" data-level="硕士申请" data-status="已解析" data-direction="CS/人工智能" data-school="帝国理工学院" data-uploader="王志强" data-time="2026-07-28">
+              <td class="px-4 py-4"><input type="checkbox" class="row-check rounded border-gray-300 text-blue-600" onclick="updateSelected()"></td>
+              <td class="px-5 py-4">
+                <div class="flex items-center gap-3">
+                  <div class="w-8 h-8 bg-red-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                    <svg class="w-4 h-4 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                  </div>
+                  <div>
+                    <p class="text-sm font-medium text-gray-900">李同学-AI方向-PS录取版.pdf</p>
+                    <p class="text-xs text-gray-400 mt-0.5">342 KB · 英国 · 2025Fall</p>
+                  </div>
+                </div>
+              </td>
+              <td class="px-5 py-4"><span class="inline-flex items-center px-2 py-0.5 rounded-md text-xs font-medium bg-blue-50 text-blue-700">PS</span></td>
+              <td class="px-5 py-4 text-sm text-gray-600">CS/人工智能</td>
+              <td class="px-5 py-4 text-sm text-gray-600">硕士申请</td>
+              <td class="px-5 py-4 text-sm text-gray-600">帝国理工学院</td>
+              <td class="px-5 py-4 text-sm text-gray-600">李**<span class="ml-1 text-[10px] px-1.5 py-0.5 bg-gray-100 text-gray-400 rounded">已脱敏</span></td>
+              <td class="px-5 py-4"><span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">已解析</span></td>
+              <td class="px-5 py-4"><button class="text-blue-600 hover:text-blue-800 text-sm" onclick="showToast(&#39;跳转至模板库编辑：AI方向PS标准模板&#39;)">AI方向PS标准模板</button></td>
+              <td class="px-5 py-4 text-sm text-gray-500">2026-07-28 14:30</td>
+              <td class="px-5 py-4">
+                <div class="flex items-center gap-3">
+                  <button class="text-blue-600 hover:text-blue-800 text-sm font-medium" onclick="openDrawer()">详情</button>
+                  <button class="text-gray-500 hover:text-gray-700 text-sm" onclick="showToast(&#39;原文下载已开始&#39;)">下载</button>
+                  <button class="text-gray-500 hover:text-red-600 text-sm" onclick="openDeleteModal(&#39;李同学-AI方向-PS录取版.pdf&#39;)">删除</button>
+                </div>
+              </td>
+            </tr>
+            <tr class="hover:bg-gray-50 transition-colors" data-kw="王同学数据科学ps终稿麻省理工学院王林小婉" data-type="PS" data-level="硕士申请" data-status="解析中" data-direction="数据科学" data-school="麻省理工学院" data-uploader="林小婉" data-time="2026-07-30">
+              <td class="px-4 py-4"><input type="checkbox" class="row-check rounded border-gray-300 text-blue-600" onclick="updateSelected()"></td>
+              <td class="px-5 py-4">
+                <div class="flex items-center gap-3">
+                  <div class="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                    <svg class="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                  </div>
+                  <div>
+                    <p class="text-sm font-medium text-gray-900">王同学-数据科学-PS终稿.docx</p>
+                    <p class="text-xs text-gray-400 mt-0.5">205 KB · 美国 · 2025Fall</p>
+                  </div>
+                </div>
+              </td>
+              <td class="px-5 py-4"><span class="inline-flex items-center px-2 py-0.5 rounded-md text-xs font-medium bg-blue-50 text-blue-700">PS</span></td>
+              <td class="px-5 py-4 text-sm text-gray-600">数据科学</td>
+              <td class="px-5 py-4 text-sm text-gray-600">硕士申请</td>
+              <td class="px-5 py-4 text-sm text-gray-600">麻省理工学院</td>
+              <td class="px-5 py-4 text-sm text-gray-600">王**<span class="ml-1 text-[10px] px-1.5 py-0.5 bg-gray-100 text-gray-400 rounded">已脱敏</span></td>
+              <td class="px-5 py-4"><span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-700"><span class="w-1.5 h-1.5 bg-blue-500 rounded-full parsing-dot"></span>解析中</span></td>
+              <td class="px-5 py-4 text-sm text-gray-300">—</td>
+              <td class="px-5 py-4 text-sm text-gray-500">2026-07-30 09:12</td>
+              <td class="px-5 py-4">
+                <div class="flex items-center gap-3">
+                  <button class="text-blue-600 hover:text-blue-800 text-sm font-medium" onclick="openDrawer()">详情</button>
+                  <button class="text-gray-500 hover:text-gray-700 text-sm" onclick="showToast(&#39;原文下载已开始&#39;)">下载</button>
+                  <button class="text-gray-500 hover:text-red-600 text-sm" onclick="openDeleteModal(&#39;王同学-数据科学-PS终稿.docx&#39;)">删除</button>
+                </div>
+              </td>
+            </tr>
+            <tr class="hover:bg-gray-50 transition-colors" data-kw="陈同学金融方向cv终版伦敦政治经济学院陈赵思远" data-type="CV" data-level="硕士申请" data-status="未解析" data-direction="商科/金融" data-school="伦敦政治经济学院" data-uploader="赵思远" data-time="2026-07-30">
+              <td class="px-4 py-4"><input type="checkbox" class="row-check rounded border-gray-300 text-blue-600" onclick="updateSelected()"></td>
+              <td class="px-5 py-4">
+                <div class="flex items-center gap-3">
+                  <div class="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                    <svg class="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                  </div>
+                  <div>
+                    <p class="text-sm font-medium text-gray-900">陈同学-金融方向-CV终版.docx</p>
+                    <p class="text-xs text-gray-400 mt-0.5">158 KB · 英国 · 2024Fall</p>
+                  </div>
+                </div>
+              </td>
+              <td class="px-5 py-4"><span class="inline-flex items-center px-2 py-0.5 rounded-md text-xs font-medium bg-cyan-50 text-cyan-700">CV</span></td>
+              <td class="px-5 py-4 text-sm text-gray-600">商科/金融</td>
+              <td class="px-5 py-4 text-sm text-gray-600">硕士申请</td>
+              <td class="px-5 py-4 text-sm text-gray-600">伦敦政治经济学院</td>
+              <td class="px-5 py-4 text-sm text-gray-600">陈**<span class="ml-1 text-[10px] px-1.5 py-0.5 bg-gray-100 text-gray-400 rounded">已脱敏</span></td>
+              <td class="px-5 py-4"><span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-600">未解析</span></td>
+              <td class="px-5 py-4 text-sm text-gray-300">—</td>
+              <td class="px-5 py-4 text-sm text-gray-500">2026-07-30 16:45</td>
+              <td class="px-5 py-4">
+                <div class="flex items-center gap-3">
+                  <button class="text-blue-600 hover:text-blue-800 text-sm font-medium" onclick="openDrawer()">详情</button>
+                  <button class="text-blue-600 hover:text-blue-800 text-sm" onclick="showToast(&#39;已提交解析任务：陈同学-金融方向-CV终版.docx&#39;)">解析</button>
+                  <button class="text-gray-500 hover:text-red-600 text-sm" onclick="openDeleteModal(&#39;陈同学-金融方向-CV终版.docx&#39;)">删除</button>
+                </div>
+              </td>
+            </tr>
+            <tr class="hover:bg-gray-50 transition-colors" data-kw="刘同学电子工程rp研究计划斯坦福大学刘林小婉" data-type="RP" data-level="博士申请" data-status="解析失败" data-direction="电子工程" data-school="斯坦福大学" data-uploader="林小婉" data-time="2026-07-29">
+              <td class="px-4 py-4"><input type="checkbox" class="row-check rounded border-gray-300 text-blue-600" onclick="updateSelected()"></td>
+              <td class="px-5 py-4">
+                <div class="flex items-center gap-3">
+                  <div class="w-8 h-8 bg-red-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                    <svg class="w-4 h-4 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                  </div>
+                  <div>
+                    <p class="text-sm font-medium text-gray-900">刘同学-电子工程-RP研究计划.pdf</p>
+                    <p class="text-xs text-gray-400 mt-0.5">1.2 MB · 美国 · 2025Fall</p>
+                  </div>
+                </div>
+              </td>
+              <td class="px-5 py-4"><span class="inline-flex items-center px-2 py-0.5 rounded-md text-xs font-medium bg-purple-50 text-purple-700">RP</span></td>
+              <td class="px-5 py-4 text-sm text-gray-600">电子工程</td>
+              <td class="px-5 py-4 text-sm text-gray-600">博士申请</td>
+              <td class="px-5 py-4 text-sm text-gray-600">斯坦福大学</td>
+              <td class="px-5 py-4 text-sm text-gray-600">刘**<span class="ml-1 text-[10px] px-1.5 py-0.5 bg-gray-100 text-gray-400 rounded">已脱敏</span></td>
+              <td class="px-5 py-4"><span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-700" title="文档扫描件无法提取文本，请上传文字版文件">解析失败</span></td>
+              <td class="px-5 py-4 text-sm text-gray-300">—</td>
+              <td class="px-5 py-4 text-sm text-gray-500">2026-07-29 11:05</td>
+              <td class="px-5 py-4">
+                <div class="flex items-center gap-3">
+                  <button class="text-blue-600 hover:text-blue-800 text-sm font-medium" onclick="openDrawer()">详情</button>
+                  <button class="text-blue-600 hover:text-blue-800 text-sm" onclick="showToast(&#39;已重新提交解析任务&#39;)">重新解析</button>
+                  <button class="text-gray-500 hover:text-red-600 text-sm" onclick="openDeleteModal(&#39;刘同学-电子工程-RP研究计划.pdf&#39;)">删除</button>
+                </div>
+              </td>
+            </tr>
+            <tr class="hover:bg-gray-50 transition-colors" data-kw="赵同学市场营销推荐信西北大学赵周明杰" data-type="推荐信" data-level="硕士申请" data-status="已解析" data-direction="商科/市场营销" data-school="西北大学" data-uploader="周明杰" data-time="2026-07-27">
+              <td class="px-4 py-4"><input type="checkbox" class="row-check rounded border-gray-300 text-blue-600" onclick="updateSelected()"></td>
+              <td class="px-5 py-4">
+                <div class="flex items-center gap-3">
+                  <div class="w-8 h-8 bg-red-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                    <svg class="w-4 h-4 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                  </div>
+                  <div>
+                    <p class="text-sm font-medium text-gray-900">赵同学-市场营销-推荐信.pdf</p>
+                    <p class="text-xs text-gray-400 mt-0.5">96 KB · 美国 · 2024Fall</p>
+                  </div>
+                </div>
+              </td>
+              <td class="px-5 py-4"><span class="inline-flex items-center px-2 py-0.5 rounded-md text-xs font-medium bg-amber-50 text-amber-700">推荐信</span></td>
+              <td class="px-5 py-4 text-sm text-gray-600">商科/市场营销</td>
+              <td class="px-5 py-4 text-sm text-gray-600">硕士申请</td>
+              <td class="px-5 py-4 text-sm text-gray-600">西北大学</td>
+              <td class="px-5 py-4 text-sm text-gray-600">赵**<span class="ml-1 text-[10px] px-1.5 py-0.5 bg-gray-100 text-gray-400 rounded">已脱敏</span></td>
+              <td class="px-5 py-4"><span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">已解析</span></td>
+              <td class="px-5 py-4"><button class="text-blue-600 hover:text-blue-800 text-sm" onclick="showToast(&#39;跳转至模板库编辑：商科推荐信通用模板&#39;)">商科推荐信通用模板</button></td>
+              <td class="px-5 py-4 text-sm text-gray-500">2026-07-27 10:20</td>
+              <td class="px-5 py-4">
+                <div class="flex items-center gap-3">
+                  <button class="text-blue-600 hover:text-blue-800 text-sm font-medium" onclick="openDrawer()">详情</button>
+                  <button class="text-gray-500 hover:text-gray-700 text-sm" onclick="showToast(&#39;原文下载已开始&#39;)">下载</button>
+                  <button class="text-gray-500 hover:text-red-600 text-sm" onclick="openDeleteModal(&#39;赵同学-市场营销-推荐信.pdf&#39;)">删除</button>
+                </div>
+              </td>
+            </tr>
+            <tr class="hover:bg-gray-50 transition-colors" data-kw="周同学机械工程ps密歇根大学安娜堡分校周王志强" data-type="PS" data-level="本科申请" data-status="未解析" data-direction="机械工程" data-school="密歇根大学安娜堡分校" data-uploader="王志强" data-time="2026-07-26">
+              <td class="px-4 py-4"><input type="checkbox" class="row-check rounded border-gray-300 text-blue-600" onclick="updateSelected()"></td>
+              <td class="px-5 py-4">
+                <div class="flex items-center gap-3">
+                  <div class="w-8 h-8 bg-red-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                    <svg class="w-4 h-4 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                  </div>
+                  <div>
+                    <p class="text-sm font-medium text-gray-900">周同学-机械工程-PS.pdf</p>
+                    <p class="text-xs text-gray-400 mt-0.5">210 KB · 美国 · 2023Fall</p>
+                  </div>
+                </div>
+              </td>
+              <td class="px-5 py-4"><span class="inline-flex items-center px-2 py-0.5 rounded-md text-xs font-medium bg-blue-50 text-blue-700">PS</span></td>
+              <td class="px-5 py-4 text-sm text-gray-600">机械工程</td>
+              <td class="px-5 py-4 text-sm text-gray-600">本科申请</td>
+              <td class="px-5 py-4 text-sm text-gray-600">密歇根大学安娜堡分校</td>
+              <td class="px-5 py-4 text-sm text-gray-600">周**<span class="ml-1 text-[10px] px-1.5 py-0.5 bg-gray-100 text-gray-400 rounded">已脱敏</span></td>
+              <td class="px-5 py-4"><span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-600">未解析</span></td>
+              <td class="px-5 py-4 text-sm text-gray-300">—</td>
+              <td class="px-5 py-4 text-sm text-gray-500">2026-07-26 15:40</td>
+              <td class="px-5 py-4">
+                <div class="flex items-center gap-3">
+                  <button class="text-blue-600 hover:text-blue-800 text-sm font-medium" onclick="openDrawer()">详情</button>
+                  <button class="text-blue-600 hover:text-blue-800 text-sm" onclick="showToast(&#39;已提交解析任务：周同学-机械工程-PS.pdf&#39;)">解析</button>
+                  <button class="text-gray-500 hover:text-red-600 text-sm" onclick="openDeleteModal(&#39;周同学-机械工程-PS.pdf&#39;)">删除</button>
+                </div>
+              </td>
+            </tr>
+            <tr class="hover:bg-gray-50 transition-colors" data-kw="吴同学计算机科学cv伊利诺伊大学香槟分校吴赵思远" data-type="CV" data-level="本科申请" data-status="已归档" data-direction="CS/人工智能" data-school="伊利诺伊大学香槟分校" data-uploader="赵思远" data-time="2026-07-20">
+              <td class="px-4 py-4"><input type="checkbox" class="row-check rounded border-gray-300 text-blue-600" onclick="updateSelected()"></td>
+              <td class="px-5 py-4">
+                <div class="flex items-center gap-3">
+                  <div class="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                    <svg class="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                  </div>
+                  <div>
+                    <p class="text-sm font-medium text-gray-900">吴同学-计算机科学-CV.docx</p>
+                    <p class="text-xs text-gray-400 mt-0.5">132 KB · 美国 · 2022Fall</p>
+                  </div>
+                </div>
+              </td>
+              <td class="px-5 py-4"><span class="inline-flex items-center px-2 py-0.5 rounded-md text-xs font-medium bg-cyan-50 text-cyan-700">CV</span></td>
+              <td class="px-5 py-4 text-sm text-gray-600">CS/人工智能</td>
+              <td class="px-5 py-4 text-sm text-gray-600">本科申请</td>
+              <td class="px-5 py-4 text-sm text-gray-600">伊利诺伊大学香槟分校</td>
+              <td class="px-5 py-4 text-sm text-gray-600">吴**<span class="ml-1 text-[10px] px-1.5 py-0.5 bg-gray-100 text-gray-400 rounded">已脱敏</span></td>
+              <td class="px-5 py-4"><span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-200 text-gray-500">已归档</span></td>
+              <td class="px-5 py-4 text-sm text-gray-300">—</td>
+              <td class="px-5 py-4 text-sm text-gray-500">2026-07-20 08:55</td>
+              <td class="px-5 py-4">
+                <div class="flex items-center gap-3">
+                  <button class="text-blue-600 hover:text-blue-800 text-sm font-medium" onclick="openDrawer()">详情</button>
+                  <button class="text-gray-500 hover:text-gray-700 text-sm" onclick="showToast(&#39;原文下载已开始&#39;)">下载</button>
+                  <button class="text-gray-500 hover:text-red-600 text-sm" onclick="openDeleteModal(&#39;吴同学-计算机科学-CV.docx&#39;)">删除</button>
+                </div>
+              </td>
+            </tr>
+            <tr id="flt-empty" class="hidden">
+              <td colspan="11" class="px-6 py-10 text-center text-sm text-gray-400">暂无符合条件的案例，请调整筛选条件</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <!-- 分页控件 -->
+        <div class="flex items-center justify-between px-6 py-4 border-t border-gray-100">
+          <div class="text-sm text-gray-500">
+            共 128 条记录，每页
+            <select class="ml-2 mr-2 px-2 py-1 border border-gray-300 rounded">
+              <option>10</option>
+              <option selected="">20</option>
+              <option>50</option>
+            </select>
+            条
+          </div>
+          <div class="flex items-center gap-2">
+            <button class="px-3 py-1.5 border border-gray-300 rounded-lg text-sm text-gray-600 hover:bg-gray-50 disabled:opacity-50" disabled="">上一页</button>
+            <button class="px-3 py-1.5 bg-blue-600 text-white rounded-lg text-sm">1</button>
+            <button class="px-3 py-1.5 border border-gray-300 rounded-lg text-sm text-gray-600 hover:bg-gray-50">2</button>
+            <button class="px-3 py-1.5 border border-gray-300 rounded-lg text-sm text-gray-600 hover:bg-gray-50">3</button>
+            <span class="text-sm text-gray-400">…</span>
+            <button class="px-3 py-1.5 border border-gray-300 rounded-lg text-sm text-gray-600 hover:bg-gray-50">7</button>
+            <button class="px-3 py-1.5 border border-gray-300 rounded-lg text-sm text-gray-600 hover:bg-gray-50">下一页</button>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- 上传案例包弹窗 -->
+  <div id="uploadModal" class="fixed inset-0 z-50 hidden">
+    <div class="absolute inset-0 bg-black bg-opacity-30" onclick="closeUploadModal()"></div>
+    <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[880px] max-w-[95vw] max-h-[86vh] bg-white rounded-2xl shadow-2xl flex flex-col">
+      <!-- 弹窗头部 -->
+      <div class="flex items-center justify-between px-6 py-4 border-b border-gray-200">
+        <div class="flex items-center gap-2">
+          <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path>
+          </svg>
+          <h3 class="text-lg font-semibold text-gray-800">上传文书案例包</h3>
+          <span class="text-xs text-gray-400">批量上传过往文书，充实案例库，可用于 AI 解析生成模板</span>
+        </div>
+        <button class="p-1 text-gray-400 hover:text-gray-600" onclick="closeUploadModal()">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+        </button>
+      </div>
+
+      <div class="flex-1 overflow-y-auto p-6">
+        <!-- 上传区 -->
+        <div id="case-dropzone" class="border-2 border-dashed border-gray-300 rounded-xl p-8 text-center cursor-pointer hover:border-blue-400 hover:bg-blue-50/40 transition-colors" onclick="addDemoFile()">
+          <svg class="w-10 h-10 mx-auto text-gray-300 mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path>
+          </svg>
+          <p class="text-sm font-medium text-gray-700">点击或拖拽上传文书案例包</p>
+          <p class="text-xs text-gray-400 mt-1.5">支持 .docx / .pdf / .zip 打包上传，单个文件不超过 50MB，单次最多 20 份文书</p>
+        </div>
+
+        <!-- 已上传文件列表（含批量信息补全） -->
+        <div class="mt-4">
+          <div class="flex items-center justify-between mb-2">
+            <label class="text-sm font-medium text-gray-700">已上传案例 <span class="text-gray-400 font-normal" id="upload-file-count">(3)</span></label>
+            <div class="flex items-center gap-4">
+              <button class="text-xs text-gray-500 hover:text-gray-700" onclick="fillDemoMeta()">批量填充示例信息</button>
+              <button class="text-xs text-blue-600 hover:text-blue-700" onclick="addDemoFile()">继续添加</button>
+            </div>
+          </div>
+          <div class="space-y-2" id="upload-file-list">
+            <div class="upload-file-item p-3 bg-gray-50 rounded-lg border border-gray-100">
+              <div class="flex items-center justify-between">
+                <div class="flex items-center gap-3 min-w-0">
+                  <div class="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                    <svg class="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                  </div>
+                  <div class="min-w-0">
+                    <p class="text-sm text-gray-800 truncate">孙同学-商业分析-PS终稿.docx</p>
+                    <p class="text-xs text-gray-400">172 KB</p>
+                  </div>
+                </div>
+                <div class="flex items-center gap-2 flex-shrink-0">
+                  <span class="text-xs px-2 py-0.5 bg-green-50 text-green-600 rounded-full">已就绪</span>
+                  <svg class="btn-remove-file w-4 h-4 text-gray-400 cursor-pointer hover:text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" onclick="removeUploadFile(this)"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                </div>
+              </div>
+              <!-- 案例信息补全 -->
+              <div class="flex items-center gap-2 mt-2.5 pl-11">
+                <select class="meta-type h-8 px-2 text-xs border border-gray-200 rounded-lg bg-white text-gray-600 focus:ring-1 focus:ring-blue-500">
+                  <option>PS</option><option>CV</option><option>RP</option><option>推荐信</option>
+                </select>
+                <select class="meta-level h-8 px-2 text-xs border border-gray-200 rounded-lg bg-white text-gray-600 focus:ring-1 focus:ring-blue-500">
+                  <option>硕士申请</option><option>本科申请</option><option>博士申请</option>
+                </select>
+                <input type="text" placeholder="申请方向（如 商科/商业分析）" class="meta-direction h-8 px-2 text-xs border border-gray-200 rounded-lg bg-white text-gray-600 w-48 focus:ring-1 focus:ring-blue-500">
+                <input type="text" placeholder="录取院校（选填）" class="meta-school h-8 px-2 text-xs border border-gray-200 rounded-lg bg-white text-gray-600 w-40 focus:ring-1 focus:ring-blue-500">
+              </div>
+            </div>
+            <div class="upload-file-item p-3 bg-gray-50 rounded-lg border border-gray-100">
+              <div class="flex items-center justify-between">
+                <div class="flex items-center gap-3 min-w-0">
+                  <div class="w-8 h-8 bg-red-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                    <svg class="w-4 h-4 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                  </div>
+                  <div class="min-w-0">
+                    <p class="text-sm text-gray-800 truncate">钱同学-商业分析-CV.pdf</p>
+                    <p class="text-xs text-gray-400">118 KB</p>
+                  </div>
+                </div>
+                <div class="flex items-center gap-2 flex-shrink-0">
+                  <span class="text-xs px-2 py-0.5 bg-green-50 text-green-600 rounded-full">已就绪</span>
+                  <svg class="btn-remove-file w-4 h-4 text-gray-400 cursor-pointer hover:text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" onclick="removeUploadFile(this)"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                </div>
+              </div>
+              <div class="flex items-center gap-2 mt-2.5 pl-11">
+                <select class="meta-type h-8 px-2 text-xs border border-gray-200 rounded-lg bg-white text-gray-600 focus:ring-1 focus:ring-blue-500">
+                  <option>CV</option><option>PS</option><option>RP</option><option>推荐信</option>
+                </select>
+                <select class="meta-level h-8 px-2 text-xs border border-gray-200 rounded-lg bg-white text-gray-600 focus:ring-1 focus:ring-blue-500">
+                  <option>硕士申请</option><option>本科申请</option><option>博士申请</option>
+                </select>
+                <input type="text" placeholder="申请方向（如 商科/商业分析）" class="meta-direction h-8 px-2 text-xs border border-gray-200 rounded-lg bg-white text-gray-600 w-48 focus:ring-1 focus:ring-blue-500">
+                <input type="text" placeholder="录取院校（选填）" class="meta-school h-8 px-2 text-xs border border-gray-200 rounded-lg bg-white text-gray-600 w-40 focus:ring-1 focus:ring-blue-500">
+              </div>
+            </div>
+            <div class="upload-file-item p-3 bg-gray-50 rounded-lg border border-gray-100">
+              <div class="flex items-center justify-between">
+                <div class="flex items-center gap-3 min-w-0">
+                  <div class="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                    <svg class="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                  </div>
+                  <div class="min-w-0">
+                    <p class="text-sm text-gray-800 truncate">冯同学-商业分析-推荐信.docx</p>
+                    <p class="text-xs text-gray-400">88 KB</p>
+                  </div>
+                </div>
+                <div class="flex items-center gap-2 flex-shrink-0">
+                  <span class="text-xs px-2 py-0.5 bg-green-50 text-green-600 rounded-full">已就绪</span>
+                  <svg class="btn-remove-file w-4 h-4 text-gray-400 cursor-pointer hover:text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" onclick="removeUploadFile(this)"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                </div>
+              </div>
+              <div class="flex items-center gap-2 mt-2.5 pl-11">
+                <select class="meta-type h-8 px-2 text-xs border border-gray-200 rounded-lg bg-white text-gray-600 focus:ring-1 focus:ring-blue-500">
+                  <option>推荐信</option><option>PS</option><option>CV</option><option>RP</option>
+                </select>
+                <select class="meta-level h-8 px-2 text-xs border border-gray-200 rounded-lg bg-white text-gray-600 focus:ring-1 focus:ring-blue-500">
+                  <option>硕士申请</option><option>本科申请</option><option>博士申请</option>
+                </select>
+                <input type="text" placeholder="申请方向（如 商科/商业分析）" class="meta-direction h-8 px-2 text-xs border border-gray-200 rounded-lg bg-white text-gray-600 w-48 focus:ring-1 focus:ring-blue-500">
+                <input type="text" placeholder="录取院校（选填）" class="meta-school h-8 px-2 text-xs border border-gray-200 rounded-lg bg-white text-gray-600 w-40 focus:ring-1 focus:ring-blue-500">
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 入库选项 -->
+        <div class="mt-5 bg-gray-50 rounded-xl p-4 border border-gray-100">
+          <label class="text-sm font-medium text-gray-700">入库选项</label>
+          <div class="flex flex-wrap gap-x-6 gap-y-2 mt-2.5">
+            <label class="flex items-center gap-2 cursor-pointer">
+              <input type="checkbox" checked="" class="rounded border-gray-300 text-blue-600" id="opt-auto-parse">
+              <span class="text-sm text-gray-700">入库后自动进行 AI 解析（识别结构与变量）</span>
+            </label>
+            <label class="flex items-center gap-2 cursor-pointer">
+              <input type="checkbox" checked="" class="rounded border-gray-300 text-blue-600" id="opt-mask">
+              <span class="text-sm text-gray-700">学生敏感信息脱敏展示</span>
+            </label>
+          </div>
+          <p class="text-xs text-gray-400 mt-2.5">同方向、同类型的多份案例将自动归为同一案例包，便于后续交叉比对生成模板</p>
+        </div>
+      </div>
+
+      <!-- 弹窗底部按钮 -->
+      <div class="flex items-center justify-between px-6 py-4 border-t border-gray-200 bg-gray-50 rounded-b-2xl">
+        <div class="text-xs text-gray-400">案例内容仅用于内部参考与模板结构提取，不会明文外发</div>
+        <div class="flex items-center gap-3">
+          <button class="px-4 py-2 text-sm bg-white border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 font-medium" onclick="closeUploadModal()">取消</button>
+          <button class="px-5 py-2 text-sm bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium flex items-center gap-1.5" onclick="confirmUpload()">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+            上传并入库
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 案例详情抽屉 -->
+  <div id="caseDrawer" class="fixed inset-0 z-50 hidden">
+    <div class="absolute inset-0 bg-black bg-opacity-30" onclick="closeDrawer()"></div>
+    <div class="case-drawer absolute top-0 right-0 h-full w-[560px] max-w-[95vw] bg-white shadow-2xl flex flex-col">
+      <!-- 抽屉头部 -->
+      <div class="flex items-center justify-between px-6 py-4 border-b border-gray-200">
+        <div class="flex items-center gap-2.5">
+          <h3 class="text-lg font-semibold text-gray-800">案例详情</h3>
+          <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">已解析</span>
+        </div>
+        <button class="p-1 text-gray-400 hover:text-gray-600" onclick="closeDrawer()">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+        </button>
+      </div>
+
+      <div class="flex-1 overflow-y-auto p-6 space-y-6">
+        <!-- 文件信息 -->
+        <div class="flex items-center gap-4 p-4 bg-gray-50 rounded-xl border border-gray-100">
+          <div class="w-11 h-11 bg-blue-100 rounded-lg flex items-center justify-center flex-shrink-0">
+            <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+          </div>
+          <div class="flex-1 min-w-0">
+            <p class="text-sm font-medium text-gray-900 truncate">张同学-CS方向-PS终稿.docx</p>
+            <p class="text-xs text-gray-400 mt-0.5">186 KB · 王志强上传于 2026-07-28 14:30</p>
+          </div>
+          <button class="flex items-center gap-1 px-3 py-1.5 text-xs bg-white border border-gray-300 text-gray-600 rounded-lg hover:bg-gray-50 flex-shrink-0" onclick="showToast(&#39;原文下载已开始&#39;)">
+            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+            下载原文
+          </button>
+        </div>
+
+        <!-- 基础信息 -->
+        <div>
+          <h4 class="text-sm font-medium text-gray-700 mb-3">基础信息</h4>
+          <div class="grid grid-cols-2 gap-x-6 gap-y-3 text-sm">
+            <div class="flex justify-between border-b border-gray-50 pb-2"><span class="text-gray-400">文书类型</span><span class="text-gray-800 font-medium">PS</span></div>
+            <div class="flex justify-between border-b border-gray-50 pb-2"><span class="text-gray-400">申请层次</span><span class="text-gray-800 font-medium">硕士申请</span></div>
+            <div class="flex justify-between border-b border-gray-50 pb-2"><span class="text-gray-400">申请方向</span><span class="text-gray-800 font-medium">CS/人工智能</span></div>
+            <div class="flex justify-between border-b border-gray-50 pb-2"><span class="text-gray-400">录取院校</span><span class="text-gray-800 font-medium">卡内基梅隆大学</span></div>
+            <div class="flex justify-between border-b border-gray-50 pb-2"><span class="text-gray-400">录取结果</span><span class="text-green-600 font-medium">已录取</span></div>
+            <div class="flex justify-between border-b border-gray-50 pb-2"><span class="text-gray-400">来源学生</span><span class="text-gray-800 font-medium">张**（2025Fall）<span class="ml-1 text-[10px] px-1.5 py-0.5 bg-gray-100 text-gray-400 rounded">已脱敏</span></span></div>
+          </div>
+          <div class="flex items-center gap-2 mt-3">
+            <span class="text-sm text-gray-400">标签</span>
+            <span class="inline-flex items-center px-2.5 py-1 bg-blue-100 text-blue-700 rounded-full text-xs font-medium">美国</span>
+            <span class="inline-flex items-center px-2.5 py-1 bg-blue-100 text-blue-700 rounded-full text-xs font-medium">CS硕士</span>
+            <span class="inline-flex items-center px-2.5 py-1 bg-blue-100 text-blue-700 rounded-full text-xs font-medium">科研导向</span>
+            <button class="inline-flex items-center gap-1 px-2.5 py-1 border border-dashed border-gray-300 rounded-full text-xs text-gray-500 hover:text-gray-700 hover:border-gray-400">+ 添加</button>
+          </div>
+        </div>
+
+        <!-- AI 解析结果 -->
+        <div>
+          <div class="flex items-center justify-between mb-3">
+            <h4 class="text-sm font-medium text-gray-700">AI 解析结果</h4>
+            <span class="text-xs text-gray-400">解析于 2026-07-28 14:32</span>
+          </div>
+          <div class="space-y-2">
+            <div class="flex items-center gap-3 p-3 border border-gray-200 rounded-lg">
+              <div class="flex-1 min-w-0">
+                <p class="text-sm font-medium text-gray-800">一、背景与动机</p>
+                <p class="text-xs text-gray-400 truncate">兴趣起源、关键事件触发</p>
+              </div>
+              <span class="text-xs px-2 py-0.5 bg-green-50 text-green-600 rounded-full flex-shrink-0">置信度 98%</span>
+            </div>
+            <div class="flex items-center gap-3 p-3 border border-gray-200 rounded-lg">
+              <div class="flex-1 min-w-0">
+                <p class="text-sm font-medium text-gray-800">二、学术准备</p>
+                <p class="text-xs text-gray-400 truncate">核心课程、GPA、专业排名</p>
+              </div>
+              <span class="text-xs px-2 py-0.5 bg-green-50 text-green-600 rounded-full flex-shrink-0">置信度 96%</span>
+            </div>
+            <div class="flex items-center gap-3 p-3 border border-gray-200 rounded-lg">
+              <div class="flex-1 min-w-0">
+                <p class="text-sm font-medium text-gray-800">三、研究经历</p>
+                <p class="text-xs text-gray-400 truncate">项目目标、个人职责、成果产出</p>
+              </div>
+              <span class="text-xs px-2 py-0.5 bg-green-50 text-green-600 rounded-full flex-shrink-0">置信度 95%</span>
+            </div>
+            <div class="flex items-center gap-3 p-3 border border-gray-200 rounded-lg">
+              <div class="flex-1 min-w-0">
+                <p class="text-sm font-medium text-gray-800">四、实习/实践经历</p>
+                <p class="text-xs text-gray-400 truncate">公司与岗位、工作内容、能力提升</p>
+              </div>
+              <span class="text-xs px-2 py-0.5 bg-yellow-50 text-yellow-600 rounded-full flex-shrink-0">置信度 82%</span>
+            </div>
+            <div class="flex items-center gap-3 p-3 border border-gray-200 rounded-lg">
+              <div class="flex-1 min-w-0">
+                <p class="text-sm font-medium text-gray-800">五、职业规划与动机升华</p>
+                <p class="text-xs text-gray-400 truncate">短期/长期目标、院校匹配度</p>
+              </div>
+              <span class="text-xs px-2 py-0.5 bg-green-50 text-green-600 rounded-full flex-shrink-0">置信度 93%</span>
+            </div>
+          </div>
+          <!-- 提取变量 -->
+          <div class="mt-3">
+            <p class="text-xs text-gray-500 mb-2">提取变量（12）</p>
+            <div class="flex flex-wrap gap-1.5">
+              <span class="text-xs px-2 py-1 bg-blue-50 text-blue-700 rounded">[学生姓名]</span>
+              <span class="text-xs px-2 py-1 bg-blue-50 text-blue-700 rounded">[申请方向]</span>
+              <span class="text-xs px-2 py-1 bg-blue-50 text-blue-700 rounded">[本科院校]</span>
+              <span class="text-xs px-2 py-1 bg-blue-50 text-blue-700 rounded">[专业名称]</span>
+              <span class="text-xs px-2 py-1 bg-blue-50 text-blue-700 rounded">[GPA]</span>
+              <span class="text-xs px-2 py-1 bg-blue-50 text-blue-700 rounded">[项目名称]</span>
+              <span class="text-xs px-2 py-1 bg-blue-50 text-blue-700 rounded">[实习公司]</span>
+              <span class="text-xs px-2 py-1 bg-blue-50 text-blue-700 rounded">[目标院校]</span>
+              <span class="text-xs px-2 py-1 bg-gray-100 text-gray-500 rounded">+4</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- 关联模板 -->
+        <div>
+          <h4 class="text-sm font-medium text-gray-700 mb-3">关联模板</h4>
+          <div class="flex items-center gap-3 p-4 border border-blue-100 bg-blue-50/50 rounded-xl">
+            <div class="w-9 h-9 bg-blue-100 rounded-lg flex items-center justify-center flex-shrink-0">
+              <svg class="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 5a1 1 0 011-1h14a1 1 0 011 1v2a1 1 0 01-1 1H5a1 1 0 01-1-1V5zM4 13a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H5a1 1 0 01-1-1v-6zM16 13a1 1 0 011-1h2a1 1 0 011 1v6a1 1 0 01-1 1h-2a1 1 0 01-1-1v-6z"></path></svg>
+            </div>
+            <div class="flex-1 min-w-0">
+              <p class="text-sm font-medium text-gray-900">AI方向PS标准模板</p>
+              <p class="text-xs text-gray-400 mt-0.5">本案例与其余 2 份案例共同解析生成 · 已发布</p>
+            </div>
+            <button class="text-xs text-blue-600 hover:text-blue-800 font-medium flex-shrink-0" onclick="showToast(&#39;跳转至模板库编辑：AI方向PS标准模板&#39;)">查看模板 →</button>
+          </div>
+          <p class="text-xs text-gray-400 mt-2">该模板已被 12 个文书任务引用</p>
+        </div>
+      </div>
+
+      <!-- 抽屉底部 -->
+      <div class="flex items-center justify-between px-6 py-4 border-t border-gray-200 bg-gray-50">
+        <button class="text-sm text-gray-500 hover:text-red-600" onclick="openDeleteModal(&#39;张同学-CS方向-PS终稿.docx&#39;)">删除案例</button>
+        <div class="flex items-center gap-3">
+          <button class="px-4 py-2 text-sm bg-white border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 font-medium" onclick="showToast(&#39;已重新提交解析任务&#39;)">重新解析</button>
+          <button class="px-5 py-2 text-sm bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium flex items-center gap-1.5" onclick="showToast(&#39;跳转至模板库编辑，并带入本案例包&#39;)">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09z"></path></svg>
+            生成模板
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 删除确认弹窗 -->
+  <div id="deleteModal" class="fixed inset-0 z-[60] hidden">
+    <div class="absolute inset-0 bg-black bg-opacity-30" onclick="closeDeleteModal()"></div>
+    <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[400px] max-w-[92vw] bg-white rounded-2xl shadow-2xl p-6">
+      <div class="flex flex-col items-center text-center">
+        <div class="w-12 h-12 bg-red-50 rounded-full flex items-center justify-center mb-3">
+          <svg class="w-6 h-6 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
+          </svg>
+        </div>
+        <h3 class="text-base font-semibold text-gray-800">确认删除案例？</h3>
+        <p class="text-sm text-gray-500 mt-2 break-all">「<span id="delete-target-name">案例</span>」将被删除</p>
+        <p class="text-xs text-gray-400 mt-1">删除后不可恢复；已由其生成的模板不受影响</p>
+      </div>
+      <div class="flex gap-3 mt-5">
+        <button class="flex-1 h-10 bg-white border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 text-sm font-medium" onclick="closeDeleteModal()">取消</button>
+        <button class="flex-1 h-10 bg-red-500 text-white rounded-lg hover:bg-red-600 text-sm font-medium" onclick="confirmDelete()">确认删除</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 提示 Toast -->
+  <div id="toast" class="fixed top-16 right-6 z-[70] hidden">
+    <div class="flex items-center gap-2.5 bg-gray-800 text-white text-sm pl-3 pr-4 py-2.5 rounded-xl shadow-xl">
+      <svg class="w-4 h-4 text-green-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+      <span id="toast-text">操作成功</span>
+    </div>
+  </div>
+
+  <script>
+    // ================= 筛选 =================
+    function toggleMore() {
+      var more = document.getElementById('flt-more');
+      var btn = document.getElementById('flt-toggle');
+      var icon = document.getElementById('flt-toggle-icon');
+      var hidden = more.classList.toggle('hidden');
+      more.classList.toggle('flex', !hidden);
+      btn.childNodes[0].textContent = hidden ? '展开更多' : '收起筛选';
+      icon.style.transform = hidden ? '' : 'rotate(180deg)';
+    }
+
+    function applyFilter() {
+      var kw = document.getElementById('flt-kw').value.trim().toLowerCase();
+      var type = document.getElementById('flt-type').value;
+      var level = document.getElementById('flt-level').value;
+      var status = document.getElementById('flt-status').value;
+      var direction = document.getElementById('flt-direction').value;
+      var school = document.getElementById('flt-school').value.trim().toLowerCase();
+      var uploader = document.getElementById('flt-uploader').value.trim().toLowerCase();
+      var time = document.getElementById('flt-time').value.trim();
+      var rows = document.querySelectorAll('#caseTbody tr:not(#flt-empty)');
+      var visible = 0;
+      rows.forEach(function(r) {
+        var ok = true;
+        if (kw && (r.dataset.kw || '').toLowerCase().indexOf(kw) === -1) ok = false;
+        if (type && r.dataset.type !== type) ok = false;
+        if (level && r.dataset.level !== level) ok = false;
+        if (status && r.dataset.status !== status) ok = false;
+        if (direction && r.dataset.direction !== direction) ok = false;
+        if (school && (r.dataset.school || '').toLowerCase().indexOf(school) === -1) ok = false;
+        if (uploader && (r.dataset.uploader || '').toLowerCase().indexOf(uploader) === -1) ok = false;
+        if (time && (r.dataset.time || '').indexOf(time) === -1) ok = false;
+        r.style.display = ok ? '' : 'none';
+        if (ok) visible++;
+      });
+      document.getElementById('flt-empty').classList.toggle('hidden', visible > 0);
+      if (visible > 0) showToast('筛选完成，命中 ' + visible + ' 个案例（当前页）');
+    }
+
+    function resetFilter() {
+      ['flt-kw','flt-school','flt-uploader','flt-time'].forEach(function(id){ document.getElementById(id).value = ''; });
+      ['flt-type','flt-level','flt-status','flt-direction'].forEach(function(id){ document.getElementById(id).value = ''; });
+      applyFilter();
+    }
+
+    // ================= 勾选与批量操作 =================
+    function toggleCheckAll() {
+      var all = document.getElementById('check-all').checked;
+      document.querySelectorAll('.row-check').forEach(function(c) {
+        if (c.closest('tr').style.display !== 'none') c.checked = all;
+      });
+      updateSelected();
+    }
+
+    function updateSelected() {
+      var n = document.querySelectorAll('.row-check:checked').length;
+      document.getElementById('selected-count').textContent = n;
+      document.getElementById('batch-hint').style.display = n > 0 ? '' : 'none';
+    }
+
+    function batchParse() {
+      var n = document.querySelectorAll('.row-check:checked').length;
+      if (n === 0) { showToast('请先勾选需要解析的案例'); return; }
+      showToast('已将 ' + n + ' 个案例加入 AI 解析队列，完成后可生成模板');
+    }
+
+    // ================= 上传弹窗 =================
+    function openUploadModal() { document.getElementById('uploadModal').classList.remove('hidden'); }
+    function closeUploadModal() { document.getElementById('uploadModal').classList.add('hidden'); }
+
+    function removeUploadFile(el) {
+      el.closest('.upload-file-item').remove();
+      refreshUploadCount();
+    }
+
+    function refreshUploadCount() {
+      var n = document.querySelectorAll('#upload-file-list .upload-file-item').length;
+      document.getElementById('upload-file-count').textContent = '(' + n + ')';
+    }
+
+    function addDemoFile() {
+      var list = document.getElementById('upload-file-list');
+      var first = list.querySelector('.upload-file-item');
+      if (!first) return;
+      var clone = first.cloneNode(true);
+      clone.querySelector('p.text-sm').textContent = '新上传-案例文书-' + (list.children.length + 1) + '.docx';
+      list.appendChild(clone);
+      refreshUploadCount();
+    }
+
+    function fillDemoMeta() {
+      document.querySelectorAll('#upload-file-list .meta-direction').forEach(function(i){ i.value = '商科/商业分析'; });
+      document.querySelectorAll('#upload-file-list .meta-school').forEach(function(i){ i.value = '杜克大学'; });
+      showToast('已按同方向批量填充案例信息');
+    }
+
+    function confirmUpload() {
+      var n = document.querySelectorAll('#upload-file-list .upload-file-item').length;
+      if (n === 0) { showToast('请先上传至少 1 份文书案例'); return; }
+      closeUploadModal();
+      var auto = document.getElementById('opt-auto-parse').checked;
+      showToast('已入库 ' + n + ' 份案例' + (auto ? '，AI 解析已自动开始' : ''));
+    }
+
+    // ================= 详情抽屉 =================
+    function openDrawer() { document.getElementById('caseDrawer').classList.remove('hidden'); }
+    function closeDrawer() { document.getElementById('caseDrawer').classList.add('hidden'); }
+
+    // ================= 删除 =================
+    function openDeleteModal(name) {
+      document.getElementById('delete-target-name').textContent = name;
+      document.getElementById('deleteModal').classList.remove('hidden');
+    }
+    function closeDeleteModal() { document.getElementById('deleteModal').classList.add('hidden'); }
+    function confirmDelete() {
+      closeDeleteModal();
+      showToast('案例已删除');
+    }
+
+    // ================= Toast =================
+    var toastTimer = null;
+    function showToast(text) {
+      var toast = document.getElementById('toast');
+      document.getElementById('toast-text').textContent = text;
+      toast.classList.remove('hidden');
+      clearTimeout(toastTimer);
+      toastTimer = setTimeout(function(){ toast.classList.add('hidden'); }, 2600);
+    }
+
+    document.addEventListener('DOMContentLoaded', updateSelected);
+  </script>
+
+
+</body></html>

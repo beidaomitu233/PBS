@@ -1,0 +1,2205 @@
+<!DOCTYPE html>
+<!-- saved from url=(0204)file:///C:/Users/yushe/Documents/kimi/workspace/%E6%96%87%E4%B9%A6%E7%BC%96%E8%BE%91%E5%99%A8%20-%20%E6%96%87%E4%B9%A6%E4%BA%A4%E4%BB%98%E7%B3%BB%E7%BB%9F%EF%BC%88%E7%BE%8E%E5%8C%96%E7%89%88%EF%BC%89.html -->
+<html lang="zh-CN" class="light" data-theme="light"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>文书编辑器 - 文书交付系统</title>
+  <script src="./文书编辑器 - 文书交付系统_files/saved_resource"></script>
+  <style>
+
+/* ===== PBS留学CRM系统 - 企业级设计规范（增强版） ===== */
+:root {
+  /* 主色调 - 专业蓝 */
+  --color-primary: #2563EB;
+  --color-primary-light: #3B82F6;
+  --color-primary-dark: #1D4ED8;
+  --color-primary-bg: #EFF6FF;
+  
+  /* 辅助色 */
+  --color-success: #10B981;
+  --color-success-light: #D1FAE5;
+  --color-warning: #F59E0B;
+  --color-warning-light: #FEF3C7;
+  --color-error: #EF4444;
+  --color-error-light: #FEE2E2;
+  --color-info: #06B6D4;
+  --color-info-light: #CFFAFE;
+  
+  /* 中性色 */
+  --color-gray-50: #F9FAFB;
+  --color-gray-100: #F3F4F6;
+  --color-gray-200: #E5E7EB;
+  --color-gray-300: #D1D5DB;
+  --color-gray-400: #9CA3AF;
+  --color-gray-500: #6B7280;
+  --color-gray-600: #4B5563;
+  --color-gray-700: #374151;
+  --color-gray-800: #1F2937;
+  --color-gray-900: #111827;
+  
+  /* 文字色 */
+  --color-text-primary: #1F2937;
+  --color-text-secondary: #6B7280;
+  --color-text-tertiary: #9CA3AF;
+  --color-text-inverse: #FFFFFF;
+  
+  /* 边框色 */
+  --color-border: #E5E7EB;
+  --color-border-light: #F3F4F6;
+  
+  /* 背景色 */
+  --color-bg-page: #F9FAFB;
+  --color-bg-card: #FFFFFF;
+  --color-bg-hover: #F3F4F6;
+  --color-bg-active: #EEF2FF;
+  
+  /* 阴影 */
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  
+  /* 圆角 */
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-xl: 16px;
+  --radius-full: 9999px;
+  
+  /* 间距 */
+  --spacing-xs: 4px;
+  --spacing-sm: 8px;
+  --spacing-md: 16px;
+  --spacing-lg: 24px;
+  --spacing-xl: 32px;
+  --spacing-2xl: 48px;
+  
+  /* 字体 */
+  --font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif;
+  --font-family-mono: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+  
+  /* 字号 */
+  --font-size-xs: 12px;
+  --font-size-sm: 14px;
+  --font-size-base: 16px;
+  --font-size-lg: 18px;
+  --font-size-xl: 20px;
+  --font-size-2xl: 24px;
+  --font-size-3xl: 30px;
+  
+  /* 行高 */
+  --line-height-tight: 1.25;
+  --line-height-normal: 1.5;
+  --line-height-relaxed: 1.75;
+  
+  /* 过渡 */
+  --transition-fast: 150ms ease;
+  --transition-normal: 200ms ease;
+  --transition-slow: 300ms ease;
+}
+
+/* 暗色主题 */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-bg-page: #111827;
+    --color-bg-card: #1F2937;
+    --color-bg-hover: #374151;
+    --color-bg-active: #312E81;
+    --color-text-primary: #F9FAFB;
+    --color-text-secondary: #D1D5DB;
+    --color-text-tertiary: #9CA3AF;
+    --color-border: #374151;
+    --color-border-light: #4B5563;
+  }
+}
+
+/* ===== 新增增强样式 ===== */
+
+/* 滚动条美化 */
+::-webkit-scrollbar {
+  width: 5px;
+  height: 5px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 10px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
+
+/* 卡片样式 */
+.card {
+  background: white;
+  border-radius: 12px;
+  border: 1px solid rgba(0,0,0,0.04);
+  box-shadow: 0 1px 3px rgba(0,0,0,0.04), 0 4px 12px rgba(0,0,0,0.02);
+  transition: all 0.2s ease;
+}
+.card:hover {
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06), 0 8px 24px rgba(0,0,0,0.04);
+  border-color: rgba(59,130,246,0.15);
+}
+
+/* 编辑器样式 */
+.editor-textarea {
+  width: 100%;
+  min-height: 120px;
+  padding: 16px;
+  border: 1.5px solid #e2e8f0;
+  border-radius: 10px;
+  font-size: 15px;
+  line-height: 1.8;
+  color: #1e293b;
+  background: #fafbfc;
+  resize: vertical;
+  transition: all 0.2s ease;
+  outline: none;
+}
+.editor-textarea:focus {
+  border-color: #3b82f6;
+  background: white;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+.editor-textarea::placeholder {
+  color: #94a3b8;
+}
+
+/* 按钮样式 */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 8px 16px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  transition: all 0.15s ease;
+  cursor: pointer;
+  border: none;
+  outline: none;
+}
+.btn-primary {
+  background: linear-gradient(135deg, #2563eb, #1d4ed8);
+  color: white;
+  box-shadow: 0 1px 3px rgba(37, 99, 235, 0.3);
+}
+.btn-primary:hover {
+  background: linear-gradient(135deg, #1d4ed8, #1e40af);
+  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.4);
+  transform: translateY(-1px);
+}
+.btn-secondary {
+  background: white;
+  color: #475569;
+  border: 1px solid #e2e8f0;
+}
+.btn-secondary:hover {
+  background: #f8fafc;
+  border-color: #cbd5e1;
+}
+
+/* 智能输入框 */
+.smart-input {
+  width: 100%;
+  height: 36px;
+  padding: 0 12px;
+  border: 1.5px solid #e2e8f0;
+  border-radius: 10px;
+  font-size: 14px;
+  transition: all 0.2s ease;
+  outline: none;
+  background: #fafbfc;
+}
+.smart-input:focus {
+  border-color: #3b82f6;
+  background: white;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+/* 动画 */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.animate-fade-in {
+  animation: fadeIn 0.25s ease-out;
+}
+
+/* 响应式设计 */
+@media (max-width: 1024px) {
+  .sidebar-left {
+    position: fixed !important;
+    left: 0;
+    top: 0;
+    height: 100vh;
+    z-index: 100;
+    transform: translateX(-100%);
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 4px 0 24px rgba(0,0,0,0.08);
+  }
+  .sidebar-left.open {
+    transform: translateX(0);
+  }
+  .sidebar-right {
+    width: 300px;
+  }
+}
+
+@media (max-width: 768px) {
+  .sidebar-right {
+    display: none;
+  }
+  .editor-main {
+    padding: 16px !important;
+  }
+}
+
+/* 遮罩层 */
+.overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.35);
+  backdrop-filter: blur(4px);
+  z-index: 99;
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.3s ease;
+}
+.overlay.show {
+  opacity: 1;
+  visibility: visible;
+}
+
+/* 移动端菜单按钮 */
+.mobile-menu-btn {
+  display: none;
+}
+@media (max-width: 1024px) {
+  .mobile-menu-btn {
+    display: block;
+  }
+}
+
+/* AI建议卡片增强（悬停不再位移，避免挤压右边栏宽度） */
+.ai-suggestion-card {
+  background: white;
+  border: 1.5px solid #e2e8f0;
+  border-radius: 10px;
+  padding: 14px;
+  margin-bottom: 10px;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  cursor: pointer;
+}
+.ai-suggestion-card:hover {
+  border-color: #93c5fd;
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.08);
+}
+
+/* ===== 右侧边栏：固定宽度 + 内容不挤压 ===== */
+#right-sidebar {
+  position: relative;
+  flex-shrink: 0;
+}
+#right-sidebar .overflow-y-auto {
+  scrollbar-gutter: stable;   /* 滚动条出现/消失不改变内容宽度 */
+  overflow-x: hidden;         /* 内容再长也不横向撑宽边栏 */
+}
+#right-sidebar p,
+#right-sidebar li,
+#right-sidebar span,
+#right-sidebar h4 {
+  overflow-wrap: break-word;
+  word-break: break-word;
+}
+
+/* 拖拽调宽手柄（右侧边栏左边缘） */
+#right-sidebar-resizer {
+  position: absolute;
+  top: 0;
+  left: -4px;
+  width: 8px;
+  height: 100%;
+  cursor: col-resize;
+  z-index: 40;
+  touch-action: none;
+}
+#right-sidebar-resizer::after {
+  content: '';
+  position: absolute;
+  left: 3px;
+  top: 0;
+  width: 2px;
+  height: 100%;
+  background: transparent;
+  border-radius: 2px;
+  transition: background 0.2s ease;
+}
+#right-sidebar-resizer:hover::after,
+body.sidebar-resizing #right-sidebar-resizer::after {
+  background: #3b82f6;
+}
+/* 手柄中点提示条 */
+#right-sidebar-resizer::before {
+  content: '';
+  position: absolute;
+  left: 2px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 4px;
+  height: 36px;
+  border-radius: 4px;
+  background: #cbd5e1;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+#right-sidebar-resizer:hover::before,
+body.sidebar-resizing #right-sidebar-resizer::before {
+  opacity: 1;
+  background: #3b82f6;
+}
+body.sidebar-resizing {
+  cursor: col-resize;
+  user-select: none;
+}
+body.sidebar-resizing * {
+  cursor: col-resize !important;
+}
+
+/* 左侧边栏：拖拽调宽手柄（右边缘） */
+#sidebar-tabs {
+  position: relative;
+}
+#left-sidebar-resizer {
+  position: absolute;
+  top: 0;
+  right: -4px;
+  width: 8px;
+  height: 100%;
+  cursor: col-resize;
+  z-index: 40;
+  touch-action: none;
+}
+#left-sidebar-resizer::after {
+  content: '';
+  position: absolute;
+  right: 3px;
+  top: 0;
+  width: 2px;
+  height: 100%;
+  background: transparent;
+  border-radius: 2px;
+  transition: background 0.2s ease;
+}
+#left-sidebar-resizer:hover::after,
+body.sidebar-resizing #left-sidebar-resizer::after {
+  background: #3b82f6;
+}
+#left-sidebar-resizer::before {
+  content: '';
+  position: absolute;
+  right: 2px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 4px;
+  height: 36px;
+  border-radius: 4px;
+  background: #cbd5e1;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+#left-sidebar-resizer:hover::before,
+body.sidebar-resizing #left-sidebar-resizer::before {
+  opacity: 1;
+  background: #3b82f6;
+}
+
+/* ===== AI段落建议：详细卡片排版 ===== */
+.ai-detail-card {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 14px;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+.ai-detail-card:hover {
+  border-color: #c7d2fe;
+  box-shadow: 0 4px 14px rgba(99, 102, 241, 0.07);
+}
+.ai-label {
+  display: block;
+  font-size: 11px;
+  font-weight: 600;
+  color: #64748b;
+  letter-spacing: 0.03em;
+  margin-bottom: 4px;
+}
+.ai-quote {
+  font-size: 12px;
+  color: #6b7280;
+  line-height: 1.6;
+  background: #f8fafc;
+  border-left: 3px solid #c7d2fe;
+  border-radius: 0 8px 8px 0;
+  padding: 6px 10px;
+}
+.ai-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.ai-list li {
+  position: relative;
+  padding-left: 14px;
+  font-size: 12px;
+  color: #4b5563;
+  line-height: 1.65;
+  margin-bottom: 4px;
+}
+.ai-list li::before {
+  content: '';
+  position: absolute;
+  left: 1px;
+  top: 8px;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: #93c5fd;
+}
+.ai-list.ai-list-problem li::before {
+  background: #fca5a5;
+}
+.ai-sample {
+  background: #f0f7ff;
+  border: 1px solid #dbeafe;
+  border-radius: 8px;
+  padding: 8px 10px;
+}
+.ai-sample p {
+  font-size: 12px;
+  color: #334155;
+  line-height: 1.65;
+  font-style: italic;
+  margin: 0;
+}
+.ai-basis {
+  font-size: 11px;
+  color: #94a3b8;
+  line-height: 1.5;
+}
+.badge-priority-high { background: #fee2e2; color: #dc2626; }
+.badge-priority-mid { background: #fef3c7; color: #b45309; }
+.badge-priority-low { background: #d1fae5; color: #059669; }
+
+/* ===== 顶部导航栏美化 ===== */
+.topbar {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  background: rgba(255, 255, 255, 0.88);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border-bottom: 1px solid rgba(226, 232, 240, 0.9);
+  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.03), 0 10px 28px -14px rgba(15, 23, 42, 0.12);
+}
+.topbar::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, #2563eb 0%, #7c3aed 50%, #2563eb 100%);
+  background-size: 200% 100%;
+  opacity: 0.85;
+}
+.topbar-inner {
+  height: 56px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 20px;
+}
+.topbar-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 12px;
+  font-size: 13px;
+  font-weight: 500;
+  color: #475569;
+  border-radius: 10px;
+  transition: all 0.18s ease;
+}
+.topbar-back:hover {
+  color: #0f172a;
+  background: #f1f5f9;
+}
+.topbar-brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.topbar-logo {
+  width: 38px;
+  height: 38px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #eff6ff, #eef2ff);
+  border: 1px solid #dbeafe;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 8px rgba(37, 99, 235, 0.1);
+}
+.topbar-brand-text {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.25;
+}
+.topbar-brand-name {
+  font-size: 14px;
+  font-weight: 700;
+  color: #0f172a;
+  letter-spacing: 0.01em;
+}
+.topbar-brand-sub {
+  font-size: 11px;
+  color: #94a3b8;
+}
+.topbar-divider {
+  width: 1px;
+  height: 28px;
+  background: linear-gradient(to bottom, transparent, #e2e8f0 30%, #e2e8f0 70%, transparent);
+  margin: 0 6px;
+}
+.topbar-doc h1 {
+  font-size: 13px;
+  font-weight: 600;
+  color: #0f172a;
+}
+.topbar-doc p {
+  font-size: 11px;
+  color: #64748b;
+}
+.topbar-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.topbar-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 12px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 500;
+  color: #b45309;
+  background: linear-gradient(135deg, #fffbeb, #fef3c7);
+  border: 1px solid #fde68a;
+}
+.topbar-status-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #f59e0b;
+  animation: pulse-dot 1.6s ease-in-out infinite;
+}
+@keyframes pulse-dot {
+  0%, 100% { opacity: 1; box-shadow: 0 0 0 0 rgba(245, 158, 11, 0.45); }
+  50% { opacity: 0.75; box-shadow: 0 0 0 5px rgba(245, 158, 11, 0); }
+}
+
+/* ===== 全局细节美化 ===== */
+body {
+  background: linear-gradient(160deg, #f8fafc 0%, #f1f5f9 55%, #eef4ff 100%);
+}
+.editor-paper {
+  border-radius: 16px !important;
+  border-color: #eef2f7 !important;
+  box-shadow: 0 4px 24px rgba(15, 23, 42, 0.06) !important;
+}
+.editor-block {
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+.editor-block:hover {
+  border-color: #bfdbfe;
+  box-shadow: 0 2px 10px rgba(59, 130, 246, 0.06);
+}
+.doc-type-btn {
+  transition: all 0.18s ease;
+}
+/* 细滚动条（所有面板） */
+.overflow-y-auto::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+.overflow-y-auto::-webkit-scrollbar-track {
+  background: transparent;
+}
+.overflow-y-auto::-webkit-scrollbar-thumb {
+  background: rgba(148, 163, 184, 0.35);
+  border-radius: 8px;
+  border: 2px solid transparent;
+  background-clip: content-box;
+}
+.overflow-y-auto::-webkit-scrollbar-thumb:hover {
+  background: rgba(100, 116, 139, 0.5);
+  background-clip: content-box;
+}
+
+/* AI徽章 */
+.ai-badge-grammar { background: #fee2e2; color: #dc2626; }
+.ai-badge-style { background: #dbeafe; color: #1d4ed8; }
+.ai-badge-structure { background: #fef3c7; color: #b45309; }
+.ai-badge-vocabulary { background: #d1fae5; color: #059669; }
+
+/* 加载动画 */
+@keyframes bounce {
+  0%, 80%, 100% { transform: scale(0); }
+  40% { transform: scale(1); }
+}
+.ai-loading-dot {
+  width: 8px;
+  height: 8px;
+  background: #3b82f6;
+  border-radius: 50%;
+  animation: bounce 1.4s ease-in-out infinite both;
+  display: inline-block;
+  margin: 0 2px;
+}
+.ai-loading-dot:nth-child(1) { animation-delay: -0.32s; }
+.ai-loading-dot:nth-child(2) { animation-delay: -0.16s; }
+
+</style>
+  <style>
+    body { font-family: var(--font-family); background: var(--color-bg-page); }
+    .editor-area { min-height: 400px; outline: none; }
+    .editor-area:focus { border-color: #3B82F6; }
+    .sidebar-item:hover { background: #F3F4F6; }
+  </style>
+  <link rel="stylesheet" href="./文书编辑器 - 文书交付系统_files/pbs-theme.css">
+<script src="./文书编辑器 - 文书交付系统_files/sdk-seed.js.下载" defer=""></script><style>*, ::before, ::after{--tw-border-spacing-x:0;--tw-border-spacing-y:0;--tw-translate-x:0;--tw-translate-y:0;--tw-rotate:0;--tw-skew-x:0;--tw-skew-y:0;--tw-scale-x:1;--tw-scale-y:1;--tw-pan-x: ;--tw-pan-y: ;--tw-pinch-zoom: ;--tw-scroll-snap-strictness:proximity;--tw-gradient-from-position: ;--tw-gradient-via-position: ;--tw-gradient-to-position: ;--tw-ordinal: ;--tw-slashed-zero: ;--tw-numeric-figure: ;--tw-numeric-spacing: ;--tw-numeric-fraction: ;--tw-ring-inset: ;--tw-ring-offset-width:0px;--tw-ring-offset-color:#fff;--tw-ring-color:rgb(59 130 246 / 0.5);--tw-ring-offset-shadow:0 0 #0000;--tw-ring-shadow:0 0 #0000;--tw-shadow:0 0 #0000;--tw-shadow-colored:0 0 #0000;--tw-blur: ;--tw-brightness: ;--tw-contrast: ;--tw-grayscale: ;--tw-hue-rotate: ;--tw-invert: ;--tw-saturate: ;--tw-sepia: ;--tw-drop-shadow: ;--tw-backdrop-blur: ;--tw-backdrop-brightness: ;--tw-backdrop-contrast: ;--tw-backdrop-grayscale: ;--tw-backdrop-hue-rotate: ;--tw-backdrop-invert: ;--tw-backdrop-opacity: ;--tw-backdrop-saturate: ;--tw-backdrop-sepia: ;--tw-contain-size: ;--tw-contain-layout: ;--tw-contain-paint: ;--tw-contain-style: }::backdrop{--tw-border-spacing-x:0;--tw-border-spacing-y:0;--tw-translate-x:0;--tw-translate-y:0;--tw-rotate:0;--tw-skew-x:0;--tw-skew-y:0;--tw-scale-x:1;--tw-scale-y:1;--tw-pan-x: ;--tw-pan-y: ;--tw-pinch-zoom: ;--tw-scroll-snap-strictness:proximity;--tw-gradient-from-position: ;--tw-gradient-via-position: ;--tw-gradient-to-position: ;--tw-ordinal: ;--tw-slashed-zero: ;--tw-numeric-figure: ;--tw-numeric-spacing: ;--tw-numeric-fraction: ;--tw-ring-inset: ;--tw-ring-offset-width:0px;--tw-ring-offset-color:#fff;--tw-ring-color:rgb(59 130 246 / 0.5);--tw-ring-offset-shadow:0 0 #0000;--tw-ring-shadow:0 0 #0000;--tw-shadow:0 0 #0000;--tw-shadow-colored:0 0 #0000;--tw-blur: ;--tw-brightness: ;--tw-contrast: ;--tw-grayscale: ;--tw-hue-rotate: ;--tw-invert: ;--tw-saturate: ;--tw-sepia: ;--tw-drop-shadow: ;--tw-backdrop-blur: ;--tw-backdrop-brightness: ;--tw-backdrop-contrast: ;--tw-backdrop-grayscale: ;--tw-backdrop-hue-rotate: ;--tw-backdrop-invert: ;--tw-backdrop-opacity: ;--tw-backdrop-saturate: ;--tw-backdrop-sepia: ;--tw-contain-size: ;--tw-contain-layout: ;--tw-contain-paint: ;--tw-contain-style: }/* ! tailwindcss v3.4.17 | MIT License | https://tailwindcss.com */*,::after,::before{box-sizing:border-box;border-width:0;border-style:solid;border-color:#e5e7eb}::after,::before{--tw-content:''}:host,html{line-height:1.5;-webkit-text-size-adjust:100%;-moz-tab-size:4;tab-size:4;font-family:ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";font-feature-settings:normal;font-variation-settings:normal;-webkit-tap-highlight-color:transparent}body{margin:0;line-height:inherit}hr{height:0;color:inherit;border-top-width:1px}abbr:where([title]){-webkit-text-decoration:underline dotted;text-decoration:underline dotted}h1,h2,h3,h4,h5,h6{font-size:inherit;font-weight:inherit}a{color:inherit;text-decoration:inherit}b,strong{font-weight:bolder}code,kbd,pre,samp{font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;font-feature-settings:normal;font-variation-settings:normal;font-size:1em}small{font-size:80%}sub,sup{font-size:75%;line-height:0;position:relative;vertical-align:baseline}sub{bottom:-.25em}sup{top:-.5em}table{text-indent:0;border-color:inherit;border-collapse:collapse}button,input,optgroup,select,textarea{font-family:inherit;font-feature-settings:inherit;font-variation-settings:inherit;font-size:100%;font-weight:inherit;line-height:inherit;letter-spacing:inherit;color:inherit;margin:0;padding:0}button,select{text-transform:none}button,input:where([type=button]),input:where([type=reset]),input:where([type=submit]){-webkit-appearance:button;background-color:transparent;background-image:none}:-moz-focusring{outline:auto}:-moz-ui-invalid{box-shadow:none}progress{vertical-align:baseline}::-webkit-inner-spin-button,::-webkit-outer-spin-button{height:auto}[type=search]{-webkit-appearance:textfield;outline-offset:-2px}::-webkit-search-decoration{-webkit-appearance:none}::-webkit-file-upload-button{-webkit-appearance:button;font:inherit}summary{display:list-item}blockquote,dd,dl,figure,h1,h2,h3,h4,h5,h6,hr,p,pre{margin:0}fieldset{margin:0;padding:0}legend{padding:0}menu,ol,ul{list-style:none;margin:0;padding:0}dialog{padding:0}textarea{resize:vertical}input::placeholder,textarea::placeholder{opacity:1;color:#9ca3af}[role=button],button{cursor:pointer}:disabled{cursor:default}audio,canvas,embed,iframe,img,object,svg,video{display:block;vertical-align:middle}img,video{max-width:100%;height:auto}[hidden]:where(:not([hidden=until-found])){display:none}.absolute{position:absolute}.sticky{position:sticky}.top-0{top:0px}.right-0{right:0px}.top-12{top:3rem}.z-50{z-index:50}.mx-1{margin-left:0.25rem;margin-right:0.25rem}.mx-auto{margin-left:auto;margin-right:auto}.mb-1{margin-bottom:0.25rem}.mb-1\.5{margin-bottom:0.375rem}.mb-2{margin-bottom:0.5rem}.mb-3{margin-bottom:0.75rem}.mb-4{margin-bottom:1rem}.mb-6{margin-bottom:1.5rem}.mr-1{margin-right:0.25rem}.mt-0\.5{margin-top:0.125rem}.mt-1\.5{margin-top:0.375rem}.mt-2{margin-top:0.5rem}.mt-6{margin-top:1.5rem}.block{display:block}.inline-block{display:inline-block}.flex{display:flex}.inline-flex{display:inline-flex}.grid{display:grid}.hidden{display:none}.h-1\.5{height:0.375rem}.h-14{height:3.5rem}.h-3\.5{height:0.875rem}.h-4{height:1rem}.h-5{height:1.25rem}.h-6{height:1.5rem}.h-7{height:1.75rem}.h-8{height:2rem}.h-9{height:2.25rem}.h-\[calc\(100vh-56px\)\]{height:calc(100vh - 56px)}.h-10{height:2.5rem}.min-h-screen{min-height:100vh}.w-1{width:0.25rem}.w-1\.5{width:0.375rem}.w-3\.5{width:0.875rem}.w-4{width:1rem}.w-5{width:1.25rem}.w-64{width:16rem}.w-7{width:1.75rem}.w-72{width:18rem}.w-8{width:2rem}.w-full{width:100%}.w-px{width:1px}.w-10{width:2.5rem}.min-w-0{min-width:0px}.max-w-3xl{max-width:48rem}.flex-1{flex:1 1 0%}.flex-shrink-0{flex-shrink:0}.cursor-grab{cursor:grab}.cursor-pointer{cursor:pointer}.resize-none{resize:none}.grid-cols-4{grid-template-columns:repeat(4, minmax(0, 1fr))}.flex-col{flex-direction:column}.items-start{align-items:flex-start}.items-center{align-items:center}.justify-center{justify-content:center}.justify-between{justify-content:space-between}.gap-1{gap:0.25rem}.gap-1\.5{gap:0.375rem}.gap-2{gap:0.5rem}.gap-3{gap:0.75rem}.gap-4{gap:1rem}.space-x-1 > :not([hidden]) ~ :not([hidden]){--tw-space-x-reverse:0;margin-right:calc(0.25rem * var(--tw-space-x-reverse));margin-left:calc(0.25rem * calc(1 - var(--tw-space-x-reverse)))}.space-y-2 > :not([hidden]) ~ :not([hidden]){--tw-space-y-reverse:0;margin-top:calc(0.5rem * calc(1 - var(--tw-space-y-reverse)));margin-bottom:calc(0.5rem * var(--tw-space-y-reverse))}.space-y-2\.5 > :not([hidden]) ~ :not([hidden]){--tw-space-y-reverse:0;margin-top:calc(0.625rem * calc(1 - var(--tw-space-y-reverse)));margin-bottom:calc(0.625rem * var(--tw-space-y-reverse))}.space-y-3 > :not([hidden]) ~ :not([hidden]){--tw-space-y-reverse:0;margin-top:calc(0.75rem * calc(1 - var(--tw-space-y-reverse)));margin-bottom:calc(0.75rem * var(--tw-space-y-reverse))}.space-y-4 > :not([hidden]) ~ :not([hidden]){--tw-space-y-reverse:0;margin-top:calc(1rem * calc(1 - var(--tw-space-y-reverse)));margin-bottom:calc(1rem * var(--tw-space-y-reverse))}.overflow-hidden{overflow:hidden}.overflow-y-auto{overflow-y:auto}.truncate{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.rounded{border-radius:0.25rem}.rounded-2xl{border-radius:1rem}.rounded-full{border-radius:9999px}.rounded-lg{border-radius:0.5rem}.rounded-xl{border-radius:0.75rem}.border{border-width:1px}.border-b{border-bottom-width:1px}.border-l{border-left-width:1px}.border-r{border-right-width:1px}.border-t{border-top-width:1px}.border-amber-200{--tw-border-opacity:1;border-color:rgb(253 230 138 / var(--tw-border-opacity, 1))}.border-blue-100{--tw-border-opacity:1;border-color:rgb(219 234 254 / var(--tw-border-opacity, 1))}.border-emerald-100{--tw-border-opacity:1;border-color:rgb(209 250 229 / var(--tw-border-opacity, 1))}.border-gray-100{--tw-border-opacity:1;border-color:rgb(243 244 246 / var(--tw-border-opacity, 1))}.border-gray-200{--tw-border-opacity:1;border-color:rgb(229 231 235 / var(--tw-border-opacity, 1))}.border-gray-300{--tw-border-opacity:1;border-color:rgb(209 213 219 / var(--tw-border-opacity, 1))}.border-gray-50{--tw-border-opacity:1;border-color:rgb(249 250 251 / var(--tw-border-opacity, 1))}.border-purple-100{--tw-border-opacity:1;border-color:rgb(243 232 255 / var(--tw-border-opacity, 1))}.bg-amber-50{--tw-bg-opacity:1;background-color:rgb(255 251 235 / var(--tw-bg-opacity, 1))}.bg-blue-100{--tw-bg-opacity:1;background-color:rgb(219 234 254 / var(--tw-bg-opacity, 1))}.bg-blue-50{--tw-bg-opacity:1;background-color:rgb(239 246 255 / var(--tw-bg-opacity, 1))}.bg-blue-500{--tw-bg-opacity:1;background-color:rgb(59 130 246 / var(--tw-bg-opacity, 1))}.bg-blue-600{--tw-bg-opacity:1;background-color:rgb(37 99 235 / var(--tw-bg-opacity, 1))}.bg-emerald-100{--tw-bg-opacity:1;background-color:rgb(209 250 229 / var(--tw-bg-opacity, 1))}.bg-emerald-50{--tw-bg-opacity:1;background-color:rgb(236 253 245 / var(--tw-bg-opacity, 1))}.bg-gray-200{--tw-bg-opacity:1;background-color:rgb(229 231 235 / var(--tw-bg-opacity, 1))}.bg-gray-50{--tw-bg-opacity:1;background-color:rgb(249 250 251 / var(--tw-bg-opacity, 1))}.bg-green-500{--tw-bg-opacity:1;background-color:rgb(34 197 94 / var(--tw-bg-opacity, 1))}.bg-orange-400{--tw-bg-opacity:1;background-color:rgb(251 146 60 / var(--tw-bg-opacity, 1))}.bg-purple-50{--tw-bg-opacity:1;background-color:rgb(250 245 255 / var(--tw-bg-opacity, 1))}.bg-purple-500{--tw-bg-opacity:1;background-color:rgb(168 85 247 / var(--tw-bg-opacity, 1))}.bg-white{--tw-bg-opacity:1;background-color:rgb(255 255 255 / var(--tw-bg-opacity, 1))}.bg-yellow-100{--tw-bg-opacity:1;background-color:rgb(254 249 195 / var(--tw-bg-opacity, 1))}.bg-gradient-to-br{background-image:linear-gradient(to bottom right, var(--tw-gradient-stops))}.bg-gradient-to-r{background-image:linear-gradient(to right, var(--tw-gradient-stops))}.from-blue-50{--tw-gradient-from:#eff6ff var(--tw-gradient-from-position);--tw-gradient-to:rgb(239 246 255 / 0) var(--tw-gradient-to-position);--tw-gradient-stops:var(--tw-gradient-from), var(--tw-gradient-to)}.from-blue-500{--tw-gradient-from:#3b82f6 var(--tw-gradient-from-position);--tw-gradient-to:rgb(59 130 246 / 0) var(--tw-gradient-to-position);--tw-gradient-stops:var(--tw-gradient-from), var(--tw-gradient-to)}.from-emerald-50{--tw-gradient-from:#ecfdf5 var(--tw-gradient-from-position);--tw-gradient-to:rgb(236 253 245 / 0) var(--tw-gradient-to-position);--tw-gradient-stops:var(--tw-gradient-from), var(--tw-gradient-to)}.from-emerald-500{--tw-gradient-from:#10b981 var(--tw-gradient-from-position);--tw-gradient-to:rgb(16 185 129 / 0) var(--tw-gradient-to-position);--tw-gradient-stops:var(--tw-gradient-from), var(--tw-gradient-to)}.from-purple-500{--tw-gradient-from:#a855f7 var(--tw-gradient-from-position);--tw-gradient-to:rgb(168 85 247 / 0) var(--tw-gradient-to-position);--tw-gradient-stops:var(--tw-gradient-from), var(--tw-gradient-to)}.to-green-50{--tw-gradient-to:#f0fdf4 var(--tw-gradient-to-position)}.to-indigo-50{--tw-gradient-to:#eef2ff var(--tw-gradient-to-position)}.to-indigo-600{--tw-gradient-to:#4f46e5 var(--tw-gradient-to-position)}.to-purple-50{--tw-gradient-to:#faf5ff var(--tw-gradient-to-position)}.to-purple-500{--tw-gradient-to:#a855f7 var(--tw-gradient-to-position)}.to-teal-600{--tw-gradient-to:#0d9488 var(--tw-gradient-to-position)}.to-violet-600{--tw-gradient-to:#7c3aed var(--tw-gradient-to-position)}.object-contain{object-fit:contain}.p-1{padding:0.25rem}.p-1\.5{padding:0.375rem}.p-2\.5{padding:0.625rem}.p-3{padding:0.75rem}.p-4{padding:1rem}.p-6{padding:1.5rem}.p-8{padding:2rem}.px-1\.5{padding-left:0.375rem;padding-right:0.375rem}.px-2{padding-left:0.5rem;padding-right:0.5rem}.px-2\.5{padding-left:0.625rem;padding-right:0.625rem}.px-3{padding-left:0.75rem;padding-right:0.75rem}.px-4{padding-left:1rem;padding-right:1rem}.px-6{padding-left:1.5rem;padding-right:1.5rem}.py-0\.5{padding-top:0.125rem;padding-bottom:0.125rem}.py-1{padding-top:0.25rem;padding-bottom:0.25rem}.py-1\.5{padding-top:0.375rem;padding-bottom:0.375rem}.py-2{padding-top:0.5rem;padding-bottom:0.5rem}.py-2\.5{padding-top:0.625rem;padding-bottom:0.625rem}.px-5{padding-left:1.25rem;padding-right:1.25rem}.py-3{padding-top:0.75rem;padding-bottom:0.75rem}.pl-4{padding-left:1rem}.pt-2{padding-top:0.5rem}.pt-3{padding-top:0.75rem}.pt-4{padding-top:1rem}.text-left{text-align:left}.text-center{text-align:center}.text-base{font-size:1rem;line-height:1.5rem}.text-sm{font-size:0.875rem;line-height:1.25rem}.text-xl{font-size:1.25rem;line-height:1.75rem}.text-xs{font-size:0.75rem;line-height:1rem}.font-bold{font-weight:700}.font-medium{font-weight:500}.font-normal{font-weight:400}.font-semibold{font-weight:600}.uppercase{text-transform:uppercase}.leading-relaxed{line-height:1.625}.tracking-wider{letter-spacing:0.05em}.text-amber-500{--tw-text-opacity:1;color:rgb(245 158 11 / var(--tw-text-opacity, 1))}.text-amber-700{--tw-text-opacity:1;color:rgb(180 83 9 / var(--tw-text-opacity, 1))}.text-amber-800{--tw-text-opacity:1;color:rgb(146 64 14 / var(--tw-text-opacity, 1))}.text-blue-400{--tw-text-opacity:1;color:rgb(96 165 250 / var(--tw-text-opacity, 1))}.text-blue-500{--tw-text-opacity:1;color:rgb(59 130 246 / var(--tw-text-opacity, 1))}.text-blue-600{--tw-text-opacity:1;color:rgb(37 99 235 / var(--tw-text-opacity, 1))}.text-blue-700{--tw-text-opacity:1;color:rgb(29 78 216 / var(--tw-text-opacity, 1))}.text-blue-800{--tw-text-opacity:1;color:rgb(30 64 175 / var(--tw-text-opacity, 1))}.text-emerald-600{--tw-text-opacity:1;color:rgb(5 150 105 / var(--tw-text-opacity, 1))}.text-emerald-700{--tw-text-opacity:1;color:rgb(4 120 87 / var(--tw-text-opacity, 1))}.text-gray-400{--tw-text-opacity:1;color:rgb(156 163 175 / var(--tw-text-opacity, 1))}.text-gray-500{--tw-text-opacity:1;color:rgb(107 114 128 / var(--tw-text-opacity, 1))}.text-gray-600{--tw-text-opacity:1;color:rgb(75 85 99 / var(--tw-text-opacity, 1))}.text-gray-700{--tw-text-opacity:1;color:rgb(55 65 81 / var(--tw-text-opacity, 1))}.text-gray-800{--tw-text-opacity:1;color:rgb(31 41 55 / var(--tw-text-opacity, 1))}.text-gray-900{--tw-text-opacity:1;color:rgb(17 24 39 / var(--tw-text-opacity, 1))}.text-green-500{--tw-text-opacity:1;color:rgb(34 197 94 / var(--tw-text-opacity, 1))}.text-green-600{--tw-text-opacity:1;color:rgb(22 163 74 / var(--tw-text-opacity, 1))}.text-orange-500{--tw-text-opacity:1;color:rgb(249 115 22 / var(--tw-text-opacity, 1))}.text-orange-600{--tw-text-opacity:1;color:rgb(234 88 12 / var(--tw-text-opacity, 1))}.text-purple-500{--tw-text-opacity:1;color:rgb(168 85 247 / var(--tw-text-opacity, 1))}.text-purple-600{--tw-text-opacity:1;color:rgb(147 51 234 / var(--tw-text-opacity, 1))}.text-red-500{--tw-text-opacity:1;color:rgb(239 68 68 / var(--tw-text-opacity, 1))}.text-white{--tw-text-opacity:1;color:rgb(255 255 255 / var(--tw-text-opacity, 1))}.text-yellow-800{--tw-text-opacity:1;color:rgb(133 77 14 / var(--tw-text-opacity, 1))}.shadow-lg{--tw-shadow:0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);--tw-shadow-colored:0 10px 15px -3px var(--tw-shadow-color), 0 4px 6px -4px var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}.shadow-sm{--tw-shadow:0 1px 2px 0 rgb(0 0 0 / 0.05);--tw-shadow-colored:0 1px 2px 0 var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}.transition-colors{transition-property:color, background-color, border-color, fill, stroke, -webkit-text-decoration-color;transition-property:color, background-color, border-color, text-decoration-color, fill, stroke;transition-property:color, background-color, border-color, text-decoration-color, fill, stroke, -webkit-text-decoration-color;transition-timing-function:cubic-bezier(0.4, 0, 0.2, 1);transition-duration:150ms}.hover\:border-blue-300:hover{--tw-border-opacity:1;border-color:rgb(147 197 253 / var(--tw-border-opacity, 1))}.hover\:border-green-300:hover{--tw-border-opacity:1;border-color:rgb(134 239 172 / var(--tw-border-opacity, 1))}.hover\:bg-blue-50:hover{--tw-bg-opacity:1;background-color:rgb(239 246 255 / var(--tw-bg-opacity, 1))}.hover\:bg-blue-700:hover{--tw-bg-opacity:1;background-color:rgb(29 78 216 / var(--tw-bg-opacity, 1))}.hover\:bg-gray-100:hover{--tw-bg-opacity:1;background-color:rgb(243 244 246 / var(--tw-bg-opacity, 1))}.hover\:bg-gray-50:hover{--tw-bg-opacity:1;background-color:rgb(249 250 251 / var(--tw-bg-opacity, 1))}.hover\:text-blue-600:hover{--tw-text-opacity:1;color:rgb(37 99 235 / var(--tw-text-opacity, 1))}.hover\:text-blue-800:hover{--tw-text-opacity:1;color:rgb(30 64 175 / var(--tw-text-opacity, 1))}.hover\:text-gray-700:hover{--tw-text-opacity:1;color:rgb(55 65 81 / var(--tw-text-opacity, 1))}.hover\:text-gray-900:hover{--tw-text-opacity:1;color:rgb(17 24 39 / var(--tw-text-opacity, 1))}.hover\:text-green-600:hover{--tw-text-opacity:1;color:rgb(22 163 74 / var(--tw-text-opacity, 1))}.focus\:border-blue-500:focus{--tw-border-opacity:1;border-color:rgb(59 130 246 / var(--tw-border-opacity, 1))}.focus\:outline-none:focus{outline:2px solid transparent;outline-offset:2px}.focus\:ring-2:focus{--tw-ring-offset-shadow:var(--tw-ring-inset) 0 0 0 var(--tw-ring-offset-width) var(--tw-ring-offset-color);--tw-ring-shadow:var(--tw-ring-inset) 0 0 0 calc(2px + var(--tw-ring-offset-width)) var(--tw-ring-color);box-shadow:var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow, 0 0 #0000)}.focus\:ring-blue-500:focus{--tw-ring-opacity:1;--tw-ring-color:rgb(59 130 246 / var(--tw-ring-opacity, 1))}.active\:cursor-grabbing:active{cursor:grabbing}</style><script src="./文书编辑器 - 文书交付系统_files/publish.DQfKjRRp.min.js.下载" async=""></script>
+    <style>
+      .kimi-brand-container {
+        position: fixed;
+        bottom: 16px;
+        right: 16px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        z-index: 99999999;
+        transition: opacity 0.3s ease;
+      }
+
+      .kimi-brand-close-icon {
+        cursor: pointer;
+        border-radius: 50%;
+        width: 26px;
+        height: 26px;
+        background: #000;
+        display: none;
+        align-items: center;
+        justify-content: center;
+        border: 0.5px solid rgba(255, 255, 255, 0.15);
+      }
+
+      .kimi-brand-container:hover .kimi-brand-close-icon {
+        display: flex;
+      }
+
+      .kimi-brand-info-wrapper {
+        position: relative;
+        display: none;
+        width: 26px;
+        height: 26px;
+        flex-shrink: 0;
+      }
+
+      .kimi-brand-container:hover .kimi-brand-info-wrapper {
+        display: block;
+      }
+
+      .kimi-brand-info-wrapper::before {
+        content: "";
+        position: absolute;
+        right: -8px;
+        bottom: 100%;
+        left: -8px;
+        display: none;
+        height: 12px;
+      }
+
+      .kimi-brand-info-wrapper:hover::before {
+        display: block;
+      }
+
+      .kimi-brand-info-button {
+        cursor: pointer;
+        border-radius: 50%;
+        width: 26px;
+        height: 26px;
+        background: #000;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border: 0.5px solid rgba(255, 255, 255, 0.15);
+        color: rgba(255, 255, 255, 0.84);
+        padding: 0;
+      }
+
+      .kimi-brand-info-button:hover {
+        background: #000;
+      }
+
+      .kimi-brand-info-tooltip {
+        position: fixed;
+        right: 16px;
+        bottom: 52px;
+        box-sizing: border-box;
+        width: 240px;
+        padding: 8px 12px;
+        border-radius: 8px;
+        background: #2b2b2b;
+        color: rgba(255, 255, 255, 0.72);
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+        font-size: 12px;
+        line-height: 18px;
+        opacity: 0;
+        pointer-events: none;
+        transform: translateY(4px);
+        transition: opacity 0.15s ease, transform 0.15s ease;
+        z-index: 99999999;
+      }
+
+      .kimi-brand-info-wrapper:hover .kimi-brand-info-tooltip {
+        opacity: 1;
+        pointer-events: auto;
+        transform: translateY(0);
+      }
+
+      .kimi-brand-info-tooltip::after {
+        content: "";
+        position: absolute;
+        right: 127px;
+        bottom: -5px;
+        width: 10px;
+        height: 10px;
+        background: #2b2b2b;
+        transform: rotate(45deg);
+      }
+
+      .kimi-brand-report-link {
+        color: #6AA6FF;
+        text-decoration: none;
+      }
+
+      .kimi-brand-report-link:hover {
+        color: #A6D0FF;
+      }
+
+      .kimi-brand-link {
+        background: #000;
+        color: white;
+        padding: 4px 6px 4px 4px;
+        border-radius: 16px;
+        font-family: Arial, sans-serif;
+        font-size: 12px;
+        line-height: 18px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        border: 0.5px solid rgba(255, 255, 255, 0.15);
+        text-decoration: none;
+      }
+
+      .kimi-brand-container:hover .kimi-brand-icon {
+        width: 16px;
+      }
+
+      .kimi-brand-icon {
+        width: 0;
+        overflow: hidden;
+        transition: width 0.3s ease;
+        pointer-events: none;
+      }
+
+      .kimi-brand-avatar {
+        width: 18px;
+        height: 18px;
+        border: 0.5px solid rgba(255, 255, 255, 0.15);
+        border-radius: 50%;
+      }
+    </style>
+  </head>
+<body class="min-h-screen bg-gray-50">
+  <!-- 顶部导航栏 -->
+  <div id="mobile-overlay" class="overlay"></div>
+<header class="topbar">
+    <div class="topbar-inner">
+      <div class="flex items-center gap-3">
+      <button id="mobile-menu-btn" class="mobile-menu-btn lg:hidden mr-2 p-2 rounded-lg hover:bg-slate-100 text-slate-600 transition-colors">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
+      </button>
+
+        <button class="topbar-back" data-dom-id="btn-back-task-list">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+          </svg>
+          返回
+        </button>
+        <div class="topbar-divider"></div>
+        <div class="topbar-brand">
+          <div class="topbar-logo">
+            <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-blue-600 to-blue-400 flex items-center justify-center flex-shrink-0"><span class="text-white text-sm font-bold">P</span></div>
+          </div>
+          <div class="topbar-brand-text">
+            <span class="topbar-brand-name">留学申请管理系统</span>
+            <span class="topbar-brand-sub">PBS留学 · 文书交付工作台</span>
+          </div>
+        </div>
+        <div class="topbar-divider"></div>
+        <div class="topbar-doc">
+          <h1 id="header-doc-title">李雪 - 研究计划（RP）</h1>
+          <p>卡内基梅隆大学 · 人工智能 · 硕士</p>
+        </div>
+      </div>
+      <div class="topbar-actions">
+        <span class="topbar-status"><span class="topbar-status-dot"></span>撰写中</span>
+        <button class="btn btn-secondary" data-dom-id="btn-save">
+          <svg class="w-4 h-4 inline-block mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4"></path>
+          </svg>
+          保存
+        </button>
+        <button class="btn btn-primary" data-dom-id="btn-submit">
+          <svg class="w-4 h-4 inline-block mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+          </svg>
+          确认提交
+        </button>
+        <div class="flex items-center gap-2 pl-4 border-l border-gray-200" style="position: relative; cursor: pointer;">
+          <div class="w-7 h-7 bg-gradient-to-br from-blue-500 to-purple-500 rounded-full flex items-center justify-center">
+            <span class="text-white text-xs font-medium">测</span>
+          </div>
+        <div id="userMenu" class="absolute top-12 right-0 w-64 bg-white rounded-xl shadow-lg border border-gray-100 py-3 hidden z-50"><div class="px-5 py-3 border-b border-gray-100"><div class="flex items-center gap-3"><div class="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-500 rounded-full flex items-center justify-center"><span class="text-white text-base font-medium">测</span></div><div><p class="text-sm font-semibold text-gray-900">测试账号</p><p class="text-xs text-blue-600 mt-0.5">超级管理员 · PBS留学总部</p><p class="text-xs text-gray-500">test@pbs.com</p></div></div></div><div class="py-1"><a href="文书编辑器 - 文书交付系统.html" class="flex items-center gap-3 px-5 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition-colors"><svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>个人设置</a><a href="文书编辑器 - 文书交付系统.html" class="flex items-center gap-3 px-5 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition-colors"><svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path></svg>退出登录</a></div><div class="px-5 py-2 border-t border-gray-100"><p class="text-xs text-gray-400">PBS留学CRM v2.5</p></div></div></div>
+      </div>
+    </div>
+  </header>
+
+  <div class="flex h-[calc(100vh-56px)]">
+    <!-- 左侧边栏 -->
+    <aside id="sidebar-tabs" class="sidebar-left bg-white/95 border-r border-slate-200/80 flex flex-col flex-shrink-0 backdrop-blur-sm" style="width: 257px;">
+      <!-- 右边缘拖拽手柄：按住可手动调整左侧边栏宽度，双击恢复默认宽度 -->
+      <div id="left-sidebar-resizer" title="拖动调整宽度，双击恢复默认"></div>
+      <div class="p-4 border-b border-gray-100">
+        <nav class="flex space-x-1" id="sidebar-tabs">
+          <button id="tab-student-info" class="flex-1 px-3 py-2 text-sm font-medium text-gray-600 hover:text-gray-900" data-dom-id="tab-student-info">
+            学生信息
+          </button>
+          <button id="tab-materials" class="flex-1 px-3 py-2 text-sm font-medium text-gray-600 hover:text-gray-900" data-dom-id="tab-materials">
+            资产文件
+          </button>
+          <button id="tab-version-history" class="flex-1 px-3 py-2 text-sm font-medium text-blue-700 bg-blue-50 rounded-lg" data-dom-id="tab-version-history">
+            历史版本
+          </button>
+        </nav>
+      </div>
+
+      <!-- 学生信息面板 -->
+      <div id="panel-student-info" class="flex-1 overflow-y-auto p-4 space-y-4 hidden">
+        <!-- 学生基础信息卡片 -->
+        <div class="bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden">
+          <div class="h-1.5 bg-gradient-to-r from-blue-500 to-indigo-600"></div>
+          <div class="p-4">
+            <h3 class="text-sm font-semibold text-gray-800 mb-3 flex items-center gap-2">
+              <span class="w-7 h-7 bg-blue-50 rounded-lg flex items-center justify-center">
+                <svg class="w-3.5 h-3.5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+                </svg>
+              </span>
+              学生基础信息
+            </h3>
+            <div class="space-y-2.5 text-xs">
+              <div class="flex items-center justify-between">
+                <span class="text-gray-400">学生姓名</span>
+                <span class="text-gray-900 font-semibold">李雪</span>
+              </div>
+              <div class="flex items-center justify-between border-t border-gray-50 pt-2">
+                <span class="text-gray-400">性别</span>
+                <span class="text-gray-900">女</span>
+              </div>
+              <div class="flex items-center justify-between border-t border-gray-50 pt-2">
+                <span class="text-gray-400">年龄</span>
+                <span class="text-gray-900">22岁</span>
+              </div>
+              <div class="flex items-center justify-between border-t border-gray-50 pt-2">
+                <span class="text-gray-400">手机号</span>
+                <span class="text-gray-900">138****8888</span>
+              </div>
+              <div class="flex items-center justify-between border-t border-gray-50 pt-2">
+                <span class="text-gray-400">本科院校</span>
+                <span class="text-gray-900 font-medium">北京大学</span>
+              </div>
+              <div class="flex items-center justify-between border-t border-gray-50 pt-2">
+                <span class="text-gray-400">本科专业</span>
+                <span class="text-gray-900">计算机科学</span>
+              </div>
+              <div class="flex items-center justify-between border-t border-gray-50 pt-2">
+                <span class="text-gray-400">项目号</span>
+                <span class="text-gray-900 font-medium">PRJ20260701001</span>
+              </div>
+              <div class="flex items-center justify-between border-t border-gray-50 pt-2">
+                <span class="text-gray-400">目标专业</span>
+                <span class="text-gray-900 font-medium">人工智能</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 语言成绩卡片 -->
+        <div class="bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden">
+          <div class="h-1.5 bg-gradient-to-r from-emerald-500 to-teal-600"></div>
+          <div class="p-4">
+            <h3 class="text-sm font-semibold text-gray-800 mb-3 flex items-center gap-2">
+              <span class="w-7 h-7 bg-emerald-50 rounded-lg flex items-center justify-center">
+                <svg class="w-3.5 h-3.5 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12 5.5a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z"></path>
+                </svg>
+              </span>
+              语言成绩
+            </h3>
+            <div class="space-y-3 text-xs">
+              <div class="bg-gradient-to-br from-emerald-50 to-green-50 rounded-xl p-3 border border-emerald-100">
+                <div class="flex items-center justify-between mb-1">
+                  <span class="text-emerald-600 font-medium text-xs uppercase tracking-wider">雅思</span>
+                  <span class="inline-flex items-center px-1.5 py-0.5 rounded-full text-xs font-medium bg-emerald-100 text-emerald-700">达标</span>
+                </div>
+                <p class="text-xl font-bold text-gray-900">7.5</p>
+                <div class="grid grid-cols-4 gap-1 mt-1.5">
+                  <div class="text-center bg-white rounded-lg py-1">
+                    <p class="text-xs text-gray-400">L</p>
+                    <p class="text-xs font-bold text-gray-800">8.0</p>
+                  </div>
+                  <div class="text-center bg-white rounded-lg py-1">
+                    <p class="text-xs text-gray-400">R</p>
+                    <p class="text-xs font-bold text-gray-800">7.5</p>
+                  </div>
+                  <div class="text-center bg-white rounded-lg py-1">
+                    <p class="text-xs text-gray-400">W</p>
+                    <p class="text-xs font-bold text-gray-800">6.5</p>
+                  </div>
+                  <div class="text-center bg-white rounded-lg py-1">
+                    <p class="text-xs text-gray-400">S</p>
+                    <p class="text-xs font-bold text-gray-800">7.0</p>
+                  </div>
+                </div>
+              </div>
+              <div class="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl p-3 border border-blue-100">
+                <div class="flex items-center justify-between mb-1">
+                  <span class="text-blue-600 font-medium text-xs uppercase tracking-wider">托福</span>
+                  <span class="inline-flex items-center px-1.5 py-0.5 rounded-full text-xs font-medium bg-emerald-100 text-emerald-700">达标</span>
+                </div>
+                <p class="text-xl font-bold text-gray-900">105</p>
+                <div class="grid grid-cols-4 gap-1 mt-1.5">
+                  <div class="text-center bg-white rounded-lg py-1">
+                    <p class="text-xs text-gray-400">L</p>
+                    <p class="text-xs font-bold text-gray-800">28</p>
+                  </div>
+                  <div class="text-center bg-white rounded-lg py-1">
+                    <p class="text-xs text-gray-400">R</p>
+                    <p class="text-xs font-bold text-gray-800">27</p>
+                  </div>
+                  <div class="text-center bg-white rounded-lg py-1">
+                    <p class="text-xs text-gray-400">W</p>
+                    <p class="text-xs font-bold text-gray-800">25</p>
+                  </div>
+                  <div class="text-center bg-white rounded-lg py-1">
+                    <p class="text-xs text-gray-400">S</p>
+                    <p class="text-xs font-bold text-gray-800">25</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 学术成绩卡片 -->
+        <div class="bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden">
+          <div class="h-1.5 bg-gradient-to-r from-purple-500 to-violet-600"></div>
+          <div class="p-4">
+            <h3 class="text-sm font-semibold text-gray-800 mb-3 flex items-center gap-2">
+              <span class="w-7 h-7 bg-purple-50 rounded-lg flex items-center justify-center">
+                <svg class="w-3.5 h-3.5 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
+                </svg>
+              </span>
+              学术成绩
+            </h3>
+            <div class="space-y-2.5 text-xs">
+              <div class="flex items-center justify-between bg-purple-50 rounded-xl px-3 py-2.5 border border-purple-100">
+                <span class="text-gray-500">本科GPA</span>
+                <span class="text-base font-bold text-gray-900">3.8<span class="text-xs text-gray-400 font-normal">/4.0</span></span>
+              </div>
+              <div class="flex items-center justify-between border-t border-gray-50 pt-2">
+                <span class="text-gray-400">GRE</span>
+                <span class="text-gray-900 font-medium">330</span>
+              </div>
+              <div class="flex items-center justify-between border-t border-gray-50 pt-2">
+                <span class="text-gray-400">论文发表</span>
+                <span class="text-gray-900 font-medium">2篇</span>
+              </div>
+              <div class="flex items-center justify-between border-t border-gray-50 pt-2">
+                <span class="text-gray-400">专利获得</span>
+                <span class="text-gray-900 font-medium">1项</span>
+              </div>
+              <div class="flex items-center justify-between border-t border-gray-50 pt-2">
+                <span class="text-gray-400">奖学金</span>
+                <span class="text-gray-900 font-medium">国家奖学金</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 学生经历时间线 -->
+        <div>
+          <h4 class="text-sm font-medium text-gray-700 mb-3">学生经历</h4>
+          <div class="space-y-3">
+            <div class="flex gap-3 p-3 bg-white rounded-lg border border-gray-100 cursor-grab active:cursor-grabbing">
+              <div class="w-1 bg-blue-500 rounded-full flex-shrink-0"></div>
+              <div>
+                <p class="text-xs text-gray-400">2025.09 - 至今</p>
+                <p class="text-sm font-medium text-gray-900">国家级大学生创新项目</p>
+                <p class="text-xs text-gray-500">基于深度学习的医疗影像分析系统</p>
+              </div>
+            </div>
+            <div class="flex gap-3 p-3 bg-white rounded-lg border border-gray-100 cursor-grab active:cursor-grabbing">
+              <div class="w-1 bg-green-500 rounded-full flex-shrink-0"></div>
+              <div>
+                <p class="text-xs text-gray-400">2025.01 - 2025.08</p>
+                <p class="text-sm font-medium text-gray-900">百度AI Lab实习</p>
+                <p class="text-xs text-gray-500">自然语言处理方向，参与对话系统开发</p>
+              </div>
+            </div>
+            <div class="flex gap-3 p-3 bg-white rounded-lg border border-gray-100 cursor-grab active:cursor-grabbing">
+              <div class="w-1 bg-purple-500 rounded-full flex-shrink-0"></div>
+              <div>
+                <p class="text-xs text-gray-400">2024.06 - 2024.09</p>
+                <p class="text-sm font-medium text-gray-900">Kaggle竞赛</p>
+                <p class="text-xs text-gray-500">Top 5% - 多模态分类挑战赛</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 历史版本面板（默认隐藏） -->
+      <div id="panel-version-history" class="flex-1 overflow-y-auto p-4">
+        <div class="space-y-3">
+          <!-- 当前版本 -->
+          <div class="p-3 bg-blue-50 rounded-xl border border-blue-200">
+            <div class="flex items-center justify-between mb-2">
+              <span class="text-sm font-semibold text-blue-800">v1.2</span>
+              <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-blue-600 text-white">当前版本</span>
+            </div>
+            <p class="text-xs text-gray-500 mb-1">2026-07-17 14:32 · 张老师</p>
+            <p class="text-xs text-gray-500 mb-2">856 字 · 修改研究经历段落</p>
+            <div class="flex items-center gap-3 text-xs">
+              <button class="text-blue-600 hover:text-blue-800 font-medium">预览</button>
+              <button class="text-gray-500 hover:text-gray-700">下载</button>
+            </div>
+          </div>
+
+          <!-- 历史版本 v1.1 -->
+          <div class="p-3 bg-white rounded-xl border border-gray-100 hover:border-blue-200 transition-colors">
+            <div class="flex items-center justify-between mb-2">
+              <span class="text-sm font-semibold text-gray-800">v1.1</span>
+              <span class="text-xs text-gray-400">历史版本</span>
+            </div>
+            <p class="text-xs text-gray-500 mb-1">2026-07-15 10:18 · 张老师</p>
+            <p class="text-xs text-gray-500 mb-2">812 字 · 补充学术准备内容</p>
+            <div class="flex items-center gap-3 text-xs">
+              <button class="text-blue-600 hover:text-blue-800 font-medium">预览</button>
+              <button class="text-gray-500 hover:text-gray-700">下载</button>
+              <button class="text-emerald-600 hover:text-emerald-700 font-medium">恢复此版本</button>
+            </div>
+          </div>
+
+          <!-- 历史版本 v1.0 -->
+          <div class="p-3 bg-white rounded-xl border border-gray-100 hover:border-blue-200 transition-colors">
+            <div class="flex items-center justify-between mb-2">
+              <span class="text-sm font-semibold text-gray-800">v1.0</span>
+              <span class="text-xs text-gray-400">历史版本</span>
+            </div>
+            <p class="text-xs text-gray-500 mb-1">2026-07-12 16:45 · 李顾问</p>
+            <p class="text-xs text-gray-500 mb-2">768 字 · 初稿</p>
+            <div class="flex items-center gap-3 text-xs">
+              <button class="text-blue-600 hover:text-blue-800 font-medium">预览</button>
+              <button class="text-gray-500 hover:text-gray-700">下载</button>
+              <button class="text-emerald-600 hover:text-emerald-700 font-medium">恢复此版本</button>
+            </div>
+          </div>
+
+          <!-- 已导出的文书文件 -->
+          <div class="pt-3 border-t border-gray-100">
+            <h4 class="text-xs font-medium text-gray-500 mb-2">已导出的文书文件</h4>
+            <div class="space-y-2">
+              <div class="flex items-center justify-between p-2.5 bg-white rounded-lg border border-gray-100 hover:border-blue-300 transition-colors">
+                <div class="flex items-center gap-2 min-w-0">
+                  <svg class="w-5 h-5 text-purple-500 flex-shrink-0" fill="currentColor" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8l-6-6z"></path></svg>
+                  <span class="text-sm text-gray-700 truncate">个人陈述v1.2.pdf</span>
+                </div>
+                <div class="flex items-center gap-1.5 flex-shrink-0">
+                  <button class="p-1 text-gray-400 hover:text-blue-600" title="预览">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
+                  </button>
+                  <button class="p-1 text-gray-400 hover:text-green-600" title="下载">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+                  </button>
+                </div>
+              </div>
+              <div class="flex items-center justify-between p-2.5 bg-white rounded-lg border border-gray-100 hover:border-blue-300 transition-colors">
+                <div class="flex items-center gap-2 min-w-0">
+                  <svg class="w-5 h-5 text-purple-500 flex-shrink-0" fill="currentColor" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8l-6-6z"></path></svg>
+                  <span class="text-sm text-gray-700 truncate">个人陈述v1.1.pdf</span>
+                </div>
+                <div class="flex items-center gap-1.5 flex-shrink-0">
+                  <button class="p-1 text-gray-400 hover:text-blue-600" title="预览">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
+                  </button>
+                  <button class="p-1 text-gray-400 hover:text-green-600" title="下载">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+                  </button>
+                </div>
+              </div>
+              <div class="flex items-center justify-between p-2.5 bg-white rounded-lg border border-gray-100 hover:border-blue-300 transition-colors">
+                <div class="flex items-center gap-2 min-w-0">
+                  <svg class="w-5 h-5 text-purple-500 flex-shrink-0" fill="currentColor" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8l-6-6z"></path></svg>
+                  <span class="text-sm text-gray-700 truncate">个人陈述v1.0.pdf</span>
+                </div>
+                <div class="flex items-center gap-1.5 flex-shrink-0">
+                  <button class="p-1 text-gray-400 hover:text-blue-600" title="预览">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
+                  </button>
+                  <button class="p-1 text-gray-400 hover:text-green-600" title="下载">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 资产文件面板（默认隐藏） -->
+      <div id="panel-materials" class="flex-1 overflow-y-auto p-4 hidden">
+        <div class="space-y-4">
+          <!-- 资产文件 -->
+          <div>
+            <h4 class="text-sm font-medium text-gray-700 mb-3 flex items-center gap-2">
+              <svg class="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4"></path>
+              </svg>
+              资产文件
+            </h4>
+            <div class="space-y-2">
+              <div class="flex items-center justify-between p-2.5 bg-white rounded-lg border border-gray-100 hover:border-blue-300 transition-colors">
+                <div class="flex items-center gap-2 min-w-0">
+                  <svg class="w-5 h-5 text-red-500 flex-shrink-0" fill="currentColor" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8l-6-6z"></path></svg>
+                  <span class="text-sm text-gray-700 truncate">身份证扫描件.pdf</span>
+                </div>
+                <div class="flex items-center gap-1.5 flex-shrink-0">
+                  <button class="p-1 text-gray-400 hover:text-blue-600" title="预览">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
+                  </button>
+                  <button class="p-1 text-gray-400 hover:text-green-600" title="下载">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+                  </button>
+                </div>
+              </div>
+              <div class="flex items-center justify-between p-2.5 bg-white rounded-lg border border-gray-100 hover:border-blue-300 transition-colors">
+                <div class="flex items-center gap-2 min-w-0">
+                  <svg class="w-5 h-5 text-blue-500 flex-shrink-0" fill="currentColor" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8l-6-6z"></path></svg>
+                  <span class="text-sm text-gray-700 truncate">本科成绩单（中英文）.pdf</span>
+                </div>
+                <div class="flex items-center gap-1.5 flex-shrink-0">
+                  <button class="p-1 text-gray-400 hover:text-blue-600" title="预览">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
+                  </button>
+                  <button class="p-1 text-gray-400 hover:text-green-600" title="下载">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+                  </button>
+                </div>
+              </div>
+              <div class="flex items-center justify-between p-2.5 bg-white rounded-lg border border-gray-100 hover:border-blue-300 transition-colors">
+                <div class="flex items-center gap-2 min-w-0">
+                  <svg class="w-5 h-5 text-green-500 flex-shrink-0" fill="currentColor" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8l-6-6z"></path></svg>
+                  <span class="text-sm text-gray-700 truncate">雅思成绩单.pdf</span>
+                </div>
+                <div class="flex items-center gap-1.5 flex-shrink-0">
+                  <button class="p-1 text-gray-400 hover:text-blue-600" title="预览">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
+                  </button>
+                  <button class="p-1 text-gray-400 hover:text-green-600" title="下载">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- 中央编辑区 -->
+    <main class="flex-1 flex flex-col min-w-0">
+      <!-- 文书类型切换 -->
+      <div class="bg-white border-b border-gray-200 px-6 py-2">
+        <div class="flex items-center gap-2">
+          <span class="text-xs text-gray-500">文书类型：</span>
+          <button id="btn-doc-type-ps" class="doc-type-btn px-3 py-1 text-xs font-medium text-gray-600 hover:bg-gray-100 rounded-full cursor-pointer" data-doc-type="ps" data-dom-id="btn-doc-type-ps">PS</button>
+          <button id="btn-doc-type-cv" class="doc-type-btn px-3 py-1 text-xs font-medium text-gray-600 hover:bg-gray-100 rounded-full cursor-pointer" data-doc-type="cv">CV</button>
+          <button id="btn-doc-type-rl" class="doc-type-btn px-3 py-1 text-xs font-medium text-gray-600 hover:bg-gray-100 rounded-full cursor-pointer" data-doc-type="rl">RL</button>
+          <button id="btn-doc-type-rp" class="doc-type-btn px-3 py-1 text-xs font-medium bg-blue-100 text-blue-700 rounded-full cursor-pointer" data-doc-type="rp">RP</button>
+        </div>
+      </div>
+
+      <!-- 编辑器工具栏 -->
+      <div class="bg-white border-b border-gray-200 px-6 py-2">
+        <div class="flex items-center gap-1">
+          <button class="p-1.5 text-gray-600 hover:bg-gray-100 rounded" title="粗体"><strong>B</strong></button>
+          <button class="p-1.5 text-gray-600 hover:bg-gray-100 rounded" title="斜体"><em>I</em></button>
+          <button class="p-1.5 text-gray-600 hover:bg-gray-100 rounded" title="下划线"><u>U</u></button>
+          <div class="w-px h-5 bg-gray-200 mx-1"></div>
+          <button class="p-1.5 text-gray-600 hover:bg-gray-100 rounded" title="无序列表">≡</button>
+          <button class="p-1.5 text-gray-600 hover:bg-gray-100 rounded" title="有序列表">#</button>
+          <div class="w-px h-5 bg-gray-200 mx-1"></div>
+          <button class="p-1.5 text-gray-600 hover:bg-gray-100 rounded" title="插入引用">"</button>
+          <button class="p-1.5 text-gray-600 hover:bg-gray-100 rounded" title="插入链接">🔗</button>
+        </div>
+      </div>
+
+      <!-- 编辑器内容 -->
+      <div class="flex-1 overflow-y-auto p-6 bg-gray-50">
+        <div class="editor-paper w-full mx-auto bg-white rounded-xl shadow-sm border border-gray-100 p-8">
+          <div class="mb-6">
+            <h2 id="doc-title" class="text-xl font-bold text-gray-900 mb-1">研究计划（Research Proposal）</h2>
+            <p id="doc-subtitle" class="text-sm text-gray-500">卡内基梅隆大学 · 人工智能 · 硕士申请</p>
+          </div>
+          <div id="editor-sections" class="editor-sections space-y-4"><div class="editor-block border border-gray-200 rounded-xl overflow-hidden"><div class="flex items-center justify-between px-4 py-2 bg-gray-50 border-b border-gray-200"><span class="text-xs font-medium text-gray-500">段落 1 · 研究背景与问题</span><button class="btn-send-to-ai flex items-center gap-1 px-2.5 py-1 text-xs font-medium bg-blue-600 text-white rounded-lg hover:bg-blue-700" data-section="section-1"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>传给AI助手</button></div><textarea class="editor-textarea w-full p-4 text-gray-700 leading-relaxed text-sm resize-none focus:outline-none" rows="3" style="height: 118px;"></textarea></div><div class="editor-block border border-gray-200 rounded-xl overflow-hidden"><div class="flex items-center justify-between px-4 py-2 bg-gray-50 border-b border-gray-200"><span class="text-xs font-medium text-gray-500">段落 2 · 研究方法与技术路线</span><button class="btn-send-to-ai flex items-center gap-1 px-2.5 py-1 text-xs font-medium bg-blue-600 text-white rounded-lg hover:bg-blue-700" data-section="section-2"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>传给AI助手</button></div><textarea class="editor-textarea w-full p-4 text-gray-700 leading-relaxed text-sm resize-none focus:outline-none" rows="3" style="height: 118px;"></textarea></div><div class="editor-block border border-gray-200 rounded-xl overflow-hidden"><div class="flex items-center justify-between px-4 py-2 bg-gray-50 border-b border-gray-200"><span class="text-xs font-medium text-gray-500">段落 3 · 预期成果与计划安排</span><button class="btn-send-to-ai flex items-center gap-1 px-2.5 py-1 text-xs font-medium bg-blue-600 text-white rounded-lg hover:bg-blue-700" data-section="section-3"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>传给AI助手</button></div><textarea class="editor-textarea w-full p-4 text-gray-700 leading-relaxed text-sm resize-none focus:outline-none" rows="3" style="height: 118px;"></textarea></div></div>
+          <div class="flex items-center justify-between mt-6 pt-4 border-t border-gray-100">
+            <div class="text-sm text-gray-500">
+              <span class="font-medium text-gray-900">856</span> 字
+            </div>
+            <div class="flex items-center gap-4 text-xs text-gray-400">
+              <span>版本: v1.2</span>
+              <span>最后编辑: 2026-07-17 14:32</span>
+              <span>编辑人: 张老师</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 底部状态栏 -->
+      <div class="bg-white border-t border-gray-200 px-6 py-2 flex items-center justify-between">
+        <div class="flex items-center gap-4 text-xs text-gray-500">
+          <span>当前版本: <span class="font-medium text-gray-700">v1.2</span></span>
+          <span>字数: <span class="font-medium text-gray-700">856</span></span>
+          <span>最后编辑: <span class="font-medium text-gray-700">2026-07-17 14:32</span></span>
+          <span>编辑人: <span class="font-medium text-gray-700">张老师</span></span>
+        </div>
+        <button class="flex items-center gap-1.5 px-3 py-1.5 text-xs bg-white border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path>
+          </svg>
+          导出文书
+        </button>
+      </div>
+    </main>
+
+    <!-- 右侧边栏 -->
+    <aside id="right-sidebar" class="sidebar-right bg-white/95 border-l border-slate-200/80 flex flex-col flex-shrink-0 backdrop-blur-sm" style="width: 370px;">
+      <!-- 左边缘拖拽手柄：按住可手动调整右侧边栏宽度，双击恢复默认宽度 -->
+      <div id="right-sidebar-resizer" title="拖动调整宽度，双击恢复默认"></div>
+      <div class="p-4 border-b border-gray-100">
+        <nav class="flex space-x-1" id="right-tabs">
+          <button id="tab-template" class="flex-1 px-2 py-2 text-xs font-medium text-gray-600 hover:text-gray-900" data-dom-id="tab-template">
+            模板
+          </button>
+          <button id="tab-ai" class="flex-1 px-2 py-2 text-xs font-medium text-blue-700 bg-blue-50 rounded-lg" data-dom-id="tab-ai">
+            AI修改
+          </button>
+          <button id="tab-supplement" class="flex-1 px-2 py-2 text-xs font-medium text-gray-600 hover:text-gray-900" data-dom-id="tab-supplement">
+            补充信息
+          </button>
+          <button id="tab-cases" class="flex-1 px-2 py-2 text-xs font-medium text-gray-600 hover:text-gray-900" data-dom-id="tab-cases">
+            案例库
+          </button>
+        </nav>
+      </div>
+
+      <!-- 模板库面板 -->
+      <div id="panel-template" class="flex-1 overflow-y-auto p-4 hidden">
+        <div class="mb-4">
+          <input type="text" placeholder="搜索模板..." class="smart-input">
+        </div>
+        <div class="space-y-3">
+          <div class="p-3 bg-white border border-gray-200 rounded-lg hover:border-blue-300 cursor-pointer">
+            <h4 class="text-sm font-medium text-gray-900 mb-1">AI方向PS标准模板</h4>
+            <p class="text-xs text-gray-500 mb-2">适用于CS/AI方向硕士申请</p>
+            <div class="flex items-center justify-between">
+              <span class="text-xs text-gray-400">使用 128 次</span>
+              <button class="px-2.5 py-1 text-xs bg-blue-600 text-white rounded hover:bg-blue-700">套用</button>
+            </div>
+          </div>
+          <div class="p-3 bg-white border border-gray-200 rounded-lg hover:border-blue-300 cursor-pointer">
+            <h4 class="text-sm font-medium text-gray-900 mb-1">转专业PS框架</h4>
+            <p class="text-xs text-gray-500 mb-2">适用于跨专业申请</p>
+            <div class="flex items-center justify-between">
+              <span class="text-xs text-gray-400">使用 56 次</span>
+              <button class="px-2.5 py-1 text-xs bg-blue-600 text-white rounded hover:bg-blue-700">套用</button>
+            </div>
+          </div>
+          <div class="p-3 bg-white border border-gray-200 rounded-lg hover:border-blue-300 cursor-pointer">
+            <h4 class="text-sm font-medium text-gray-900 mb-1">科研型PS模板</h4>
+            <p class="text-xs text-gray-500 mb-2">强调科研经历与学术能力</p>
+            <div class="flex items-center justify-between">
+              <span class="text-xs text-gray-400">使用 89 次</span>
+              <button class="px-2.5 py-1 text-xs bg-blue-600 text-white rounded hover:bg-blue-700">套用</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- AI修改面板（默认隐藏）：含两个子Tab -->
+      <div id="panel-ai" class="flex-1 overflow-y-auto">
+        <!-- 子Tab导航 -->
+        <div class="px-4 pt-4 pb-3 border-b border-gray-100 bg-white">
+          <nav class="flex space-x-1" id="ai-subtabs">
+            <button id="tab-ai-suggest" class="flex-1 px-2 py-1.5 text-xs font-medium text-blue-700 bg-white rounded-lg shadow-sm transition-all">
+              AI段落建议
+            </button>
+            <button id="tab-ai-write" class="flex-1 px-2 py-1.5 text-xs font-medium text-slate-600 hover:text-slate-900 hover:bg-slate-50 rounded-lg transition-all">
+              AI写作助手
+            </button>
+          </nav>
+        </div>
+
+        <!-- 子面板1：AI段落建议（提取左侧学生信息，逐段给出建议） -->
+        <div id="panel-ai-suggest" class="p-4 space-y-4">
+          <!-- AI已读取学生信息 -->
+          <div class="p-3 bg-gradient-to-br from-indigo-50 to-blue-50 rounded-xl border border-indigo-100">
+            <div class="flex items-center justify-between mb-2">
+              <h4 class="text-sm font-medium text-gray-800">AI已读取左侧学生信息</h4>
+              <button class="text-xs text-blue-600 hover:text-blue-800 font-medium flex-shrink-0">重新分析</button>
+            </div>
+            <div class="flex flex-wrap gap-1.5">
+              <span class="px-2 py-0.5 text-xs bg-white rounded-full text-gray-600 border border-indigo-100">GPA 3.8/4.0</span>
+              <span class="px-2 py-0.5 text-xs bg-white rounded-full text-gray-600 border border-indigo-100">雅思 7.5</span>
+              <span class="px-2 py-0.5 text-xs bg-white rounded-full text-gray-600 border border-indigo-100">国家级创新项目</span>
+              <span class="px-2 py-0.5 text-xs bg-white rounded-full text-gray-600 border border-indigo-100">百度AI Lab实习</span>
+              <span class="px-2 py-0.5 text-xs bg-white rounded-full text-gray-600 border border-indigo-100">Kaggle Top 5%</span>
+            </div>
+            <p class="text-xs text-gray-400 mt-2">以下建议基于左侧学生基础信息、成绩与经历自动生成，逐段对应编辑器内容，仅供参考。</p>
+          </div>
+
+          <!-- 段落1建议 -->
+          <div class="ai-detail-card">
+            <div class="flex items-center justify-between mb-2">
+              <span class="text-xs font-semibold text-gray-800">段落 1 · 背景与动机</span>
+              <div class="flex items-center gap-1.5 flex-shrink-0">
+                <span class="inline-flex items-center px-1.5 py-0.5 rounded-full text-xs font-medium bg-indigo-50 text-indigo-600">匹配：Kaggle竞赛</span>
+                <span class="inline-flex items-center px-1.5 py-0.5 rounded-full text-xs font-medium badge-priority-high">优先级 高</span>
+              </div>
+            </div>
+            <div class="mb-2">
+              <span class="ai-label">原文定位</span>
+              <p class="ai-quote">"I first encountered machine learning through a course project…"（第 1 段第 2 句）</p>
+            </div>
+            <div class="mb-2">
+              <span class="ai-label">问题诊断</span>
+              <ul class="ai-list ai-list-problem">
+                <li>兴趣起点表述笼统，"课程项目"缺乏个人辨识度，容易与大量申请者的开篇雷同；</li>
+                <li>从"接触"到"决心深入"之间缺少动机递进，招生官难以判断兴趣的真实性与持续性。</li>
+              </ul>
+            </div>
+            <div class="mb-2">
+              <span class="ai-label">修改建议</span>
+              <ul class="ai-list">
+                <li>引入 Kaggle 多模态分类挑战赛（Top 5%，1800+ 支队伍）作为兴趣起点，替代"课程项目"的笼统表述；</li>
+                <li>补一句"赛后复盘"：例如在调参过程中意识到多模态融合的难点，从而确定研究生阶段的方向；</li>
+                <li>开篇控制在 3-4 句内给出具体场景、个人角色与关键结果，避免泛泛抒情。</li>
+              </ul>
+            </div>
+            <div class="mb-2">
+              <span class="ai-label">示例改写（英文，供参考）</span>
+              <div class="ai-sample">
+                <p>"My interest in multimodal learning took shape during the 2024 Kaggle Multimodal Classification Challenge, where my team's vision-text ensemble ranked in the top 5% of 1,800+ teams. Debugging late-fusion failures late into the night convinced me that representation alignment was the problem I wanted to devote my graduate study to."</p>
+              </div>
+            </div>
+            <p class="ai-basis mb-2">依据：学生信息「Kaggle Top 5%」· CMU MSAI 近两年录取文书开篇共性分析</p>
+            <div class="flex items-center gap-3 text-xs pt-3 border-t border-gray-100">
+              <button class="text-blue-600 hover:text-blue-800 font-medium">应用到段落</button>
+              <button class="text-emerald-600 hover:text-emerald-700">采纳</button>
+              <button class="text-gray-400 hover:text-gray-600">忽略</button>
+            </div>
+          </div>
+
+          <!-- 段落2建议 -->
+          <div class="ai-detail-card">
+            <div class="flex items-center justify-between mb-2">
+              <span class="text-xs font-semibold text-gray-800">段落 2 · 背景与动机（续）</span>
+              <div class="flex items-center gap-1.5 flex-shrink-0">
+                <span class="inline-flex items-center px-1.5 py-0.5 rounded-full text-xs font-medium bg-indigo-50 text-indigo-600">匹配：百度AI Lab实习</span>
+                <span class="inline-flex items-center px-1.5 py-0.5 rounded-full text-xs font-medium badge-priority-high">优先级 高</span>
+              </div>
+            </div>
+            <div class="mb-2">
+              <span class="ai-label">原文定位</span>
+              <p class="ai-quote">"During my internship at Baidu AI Lab, I participated in a dialogue system project…"（第 2 段第 1 句）</p>
+            </div>
+            <div class="mb-2">
+              <span class="ai-label">问题诊断</span>
+              <ul class="ai-list ai-list-problem">
+                <li>实习内容只有"参与项目"的概括，没有说明具体负责的模块，个人贡献无法被评估；</li>
+                <li>缺少量化成果，无法体现工程落地能力——而这正是 CMU 最看重的素质之一。</li>
+              </ul>
+            </div>
+            <div class="mb-2">
+              <span class="ai-label">修改建议</span>
+              <ul class="ai-list">
+                <li>明确负责的子模块：如意图识别与槽位填充模型的改进，写清输入、方法与输出；</li>
+                <li>补充量化成果：如意图识别准确率从 91.2% 提升至 94.6%，模型实际接入线上客服场景、日均服务 N 万次请求；</li>
+                <li>增加一句反思：实习让你意识到研究与工程的差距，呼应后文的读研动机。</li>
+              </ul>
+            </div>
+            <div class="mb-2">
+              <span class="ai-label">示例改写（英文，供参考）</span>
+              <div class="ai-sample">
+                <p>"At Baidu AI Lab, I owned the intent-recognition and slot-filling modules of a production dialogue system. By replacing the baseline BiLSTM with a fine-tuned pre-trained encoder, I lifted intent accuracy from 91.2% to 94.6%; the module now serves the online customer-service channel at scale."</p>
+              </div>
+            </div>
+            <p class="ai-basis mb-2">依据：学生信息「百度AI Lab实习」· 招生官对"可验证贡献"的偏好</p>
+            <div class="flex items-center gap-3 text-xs pt-3 border-t border-gray-100">
+              <button class="text-blue-600 hover:text-blue-800 font-medium">应用到段落</button>
+              <button class="text-emerald-600 hover:text-emerald-700">采纳</button>
+              <button class="text-gray-400 hover:text-gray-600">忽略</button>
+            </div>
+          </div>
+
+          <!-- 段落3建议 -->
+          <div class="ai-detail-card">
+            <div class="flex items-center justify-between mb-2">
+              <span class="text-xs font-semibold text-gray-800">段落 3 · 学术准备</span>
+              <div class="flex items-center gap-1.5 flex-shrink-0">
+                <span class="inline-flex items-center px-1.5 py-0.5 rounded-full text-xs font-medium bg-indigo-50 text-indigo-600">匹配：论文2篇 · GRE 330</span>
+                <span class="inline-flex items-center px-1.5 py-0.5 rounded-full text-xs font-medium badge-priority-mid">优先级 中</span>
+              </div>
+            </div>
+            <div class="mb-2">
+              <span class="ai-label">原文定位</span>
+              <p class="ai-quote">"I maintained a GPA of 3.8 and ranked among the top of my major…"（第 3 段第 1 句）</p>
+            </div>
+            <div class="mb-2">
+              <span class="ai-label">问题诊断</span>
+              <ul class="ai-list ai-list-problem">
+                <li>GPA 与专业排名已写明，但 2 篇论文只提数量，未给出期刊/会议名称与本人贡献，证据链不完整；</li>
+                <li>GRE 330 与国家奖学金未在文中出现，学术竞争力的亮点被埋没。</li>
+              </ul>
+            </div>
+            <div class="mb-2">
+              <span class="ai-label">修改建议</span>
+              <ul class="ai-list">
+                <li>写明论文发表 venue（如 ACL Workshop / 中文核心期刊）与署名顺序，并一句话说明本人负责的实验或方法部分；</li>
+                <li>补充 GRE 330（可注明 Verbal/Quant 分项）与国家奖学金，作为学习能力的横向佐证；</li>
+                <li>按"课程基础 → 科研产出 → 标化与荣誉"的顺序组织，形成递进式证据链。</li>
+              </ul>
+            </div>
+            <div class="mb-2">
+              <span class="ai-label">示例改写（英文，供参考）</span>
+              <div class="ai-sample">
+                <p>"Beyond coursework (GPA 3.8/4.0, top 3% of the major), I co-authored two papers — one accepted at an ACL workshop — where I designed the ablation experiments. I also scored 330 on the GRE and received the National Scholarship, the highest undergraduate honor in my university."</p>
+              </div>
+            </div>
+            <p class="ai-basis mb-2">依据：学生信息「GPA 3.8 · 论文2篇 · GRE 330」· 学术段落证据链写作规范</p>
+            <div class="flex items-center gap-3 text-xs pt-3 border-t border-gray-100">
+              <button class="text-blue-600 hover:text-blue-800 font-medium">应用到段落</button>
+              <button class="text-emerald-600 hover:text-emerald-700">采纳</button>
+              <button class="text-gray-400 hover:text-gray-600">忽略</button>
+            </div>
+          </div>
+
+          <!-- 段落4建议 -->
+          <div class="ai-detail-card">
+            <div class="flex items-center justify-between mb-2">
+              <span class="text-xs font-semibold text-gray-800">段落 4 · 研究经历</span>
+              <div class="flex items-center gap-1.5 flex-shrink-0">
+                <span class="inline-flex items-center px-1.5 py-0.5 rounded-full text-xs font-medium bg-indigo-50 text-indigo-600">匹配：国家级创新项目</span>
+                <span class="inline-flex items-center px-1.5 py-0.5 rounded-full text-xs font-medium badge-priority-mid">优先级 中</span>
+              </div>
+            </div>
+            <div class="mb-2">
+              <span class="ai-label">原文定位</span>
+              <p class="ai-quote">"…our model reached an industry-leading level…"（第 4 段第 3 句）</p>
+            </div>
+            <div class="mb-2">
+              <span class="ai-label">问题诊断</span>
+              <ul class="ai-list ai-list-problem">
+                <li>"行业领先水平"属于主观表述，没有可验证的指标支撑，反而降低可信度；</li>
+                <li>未说明该项目与 CMU 具体研究方向的关联，错失"院校匹配"的得分点。</li>
+              </ul>
+            </div>
+            <div class="mb-2">
+              <span class="ai-label">修改建议</span>
+              <ul class="ai-list">
+                <li>用可验证指标替换主观评价：如模型在公开数据集上的准确率/F1，以及相对基线的提升幅度（+x.x%）；</li>
+                <li>点明契合点：将项目主题与 CMU 具体实验室或教授方向（如多模态学习、NLP）对应，并可在结尾段呼应；</li>
+                <li>说明你在团队中的独立贡献（方案设计 / 核心实验 / 论文撰写），而非"我们做了什么"。</li>
+              </ul>
+            </div>
+            <div class="mb-2">
+              <span class="ai-label">示例改写（英文，供参考）</span>
+              <div class="ai-sample">
+                <p>"Our model achieved 87.3% F1 on the public benchmark, a 4.1-point improvement over the strongest baseline — a result later cited by two follow-up studies. This experience drew me to CMU's strength in multimodal representation learning, particularly the work at the LTI."</p>
+              </div>
+            </div>
+            <p class="ai-basis mb-2">依据：学生信息「国家级创新项目」· CMU LTI 研究方向与往年录取画像</p>
+            <div class="flex items-center gap-3 text-xs pt-3 border-t border-gray-100">
+              <button class="text-blue-600 hover:text-blue-800 font-medium">应用到段落</button>
+              <button class="text-emerald-600 hover:text-emerald-700">采纳</button>
+              <button class="text-gray-400 hover:text-gray-600">忽略</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- 子面板2：AI写作助手（现有形式，默认隐藏） -->
+        <div id="panel-ai-write" class="p-4 hidden">
+          <div class="space-y-4">
+            <!-- 段落内容显示 -->
+            <div id="ai-received-content" class="hidden p-3 bg-white rounded-xl border border-blue-100 text-sm text-gray-700 leading-relaxed">
+            </div>
+            <!-- 注意事项 -->
+            <div class="p-3 bg-amber-50 border border-amber-200 rounded-xl">
+              <div class="flex items-start gap-2">
+                <svg class="w-4 h-4 text-amber-500 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01M12 2a10 10 0 100 20 10 10 0 000-20z"></path>
+                </svg>
+                <div>
+                  <h4 class="text-xs font-medium text-amber-800 mb-1">注意事项</h4>
+                  <p class="text-xs text-amber-700 leading-relaxed">本面板所有内容（包括润色建议、语法检查、续写段落、扩写段落等）均由 AI 自动生成，仅供参考。请务必结合申请院校的具体要求和个人实际情况进行人工审核与修改，AI 生成内容不代表最终文书质量。</p>
+                </div>
+              </div>
+            </div>
+            <div class="p-3 bg-gradient-to-br from-blue-50 to-purple-50 rounded-xl">
+              <h4 class="text-sm font-medium text-gray-800 mb-2">AI写作助手</h4>
+              <p class="text-xs text-gray-600 mb-3">智能辅助撰写，提供句子建议、语法纠错、内容优化</p>
+              <div class="space-y-2 mb-3">
+                <textarea id="ai-input-content" class="w-full p-2.5 text-sm border border-gray-200 rounded-lg resize-none focus:outline-none focus:ring-2 focus:ring-blue-500" rows="3" placeholder="来自编辑器的段落将显示在此处，也可直接输入"></textarea>
+              </div>
+              <div class="space-y-2">
+                <button class="w-full text-left px-3 py-2 bg-white rounded-lg text-sm text-gray-700 hover:bg-blue-50 border border-gray-200 flex items-center gap-2">
+                  <svg class="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path></svg>
+                  润色优化
+                </button>
+                <button class="w-full text-left px-3 py-2 bg-white rounded-lg text-sm text-gray-700 hover:bg-blue-50 border border-gray-200 flex items-center gap-2">
+                  <svg class="w-4 h-4 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                  语法检查
+                </button>
+                <button class="w-full text-left px-3 py-2 bg-white rounded-lg text-sm text-gray-700 hover:bg-blue-50 border border-gray-200 flex items-center gap-2">
+                  <svg class="w-4 h-4 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+                  续写段落
+                </button>
+                <button class="w-full text-left px-3 py-2 bg-white rounded-lg text-sm text-gray-700 hover:bg-blue-50 border border-gray-200 flex items-center gap-2">
+                  <svg class="w-4 h-4 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
+                  扩写段落
+                </button>
+              </div>
+            </div>
+            <div class="bg-gray-50 rounded-xl p-3">
+              <p class="text-xs text-gray-500 mb-2">AI建议</p>
+              <div class="p-3 bg-white rounded-lg border border-blue-100">
+                <p class="text-xs text-gray-700 leading-relaxed">请选择想要修改的段落和操作，AI将根据选中的内容提供优化建议。</p>
+                <div class="flex gap-2 mt-2">
+                  <button class="text-xs text-blue-600 hover:text-blue-800">采纳</button>
+                  <button class="text-xs text-gray-500 hover:text-gray-700">忽略</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 补充信息面板（默认隐藏，自左侧迁移至此） -->
+      <div id="panel-supplement" class="flex-1 overflow-y-auto p-4 hidden">
+        <div class="space-y-4">
+          <!-- 学校/专业基本信息 -->
+          <div class="card p-4">
+            <div class="flex items-center gap-3 mb-3">
+              <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">当前院校目标</span>
+              <h4 class="text-sm font-semibold text-gray-900">卡内基梅隆大学 · 人工智能</h4>
+            </div>
+          </div>
+
+          <!-- 课程特色 -->
+          <div class="card p-4">
+            <h4 class="text-sm font-medium text-gray-700 mb-3 flex items-center gap-2">
+              <svg class="w-4 h-4 text-orange-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
+              </svg>
+              课程特色
+            </h4>
+            <div class="space-y-2 text-xs">
+              <div class="flex items-start gap-2">
+                <span class="w-1.5 h-1.5 bg-orange-400 rounded-full mt-1.5 flex-shrink-0"></span>
+                <span class="text-gray-700">卡内基梅隆大学计算机科学学院在全美排名领先，其人工智能专业为顶尖研究方向</span>
+              </div>
+              <div class="flex items-start gap-2">
+                <span class="w-1.5 h-1.5 bg-orange-400 rounded-full mt-1.5 flex-shrink-0"></span>
+                <span class="text-gray-700">课程涵盖机器学习、自然语言处理、计算机视觉、机器人学等核心方向</span>
+              </div>
+              <div class="flex items-start gap-2">
+                <span class="w-1.5 h-1.5 bg-orange-400 rounded-full mt-1.5 flex-shrink-0"></span>
+                <span class="text-gray-700">提供丰富的实验室研究和企业合作项目机会，毕业生就业率名列前茅</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- 文书要求 -->
+          <div class="card p-4">
+            <h4 class="text-sm font-medium text-gray-700 mb-3 flex items-center gap-2">
+              <svg class="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+              </svg>
+              文书要求
+            </h4>
+            <div class="space-y-2">
+              <div class="flex items-center justify-between p-2.5 bg-blue-50 rounded-lg border border-blue-100 cursor-pointer hover:bg-blue-100 transition-colors" data-tooltip-type="doc" data-tooltip-key="CMU-PS">
+                <span class="text-sm text-blue-700 font-medium">PS(1000词)</span>
+                <svg class="w-4 h-4 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+              </div>
+              <div class="flex items-center justify-between p-2.5 bg-blue-50 rounded-lg border border-blue-100 cursor-pointer hover:bg-blue-100 transition-colors" data-tooltip-type="doc" data-tooltip-key="CMU-RL">
+                <span class="text-sm text-blue-700 font-medium">RL×2(500词/封)</span>
+                <svg class="w-4 h-4 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+              </div>
+              <div class="flex items-center justify-between p-2.5 bg-blue-50 rounded-lg border border-blue-100 cursor-pointer hover:bg-blue-100 transition-colors" data-tooltip-type="doc" data-tooltip-key="CMU-CV">
+                <span class="text-sm text-blue-700 font-medium">CV(2页)</span>
+                <svg class="w-4 h-4 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+              </div>
+            </div>
+          </div>
+
+          <!-- 院系链接 -->
+          <div class="card p-4">
+            <h4 class="text-sm font-medium text-gray-700 mb-3 flex items-center gap-2">
+              <svg class="w-4 h-4 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"></path>
+              </svg>
+              院系链接
+            </h4>
+            <div class="space-y-3">
+              <div>
+                <label class="block text-xs text-gray-400 mb-1.5">目标院系专业详情页 URL</label>
+                <div class="flex items-center gap-2">
+                  <input type="text" value="https://www.cmu.edu/graduate/programs/artificial-intelligence" class="flex-1 px-2.5 py-1.5 text-xs border border-gray-200 rounded-lg bg-gray-50 text-gray-700" readonly="">
+                  <button class="px-2 py-1.5 text-xs font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700">复制</button>
+                </div>
+              </div>
+              <div>
+                <label class="block text-xs text-gray-400 mb-1.5">目标院系详情页 URL</label>
+                <div class="flex items-center gap-2">
+                  <input type="text" value="https://www.cmu.edu" class="flex-1 px-2.5 py-1.5 text-xs border border-gray-200 rounded-lg bg-gray-50 text-gray-700" readonly="">
+                  <button class="px-2 py-1.5 text-xs font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700">复制</button>
+                </div>
+              </div>
+              <div class="border-t border-gray-100 pt-3">
+                <button class="flex items-center gap-1.5 text-xs font-medium text-blue-600 hover:text-blue-800">
+                  <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
+                  手动添加URL
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 案例库面板（默认隐藏） -->
+      <div id="panel-cases" class="flex-1 overflow-y-auto p-4 hidden">
+        <div class="mb-4">
+          <input type="text" placeholder="搜索案例：院校 / 专业 / 背景..." class="smart-input">
+        </div>
+        <div class="flex flex-wrap gap-1.5 mb-4">
+          <button class="px-2.5 py-1 text-xs font-medium bg-blue-100 text-blue-700 rounded-full">全部</button>
+          <button class="px-2.5 py-1 text-xs font-medium text-gray-600 bg-gray-100 hover:bg-gray-200 rounded-full">CMU</button>
+          <button class="px-2.5 py-1 text-xs font-medium text-gray-600 bg-gray-100 hover:bg-gray-200 rounded-full">AI方向</button>
+          <button class="px-2.5 py-1 text-xs font-medium text-gray-600 bg-gray-100 hover:bg-gray-200 rounded-full">转专业</button>
+          <button class="px-2.5 py-1 text-xs font-medium text-gray-600 bg-gray-100 hover:bg-gray-200 rounded-full">GPA 3.8+</button>
+        </div>
+        <div class="space-y-3">
+          <div class="card p-3 hover:border-blue-300 transition-all cursor-pointer">
+            <div class="flex items-center justify-between mb-1">
+              <h4 class="text-sm font-medium text-gray-900">王同学 · CMU MSAI</h4>
+              <span class="inline-flex items-center px-1.5 py-0.5 rounded-full text-xs font-medium bg-emerald-100 text-emerald-700 flex-shrink-0">已录取</span>
+            </div>
+            <p class="text-xs text-gray-500 mb-2">GPA 3.9 · 托福 108 · 两段AI实习</p>
+            <p class="text-xs text-gray-600 leading-relaxed bg-gray-50 rounded-lg p-2 mb-2">"My fascination with intelligent systems began when I built a medical imaging model that helped radiologists..."</p>
+            <div class="flex items-center gap-3 text-xs">
+              <button class="text-blue-600 hover:text-blue-800 font-medium">查看全文</button>
+              <button class="text-gray-500 hover:text-gray-700">引用到编辑器</button>
+            </div>
+          </div>
+          <div class="card p-3 hover:border-blue-300 transition-all cursor-pointer">
+            <div class="flex items-center justify-between mb-1">
+              <h4 class="text-sm font-medium text-gray-900">陈同学 · 宾大 MCIT</h4>
+              <span class="inline-flex items-center px-1.5 py-0.5 rounded-full text-xs font-medium bg-emerald-100 text-emerald-700 flex-shrink-0">已录取</span>
+            </div>
+            <p class="text-xs text-gray-500 mb-2">GPA 3.7 · 雅思 7.5 · 商科转CS</p>
+            <p class="text-xs text-gray-600 leading-relaxed bg-gray-50 rounded-lg p-2 mb-2">"Transitioning from finance to computer science was driven by a simple realization: the questions I cared about..."</p>
+            <div class="flex items-center gap-3 text-xs">
+              <button class="text-blue-600 hover:text-blue-800 font-medium">查看全文</button>
+              <button class="text-gray-500 hover:text-gray-700">引用到编辑器</button>
+            </div>
+          </div>
+          <div class="card p-3 hover:border-blue-300 transition-all cursor-pointer">
+            <div class="flex items-center justify-between mb-1">
+              <h4 class="text-sm font-medium text-gray-900">刘同学 · USC CS37</h4>
+              <span class="inline-flex items-center px-1.5 py-0.5 rounded-full text-xs font-medium bg-emerald-100 text-emerald-700 flex-shrink-0">已录取</span>
+            </div>
+            <p class="text-xs text-gray-500 mb-2">GPA 3.6 · GRE 325 · 一段科研经历</p>
+            <p class="text-xs text-gray-600 leading-relaxed bg-gray-50 rounded-lg p-2 mb-2">"During my junior year, I joined the computer vision lab and worked on pedestrian detection for autonomous driving..."</p>
+            <div class="flex items-center gap-3 text-xs">
+              <button class="text-blue-600 hover:text-blue-800 font-medium">查看全文</button>
+              <button class="text-gray-500 hover:text-gray-700">引用到编辑器</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </aside>
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      // 左侧面板切换
+      document.getElementById('tab-student-info').addEventListener('click', function() {
+        showLeftPanel('student-info');
+      });
+      document.getElementById('tab-materials').addEventListener('click', function() {
+        showLeftPanel('materials');
+      });
+      document.getElementById('tab-version-history').addEventListener('click', function() {
+        showLeftPanel('version-history');
+      });
+
+      // 右侧面板切换：点击标签按钮切换右侧边栏显示/隐藏
+      document.getElementById('tab-template').addEventListener('click', function() {
+        toggleRightSidebar('template');
+      });
+      document.getElementById('tab-ai').addEventListener('click', function() {
+        toggleRightSidebar('ai');
+      });
+      document.getElementById('tab-supplement').addEventListener('click', function() {
+        toggleRightSidebar('supplement');
+      });
+      document.getElementById('tab-cases').addEventListener('click', function() {
+        toggleRightSidebar('cases');
+      });
+
+      // AI修改子Tab切换
+      document.getElementById('tab-ai-suggest').addEventListener('click', function() {
+        showAiSubPanel('suggest');
+      });
+      document.getElementById('tab-ai-write').addEventListener('click', function() {
+        showAiSubPanel('write');
+      });
+
+      // 返回按钮
+      var backBtn = document.querySelector('[data-dom-id="btn-back-task-list"]');
+      if (backBtn) {
+        backBtn.addEventListener('click', function() {
+      window.location.href = '任务列表页 - 文书交付系统.html';
+        });
+      }
+
+      // 保存按钮
+      var saveBtn = document.querySelector('[data-dom-id="btn-save"]');
+      if (saveBtn) {
+        saveBtn.addEventListener('click', function() {
+          alert('文书已保存');
+        });
+      }
+
+      // 确认提交按钮
+      var submitBtn = document.querySelector('[data-dom-id="btn-submit"]');
+      if (submitBtn) {
+        submitBtn.addEventListener('click', function() {
+          if (confirm('确认提交当前文书？提交后进入审核流程，将无法直接编辑。')) {
+            alert('文书已提交审核');
+          }
+        });
+      }
+
+      // 传给AI助手按钮
+      document.querySelectorAll('.btn-send-to-ai').forEach(function(btn) {
+        btn.addEventListener('click', function() {
+          var textarea = this.closest('.editor-block').querySelector('.editor-textarea');
+          var content = textarea.value;
+          // 切换到右侧AI修改面板（AI写作助手子Tab）
+          activateRightPanel('ai');
+          showAiSubPanel('write');
+          // 将内容传入AI面板
+          var aiInput = document.getElementById('ai-input-content');
+          if (aiInput) {
+            aiInput.value = content;
+          }
+          var aiDisplay = document.getElementById('ai-received-content');
+          if (aiDisplay) {
+            aiDisplay.textContent = content;
+            aiDisplay.classList.remove('hidden');
+          }
+        });
+      });
+
+      // 自动调整textarea高度
+      document.querySelectorAll('.editor-textarea').forEach(function(textarea) {
+        textarea.addEventListener('input', function() {
+          this.style.height = 'auto';
+          this.style.height = this.scrollHeight + 'px';
+        });
+        // 初始化高度
+        textarea.style.height = 'auto';
+        textarea.style.height = textarea.scrollHeight + 'px';
+      });
+
+      // ===== 右侧边栏：手动拖拽调宽（300–620px），宽度记忆，双击恢复默认 =====
+      (function () {
+        var sidebar = document.getElementById('right-sidebar');
+        var handle = document.getElementById('right-sidebar-resizer');
+        if (!sidebar || !handle) return;
+        var MIN_W = 300, MAX_W = 620, DEFAULT_W = 360;
+        function saveWidth(w) {
+          try { localStorage.setItem('rightSidebarWidth', String(Math.round(w))); } catch (e) {}
+        }
+        try {
+          var saved = parseInt(localStorage.getItem('rightSidebarWidth'), 10);
+          if (saved && saved >= MIN_W && saved <= MAX_W) {
+            sidebar.style.width = saved + 'px';
+          }
+        } catch (e) {}
+        handle.addEventListener('mousedown', function (e) {
+          e.preventDefault();
+          var startX = e.clientX;
+          var startW = sidebar.getBoundingClientRect().width;
+          document.body.classList.add('sidebar-resizing');
+          function onMove(ev) {
+            var w = startW + (startX - ev.clientX);
+            w = Math.max(MIN_W, Math.min(MAX_W, w));
+            sidebar.style.width = w + 'px';
+          }
+          function onUp() {
+            document.removeEventListener('mousemove', onMove);
+            document.removeEventListener('mouseup', onUp);
+            document.body.classList.remove('sidebar-resizing');
+            saveWidth(sidebar.getBoundingClientRect().width);
+          }
+          document.addEventListener('mousemove', onMove);
+          document.addEventListener('mouseup', onUp);
+        });
+        handle.addEventListener('dblclick', function () {
+          sidebar.style.width = DEFAULT_W + 'px';
+          saveWidth(DEFAULT_W);
+        });
+      })();
+
+      // ===== 左侧边栏：手动拖拽调宽（200–480px），宽度记忆，双击恢复默认 =====
+      (function () {
+        var sidebar = document.getElementById('sidebar-tabs');
+        var handle = document.getElementById('left-sidebar-resizer');
+        if (!sidebar || !handle) return;
+        var MIN_W = 200, MAX_W = 480, DEFAULT_W = 256;
+        function saveWidth(w) {
+          try { localStorage.setItem('leftSidebarWidth', String(Math.round(w))); } catch (e) {}
+        }
+        try {
+          var saved = parseInt(localStorage.getItem('leftSidebarWidth'), 10);
+          if (saved && saved >= MIN_W && saved <= MAX_W) {
+            sidebar.style.width = saved + 'px';
+          }
+        } catch (e) {}
+        handle.addEventListener('mousedown', function (e) {
+          e.preventDefault();
+          var startX = e.clientX;
+          var startW = sidebar.getBoundingClientRect().width;
+          document.body.classList.add('sidebar-resizing');
+          function onMove(ev) {
+            var w = startW + (ev.clientX - startX);
+            w = Math.max(MIN_W, Math.min(MAX_W, w));
+            sidebar.style.width = w + 'px';
+          }
+          function onUp() {
+            document.removeEventListener('mousemove', onMove);
+            document.removeEventListener('mouseup', onUp);
+            document.body.classList.remove('sidebar-resizing');
+            saveWidth(sidebar.getBoundingClientRect().width);
+          }
+          document.addEventListener('mousemove', onMove);
+          document.addEventListener('mouseup', onUp);
+        });
+        handle.addEventListener('dblclick', function () {
+          sidebar.style.width = DEFAULT_W + 'px';
+          saveWidth(DEFAULT_W);
+        });
+      })();
+
+      // ===== 文书类型切换：PS / CV / RL / RP =====
+      (function () {
+        var meta = {
+          ps: { title: '个人陈述（Personal Statement）', short: '个人陈述（PS）', subtitle: '卡内基梅隆大学 · 人工智能 · 硕士申请' },
+          cv: { title: '学术简历（Curriculum Vitae）', short: '学术简历（CV）', subtitle: '卡内基梅隆大学 · 人工智能 · 硕士申请' },
+          rl: { title: '推荐信（Recommendation Letter）', short: '推荐信（RL）', subtitle: '卡内基梅隆大学 · 人工智能 · 硕士申请' },
+          rp: { title: '研究计划（Research Proposal）', short: '研究计划（RP）', subtitle: '卡内基梅隆大学 · 人工智能 · 硕士申请' }
+        };
+        var defaults = {
+          ps: null,
+          cv: [
+            { label: '段落 1 · 教育背景', content: '教育背景：XX大学 计算机科学与技术专业 本科（2022.09–2026.06），GPA 3.8/4.0，专业排名前 5%。主修课程：数据结构与算法、操作系统、机器学习、深度学习、自然语言处理。' },
+            { label: '段落 2 · 实习经历', content: '实习经历：百度 AI Lab NLP 算法实习生（2025.06–2025.09）。负责对话系统意图识别与槽位填充模块优化，意图识别准确率由 91.2% 提升至 94.6%，模型接入线上客服场景。' },
+            { label: '段落 3 · 科研与项目', content: '科研与项目：主持国家级大学生创新项目"基于深度学习的医疗影像分析系统"；Kaggle 多模态分类挑战赛 Top 5%；以共同作者身份发表论文 2 篇（含 ACL Workshop 1 篇）。' },
+            { label: '段落 4 · 技能与荣誉', content: '技能与荣誉：熟练使用 Python、PyTorch、Git；GRE 330，雅思 7.5；曾获国家奖学金、校级一等奖学金。' }
+          ],
+          rl: [
+            { label: '段落 1 · 推荐人身份与关系', content: '我是 XX 大学计算机学院的教授，担任该生《机器学习》课程授课教师及其国家级创新项目的指导老师，与其相处两年，对其学术能力与个人品质有深入了解。' },
+            { label: '段落 2 · 学术能力评价', content: '该生在课程中表现突出，机器学习课程成绩位列班级第一。在创新项目中，他独立完成了模型设计与核心实验，展现出远超同龄人的科研素养与问题解决能力。' },
+            { label: '段落 3 · 个人品质与推荐意见', content: '该生勤奋踏实、乐于协作，曾主动帮助团队成员调试代码、分享学习资料。基于以上观察，我毫无保留地推荐他攻读卡内基梅隆大学人工智能硕士项目，相信他将成为该项目优秀的一员。' }
+          ],
+          rp: [
+            { label: '段落 1 · 研究背景与问题', content: '多模态学习在医疗影像分析中展现出巨大潜力，但现有方法在模态对齐与小样本场景下仍存在明显性能瓶颈。本研究计划聚焦于鲁棒的多模态表征对齐方法。' },
+            { label: '段落 2 · 研究方法与技术路线', content: '拟采用对比学习框架对齐影像与文本表征，结合注意力机制挖掘跨模态关联，并在公开数据集与真实临床数据上验证有效性；计划使用 PyTorch 实现，依托实验室 GPU 集群完成训练。' },
+            { label: '段落 3 · 预期成果与计划安排', content: '预期在基准数据集上超越现有最优方法 2–3 个百分点，产出 1–2 篇高水平论文。时间安排：第一学期完成文献综述与基线复现，第二学期完成方法设计与实验，第三学期撰写论文并投稿。' }
+          ]
+        };
+        var store = {};
+        var currentType = 'ps';
+
+        function captureCurrent() {
+          var blocks = [];
+          document.querySelectorAll('#editor-sections .editor-block').forEach(function (block) {
+            blocks.push({
+              label: block.querySelector('span').textContent,
+              content: block.querySelector('.editor-textarea').value
+            });
+          });
+          return blocks;
+        }
+
+        function renderSections(type) {
+          var data = store[type] || defaults[type] || [];
+          var html = '';
+          data.forEach(function (sec, i) {
+            html += '<div class="editor-block border border-gray-200 rounded-xl overflow-hidden">'
+              + '<div class="flex items-center justify-between px-4 py-2 bg-gray-50 border-b border-gray-200">'
+              + '<span class="text-xs font-medium text-gray-500">' + sec.label + '</span>'
+              + '<button class="btn-send-to-ai flex items-center gap-1 px-2.5 py-1 text-xs font-medium bg-blue-600 text-white rounded-lg hover:bg-blue-700" data-section="section-' + (i + 1) + '">'
+              + '<svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>'
+              + '传给AI助手</button></div>'
+              + '<textarea class="editor-textarea w-full p-4 text-gray-700 leading-relaxed text-sm resize-none focus:outline-none" rows="3"></textarea>'
+              + '</div>';
+          });
+          var container = document.getElementById('editor-sections');
+          container.innerHTML = html;
+          container.querySelectorAll('.editor-textarea').forEach(function (ta, i) {
+            ta.value = data[i].content;
+            ta.style.height = 'auto';
+            ta.style.height = ta.scrollHeight + 'px';
+            ta.addEventListener('input', function () {
+              this.style.height = 'auto';
+              this.style.height = this.scrollHeight + 'px';
+            });
+          });
+          container.querySelectorAll('.btn-send-to-ai').forEach(function (btn) {
+            btn.addEventListener('click', function () {
+              var content = this.closest('.editor-block').querySelector('.editor-textarea').value;
+              activateRightPanel('ai');
+              showAiSubPanel('write');
+              var aiInput = document.getElementById('ai-input-content');
+              if (aiInput) aiInput.value = content;
+              var aiDisplay = document.getElementById('ai-received-content');
+              if (aiDisplay) {
+                aiDisplay.textContent = content;
+                aiDisplay.classList.remove('hidden');
+              }
+            });
+          });
+        }
+
+        function switchDocType(type) {
+          if (type === currentType) return;
+          store[currentType] = captureCurrent();
+          currentType = type;
+          document.getElementById('doc-title').textContent = meta[type].title;
+          document.getElementById('doc-subtitle').textContent = meta[type].subtitle;
+          var headerTitle = document.getElementById('header-doc-title');
+          if (headerTitle) headerTitle.textContent = '李雪 - ' + meta[type].short;
+          document.querySelectorAll('.doc-type-btn').forEach(function (btn) {
+            var active = btn.getAttribute('data-doc-type') === type;
+            btn.className = active
+              ? 'doc-type-btn px-3 py-1 text-xs font-medium bg-blue-100 text-blue-700 rounded-full cursor-pointer'
+              : 'doc-type-btn px-3 py-1 text-xs font-medium text-gray-600 hover:bg-gray-100 rounded-full cursor-pointer';
+          });
+          renderSections(type);
+        }
+
+        document.querySelectorAll('.doc-type-btn').forEach(function (btn) {
+          btn.addEventListener('click', function () {
+            switchDocType(this.getAttribute('data-doc-type'));
+          });
+        });
+      })();
+    });
+
+    function showLeftPanel(panel) {
+      ['student-info', 'materials', 'version-history'].forEach(function(p) {
+        document.getElementById('panel-' + p).classList.toggle('hidden', p !== panel);
+      });
+      ['tab-student-info', 'tab-materials', 'tab-version-history'].forEach(function(id) {
+        var el = document.getElementById(id);
+        if (el.id === 'tab-' + panel) {
+          el.className = 'flex-1 px-3 py-2 text-sm font-medium text-blue-700 bg-blue-50 rounded-lg';
+        } else {
+          el.className = 'flex-1 px-3 py-2 text-sm font-medium text-gray-600 hover:text-gray-900';
+        }
+      });
+    }
+
+    function toggleRightSidebar(panel) {
+      var sidebar = document.getElementById('right-sidebar');
+      var isHidden = sidebar.classList.contains('hidden');
+      if (!isHidden) {
+        // 当前显示，检查点击的是否已经是激活的面板
+        var activeEl = document.querySelector('#right-tabs .text-blue-700');
+        if (activeEl && activeEl.id === 'tab-' + panel) {
+          // 再次点击同一按钮 -> 隐藏
+          sidebar.classList.add('hidden');
+          return;
+        }
+      }
+      activateRightPanel(panel);
+    }
+
+    function activateRightPanel(panel) {
+      // 显示右侧边栏并切换到指定面板（不会因重复点击而隐藏）
+      document.getElementById('right-sidebar').classList.remove('hidden');
+      ['template', 'ai', 'supplement', 'cases'].forEach(function(p) {
+        document.getElementById('panel-' + p).classList.toggle('hidden', p !== panel);
+      });
+      ['tab-template', 'tab-ai', 'tab-supplement', 'tab-cases'].forEach(function(id) {
+        var el = document.getElementById(id);
+        if (el.id === 'tab-' + panel) {
+          el.className = 'flex-1 px-2 py-2 text-xs font-medium text-blue-700 bg-blue-50 rounded-lg';
+        } else {
+          el.className = 'flex-1 px-2 py-2 text-xs font-medium text-gray-600 hover:text-gray-900';
+        }
+      });
+    }
+
+    function showAiSubPanel(sub) {
+      // AI修改面板内的子Tab切换：suggest=AI段落建议，write=AI写作助手
+      ['suggest', 'write'].forEach(function(s) {
+        document.getElementById('panel-ai-' + s).classList.toggle('hidden', s !== sub);
+      });
+      ['tab-ai-suggest', 'tab-ai-write'].forEach(function(id) {
+        var el = document.getElementById(id);
+        if (el.id === 'tab-ai-' + sub) {
+          el.className = 'flex-1 px-2 py-1.5 text-xs font-medium text-blue-700 bg-blue-50 rounded-lg';
+        } else {
+          el.className = 'flex-1 px-2 py-1.5 text-xs font-medium text-gray-600 hover:text-gray-900';
+        }
+      });
+    }
+  </script>
+  <script src="./文书编辑器 - 文书交付系统_files/pbs-app.js.下载"></script>
+
+
+  <div class="kimi-brand-container">
+    <div class="kimi-brand-close-icon">
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M12.499 3.50216C12.7226 3.72574 12.7226 4.08825 12.499 4.31184L8.81035 8.00029L12.4972 11.6872C12.7208 11.9107 12.7208 12.2733 12.4972 12.4968C12.2736 12.7204 11.9111 12.7204 11.6875 12.4968L8.00066 8.80998L4.31221 12.4986C4.10582 12.705 3.78106 12.7209 3.55646 12.5463L3.50252 12.4986C3.27893 12.2751 3.27893 11.9126 3.50252 11.689L7.19098 8.00029L3.50107 4.31038C3.27748 4.0868 3.27748 3.72429 3.50107 3.5007C3.72465 3.27711 4.08716 3.27711 4.31075 3.5007L8.00066 7.19061L11.6893 3.50216C11.8957 3.29577 12.2205 3.27989 12.4451 3.45453L12.499 3.50216Z" fill="white" fill-opacity="0.84"></path>
+      </svg>
+    </div>
+
+    <div class="kimi-brand-info-wrapper">
+      <button type="button" class="kimi-brand-info-button" aria-label="AI 内容说明">
+        <svg width="14" height="14" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M8 6.75V12" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"></path>
+          <circle cx="8" cy="4" r="1" fill="currentColor"></circle>
+        </svg>
+      </button>
+      <div class="kimi-brand-info-tooltip">
+        该网页包含 AI 生成内容（可能经用户编辑）。请仔细核实，且不要提交任何个人信息。如认为内容侵权或违法，可<a href="https://www.kimi.com/report?from=website&amp;reportUrl=https%3A%2F%2Fyiyanqiuxue-pbs.ok.kimi.link%2F%25E6%2596%2587%25E4%25B9%25A6%25E7%25BC%2596%25E8%25BE%2591%25E5%2599%25A8%25E9%25A1%25B5.html" target="_blank" rel="noopener" class="kimi-brand-report-link">提交报告申请审核</a>。
+      </div>
+    </div>
+
+    <a href="https://www.kimi.com/agent" target="_blank" class="kimi-brand-link">
+      <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADgAAAA4CAYAAACohjseAAAACXBIWXMAABYlAAAWJQFJUiTwAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAsHSURBVHgB1ZpJTFRfFsYvlPNYOM8WzjPgFGfBIbIwihuXSi/c9EY6veyFQy9cddC4sHujbFyYaOLfaKKJCUQTo4kKGGOcLUdwpJxRxNfnd+RUHuUroGS+yc199d4dzne+M9x7Ic01XyJSC6RmNTxHGt6HG2pHlFhCrZBaKbVMatT9YcmVWirV6+IVGbNdiqXYOdfZgqdai10LCiZX7jpf2D+t5a4Zt+nO4PwgA0t3NMtGNS0tTasLMNfsrix4KgDT09P1uU+fPrl+gKVdWfBUANpzKBQqBVia+5XXHrluXgSc8zwv/kyR35k93K981+2LgfM/z549uyDd/UGS7IzSJ2e7G/GvGjfy354b+vdyF8qIJO3bo0cPZbGmpiYLLrHVXNeFSygcccP+2diL6mNR9+Y/mY3eSYBR9nr37u1qa2t5VQaDHbWf/OPSd37hb+8A3XN0Y+ODOcABlBIOhyP4YJcH2NLy48eP+DNA379/77otwNryEldXVdHoXa9evVzPnj0VKCYqv8OtBrhr1y4XiUTivysrK93+/ftbPD47O9vt3Lkz8NuePXtcNBp19TVRVxct03c/a2PuR1Wl+3Lp9zV+/vzpvn375r5//66/Bw0apNhalVwfPXrk+UtpaWmLxwo4TyKdF1R2796dNIm7FiR62cnYc+cAbCk43/6yEYjE99QBAwY0+j5mzJjOAZgqc7LtapKtoDp06NDOYbA5cH4GgkD5ATfFrm9cxwFsCXN2Gkisyd5bHTlypN/vFGRGRkbHAWwNc36AiUCNUfzNZ5b+edofYCo+11SVHKet7Fg0oPAMOH4DyACOGzfO69evn4FsX4C5ubltAq6pCjBADRkyxBs4cKA3Z84cP4vtB3D79u1estJW4MxsDeCoUaPi4NoVYHuC86cN80HA8dy/f//E/m0PMBVw+A8MNBcl/WxZS5UTgzdx4kQFlhigeMdetE2L+JzWZMWOMlb8J4CWFPab/hKLxdyECRPc58+fdYPdt29f9+XLFz3wCkDt06YMtqQwRjboXmvXpuJzw4cP15YoKycIZdYXVTseIIXIWlRU1GqAliZox44dqymJFrC0je2lHQrHnaAivuOKi4vdkSNHGh23UimYu4DQVvKimuXr16+dMOokqrqlS5dqv3ZjsLy8XINAQUFBk/34Nn/+/JTXxgyJnmzJRo8e7S1fvtzLysrSXc26deu88ePHtx+DFRUVLi8vT4PAyZMn9bmsrCywLwxeu3ZND8+pFNGNq6+vd3V1dRpcKDD49etXvbIQs/3Vz6WoNX84DmLGmAsaT5poqjCWAOS/hm+qEkhgjyCzYsUKb/HixZ6YprdgwQIvMzMz9SBjC9viiQD5nQycVQJBc8GJfFpYWNjohGDVoiQte05hz5PrCW/z5s3epk2bFBhAZ86c+Qtg0Ok4CJh/ASJXEMDmzoOMQ2gWLykp8ZorREPWo2WcrS0mqNX2nzCI74krqAVYRE3HTrFlz3f1nczeg55TLSR20bq7c+eO27Fjh9u7d2+T/fEtYUd9iogpgDRiMseUKVM0qQtAjaQk+3fv3qnvye7GSfBx6QjLR/8Ow/54QeG9/7cVnDvofbJi83M5i1AUhAYggj579ixw3IwZM/Q6EBCsJ/4WH/vmzRsnkVLTwocPHxTYgwcP3Nu3b52wrTd86fZXGQNiQiduqeyb1VRZZIvFnSXzohx+f/r0SZ/FzN2iRYvcvn37fsub/FYmGkjgWnDw4MEaOadPn+4kLWikJq+K2WuLEtim0S8kwu42gLRBAOy9tf4iOU5bFqEi0LFjx5KCRMswgoD++QF78eJFd/z4cffkyRMFTsgntUybNk3fISO31QDATJnn/v37CgoL4D4UMyYlXbhwwUmEdWkNR484g/6F/QK4ACYROBUmWQOAxmCyMm/ePP4ypLsRwF26dEl9lzURmnnmzp3rqqqqFBiKBSyb7UmTJql/ss7NmzddSMymSOy1DxMgLB0RwID5TTeRST/jQf6Y+I7+TSkFv0EwEjV+iv9hvgQPFM93WtmxKFtm7vQHHCbJTbmZsrSxHtIhJiDDdKIwwMzV/NBMi8qzKcD6UQgeKMnGGHjr2xJ26U8wQRZJ1Ary48eP7tWrV/H9Jetjunfv3o3vVmhhDnb5hiIaru9j6fJXUEVOJbQSkgnNLMZgOrO4P0gkBiJrTQF+VpMFq8TCuhSExcQkr6lf4mvUYcOGKQBM8unTp6oElIhSAcO6jCWNoBD6Co5YSKgtkAkjhFnsHo1TAUnLBIA0EzIhAWMMonUWie/9fOzbbyv211fP9/d0wPGeyEfLOsjz/PlzlQFzw3VIJw8fPozvPWkJOigEhkkPyGAmLYTcDkmYzbt371721KlTtSOaYREzVzRjDDLI8p/Zv7UmPM8mPGMsmJgyrNIXi8ByZAeiwgMCBkgLL168iJ/KzfQomC3j8DnkhV3G0w9gyE/qIEfKdu2vkDxEZFw+H5iQkIv2WMzOWCtXrtSJmYDCAnznG4rhPUxjIijBANguKcjX0PiIESN0PJoHAH15Zn2CBYWTBqlAbq4VBH0wUcA9fvxYE70RwpywDRZyovjv/4ii1UJ3ERpB+9xvsN0BBKaHRhnEOxawKIvD2zbJTBTlEBTMBM1UEYaWsRT6EQlv3bqlc8MYSmKsKYk1TCb8jjlZEwVMnjxZ5yTnYd74J6kEa0EWNg0EHbkb+kdINB/buHFjrvhfhIVwbAbQUY4f6g9Xr15VDQKSgQDFkclRCI3mYAsWaJmHfigA4AQM5kMogGGO1dXVqoANGza469ev69woAd9iPKwAlLUAjiJQNuwQDO0WAIW8fPnSbdmyRZnHKgAuc5fJuwMaFcRWHwuYQjRL3mEwpoMDY3oIx6RyY6yL0o9nObspCLQM4wgBaEAilMyrLGzdutUtXLhQNY8wCIDi7E/OsEJFWECzPsLCHDsYFE4yx2VQGL/xXdtsAFziiMqJ8hry7ZZz585VK0A5fUflLJUhwi9hG8RCMIZGAThr1izdgjEBi6N9FIB5wA5aJwLzDfCMx29hDMFhm28AR2DYQXj6nj17VkHDFH7HOnxDcVRAoTha1kWZzIWCbty4oYBhnDV45vv58+cPyF1PiUZpfwCQv4mXi+azERjB0DCAMYvTp087MWV1cEL1qlWr3KlTp5RZki7bKxYFHBpGOHwGJjF73sMKoOnPOK41Ll++rBqHXSzGoiXsMB/C8y4/P1/nxSIAivKZE4uDBLnT0flkXIUAzzFMIT9A6XBs27Zt+SLQKDQC9Rw58Bt8hAAEAwjJPpDdBgLAHqEcQAiG/wGYDe+yZcvi/xiAIPSnn1kESqQvfZgTk8X8+cY7TC4nJ0ef8S8YX79+vRKA2ZIrbX8q81SsXbs2T0yz1jAFHugOHTq0Xybcib+hLSZGaDQEYMwPFgGKD9CiDNhCy7CDsHKz5U6cOKE5CUERmvNaw79ZafhfvXq1O3z4sAYqi6qsixnzDoUwzvyTZ0yd78zBO1zl9u3bB0S+okQsoSCAZ86cOStns7/ELGeIhiJoh4lZzPIQQQPzNbNbs2aNAiT/4L/4AlbAOHwYYSmYFN9hk5bxgKIv1gHTzEcQwS9hmnzHeDsYMw458F0x7bKjR4/+TTYG/w3C0uyRXO5YIgcPHsyVM1a2CJAlwSUsmg+LzYdFY+ElS5ZossWXEJpDKOYM66JVBYgi8DtMij5EX7kYUs1zBuQbwiYey4wpUVBMLCiGtYibRGXeqMxTeeXKlZMyZ7Qp+f8PFfwmm2H/qgMAAAAASUVORK5CYII=" alt="Kimi" class="kimi-brand-avatar">
+      <span>Kimi Agent</span>
+      <svg width="16" height="16" class="kimi-brand-icon" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path fill-rule="evenodd" clip-rule="evenodd" d="M14.2925 8.54311C14.5253 8.30855 14.5247 7.92983 14.2909 7.69611L10.5986 4.00381C10.3643 3.76949 9.98442 3.76949 9.7501 4.00381C9.51579 4.23812 9.51579 4.61802 9.7501 4.85233L12.4181 7.52038H1.86667C1.5353 7.52038 1.26667 7.78901 1.26667 8.12038C1.26667 8.45175 1.5353 8.72038 1.86667 8.72038H12.4255L9.74857 11.4167C9.51511 11.6519 9.51648 12.0318 9.75164 12.2652C9.9868 12.4987 10.3667 12.4973 10.6002 12.2622L14.2925 8.54311Z" fill="white" fill-opacity="0.84"></path>
+      </svg>
+    </a>
+  </div>
+    
+<script>
+// 移动端菜单切换
+document.getElementById('mobile-menu-btn')?.addEventListener('click', function() {
+  document.getElementById('sidebar-tabs').classList.add('open');
+  document.getElementById('mobile-overlay').classList.add('show');
+});
+
+document.getElementById('mobile-overlay')?.addEventListener('click', function() {
+  document.getElementById('sidebar-tabs').classList.remove('open');
+  this.classList.remove('show');
+});
+
+// 所有面板切换按钮点击后关闭移动端菜单
+document.querySelectorAll('#tab-student-info, #tab-materials, #tab-version-history').forEach(function(btn) {
+  btn.addEventListener('click', function() {
+    document.getElementById('sidebar-tabs').classList.remove('open');
+    document.getElementById('mobile-overlay').classList.remove('show');
+  });
+});
+
+// Toast提示
+function showToast(message, type) {
+  var toast = document.createElement('div');
+  var colors = {
+    success: 'bg-emerald-500',
+    error: 'bg-red-500',
+    info: 'bg-blue-500'
+  };
+  toast.className = 'fixed top-4 right-4 ' + (colors[type] || colors.info) + ' text-white px-4 py-3 rounded-xl shadow-lg z-[9999] flex items-center gap-2 animate-fade-in';
+  toast.innerHTML = '<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg><span class="font-medium">' + message + '</span>';
+  document.body.appendChild(toast);
+  setTimeout(function() {
+    toast.style.opacity = '0';
+    toast.style.transform = 'translateY(-10px)';
+    setTimeout(function() { toast.remove(); }, 300);
+  }, 3000);
+}
+
+// 增强保存按钮
+document.querySelector('[data-dom-id="btn-save"]')?.addEventListener('click', function() {
+  showToast('文书已保存', 'success');
+});
+
+// 增强提交按钮
+document.querySelector('[data-dom-id="btn-submit"]')?.addEventListener('click', function() {
+  if (confirm('确认提交当前文书？提交后进入审核流程，将无法直接编辑。')) {
+    showToast('文书已提交审核', 'success');
+  }
+});
+</script>
+
+</body></html>

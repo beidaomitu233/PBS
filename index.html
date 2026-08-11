@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PBS 留学申请管理系统 · 原型图 5.0 导航</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", Roboto, "Helvetica Neue", Arial, sans-serif;
+    background: #F9FAFB; color: #1F2937; min-height: 100vh;
+  }
+  header {
+    background: #fff; border-bottom: 1px solid #E5E7EB;
+    position: sticky; top: 0; z-index: 50;
+  }
+  .header-inner {
+    max-width: 1200px; margin: 0 auto; height: 60px;
+    display: flex; align-items: center; gap: 12px; padding: 0 24px;
+  }
+  .logo {
+    width: 34px; height: 34px; border-radius: 9px; flex-shrink: 0;
+    background: linear-gradient(135deg, #2563EB, #60A5FA);
+    color: #fff; font-weight: 700; font-size: 15px;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .header-title { font-size: 16px; font-weight: 600; }
+  .header-sub { font-size: 12px; color: #9CA3AF; margin-left: 4px; }
+  .badge-ver {
+    margin-left: auto; font-size: 12px; color: #2563EB;
+    background: #EFF6FF; border: 1px solid #BFDBFE;
+    padding: 4px 10px; border-radius: 999px;
+  }
+  .wrap { max-width: 1200px; margin: 0 auto; padding: 28px 24px 60px; }
+
+  .entry {
+    background: linear-gradient(135deg, #2563EB, #3B82F6 60%, #60A5FA);
+    border-radius: 16px; padding: 28px 32px; color: #fff;
+    display: flex; align-items: center; justify-content: space-between;
+    gap: 24px; flex-wrap: wrap; margin-bottom: 32px;
+    box-shadow: 0 10px 24px rgba(37, 99, 235, .18);
+  }
+  .entry h1 { font-size: 20px; font-weight: 700; margin-bottom: 8px; }
+  .entry p { font-size: 13px; opacity: .92; line-height: 1.7; }
+  .entry-btn {
+    background: #fff; color: #1D4ED8; text-decoration: none;
+    font-size: 14px; font-weight: 600; padding: 12px 26px;
+    border-radius: 10px; white-space: nowrap;
+    box-shadow: 0 4px 12px rgba(0,0,0,.12); transition: transform .15s ease;
+  }
+  .entry-btn:hover { transform: translateY(-1px); }
+
+  .notice {
+    background: #FFFBEB; border: 1px solid #FDE68A; color: #92400E;
+    font-size: 12.5px; line-height: 1.8; border-radius: 12px;
+    padding: 12px 16px; margin-bottom: 32px;
+  }
+
+  .section { margin-bottom: 28px; }
+  .section-head {
+    display: flex; align-items: center; gap: 10px; margin-bottom: 14px;
+  }
+  .section-icon {
+    width: 28px; height: 28px; border-radius: 8px; background: #EFF6FF;
+    display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+  }
+  .section-icon svg { width: 15px; height: 15px; stroke: #2563EB; }
+  .section-title { font-size: 15px; font-weight: 600; color: #374151; }
+  .section-count { font-size: 12px; color: #9CA3AF; }
+
+  .grid {
+    display: grid; gap: 12px;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  }
+  .card {
+    background: #fff; border: 1px solid #E5E7EB; border-radius: 12px;
+    padding: 16px 18px; text-decoration: none; color: inherit;
+    display: block; transition: all .15s ease; position: relative;
+  }
+  .card:hover {
+    border-color: #93C5FD; box-shadow: 0 6px 16px rgba(37,99,235,.10);
+    transform: translateY(-2px);
+  }
+  .card-name { font-size: 14px; font-weight: 600; color: #1F2937; display: flex; align-items: center; gap: 8px; }
+  .card-desc { font-size: 12px; color: #9CA3AF; margin-top: 6px; line-height: 1.6; }
+  .tag {
+    font-size: 10px; padding: 1.5px 7px; border-radius: 999px; flex-shrink: 0;
+    font-weight: 500;
+  }
+  .tag-list { background: #EFF6FF; color: #2563EB; }
+  .tag-detail { background: #ECFDF5; color: #059669; }
+  .tag-editor { background: #F5F3FF; color: #7C3AED; }
+  .tag-entry { background: #FEF3C7; color: #B45309; }
+  .card::after {
+    content: "›"; position: absolute; right: 16px; top: 14px;
+    color: #D1D5DB; font-size: 18px; font-weight: 600;
+  }
+  footer {
+    text-align: center; color: #9CA3AF; font-size: 12px; padding: 24px 0 8px;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-inner">
+    <div class="logo">P</div>
+    <span class="header-title">留学申请管理系统</span>
+    <span class="header-sub">原型图导航</span>
+    <span class="badge-ver">原型图 5.0 · 共 34 页</span>
+  </div>
+</header>
+
+<div class="wrap">
+
+  <div class="entry">
+    <div>
+      <h1>从登录页开始完整走查</h1>
+      <p>点击任一演示账号「一键登录」→ 进入管理员工作台 → 通过左侧导航栏点击切换各模块页面</p>
+    </div>
+    <a class="entry-btn" href="登录 - PBS留学申请管理平台.html">进入登录页 →</a>
+  </div>
+
+  <div class="notice">
+    ⚠️ 请先<b>解压全部文件</b>再打开本页（不要直接在压缩包里双击）。本页与同目录下的 33 个 HTML 页面及其 _files 资源文件夹必须保持在一起，单独移动或改名会导致跳转失效。
+  </div>
+
+  <!-- 模块分组：与系统左侧导航一致 -->
+
+  <div class="section">
+    <div class="section-head">
+      <div class="section-icon"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l9-9 9 9M5 10v10a1 1 0 001 1h3a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1h3a1 1 0 001-1V10"/></svg></div>
+      <span class="section-title">工作台</span><span class="section-count">1 页</span>
+    </div>
+    <div class="grid">
+      <a class="card" href="管理员工作台 - 留学申请管理系统.html"><div class="card-name">管理员工作台 <span class="tag tag-entry">首页</span></div><div class="card-desc">留学机构管理员的数据总览与快捷入口</div></a>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-head">
+      <div class="section-icon"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V8a2 2 0 00-2-2h-5m-4 0V5a2 2 0 114 0v1m-4 0a2 2 0 104 0m-5 8a2 2 0 100-4 2 2 0 000 4zm0 0c1.306 0 2.417.835 2.83 2M9 14a3.001 3.001 0 00-2.83 2"/></svg></div>
+      <span class="section-title">学生档案</span><span class="section-count">2 页</span>
+    </div>
+    <div class="grid">
+      <a class="card" href="学生档案列表页 - 留学申请管理系统.html"><div class="card-name">学生档案列表页 <span class="tag tag-list">列表</span></div><div class="card-desc">学生档案的检索、筛选与管理</div></a>
+      <a class="card" href="学生档案详情页 - 留学申请管理系统.html"><div class="card-name">学生档案详情页 <span class="tag tag-detail">详情</span></div><div class="card-desc">学生全景档案：背景、成绩、申请进度</div></a>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-head">
+      <div class="section-icon"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"/></svg></div>
+      <span class="section-title">PMO 监控台</span><span class="section-count">3 页</span>
+    </div>
+    <div class="grid">
+      <a class="card" href="项目池列表页 - 留学申请管理系统.html"><div class="card-name">项目池列表页 <span class="tag tag-list">列表</span></div><div class="card-desc">全部申请项目的池化监控与分配</div></a>
+      <a class="card" href="项目详情页 - 留学申请管理系统.html"><div class="card-name">项目详情页 <span class="tag tag-detail">详情</span></div><div class="card-desc">单项目全维度进度与交付明细</div></a>
+      <a class="card" href="PMO看板 - 留学申请管理系统.html"><div class="card-name">PMO 看板 <span class="tag tag-list">看板</span></div><div class="card-desc">项目状态泳道视图与风险预警</div></a>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-head">
+      <div class="section-icon"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg></div>
+      <span class="section-title">项目管理</span><span class="section-count">2 页</span>
+    </div>
+    <div class="grid">
+      <a class="card" href="我的项目列表页 - 留学申请管理系统.html"><div class="card-name">我的项目列表页 <span class="tag tag-list">列表</span></div><div class="card-desc">项目经理名下项目与待办</div></a>
+      <a class="card" href="我的项目详情页 - 留学申请管理系统.html"><div class="card-name">我的项目详情页 <span class="tag tag-detail">详情</span></div><div class="card-desc">项目执行视图：子项目、任务与节点</div></a>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-head">
+      <div class="section-icon"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg></div>
+      <span class="section-title">文书交付</span><span class="section-count">5 页</span>
+    </div>
+    <div class="grid">
+      <a class="card" href="任务列表页 - 文书交付系统.html"><div class="card-name">任务列表页 <span class="tag tag-list">列表</span></div><div class="card-desc">文书写作任务的认领与交付</div></a>
+      <a class="card" href="文书编辑器 - 文书交付系统.html"><div class="card-name">文书编辑器 <span class="tag tag-editor">编辑器</span></div><div class="card-desc">在线撰写文书，支持 AI 辅助与版本</div></a>
+      <a class="card" href="模板库列表 - 文书交付系统.html"><div class="card-name">模板库列表 <span class="tag tag-list">列表</span></div><div class="card-desc">文书模板资产管理</div></a>
+      <a class="card" href="模板库编辑 - 文书交付系统.html"><div class="card-name">模板库编辑 <span class="tag tag-editor">编辑器</span></div><div class="card-desc">模板结构编辑与变量配置</div></a>
+      <a class="card" href="案例库 - 文书交付系统.html"><div class="card-name">案例库 <span class="tag tag-list">列表</span></div><div class="card-desc">过往文书案例资产，支持 AI 解析</div></a>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-head">
+      <div class="section-icon"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/></svg></div>
+      <span class="section-title">文书审核</span><span class="section-count">2 页</span>
+    </div>
+    <div class="grid">
+      <a class="card" href="文书审核列表页 - 留学申请管理系统.html"><div class="card-name">文书审核列表页 <span class="tag tag-list">列表</span></div><div class="card-desc">待审核文书队列与分派</div></a>
+      <a class="card" href="文书审核详情页 - 留学申请管理系统.html"><div class="card-name">文书审核详情页 <span class="tag tag-detail">详情</span></div><div class="card-desc">审阅批注、评分与审核结论</div></a>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-head">
+      <div class="section-icon"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg></div>
+      <span class="section-title">网申管理</span><span class="section-count">2 页</span>
+    </div>
+    <div class="grid">
+      <a class="card" href="网申任务列表页 - 留学申请管理系统.html"><div class="card-name">网申任务列表页 <span class="tag tag-list">列表</span></div><div class="card-desc">网申填报任务队列与状态跟踪</div></a>
+      <a class="card" href="网申任务详情页 - 留学申请管理系统.html"><div class="card-name">网申任务详情页 <span class="tag tag-detail">详情</span></div><div class="card-desc">单校网申填报项与提交记录</div></a>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-head">
+      <div class="section-icon"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg></div>
+      <span class="section-title">监控管理</span><span class="section-count">4 页</span>
+    </div>
+    <div class="grid">
+      <a class="card" href="监控任务列表 - PBS留学CRM.html"><div class="card-name">监控任务列表 <span class="tag tag-list">列表</span></div><div class="card-desc">申请结果监控任务的配置与状态</div></a>
+      <a class="card" href="监控详情页 - 留学申请管理系统.html"><div class="card-name">监控详情页 <span class="tag tag-detail">详情</span></div><div class="card-desc">监控任务的执行记录与结果</div></a>
+      <a class="card" href="监控详情页（官网） - 留学申请管理系统.html"><div class="card-name">监控详情页（官网） <span class="tag tag-detail">详情</span></div><div class="card-desc">官网渠道监控视图</div></a>
+      <a class="card" href="监控详情页（邮件） - 留学申请管理系统.html"><div class="card-name">监控详情页（邮件） <span class="tag tag-detail">详情</span></div><div class="card-desc">邮件渠道监控视图</div></a>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-head">
+      <div class="section-icon"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4"/></svg></div>
+      <span class="section-title">结项归档</span><span class="section-count">2 页</span>
+    </div>
+    <div class="grid">
+      <a class="card" href="结项归档列表 - PBS留学CRM系统.html"><div class="card-name">结项归档列表 <span class="tag tag-list">列表</span></div><div class="card-desc">已结项服务的归档检索</div></a>
+      <a class="card" href="结项详情页 - 留学申请管理系统.html"><div class="card-name">结项详情页 <span class="tag tag-detail">详情</span></div><div class="card-desc">结项报告、材料清单与评价</div></a>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-head">
+      <div class="section-icon"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14l9-5-9-5-9 5 9 5zm0 0l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z"/></svg></div>
+      <span class="section-title">选校工作台</span><span class="section-count">5 页</span>
+    </div>
+    <div class="grid">
+      <a class="card" href="选校订单池页 - 留学申请管理系统.html"><div class="card-name">选校订单池页 <span class="tag tag-list">列表</span></div><div class="card-desc">待承接的选校服务订单</div></a>
+      <a class="card" href="选校任务列表页 - 留学申请管理系统.html"><div class="card-name">选校任务列表页 <span class="tag tag-list">列表</span></div><div class="card-desc">选校方案制定任务跟踪</div></a>
+      <a class="card" href="选校工作台页 - 留学申请管理系统.html"><div class="card-name">选校工作台页 <span class="tag tag-editor">工作台</span></div><div class="card-desc">院校检索对比与方案编排</div></a>
+      <a class="card" href="选校方案详情页 - 留学申请管理系统.html"><div class="card-name">选校方案详情页 <span class="tag tag-detail">详情</span></div><div class="card-desc">冲刺/匹配/保底方案明细</div></a>
+      <a class="card" href="院校目标详情页 - 留学申请管理系统.html"><div class="card-name">院校目标详情页 <span class="tag tag-detail">详情</span></div><div class="card-desc">目标院校要求与申请清单</div></a>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-head">
+      <div class="section-icon"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/></svg></div>
+      <span class="section-title">系统管理</span><span class="section-count">5 页</span>
+    </div>
+    <div class="grid">
+      <a class="card" href="用户管理 - 留学申请管理系统.html"><div class="card-name">用户管理 <span class="tag tag-list">列表</span></div><div class="card-desc">系统账号的创建与停用</div></a>
+      <a class="card" href="角色权限管理 - 留学申请管理系统.html"><div class="card-name">角色权限管理 <span class="tag tag-list">列表</span></div><div class="card-desc">角色定义与功能权限配置</div></a>
+      <a class="card" href="操作日志审计 - 留学申请管理系统.html"><div class="card-name">操作日志审计 <span class="tag tag-list">列表</span></div><div class="card-desc">关键操作留痕与追溯</div></a>
+      <a class="card" href="人员管理 - PBS留学CRM系统.html"><div class="card-name">人员管理 <span class="tag tag-list">列表</span></div><div class="card-desc">全体人员信息、角色与状态</div></a>
+      <a class="card" href="AI管理 - 留学申请管理系统.html"><div class="card-name">AI 管理 <span class="tag tag-editor">配置</span></div><div class="card-desc">模型厂商、提示词、效果评测与主备容灾配置</div></a>
+    </div>
+  </div>
+
+  <footer>PBS 留学申请管理系统 · 原型图 5.0 · 本地静态演示，无需联网</footer>
+</div>
+
+</body>
+</html>

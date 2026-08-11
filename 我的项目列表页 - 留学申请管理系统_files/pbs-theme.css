@@ -1,0 +1,164 @@
+/* ============================================================
+   PBS 留学申请管理平台 · v3.2 视觉主题（精修版）
+   浅色灰蓝底 + 氛围光斑 + 白色大圆角卡片 + 紫色主色
+   ============================================================ */
+:root {
+  --pbs-primary: #7C6AED;
+  --pbs-primary-dark: #6A5AD8;
+  --pbs-primary-deeper: #5B4CC7;
+  --pbs-primary-light: #EFECFF;
+  --pbs-primary-lighter: #F6F4FF;
+  --pbs-bg: #E9EEF3;
+  --pbs-ink: #1E1B3A;
+  --pbs-card-shadow: 0 4px 24px rgba(30, 27, 75, 0.06);
+  --pbs-card-shadow-lg: 0 12px 40px rgba(30, 27, 75, 0.10);
+  --pbs-card-shadow-hover: 0 12px 36px rgba(30, 27, 75, 0.12);
+}
+
+/* ---------- 页面背景：浅灰蓝 + 两团氛围光 ---------- */
+body {
+  background:
+    radial-gradient(720px 460px at 88% -6%, rgba(124, 106, 237, 0.12), transparent 62%),
+    radial-gradient(560px 420px at -8% 108%, rgba(120, 168, 250, 0.10), transparent 60%),
+    var(--pbs-bg) !important;
+  background-attachment: fixed !important;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* 文字选中色 */
+::selection { background: rgba(124, 106, 237, 0.22); }
+
+/* ---------- 大圆角体系 ---------- */
+.rounded-xl { border-radius: 20px !important; }
+.rounded-lg { border-radius: 14px !important; }
+
+/* ---------- 卡片：白底 + 柔和阴影 + 悬浮反馈 ---------- */
+.shadow-sm { box-shadow: var(--pbs-card-shadow) !important; }
+.shadow-md, .shadow-lg { box-shadow: var(--pbs-card-shadow-lg) !important; }
+.bg-white.rounded-xl, .bg-white.rounded-2xl {
+  transition: box-shadow 0.22s ease, transform 0.22s ease;
+}
+.bg-white.rounded-xl:hover, .bg-white.rounded-2xl:hover {
+  box-shadow: var(--pbs-card-shadow-hover) !important;
+}
+.border-gray-100 { border-color: #EFEFF4 !important; }
+.border-gray-200 { border-color: #E8E8F0 !important; }
+.divide-gray-100 > * + * { border-color: #F1F1F6 !important; }
+.divide-gray-200 > * + * { border-color: #ECECF2 !important; }
+
+/* ---------- 标题排版 ---------- */
+h1 { letter-spacing: -0.01em; color: var(--pbs-ink); }
+h2, h3 { color: var(--pbs-ink); }
+h1.text-2xl { font-size: 26px !important; font-weight: 700 !important; }
+
+/* ---------- 侧边栏：悬浮白色卡片 ---------- */
+#pbs-sidebar {
+  background: #FFFFFF !important;
+  border: none !important;
+  border-radius: 24px;
+  margin: 16px 0 16px 16px;
+  min-height: calc(100vh - 32px) !important;
+  box-shadow: var(--pbs-card-shadow);
+  position: sticky;
+  top: 16px;
+}
+#pbs-sidebar nav a, #pbs-sidebar nav .rounded-lg {
+  border-radius: 12px !important;
+  transition: background 0.18s ease, color 0.18s ease, box-shadow 0.18s ease;
+}
+/* 选中菜单：淡紫 pill + 微投影 + 加粗 */
+#pbs-sidebar a.bg-blue-50 {
+  box-shadow: 0 6px 14px rgba(124, 106, 237, 0.18);
+  font-weight: 600 !important;
+}
+#pbs-sidebar a:hover { background: var(--pbs-primary-lighter) !important; }
+
+/* ---------- 顶栏：融入背景的磨砂条 ---------- */
+header.sticky, header.bg-white {
+  background: rgba(233, 238, 243, 0.75) !important;
+  backdrop-filter: blur(12px) saturate(1.1);
+  -webkit-backdrop-filter: blur(12px) saturate(1.1);
+  border-bottom: none !important;
+}
+/* 顶栏搜索框胶囊化 */
+header input { border-radius: 9999px !important; }
+
+/* ---------- 主色：蓝 → 紫 ---------- */
+.bg-blue-600 { background-color: var(--pbs-primary) !important; }
+.hover\:bg-blue-700:hover { background-color: var(--pbs-primary-dark) !important; }
+.bg-blue-700 { background-color: var(--pbs-primary-dark) !important; }
+.text-blue-600 { color: var(--pbs-primary-dark) !important; }
+.text-blue-700 { color: var(--pbs-primary-deeper) !important; }
+.hover\:text-blue-800:hover { color: var(--pbs-primary-deeper) !important; }
+.hover\:text-blue-700:hover { color: var(--pbs-primary-dark) !important; }
+.bg-blue-50 { background-color: var(--pbs-primary-light) !important; }
+.hover\:bg-blue-50:hover { background-color: var(--pbs-primary-light) !important; }
+.border-blue-500, .border-blue-600 { border-color: var(--pbs-primary) !important; }
+.focus\:border-blue-500:focus { border-color: var(--pbs-primary) !important; }
+.focus\:ring-blue-500:focus { --tw-ring-color: rgba(124, 106, 237, 0.35) !important; }
+.ring-blue-500 { --tw-ring-color: rgba(124, 106, 237, 0.35) !important; }
+
+/* 表头底色（淡紫灰）+ 表头字体 */
+.bg-gray-50 { background-color: #F4F3FA !important; }
+.hover\:bg-gray-50:hover { background-color: #F7F6FC !important; }
+thead th { letter-spacing: 0.02em; }
+tbody tr { transition: background-color 0.15s ease; }
+
+/* ---------- 渐变色映射（紫系） ---------- */
+.from-blue-500 { --tw-gradient-from: #8B7CF6 !important; --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to, rgba(139, 124, 246, 0)) !important; }
+.from-blue-600 { --tw-gradient-from: #7C6AED !important; --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to, rgba(124, 106, 237, 0)) !important; }
+.from-blue-50  { --tw-gradient-from: #F1EFFF !important; --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to, rgba(241, 239, 255, 0)) !important; }
+.to-purple-500, .to-indigo-500 { --tw-gradient-to: #7C6AED !important; }
+.to-blue-700   { --tw-gradient-to: #6A5AD8 !important; }
+.to-indigo-50  { --tw-gradient-to: #E9E6FF !important; }
+.text-blue-100 { color: #E3DEFE !important; }
+.text-blue-200 { color: #CFC8FB !important; }
+
+/* ---------- 按钮：胶囊化 + 主按钮光晕 ---------- */
+button.bg-blue-600, a.bg-blue-600 {
+  border-radius: 9999px !important;
+  box-shadow: 0 8px 18px rgba(124, 106, 237, 0.30);
+  transition: box-shadow 0.2s ease, transform 0.15s ease, background 0.18s ease !important;
+}
+button.bg-blue-600:hover, a.bg-blue-600:hover {
+  box-shadow: 0 10px 24px rgba(124, 106, 237, 0.38);
+  transform: translateY(-1px);
+}
+button.bg-green-600, a.bg-green-600, button.bg-red-600, a.bg-red-600 {
+  border-radius: 9999px !important;
+  transition: box-shadow 0.2s ease, transform 0.15s ease, background 0.18s ease !important;
+}
+button.bg-green-600:hover, button.bg-red-600:hover { transform: translateY(-1px); }
+/* 次要描边按钮：胶囊 + 悬浮泛紫 */
+button.border.border-gray-300, button.border-gray-200.rounded-lg, a.border.border-gray-300 {
+  border-radius: 9999px !important;
+  transition: border-color 0.18s ease, color 0.18s ease, background 0.18s ease !important;
+}
+button.border.border-gray-300:hover, a.border.border-gray-300:hover {
+  border-color: #C6BCF5 !important;
+  color: var(--pbs-primary-dark) !important;
+  background: var(--pbs-primary-lighter) !important;
+}
+
+/* ---------- 输入控件 ---------- */
+input[type="text"].rounded-lg, input[type="date"].rounded-lg,
+select.rounded-lg, textarea.rounded-lg {
+  border-radius: 12px !important;
+  box-shadow: 0 1px 2px rgba(30, 27, 75, 0.04);
+  transition: border-color 0.18s ease, box-shadow 0.18s ease !important;
+}
+input:focus, select:focus, textarea:focus {
+  box-shadow: 0 0 0 4px rgba(124, 106, 237, 0.10) !important;
+}
+
+/* ---------- 弹窗：超大圆角 ---------- */
+.rounded-2xl { border-radius: 24px !important; }
+
+/* ---------- 徽章更圆润 ---------- */
+span.rounded-full { letter-spacing: 0.01em; }
+
+/* ---------- 滚动条 ---------- */
+::-webkit-scrollbar { width: 8px; height: 8px; }
+::-webkit-scrollbar-thumb { background: #C9C4E8; border-radius: 8px; }
+::-webkit-scrollbar-thumb:hover { background: #B0A8E0; }
+::-webkit-scrollbar-track { background: transparent; }

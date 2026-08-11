@@ -671,8 +671,63 @@
   </div>
 
   <script>
+    // AI 管理页的自动保存操作统一写入本页审计日志。
+    function loadAiOperationLogs() {
+      try {
+        var logs = JSON.parse(localStorage.getItem('pbs_operation_logs_v1') || '[]');
+        return Array.isArray(logs) ? logs : [];
+      } catch (e) {
+        return [];
+      }
+    }
+
     // 模拟数据
-    var allLogs = [
+    var allLogs = loadAiOperationLogs().concat([
+      {
+        time: '2026-08-12 16:42:18',
+        user: '平台运营人员',
+        organization: 'PBS留学总部',
+        type: '修改',
+        content: 'AI 管理：更新案例包解析模板；PS / 硕士模板调整为固定字段结构并自动保存',
+        ip: '192.168.1.100',
+        result: '成功'
+      },
+      {
+        time: '2026-08-12 16:35:06',
+        user: '平台运营人员',
+        organization: 'PBS留学总部',
+        type: '修改',
+        content: 'AI 管理：修改主次模型；Qwen 主模型 → DeepSeek 次模型',
+        ip: '192.168.1.100',
+        result: '成功'
+      },
+      {
+        time: '2026-08-12 16:28:47',
+        user: '平台运营人员',
+        organization: 'PBS留学总部',
+        type: '修改',
+        content: 'AI 管理：修改默认请求参数；Temperature 0.2，最大输出 8192 Token，流式响应开启',
+        ip: '192.168.1.100',
+        result: '成功'
+      },
+      {
+        time: '2026-08-12 16:20:31',
+        user: '平台运营人员',
+        organization: 'PBS留学总部',
+        type: '修改',
+        content: 'AI 管理：更新 Kimi 厂商 API Key；密钥已保存为掩码并通过连接测试',
+        ip: '192.168.1.100',
+        result: '成功'
+      },
+      {
+        time: '2026-08-12 16:08:55',
+        user: '平台运营人员',
+        organization: 'PBS留学总部',
+        type: '新增',
+        content: 'AI 管理：运行案例包 AI 解析效果评测；发布金标集 120 条，结构一致性 100%，评测通过',
+        ip: '192.168.1.100',
+        result: '成功'
+      },
       {
         time: '2026-07-17 09:15:32',
         user: '管理员',
@@ -745,7 +800,7 @@
         ip: '192.168.1.100',
         result: '成功'
       }
-    ];
+    ]);
 
     var filteredLogs = allLogs.slice();
     var currentPage = 1;

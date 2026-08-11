@@ -303,19 +303,25 @@
         opacity: 1;
         transform: translate(-50%, -100%) translateY(-10px) scale(1);
       }
-      #ddlMerchantTip .tip-label {
+      #ddlMerchantTip .tip-title {
         font-size: 11px;
         color: #9CA3AF;
-        margin-bottom: 2px;
+        margin-bottom: 6px;
       }
+      #ddlMerchantTip .tip-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 18px;
+        font-size: 12px;
+        line-height: 1.8;
+      }
+      #ddlMerchantTip .tip-source { color: #D1D5DB; }
       #ddlMerchantTip .tip-date {
         font-size: 13px;
         font-weight: 600;
         color: #FFFFFF;
         font-variant-numeric: tabular-nums;
-      }
-      #ddlMerchantTip .tip-date.same {
-        color: #34D399;
       }
       /* 小三角箭头 */
       #ddlMerchantTip::after {
@@ -514,7 +520,7 @@
             </tr>
           </thead>
           <tbody class="divide-y divide-gray-100" id="myProjTbody">
-            <tr data-kw="1PRJ20260701002李慧敏李雪硕士申请交付中2026-10-012026-10-152026-11-012026-07-1409:30详情" data-project="PRJ20260701002" data-name="李慧敏" data-student="李雪" data-level="硕士申请" data-status="交付中" data-matddl="2026-10-01" data-docddl="2026-10-15" data-appddl="2026-11-01" data-matddl-m="2026-09-25" data-docddl-m="2026-10-10" data-appddl-m="2026-10-25" data-time="2026-07-1409:30" class="hover:bg-gray-50 transition-colors cursor-pointer" data-dom-id="btn-my-project-detail-1">
+            <tr data-kw="1PRJ20260701002李慧敏李雪硕士申请交付中2026-09-252026-10-152026-11-012026-07-1409:30详情" data-project="PRJ20260701002" data-name="李慧敏" data-student="李雪" data-level="硕士申请" data-status="交付中" data-matddl="2026-09-25" data-docddl="2026-10-15" data-appddl="2026-11-01" data-matddl-m="2026-09-28" data-docddl-m="2026-10-10" data-appddl-m="2026-10-25" data-time="2026-07-1409:30" class="hover:bg-gray-50 transition-colors cursor-pointer" data-dom-id="btn-my-project-detail-1">
               <td class="px-5 py-4 text-sm text-gray-900">1</td>
               <td class="px-5 py-4 text-sm text-gray-900">PRJ20260701002</td>
               <td class="px-5 py-4 text-sm font-medium text-gray-900">李慧敏</td>
@@ -523,7 +529,7 @@
               <td class="px-5 py-4">
                 <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">交付中</span>
               </td>
-              <td class="px-5 py-4 text-sm text-gray-500 ddl-has-merchant"><span>2026-10-01</span></td>
+              <td class="px-5 py-4 text-sm text-gray-500 ddl-has-merchant"><span>2026-09-25</span></td>
               <td class="px-5 py-4 text-sm text-gray-500 ddl-has-merchant"><span>2026-10-15</span></td>
               <td class="px-5 py-4 text-sm text-gray-500 ddl-has-merchant"><span>2026-11-01</span></td>
               <td class="px-5 py-4 text-sm text-gray-500">2026-07-1409:30</td>
@@ -683,8 +689,19 @@
         <h3 class="text-lg font-semibold text-gray-800">系统消息</h3>
       </div>
       <div class="bg-blue-50 rounded-xl p-4 mb-5">
-        <p class="text-sm text-gray-700 font-medium mb-3">你有 3 条未读消息</p>
+        <p class="text-sm text-gray-700 font-medium mb-3">你有 4 条未读消息</p>
         <div class="space-y-3">
+          <div class="flex items-start gap-3 p-2 bg-white rounded-lg">
+            <div class="w-2 h-2 bg-red-500 rounded-full mt-1.5 flex-shrink-0"></div>
+            <div class="flex-1">
+              <p class="text-sm text-gray-900">项目 PRJ20260701002 · 材料准备DDL</p>
+              <div class="grid grid-cols-[72px_1fr] gap-x-3 text-xs mt-1.5">
+                <span class="text-gray-500">管理配置</span><span class="text-gray-800 font-medium">2026-09-25</span>
+                <span class="text-gray-500">商户配置</span><span class="text-gray-800 font-medium">2026-09-28</span>
+              </div>
+              <p class="text-xs text-gray-400 mt-1">刚刚</p>
+            </div>
+          </div>
           <div class="flex items-start gap-3 p-2 bg-white rounded-lg">
             <div class="w-2 h-2 bg-red-500 rounded-full mt-1.5 flex-shrink-0"></div>
             <div>
@@ -875,27 +892,28 @@
   <!-- 商户DDL悬浮提示 -->
   <script>
     (function () {
-      /* 三个DDL列：单元格索引、列名、行上的商户数据属性(dataset键) */
+      /* 三个DDL列：同时展示管理配置与商户配置 */
       var DDL_COLS = [
-        { idx: 6, name: '材料准备DDL', key: 'matddlM' },
-        { idx: 7, name: '文书交付DDL', key: 'docddlM' },
-        { idx: 8, name: '网申提交DDL', key: 'appddlM' }
+        { idx: 6, name: '材料准备DDL', manageKey: 'matddl', merchantKey: 'matddlM' },
+        { idx: 7, name: '文书交付DDL', manageKey: 'docddl', merchantKey: 'docddlM' },
+        { idx: 8, name: '网申提交DDL', manageKey: 'appddl', merchantKey: 'appddlM' }
       ];
 
       document.addEventListener('DOMContentLoaded', function () {
         /* 创建悬浮框 */
         var tip = document.createElement('div');
         tip.id = 'ddlMerchantTip';
-        tip.innerHTML = '<div class="tip-label"></div><div class="tip-date"></div>';
+        tip.innerHTML = '<div class="tip-title"></div><div class="tip-row"><span class="tip-source">管理配置</span><span class="tip-date" data-tip="manage"></span></div><div class="tip-row"><span class="tip-source">商户配置</span><span class="tip-date" data-tip="merchant"></span></div>';
         document.body.appendChild(tip);
-        var tipLabel = tip.firstElementChild;
-        var tipDate = tip.lastElementChild;
+        var tipTitle = tip.querySelector('.tip-title');
+        var manageDate = tip.querySelector('[data-tip="manage"]');
+        var merchantDate = tip.querySelector('[data-tip="merchant"]');
 
         /* 给有商户DDL数据的单元格加可悬浮标记（虚线下划线） */
         document.querySelectorAll('#myProjTbody tr[data-kw]').forEach(function (tr) {
           var tds = tr.children;
           DDL_COLS.forEach(function (col) {
-            var val = tr.dataset[col.key];
+            var val = tr.dataset[col.merchantKey];
             var td = tds[col.idx];
             if (val && td && !td.classList.contains('ddl-has-merchant')) {
               td.classList.add('ddl-has-merchant');
@@ -910,10 +928,12 @@
             if (DDL_COLS[i].idx === td.cellIndex) { col = DDL_COLS[i]; break; }
           }
           if (!col) return;
-          var val = td.parentElement.dataset[col.key];
-          if (!val) return;
-          tipLabel.textContent = '商户传来 · ' + col.name;
-          tipDate.textContent = val;
+          var row = td.parentElement;
+          var merchantVal = row.dataset[col.merchantKey];
+          if (!merchantVal) return;
+          tipTitle.textContent = col.name;
+          manageDate.textContent = row.dataset[col.manageKey] || '—';
+          merchantDate.textContent = merchantVal;
           var rect = td.getBoundingClientRect();
           tip.classList.add('show');
           /* 悬浮于单元格正上方居中，防止超出视口左右边缘 */

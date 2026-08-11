@@ -999,7 +999,7 @@
       <div class="flex-1 overflow-y-auto px-6 py-5">
         <div class="bg-blue-50 border border-blue-100 rounded-xl p-3 mb-4 flex items-start gap-2">
           <svg class="w-4 h-4 text-blue-600 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-          <p class="text-xs text-blue-700 leading-relaxed">支付节点可自定义增删、改名、调整金额与顺序；<span class="font-medium">已支付节点</span>金额与记录锁定，仅可修改名称。保存后支付时间线实时更新。</p>
+          <p class="text-xs text-blue-700 leading-relaxed">机构管理员可修改支付状态。标记为已支付后金额与时间锁定；改回待支付后恢复编辑。支付状态变更需要二次确认。</p>
         </div>
         <div id="payNodeList" class="space-y-2 mb-3"></div>
         <button class="w-full h-10 border-2 border-dashed border-gray-300 text-gray-500 rounded-lg hover:border-blue-400 hover:text-blue-600 transition-colors text-sm font-medium flex items-center justify-center gap-1.5" onclick="addPayNode()">
@@ -1013,6 +1013,26 @@
           <button class="flex-1 h-10 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium" onclick="savePayConfig()">保存配置</button>
           <button class="flex-1 h-10 bg-white border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors font-medium" onclick="closePayConfig()">取消</button>
         </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 支付状态二次确认 -->
+  <div id="payStatusConfirmModal" class="hidden fixed inset-0 flex items-center justify-center" style="z-index:120">
+    <div class="absolute inset-0 bg-black bg-opacity-40" onclick="closePayStatusConfirm()"></div>
+    <div class="relative w-[420px] bg-white rounded-xl shadow-2xl p-6">
+      <div class="flex items-start gap-3">
+        <span class="w-10 h-10 rounded-full bg-yellow-100 flex items-center justify-center flex-shrink-0">
+          <svg class="w-5 h-5 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
+        </span>
+        <div>
+          <h3 id="payStatusConfirmTitle" class="text-lg font-semibold text-gray-800">确认修改支付状态</h3>
+          <p id="payStatusConfirmText" class="text-sm text-gray-600 mt-2 leading-relaxed"></p>
+        </div>
+      </div>
+      <div class="flex items-center gap-3 mt-6">
+        <button class="flex-1 h-10 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium" onclick="confirmPayStatusChange()">确认修改</button>
+        <button class="flex-1 h-10 bg-white border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 font-medium" onclick="closePayStatusConfirm()">取消</button>
       </div>
     </div>
   </div>
@@ -1600,6 +1620,7 @@
 
     /* ---------------- 支付节点自定义配置 ---------------- */
     var payConfigDraft = null;
+    var pendingPayStatusIndex = null;
 
     function parseAmt(s) {
       if (s === null || s === undefined) { return 0; }
@@ -1620,8 +1641,10 @@
     }
     function closePayConfig() {
       document.getElementById('payConfigDrawer').classList.add('hidden');
+      document.getElementById('payStatusConfirmModal').classList.add('hidden');
       document.body.style.overflow = '';
       payConfigDraft = null;
+      pendingPayStatusIndex = null;
     }
     function syncDraftFromDOM() {
       if (!payConfigDraft) { return; }
@@ -1652,7 +1675,7 @@
           : '<input type="number" min="0" step="100" value="' + amountVal + '" placeholder="金额" data-field="amount" class="w-full h-9 pl-7 pr-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500">';
         var subLine = p.paid
           ? '<p class="text-[10px] text-blue-600 mt-2 pl-8">支付时间：' + p.time + '</p>'
-          : '<p class="text-[10px] text-gray-300 mt-2 pl-8">待支付 · 保存后按顺序展示在时间线</p>';
+          : '<p class="text-[10px] text-gray-400 mt-2 pl-8">待支付 · 金额与节点可编辑</p>';
         html += '<div class="border border-gray-200 rounded-lg p-3" data-idx="' + i + '">' +
           '<div class="flex items-center gap-2">' +
           '<span class="w-6 h-6 rounded-full ' + (p.paid ? 'bg-blue-600 text-white' : 'bg-blue-100 text-blue-600') + ' text-xs flex items-center justify-center flex-shrink-0 font-medium">' + (i + 1) + '</span>' +
@@ -1660,7 +1683,8 @@
           '<div class="relative w-[128px] flex-shrink-0"><span class="absolute left-3 top-1/2 -translate-y-1/2 text-sm text-gray-400">¥</span>' + amountInput + '</div>' +
           delBtn +
           '</div>' +
-          '<div class="flex items-center justify-between mt-2"><span class="pl-8">' + lockBadge + '</span></div>' +
+          '<div class="flex items-center justify-between mt-2"><span class="pl-8">' + lockBadge + '</span>' +
+          '<button class="px-3 py-1 text-xs text-blue-600 bg-blue-50 rounded-md hover:bg-blue-100 font-medium" onclick="requestPayStatusChange(' + i + ')">管理支付状态</button></div>' +
           subLine +
           '</div>';
       });
@@ -1680,6 +1704,42 @@
       if (payConfigDraft.length <= 1) { showPageToast('至少保留 1 个支付节点'); return; }
       payConfigDraft.splice(i, 1);
       renderPayNodeList();
+    }
+    function requestPayStatusChange(i) {
+      syncDraftFromDOM();
+      var node = payConfigDraft && payConfigDraft[i];
+      if (!node) { return; }
+      if (!node.paid && parseAmt(node.amount) <= 0) {
+        showPageToast('标记为已支付前，请先填写支付金额');
+        return;
+      }
+      pendingPayStatusIndex = i;
+      var target = node.paid ? '待支付' : '已支付';
+      document.getElementById('payStatusConfirmTitle').textContent = '确认改为“' + target + '”';
+      document.getElementById('payStatusConfirmText').textContent = node.paid
+        ? '节点“' + node.type + '”改回待支付后，原支付时间将清空，金额和节点将恢复编辑。'
+        : '节点“' + node.type + '”标记为已支付后，将记录当前支付时间并锁定金额。';
+      document.getElementById('payStatusConfirmModal').classList.remove('hidden');
+    }
+    function closePayStatusConfirm() {
+      document.getElementById('payStatusConfirmModal').classList.add('hidden');
+      pendingPayStatusIndex = null;
+    }
+    function currentDateTime() {
+      var now = new Date();
+      function pad(v) { return String(v).padStart(2, '0'); }
+      return now.getFullYear() + '-' + pad(now.getMonth() + 1) + '-' + pad(now.getDate()) + ' ' + pad(now.getHours()) + ':' + pad(now.getMinutes());
+    }
+    function confirmPayStatusChange() {
+      if (pendingPayStatusIndex === null || !payConfigDraft[pendingPayStatusIndex]) { closePayStatusConfirm(); return; }
+      var node = payConfigDraft[pendingPayStatusIndex];
+      node.paid = !node.paid;
+      node.time = node.paid ? currentDateTime() : null;
+      var result = node.paid ? '已支付' : '待支付';
+      document.getElementById('payStatusConfirmModal').classList.add('hidden');
+      pendingPayStatusIndex = null;
+      renderPayNodeList();
+      showPageToast('支付状态已改为“' + result + '”，请保存配置');
     }
     function savePayConfig() {
       syncDraftFromDOM();

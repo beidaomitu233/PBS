@@ -67,8 +67,11 @@
       children: [
         { label: '任务列表', file: '任务列表页 - 文书交付系统.html' },
         { label: '模板库', file: '模板库列表 - 文书交付系统.html' }] },
-    { key: 'apply', label: '网申管理', icon: 'globe', roles: ['网申人员'],
-      children: [{ label: '网申任务列表', file: '网申任务列表页 - 留学申请管理系统.html' }] },
+    { key: 'apply', label: '网申管理', icon: 'globe', roles: ['网申人员', '项目经理'],
+      children: [
+        { label: '网申任务列表', file: '网申任务列表页 - 留学申请管理系统.html' },
+        { label: '网申模板库', file: '网申模板库 - 留学申请管理系统.html' }
+      ] },
     { key: 'monitor', label: '监控管理', icon: 'eye', roles: ['项目经理'],
       children: [{ label: '监控任务列表', file: '监控任务列表 - PBS留学CRM.html' }] },
     { key: 'archive', label: '结项归档', icon: 'archive', roles: ['项目经理', '文书人员', '网申人员'],
@@ -113,8 +116,9 @@
     '文书编辑器 - 文书交付系统.html': ['文书人员', '文书机构管理员'],
     '模板库列表 - 文书交付系统.html': ['文书人员', '文书机构管理员'],
     '模板库编辑 - 文书交付系统.html': ['文书人员', '文书机构管理员'],
-    '网申任务列表页 - 留学申请管理系统.html': ['网申人员'],
-    '网申任务详情页 - 留学申请管理系统.html': ['网申人员'],
+    '网申任务列表页 - 留学申请管理系统.html': ['网申人员', '项目经理'],
+    '网申任务详情页 - 留学申请管理系统.html': ['网申人员', '项目经理'],
+    '网申模板库 - 留学申请管理系统.html': ['网申人员', '项目经理'],
     '监控任务列表 - PBS留学CRM.html': ['项目经理'],
     '监控详情页 - 留学申请管理系统.html': ['项目经理'],
     '结项归档列表 - PBS留学CRM系统.html': ['项目经理', '文书人员', '网申人员'],
@@ -181,6 +185,21 @@
       aiLink.innerHTML = '<span class="w-1.5 h-1.5 rounded-full ' +
         (file === 'AI管理 - 留学申请管理系统.html' ? 'bg-blue-600' : 'bg-gray-300') + '"></span>AI管理';
       container.appendChild(aiLink);
+    }
+
+    var canUseApplication = session.role === '超级管理员' || session.role === '网申人员' || session.role === '项目经理';
+    if (canUseApplication && !nav.querySelector('a[href="网申模板库 - 留学申请管理系统.html"]')) {
+      var taskLink = nav.querySelector('a[href="网申任务列表页 - 留学申请管理系统.html"]');
+      if (taskLink) {
+        var templateLink = document.createElement('a');
+        var templateActive = file === '网申模板库 - 留学申请管理系统.html';
+        templateLink.href = '网申模板库 - 留学申请管理系统.html';
+        templateLink.className = 'flex items-center gap-2 px-4 py-2 rounded-lg text-sm transition-colors ' +
+          (templateActive ? 'bg-blue-50 text-blue-600 font-medium' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-800');
+        templateLink.innerHTML = '<span class="w-1.5 h-1.5 rounded-full ' +
+          (templateActive ? 'bg-blue-600' : 'bg-gray-300') + '"></span>网申模板库';
+        taskLink.insertAdjacentElement('afterend', templateLink);
+      }
     }
   }
 

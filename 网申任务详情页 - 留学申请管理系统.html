@@ -341,6 +341,10 @@
           <p class="text-sm text-gray-500 mt-1">查看和管理网申任务的完整信息</p>
         </div>
         <div class="flex items-center gap-3">
+          <button data-dom-id="btn-reuse-template" class="flex items-center gap-2 px-4 py-2 bg-white border border-blue-300 text-blue-600 rounded-lg hover:bg-blue-50 transition-colors font-medium" onclick="openTemplateReuseModal()">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v6h6M20 20v-6h-6M5.07 15A7 7 0 0017 18.93M18.93 9A7 7 0 007 5.07"></path></svg>
+            复用模板
+          </button>
           <button data-dom-id="btn-update-progress" class="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium" onclick="openProgressModal()">
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
@@ -416,15 +420,27 @@
             </div>
             <span class="hidden text-sm text-gray-900" data-field="app-pwd-plain">CmU2026!</span>
           </div>
-          <div>
-            <span class="text-xs text-gray-500 block mb-1">关联邮箱</span>
-            <button class="text-sm text-blue-600 hover:underline inline-flex items-center gap-1" data-dom-id="link-email" onclick="openEmailRegister()" title="点击进入邮箱注册页面">
-              <span id="linkedEmailText">zhangming@cmu.edu</span>
-              <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 19.036a2 2 0 01-.897.518l-2.829.707.707-2.829a2 2 0 01.518-.897L13.768 5.768z"></path>
-              </svg>
-            </button>
-            <p class="text-xs text-gray-400 mt-0.5">点击进入邮箱注册页面，进行邮箱注册</p>
+          <div class="col-span-2 border border-gray-100 rounded-lg p-3">
+            <div class="flex items-center justify-between mb-3">
+              <span class="text-xs text-gray-500">关联邮箱</span>
+              <span id="linkedEmailText" class="text-xs text-gray-500">zhangming@cmu.edu</span>
+            </div>
+            <div class="flex border-b border-gray-200 mb-3">
+              <button id="emailRegisterTab" class="px-3 py-1.5 text-xs font-medium text-blue-600 border-b-2 border-blue-600" onclick="switchEmailBindingTab('register')">注册邮箱</button>
+              <button id="emailManualTab" class="px-3 py-1.5 text-xs font-medium text-gray-500 border-b-2 border-transparent" onclick="switchEmailBindingTab('manual')">手动绑定</button>
+            </div>
+            <div id="emailRegisterPanel" class="flex items-center justify-between gap-3">
+              <p class="text-xs text-gray-500">注册申请专用邮箱并自动关联</p>
+              <button class="px-3 py-1.5 text-xs text-blue-600 bg-blue-50 rounded-md hover:bg-blue-100 font-medium" onclick="openEmailRegister()">注册 / 管理</button>
+            </div>
+            <div id="emailManualPanel" class="hidden space-y-2">
+              <input id="manualEmailAccount" type="email" class="w-full h-9 px-3 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500" placeholder="邮箱账号">
+              <input id="manualEmailPassword" type="password" class="w-full h-9 px-3 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500" placeholder="邮箱密码或授权码">
+              <div class="flex items-center justify-between gap-3">
+                <p class="text-xs text-gray-400">使用 IMAP 协议连接，请确保邮箱已开启 IMAP 服务。</p>
+                <button class="px-3 py-1.5 text-xs text-white bg-blue-600 rounded-md hover:bg-blue-700 font-medium flex-shrink-0" onclick="confirmManualEmailBinding()">确认绑定</button>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -562,16 +578,16 @@
               <h2 class="text-base font-semibold text-gray-800">申请材料清单</h2>
             </div>
             <div class="flex items-center gap-2">
-              <span id="scanStateBadge" class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-yellow-100 text-yellow-700">AI 待匹配</span>
+              <span id="scanStateBadge" class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-gray-100 text-gray-600">未复用模板</span>
               <a href="网申模板库 - 留学申请管理系统.html" class="text-xs text-blue-600 hover:underline">查看模板库</a>
               <button class="px-3 py-1.5 text-xs text-white bg-blue-600 rounded-md hover:bg-blue-700 font-medium" onclick="openUploadModal()">上传材料</button>
             </div>
           </div>
-          <div class="mb-4 p-3 bg-blue-50 border border-blue-100 rounded-lg flex items-center justify-between gap-3">
-            <div><p class="text-sm font-medium text-blue-800">已找到同校模板：卡内基梅隆大学 · v3.2</p><p class="text-xs text-blue-600 mt-0.5">AI 将优先复用模板，再与官网和学生材料交叉核对。</p></div>
-            <button class="px-3 py-1.5 text-xs text-white bg-blue-600 rounded-md hover:bg-blue-700 font-medium flex-shrink-0" onclick="runAiMaterialMatch()">AI 匹配材料清单</button>
+          <div class="mb-4 p-3 bg-blue-50 border border-blue-100 rounded-lg">
+            <p class="text-sm font-medium text-blue-800">卡内基梅隆大学已有历史模板</p>
+            <p class="text-xs text-blue-600 mt-0.5">点击页面顶部“复用模板”选择历史版本。</p>
           </div>
-          <!-- AI匹配前：显示待确认清单 -->
+          <!-- 复用前：显示待确认清单 -->
           <div id="materialListPending" class="space-y-3">
             <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
               <div class="flex-1 min-w-0">
@@ -579,10 +595,10 @@
                   <span class="text-sm font-medium text-gray-500">个人陈述（PS）</span>
                   <span class="text-xs text-gray-300">| 字数待确认</span>
                 </div>
-                <p class="text-xs text-gray-400 mt-0.5">材料要求待 AI 匹配后确认</p>
+                <p class="text-xs text-gray-400 mt-0.5">材料要求将在复用模板后同步</p>
               </div>
               <div class="flex items-center gap-2 flex-shrink-0 ml-3">
-                <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-gray-100 text-gray-500">待匹配</span>
+                <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-gray-100 text-gray-500">待复用</span>
               </div>
             </div>
             <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
@@ -591,10 +607,10 @@
                   <span class="text-sm font-medium text-gray-500">推荐信（RL）</span>
                   <span class="text-xs text-gray-300">| 数量待确认</span>
                 </div>
-                <p class="text-xs text-gray-400 mt-0.5">材料要求待 AI 匹配后确认</p>
+                <p class="text-xs text-gray-400 mt-0.5">材料要求将在复用模板后同步</p>
               </div>
               <div class="flex items-center gap-2 flex-shrink-0 ml-3">
-                <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-gray-100 text-gray-500">待匹配</span>
+                <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-gray-100 text-gray-500">待复用</span>
               </div>
             </div>
             <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
@@ -603,10 +619,10 @@
                   <span class="text-sm font-medium text-gray-500">简历（CV）</span>
                   <span class="text-xs text-gray-300">| 格式待确认</span>
                 </div>
-                <p class="text-xs text-gray-400 mt-0.5">材料要求待 AI 匹配后确认</p>
+                <p class="text-xs text-gray-400 mt-0.5">材料要求将在复用模板后同步</p>
               </div>
               <div class="flex items-center gap-2 flex-shrink-0 ml-3">
-                <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-gray-100 text-gray-500">待匹配</span>
+                <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-gray-100 text-gray-500">待复用</span>
               </div>
             </div>
             <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
@@ -615,10 +631,10 @@
                   <span class="text-sm font-medium text-gray-500">本科成绩单</span>
                   <span class="text-xs text-gray-300">| 要求待确认</span>
                 </div>
-                <p class="text-xs text-gray-400 mt-0.5">材料要求待 AI 匹配后确认</p>
+                <p class="text-xs text-gray-400 mt-0.5">材料要求将在复用模板后同步</p>
               </div>
               <div class="flex items-center gap-2 flex-shrink-0 ml-3">
-                <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-gray-100 text-gray-500">待匹配</span>
+                <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-gray-100 text-gray-500">待复用</span>
               </div>
             </div>
             <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
@@ -627,10 +643,10 @@
                   <span class="text-sm font-medium text-gray-500">语言成绩单</span>
                   <span class="text-xs text-gray-300">| 分数线待确认</span>
                 </div>
-                <p class="text-xs text-gray-400 mt-0.5">材料要求待 AI 匹配后确认</p>
+                <p class="text-xs text-gray-400 mt-0.5">材料要求将在复用模板后同步</p>
               </div>
               <div class="flex items-center gap-2 flex-shrink-0 ml-3">
-                <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-gray-100 text-gray-500">待匹配</span>
+                <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-gray-100 text-gray-500">待复用</span>
               </div>
             </div>
             <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
@@ -639,10 +655,10 @@
                   <span class="text-sm font-medium text-gray-500">护照复印件</span>
                   <span class="text-xs text-gray-300">| 要求待确认</span>
                 </div>
-                <p class="text-xs text-gray-400 mt-0.5">材料要求待 AI 匹配后确认</p>
+                <p class="text-xs text-gray-400 mt-0.5">材料要求将在复用模板后同步</p>
               </div>
               <div class="flex items-center gap-2 flex-shrink-0 ml-3">
-                <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-gray-100 text-gray-500">待匹配</span>
+                <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-gray-100 text-gray-500">待复用</span>
               </div>
             </div>
             <div class="p-3 bg-yellow-50 border border-yellow-100 rounded-lg flex items-center justify-between gap-3">
@@ -650,14 +666,13 @@
                 <svg class="w-4 h-4 text-yellow-500 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
                 </svg>
-                <p class="text-xs text-yellow-700">AI 无法确认的材料要求将保留提示，由项目经理检查后确认。</p>
+                <p class="text-xs text-yellow-700">复用后请检查模板内容是否仍符合当前申请要求。</p>
               </div>
-              <button class="px-3 py-1.5 text-xs text-white bg-yellow-500 rounded-md hover:bg-yellow-600 font-medium flex-shrink-0" onclick="runAiMaterialMatch()">开始匹配</button>
             </div>
           </div>
-          <!-- AI已匹配：显示正式材料清单与人工核对项 -->
+          <!-- 已复用模板：显示正式材料清单与人工核对项 -->
           <div id="materialListScanned" class="space-y-3 hidden">
-            <div id="aiMaterialIssues" class="p-3 bg-yellow-50 border border-yellow-200 rounded-lg flex items-start gap-2">
+            <div id="templateMaterialIssues" class="p-3 bg-yellow-50 border border-yellow-200 rounded-lg flex items-start gap-2">
               <svg class="w-4 h-4 text-yellow-600 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
               <p class="text-xs text-yellow-800"><span class="font-medium">待项目经理检查：</span>护照有效期未识别；推荐信是否必须使用学校抬头需在官网确认。</p>
             </div>
@@ -750,29 +765,22 @@
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"></path>
             </svg>
             <h2 class="text-base font-semibold text-gray-800">申请官网字段表单</h2>
-            <span class="text-xs text-gray-400 ml-1">AI 优先匹配，缺失项由项目经理核对</span>
+            <span class="text-xs text-gray-400 ml-1">复用后请核对当前申请信息</span>
           </div>
           <div class="flex items-center gap-2">
-            <button data-dom-id="btn-ai-match-website" class="flex items-center gap-1 px-3 py-1.5 text-xs text-white bg-purple-600 rounded-md hover:bg-purple-700 font-medium" onclick="runAiWebsiteMatch()">AI 匹配字段</button>
             <button data-dom-id="btn-save-website-form" class="flex items-center gap-1 px-3 py-1.5 text-xs text-white bg-blue-600 rounded-md hover:bg-blue-700 font-medium" onclick="saveWebsiteForm()">
               <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
               </svg>
               保存表单
             </button>
-            <button data-dom-id="btn-export-website-form" class="flex items-center gap-1 px-3 py-1.5 text-xs text-blue-600 bg-blue-50 rounded-md hover:bg-blue-100 font-medium" onclick="exportWebsiteFormTemplate()">
-              <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path>
-              </svg>
-              保存为模板
-            </button>
           </div>
         </div>
-        <div id="aiFieldMatchSummary" class="mb-4 p-3 bg-blue-50 border border-blue-100 rounded-lg flex items-start justify-between gap-4">
-          <div><p class="text-sm font-medium text-blue-800">同校模板 v3.2 · 12 个官网字段</p><p class="text-xs text-blue-600 mt-0.5">点击“AI 匹配字段”后，将从学生档案与材料中填充可确认内容。</p></div>
+        <div id="templateFieldSummary" class="mb-4 p-3 bg-blue-50 border border-blue-100 rounded-lg flex items-start justify-between gap-4">
+          <div><p class="text-sm font-medium text-blue-800">尚未复用历史模板</p><p class="text-xs text-blue-600 mt-0.5">复用后将同步官网字段和申请材料清单。</p></div>
           <a href="网申模板库 - 留学申请管理系统.html" class="text-xs text-blue-700 font-medium hover:underline flex-shrink-0">查看模板详情</a>
         </div>
-        <div id="aiFieldIssues" class="hidden mb-4 p-3 bg-yellow-50 border border-yellow-200 rounded-lg text-xs text-yellow-800"></div>
+        <div id="templateFieldNotice" class="hidden mb-4 p-3 bg-yellow-50 border border-yellow-200 rounded-lg text-xs text-yellow-800"></div>
         <div class="grid grid-cols-3 gap-5">
           <div>
             <label class="block text-xs text-gray-500 mb-1">名（First Name）<span class="text-red-500">*</span></label>
@@ -824,10 +832,10 @@
           </div>
           <div>
             <label class="block text-xs text-gray-500 mb-1">通信地址（Mailing Address）</label>
-            <input id="wf-address" data-wf-label="通信地址" type="text" value="" class="w-full h-9 px-3 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="AI 未找到可确认信息">
+            <input id="wf-address" data-wf-label="通信地址" type="text" value="" class="w-full h-9 px-3 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="请填写通信地址">
           </div>
         </div>
-        <p class="text-xs text-gray-400 mt-4">保存前请完成黄色提示项核对；确认后的字段可用于官网辅助填写。</p>
+        <p class="text-xs text-gray-400 mt-4">保存前请核对当前字段内容。</p>
       </div>
 
       <!-- 网申材料预览区 -->
@@ -988,7 +996,6 @@
           </div>
           <span id="admissionResultBadge" class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-500">未填写</span>
         </div>
-        <p class="text-xs text-gray-500 mb-4">申请结果不做 AI 或邮箱自动回填，以下内容均由经办人手动录入。</p>
         <div class="grid grid-cols-3 gap-4">
           <div><label class="text-xs text-gray-500 block mb-1">申请结果 <span class="text-red-500">*</span></label><select id="admissionResult" class="w-full h-9 px-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500"><option value="">请选择</option><option value="admitted">录取</option><option value="rejected">拒录</option><option value="waitlist">等待名单</option><option value="withdrawn">已撤回</option></select></div>
           <div><label class="text-xs text-gray-500 block mb-1">录取院校 <span class="text-red-500">*</span></label><input id="resultSchool" type="text" class="w-full h-9 px-3 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500" placeholder="手动填写院校"></div>
@@ -996,12 +1003,10 @@
           <div><label class="text-xs text-gray-500 block mb-1">奖学金 <span class="text-red-500">*</span></label><input id="resultScholarship" type="text" class="w-full h-9 px-3 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500" placeholder="无奖学金也需填写“无”"></div>
           <div><label class="text-xs text-gray-500 block mb-1">录取通知日期 <span class="text-red-500">*</span></label><input id="resultNoticeDate" type="date" class="w-full h-9 px-3 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500"></div>
           <div><label class="text-xs text-gray-500 block mb-1">回复截止日期 <span class="text-red-500">*</span></label><input id="resultReplyDate" type="date" class="w-full h-9 px-3 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500"></div>
-          <div><label class="text-xs text-gray-500 block mb-1">入学学期 <span class="text-red-500">*</span></label><input id="resultTerm" type="text" class="w-full h-9 px-3 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500" placeholder="如 2027 Fall"></div>
-          <div><label class="text-xs text-gray-500 block mb-1">结果来源 <span class="text-red-500">*</span></label><select id="resultSource" class="w-full h-9 px-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500"><option value="">请选择</option><option>申请官网</option><option>学校邮件</option><option>纸质通知</option></select></div>
-          <div><label class="text-xs text-gray-500 block mb-1">经办人 <span class="text-red-500">*</span></label><input id="resultOperator" type="text" class="w-full h-9 px-3 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500" placeholder="手动填写经办人"></div>
-          <div class="col-span-3"><label class="text-xs text-gray-500 block mb-1">备注 <span class="text-red-500">*</span></label><textarea id="resultRemark" rows="3" class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 resize-none" placeholder="手动填写结果说明；无备注请填写“无”"></textarea></div>
+          <div class="col-span-3"><label class="text-xs text-gray-500 block mb-1">结果图片</label><div class="border-2 border-dashed border-gray-300 rounded-lg p-4"><input id="resultOfferImageInput" type="file" accept="image/*" class="hidden" onchange="previewResultImage(this.files[0])"><div id="resultOfferImageEmpty" class="text-center"><button type="button" class="px-4 py-2 text-sm text-blue-600 bg-blue-50 rounded-lg hover:bg-blue-100 font-medium" onclick="document.getElementById('resultOfferImageInput').click()">上传 Offer / 结果图片</button><p class="text-xs text-gray-400 mt-2">支持 JPG、PNG，保存后同步至项目结果确认页面</p></div><div id="resultOfferImagePreview" class="hidden flex items-center gap-4"><img id="resultOfferImage" class="w-36 h-24 object-contain bg-gray-50 border border-gray-200 rounded-lg" alt="申请结果图片预览"><div><p id="resultOfferImageName" class="text-sm text-gray-700 mb-2"></p><div class="flex gap-3"><button type="button" class="text-xs text-blue-600 hover:underline" onclick="document.getElementById('resultOfferImageInput').click()">更换图片</button><button type="button" class="text-xs text-red-600 hover:underline" onclick="removeResultImage()">移除</button></div></div></div></div></div>
+          <div class="col-span-3"><label class="text-xs text-gray-500 block mb-1">备注</label><textarea id="resultRemark" rows="3" class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 resize-none" placeholder="填写结果说明"></textarea></div>
         </div>
-        <div class="flex justify-end mt-4"><button class="h-9 px-5 bg-blue-600 text-white rounded-lg hover:bg-blue-700 text-sm font-medium" onclick="saveAdmissionResult()">保存申请结果</button></div>
+        <div class="flex justify-end gap-3 mt-4"><button data-dom-id="btn-export-website-form" class="h-9 px-5 text-blue-600 bg-blue-50 rounded-lg hover:bg-blue-100 text-sm font-medium" onclick="exportWebsiteFormTemplate()">保存为模板</button><button class="h-9 px-5 bg-blue-600 text-white rounded-lg hover:bg-blue-700 text-sm font-medium" onclick="saveAdmissionResult()">保存申请结果</button></div>
       </div>
 
     </main>
@@ -1040,6 +1045,22 @@
       <div class="flex items-center gap-3 mt-6">
         <button class="flex-1 h-10 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium" onclick="confirmProgress()">确认更新</button>
         <button class="flex-1 h-10 bg-white border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors font-medium" onclick="closeProgressModal()">取消</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 复用模板弹窗 -->
+  <div id="templateReuseModal" class="fixed inset-0 z-50 hidden">
+    <div class="absolute inset-0 bg-black bg-opacity-30" onclick="closeTemplateReuseModal()"></div>
+    <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[680px] max-h-[80vh] overflow-y-auto bg-white rounded-2xl shadow-2xl p-6">
+      <div class="flex items-center justify-between mb-1">
+        <div><h3 class="text-lg font-semibold text-gray-800">复用网申模板</h3><p class="text-xs text-gray-400 mt-1">卡内基梅隆大学 · 计算机科学</p></div>
+        <button class="p-1 text-gray-400 hover:text-gray-600" onclick="closeTemplateReuseModal()"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg></button>
+      </div>
+      <div class="space-y-3 mt-5">
+        <div class="border border-blue-200 bg-blue-50 rounded-xl p-4 flex items-center justify-between gap-4"><div><div class="flex items-center gap-2"><span class="text-sm font-semibold text-gray-900">v3.2</span><span class="text-xs px-2 py-0.5 rounded bg-blue-100 text-blue-700">当前推荐</span></div><p class="text-xs text-gray-500 mt-2">2026-07-08 更新 · 官网字段 12 项 · 申请材料 6 项</p><p class="text-xs text-gray-400 mt-1">来源：2027 Fall · 计算机科学硕士申请</p></div><button class="px-4 py-2 text-sm text-white bg-blue-600 rounded-lg hover:bg-blue-700 font-medium flex-shrink-0" onclick="reuseTemplateVersion('v3.2')">复用此版本</button></div>
+        <div class="border border-gray-200 rounded-xl p-4 flex items-center justify-between gap-4"><div><span class="text-sm font-semibold text-gray-900">v3.1</span><p class="text-xs text-gray-500 mt-2">2026-05-21 更新 · 官网字段 11 项 · 申请材料 6 项</p><p class="text-xs text-gray-400 mt-1">来源：2026 Fall · 计算机科学硕士申请</p></div><button class="px-4 py-2 text-sm text-blue-600 bg-blue-50 rounded-lg hover:bg-blue-100 font-medium flex-shrink-0" onclick="reuseTemplateVersion('v3.1')">复用此版本</button></div>
+        <div class="border border-gray-200 rounded-xl p-4 flex items-center justify-between gap-4"><div><span class="text-sm font-semibold text-gray-900">v2.8</span><p class="text-xs text-gray-500 mt-2">2025-11-16 更新 · 官网字段 10 项 · 申请材料 5 项</p><p class="text-xs text-gray-400 mt-1">来源：2026 Spring · 软件工程硕士申请</p></div><button class="px-4 py-2 text-sm text-blue-600 bg-blue-50 rounded-lg hover:bg-blue-100 font-medium flex-shrink-0" onclick="reuseTemplateVersion('v2.8')">复用此版本</button></div>
       </div>
     </div>
   </div>
@@ -1509,7 +1530,23 @@
       }
     });
 
-    // ===== 关联邮箱：邮箱注册 =====
+    // ===== 关联邮箱：注册或手动绑定 =====
+    function switchEmailBindingTab(mode) {
+      var isRegister = mode === 'register';
+      document.getElementById('emailRegisterPanel').classList.toggle('hidden', !isRegister);
+      document.getElementById('emailManualPanel').classList.toggle('hidden', isRegister);
+      document.getElementById('emailRegisterTab').className = 'px-3 py-1.5 text-xs font-medium border-b-2 ' + (isRegister ? 'text-blue-600 border-blue-600' : 'text-gray-500 border-transparent');
+      document.getElementById('emailManualTab').className = 'px-3 py-1.5 text-xs font-medium border-b-2 ' + (!isRegister ? 'text-blue-600 border-blue-600' : 'text-gray-500 border-transparent');
+    }
+    function confirmManualEmailBinding() {
+      var email = document.getElementById('manualEmailAccount').value.trim();
+      var password = document.getElementById('manualEmailPassword').value;
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { alert('请输入正确的邮箱账号'); return; }
+      if (!password) { alert('请输入邮箱密码或授权码'); return; }
+      document.getElementById('linkedEmailText').textContent = email;
+      document.getElementById('wf-email').value = email;
+      alert('邮箱已通过 IMAP 协议绑定');
+    }
     function openEmailRegister() {
       document.getElementById('emailRegisterModal').classList.remove('hidden');
     }
@@ -1549,6 +1586,7 @@
       if (!phone) { alert('请输入手机号码'); return; }
       if (!code) { alert('请输入短信验证码'); return; }
       document.getElementById('linkedEmailText').textContent = email;
+      document.getElementById('wf-email').value = email;
       alert('邮箱注册成功！\n邮箱账号：' + email + '\n已自动关联到当前网申任务。');
       closeEmailRegisterModal();
     }
@@ -1600,23 +1638,41 @@
       closeTimelineConfigModal();
     }
 
-    // ===== 申请材料清单：同校模板复用 + AI匹配 =====
-    var materialScanned = false;
-    function runAiMaterialMatch() {
-      materialScanned = true;
+    // ===== 申请材料与官网字段：历史模板复用 =====
+    function openTemplateReuseModal() {
+      document.getElementById('templateReuseModal').classList.remove('hidden');
+      document.body.style.overflow = 'hidden';
+    }
+    function closeTemplateReuseModal() {
+      document.getElementById('templateReuseModal').classList.add('hidden');
+      document.body.style.overflow = '';
+    }
+    function reuseTemplateVersion(version) {
+      var versions = {
+        'v3.2': { address: '浙江省杭州市西湖区余杭塘路866号', gre: 'GRE 328 + 4.0', fields: 12, materials: 6 },
+        'v3.1': { address: '浙江省杭州市西湖区余杭塘路866号', gre: 'GRE 326 + 3.5', fields: 11, materials: 6 },
+        'v2.8': { address: '浙江省杭州市西湖区余杭塘路866号', gre: 'GRE 325', fields: 10, materials: 5 }
+      };
+      var selected = versions[version];
+      document.getElementById('wf-address').value = selected.address;
+      document.getElementById('wf-greScore').value = selected.gre;
+      document.getElementById('wf-address').classList.remove('border-yellow-400', 'bg-yellow-50');
       var pending = document.getElementById('materialListPending');
       var scanned = document.getElementById('materialListScanned');
       var badge = document.getElementById('scanStateBadge');
       pending.classList.add('hidden');
       scanned.classList.remove('hidden');
-      badge.textContent = 'AI 已匹配 · 待核对 2 项';
-      badge.className = 'inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-yellow-100 text-yellow-700';
-    }
-    function toggleScanState() {
-      runAiMaterialMatch();
+      badge.textContent = '已复用 ' + version;
+      badge.className = 'inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-green-100 text-green-700';
+      document.getElementById('templateFieldSummary').innerHTML = '<div><p class="text-sm font-medium text-blue-800">已复用模板 ' + version + ' · 官网字段 ' + selected.fields + ' 项</p><p class="text-xs text-blue-600 mt-0.5">申请官网字段和材料清单已同步，请核对后保存。</p></div><a href="网申模板库 - 留学申请管理系统.html" class="text-xs text-blue-700 font-medium hover:underline flex-shrink-0">查看模板详情</a>';
+      var notice = document.getElementById('templateFieldNotice');
+      notice.classList.remove('hidden');
+      notice.textContent = '模板已同步。通信地址与标准化考试成绩已更新，请项目经理核对当前申请要求。';
+      closeTemplateReuseModal();
+      alert('已复用模板 ' + version + '，官网字段与申请材料清单已同步更新');
     }
 
-    // ===== 申请官网字段表单：AI匹配 / 保存模板 =====
+    // ===== 申请官网字段表单：保存 / 保存为模板 =====
     function collectWebsiteFormData() {
       var data = {};
       document.querySelectorAll('[data-wf-label]').forEach(function(el) {
@@ -1637,32 +1693,53 @@
       }
       alert('申请官网字段表单已保存！\n保存字段数：' + Object.keys(data).length);
     }
-    function runAiWebsiteMatch() {
-      var address = document.getElementById('wf-address');
-      address.classList.add('border-yellow-400', 'bg-yellow-50');
-      var issues = document.getElementById('aiFieldIssues');
-      issues.classList.remove('hidden');
-      issues.innerHTML = '<span class="font-medium">AI 已匹配 10 / 12 项，待项目经理检查：</span>通信地址缺失；GRE Writing 分数与官网字段含义不确定。';
-      var summary = document.getElementById('aiFieldMatchSummary');
-      summary.innerHTML = '<div><p class="text-sm font-medium text-blue-800">AI 匹配完成：10 / 12 项</p><p class="text-xs text-blue-600 mt-0.5">来源：同校模板 v3.2、学生档案、已上传材料</p></div><a href="网申模板库 - 留学申请管理系统.html" class="text-xs text-blue-700 font-medium hover:underline flex-shrink-0">查看模板详情</a>';
-    }
     function exportWebsiteFormTemplate() {
       alert('已保存到网申模板库：卡内基梅隆大学 · 计算机科学。\n后续同校任务将优先复用，不再重复扫描。');
     }
 
+    var selectedResultImageData = localStorage.getItem('pbs_offer_image_cmu') || '';
+    function renderResultImage(name) {
+      var hasImage = !!selectedResultImageData;
+      document.getElementById('resultOfferImageEmpty').classList.toggle('hidden', hasImage);
+      document.getElementById('resultOfferImagePreview').classList.toggle('hidden', !hasImage);
+      if (hasImage) {
+        document.getElementById('resultOfferImage').src = selectedResultImageData;
+        document.getElementById('resultOfferImageName').textContent = name || '已保存的结果图片';
+      }
+    }
+    function previewResultImage(file) {
+      if (!file) return;
+      if (!file.type.match(/^image\//)) { alert('请选择 JPG、PNG 等图片文件'); return; }
+      if (file.size > 3 * 1024 * 1024) { alert('图片大小不能超过 3MB'); return; }
+      var reader = new FileReader();
+      reader.onload = function(event) {
+        selectedResultImageData = event.target.result;
+        renderResultImage(file.name);
+      };
+      reader.readAsDataURL(file);
+    }
+    function removeResultImage() {
+      selectedResultImageData = '';
+      localStorage.removeItem('pbs_offer_image_cmu');
+      document.getElementById('resultOfferImageInput').value = '';
+      renderResultImage('');
+    }
+
     function saveAdmissionResult() {
-      var ids = ['admissionResult', 'resultSchool', 'resultProgram', 'resultScholarship', 'resultNoticeDate', 'resultReplyDate', 'resultTerm', 'resultSource', 'resultOperator', 'resultRemark'];
+      var ids = ['admissionResult', 'resultSchool', 'resultProgram', 'resultScholarship', 'resultNoticeDate', 'resultReplyDate'];
       for (var i = 0; i < ids.length; i++) {
         var field = document.getElementById(ids[i]);
-        if (!field.value.trim()) { alert('请手动填写全部申请结果字段'); field.focus(); return; }
+        if (!field.value.trim()) { alert('请填写必填的申请结果字段'); field.focus(); return; }
       }
       var map = { admitted: ['录取', 'bg-green-100 text-green-700'], rejected: ['拒录', 'bg-red-100 text-red-700'], waitlist: ['等待名单', 'bg-yellow-100 text-yellow-700'], withdrawn: ['已撤回', 'bg-gray-100 text-gray-600'] };
       var result = map[document.getElementById('admissionResult').value];
       var badge = document.getElementById('admissionResultBadge');
       badge.textContent = result[0];
       badge.className = 'inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ' + result[1];
-      alert('申请结果已手动保存');
+      if (selectedResultImageData) localStorage.setItem('pbs_offer_image_cmu', selectedResultImageData);
+      alert('申请结果已保存');
     }
+    document.addEventListener('DOMContentLoaded', function() { renderResultImage(''); });
   </script>
   <script src="./assets/js/pbs-app.js"></script>
 

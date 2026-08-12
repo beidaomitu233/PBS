@@ -27,16 +27,15 @@
       </div>
 
       <div class="grid grid-cols-3 gap-4 mb-5">
-        <div class="card p-5"><p class="text-sm text-gray-500">可用模板</p><p class="text-2xl font-bold text-gray-900 mt-2">18</p></div>
+        <div class="card p-5"><p class="text-sm text-gray-500">模板总数</p><p class="text-2xl font-bold text-gray-900 mt-2">18</p></div>
         <div class="card p-5"><p class="text-sm text-gray-500">覆盖院校</p><p class="text-2xl font-bold text-gray-900 mt-2">12</p></div>
-        <div class="card p-5"><p class="text-sm text-gray-500">累计复用</p><p class="text-2xl font-bold text-blue-600 mt-2">47 次</p></div>
+        <div class="card p-5"><p class="text-sm text-gray-500">本月新增</p><p class="text-2xl font-bold text-blue-600 mt-2">5</p></div>
       </div>
 
       <section class="card p-5 mb-5">
         <div class="flex items-end gap-4 flex-wrap">
           <div class="flex-1 min-w-[240px]"><label class="block text-sm text-gray-600 mb-2">学校 / 专业</label><input id="templateKeyword" class="input w-full" placeholder="搜索学校或专业" oninput="filterTemplates()"></div>
           <div><label class="block text-sm text-gray-600 mb-2">国家 / 地区</label><select id="templateRegion" class="input w-36" onchange="filterTemplates()"><option value="">全部</option><option>美国</option><option>英国</option><option>中国香港</option></select></div>
-          <div><label class="block text-sm text-gray-600 mb-2">状态</label><select id="templateStatus" class="input w-36" onchange="filterTemplates()"><option value="">全部</option><option>可复用</option><option>待复核</option></select></div>
           <button class="btn" onclick="resetTemplateFilter()">重置</button>
         </div>
       </section>
@@ -44,7 +43,7 @@
       <section class="card overflow-hidden">
         <div class="overflow-x-auto">
           <table class="w-full template-table">
-            <thead class="bg-gray-50"><tr><th class="px-5 py-4 text-left text-sm font-medium text-gray-500">来源案例 / 学校</th><th class="px-5 py-4 text-left text-sm font-medium text-gray-500">版本</th><th class="px-5 py-4 text-left text-sm font-medium text-gray-500">官网字段</th><th class="px-5 py-4 text-left text-sm font-medium text-gray-500">材料清单</th><th class="px-5 py-4 text-left text-sm font-medium text-gray-500">累计复用</th><th class="px-5 py-4 text-left text-sm font-medium text-gray-500">状态</th><th class="px-5 py-4 text-left text-sm font-medium text-gray-500">操作</th></tr></thead>
+            <thead class="bg-gray-50"><tr><th class="px-5 py-4 text-left text-sm font-medium text-gray-500">来源案例 / 学校</th><th class="px-5 py-4 text-left text-sm font-medium text-gray-500">版本</th><th class="px-5 py-4 text-left text-sm font-medium text-gray-500">官网字段</th><th class="px-5 py-4 text-left text-sm font-medium text-gray-500">材料清单</th><th class="px-5 py-4 text-left text-sm font-medium text-gray-500">操作</th></tr></thead>
             <tbody id="templateRows" class="divide-y divide-gray-100"></tbody>
           </table>
         </div>
@@ -63,10 +62,9 @@
         </div>
         <div id="templateReviewNote" class="mt-5 p-3 bg-yellow-50 border border-yellow-200 rounded-lg text-xs text-yellow-800"></div>
       </div>
-      <div class="flex items-center justify-between px-6 py-4 border-t border-gray-200"><p class="text-xs text-gray-500">套用后 AI 仍会核对学生材料，缺失项交由项目经理检查。</p><div class="flex gap-3"><button class="btn" onclick="closeTemplateDetail()">关闭</button><button class="btn primary" onclick="reuseCurrentTemplate()">套用到当前任务</button></div></div>
+      <div class="flex items-center justify-end px-6 py-4 border-t border-gray-200"><button class="btn" onclick="closeTemplateDetail()">关闭</button></div>
     </div>
   </div>
-  <div id="templateToast" class="toast" role="status"></div>
   <script src="./网申模板库 - 留学申请管理系统.js"></script>
 </body>
 </html>

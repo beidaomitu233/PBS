@@ -43,6 +43,10 @@
               <div class="rounded-xl bg-slate-50 p-4"><p class="text-xs text-slate-400">截止时间</p><p class="text-sm font-medium text-slate-800 mt-1">2027-01-15</p></div>
               <div class="rounded-xl bg-slate-50 p-4"><p class="text-xs text-slate-400">执行人员</p><p class="text-sm font-medium text-slate-800 mt-1">陈晨（网申人员）</p></div>
             </div>
+            <section class="px-6 pb-6">
+              <div class="flex items-center justify-between mb-3"><h3 class="text-sm font-semibold text-slate-900">院系链接</h3><span class="text-xs text-slate-400">来自 PBS 选校工作台</span></div>
+              <div id="departmentLinks" class="grid md:grid-cols-2 gap-3"></div>
+            </section>
             <div id="scanSummary" class="hidden mx-6 mb-6 rounded-xl border border-emerald-200 bg-emerald-50 p-4">
               <div class="flex items-center justify-between"><p class="text-sm font-medium text-emerald-800">扫描完成</p><span class="text-xs text-emerald-600">刚刚</span></div>
               <div class="grid grid-cols-3 gap-3 mt-3 text-center"><div class="bg-white rounded-lg p-3"><p class="text-lg font-semibold text-slate-900">18</p><p class="text-xs text-slate-400">识别字段</p></div><div class="bg-white rounded-lg p-3"><p class="text-lg font-semibold text-slate-900">6</p><p class="text-xs text-slate-400">材料项</p></div><div class="bg-white rounded-lg p-3"><p class="text-lg font-semibold text-amber-600">2</p><p class="text-xs text-slate-400">待人工确认</p></div></div>
@@ -107,6 +111,33 @@
       ['本科成绩单', 'ZHANG_Ming_Transcript.pdf', true], ['护照复印件', 'ZHANG_Ming_Passport.pdf', true], ['语言成绩单', 'ZHANG_Ming_TOEFL.pdf', true],
       ['个人陈述（PS）', 'CMU_MSCS_PS_v4.docx', true], ['推荐信（RL）', 'Professor_Li_Recommendation.pdf', true], ['简历（CV）', 'ZHANG_Ming_CV.pdf', true]
     ];
+    // 原型中模拟从 PBS 选校工作台按“学校 + 专业”同步院系链接。
+    var schoolProgramLinks = {
+      '卡内基梅隆大学|计算机科学 MSCS': [
+        { name: '计算机科学专业详情页', url: 'https://ms.cs.cmu.edu/' },
+        { name: '计算机科学学院官网', url: 'https://www.cs.cmu.edu/' }
+      ],
+      '斯坦福大学|计算机科学 MS': [
+        { name: '计算机科学硕士专业详情页', url: 'https://www.cs.stanford.edu/masters-program-overview' },
+        { name: '计算机科学系官网', url: 'https://www.cs.stanford.edu/' }
+      ],
+      '哥伦比亚大学|计算机科学 MS': [
+        { name: '计算机科学硕士专业详情页', url: 'https://www.engineering.columbia.edu/academics/programs/masters-programs/master-science-programs/computer-science-ms' },
+        { name: '计算机科学系官网', url: 'https://www.cs.columbia.edu/' }
+      ],
+      '伦敦大学学院|教育学 MA': [
+        { name: '教育学专业详情页', url: 'https://www.ucl.ac.uk/prospective-students/graduate/taught-degrees/education-ma' },
+        { name: '教育学院官网', url: 'https://www.ucl.ac.uk/ioe/' }
+      ],
+      '伦敦国王学院|教育管理 MA': [
+        { name: '教育领导与管理专业详情页', url: 'https://www.kcl.ac.uk/study/postgraduate-taught/courses/educational-leadership-and-management-ma' },
+        { name: '教育、传播与社会学院官网', url: 'https://www.kcl.ac.uk/ecs' }
+      ],
+      '波士顿大学|经济学 BA': [
+        { name: '经济学专业详情页', url: 'https://www.bu.edu/econ/academics/undergraduate-academics/ba-economics/' },
+        { name: '经济学系官网', url: 'https://www.bu.edu/econ/' }
+      ]
+    };
     var activeStudent = null;
     var activeSchool = null;
 
@@ -139,8 +170,16 @@
       document.getElementById('projectProgram').textContent = activeSchool.program;
       document.getElementById('projectStatus').textContent = activeSchool.status;
       document.getElementById('projectStatus').className = 'px-2.5 py-1 rounded-full text-xs font-medium ' + statusClass(activeSchool.status);
+      renderDepartmentLinks(activeSchool);
       document.getElementById('scanSummary').classList.toggle('hidden', activeSchool.status !== '已扫描');
       showView('projectView');
+    }
+    function renderDepartmentLinks(school) {
+      var links = schoolProgramLinks[school.name + '|' + school.program] || [];
+      var container = document.getElementById('departmentLinks');
+      container.innerHTML = links.length ? links.map(function (link) {
+        return '<a href="' + link.url + '" target="_blank" rel="noopener noreferrer" class="group flex items-center justify-between gap-4 rounded-xl border border-slate-200 bg-white px-4 py-3 hover:border-blue-300 hover:bg-blue-50 transition-colors"><div class="min-w-0"><p class="text-sm font-medium text-slate-800 group-hover:text-blue-700">' + link.name + '</p><p class="text-xs text-slate-400 truncate mt-1">' + link.url + '</p></div><span class="text-blue-600 flex-shrink-0">↗</span></a>';
+      }).join('') : '<div class="md:col-span-2 rounded-xl bg-slate-50 px-4 py-3 text-sm text-slate-400">暂无对应院系链接</div>';
     }
     function showView(id) { ['studentView','schoolView','projectView'].forEach(function (view) { document.getElementById(view).classList.toggle('hidden', view !== id); }); }
     function showStudents() { activeStudent = null; showView('studentView'); }

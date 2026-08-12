@@ -675,7 +675,14 @@
     function loadAiOperationLogs() {
       try {
         var logs = JSON.parse(localStorage.getItem('pbs_operation_logs_v1') || '[]');
-        return Array.isArray(logs) ? logs : [];
+        if (!Array.isArray(logs)) return [];
+        var removedContents = [
+          'AI 管理：修改主次模型；Qwen 主模型 → DeepSeek 次选模型',
+          'AI 管理：修改主次模型；Kimi 长文本模型 → DeepSeek 次选模型'
+        ];
+        var cleanedLogs = logs.filter(function (log) { return removedContents.indexOf(log.content) < 0; });
+        if (cleanedLogs.length !== logs.length) localStorage.setItem('pbs_operation_logs_v1', JSON.stringify(cleanedLogs));
+        return cleanedLogs;
       } catch (e) {
         return [];
       }
@@ -683,33 +690,6 @@
 
     // 模拟数据
     var allLogs = loadAiOperationLogs().concat([
-      {
-        time: '2026-08-12 16:42:18',
-        user: '平台运营人员',
-        organization: 'PBS留学总部',
-        type: '修改',
-        content: 'AI 管理：更新案例包解析模板；PS / 硕士模板调整为固定字段结构并自动保存',
-        ip: '192.168.1.100',
-        result: '成功'
-      },
-      {
-        time: '2026-08-12 16:35:06',
-        user: '平台运营人员',
-        organization: 'PBS留学总部',
-        type: '修改',
-        content: 'AI 管理：修改主次模型；Qwen 主模型 → DeepSeek 次模型',
-        ip: '192.168.1.100',
-        result: '成功'
-      },
-      {
-        time: '2026-08-12 16:28:47',
-        user: '平台运营人员',
-        organization: 'PBS留学总部',
-        type: '修改',
-        content: 'AI 管理：修改默认请求参数；Temperature 0.2，最大输出 8192 Token，流式响应开启',
-        ip: '192.168.1.100',
-        result: '成功'
-      },
       {
         time: '2026-08-12 16:20:31',
         user: '平台运营人员',

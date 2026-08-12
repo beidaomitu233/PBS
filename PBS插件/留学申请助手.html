@@ -85,6 +85,45 @@
       </div>
     </div>
 
+    <div id="submitToPbsModal" class="fixed inset-0 z-[65] hidden" role="dialog" aria-modal="true" aria-labelledby="submitModalTitle">
+      <div class="absolute inset-0 bg-slate-900/50" onclick="closeSubmitModalFromMask()"></div>
+      <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[calc(100%_-_2rem)] max-w-[520px] bg-white rounded-2xl shadow-2xl overflow-hidden">
+        <div id="submitConfirmView">
+          <header class="px-6 py-5 border-b border-slate-100 flex items-start justify-between gap-4">
+            <div><p class="text-xs text-blue-600 mb-1">提交至 PBS</p><h2 id="submitModalTitle" class="text-lg font-semibold text-slate-900">确认提交模板</h2></div>
+            <button class="w-8 h-8 rounded-full bg-slate-100 text-slate-500 text-xl" onclick="closeSubmitModal()">×</button>
+          </header>
+          <div class="p-6 space-y-5">
+            <div><p class="text-xs text-slate-400 mb-1.5">院校</p><p id="submitSchoolTarget" class="text-sm font-medium text-slate-900"></p></div>
+            <div>
+              <label for="submitTemplateName" class="block text-xs text-slate-500 mb-2">模板名称</label>
+              <input id="submitTemplateName" class="w-full h-11 px-3 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+              <p id="submitTemplateError" class="hidden text-xs text-red-500 mt-2">请输入模板名称</p>
+            </div>
+            <div class="rounded-xl bg-blue-50 px-4 py-3"><p id="submitContentSummary" class="text-sm font-medium text-blue-700"></p></div>
+          </div>
+          <footer class="px-6 py-4 border-t border-slate-100 flex justify-end gap-3">
+            <button class="h-10 px-5 border border-slate-300 text-slate-700 rounded-lg hover:bg-slate-50 text-sm" onclick="closeSubmitModal()">取消</button>
+            <button id="confirmSubmitButton" class="h-10 min-w-[104px] px-5 bg-blue-600 text-white rounded-lg hover:bg-blue-700 text-sm font-medium flex items-center justify-center gap-2" onclick="confirmSubmitToPbs()">确认提交</button>
+          </footer>
+        </div>
+
+        <div id="submitSuccessView" class="hidden p-7 text-center">
+          <div class="w-16 h-16 mx-auto rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center text-3xl font-semibold">✓</div>
+          <h2 class="text-xl font-semibold text-slate-900 mt-5">✅ 模板提交成功！</h2>
+          <div class="rounded-xl bg-slate-50 p-4 mt-5 text-left">
+            <p class="text-xs text-slate-400">模板编号</p>
+            <p id="submittedTemplateId" class="text-sm font-semibold text-slate-900 mt-1"></p>
+            <p class="text-sm text-slate-500 mt-3">模板已存入PBS系统，可登录PBS查看并使用</p>
+          </div>
+          <div class="flex items-center justify-center gap-4 mt-6">
+            <button class="text-sm text-blue-600 hover:underline" onclick="viewSubmittedTemplate()">查看模板</button>
+            <button class="h-10 px-6 bg-blue-600 text-white rounded-lg hover:bg-blue-700 text-sm font-medium" onclick="returnFromSubmitSuccess()">返回主页</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <div id="drawerMask" class="fixed inset-0 z-40 bg-black/30 hidden" onclick="closeFillDrawer()"></div>
     <aside id="fillDrawer" class="drawer fixed top-0 right-0 bottom-0 z-50 w-full max-w-[520px] bg-white shadow-2xl flex flex-col">
       <div class="px-5 py-4 border-b border-slate-200 flex items-start justify-between gap-4">
@@ -114,12 +153,12 @@
   <script>
     var students = [
       { id: 'zhang', name: '张明', meta: '硕士申请 · 2027 秋 · 美国', schools: [
-        { id: 'cmu', name: '卡内基梅隆大学', program: '计算机科学 MSCS', status: '待填报' },
+        { id: 'cmu', name: '卡内基梅隆大学', program: '计算机科学 MSCS', status: '待提交' },
         { id: 'stanford', name: '斯坦福大学', program: '计算机科学 MS', status: '待扫描' },
         { id: 'columbia', name: '哥伦比亚大学', program: '计算机科学 MS', status: '待确认' }
       ]},
       { id: 'lixue', name: '李雪', meta: '硕士申请 · 2027 秋 · 英国', schools: [
-        { id: 'ucl', name: '伦敦大学学院', program: '教育学 MA', status: '待填报' },
+        { id: 'ucl', name: '伦敦大学学院', program: '教育学 MA', status: '待提交' },
         { id: 'kcl', name: '伦敦国王学院', program: '教育管理 MA', status: '待扫描' }
       ]},
       { id: 'chenlei', name: '陈磊', meta: '本科申请 · 2027 秋 · 美国', schools: [
@@ -184,10 +223,11 @@
     var activeStudent = null;
     var activeSchool = null;
     var editingScanRecord = null;
+    var submitInFlight = false;
 
     function statusClass(status) {
-      if (status === '已完成') return 'bg-emerald-50 text-emerald-700';
-      if (status === '待填报') return 'bg-blue-50 text-blue-700';
+      if (status === '已完成' || status === '已填报') return 'bg-emerald-50 text-emerald-700';
+      if (status === '待填报' || status === '待提交') return 'bg-blue-50 text-blue-700';
       if (status === '待确认') return 'bg-amber-50 text-amber-700';
       return 'bg-amber-50 text-amber-700';
     }
@@ -195,17 +235,22 @@
     function escapeText(value) { var div = document.createElement('div'); div.textContent = value == null ? '' : String(value); return div.innerHTML; }
     function escapeAttr(value) { return escapeText(value).replace(/"/g, '&quot;').replace(/'/g, '&#39;'); }
     function scanStorageKey() { return activeStudent && activeSchool ? 'pbs_plugin_scan_' + activeStudent.id + '_' + activeSchool.id : ''; }
-    function createScanRecord(confirmed) {
-      return { confirmed: !!confirmed, scannedAt: new Date().toLocaleString('zh-CN', { hour12: false }), fields: cloneData(scanFieldTemplate), materials: cloneData(scanMaterialTemplate) };
+    function createScanRecord(confirmed, submitted) {
+      return { confirmed: !!confirmed, submitted: !!submitted, scannedAt: new Date().toLocaleString('zh-CN', { hour12: false }), fields: cloneData(scanFieldTemplate), materials: cloneData(scanMaterialTemplate) };
     }
     function loadActiveScanRecord() {
       var saved = null;
       try { saved = JSON.parse(localStorage.getItem(scanStorageKey()) || 'null'); } catch (e) {}
       if (saved && Array.isArray(saved.fields) && Array.isArray(saved.materials)) {
+        saved.submitted = !!saved.submitted;
         activeSchool.scanRecord = saved;
-        activeSchool.status = saved.confirmed ? '待填报' : '待确认';
+        activeSchool.status = saved.submitted ? '已填报' : (saved.confirmed ? '待提交' : '待确认');
       }
-      if (!activeSchool.scanRecord && (activeSchool.status === '待填报' || activeSchool.status === '已完成')) activeSchool.scanRecord = createScanRecord(true);
+      if (!activeSchool.scanRecord && (activeSchool.status === '待提交' || activeSchool.status === '待填报')) {
+        activeSchool.scanRecord = createScanRecord(true, false);
+        activeSchool.status = '待提交';
+      }
+      if (!activeSchool.scanRecord && (activeSchool.status === '已填报' || activeSchool.status === '已完成')) activeSchool.scanRecord = createScanRecord(true, true);
       if (!activeSchool.scanRecord && activeSchool.status === '待确认') activeSchool.scanRecord = createScanRecord(false);
     }
     function saveActiveScanRecord(record) {
@@ -247,19 +292,22 @@
       var summary = document.getElementById('scanSummary');
       if (!record) summary.classList.add('hidden');
       else {
-        summary.classList.remove('hidden', 'border-emerald-200', 'bg-emerald-50', 'border-amber-200', 'bg-amber-50');
-        summary.classList.add(record.confirmed ? 'border-emerald-200' : 'border-amber-200', record.confirmed ? 'bg-emerald-50' : 'bg-amber-50');
-        document.getElementById('scanSummaryTitle').textContent = record.confirmed ? '扫描结果已确认' : '扫描结果待确认';
-        document.getElementById('scanSummaryTitle').className = 'text-sm font-medium ' + (record.confirmed ? 'text-emerald-800' : 'text-amber-800');
-        document.getElementById('scanSummaryTime').textContent = record.scannedAt;
-        document.getElementById('scanSummaryTime').className = 'text-xs ' + (record.confirmed ? 'text-emerald-600' : 'text-amber-600');
+        var summaryState = record.submitted ? 'submitted' : (record.confirmed ? 'confirmed' : 'pending');
+        summary.classList.remove('hidden', 'border-emerald-200', 'bg-emerald-50', 'border-blue-200', 'bg-blue-50', 'border-amber-200', 'bg-amber-50');
+        summary.classList.add(summaryState === 'submitted' ? 'border-emerald-200' : (summaryState === 'confirmed' ? 'border-blue-200' : 'border-amber-200'), summaryState === 'submitted' ? 'bg-emerald-50' : (summaryState === 'confirmed' ? 'bg-blue-50' : 'bg-amber-50'));
+        document.getElementById('scanSummaryTitle').textContent = record.submitted ? '模板已提交至 PBS' : (record.confirmed ? '扫描结果已确认，等待提交' : '扫描结果待确认');
+        document.getElementById('scanSummaryTitle').className = 'text-sm font-medium ' + (summaryState === 'submitted' ? 'text-emerald-800' : (summaryState === 'confirmed' ? 'text-blue-800' : 'text-amber-800'));
+        document.getElementById('scanSummaryTime').textContent = record.submittedAt || record.scannedAt;
+        document.getElementById('scanSummaryTime').className = 'text-xs ' + (summaryState === 'submitted' ? 'text-emerald-600' : (summaryState === 'confirmed' ? 'text-blue-600' : 'text-amber-600'));
         document.getElementById('scanFieldCount').textContent = record.fields.length;
         document.getElementById('scanMaterialCount').textContent = record.materials.length;
       }
       var scanButton = document.getElementById('scanActionButton');
-      scanButton.textContent = record && !record.confirmed ? '确认扫描结果' : (record ? '重新扫描' : '开始扫描');
+      var waitingSubmit = !!(record && record.confirmed && !record.submitted);
+      scanButton.textContent = !record ? '开始扫描' : (!record.confirmed ? '确认扫描结果' : (waitingSubmit ? '提交至PBS' : '重新扫描'));
+      scanButton.className = waitingSubmit ? 'h-10 px-5 bg-blue-600 text-white rounded-lg hover:bg-blue-700 text-sm font-medium' : 'h-10 px-5 border border-slate-300 bg-white text-slate-700 rounded-lg hover:bg-slate-50 text-sm font-medium';
       var fillButton = document.getElementById('fillActionButton');
-      var canFill = !!(record && record.confirmed);
+      var canFill = !!(record && record.submitted);
       fillButton.disabled = !canFill;
       fillButton.className = canFill ? 'h-10 px-5 bg-blue-600 text-white rounded-lg hover:bg-blue-700 text-sm font-medium' : 'h-10 px-5 bg-slate-200 text-slate-400 rounded-lg text-sm font-medium cursor-not-allowed';
     }
@@ -278,6 +326,10 @@
         openScanResult(activeSchool.scanRecord);
         return;
       }
+      if (activeSchool.scanRecord && activeSchool.scanRecord.confirmed && !activeSchool.scanRecord.submitted) {
+        openSubmitConfirmation();
+        return;
+      }
       var button = document.getElementById('scanActionButton');
       button.disabled = true;
       button.textContent = '正在扫描官网...';
@@ -285,6 +337,7 @@
         var source = activeSchool.scanRecord && activeSchool.scanRecord.confirmed ? activeSchool.scanRecord : createScanRecord(false);
         source = cloneData(source);
         source.confirmed = false;
+        source.submitted = false;
         source.scannedAt = new Date().toLocaleString('zh-CN', { hour12: false });
         button.disabled = false;
         openScanResult(source);
@@ -358,11 +411,111 @@
       var record = collectScanResult();
       if (!validateScanResult(record)) return;
       record.confirmed = true;
+      record.submitted = false;
       saveActiveScanRecord(record);
-      activeSchool.status = '待填报';
+      activeSchool.status = '待提交';
       closeScanResult();
       renderProjectState();
-      toast('扫描结果已确认，可以开始填报');
+      toast('扫描结果已确认，请提交至PBS');
+    }
+    function duplicateFieldNames(record) {
+      var names = {};
+      var duplicates = [];
+      record.fields.forEach(function (field) {
+        var key = field.label.trim().toLowerCase();
+        if (!key) return;
+        if (names[key] && duplicates.indexOf(field.label.trim()) < 0) duplicates.push(field.label.trim());
+        names[key] = true;
+      });
+      return duplicates;
+    }
+    function submissionProgramName(program) {
+      var names = {
+        '计算机科学 MSCS': '计算机科学硕士',
+        '计算机科学 MS': '计算机科学硕士',
+        '教育学 MA': '教育学硕士',
+        '教育管理 MA': '教育管理硕士',
+        '经济学 BA': '经济学本科'
+      };
+      return names[program] || program;
+    }
+    function defaultTemplateName() {
+      return activeSchool.name + '*' + submissionProgramName(activeSchool.program) + '_RD_V1.0';
+    }
+    function openSubmitConfirmation() {
+      var record = activeSchool.scanRecord;
+      if (!record || !record.confirmed) { toast('请先确认扫描结果'); return; }
+      var duplicates = duplicateFieldNames(record);
+      if (duplicates.length) {
+        toast('存在重复字段名，请修改后再提交');
+        openScanResult(record);
+        return;
+      }
+      document.getElementById('submitConfirmView').classList.remove('hidden');
+      document.getElementById('submitSuccessView').classList.add('hidden');
+      document.getElementById('submitSchoolTarget').textContent = activeSchool.name + ' · ' + submissionProgramName(activeSchool.program);
+      document.getElementById('submitTemplateName').value = record.templateName || defaultTemplateName();
+      document.getElementById('submitContentSummary').textContent = '包含 ' + record.fields.length + ' 个填写字段 + ' + record.materials.length + ' 项材料要求';
+      document.getElementById('submitTemplateError').classList.add('hidden');
+      var button = document.getElementById('confirmSubmitButton');
+      button.disabled = false;
+      button.innerHTML = '确认提交';
+      document.getElementById('submitToPbsModal').classList.remove('hidden');
+      document.body.classList.add('overflow-hidden');
+    }
+    function closeSubmitModalFromMask() {
+      if (!document.getElementById('submitSuccessView').classList.contains('hidden') || submitInFlight) return;
+      closeSubmitModal();
+    }
+    function closeSubmitModal() {
+      if (submitInFlight) return;
+      document.getElementById('submitToPbsModal').classList.add('hidden');
+      document.body.classList.remove('overflow-hidden');
+    }
+    function generateTemplateId() {
+      var now = new Date();
+      var monthDay = String(now.getMonth() + 1).padStart(2, '0') + String(now.getDate()).padStart(2, '0');
+      var sequence = 1;
+      students.some(function (student) {
+        var index = student.schools.findIndex(function (school) { return school.id === activeSchool.id; });
+        if (index < 0) { sequence += student.schools.length; return false; }
+        sequence += index;
+        return true;
+      });
+      return 'TPL-' + now.getFullYear() + '-' + monthDay + '-' + String(sequence).padStart(3, '0');
+    }
+    function confirmSubmitToPbs() {
+      var templateName = document.getElementById('submitTemplateName').value.trim();
+      if (!templateName) { document.getElementById('submitTemplateError').classList.remove('hidden'); return; }
+      document.getElementById('submitTemplateError').classList.add('hidden');
+      submitInFlight = true;
+      var button = document.getElementById('confirmSubmitButton');
+      button.disabled = true;
+      button.innerHTML = '<span class="w-4 h-4 rounded-full border-2 border-white/40 border-t-white animate-spin"></span>提交中';
+      window.setTimeout(function () {
+        var record = cloneData(activeSchool.scanRecord);
+        record.submitted = true;
+        record.templateName = templateName;
+        record.templateId = record.templateId || generateTemplateId();
+        record.submittedAt = new Date().toLocaleString('zh-CN', { hour12: false });
+        saveActiveScanRecord(record);
+        activeSchool.status = '已填报';
+        submitInFlight = false;
+        renderProjectState();
+        renderStudents();
+        document.getElementById('submittedTemplateId').textContent = record.templateId;
+        document.getElementById('submitConfirmView').classList.add('hidden');
+        document.getElementById('submitSuccessView').classList.remove('hidden');
+      }, 700);
+    }
+    function viewSubmittedTemplate() {
+      closeSubmitModal();
+      openFillDrawer();
+    }
+    function returnFromSubmitSuccess() {
+      closeSubmitModal();
+      renderStudents();
+      showStudents();
     }
     function renderDrawerData() {
       var record = activeSchool.scanRecord;
@@ -377,7 +530,7 @@
       }).join('');
     }
     function openFillDrawer() {
-      if (!activeSchool.scanRecord || !activeSchool.scanRecord.confirmed) { toast('请先确认扫描结果'); if (activeSchool.scanRecord) openScanResult(activeSchool.scanRecord); return; }
+      if (!activeSchool.scanRecord || !activeSchool.scanRecord.submitted) { toast('请先将扫描结果提交至PBS'); return; }
       document.getElementById('drawerTitle').textContent = activeStudent.name + ' · ' + activeSchool.name;
       renderDrawerData();
       document.getElementById('drawerMask').classList.remove('hidden');

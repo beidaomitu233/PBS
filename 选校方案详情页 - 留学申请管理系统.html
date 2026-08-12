@@ -607,6 +607,7 @@
       }
       hydrateSavedPlanVersions();
       renderCommunicationRecords();
+      if (location.hash === '#history') openHistoryModal();
     });
 
     function openShareH5() {

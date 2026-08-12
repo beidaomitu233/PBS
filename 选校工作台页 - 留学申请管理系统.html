@@ -842,6 +842,7 @@
       <div id="schoolActionBar" class="sticky bottom-0 mt-6 -mx-6 px-6 py-4 bg-white border-t border-gray-200 shadow-[0_-4px_12px_rgba(0,0,0,0.06)] z-30 flex items-center justify-between gap-4">
         <div><p class="text-xs text-gray-400">当前方案版本</p><p id="planVersionLabel" class="text-sm font-semibold text-gray-800 mt-0.5">V3</p></div>
         <div class="flex items-center gap-4">
+        <button class="px-6 h-11 bg-white border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors font-medium" onclick="openHistoryPlans()">查看历史方案</button>
         <button class="px-6 h-11 bg-white border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors font-medium" onclick="savePlan()">保存方案</button>
         <button class="px-6 h-11 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium" onclick="location.href=&#39;选校方案详情页 - 留学申请管理系统.html&#39;">生成方案报告</button>
         <button class="px-6 h-11 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors font-medium flex items-center gap-2" onclick="sharePlan()">
@@ -1142,6 +1143,9 @@
       if (navigator.clipboard) navigator.clipboard.writeText(link).catch(function () {});
       planToast('H5链接已生成并复制');
       window.open(target, '_blank');
+    }
+    function openHistoryPlans() {
+      location.href = '选校方案详情页 - 留学申请管理系统.html#history';
     }
   </script>
     </main>

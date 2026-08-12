@@ -4,49 +4,68 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>周雨薇的选校方案 - PBS留学</title>
-  <script src="./assets/js/tailwindcss.js"></script>
+  <script src="./assets/vendor/tailwind-runtime.js"></script>
   <style>
-    body { font-family: "Microsoft YaHei", "PingFang SC", sans-serif; }
+    html { scroll-behavior: smooth; }
+    body { font-family: "Microsoft YaHei", "PingFang SC", sans-serif; background: #f4f7fb; }
     .safe-bottom { padding-bottom: max(24px, env(safe-area-inset-bottom)); }
+    .hero-grid { background-image: linear-gradient(rgba(255,255,255,.06) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.06) 1px, transparent 1px); background-size: 28px 28px; }
+    .school-card { transition: transform .2s ease, box-shadow .2s ease, border-color .2s ease; }
+    .school-card:hover { transform: translateY(-2px); }
+    @media (max-width: 640px) { .school-card:hover { transform: none; } }
   </style>
 </head>
-<body class="bg-slate-50 text-slate-800">
-  <header class="bg-gradient-to-br from-blue-700 to-indigo-700 text-white">
-    <div class="max-w-3xl mx-auto px-5 pt-7 pb-9">
-      <div class="flex items-center justify-between mb-8">
-        <div class="flex items-center gap-2"><span class="w-9 h-9 rounded-xl bg-white/20 flex items-center justify-center font-bold">P</span><span class="font-semibold">PBS留学</span></div>
-        <span class="text-xs text-blue-100">方案 V3 · 2026-07-19</span>
+<body class="min-h-screen text-slate-800">
+  <header class="relative overflow-hidden bg-gradient-to-br from-blue-700 via-blue-700 to-indigo-800 text-white">
+    <div class="hero-grid absolute inset-0 opacity-60"></div>
+    <div class="absolute -top-24 -right-20 w-72 h-72 rounded-full bg-cyan-300 opacity-20"></div>
+    <div class="absolute -bottom-24 -left-12 w-64 h-64 rounded-full bg-indigo-300 opacity-20"></div>
+    <div class="relative max-w-4xl mx-auto px-5 sm:px-8 pt-7 pb-16">
+      <div class="flex items-center justify-between mb-10">
+        <div class="flex items-center gap-3"><span class="w-10 h-10 rounded-xl bg-white text-blue-700 shadow-lg flex items-center justify-center font-bold text-lg">P</span><div><p class="font-semibold leading-5">PBS留学</p><p class="text-xs text-blue-200">专业留学申请服务</p></div></div>
+        <span class="inline-flex items-center px-3 py-1.5 rounded-full bg-white/10 border border-white/20 text-xs text-blue-50">方案 V3 · 2026-07-19</span>
       </div>
-      <p class="text-sm text-blue-100">周雨薇同学</p>
-      <h1 class="text-2xl font-semibold mt-1">美国计算机科学硕士选校方案</h1>
-      <div class="flex flex-wrap gap-x-5 gap-y-2 text-sm text-blue-100 mt-4">
-        <span>申请层次：硕士</span><span>入学时间：2026 秋</span><span>意向国家：美国</span>
+      <div class="md:flex md:items-end md:justify-between md:gap-8">
+        <div>
+          <p class="text-sm text-blue-200 mb-2">周雨薇同学的专属方案</p>
+          <h1 class="text-2xl sm:text-3xl font-semibold tracking-tight">美国计算机科学硕士选校方案</h1>
+          <p class="text-sm text-blue-100 mt-4 max-w-2xl leading-6">基于学生背景、申请目标与院校录取要求形成的分层选校建议。</p>
+        </div>
+        <div class="flex items-center gap-2 mt-6 md:mt-0 text-xs text-blue-100">
+          <span class="px-3 py-2 rounded-lg bg-white/10">硕士申请</span><span class="px-3 py-2 rounded-lg bg-white/10">2026 秋</span><span class="px-3 py-2 rounded-lg bg-white/10">美国</span>
+        </div>
       </div>
     </div>
   </header>
 
-  <main class="max-w-3xl mx-auto px-4 -mt-4 safe-bottom">
-    <section class="bg-white rounded-2xl shadow-sm border border-slate-100 p-5 mb-4">
-      <h2 class="text-base font-semibold text-slate-900 mb-3">推荐说明</h2>
-      <p class="text-sm leading-7 text-slate-600">结合 GPA 3.9、托福 105、AI 研究经历及就业方向，本方案按“1 冲刺、2 匹配、1 保底”形成梯度。重点关注计算机学科实力、课程匹配度与毕业就业资源。</p>
+  <main class="relative max-w-4xl mx-auto px-4 sm:px-8 -mt-8 safe-bottom">
+    <section class="bg-white rounded-2xl shadow-lg border border-slate-100 p-5 sm:p-7 mb-5">
+      <div class="grid md:grid-cols-[1fr_auto] gap-6 md:items-center">
+        <div><p class="text-xs font-medium text-blue-600 mb-2">方案概览</p><h2 class="text-lg font-semibold text-slate-900 mb-3">推荐说明</h2><p class="text-sm leading-7 text-slate-600">结合 GPA 3.9、托福 105、AI 研究经历及就业方向，本方案按“1 冲刺、2 匹配、1 保底”形成梯度。重点关注计算机学科实力、课程匹配度与毕业就业资源。</p></div>
+        <div class="grid grid-cols-3 gap-3 md:w-64">
+          <div class="text-center px-3 py-3 bg-red-50 rounded-xl"><p class="text-xl font-semibold text-red-600">1</p><p class="text-xs text-red-500 mt-1">冲刺</p></div>
+          <div class="text-center px-3 py-3 bg-blue-50 rounded-xl"><p class="text-xl font-semibold text-blue-600">2</p><p class="text-xs text-blue-500 mt-1">匹配</p></div>
+          <div class="text-center px-3 py-3 bg-emerald-50 rounded-xl"><p class="text-xl font-semibold text-emerald-600">1</p><p class="text-xs text-emerald-500 mt-1">保底</p></div>
+        </div>
+      </div>
     </section>
 
-    <section class="space-y-4">
-      <div class="rounded-2xl bg-red-50 border border-red-100 p-4">
-        <div class="flex items-center justify-between mb-3"><h2 class="font-semibold text-red-700">冲刺区</h2><span class="text-xs text-red-500">1 所</span></div>
+    <section class="space-y-5">
+      <div class="rounded-2xl bg-red-50 border border-red-100 p-4 sm:p-5">
+        <div class="flex items-center justify-between mb-4"><div><h2 class="font-semibold text-red-700">冲刺区</h2><p class="text-xs text-red-500 mt-1">录取难度较高，重点争取</p></div><span class="text-xs text-red-600 bg-white px-2.5 py-1 rounded-full border border-red-100">1 所</span></div>
         <div id="zoneReach"></div>
       </div>
-      <div class="rounded-2xl bg-blue-50 border border-blue-100 p-4">
-        <div class="flex items-center justify-between mb-3"><h2 class="font-semibold text-blue-700">匹配区</h2><span class="text-xs text-blue-500">2 所</span></div>
+      <div class="rounded-2xl bg-blue-50 border border-blue-100 p-4 sm:p-5">
+        <div class="flex items-center justify-between mb-4"><div><h2 class="font-semibold text-blue-700">匹配区</h2><p class="text-xs text-blue-500 mt-1">背景匹配度较高，作为申请主体</p></div><span class="text-xs text-blue-600 bg-white px-2.5 py-1 rounded-full border border-blue-100">2 所</span></div>
         <div id="zoneMatch" class="space-y-3"></div>
       </div>
-      <div class="rounded-2xl bg-emerald-50 border border-emerald-100 p-4">
-        <div class="flex items-center justify-between mb-3"><h2 class="font-semibold text-emerald-700">保底区</h2><span class="text-xs text-emerald-500">1 所</span></div>
+      <div class="rounded-2xl bg-emerald-50 border border-emerald-100 p-4 sm:p-5">
+        <div class="flex items-center justify-between mb-4"><div><h2 class="font-semibold text-emerald-700">保底区</h2><p class="text-xs text-emerald-500 mt-1">录取把握相对稳定，保障方案下限</p></div><span class="text-xs text-emerald-600 bg-white px-2.5 py-1 rounded-full border border-emerald-100">1 所</span></div>
         <div id="zoneSafe"></div>
       </div>
     </section>
 
-    <p class="text-center text-xs text-slate-400 mt-6">本方案由 PBS 留学顾问团队提供</p>
+    <footer class="text-center pt-8 pb-2"><div class="inline-flex items-center gap-2 text-xs text-slate-400"><span class="w-6 h-6 rounded-lg bg-blue-600 text-white flex items-center justify-center font-semibold">P</span><span>本方案由 PBS 留学顾问团队提供</span></div><p class="text-xs text-slate-400 mt-3">院校要求可能调整，请以学校官网最新信息为准</p></footer>
   </main>
 
   <div id="schoolModal" class="fixed inset-0 z-50 hidden">
@@ -82,9 +101,9 @@
     function renderSchools() {
       schools.forEach(function (school) {
         var card = document.createElement('button');
-        card.className = 'w-full text-left bg-white rounded-xl border border-slate-100 p-4 shadow-sm hover:shadow-md transition-shadow';
+        card.className = 'school-card w-full text-left bg-white rounded-xl border border-slate-100 p-4 sm:p-5 shadow-sm hover:shadow-lg hover:border-blue-200';
         card.onclick = function () { openSchoolDetail(school.id); };
-        card.innerHTML = '<div class="flex items-start justify-between gap-3"><div><h3 class="text-sm font-semibold text-slate-900">' + school.name + '</h3><p class="text-xs text-slate-500 mt-1">' + school.rank + ' · ' + school.program + '</p></div><span class="text-xs text-blue-600 flex-shrink-0">查看详情 ›</span></div><p class="text-xs text-slate-600 leading-6 mt-3">' + school.reason + '</p>';
+        card.innerHTML = '<div class="flex items-start justify-between gap-4"><div class="min-w-0"><h3 class="text-base font-semibold text-slate-900">' + school.name + '</h3><div class="flex flex-wrap items-center gap-2 mt-2"><span class="text-xs font-medium text-blue-600 bg-blue-50 px-2 py-1 rounded-md">' + school.rank + '</span><span class="text-xs text-slate-500">' + school.program + '</span></div></div><span class="w-8 h-8 rounded-full bg-slate-50 text-blue-600 flex items-center justify-center flex-shrink-0">›</span></div><div class="border-t border-slate-100 mt-4 pt-3"><p class="text-xs text-slate-400 mb-1">推荐理由</p><p class="text-sm text-slate-600 leading-6">' + school.reason + '</p></div>';
         document.getElementById(school.target).appendChild(card);
       });
     }

@@ -80,13 +80,13 @@
       children: [{ label: '文书审核列表', file: '文书审核列表页 - 留学申请管理系统.html' }] },
     { key: 'school', label: '选校管理', icon: 'map', roles: ['机构管理员', '销售人员管理员', '销售人员'],
       children: [
-        { label: '选校任务列表', file: '选校任务列表页 - 留学申请管理系统.html', roles: ['机构管理员', '销售人员管理员', '销售人员'] }] },
-    { key: 'usermgmt', label: '用户管理', icon: 'users', roles: ['平台运维人员'],
+        { label: '选校任务列表', file: '选校任务列表页 - 留学申请管理系统.html', roles: ['机构管理员', '销售人员管理员', '销售人员'] },
+        { label: '选校工作台', file: '选校工作台页 - 留学申请管理系统.html', roles: ['销售人员管理员', '销售人员'] }] },
+    { key: 'usermgmt', label: '系统管理', icon: 'users', roles: ['平台运维人员', '机构管理员'],
       children: [
-        { label: '用户管理', file: '用户管理 - 留学申请管理系统.html' },
-        { label: '角色权限管理', file: '角色权限管理 - 留学申请管理系统.html' },
-        { label: '操作日志审计', file: '操作日志审计 - 留学申请管理系统.html' }] },
-    { key: 'staffmgmt', label: '人员管理', icon: 'idcard', roles: ['机构管理员'], single: true, file: '人员管理 - PBS留学CRM系统.html' },
+        { label: '人员管理', file: '人员管理 - PBS留学CRM系统.html', roles: ['平台运维人员', '机构管理员'] },
+        { label: '角色权限管理', file: '角色权限管理 - 留学申请管理系统.html', roles: ['平台运维人员'] },
+        { label: '操作日志审计', file: '操作日志审计 - 留学申请管理系统.html', roles: ['平台运维人员'] }] },
     { key: 'aimanagement', label: 'AI管理', icon: 'ai', roles: ['平台运维人员', '机构管理员'], single: true, file: 'AI管理 - 留学申请管理系统.html' }
   ];
 
@@ -122,7 +122,7 @@
     '结项归档列表 - PBS留学CRM系统.html': ['项目经理', '文书人员', '网申人员'],
     '结项详情页 - 留学申请管理系统.html': ['项目经理', '文书人员', '网申人员'],
     '用户管理 - 留学申请管理系统.html': ['平台运维人员'],
-    '人员管理 - PBS留学CRM系统.html': ['机构管理员'],
+    '人员管理 - PBS留学CRM系统.html': ['平台运维人员', '机构管理员'],
     '角色权限管理 - 留学申请管理系统.html': ['平台运维人员'],
     '操作日志审计 - 留学申请管理系统.html': ['平台运维人员'],
     'AI管理 - 留学申请管理系统.html': ['平台运维人员', '机构管理员'],
@@ -131,7 +131,7 @@
     '文书审核详情页 - 留学申请管理系统.html': ['文书审核'],
     '选校订单池页 - 留学申请管理系统.html': ['机构管理员', '销售人员管理员', '销售人员'],
     '选校任务列表页 - 留学申请管理系统.html': ['机构管理员', '销售人员管理员', '销售人员'],
-    '选校工作台页 - 留学申请管理系统.html': ['销售人员'],
+    '选校工作台页 - 留学申请管理系统.html': ['销售人员管理员', '销售人员'],
     '选校方案详情页 - 留学申请管理系统.html': ['销售人员', '销售人员管理员', '机构管理员']
   };
 
@@ -200,19 +200,34 @@
       }
     }
 
-    /* 选校入口统一为任务列表；机构管理员不展示独立工作台入口 */
+    /* 选校任务列表按角色隔离；选校执行人员保留独立工作台入口 */
     var schoolRoles = ['机构管理员', '销售人员管理员', '销售人员'];
     if (session.role === '超级管理员' || schoolRoles.indexOf(session.role) >= 0) {
       var taskEntry = nav.querySelector('a[href="选校任务列表页 - 留学申请管理系统.html"]') || nav.querySelector('a[href="选校订单池页 - 留学申请管理系统.html"]');
       if (taskEntry) {
         var schoolChildContainer = taskEntry.parentElement;
-        schoolChildContainer.querySelectorAll('a[href="选校订单池页 - 留学申请管理系统.html"], a[href="选校工作台页 - 留学申请管理系统.html"]').forEach(function (link) {
+        schoolChildContainer.querySelectorAll('a[href="选校订单池页 - 留学申请管理系统.html"]').forEach(function (link) {
           if (link !== taskEntry) link.remove();
         });
         taskEntry.href = '选校任务列表页 - 留学申请管理系统.html';
         var taskActive = file === '选校任务列表页 - 留学申请管理系统.html';
         taskEntry.className = 'flex items-center gap-2 px-4 py-2 rounded-lg text-sm transition-colors ' + (taskActive ? 'bg-blue-50 text-blue-600 font-medium' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-800');
         taskEntry.innerHTML = '<span class="w-1.5 h-1.5 rounded-full ' + (taskActive ? 'bg-blue-600' : 'bg-gray-300') + '"></span>选校任务列表';
+        var canUseSchoolWorkbench = session.role === '超级管理员' || session.role === '销售人员管理员' || session.role === '销售人员';
+        var schoolWorkbench = schoolChildContainer.querySelector('a[href="选校工作台页 - 留学申请管理系统.html"]');
+        if (canUseSchoolWorkbench && !schoolWorkbench) {
+          schoolWorkbench = document.createElement('a');
+          schoolWorkbench.href = '选校工作台页 - 留学申请管理系统.html';
+          schoolChildContainer.appendChild(schoolWorkbench);
+        }
+        if (schoolWorkbench) {
+          if (!canUseSchoolWorkbench) schoolWorkbench.remove();
+          else {
+            var workbenchActive = file === '选校工作台页 - 留学申请管理系统.html';
+            schoolWorkbench.className = 'flex items-center gap-2 px-4 py-2 rounded-lg text-sm transition-colors ' + (workbenchActive ? 'bg-blue-50 text-blue-600 font-medium' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-800');
+            schoolWorkbench.innerHTML = '<span class="w-1.5 h-1.5 rounded-full ' + (workbenchActive ? 'bg-blue-600' : 'bg-gray-300') + '"></span>选校工作台';
+          }
+        }
         var groupTitle = schoolChildContainer.previousElementSibling;
         if (groupTitle) {
           var groupLabel = groupTitle.querySelector('span');
@@ -220,6 +235,34 @@
         }
       }
     }
+
+    /* 用户管理并入人员管理，静态旧菜单统一收口。 */
+    nav.querySelectorAll('a[href="用户管理 - 留学申请管理系统.html"]').forEach(function (link) { link.remove(); });
+    var canManagePersonnel = session.role === '超级管理员' || session.role === '平台运维人员' || session.role === '机构管理员';
+    var platformPersonnelView = session.role === '超级管理员' || session.role === '平台运维人员';
+    var roleLink = nav.querySelector('a[href="角色权限管理 - 留学申请管理系统.html"]');
+    var systemGroup = roleLink && roleLink.parentElement ? roleLink.parentElement.parentElement : null;
+    nav.querySelectorAll('a[href="人员管理 - PBS留学CRM系统.html"]').forEach(function (link) { link.remove(); });
+    if (canManagePersonnel) {
+      var personnelLink = document.createElement('a');
+      var personnelActive = file === '人员管理 - PBS留学CRM系统.html';
+      personnelLink.href = '人员管理 - PBS留学CRM系统.html';
+      if (platformPersonnelView && roleLink) {
+        personnelLink.className = 'flex items-center gap-2 px-4 py-2 rounded-lg text-sm transition-colors ' + (personnelActive ? 'bg-blue-50 text-blue-600 font-medium' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-800');
+        personnelLink.innerHTML = '<span class="w-1.5 h-1.5 rounded-full ' + (personnelActive ? 'bg-blue-600' : 'bg-gray-300') + '"></span>人员管理';
+        roleLink.insertAdjacentElement('beforebegin', personnelLink);
+      } else {
+        personnelLink.className = 'flex items-center gap-3 px-4 py-3 rounded-lg font-medium transition-colors ' + (personnelActive ? 'bg-blue-50 text-blue-700' : 'text-gray-600 hover:text-gray-800 hover:bg-gray-50');
+        personnelLink.innerHTML = svgIcon(ICONS.idcard, 'w-5 h-5') + '<span>人员管理</span>';
+        if (systemGroup) systemGroup.insertAdjacentElement('afterend', personnelLink);
+        else nav.appendChild(personnelLink);
+      }
+    }
+    if (!platformPersonnelView && systemGroup) systemGroup.remove();
+    nav.querySelectorAll(':scope > div').forEach(function (group) {
+      var label = group.querySelector(':scope > div span');
+      if (label && label.textContent.trim() === '用户管理') label.textContent = '系统管理';
+    });
   }
 
   function renderSidebar(session, file) {
@@ -510,6 +553,10 @@
     if (COMPONENT_PAGES.indexOf(file) >= 0) return; /* 组件页不校验 */
     if (file === '选校订单池页 - 留学申请管理系统.html') {
       location.replace('选校任务列表页 - 留学申请管理系统.html');
+      return;
+    }
+    if (file === '用户管理 - 留学申请管理系统.html') {
+      location.replace('人员管理 - PBS留学CRM系统.html');
       return;
     }
 

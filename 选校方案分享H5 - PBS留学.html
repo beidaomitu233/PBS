@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>周雨薇的选校方案 - PBS留学</title>
+  <script src="./assets/js/tailwindcss.js"></script>
+  <style>
+    body { font-family: "Microsoft YaHei", "PingFang SC", sans-serif; }
+    .safe-bottom { padding-bottom: max(24px, env(safe-area-inset-bottom)); }
+  </style>
+</head>
+<body class="bg-slate-50 text-slate-800">
+  <header class="bg-gradient-to-br from-blue-700 to-indigo-700 text-white">
+    <div class="max-w-3xl mx-auto px-5 pt-7 pb-9">
+      <div class="flex items-center justify-between mb-8">
+        <div class="flex items-center gap-2"><span class="w-9 h-9 rounded-xl bg-white/20 flex items-center justify-center font-bold">P</span><span class="font-semibold">PBS留学</span></div>
+        <span class="text-xs text-blue-100">方案 V3 · 2026-07-19</span>
+      </div>
+      <p class="text-sm text-blue-100">周雨薇同学</p>
+      <h1 class="text-2xl font-semibold mt-1">美国计算机科学硕士选校方案</h1>
+      <div class="flex flex-wrap gap-x-5 gap-y-2 text-sm text-blue-100 mt-4">
+        <span>申请层次：硕士</span><span>入学时间：2026 秋</span><span>意向国家：美国</span>
+      </div>
+    </div>
+  </header>
+
+  <main class="max-w-3xl mx-auto px-4 -mt-4 safe-bottom">
+    <section class="bg-white rounded-2xl shadow-sm border border-slate-100 p-5 mb-4">
+      <h2 class="text-base font-semibold text-slate-900 mb-3">推荐说明</h2>
+      <p class="text-sm leading-7 text-slate-600">结合 GPA 3.9、托福 105、AI 研究经历及就业方向，本方案按“1 冲刺、2 匹配、1 保底”形成梯度。重点关注计算机学科实力、课程匹配度与毕业就业资源。</p>
+    </section>
+
+    <section class="space-y-4">
+      <div class="rounded-2xl bg-red-50 border border-red-100 p-4">
+        <div class="flex items-center justify-between mb-3"><h2 class="font-semibold text-red-700">冲刺区</h2><span class="text-xs text-red-500">1 所</span></div>
+        <div id="zoneReach"></div>
+      </div>
+      <div class="rounded-2xl bg-blue-50 border border-blue-100 p-4">
+        <div class="flex items-center justify-between mb-3"><h2 class="font-semibold text-blue-700">匹配区</h2><span class="text-xs text-blue-500">2 所</span></div>
+        <div id="zoneMatch" class="space-y-3"></div>
+      </div>
+      <div class="rounded-2xl bg-emerald-50 border border-emerald-100 p-4">
+        <div class="flex items-center justify-between mb-3"><h2 class="font-semibold text-emerald-700">保底区</h2><span class="text-xs text-emerald-500">1 所</span></div>
+        <div id="zoneSafe"></div>
+      </div>
+    </section>
+
+    <p class="text-center text-xs text-slate-400 mt-6">本方案由 PBS 留学顾问团队提供</p>
+  </main>
+
+  <div id="schoolModal" class="fixed inset-0 z-50 hidden">
+    <div class="absolute inset-0 bg-black/40" onclick="closeSchoolDetail()"></div>
+    <div class="absolute inset-x-0 bottom-0 max-h-[86vh] overflow-y-auto bg-white rounded-t-3xl shadow-2xl">
+      <div class="max-w-3xl mx-auto p-5 safe-bottom">
+        <div class="flex items-start justify-between gap-4 mb-5">
+          <div><p id="detailZone" class="text-xs font-medium text-blue-600 mb-1"></p><h3 id="detailName" class="text-xl font-semibold text-slate-900"></h3><p id="detailProgram" class="text-sm text-slate-500 mt-1"></p></div>
+          <button class="w-9 h-9 rounded-full bg-slate-100 text-slate-500 text-xl" onclick="closeSchoolDetail()">×</button>
+        </div>
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-5">
+          <div class="bg-slate-50 rounded-xl p-3"><p class="text-xs text-slate-400">世界排名</p><p id="detailRank" class="text-sm font-medium mt-1"></p></div>
+          <div class="bg-slate-50 rounded-xl p-3"><p class="text-xs text-slate-400">学制</p><p id="detailDuration" class="text-sm font-medium mt-1"></p></div>
+          <div class="bg-slate-50 rounded-xl p-3"><p class="text-xs text-slate-400">申请截止</p><p id="detailDeadline" class="text-sm font-medium mt-1"></p></div>
+          <div class="bg-slate-50 rounded-xl p-3"><p class="text-xs text-slate-400">学费参考</p><p id="detailTuition" class="text-sm font-medium mt-1"></p></div>
+        </div>
+        <div class="space-y-5">
+          <div><h4 class="text-sm font-semibold text-slate-900 mb-2">推荐理由</h4><p id="detailReason" class="text-sm text-slate-600 leading-7"></p></div>
+          <div><h4 class="text-sm font-semibold text-slate-900 mb-2">项目特点</h4><p id="detailFeature" class="text-sm text-slate-600 leading-7"></p></div>
+          <div><h4 class="text-sm font-semibold text-slate-900 mb-2">录取要求参考</h4><p id="detailRequirement" class="text-sm text-slate-600 leading-7"></p></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    var schools = [
+      { id: 'cmu', zone: '冲刺区', target: 'zoneReach', name: '卡内基梅隆大学', program: '计算机科学（MSCS）', rank: 'QS #52', duration: '2 年', deadline: '2025-12-15', tuition: 'USD 58,000/年', reason: '科研经历与 NLP 方向高度契合，计算机学科实力突出，建议作为重点冲刺项目。', feature: '课程覆盖系统、理论与人工智能方向，学院与多家科技企业设有联合研究项目。', requirement: '建议 GPA 3.8+、托福 105+，GRE 325+；部分申请者需参加视频面试。' },
+      { id: 'uiuc', zone: '匹配区', target: 'zoneMatch', name: '伊利诺伊大学厄巴纳-香槟分校', program: '计算机科学（MCS）', rank: 'QS #69', duration: '1.5–2 年', deadline: '2026-01-15', tuition: 'USD 42,000/年', reason: '学生成绩区间与往年录取画像匹配，工程学院资源和就业表现稳定。', feature: '计算机与工程学科基础雄厚，课程选择灵活，校友与雇主网络成熟。', requirement: '建议 GPA 3.5+、托福 103+，有算法、系统及科研项目经历更具竞争力。' },
+      { id: 'gatech', zone: '匹配区', target: 'zoneMatch', name: '佐治亚理工学院', program: '计算机科学（MSCS）', rank: 'QS #97', duration: '2 年', deadline: '2026-03-01', tuition: 'USD 32,000/年', reason: '工业界认可度高，Co-op 与实习体系符合学生毕业后留美就业目标。', feature: '工程与计算机交叉优势明显，亚特兰大科技产业资源丰富。', requirement: '建议 GPA 3.5+、托福 100+；GRE 建议提交，重视技术项目及实习成果。' },
+      { id: 'bu', zone: '保底区', target: 'zoneSafe', name: '波士顿大学', program: '计算机科学（MSCS）', rank: 'QS #108', duration: '1.5–2 年', deadline: '2026-03-15', tuition: 'USD 54,000/年', reason: '录取梯度稳妥，波士顿高校与企业资源丰富，可保障方案下限。', feature: '课程注重实践与职业发展，可利用波士顿地区的科研、创业及实习资源。', requirement: '建议 GPA 3.3+、托福 95+；GRE 可选，项目与实习经历可强化申请。' }
+    ];
+    function renderSchools() {
+      schools.forEach(function (school) {
+        var card = document.createElement('button');
+        card.className = 'w-full text-left bg-white rounded-xl border border-slate-100 p-4 shadow-sm hover:shadow-md transition-shadow';
+        card.onclick = function () { openSchoolDetail(school.id); };
+        card.innerHTML = '<div class="flex items-start justify-between gap-3"><div><h3 class="text-sm font-semibold text-slate-900">' + school.name + '</h3><p class="text-xs text-slate-500 mt-1">' + school.rank + ' · ' + school.program + '</p></div><span class="text-xs text-blue-600 flex-shrink-0">查看详情 ›</span></div><p class="text-xs text-slate-600 leading-6 mt-3">' + school.reason + '</p>';
+        document.getElementById(school.target).appendChild(card);
+      });
+    }
+    function openSchoolDetail(id) {
+      var school = schools.find(function (item) { return item.id === id; });
+      if (!school) return;
+      ['Zone','Name','Program','Rank','Duration','Deadline','Tuition','Reason','Feature','Requirement'].forEach(function (key) {
+        document.getElementById('detail' + key).textContent = school[key.toLowerCase()];
+      });
+      document.getElementById('schoolModal').classList.remove('hidden');
+      document.body.classList.add('overflow-hidden');
+    }
+    function closeSchoolDetail() {
+      document.getElementById('schoolModal').classList.add('hidden');
+      document.body.classList.remove('overflow-hidden');
+    }
+    renderSchools();
+  </script>
+</body>
+</html>

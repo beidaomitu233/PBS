@@ -420,27 +420,12 @@
             </div>
             <span class="hidden text-sm text-gray-900" data-field="app-pwd-plain">CmU2026!</span>
           </div>
-          <div class="col-span-2 border border-gray-100 rounded-lg p-3">
-            <div class="flex items-center justify-between mb-3">
-              <span class="text-xs text-gray-500">关联邮箱</span>
-              <span id="linkedEmailText" class="text-xs text-gray-500">zhangming@cmu.edu</span>
-            </div>
-            <div class="flex border-b border-gray-200 mb-3">
-              <button id="emailRegisterTab" class="px-3 py-1.5 text-xs font-medium text-blue-600 border-b-2 border-blue-600" onclick="switchEmailBindingTab('register')">注册邮箱</button>
-              <button id="emailManualTab" class="px-3 py-1.5 text-xs font-medium text-gray-500 border-b-2 border-transparent" onclick="switchEmailBindingTab('manual')">手动绑定</button>
-            </div>
-            <div id="emailRegisterPanel" class="flex items-center justify-between gap-3">
-              <p class="text-xs text-gray-500">注册申请专用邮箱并自动关联</p>
-              <button class="px-3 py-1.5 text-xs text-blue-600 bg-blue-50 rounded-md hover:bg-blue-100 font-medium" onclick="openEmailRegister()">注册 / 管理</button>
-            </div>
-            <div id="emailManualPanel" class="hidden space-y-2">
-              <input id="manualEmailAccount" type="email" class="w-full h-9 px-3 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500" placeholder="邮箱账号">
-              <input id="manualEmailPassword" type="password" class="w-full h-9 px-3 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500" placeholder="邮箱密码或授权码">
-              <div class="flex items-center justify-between gap-3">
-                <p class="text-xs text-gray-400">使用 IMAP 协议连接，请确保邮箱已开启 IMAP 服务。</p>
-                <button class="px-3 py-1.5 text-xs text-white bg-blue-600 rounded-md hover:bg-blue-700 font-medium flex-shrink-0" onclick="confirmManualEmailBinding()">确认绑定</button>
-              </div>
-            </div>
+          <div>
+            <span class="text-xs text-gray-500">关联邮箱</span>
+            <button type="button" class="w-full mt-1 flex items-center justify-between gap-3 text-left group" onclick="openEmailBindingModal()">
+              <span id="linkedEmailText" class="text-sm text-gray-900">zhangming@cmu.edu</span>
+              <span class="text-xs text-blue-600 group-hover:underline">注册 / 绑定 ›</span>
+            </button>
           </div>
         </div>
       </div>
@@ -998,11 +983,11 @@
         </div>
         <div class="grid grid-cols-3 gap-4">
           <div><label class="text-xs text-gray-500 block mb-1">申请结果 <span class="text-red-500">*</span></label><select id="admissionResult" class="w-full h-9 px-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500"><option value="">请选择</option><option value="admitted">录取</option><option value="rejected">拒录</option><option value="waitlist">等待名单</option><option value="withdrawn">已撤回</option></select></div>
-          <div><label class="text-xs text-gray-500 block mb-1">录取院校 <span class="text-red-500">*</span></label><input id="resultSchool" type="text" class="w-full h-9 px-3 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500" placeholder="手动填写院校"></div>
-          <div><label class="text-xs text-gray-500 block mb-1">录取专业 <span class="text-red-500">*</span></label><input id="resultProgram" type="text" class="w-full h-9 px-3 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500" placeholder="手动填写专业"></div>
-          <div><label class="text-xs text-gray-500 block mb-1">奖学金 <span class="text-red-500">*</span></label><input id="resultScholarship" type="text" class="w-full h-9 px-3 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500" placeholder="无奖学金也需填写“无”"></div>
-          <div><label class="text-xs text-gray-500 block mb-1">录取通知日期 <span class="text-red-500">*</span></label><input id="resultNoticeDate" type="date" class="w-full h-9 px-3 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500"></div>
-          <div><label class="text-xs text-gray-500 block mb-1">回复截止日期 <span class="text-red-500">*</span></label><input id="resultReplyDate" type="date" class="w-full h-9 px-3 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500"></div>
+          <div><label class="text-xs text-gray-500 block mb-1">录取院校</label><input id="resultSchool" type="text" class="w-full h-9 px-3 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500" placeholder="手动填写院校"></div>
+          <div><label class="text-xs text-gray-500 block mb-1">录取专业</label><input id="resultProgram" type="text" class="w-full h-9 px-3 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500" placeholder="手动填写专业"></div>
+          <div><label class="text-xs text-gray-500 block mb-1">奖学金</label><input id="resultScholarship" type="text" class="w-full h-9 px-3 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500" placeholder="填写奖学金信息"></div>
+          <div><label class="text-xs text-gray-500 block mb-1">录取通知日期</label><input id="resultNoticeDate" type="date" class="w-full h-9 px-3 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500"></div>
+          <div><label class="text-xs text-gray-500 block mb-1">回复截止日期</label><input id="resultReplyDate" type="date" class="w-full h-9 px-3 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500"></div>
           <div class="col-span-3"><label class="text-xs text-gray-500 block mb-1">结果图片</label><div class="border-2 border-dashed border-gray-300 rounded-lg p-4"><input id="resultOfferImageInput" type="file" accept="image/*" class="hidden" onchange="previewResultImage(this.files[0])"><div id="resultOfferImageEmpty" class="text-center"><button type="button" class="px-4 py-2 text-sm text-blue-600 bg-blue-50 rounded-lg hover:bg-blue-100 font-medium" onclick="document.getElementById('resultOfferImageInput').click()">上传 Offer / 结果图片</button><p class="text-xs text-gray-400 mt-2">支持 JPG、PNG，保存后同步至项目结果确认页面</p></div><div id="resultOfferImagePreview" class="hidden flex items-center gap-4"><img id="resultOfferImage" class="w-36 h-24 object-contain bg-gray-50 border border-gray-200 rounded-lg" alt="申请结果图片预览"><div><p id="resultOfferImageName" class="text-sm text-gray-700 mb-2"></p><div class="flex gap-3"><button type="button" class="text-xs text-blue-600 hover:underline" onclick="document.getElementById('resultOfferImageInput').click()">更换图片</button><button type="button" class="text-xs text-red-600 hover:underline" onclick="removeResultImage()">移除</button></div></div></div></div></div>
           <div class="col-span-3"><label class="text-xs text-gray-500 block mb-1">备注</label><textarea id="resultRemark" rows="3" class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 resize-none" placeholder="填写结果说明"></textarea></div>
         </div>
@@ -1169,20 +1154,24 @@
     </div>
   </div>
 
-  <!-- 邮箱注册页面弹窗 -->
-  <div id="emailRegisterModal" class="fixed inset-0 z-50 hidden">
-    <div class="absolute inset-0 bg-black bg-opacity-30" onclick="closeEmailRegisterModal()"></div>
+  <!-- 关联邮箱弹窗 -->
+  <div id="emailBindingModal" class="fixed inset-0 z-50 hidden">
+    <div class="absolute inset-0 bg-black bg-opacity-30" onclick="closeEmailBindingModal()"></div>
     <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[480px] bg-white rounded-2xl shadow-2xl p-6">
       <div class="flex items-center justify-between mb-1">
-        <h3 class="text-lg font-semibold text-gray-800">邮箱注册</h3>
-        <button class="p-1 text-gray-400 hover:text-gray-600" onclick="closeEmailRegisterModal()">
+        <h3 class="text-lg font-semibold text-gray-800">关联邮箱</h3>
+        <button class="p-1 text-gray-400 hover:text-gray-600" onclick="closeEmailBindingModal()">
           <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
           </svg>
         </button>
       </div>
-      <p class="text-xs text-gray-400 mb-5">为当前学生注册申请专用邮箱，注册成功后自动关联到本网申任务。</p>
-      <div class="space-y-4">
+      <p class="text-xs text-gray-400 mb-4">可注册新的申请专用邮箱，也可绑定学生已有邮箱。</p>
+      <div class="flex border-b border-gray-200 mb-5">
+        <button id="emailRegisterTab" class="px-4 py-2 text-sm font-medium text-blue-600 border-b-2 border-blue-600" onclick="switchEmailBindingTab('register')">邮箱注册</button>
+        <button id="emailManualTab" class="px-4 py-2 text-sm font-medium text-gray-500 border-b-2 border-transparent" onclick="switchEmailBindingTab('manual')">邮箱绑定</button>
+      </div>
+      <div id="emailRegisterPanel" class="space-y-4">
         <div>
           <label class="block text-sm font-medium text-gray-700 mb-1.5">邮箱账号 <span class="text-red-500">*</span></label>
           <input id="regEmail" type="email" class="w-full h-10 px-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm" placeholder="例如：zhangming2027@outlook.com" value="zhangming2027@outlook.com">
@@ -1207,9 +1196,15 @@
           </div>
         </div>
       </div>
-      <div class="flex items-center gap-3 mt-6">
+      <div id="emailRegisterActions" class="flex items-center gap-3 mt-6">
         <button class="flex-1 h-10 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium" onclick="confirmEmailRegister()">注册并关联</button>
-        <button class="flex-1 h-10 bg-white border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors font-medium" onclick="closeEmailRegisterModal()">取消</button>
+        <button class="flex-1 h-10 bg-white border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors font-medium" onclick="closeEmailBindingModal()">取消</button>
+      </div>
+      <div id="emailManualPanel" class="hidden space-y-4">
+        <div><label class="block text-sm font-medium text-gray-700 mb-1.5">邮箱账号 <span class="text-red-500">*</span></label><input id="manualEmailAccount" type="email" class="w-full h-10 px-3 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500" placeholder="请输入已有邮箱账号"></div>
+        <div><label class="block text-sm font-medium text-gray-700 mb-1.5">邮箱密码 / 授权码 <span class="text-red-500">*</span></label><input id="manualEmailPassword" type="password" class="w-full h-10 px-3 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500" placeholder="请输入邮箱密码或授权码"></div>
+        <p class="text-xs text-gray-400">使用 IMAP 协议连接，请先在邮箱中开启 IMAP 服务；建议优先使用邮箱授权码。</p>
+        <div class="flex items-center gap-3 pt-2"><button class="flex-1 h-10 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium" onclick="confirmManualEmailBinding()">确认绑定</button><button class="flex-1 h-10 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50" onclick="closeEmailBindingModal()">取消</button></div>
       </div>
     </div>
   </div>
@@ -1534,9 +1529,10 @@
     function switchEmailBindingTab(mode) {
       var isRegister = mode === 'register';
       document.getElementById('emailRegisterPanel').classList.toggle('hidden', !isRegister);
+      document.getElementById('emailRegisterActions').classList.toggle('hidden', !isRegister);
       document.getElementById('emailManualPanel').classList.toggle('hidden', isRegister);
-      document.getElementById('emailRegisterTab').className = 'px-3 py-1.5 text-xs font-medium border-b-2 ' + (isRegister ? 'text-blue-600 border-blue-600' : 'text-gray-500 border-transparent');
-      document.getElementById('emailManualTab').className = 'px-3 py-1.5 text-xs font-medium border-b-2 ' + (!isRegister ? 'text-blue-600 border-blue-600' : 'text-gray-500 border-transparent');
+      document.getElementById('emailRegisterTab').className = 'px-4 py-2 text-sm font-medium border-b-2 ' + (isRegister ? 'text-blue-600 border-blue-600' : 'text-gray-500 border-transparent');
+      document.getElementById('emailManualTab').className = 'px-4 py-2 text-sm font-medium border-b-2 ' + (!isRegister ? 'text-blue-600 border-blue-600' : 'text-gray-500 border-transparent');
     }
     function confirmManualEmailBinding() {
       var email = document.getElementById('manualEmailAccount').value.trim();
@@ -1546,12 +1542,14 @@
       document.getElementById('linkedEmailText').textContent = email;
       document.getElementById('wf-email').value = email;
       alert('邮箱已通过 IMAP 协议绑定');
+      closeEmailBindingModal();
     }
-    function openEmailRegister() {
-      document.getElementById('emailRegisterModal').classList.remove('hidden');
+    function openEmailBindingModal() {
+      switchEmailBindingTab('register');
+      document.getElementById('emailBindingModal').classList.remove('hidden');
     }
-    function closeEmailRegisterModal() {
-      document.getElementById('emailRegisterModal').classList.add('hidden');
+    function closeEmailBindingModal() {
+      document.getElementById('emailBindingModal').classList.add('hidden');
     }
     function getEmailCode(btn) {
       var phone = document.getElementById('regPhone').value.trim();
@@ -1588,7 +1586,7 @@
       document.getElementById('linkedEmailText').textContent = email;
       document.getElementById('wf-email').value = email;
       alert('邮箱注册成功！\n邮箱账号：' + email + '\n已自动关联到当前网申任务。');
-      closeEmailRegisterModal();
+      closeEmailBindingModal();
     }
 
     // ===== 网申进度线：从EV系统导入 =====
@@ -1726,7 +1724,7 @@
     }
 
     function saveAdmissionResult() {
-      var ids = ['admissionResult', 'resultSchool', 'resultProgram', 'resultScholarship', 'resultNoticeDate', 'resultReplyDate'];
+      var ids = ['admissionResult'];
       for (var i = 0; i < ids.length; i++) {
         var field = document.getElementById(ids[i]);
         if (!field.value.trim()) { alert('请填写必填的申请结果字段'); field.focus(); return; }

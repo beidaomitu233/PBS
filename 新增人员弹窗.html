@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>新增人员</title>
+  <script src="./assets/js/tailwindcss.js"></script>
+  <style>body { font-family: "Microsoft YaHei", "PingFang SC", sans-serif; background: transparent; }</style>
+</head>
+<body class="min-h-screen flex items-center justify-center p-4">
+  <div class="w-full bg-white rounded-2xl shadow-2xl overflow-hidden">
+    <div class="flex items-center justify-between px-6 py-4 border-b border-gray-100">
+      <div><h1 class="text-lg font-semibold text-gray-900">新增 / 邀请人员</h1><p class="text-xs text-gray-400 mt-1">创建账号并配置其所属机构与角色</p></div>
+      <button class="text-2xl leading-none text-gray-400 hover:text-gray-700" onclick="closeModal()">×</button>
+    </div>
+    <form class="p-6 space-y-4" onsubmit="submitPerson(event)">
+      <div class="grid grid-cols-2 gap-4">
+        <div><label class="block text-sm text-gray-700 mb-1.5">姓名 <span class="text-red-500">*</span></label><input id="personName" required class="w-full h-10 px-3 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500" placeholder="请输入姓名"></div>
+        <div><label class="block text-sm text-gray-700 mb-1.5">手机号 <span class="text-red-500">*</span></label><input id="personPhone" required class="w-full h-10 px-3 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500" placeholder="请输入手机号"></div>
+        <div><label class="block text-sm text-gray-700 mb-1.5">登录账号 <span class="text-red-500">*</span></label><input id="personAccount" required class="w-full h-10 px-3 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500" placeholder="英文或数字"></div>
+        <div><label class="block text-sm text-gray-700 mb-1.5">邮箱 <span class="text-red-500">*</span></label><input id="personEmail" type="email" required class="w-full h-10 px-3 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500" placeholder="name@example.com"></div>
+      </div>
+      <div><label class="block text-sm text-gray-700 mb-1.5">所属机构 <span class="text-red-500">*</span></label><select id="personOrg" required class="w-full h-10 px-3 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500"><option>PBS留学总部</option><option>上海启明留学</option><option>北京知行教育</option></select></div>
+      <div>
+        <label class="block text-sm text-gray-700 mb-2">角色 <span class="text-red-500">*</span></label>
+        <div id="roleOptions" class="grid grid-cols-3 gap-2"></div>
+        <p id="roleError" class="hidden text-xs text-red-500 mt-2">请至少选择一个角色</p>
+      </div>
+      <div class="rounded-lg bg-blue-50 px-4 py-3 text-xs text-blue-700">创建后将向人员邮箱发送邀请，账号权限受所属机构 SaaS 数据边界限制。</div>
+      <div class="flex justify-end gap-3 pt-2"><button type="button" class="px-5 h-10 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50" onclick="closeModal()">取消</button><button type="submit" class="px-5 h-10 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium">确认邀请</button></div>
+    </form>
+  </div>
+  <script>
+    var roles = ['机构管理员', '销售人员管理员', '销售人员', '项目经理', '文书人员', '网申人员', '文书审核'];
+    document.getElementById('roleOptions').innerHTML = roles.map(function (role) { return '<label class="flex items-center gap-2 px-3 py-2 border border-gray-200 rounded-lg text-sm text-gray-700 cursor-pointer hover:border-blue-400"><input type="checkbox" value="' + role + '" class="accent-blue-600">' + role + '</label>'; }).join('');
+    try {
+      var session = parent.pbsGetSession ? parent.pbsGetSession() : null;
+      if (session && session.role === '机构管理员' && session.org) {
+        var orgSelect = document.getElementById('personOrg');
+        if (!Array.from(orgSelect.options).some(function (option) { return option.value === session.org; })) orgSelect.add(new Option(session.org, session.org));
+        orgSelect.value = session.org;
+        orgSelect.disabled = true;
+      }
+    } catch (e) {}
+    function closeModal() { parent.postMessage('pbs:close', '*'); }
+    function submitPerson(event) {
+      event.preventDefault();
+      var selected = Array.from(document.querySelectorAll('#roleOptions input:checked')).map(function (item) { return item.value; });
+      if (!selected.length) { document.getElementById('roleError').classList.remove('hidden'); return; }
+      var data = { name: document.getElementById('personName').value.trim(), phone: document.getElementById('personPhone').value.trim(), account: document.getElementById('personAccount').value.trim(), email: document.getElementById('personEmail').value.trim(), org: document.getElementById('personOrg').value, roles: selected };
+      if (parent.addPersonnelFromModal) parent.addPersonnelFromModal(data);
+      alert('人员邀请已发送');
+      closeModal();
+    }
+  </script>
+</body>
+</html>

@@ -835,13 +835,16 @@
       </div>
 
       <!-- 底部操作条 -->
-      <div class="sticky bottom-0 mt-6 -mx-6 px-6 py-4 bg-white border-t border-gray-200 shadow-[0_-4px_12px_rgba(0,0,0,0.06)] z-30 flex items-center justify-end gap-4">
+      <div class="sticky bottom-0 mt-6 -mx-6 px-6 py-4 bg-white border-t border-gray-200 shadow-[0_-4px_12px_rgba(0,0,0,0.06)] z-30 flex items-center justify-between gap-4">
+        <div><p class="text-xs text-gray-400">当前方案版本</p><p id="planVersionLabel" class="text-sm font-semibold text-gray-800 mt-0.5">V3</p></div>
+        <div class="flex items-center gap-4">
         <button class="px-6 h-11 bg-white border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors font-medium" onclick="savePlan()">保存方案</button>
         <button class="px-6 h-11 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium" onclick="location.href=&#39;选校方案详情页 - 留学申请管理系统.html&#39;">生成方案报告</button>
         <button class="px-6 h-11 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors font-medium flex items-center gap-2" onclick="sharePlan()">
           <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z"></path></svg>
           分享客户（H5链接）
         </button>
+        </div>
       </div>
 
       <!-- 院校专业详情弹窗 -->
@@ -1094,11 +1097,36 @@
       document.body.appendChild(t);
       setTimeout(function () { t.remove(); }, 2600);
     }
-    function savePlan() { planToast('选校方案已保存：冲刺1所 · 匹配1所 · 保底1所'); }
+    var currentPlanVersion = Number(localStorage.getItem('pbs_selection_plan_version') || 3);
+    document.getElementById('planVersionLabel').textContent = 'V' + currentPlanVersion;
+    function readZone(zoneId, zoneLabel) {
+      return Array.from(document.querySelectorAll('#' + zoneId + ' [data-school-item]')).map(function (item) {
+        var name = item.querySelector('p');
+        var reasonMap = { '冲刺区': '专业匹配度高、学术资源突出，建议作为重点冲刺选择。', '匹配区': '学生背景与项目要求匹配，就业和课程资源符合申请目标。', '保底区': '录取梯度稳妥，可有效保障整体申请结果。' };
+        return { id: item.getAttribute('data-school-item'), name: name ? name.textContent.trim() : '', reason: reasonMap[zoneLabel] };
+      });
+    }
+    function savePlan() {
+      currentPlanVersion += 1;
+      var snapshot = {
+        version: 'V' + currentPlanVersion,
+        savedAt: new Date().toISOString(),
+        zones: { reach: readZone('zone-reach', '冲刺区'), match: readZone('zone-match', '匹配区'), safe: readZone('zone-safe', '保底区') }
+      };
+      var versions = [];
+      try { versions = JSON.parse(localStorage.getItem('pbs_selection_plan_versions') || '[]'); } catch (e) {}
+      versions.push(snapshot);
+      localStorage.setItem('pbs_selection_plan_versions', JSON.stringify(versions));
+      localStorage.setItem('pbs_selection_plan_version', String(currentPlanVersion));
+      document.getElementById('planVersionLabel').textContent = snapshot.version;
+      planToast('选校方案已保存为 ' + snapshot.version + '：冲刺' + snapshot.zones.reach.length + '所 · 匹配' + snapshot.zones.match.length + '所 · 保底' + snapshot.zones.safe.length + '所');
+    }
     function sharePlan() {
-      var link = 'https://h5.pbs-edu.com/plan/SEL-M-2607-0003?t=9f3a2c';
-      try { navigator.clipboard.writeText(link); planToast('H5链接已复制：' + link); }
-        catch(e) { planToast('H5链接已生成：' + link); }
+      var target = '选校方案分享H5 - PBS留学.html';
+      var link = new URL(target, location.href).href;
+      if (navigator.clipboard) navigator.clipboard.writeText(link).catch(function () {});
+      planToast('H5链接已生成并复制');
+      window.open(target, '_blank');
     }
   </script>
     </main>

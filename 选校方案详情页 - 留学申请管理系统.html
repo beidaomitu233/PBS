@@ -356,8 +356,8 @@
           返回任务列表
         </button>
         <div class="flex items-center gap-3">
-          <button class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm font-medium" onclick="alert(&#39;已导入项目管理模块：已按已确认院校目标生成申请服务订单 APP-M-2607-0006，订单进入项目池待分配，与原选校订单 SEL-M-2607-0003 保持关联追溯。&#39;)">导入项目</button>
-          <button class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors text-sm font-medium" onclick="alert(&#39;H5链接已生成并复制：https://h5.pbs-edu.com/plan/SEL-M-2607-0003&#39;)">分享客户（H5链接）</button>
+          <button class="px-4 py-2 bg-white border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors text-sm font-medium" onclick="openHistoryModal()">查看历史方案</button>
+          <button class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors text-sm font-medium" onclick="openShareH5()">分享客户（H5链接）</button>
         </div>
       </div>
 
@@ -366,6 +366,7 @@
         <div class="flex items-center justify-between">
           <div class="flex items-center gap-6 text-sm">
             <span class="font-semibold text-gray-900 text-base">SEL-M-2607-0003 选校方案</span>
+            <span id="currentVersionBadge" class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-blue-50 text-blue-700">当前 V3</span>
             <span class="text-gray-500">客户：<span class="font-medium text-gray-900">周立群</span> / 申请人：<span class="font-medium text-gray-900">周雨薇</span></span>
             <span class="text-gray-500">申请层次：<span class="font-medium text-gray-900">硕士申请</span></span>
             <span class="text-gray-500">意向国家：<span class="font-medium text-gray-900">美国</span></span>
@@ -378,8 +379,8 @@
       <!-- 分层院校列表 -->
       <div class="grid grid-cols-3 gap-5 mb-6">
         <div class="bg-red-50/60 rounded-xl border border-red-100 p-4">
-          <h3 class="text-sm font-semibold text-red-700 mb-3">冲刺区（1所）</h3>
-          <div class="space-y-3">
+          <h3 id="currentReachTitle" class="text-sm font-semibold text-red-700 mb-3">冲刺区（1所）</h3>
+          <div id="currentReachSchools" class="space-y-3">
                         <div class="bg-white border border-gray-200 rounded-xl p-4 shadow-sm">
               <div class="flex items-start justify-between mb-2">
                 <div>
@@ -393,8 +394,8 @@
           </div>
         </div>
         <div class="bg-blue-50/60 rounded-xl border border-blue-100 p-4">
-          <h3 class="text-sm font-semibold text-blue-700 mb-3">匹配区（2所）</h3>
-          <div class="space-y-3">
+          <h3 id="currentMatchTitle" class="text-sm font-semibold text-blue-700 mb-3">匹配区（2所）</h3>
+          <div id="currentMatchSchools" class="space-y-3">
                         <div class="bg-white border border-gray-200 rounded-xl p-4 shadow-sm">
               <div class="flex items-start justify-between mb-2">
                 <div>
@@ -418,8 +419,8 @@
           </div>
         </div>
         <div class="bg-green-50/60 rounded-xl border border-green-100 p-4">
-          <h3 class="text-sm font-semibold text-green-700 mb-3">保底区（1所）</h3>
-          <div class="space-y-3">
+          <h3 id="currentSafeTitle" class="text-sm font-semibold text-green-700 mb-3">保底区（1所）</h3>
+          <div id="currentSafeSchools" class="space-y-3">
                         <div class="bg-white border border-gray-200 rounded-xl p-4 shadow-sm">
               <div class="flex items-start justify-between mb-2">
                 <div>
@@ -470,26 +471,54 @@
 
       <!-- 沟通记录时间线 -->
       <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
-        <h2 class="text-base font-semibold text-gray-800 mb-5">沟通记录</h2>
-        <div class="relative pl-6 border-l-2 border-gray-100 space-y-6">
-          <div class="relative">
-            <span class="absolute -left-[31px] top-1 w-3 h-3 rounded-full bg-green-500 border-2 border-white"></span>
-            <p class="text-xs text-gray-400 mb-1">2026-07-19 15:20 · 方案发送</p>
-            <p class="text-sm text-gray-700">选校方案报告已通过H5链接发送给客户周立群，等待确认反馈。</p>
+        <div class="flex items-center justify-between mb-5">
+          <div>
+            <h2 class="text-base font-semibold text-gray-800">沟通记录</h2>
+            <p class="text-xs text-gray-400 mt-1">选校任务执行人可维护沟通时间与具体内容</p>
           </div>
-          <div class="relative">
-            <span class="absolute -left-[31px] top-1 w-3 h-3 rounded-full bg-blue-500 border-2 border-white"></span>
-            <p class="text-xs text-gray-400 mb-1">2026-07-18 10:05 · 电话沟通</p>
-            <p class="text-sm text-gray-700">与客户电话沟通初步选校思路，客户倾向美国东海岸院校，认可冲刺CMU的方案方向。</p>
-          </div>
-          <div class="relative">
-            <span class="absolute -left-[31px] top-1 w-3 h-3 rounded-full bg-gray-300 border-2 border-white"></span>
-            <p class="text-xs text-gray-400 mb-1">2026-07-17 10:00 · 任务分配</p>
-            <p class="text-sm text-gray-700">选校订单由销售管理员分配给王一帆，进入选校中状态。</p>
-          </div>
+          <button class="px-3 py-1.5 text-sm text-white bg-blue-600 rounded-lg hover:bg-blue-700 font-medium" onclick="openCommunicationModal()">新增记录</button>
         </div>
+        <div id="communicationTimeline" class="relative pl-6 border-l-2 border-gray-100 space-y-6"></div>
       </div>
     </main>
+  </div>
+
+  <!-- 历史方案弹窗 -->
+  <div id="historyPlanModal" class="fixed inset-0 z-50 hidden">
+    <div class="absolute inset-0 bg-black bg-opacity-30" onclick="closeHistoryModal()"></div>
+    <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[920px] max-h-[86vh] bg-white rounded-2xl shadow-2xl overflow-hidden">
+      <div class="flex items-center justify-between px-6 py-4 border-b border-gray-100">
+        <div><h3 class="text-lg font-semibold text-gray-900">历史方案</h3><p class="text-xs text-gray-400 mt-1">学生资料等基础信息保持一致，仅对比选校区与推荐理由</p></div>
+        <button class="text-2xl leading-none text-gray-400 hover:text-gray-700" onclick="closeHistoryModal()">×</button>
+      </div>
+      <div class="grid grid-cols-[210px_1fr] min-h-[520px] max-h-[70vh]">
+        <div id="historyVersionList" class="p-4 border-r border-gray-100 bg-gray-50 space-y-2"></div>
+        <div class="p-6 overflow-y-auto">
+          <div class="flex items-center justify-between mb-5">
+            <div><p class="text-sm font-semibold text-gray-900" id="historyVersionTitle"></p><p class="text-xs text-gray-400 mt-1" id="historyVersionMeta"></p></div>
+            <span class="text-xs text-gray-500">周雨薇 · 硕士申请 · 美国</span>
+          </div>
+          <div id="historyVersionContent" class="space-y-4"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 沟通记录编辑弹窗 -->
+  <div id="communicationModal" class="fixed inset-0 z-50 hidden">
+    <div class="absolute inset-0 bg-black bg-opacity-30" onclick="closeCommunicationModal()"></div>
+    <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[480px] bg-white rounded-2xl shadow-2xl p-6">
+      <div class="flex items-center justify-between mb-5">
+        <h3 id="communicationModalTitle" class="text-lg font-semibold text-gray-900">新增沟通记录</h3>
+        <button class="text-2xl leading-none text-gray-400 hover:text-gray-700" onclick="closeCommunicationModal()">×</button>
+      </div>
+      <input id="communicationId" type="hidden">
+      <div class="space-y-4">
+        <div><label class="block text-sm text-gray-700 mb-1.5">沟通时间 <span class="text-red-500">*</span></label><input id="communicationTime" type="datetime-local" class="w-full h-10 px-3 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500"></div>
+        <div><label class="block text-sm text-gray-700 mb-1.5">沟通内容 <span class="text-red-500">*</span></label><textarea id="communicationContent" rows="5" class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm resize-none focus:ring-2 focus:ring-blue-500" placeholder="填写本次沟通内容"></textarea></div>
+      </div>
+      <div class="flex justify-end gap-3 mt-6"><button class="px-5 h-10 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50" onclick="closeCommunicationModal()">取消</button><button class="px-5 h-10 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium" onclick="saveCommunicationRecord()">保存</button></div>
+    </div>
   </div>
 
   <!-- 系统消息弹窗 -->
@@ -576,7 +605,167 @@
           location.reload();
         });
       }
+      hydrateSavedPlanVersions();
+      renderCommunicationRecords();
     });
+
+    function openShareH5() {
+      var target = '选校方案分享H5 - PBS留学.html';
+      var link = new URL(target, location.href).href;
+      if (navigator.clipboard) navigator.clipboard.writeText(link).catch(function () {});
+      window.open(target, '_blank');
+    }
+
+    var planVersions = [
+      {
+        version: 'V3', time: '2026-07-19 15:10', author: '王一帆', current: true,
+        zones: [
+          { name: '冲刺区', tone: 'red', schools: [{ school: '卡内基梅隆大学', program: '计算机科学', reason: '科研经历与 NLP 方向高度契合，建议作为重点冲刺项目。' }] },
+          { name: '匹配区', tone: 'blue', schools: [{ school: '伊利诺伊大学厄巴纳-香槟分校', program: '计算机科学', reason: '成绩区间匹配，工程学院资源与就业表现稳定。' }, { school: '佐治亚理工学院', program: '计算机科学', reason: '工业界认可度高，Co-op 体系符合就业目标。' }] },
+          { name: '保底区', tone: 'green', schools: [{ school: '波士顿大学', program: '计算机科学', reason: '录取梯度稳妥，地区资源丰富，可保障方案下限。' }] }
+        ]
+      },
+      {
+        version: 'V2', time: '2026-07-18 18:30', author: '王一帆',
+        zones: [
+          { name: '冲刺区', tone: 'red', schools: [{ school: '卡内基梅隆大学', program: '计算机科学', reason: '专业方向吻合，科研背景具备冲刺基础。' }, { school: '哥伦比亚大学', program: '计算机科学', reason: '地理位置和课程资源突出，但成本与竞争压力较高。' }] },
+          { name: '匹配区', tone: 'blue', schools: [{ school: '伊利诺伊大学厄巴纳-香槟分校', program: '计算机科学', reason: '学术画像与往年录取区间匹配。' }] },
+          { name: '保底区', tone: 'green', schools: [{ school: '东北大学', program: '计算机科学', reason: 'Co-op 资源成熟，录取稳定性较好。' }] }
+        ]
+      },
+      {
+        version: 'V1', time: '2026-07-17 16:45', author: '王一帆',
+        zones: [
+          { name: '冲刺区', tone: 'red', schools: [{ school: '哥伦比亚大学', program: '计算机科学', reason: '院校声誉与纽约就业资源突出，作为初版冲刺选择。' }] },
+          { name: '匹配区', tone: 'blue', schools: [{ school: '波士顿大学', program: '计算机科学', reason: '背景匹配度较高，地区资源符合客户偏好。' }, { school: '东北大学', program: '计算机科学', reason: '实践课程与实习资源适合作为匹配项目。' }] },
+          { name: '保底区', tone: 'green', schools: [{ school: '雪城大学', program: '计算机科学', reason: '申请门槛合理，用于保障录取结果。' }] }
+        ]
+      }
+    ];
+
+    function hydrateSavedPlanVersions() {
+      var saved = [];
+      try { saved = JSON.parse(localStorage.getItem('pbs_selection_plan_versions') || '[]'); } catch (e) {}
+      if (!Array.isArray(saved) || !saved.length) return;
+      planVersions.forEach(function (version) { version.current = false; });
+      var labels = { reach: ['冲刺区', 'red'], match: ['匹配区', 'blue'], safe: ['保底区', 'green'] };
+      saved.forEach(function (snapshot) {
+        if (!snapshot || !snapshot.version || planVersions.some(function (item) { return item.version === snapshot.version; })) return;
+        var zones = Object.keys(labels).map(function (key) {
+          var schools = snapshot.zones && Array.isArray(snapshot.zones[key]) ? snapshot.zones[key] : [];
+          return { name: labels[key][0], tone: labels[key][1], schools: schools.map(function (school) { return { school: school.name, program: '计算机科学', reason: school.reason || '本版本保存时的推荐理由。' }; }) };
+        });
+        var savedTime = snapshot.savedAt ? new Date(snapshot.savedAt) : new Date();
+        planVersions.push({ version: snapshot.version, time: savedTime.toLocaleString('zh-CN', { hour12: false }), author: '王一帆', zones: zones });
+      });
+      planVersions.sort(function (a, b) { return Number(b.version.slice(1)) - Number(a.version.slice(1)); });
+      planVersions[0].current = true;
+      document.getElementById('currentVersionBadge').textContent = '当前 ' + planVersions[0].version;
+      renderCurrentPlanSnapshot(planVersions[0]);
+    }
+    function renderCurrentPlanSnapshot(version) {
+      var targets = [
+        { title: 'currentReachTitle', list: 'currentReachSchools', zone: '冲刺区' },
+        { title: 'currentMatchTitle', list: 'currentMatchSchools', zone: '匹配区' },
+        { title: 'currentSafeTitle', list: 'currentSafeSchools', zone: '保底区' }
+      ];
+      targets.forEach(function (target) {
+        var zone = version.zones.find(function (item) { return item.name === target.zone; });
+        var schools = zone ? zone.schools : [];
+        document.getElementById(target.title).textContent = target.zone + '（' + schools.length + '所）';
+        document.getElementById(target.list).innerHTML = schools.map(function (school) {
+          return '<div class="bg-white border border-gray-200 rounded-xl p-4 shadow-sm"><div class="flex items-start justify-between mb-2"><div><p class="text-sm font-semibold text-gray-900">' + school.school + '</p><p class="text-xs text-gray-500 mt-0.5">美国 · ' + school.program + '</p></div><button class="text-xs text-blue-600 hover:underline flex-shrink-0">查看详情</button></div><p class="text-xs text-gray-600 leading-5 bg-gray-50 rounded-lg p-2.5"><span class="text-gray-400">推荐理由：</span>' + school.reason + '</p></div>';
+        }).join('');
+      });
+    }
+
+    function openHistoryModal() {
+      document.getElementById('historyPlanModal').classList.remove('hidden');
+      showPlanVersion(planVersions[0].version);
+    }
+    function closeHistoryModal() { document.getElementById('historyPlanModal').classList.add('hidden'); }
+    function renderHistoryVersionList(activeVersion) {
+      document.getElementById('historyVersionList').innerHTML = planVersions.map(function (item) {
+        var active = item.version === activeVersion;
+        return '<button class="w-full text-left p-3 rounded-lg border transition-colors ' + (active ? 'bg-white border-blue-300 shadow-sm' : 'bg-transparent border-transparent hover:bg-white') + '" onclick="showPlanVersion(\'' + item.version + '\')">' +
+          '<div class="flex items-center justify-between"><span class="text-sm font-semibold ' + (active ? 'text-blue-700' : 'text-gray-800') + '">' + item.version + '</span>' + (item.current ? '<span class="text-[11px] text-blue-600">当前</span>' : '') + '</div>' +
+          '<p class="text-xs text-gray-400 mt-1">' + item.time + '</p></button>';
+      }).join('');
+    }
+    function showPlanVersion(version) {
+      var item = planVersions.find(function (v) { return v.version === version; });
+      if (!item) return;
+      renderHistoryVersionList(version);
+      document.getElementById('historyVersionTitle').textContent = item.version + ' 选校方案';
+      document.getElementById('historyVersionMeta').textContent = item.time + ' · ' + item.author + ' 保存';
+      var toneMap = { red: 'bg-red-50 border-red-100 text-red-700', blue: 'bg-blue-50 border-blue-100 text-blue-700', green: 'bg-green-50 border-green-100 text-green-700' };
+      document.getElementById('historyVersionContent').innerHTML = item.zones.map(function (zone) {
+        return '<section class="rounded-xl border p-4 ' + toneMap[zone.tone] + '"><h4 class="text-sm font-semibold mb-3">' + zone.name + '（' + zone.schools.length + '所）</h4><div class="space-y-2">' + zone.schools.map(function (school) {
+          return '<div class="bg-white border border-gray-100 rounded-lg p-3 text-gray-700"><div class="flex justify-between gap-3"><p class="text-sm font-medium text-gray-900">' + school.school + '</p><span class="text-xs text-gray-400">' + school.program + '</span></div><p class="text-xs leading-5 text-gray-600 mt-2">推荐理由：' + school.reason + '</p></div>';
+        }).join('') + '</div></section>';
+      }).join('');
+    }
+
+    var communicationRecords = [
+      { id: 3, time: '2026-07-19T15:20', content: '选校方案已通过 H5 链接发送给客户，客户将在本周内反馈。' },
+      { id: 2, time: '2026-07-18T10:05', content: '与客户电话沟通选校思路，客户倾向美国东海岸院校，认可冲刺 CMU 的方向。' },
+      { id: 1, time: '2026-07-17T10:00', content: '完成首次需求沟通，确认申请方向为美国计算机科学硕士。' }
+    ];
+    try {
+      var savedCommunication = JSON.parse(localStorage.getItem('pbs_selection_communications') || 'null');
+      if (Array.isArray(savedCommunication)) communicationRecords = savedCommunication;
+    } catch (e) {}
+    function formatCommunicationTime(value) { return value ? value.replace('T', ' ') : ''; }
+    function escapeCommunicationText(value) { var div = document.createElement('div'); div.textContent = value || ''; return div.innerHTML; }
+    function renderCommunicationRecords() {
+      var container = document.getElementById('communicationTimeline');
+      if (!container) return;
+      var sorted = communicationRecords.slice().sort(function (a, b) { return b.time.localeCompare(a.time); });
+      container.innerHTML = sorted.length ? sorted.map(function (item) {
+        return '<div class="relative group"><span class="absolute -left-[31px] top-1 w-3 h-3 rounded-full bg-blue-500 border-2 border-white"></span>' +
+          '<div class="flex items-start justify-between gap-4"><div><p class="text-xs text-gray-400 mb-1">' + formatCommunicationTime(item.time) + ' · 王一帆</p><p class="text-sm text-gray-700 leading-6">' + escapeCommunicationText(item.content) + '</p></div>' +
+          '<div class="flex gap-3 flex-shrink-0"><button class="text-xs text-blue-600 hover:underline" onclick="editCommunicationRecord(' + item.id + ')">编辑</button><button class="text-xs text-red-600 hover:underline" onclick="deleteCommunicationRecord(' + item.id + ')">删除</button></div></div></div>';
+      }).join('') : '<p class="text-sm text-gray-400 -ml-6">暂无沟通记录</p>';
+    }
+    function openCommunicationModal() {
+      document.getElementById('communicationModalTitle').textContent = '新增沟通记录';
+      document.getElementById('communicationId').value = '';
+      var now = new Date(Date.now() - new Date().getTimezoneOffset() * 60000).toISOString().slice(0, 16);
+      document.getElementById('communicationTime').value = now;
+      document.getElementById('communicationContent').value = '';
+      document.getElementById('communicationModal').classList.remove('hidden');
+    }
+    function editCommunicationRecord(id) {
+      var item = communicationRecords.find(function (record) { return record.id === id; });
+      if (!item) return;
+      document.getElementById('communicationModalTitle').textContent = '编辑沟通记录';
+      document.getElementById('communicationId').value = id;
+      document.getElementById('communicationTime').value = item.time;
+      document.getElementById('communicationContent').value = item.content;
+      document.getElementById('communicationModal').classList.remove('hidden');
+    }
+    function closeCommunicationModal() { document.getElementById('communicationModal').classList.add('hidden'); }
+    function saveCommunicationRecord() {
+      var id = Number(document.getElementById('communicationId').value);
+      var time = document.getElementById('communicationTime').value;
+      var content = document.getElementById('communicationContent').value.trim();
+      if (!time || !content) { alert('请填写沟通时间与内容'); return; }
+      if (id) {
+        var item = communicationRecords.find(function (record) { return record.id === id; });
+        if (item) { item.time = time; item.content = content; }
+      } else {
+        communicationRecords.push({ id: Date.now(), time: time, content: content });
+      }
+      localStorage.setItem('pbs_selection_communications', JSON.stringify(communicationRecords));
+      renderCommunicationRecords();
+      closeCommunicationModal();
+    }
+    function deleteCommunicationRecord(id) {
+      if (!confirm('确认删除这条沟通记录？')) return;
+      communicationRecords = communicationRecords.filter(function (record) { return record.id !== id; });
+      localStorage.setItem('pbs_selection_communications', JSON.stringify(communicationRecords));
+      renderCommunicationRecords();
+    }
 
     // 推荐说明：AI 生成 + 人工编辑
     function toggleRecEdit() {

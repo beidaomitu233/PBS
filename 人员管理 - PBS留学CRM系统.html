@@ -657,7 +657,7 @@
     <main class="flex-1 p-6">
       <!-- 页面标题栏 -->
       <div class="flex items-center justify-between mb-6">
-        <h1 class="text-2xl font-semibold text-gray-800">人员管理</h1>
+        <div><h1 class="text-2xl font-semibold text-gray-800">人员管理</h1><p id="personnelScopeHint" class="text-sm text-gray-400 mt-1">统一管理账号、人员状态与角色权限</p></div>
         <div class="flex items-center gap-3">
           <button data-dom-id="btn-add-personnel" onclick="pbsOpenOverlay(&#39;新增人员弹窗.html&#39;)" class="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium">
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -692,6 +692,15 @@
               <option>销售人员管理员</option>
               <option>销售人员</option>
               <option>平台运维人员</option>
+            </select>
+          </div>
+          <div id="flt-org-wrap">
+            <label class="block text-sm text-gray-600 mb-2">所属机构</label>
+            <select id="flt-org" class="w-40 h-10 px-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+              <option value="">全部机构</option>
+              <option>PBS留学总部</option>
+              <option>上海启明留学</option>
+              <option>北京知行教育</option>
             </select>
           </div>
           <div>
@@ -734,6 +743,7 @@
           <thead class="bg-gray-50">
             <tr>
               <th class="px-5 py-4 text-left text-sm font-medium text-gray-500">姓名</th>
+              <th class="px-5 py-4 text-left text-sm font-medium text-gray-500">所属机构</th>
               <th class="px-5 py-4 text-left text-sm font-medium text-gray-500">手机号</th>
               <th class="px-5 py-4 text-left text-sm font-medium text-gray-500">账号</th>
               <th class="px-5 py-4 text-left text-sm font-medium text-gray-500">邮箱</th>
@@ -869,6 +879,7 @@
         phone: '13800138001',
         account: 'zhangming',
         email: 'zhangming@pbs.com',
+        org: 'PBS留学总部',
         roles: ['机构管理员', '平台运维人员'],
         status: '正常'
       },
@@ -878,6 +889,7 @@
         phone: '13800138002',
         account: 'lixue',
         email: 'lixue@pbs.com',
+        org: '上海启明留学',
         roles: ['销售人员'],
         status: '正常'
       },
@@ -887,6 +899,7 @@
         phone: '13800138003',
         account: 'wangwei',
         email: 'wangwei@pbs.com',
+        org: '上海启明留学',
         roles: ['文书人员', '文书审核'],
         status: '停用'
       },
@@ -896,6 +909,7 @@
         phone: '13800138004',
         account: 'chenchen',
         email: 'chenchen@pbs.com',
+        org: '北京知行教育',
         roles: ['项目经理', '网申人员'],
         status: '正常'
       },
@@ -905,6 +919,7 @@
         phone: '13800138005',
         account: 'liuyang',
         email: 'liuyang@pbs.com',
+        org: 'PBS留学总部',
         roles: ['机构管理员', '销售人员管理员'],
         status: '正常'
       }
@@ -913,6 +928,7 @@
     let currentPage = 1;
     let pageSize = 10;
     let filteredData = [...personnelData];
+    let personnelScopeOrg = '';
 
     var ROLE_COLORS = {
       '机构管理员': 'bg-blue-100 text-blue-700',
@@ -945,6 +961,7 @@
             '<td class="px-5 py-4"><div class="flex items-center gap-3">' +
               '<div class="w-9 h-9 bg-gradient-to-br from-blue-500 to-purple-500 rounded-full flex items-center justify-center flex-shrink-0"><span class="text-white text-sm font-medium">' + p.name.charAt(0) + '</span></div>' +
               '<span class="text-sm font-medium text-gray-900">' + p.name + '</span></div></td>' +
+            '<td class="px-5 py-4 text-sm text-gray-600">' + p.org + '</td>' +
             '<td class="px-5 py-4 text-sm text-gray-600">' + p.phone + '</td>' +
             '<td class="px-5 py-4 text-sm text-gray-600">' + p.account + '</td>' +
             '<td class="px-5 py-4 text-sm text-gray-600">' + p.email + '</td>' +
@@ -987,11 +1004,13 @@
     /* ---------- 高级筛选 ---------- */
     function gv(id) { var el = document.getElementById(id); return el ? (el.value || '').trim() : ''; }
     function applyFilter() {
-      var kw = gv('flt-kw').toLowerCase(), name = gv('flt-name'), role = gv('flt-role'), status = gv('flt-status'),
+      var kw = gv('flt-kw').toLowerCase(), name = gv('flt-name'), role = gv('flt-role'), status = gv('flt-status'), org = gv('flt-org'),
           phone = gv('flt-phone'), account = gv('flt-account'), email = gv('flt-email');
       filteredData = personnelData.filter(function (p) {
         var ok = true;
-        if (kw) ok = ok && (p.name + p.phone + p.account + p.email + p.roles.join('') + p.status).toLowerCase().indexOf(kw) >= 0;
+        if (personnelScopeOrg) ok = ok && p.org === personnelScopeOrg;
+        if (org) ok = ok && p.org === org;
+        if (kw) ok = ok && (p.name + p.org + p.phone + p.account + p.email + p.roles.join('') + p.status).toLowerCase().indexOf(kw) >= 0;
         if (name) ok = ok && p.name.indexOf(name) >= 0;
         if (role) ok = ok && p.roles.indexOf(role) >= 0;
         if (status) ok = ok && p.status === status;
@@ -1007,7 +1026,7 @@
     function searchList() { applyFilter(); }
     function refreshList() { resetFilter(); }
     function resetFilter() {
-      ['flt-kw','flt-name','flt-role','flt-status','flt-phone','flt-account','flt-email'].forEach(function (id) { var el = document.getElementById(id); if (el) el.value = ''; });
+      ['flt-kw','flt-name','flt-role','flt-status','flt-org','flt-phone','flt-account','flt-email'].forEach(function (id) { var el = document.getElementById(id); if (el) el.value = ''; });
       applyFilter();
     }
     function toggleMore() {
@@ -1090,17 +1109,33 @@
       }
       filterList();
     }
+    window.addPersonnelFromModal = function (data) {
+      data.id = personnelData.reduce(function (max, item) { return Math.max(max, item.id); }, 0) + 1;
+      data.org = personnelScopeOrg || data.org || 'PBS留学总部';
+      data.status = '正常';
+      personnelData.unshift(data);
+      applyFilter();
+    };
     function closeNotificationModal() { document.getElementById('notificationModal').classList.add('hidden'); }
     function toggleUserMenu() { var m = document.getElementById('userMenu'); if (m) m.classList.toggle('hidden'); }
 
     document.addEventListener('DOMContentLoaded', function () {
+      var session = window.pbsGetSession ? window.pbsGetSession() : null;
+      var isPlatform = !session || session.role === '超级管理员' || session.role === '平台运维人员';
+      if (!isPlatform) {
+        personnelScopeOrg = session.org || 'PBS留学总部';
+        document.getElementById('flt-org-wrap').classList.add('hidden');
+        document.getElementById('personnelScopeHint').textContent = '当前机构：' + personnelScopeOrg + ' · 仅显示本机构人员';
+      } else {
+        document.getElementById('personnelScopeHint').textContent = '平台视角 · 可查看和管理全部机构用户';
+      }
       var notifBtn = document.querySelector('[data-dom-id="btn-notification"]');
       if (notifBtn) {
         notifBtn.addEventListener('click', function () {
           document.getElementById('notificationModal').classList.remove('hidden');
         });
       }
-      renderTable();
+      applyFilter();
     });
   </script>
   <script src="./assets/js/pbs-app.js"></script>

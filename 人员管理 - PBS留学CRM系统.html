@@ -693,6 +693,10 @@
           <h1 class="text-2xl font-semibold text-gray-800">人员管理</h1>
           <p id="personnelScopeHint" class="text-sm text-gray-400 mt-1">统一管理账号、人员状态与角色权限</p>
         </div>
+        <button id="addOrganizationUserButton" onclick="openAddUser()" class="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
+          新增用户
+        </button>
       </div>
 
       <!-- 高级筛选区（筛选区与搜索区合并） -->
@@ -805,34 +809,84 @@
     </main>
   </div>
 
-  <!-- 编辑人员弹窗（角色可多选） -->
+  <!-- 新增用户弹窗（机构内部直接创建账号） -->
+  <div id="addUserModal" class="fixed inset-0 z-50 hidden" role="dialog" aria-modal="true" aria-labelledby="addUserModalTitle">
+    <div class="absolute inset-0 bg-black bg-opacity-30" onclick="closeAddUser()"></div>
+    <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[640px] max-h-[90vh] overflow-y-auto bg-white rounded-2xl shadow-2xl p-6">
+      <div class="flex items-start justify-between mb-5">
+        <div>
+          <h3 id="addUserModalTitle" class="text-lg font-semibold text-gray-800">新增用户</h3>
+          <p class="text-xs text-gray-400 mt-1">直接创建机构内部账号，首次登录需修改初始密码</p>
+        </div>
+        <button type="button" class="text-gray-400 hover:text-gray-700 text-2xl leading-none" aria-label="关闭" onclick="closeAddUser()">×</button>
+      </div>
+      <form id="addUserForm" onsubmit="event.preventDefault(); createUser();">
+        <div class="grid grid-cols-2 gap-4">
+          <div>
+            <label class="block text-sm text-gray-600 mb-2">用户名 <span class="text-red-500">*</span></label>
+            <input id="add-account" type="text" autocomplete="off" class="w-full h-10 px-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="平台内唯一">
+          </div>
+          <div>
+            <label class="block text-sm text-gray-600 mb-2">姓名 <span class="text-red-500">*</span></label>
+            <input id="add-name" type="text" autocomplete="off" class="w-full h-10 px-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="请输入姓名">
+          </div>
+          <div>
+            <label class="block text-sm text-gray-600 mb-2">手机号 <span class="text-red-500">*</span></label>
+            <input id="add-phone" type="tel" inputmode="numeric" autocomplete="off" class="w-full h-10 px-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="用于登录与找回密码">
+          </div>
+          <div>
+            <label class="block text-sm text-gray-600 mb-2">初始密码 <span class="text-red-500">*</span></label>
+            <input id="add-password" type="password" autocomplete="new-password" class="w-full h-10 px-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="8 位以上，含字母与数字">
+          </div>
+          <div class="col-span-2">
+            <label class="block text-sm text-gray-600 mb-2">所属机构 <span class="text-red-500">*</span></label>
+            <select id="add-org" class="w-full h-10 px-3 border border-gray-300 rounded-lg bg-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500"></select>
+          </div>
+          <div class="col-span-2">
+            <label class="block text-sm text-gray-600 mb-2">用户角色 <span class="text-red-500">*</span><span class="text-xs text-blue-500 font-normal ml-1">（可多选，权限并集生效）</span></label>
+            <div id="add-roles" class="grid grid-cols-3 gap-2 max-h-48 overflow-y-auto p-1"></div>
+          </div>
+        </div>
+        <p id="add-user-error" class="hidden mt-4 text-sm text-red-600" role="alert"></p>
+        <div class="flex justify-end gap-3 mt-6 pt-5 border-t border-gray-100">
+          <button type="button" class="px-6 h-10 bg-white border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors" onclick="closeAddUser()">取消</button>
+          <button type="submit" class="px-6 h-10 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium">确认创建</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- 编辑用户弹窗（角色可多选） -->
   <div id="editPersonModal" class="fixed inset-0 z-50 hidden">
     <div class="absolute inset-0 bg-black bg-opacity-30" onclick="closeEditPerson()"></div>
-    <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[520px] bg-white rounded-2xl shadow-2xl p-6">
-      <div class="mb-5">
-        <h3 class="text-lg font-semibold text-gray-800">编辑人员</h3>
-        <p class="text-xs text-gray-400 mt-1">一个人员可配置多个角色，各角色权限并集生效</p>
+    <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[560px] max-h-[90vh] overflow-y-auto bg-white rounded-2xl shadow-2xl p-6">
+      <div class="flex items-start justify-between mb-5">
+        <div>
+        <h3 class="text-lg font-semibold text-gray-800">编辑用户</h3>
+        <p class="text-xs text-gray-400 mt-1">一个用户可配置多个角色，各角色权限并集生效</p>
+        </div>
+        <button type="button" class="text-gray-400 hover:text-gray-700 text-2xl leading-none" aria-label="关闭" onclick="closeEditPerson()">×</button>
       </div>
       <div class="space-y-4">
         <div class="flex gap-4">
           <div class="flex-1">
-            <label class="block text-sm text-gray-600 mb-2">姓名</label>
-            <input id="edit-name" type="text" class="w-full h-10 px-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+            <label class="block text-sm text-gray-600 mb-2">用户名 <span class="text-red-500">*</span></label>
+            <input id="edit-account" type="text" class="w-full h-10 px-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
           </div>
           <div class="flex-1">
-            <label class="block text-sm text-gray-600 mb-2">手机号</label>
+            <label class="block text-sm text-gray-600 mb-2">手机号 <span class="text-red-500">*</span></label>
             <input id="edit-phone" type="text" class="w-full h-10 px-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
           </div>
         </div>
         <div>
-          <label class="block text-sm text-gray-600 mb-2">邮箱</label>
-          <input id="edit-email" type="text" class="w-full h-10 px-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+          <label class="block text-sm text-gray-600 mb-2">所属机构 <span class="text-red-500">*</span></label>
+          <select id="edit-org" class="w-full h-10 px-3 border border-gray-300 rounded-lg bg-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500"></select>
         </div>
         <div>
           <label class="block text-sm text-gray-600 mb-2">角色 <span class="text-xs text-blue-500 font-normal">（可多选，至少保留一个）</span></label>
           <div id="edit-roles" class="grid grid-cols-2 gap-2 max-h-56 overflow-y-auto p-1"></div>
-          <p id="edit-role-tip" class="hidden text-xs text-red-500 mt-2">请至少为人员选择一个角色</p>
         </div>
+        <p id="edit-user-error" class="hidden text-sm text-red-600" role="alert"></p>
       </div>
       <div class="flex gap-3 mt-6">
         <button class="flex-1 h-10 bg-white border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors" onclick="closeEditPerson()">取消</button>
@@ -840,6 +894,9 @@
       </div>
     </div>
   </div>
+
+  <!-- 操作提示 -->
+  <div id="personnelToastContainer" class="fixed top-20 right-5 z-[220] space-y-2" aria-live="polite"></div>
 
   <!-- 系统消息弹窗 -->
   <div id="notificationModal" class="fixed inset-0 z-50 hidden">
@@ -1021,6 +1078,93 @@
       '文书机构管理员': 'bg-violet-100 text-violet-700',
       '平台运维人员': 'bg-slate-100 text-slate-700'
     };
+    var ALL_ROLES = ['机构管理员', '项目经理', '文书人员', '网申人员', '文书审核', '文书机构管理员', '销售人员管理员', '销售人员', '平台运维人员'];
+
+    function renderRoleOptions(containerId, selectedRoles) {
+      var selected = selectedRoles || [];
+      document.getElementById(containerId).innerHTML = ALL_ROLES.map(function (role) {
+        return '<label class="flex items-center gap-2 px-3 py-2 rounded-lg border border-gray-200 hover:border-blue-400 hover:bg-blue-50 cursor-pointer text-sm text-gray-700 transition-colors">' +
+          '<input type="checkbox" value="' + role + '"' + (selected.indexOf(role) >= 0 ? ' checked' : '') + ' class="w-4 h-4 accent-blue-600">' + role + '</label>';
+      }).join('');
+    }
+    function populateOrganizationSelect(selectId, selectedOrganization) {
+      var select = document.getElementById(selectId);
+      select.innerHTML = '<option value="">请选择所属机构</option>' + organizationData.map(function (organization) {
+        return '<option value="' + organization.name + '"' + (organization.name === selectedOrganization ? ' selected' : '') + '>' + organization.name + '</option>';
+      }).join('');
+      select.disabled = !isPlatformPersonnelManager;
+      select.classList.toggle('bg-gray-100', !isPlatformPersonnelManager);
+    }
+    function selectedRoles(containerId) {
+      return Array.from(document.querySelectorAll('#' + containerId + ' input[type="checkbox"]:checked')).map(function (input) { return input.value; });
+    }
+    function escapeHtml(value) {
+      var element = document.createElement('div');
+      element.textContent = value == null ? '' : String(value);
+      return element.innerHTML;
+    }
+    function showModalError(id, message) {
+      var error = document.getElementById(id);
+      error.textContent = message || '';
+      error.classList.toggle('hidden', !message);
+    }
+    function showPersonnelToast(message, type) {
+      var container = document.getElementById('personnelToastContainer');
+      var toast = document.createElement('div');
+      var success = type !== 'error';
+      toast.className = 'flex items-center gap-2 px-4 py-3 rounded-lg border shadow-lg text-sm font-medium ' + (success ? 'bg-green-50 border-green-200 text-green-800' : 'bg-red-50 border-red-200 text-red-800');
+      var dot = document.createElement('span');
+      dot.className = 'w-2 h-2 rounded-full ' + (success ? 'bg-green-500' : 'bg-red-500');
+      var text = document.createElement('span');
+      text.textContent = message;
+      toast.appendChild(dot);
+      toast.appendChild(text);
+      container.appendChild(toast);
+      window.setTimeout(function () { toast.remove(); }, 2600);
+    }
+
+    function openAddUser() {
+      document.getElementById('addUserForm').reset();
+      populateOrganizationSelect('add-org', personnelScopeOrg);
+      renderRoleOptions('add-roles', []);
+      showModalError('add-user-error', '');
+      document.getElementById('addUserModal').classList.remove('hidden');
+      document.body.style.overflow = 'hidden';
+      window.setTimeout(function () { document.getElementById('add-account').focus(); }, 0);
+    }
+    function closeAddUser() {
+      document.getElementById('addUserModal').classList.add('hidden');
+      document.body.style.overflow = '';
+      showModalError('add-user-error', '');
+    }
+    function createUser() {
+      var account = gv('add-account');
+      var name = gv('add-name');
+      var phone = gv('add-phone');
+      var password = gv('add-password');
+      var organization = gv('add-org');
+      var roles = selectedRoles('add-roles');
+      if (!account || !name || !phone || !password || !organization) { showModalError('add-user-error', '请完整填写所有必填项'); return; }
+      if (personnelData.some(function (person) { return person.account.toLowerCase() === account.toLowerCase(); })) { showModalError('add-user-error', '用户名已存在，请更换后重试'); return; }
+      if (!/^1\d{10}$/.test(phone)) { showModalError('add-user-error', '请输入正确的 11 位手机号'); return; }
+      if (password.length < 8 || !/[A-Za-z]/.test(password) || !/\d/.test(password)) { showModalError('add-user-error', '初始密码需为 8 位以上，并同时包含字母与数字'); return; }
+      if (!roles.length) { showModalError('add-user-error', '请至少选择一个用户角色'); return; }
+      personnelData.unshift({
+        id: personnelData.reduce(function (max, item) { return Math.max(max, item.id); }, 0) + 1,
+        name: name,
+        phone: phone,
+        account: account,
+        email: '—',
+        org: organization,
+        roles: roles,
+        status: '正常',
+        mustChangePassword: true
+      });
+      closeAddUser();
+      applyFilter();
+      renderOrganizationDirectory();
+      showPersonnelToast('用户“' + name + '”已创建，首次登录需修改密码');
+    }
 
     function renderTable() {
       var tbody = document.getElementById('personnelTableBody');
@@ -1039,12 +1183,12 @@
           }).join('') + '</div>';
           html += '<tr class="hover:bg-gray-50 transition-colors">' +
             '<td class="px-5 py-4"><div class="flex items-center gap-3">' +
-              '<div class="w-9 h-9 bg-gradient-to-br from-blue-500 to-purple-500 rounded-full flex items-center justify-center flex-shrink-0"><span class="text-white text-sm font-medium">' + p.name.charAt(0) + '</span></div>' +
-              '<span class="text-sm font-medium text-gray-900">' + p.name + '</span></div></td>' +
-            '<td class="px-5 py-4 text-sm text-gray-600">' + p.org + '</td>' +
-            '<td class="px-5 py-4 text-sm text-gray-600">' + p.phone + '</td>' +
-            '<td class="px-5 py-4 text-sm text-gray-600">' + p.account + '</td>' +
-            '<td class="px-5 py-4 text-sm text-gray-600">' + p.email + '</td>' +
+              '<div class="w-9 h-9 bg-gradient-to-br from-blue-500 to-purple-500 rounded-full flex items-center justify-center flex-shrink-0"><span class="text-white text-sm font-medium">' + escapeHtml(p.name.charAt(0)) + '</span></div>' +
+              '<span class="text-sm font-medium text-gray-900">' + escapeHtml(p.name) + '</span></div></td>' +
+            '<td class="px-5 py-4 text-sm text-gray-600">' + escapeHtml(p.org) + '</td>' +
+            '<td class="px-5 py-4 text-sm text-gray-600">' + escapeHtml(p.phone) + '</td>' +
+            '<td class="px-5 py-4 text-sm text-gray-600">' + escapeHtml(p.account) + '</td>' +
+            '<td class="px-5 py-4 text-sm text-gray-600">' + escapeHtml(p.email) + '</td>' +
             '<td class="px-5 py-4">' + roleBadges + '</td>' +
             '<td class="px-5 py-4"><span class="inline-flex items-center gap-1.5 px-2.5 py-1 text-xs font-medium rounded-full ' + (p.status === '正常' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700') + '">' +
               '<span class="w-1.5 h-1.5 rounded-full ' + (p.status === '正常' ? 'bg-green-500' : 'bg-red-500') + '"></span>' + p.status + '</span></td>' +
@@ -1141,23 +1285,19 @@
       }
       if (!p) return;
       editingPersonId = id;
-      document.getElementById('edit-name').value = p.name;
+      document.getElementById('edit-account').value = p.account;
       document.getElementById('edit-phone').value = p.phone;
-      document.getElementById('edit-email').value = p.email;
-      var box = document.getElementById('edit-roles');
-      var html = '';
-      Object.keys(ROLE_COLORS).forEach(function (r) {
-        var checked = p.roles.indexOf(r) >= 0 ? ' checked' : '';
-        html += '<label class="flex items-center gap-2 px-3 py-2 rounded-lg border border-gray-200 hover:border-blue-400 hover:bg-blue-50 cursor-pointer text-sm text-gray-700 transition-colors">' +
-          '<input type="checkbox" value="' + r + '"' + checked + ' class="w-4 h-4 accent-blue-600">' + r + '</label>';
-      });
-      box.innerHTML = html;
-      document.getElementById('edit-role-tip').classList.add('hidden');
+      populateOrganizationSelect('edit-org', p.org);
+      renderRoleOptions('edit-roles', p.roles);
+      showModalError('edit-user-error', '');
       document.getElementById('editPersonModal').classList.remove('hidden');
+      document.body.style.overflow = 'hidden';
     }
     function closeEditPerson() {
       document.getElementById('editPersonModal').classList.add('hidden');
       editingPersonId = null;
+      document.body.style.overflow = '';
+      showModalError('edit-user-error', '');
     }
     function saveEditPerson() {
       var p = null;
@@ -1165,20 +1305,25 @@
         if (personnelData[i].id === editingPersonId) { p = personnelData[i]; break; }
       }
       if (!p) { closeEditPerson(); return; }
-      var checkedRoles = [];
-      document.querySelectorAll('#edit-roles input[type="checkbox"]:checked').forEach(function (el) {
-        checkedRoles.push(el.value);
-      });
+      var account = gv('edit-account');
+      var phone = gv('edit-phone');
+      var organization = gv('edit-org');
+      var checkedRoles = selectedRoles('edit-roles');
+      if (!account || !phone || !organization) { showModalError('edit-user-error', '请完整填写所有必填项'); return; }
+      if (personnelData.some(function (person) { return person.id !== editingPersonId && person.account.toLowerCase() === account.toLowerCase(); })) { showModalError('edit-user-error', '用户名已存在，请更换后重试'); return; }
+      if (!/^1\d{10}$/.test(phone)) { showModalError('edit-user-error', '请输入正确的 11 位手机号'); return; }
       if (!checkedRoles.length) {
-        document.getElementById('edit-role-tip').classList.remove('hidden');
-        return;
+        showModalError('edit-user-error', '请至少为用户保留一个角色'); return;
       }
-      p.name = gv('edit-name') || p.name;
-      p.phone = gv('edit-phone') || p.phone;
-      p.email = gv('edit-email') || p.email;
+      p.account = account;
+      p.phone = phone;
+      p.org = organization;
       p.roles = checkedRoles;
+      var updatedName = p.name;
       closeEditPerson();
       filterList();
+      renderOrganizationDirectory();
+      showPersonnelToast('用户“' + updatedName + '”已保存，操作已记入日志');
     }
     function togglePersonStatus(id) {
       for (var i = 0; i < personnelData.length; i++) {

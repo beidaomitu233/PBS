@@ -1291,6 +1291,9 @@ body {
             <h2 id="doc-title" class="text-xl font-bold text-gray-900 mb-1">研究计划（Research Proposal）</h2>
             <p id="doc-subtitle" class="text-sm text-gray-500">卡内基梅隆大学 · 人工智能 · 硕士申请</p>
           </div>
+          <div class="flex justify-end mb-2">
+            <span id="documentAutoSaveStatus" class="inline-flex items-center gap-1.5 text-xs text-emerald-600"><span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>已自动保存</span>
+          </div>
           <div id="editor-sections" class="editor-sections space-y-4"><div class="editor-block border border-gray-200 rounded-xl overflow-hidden"><div class="flex items-center justify-between px-4 py-2 bg-gray-50 border-b border-gray-200"><span class="text-xs font-medium text-gray-500">段落 1 · 研究背景与问题</span><button class="btn-send-to-ai flex items-center gap-1 px-2.5 py-1 text-xs font-medium bg-blue-600 text-white rounded-lg hover:bg-blue-700" data-section="section-1"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>同步至AI写作助手</button></div><textarea class="editor-textarea w-full p-4 text-gray-700 leading-relaxed text-sm resize-none focus:outline-none" rows="3" style="height: 118px;"></textarea></div><div class="editor-block border border-gray-200 rounded-xl overflow-hidden"><div class="flex items-center justify-between px-4 py-2 bg-gray-50 border-b border-gray-200"><span class="text-xs font-medium text-gray-500">段落 2 · 研究方法与技术路线</span><button class="btn-send-to-ai flex items-center gap-1 px-2.5 py-1 text-xs font-medium bg-blue-600 text-white rounded-lg hover:bg-blue-700" data-section="section-2"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>同步至AI写作助手</button></div><textarea class="editor-textarea w-full p-4 text-gray-700 leading-relaxed text-sm resize-none focus:outline-none" rows="3" style="height: 118px;"></textarea></div><div class="editor-block border border-gray-200 rounded-xl overflow-hidden"><div class="flex items-center justify-between px-4 py-2 bg-gray-50 border-b border-gray-200"><span class="text-xs font-medium text-gray-500">段落 3 · 预期成果与计划安排</span><button class="btn-send-to-ai flex items-center gap-1 px-2.5 py-1 text-xs font-medium bg-blue-600 text-white rounded-lg hover:bg-blue-700" data-section="section-3"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>同步至AI写作助手</button></div><textarea class="editor-textarea w-full p-4 text-gray-700 leading-relaxed text-sm resize-none focus:outline-none" rows="3" style="height: 118px;"></textarea></div></div>
           <div class="flex items-center justify-between mt-6 pt-4 border-t border-gray-100">
             <div class="text-sm text-gray-500">
@@ -1821,7 +1824,7 @@ body {
       var saveBtn = document.querySelector('[data-dom-id="btn-save"]');
       if (saveBtn) {
         saveBtn.addEventListener('click', function() {
-          alert('文书已保存');
+          if (typeof persistDocumentDraft === 'function') persistDocumentDraft();
         });
       }
 
@@ -2226,6 +2229,59 @@ document.querySelectorAll('#tab-student-info, #tab-materials, #tab-version-histo
   });
 });
 
+// 文书正文自动保存：动态段落同样通过事件委托接入
+var documentAutoSaveTimer = null;
+function documentDraftKey() {
+  var title = document.getElementById('doc-title');
+  return 'pbs_document_autosave_' + (title ? title.textContent.trim() : 'current');
+}
+function updateDocumentAutoSaveStatus(saving) {
+  var status = document.getElementById('documentAutoSaveStatus');
+  if (!status) return;
+  status.setAttribute('role', 'status');
+  status.className = 'inline-flex items-center gap-1.5 text-xs ' + (saving ? 'text-amber-500' : 'text-emerald-600');
+  status.innerHTML = '<span class="w-1.5 h-1.5 rounded-full ' + (saving ? 'bg-amber-500' : 'bg-emerald-500') + '"></span>' + (saving ? '正在自动保存…' : '已自动保存');
+}
+function persistDocumentDraft() {
+  var sections = Array.from(document.querySelectorAll('#editor-sections .editor-block')).map(function(block) {
+    var label = block.querySelector('span');
+    var textarea = block.querySelector('.editor-textarea');
+    return { label: label ? label.textContent.trim() : '', content: textarea ? textarea.value : '' };
+  });
+  try {
+    localStorage.setItem(documentDraftKey(), JSON.stringify({ sections: sections, savedAt: new Date().toISOString() }));
+  } catch (e) {}
+  updateDocumentAutoSaveStatus(false);
+}
+function scheduleDocumentAutoSave() {
+  updateDocumentAutoSaveStatus(true);
+  clearTimeout(documentAutoSaveTimer);
+  documentAutoSaveTimer = setTimeout(persistDocumentDraft, 650);
+}
+function restoreDocumentDraft() {
+  var saved = null;
+  try { saved = JSON.parse(localStorage.getItem(documentDraftKey()) || 'null'); } catch (e) {}
+  if (!saved || !Array.isArray(saved.sections)) { updateDocumentAutoSaveStatus(false); return; }
+  var textareas = document.querySelectorAll('#editor-sections .editor-textarea');
+  saved.sections.forEach(function(section, index) {
+    if (!textareas[index]) return;
+    textareas[index].value = section.content || '';
+    textareas[index].style.height = 'auto';
+    textareas[index].style.height = textareas[index].scrollHeight + 'px';
+  });
+  updateDocumentAutoSaveStatus(false);
+}
+document.addEventListener('input', function(event) {
+  if (event.target.classList && event.target.classList.contains('editor-textarea')) scheduleDocumentAutoSave();
+});
+document.addEventListener('click', function(event) {
+  if (event.target.closest && event.target.closest('.doc-type-btn')) setTimeout(restoreDocumentDraft, 0);
+});
+window.addEventListener('beforeunload', function() {
+  if (documentAutoSaveTimer) { clearTimeout(documentAutoSaveTimer); persistDocumentDraft(); }
+});
+document.addEventListener('DOMContentLoaded', function() { setTimeout(restoreDocumentDraft, 0); });
+
 // Toast提示
 function showToast(message, type) {
   var toast = document.createElement('div');
@@ -2246,6 +2302,8 @@ function showToast(message, type) {
 
 // 增强保存按钮
 document.querySelector('[data-dom-id="btn-save"]')?.addEventListener('click', function() {
+  clearTimeout(documentAutoSaveTimer);
+  persistDocumentDraft();
   showToast('文书已保存', 'success');
 });
 

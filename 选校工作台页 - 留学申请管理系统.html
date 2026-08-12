@@ -655,8 +655,12 @@
 
     <!-- 主内容区 -->
     <main class="flex-1 p-6">
+      <div id="schoolCatalogHeader" class="hidden mb-6">
+        <h1 class="text-2xl font-semibold text-gray-800">院校列表</h1>
+        <p class="text-sm text-gray-400 mt-1">查询院校与专业信息，点击院校可查看完整申请要求</p>
+      </div>
       <!-- 任务信息条 -->
-      <div class="bg-white rounded-xl shadow-sm border border-gray-100 px-6 py-4 mb-6 flex items-center justify-between">
+      <div id="schoolTaskContextBar" class="bg-white rounded-xl shadow-sm border border-gray-100 px-6 py-4 mb-6 flex items-center justify-between">
         <div class="flex items-center gap-6 text-sm">
           <span class="font-semibold text-gray-900">SEL-M-2607-0003</span>
           <span class="text-gray-500">客户：<span class="font-medium text-gray-900">周立群</span> / 申请人：<span class="font-medium text-gray-900">周雨薇</span></span>
@@ -668,7 +672,7 @@
       </div>
 
       <!-- 三栏工作台 30/40/30 -->
-      <div class="flex gap-5 items-start" style="height: calc(100vh - 290px); min-height: 560px;">
+      <div id="schoolWorkspace" class="flex gap-5 items-start" style="height: calc(100vh - 290px); min-height: 560px;">
         <!-- 左栏：筛选+院校列表 -->
         <div class="w-[30%] bg-white rounded-xl shadow-sm border border-gray-100 flex flex-col h-full">
           <div class="p-4 border-b border-gray-100">
@@ -835,7 +839,7 @@
       </div>
 
       <!-- 底部操作条 -->
-      <div class="sticky bottom-0 mt-6 -mx-6 px-6 py-4 bg-white border-t border-gray-200 shadow-[0_-4px_12px_rgba(0,0,0,0.06)] z-30 flex items-center justify-between gap-4">
+      <div id="schoolActionBar" class="sticky bottom-0 mt-6 -mx-6 px-6 py-4 bg-white border-t border-gray-200 shadow-[0_-4px_12px_rgba(0,0,0,0.06)] z-30 flex items-center justify-between gap-4">
         <div><p class="text-xs text-gray-400">当前方案版本</p><p id="planVersionLabel" class="text-sm font-semibold text-gray-800 mt-0.5">V3</p></div>
         <div class="flex items-center gap-4">
         <button class="px-6 h-11 bg-white border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors font-medium" onclick="savePlan()">保存方案</button>
@@ -861,6 +865,17 @@
       </div>
 
   <script>
+    /* 左侧“院校列表”为资料浏览模式；任务列表进入时保留学生选校上下文。 */
+    (function initSchoolPageMode() {
+      var isCatalogMode = new URLSearchParams(location.search).get('mode') === 'catalog';
+      if (!isCatalogMode) return;
+      document.title = '院校列表 - 留学申请管理系统';
+      document.getElementById('schoolCatalogHeader').classList.remove('hidden');
+      document.getElementById('schoolTaskContextBar').classList.add('hidden');
+      document.getElementById('schoolActionBar').classList.add('hidden');
+      document.getElementById('schoolWorkspace').style.height = 'calc(100vh - 150px)';
+    })();
+
     /* 院校项目数据（字段对齐硕士/本科数据库录入标准） */
     var SCHOOL_INFO = {
       cmu: { name:'卡内基梅隆大学', rank:'QS #52', location:'美国宾夕法尼亚州匹兹堡', major:'计算机科学（MSCS）',

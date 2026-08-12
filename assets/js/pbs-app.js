@@ -81,7 +81,7 @@
     { key: 'school', label: '选校管理', icon: 'map', roles: ['机构管理员', '销售人员管理员', '销售人员'],
       children: [
         { label: '选校任务列表', file: '选校任务列表页 - 留学申请管理系统.html', roles: ['机构管理员', '销售人员管理员', '销售人员'] },
-        { label: '选校工作台', file: '选校工作台页 - 留学申请管理系统.html', roles: ['销售人员管理员', '销售人员'] }] },
+        { label: '院校列表', file: '选校工作台页 - 留学申请管理系统.html', href: '选校工作台页 - 留学申请管理系统.html?mode=catalog', roles: ['销售人员管理员', '销售人员'] }] },
     { key: 'usermgmt', label: '系统管理', icon: 'users', roles: ['平台运维人员', '机构管理员'],
       children: [
         { label: '人员管理', file: '人员管理 - PBS留学CRM系统.html', roles: ['平台运维人员', '机构管理员'] },
@@ -214,18 +214,18 @@
         taskEntry.className = 'flex items-center gap-2 px-4 py-2 rounded-lg text-sm transition-colors ' + (taskActive ? 'bg-blue-50 text-blue-600 font-medium' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-800');
         taskEntry.innerHTML = '<span class="w-1.5 h-1.5 rounded-full ' + (taskActive ? 'bg-blue-600' : 'bg-gray-300') + '"></span>选校任务列表';
         var canUseSchoolWorkbench = session.role === '超级管理员' || session.role === '销售人员管理员' || session.role === '销售人员';
-        var schoolWorkbench = schoolChildContainer.querySelector('a[href="选校工作台页 - 留学申请管理系统.html"]');
+        var schoolWorkbench = schoolChildContainer.querySelector('a[href^="选校工作台页 - 留学申请管理系统.html"]');
         if (canUseSchoolWorkbench && !schoolWorkbench) {
           schoolWorkbench = document.createElement('a');
-          schoolWorkbench.href = '选校工作台页 - 留学申请管理系统.html';
           schoolChildContainer.appendChild(schoolWorkbench);
         }
         if (schoolWorkbench) {
           if (!canUseSchoolWorkbench) schoolWorkbench.remove();
           else {
-            var workbenchActive = file === '选校工作台页 - 留学申请管理系统.html';
+            schoolWorkbench.href = '选校工作台页 - 留学申请管理系统.html?mode=catalog';
+            var workbenchActive = file === '选校工作台页 - 留学申请管理系统.html' && new URLSearchParams(location.search).get('mode') === 'catalog';
             schoolWorkbench.className = 'flex items-center gap-2 px-4 py-2 rounded-lg text-sm transition-colors ' + (workbenchActive ? 'bg-blue-50 text-blue-600 font-medium' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-800');
-            schoolWorkbench.innerHTML = '<span class="w-1.5 h-1.5 rounded-full ' + (workbenchActive ? 'bg-blue-600' : 'bg-gray-300') + '"></span>选校工作台';
+            schoolWorkbench.innerHTML = '<span class="w-1.5 h-1.5 rounded-full ' + (workbenchActive ? 'bg-blue-600' : 'bg-gray-300') + '"></span>院校列表';
           }
         }
         var groupTitle = schoolChildContainer.previousElementSibling;
@@ -291,15 +291,18 @@
       });
       if (!children.length) return;
 
-      var groupActive = children.some(function (c) { return c.file === file; });
+      var groupActive = children.some(function (c) {
+        return c.file === file && (!c.href || new URLSearchParams(location.search).get('mode') === 'catalog');
+      });
       html += '<div><div class="flex items-center gap-3 px-4 py-3 rounded-lg font-medium ' +
         (groupActive ? 'text-blue-700' : 'text-gray-700') + '">' +
         svgIcon(ICONS[m.icon], 'w-5 h-5 ' + (groupActive ? 'text-blue-600' : 'text-gray-400')) +
         '<span>' + m.label + '</span></div>';
       html += '<div class="ml-8 mt-1 space-y-1">';
       children.forEach(function (c) {
-        var cActive = (c.file === file);
-        html += '<a href="' + encodeURI(c.file) + '" class="flex items-center gap-2 px-4 py-2 rounded-lg text-sm transition-colors ' +
+        var cActive = c.file === file && (!c.href || new URLSearchParams(location.search).get('mode') === 'catalog');
+        var childTarget = c.href || c.file;
+        html += '<a href="' + encodeURI(childTarget) + '" class="flex items-center gap-2 px-4 py-2 rounded-lg text-sm transition-colors ' +
           (cActive ? 'bg-blue-50 text-blue-700 font-medium' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-800') + '">' +
           '<span class="w-1.5 h-1.5 rounded-full ' + (cActive ? 'bg-blue-600' : 'bg-gray-300') + '"></span>' +
           c.label + '</a>';

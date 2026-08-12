@@ -664,10 +664,6 @@
           <p id="personnelScopeHint" class="text-sm text-gray-400 mt-1">统一管理账号、人员状态与角色权限</p>
         </div>
         <div class="flex items-end gap-3">
-          <div id="platformOrganizationSwitcher" class="hidden">
-            <label class="block text-xs text-gray-500 mb-1.5">当前机构</label>
-            <select id="organizationSwitcher" class="w-56 h-10 px-3 border border-gray-300 rounded-lg bg-white text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500" onchange="switchOrganization(this.value)"></select>
-          </div>
           <button id="addOrganizationUserButton" onclick="openAddUser()" class="flex items-center gap-2 px-4 h-10 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium">
           <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
           新增用户
@@ -988,14 +984,11 @@
       personnelScopeOrg = organization.name;
       window.pbsCurrentPersonnelOrganization = organization.name;
       document.getElementById('personnelScopeHint').textContent = organization.name + ' · PBS 人员独立管理';
-      var switcher = document.getElementById('organizationSwitcher');
-      if (switcher) switcher.value = organization.id;
       if (isPlatformPersonnelManager && window.history && history.replaceState) {
         try { history.replaceState(null, '', location.pathname + '?org=' + encodeURIComponent(organization.id)); } catch (e) {}
       }
       resetFilter();
     }
-    function switchOrganization(id) { openOrganization(id); }
     function showOrganizationDirectory() {
       if (!isPlatformPersonnelManager) return;
       location.href = '机构管理 - PBS留学CRM系统.html';
@@ -1278,9 +1271,6 @@
         document.getElementById('backToOrganizationDirectory').classList.add('hidden');
         openOrganization(sessionOrganization.id);
       } else {
-        document.getElementById('platformOrganizationSwitcher').classList.remove('hidden');
-        var switcher = document.getElementById('organizationSwitcher');
-        switcher.innerHTML = organizationData.map(function (organization) { return '<option value="' + organization.id + '">' + organization.name + '</option>'; }).join('');
         var requestedOrganization = new URLSearchParams(location.search).get('org');
         var initialOrganization = getOrganizationById(requestedOrganization) || getOrganizationByName(requestedOrganization) || organizationData[0];
         if (initialOrganization) openOrganization(initialOrganization.id);

@@ -47,18 +47,51 @@
               <div class="flex items-center justify-between mb-3"><h3 class="text-sm font-semibold text-slate-900">院系链接</h3><span class="text-xs text-slate-400">来自 PBS 选校工作台</span></div>
               <div id="departmentLinks" class="grid md:grid-cols-2 gap-3"></div>
             </section>
-            <div id="scanSummary" class="hidden mx-6 mb-6 rounded-xl border border-emerald-200 bg-emerald-50 p-4">
-              <div class="flex items-center justify-between"><p class="text-sm font-medium text-emerald-800">扫描完成</p><span class="text-xs text-emerald-600">刚刚</span></div>
-              <div class="grid grid-cols-3 gap-3 mt-3 text-center"><div class="bg-white rounded-lg p-3"><p class="text-lg font-semibold text-slate-900">18</p><p class="text-xs text-slate-400">识别字段</p></div><div class="bg-white rounded-lg p-3"><p class="text-lg font-semibold text-slate-900">6</p><p class="text-xs text-slate-400">材料项</p></div><div class="bg-white rounded-lg p-3"><p class="text-lg font-semibold text-amber-600">2</p><p class="text-xs text-slate-400">待人工确认</p></div></div>
+            <div id="scanSummary" class="hidden mx-6 mb-6 rounded-xl border p-4">
+              <div class="flex items-center justify-between"><p id="scanSummaryTitle" class="text-sm font-medium"></p><span id="scanSummaryTime" class="text-xs"></span></div>
+              <div class="grid grid-cols-3 gap-3 mt-3 text-center"><div class="bg-white rounded-lg p-3"><p id="scanFieldCount" class="text-lg font-semibold text-slate-900">0</p><p class="text-xs text-slate-400">识别字段</p></div><div class="bg-white rounded-lg p-3"><p id="scanMaterialCount" class="text-lg font-semibold text-slate-900">0</p><p class="text-xs text-slate-400">材料项</p></div><div class="bg-white rounded-lg p-3"><p id="scanPendingCount" class="text-lg font-semibold text-amber-600">0</p><p class="text-xs text-slate-400">需人工处理</p></div></div>
             </div>
             <div class="flex justify-end gap-3 px-6 py-5 bg-slate-50 border-t border-slate-100">
-              <button class="h-10 px-5 border border-slate-300 bg-white text-slate-700 rounded-lg hover:bg-slate-50 text-sm font-medium" onclick="scanApplication()">开始扫描</button>
-              <button class="h-10 px-5 bg-blue-600 text-white rounded-lg hover:bg-blue-700 text-sm font-medium" onclick="openFillDrawer()">开始填报</button>
+              <button id="scanActionButton" class="h-10 px-5 border border-slate-300 bg-white text-slate-700 rounded-lg hover:bg-slate-50 text-sm font-medium" onclick="scanApplication()">开始扫描</button>
+              <button id="fillActionButton" class="h-10 px-5 rounded-lg text-sm font-medium" onclick="openFillDrawer()">开始填报</button>
             </div>
           </div>
         </div>
       </main>
     </section>
+
+    <div id="scanResultModal" class="fixed inset-0 z-[60] hidden">
+      <div class="absolute inset-0 bg-slate-900/50" onclick="closeScanResult()"></div>
+      <div class="absolute inset-4 sm:inset-8 lg:inset-x-[8%] lg:inset-y-10 bg-white rounded-2xl shadow-2xl flex flex-col overflow-hidden">
+        <header class="px-5 sm:px-6 py-4 border-b border-slate-200 flex items-start justify-between gap-5">
+          <div><p class="text-xs text-blue-600 mb-1">官网扫描结果</p><h2 id="scanResultTitle" class="text-lg font-semibold text-slate-900">扫描结果确认</h2><p class="text-xs text-slate-400 mt-1">请核对并修改识别内容，确认后才能开始填报</p></div>
+          <button class="w-9 h-9 rounded-full bg-slate-100 text-slate-500 text-xl flex-shrink-0" onclick="closeScanResult()">×</button>
+        </header>
+        <div class="flex-1 overflow-y-auto p-5 sm:p-6 bg-slate-50">
+          <div class="grid grid-cols-3 gap-3 mb-6">
+            <div class="bg-white border border-slate-200 rounded-xl p-4"><p class="text-xs text-slate-400">识别字段</p><p id="editorFieldCount" class="text-xl font-semibold text-slate-900 mt-1">0</p></div>
+            <div class="bg-white border border-slate-200 rounded-xl p-4"><p class="text-xs text-slate-400">材料项</p><p id="editorMaterialCount" class="text-xl font-semibold text-slate-900 mt-1">0</p></div>
+            <div class="bg-white border border-amber-200 rounded-xl p-4"><p class="text-xs text-amber-600">待人工确认</p><p id="editorPendingCount" class="text-xl font-semibold text-amber-600 mt-1">0</p></div>
+          </div>
+
+          <section class="bg-white border border-slate-200 rounded-xl overflow-hidden mb-5">
+            <div class="px-5 py-4 border-b border-slate-100 flex items-center justify-between"><div><h3 class="text-sm font-semibold text-slate-900">申请官网字段表单</h3><p class="text-xs text-slate-400 mt-1">可修改官网字段名称、PBS 对应值和匹配状态</p></div><button class="text-sm text-blue-600 hover:text-blue-700" onclick="addScanField()">+ 新增字段</button></div>
+            <div class="hidden md:grid grid-cols-[1.1fr_1fr_1.5fr_120px_32px] gap-3 px-4 py-2 bg-slate-50 text-xs text-slate-400"><span>官网字段</span><span>PBS 数据来源</span><span>对应值</span><span>匹配状态</span><span></span></div>
+            <div id="scanFieldEditor" class="divide-y divide-slate-100"></div>
+          </section>
+
+          <section class="bg-white border border-slate-200 rounded-xl overflow-hidden">
+            <div class="px-5 py-4 border-b border-slate-100 flex items-center justify-between"><div><h3 class="text-sm font-semibold text-slate-900">申请材料清单</h3><p class="text-xs text-slate-400 mt-1">可修改材料名称、官网要求和匹配文件</p></div><button class="text-sm text-blue-600 hover:text-blue-700" onclick="addScanMaterial()">+ 新增材料</button></div>
+            <div class="hidden md:grid grid-cols-[1fr_1.4fr_1.2fr_88px_32px] gap-3 px-4 py-2 bg-slate-50 text-xs text-slate-400"><span>材料名称</span><span>官网要求</span><span>PBS 匹配文件</span><span>是否必需</span><span></span></div>
+            <div id="scanMaterialEditor" class="divide-y divide-slate-100"></div>
+          </section>
+        </div>
+        <footer class="px-5 sm:px-6 py-4 border-t border-slate-200 bg-white flex items-center justify-between gap-4">
+          <button class="h-10 px-4 border border-slate-300 text-slate-600 rounded-lg hover:bg-slate-50 text-sm" onclick="closeScanResult()">取消</button>
+          <div class="flex items-center gap-3"><button class="h-10 px-4 border border-blue-200 text-blue-600 rounded-lg hover:bg-blue-50 text-sm" onclick="saveScanDraft()">暂存结果</button><button class="h-10 px-5 bg-blue-600 text-white rounded-lg hover:bg-blue-700 text-sm font-medium" onclick="confirmScanResult()">确认扫描结果</button></div>
+        </footer>
+      </div>
+    </div>
 
     <div id="drawerMask" class="fixed inset-0 z-40 bg-black/30 hidden" onclick="closeFillDrawer()"></div>
     <aside id="fillDrawer" class="drawer fixed top-0 right-0 bottom-0 z-50 w-full max-w-[520px] bg-white shadow-2xl flex flex-col">
@@ -69,11 +102,11 @@
       <div class="flex-1 overflow-y-auto p-5">
         <div class="rounded-xl bg-blue-50 text-blue-700 text-xs leading-5 p-3 mb-5">插件仅展示 PBS 中已确认的信息与材料，不会自动填写或提交院校表单。请逐项核对后在官网完成操作。</div>
         <section class="mb-6">
-          <div class="flex items-center justify-between mb-3"><h3 class="text-sm font-semibold text-slate-900">申请表字段</h3><span class="text-xs text-slate-400">18 项</span></div>
+          <div class="flex items-center justify-between mb-3"><h3 class="text-sm font-semibold text-slate-900">申请表字段</h3><span id="drawerFieldCount" class="text-xs text-slate-400"></span></div>
           <div id="fieldList" class="border border-slate-200 rounded-xl divide-y divide-slate-100 overflow-hidden"></div>
         </section>
         <section>
-          <div class="flex items-center justify-between mb-3"><h3 class="text-sm font-semibold text-slate-900">申请材料</h3><span class="text-xs text-slate-400">下载后手动上传</span></div>
+          <div class="flex items-center justify-between mb-3"><h3 class="text-sm font-semibold text-slate-900">申请材料</h3><span id="drawerMaterialCount" class="text-xs text-slate-400">下载后手动上传</span></div>
           <div id="materialList" class="space-y-2"></div>
         </section>
       </div>
@@ -91,7 +124,7 @@
       { id: 'zhang', name: '张明', meta: '硕士申请 · 2027 秋 · 美国', schools: [
         { id: 'cmu', name: '卡内基梅隆大学', program: '计算机科学 MSCS', status: '待填报' },
         { id: 'stanford', name: '斯坦福大学', program: '计算机科学 MS', status: '待扫描' },
-        { id: 'columbia', name: '哥伦比亚大学', program: '计算机科学 MS', status: '已扫描' }
+        { id: 'columbia', name: '哥伦比亚大学', program: '计算机科学 MS', status: '待确认' }
       ]},
       { id: 'lixue', name: '李雪', meta: '硕士申请 · 2027 秋 · 英国', schools: [
         { id: 'ucl', name: '伦敦大学学院', program: '教育学 MA', status: '待填报' },
@@ -101,15 +134,33 @@
         { id: 'bu', name: '波士顿大学', program: '经济学 BA', status: '待扫描' }
       ]}
     ];
-    var fields = [
-      ['First Name / Given Name', 'Ming'], ['Last Name / Family Name', 'Zhang'], ['Date of Birth', '2003-06-18'], ['Gender', 'Male'],
-      ['Nationality', 'China'], ['Passport Number', 'E12345678'], ['Email', 'zhangming2027@outlook.com'], ['Phone', '+86 138 0013 8001'],
-      ['Address', 'Shanghai, China'], ['Undergraduate Institution', 'Shanghai Jiao Tong University'], ['Major', 'Computer Science'], ['Degree', 'Bachelor of Engineering'],
-      ['GPA', '3.90 / 4.00'], ['TOEFL', '105'], ['GRE', '327'], ['Enrollment Term', 'Fall 2027'], ['Program', 'MS in Computer Science'], ['Application Round', 'Regular Decision']
+    var scanFieldTemplate = [
+      { label: 'First Name / Given Name', source: '学生档案 · 英文名', value: 'Ming', status: 'matched' },
+      { label: 'Last Name / Family Name', source: '学生档案 · 英文姓', value: 'Zhang', status: 'matched' },
+      { label: 'Date of Birth', source: '学生档案 · 出生日期', value: '2003-06-18', status: 'matched' },
+      { label: 'Gender', source: '学生档案 · 性别', value: 'Male', status: 'matched' },
+      { label: 'Nationality', source: '学生档案 · 国籍', value: 'China', status: 'matched' },
+      { label: 'Passport Number', source: '护照 · 证件号码', value: 'E12345678', status: 'matched' },
+      { label: 'Email', source: '网申任务 · 注册邮箱', value: 'zhangming2027@outlook.com', status: 'matched' },
+      { label: 'Phone', source: '学生档案 · 手机号', value: '+86 138 0013 8001', status: 'matched' },
+      { label: 'Address', source: '学生档案 · 通信地址', value: 'Shanghai, China', status: 'matched' },
+      { label: 'Undergraduate Institution', source: '教育经历 · 本科院校', value: 'Shanghai Jiao Tong University', status: 'matched' },
+      { label: 'Major', source: '教育经历 · 本科专业', value: 'Computer Science', status: 'matched' },
+      { label: 'Degree', source: '教育经历 · 学位', value: 'Bachelor of Engineering', status: 'matched' },
+      { label: 'GPA', source: '教育经历 · GPA', value: '3.90 / 4.00', status: 'confirm' },
+      { label: 'TOEFL', source: '语言成绩 · TOEFL', value: '105', status: 'matched' },
+      { label: 'GRE', source: '标化成绩 · GRE', value: '327', status: 'matched' },
+      { label: 'Enrollment Term', source: '网申任务 · 入学学期', value: 'Fall 2027', status: 'matched' },
+      { label: 'Program', source: '网申任务 · 申请专业', value: 'MS in Computer Science', status: 'confirm' },
+      { label: 'Application Round', source: '网申任务 · 申请轮次', value: 'Regular Decision', status: 'matched' }
     ];
-    var materials = [
-      ['本科成绩单', 'ZHANG_Ming_Transcript.pdf', true], ['护照复印件', 'ZHANG_Ming_Passport.pdf', true], ['语言成绩单', 'ZHANG_Ming_TOEFL.pdf', true],
-      ['个人陈述（PS）', 'CMU_MSCS_PS_v4.docx', true], ['推荐信（RL）', 'Professor_Li_Recommendation.pdf', true], ['简历（CV）', 'ZHANG_Ming_CV.pdf', true]
+    var scanMaterialTemplate = [
+      { name: '本科成绩单', requirement: '学校官方开具的中英文成绩单', file: 'ZHANG_Ming_Transcript.pdf', required: true },
+      { name: '护照复印件', requirement: '清晰可辨的护照信息页', file: 'ZHANG_Ming_Passport.pdf', required: true },
+      { name: '语言成绩单', requirement: '官方送分或成绩单扫描件', file: 'ZHANG_Ming_TOEFL.pdf', required: true },
+      { name: '个人陈述（PS）', requirement: '不超过 1000 词，PDF 或 DOCX', file: 'CMU_MSCS_PS_v4.docx', required: true },
+      { name: '推荐信（RL）', requirement: '2 封，其中至少 1 封来自学术导师', file: 'Professor_Li_Recommendation.pdf', required: true },
+      { name: '简历（CV）', requirement: '不超过 2 页，PDF 格式', file: 'ZHANG_Ming_CV.pdf', required: true }
     ];
     // 原型中模拟从 PBS 选校工作台按“学校 + 专业”同步院系链接。
     var schoolProgramLinks = {
@@ -140,11 +191,34 @@
     };
     var activeStudent = null;
     var activeSchool = null;
+    var editingScanRecord = null;
 
     function statusClass(status) {
-      if (status === '已扫描') return 'bg-emerald-50 text-emerald-700';
+      if (status === '已完成') return 'bg-emerald-50 text-emerald-700';
       if (status === '待填报') return 'bg-blue-50 text-blue-700';
+      if (status === '待确认') return 'bg-amber-50 text-amber-700';
       return 'bg-amber-50 text-amber-700';
+    }
+    function cloneData(data) { return JSON.parse(JSON.stringify(data)); }
+    function escapeText(value) { var div = document.createElement('div'); div.textContent = value == null ? '' : String(value); return div.innerHTML; }
+    function escapeAttr(value) { return escapeText(value).replace(/"/g, '&quot;').replace(/'/g, '&#39;'); }
+    function scanStorageKey() { return activeStudent && activeSchool ? 'pbs_plugin_scan_' + activeStudent.id + '_' + activeSchool.id : ''; }
+    function createScanRecord(confirmed) {
+      return { confirmed: !!confirmed, scannedAt: new Date().toLocaleString('zh-CN', { hour12: false }), fields: cloneData(scanFieldTemplate), materials: cloneData(scanMaterialTemplate) };
+    }
+    function loadActiveScanRecord() {
+      var saved = null;
+      try { saved = JSON.parse(localStorage.getItem(scanStorageKey()) || 'null'); } catch (e) {}
+      if (saved && Array.isArray(saved.fields) && Array.isArray(saved.materials)) {
+        activeSchool.scanRecord = saved;
+        activeSchool.status = saved.confirmed ? '待填报' : '待确认';
+      }
+      if (!activeSchool.scanRecord && (activeSchool.status === '待填报' || activeSchool.status === '已完成')) activeSchool.scanRecord = createScanRecord(true);
+      if (!activeSchool.scanRecord && activeSchool.status === '待确认') activeSchool.scanRecord = createScanRecord(false);
+    }
+    function saveActiveScanRecord(record) {
+      activeSchool.scanRecord = cloneData(record);
+      localStorage.setItem(scanStorageKey(), JSON.stringify(activeSchool.scanRecord));
     }
     function renderStudents() {
       document.getElementById('studentCards').innerHTML = students.map(function (student) {
@@ -168,11 +242,36 @@
       document.getElementById('projectStudent').textContent = activeStudent.name;
       document.getElementById('projectSchool').textContent = activeSchool.name;
       document.getElementById('projectProgram').textContent = activeSchool.program;
-      document.getElementById('projectStatus').textContent = activeSchool.status;
-      document.getElementById('projectStatus').className = 'px-2.5 py-1 rounded-full text-xs font-medium ' + statusClass(activeSchool.status);
+      loadActiveScanRecord();
       renderDepartmentLinks(activeSchool);
-      document.getElementById('scanSummary').classList.toggle('hidden', activeSchool.status !== '已扫描');
+      renderProjectState();
       showView('projectView');
+    }
+    function renderProjectState() {
+      var badge = document.getElementById('projectStatus');
+      var record = activeSchool.scanRecord;
+      badge.textContent = activeSchool.status;
+      badge.className = 'px-2.5 py-1 rounded-full text-xs font-medium ' + statusClass(activeSchool.status);
+      var summary = document.getElementById('scanSummary');
+      if (!record) summary.classList.add('hidden');
+      else {
+        var pending = record.fields.filter(function (field) { return field.status !== 'matched'; }).length;
+        summary.classList.remove('hidden', 'border-emerald-200', 'bg-emerald-50', 'border-amber-200', 'bg-amber-50');
+        summary.classList.add(record.confirmed ? 'border-emerald-200' : 'border-amber-200', record.confirmed ? 'bg-emerald-50' : 'bg-amber-50');
+        document.getElementById('scanSummaryTitle').textContent = record.confirmed ? '扫描结果已确认' : '扫描结果待确认';
+        document.getElementById('scanSummaryTitle').className = 'text-sm font-medium ' + (record.confirmed ? 'text-emerald-800' : 'text-amber-800');
+        document.getElementById('scanSummaryTime').textContent = record.scannedAt;
+        document.getElementById('scanSummaryTime').className = 'text-xs ' + (record.confirmed ? 'text-emerald-600' : 'text-amber-600');
+        document.getElementById('scanFieldCount').textContent = record.fields.length;
+        document.getElementById('scanMaterialCount').textContent = record.materials.length;
+        document.getElementById('scanPendingCount').textContent = pending;
+      }
+      var scanButton = document.getElementById('scanActionButton');
+      scanButton.textContent = record && !record.confirmed ? '确认扫描结果' : (record ? '重新扫描' : '开始扫描');
+      var fillButton = document.getElementById('fillActionButton');
+      var canFill = !!(record && record.confirmed);
+      fillButton.disabled = !canFill;
+      fillButton.className = canFill ? 'h-10 px-5 bg-blue-600 text-white rounded-lg hover:bg-blue-700 text-sm font-medium' : 'h-10 px-5 bg-slate-200 text-slate-400 rounded-lg text-sm font-medium cursor-not-allowed';
     }
     function renderDepartmentLinks(school) {
       var links = schoolProgramLinks[school.name + '|' + school.program] || [];
@@ -185,17 +284,120 @@
     function showStudents() { activeStudent = null; showView('studentView'); }
     function backToSchools() { openStudent(activeStudent.id); }
     function scanApplication() {
-      activeSchool.status = '已扫描';
-      document.getElementById('projectStatus').textContent = '已扫描';
-      document.getElementById('projectStatus').className = 'px-2.5 py-1 rounded-full text-xs font-medium ' + statusClass('已扫描');
-      document.getElementById('scanSummary').classList.remove('hidden');
-      toast('扫描完成，已生成字段与材料清单');
+      if (activeSchool.scanRecord && !activeSchool.scanRecord.confirmed) {
+        openScanResult(activeSchool.scanRecord);
+        return;
+      }
+      var button = document.getElementById('scanActionButton');
+      button.disabled = true;
+      button.textContent = '正在扫描官网...';
+      window.setTimeout(function () {
+        var source = activeSchool.scanRecord && activeSchool.scanRecord.confirmed ? activeSchool.scanRecord : createScanRecord(false);
+        source = cloneData(source);
+        source.confirmed = false;
+        source.scannedAt = new Date().toLocaleString('zh-CN', { hour12: false });
+        button.disabled = false;
+        openScanResult(source);
+      }, 500);
+    }
+    function openScanResult(record) {
+      editingScanRecord = cloneData(record || createScanRecord(false));
+      document.getElementById('scanResultTitle').textContent = activeSchool.name + ' · ' + activeSchool.program;
+      renderScanEditors();
+      document.getElementById('scanResultModal').classList.remove('hidden');
+      document.body.classList.add('overflow-hidden');
+    }
+    function closeScanResult() {
+      document.getElementById('scanResultModal').classList.add('hidden');
+      document.body.classList.remove('overflow-hidden');
+      editingScanRecord = null;
+      renderProjectState();
+    }
+    function scanFieldRow(field) {
+      var statusOptions = '<option value="matched"' + (field.status === 'matched' ? ' selected' : '') + '>已匹配</option><option value="confirm"' + (field.status === 'confirm' ? ' selected' : '') + '>需确认</option><option value="missing"' + (field.status === 'missing' ? ' selected' : '') + '>未匹配</option>';
+      return '<div class="scan-field-row grid md:grid-cols-[1.1fr_1fr_1.5fr_120px_32px] gap-3 px-4 py-3 items-center">' +
+        '<input data-scan-label class="h-9 px-3 border border-slate-300 rounded-lg text-sm" value="' + escapeAttr(field.label) + '" placeholder="官网字段名称">' +
+        '<input data-scan-source class="h-9 px-3 border border-slate-300 rounded-lg text-sm" value="' + escapeAttr(field.source) + '" placeholder="PBS 数据来源">' +
+        '<input data-scan-value class="h-9 px-3 border border-slate-300 rounded-lg text-sm" value="' + escapeAttr(field.value) + '" placeholder="对应值">' +
+        '<select data-scan-status class="h-9 px-2 border border-slate-300 rounded-lg text-sm" onchange="updateScanEditorStats()">' + statusOptions + '</select>' +
+        '<button class="text-slate-300 hover:text-red-500 text-lg" title="移除字段" onclick="removeScanEditorRow(this)">×</button></div>';
+    }
+    function scanMaterialRow(material) {
+      return '<div class="scan-material-row grid md:grid-cols-[1fr_1.4fr_1.2fr_88px_32px] gap-3 px-4 py-3 items-center">' +
+        '<input data-material-name class="h-9 px-3 border border-slate-300 rounded-lg text-sm" value="' + escapeAttr(material.name) + '" placeholder="材料名称">' +
+        '<input data-material-requirement class="h-9 px-3 border border-slate-300 rounded-lg text-sm" value="' + escapeAttr(material.requirement) + '" placeholder="官网要求">' +
+        '<input data-material-file class="h-9 px-3 border border-slate-300 rounded-lg text-sm" value="' + escapeAttr(material.file) + '" placeholder="PBS 匹配文件">' +
+        '<label class="flex items-center gap-2 text-sm text-slate-600"><input data-material-required type="checkbox" class="accent-blue-600"' + (material.required ? ' checked' : '') + '>必需</label>' +
+        '<button class="text-slate-300 hover:text-red-500 text-lg" title="移除材料" onclick="removeScanEditorRow(this)">×</button></div>';
+    }
+    function renderScanEditors() {
+      document.getElementById('scanFieldEditor').innerHTML = editingScanRecord.fields.map(scanFieldRow).join('');
+      document.getElementById('scanMaterialEditor').innerHTML = editingScanRecord.materials.map(scanMaterialRow).join('');
+      updateScanEditorStats();
+    }
+    function updateScanEditorStats() {
+      var fieldRows = document.querySelectorAll('#scanFieldEditor .scan-field-row');
+      var materialRows = document.querySelectorAll('#scanMaterialEditor .scan-material-row');
+      var pending = Array.from(document.querySelectorAll('#scanFieldEditor [data-scan-status]')).filter(function (select) { return select.value !== 'matched'; }).length;
+      document.getElementById('editorFieldCount').textContent = fieldRows.length;
+      document.getElementById('editorMaterialCount').textContent = materialRows.length;
+      document.getElementById('editorPendingCount').textContent = pending;
+    }
+    function addScanField() {
+      document.getElementById('scanFieldEditor').insertAdjacentHTML('beforeend', scanFieldRow({ label: '', source: '', value: '', status: 'confirm' }));
+      updateScanEditorStats();
+    }
+    function addScanMaterial() {
+      document.getElementById('scanMaterialEditor').insertAdjacentHTML('beforeend', scanMaterialRow({ name: '', requirement: '', file: '', required: true }));
+      updateScanEditorStats();
+    }
+    function removeScanEditorRow(button) { button.closest('.scan-field-row, .scan-material-row').remove(); updateScanEditorStats(); }
+    function collectScanResult() {
+      var fields = Array.from(document.querySelectorAll('#scanFieldEditor .scan-field-row')).map(function (row) {
+        return { label: row.querySelector('[data-scan-label]').value.trim(), source: row.querySelector('[data-scan-source]').value.trim(), value: row.querySelector('[data-scan-value]').value.trim(), status: row.querySelector('[data-scan-status]').value };
+      });
+      var materials = Array.from(document.querySelectorAll('#scanMaterialEditor .scan-material-row')).map(function (row) {
+        return { name: row.querySelector('[data-material-name]').value.trim(), requirement: row.querySelector('[data-material-requirement]').value.trim(), file: row.querySelector('[data-material-file]').value.trim(), required: row.querySelector('[data-material-required]').checked };
+      });
+      return { confirmed: false, scannedAt: editingScanRecord.scannedAt, fields: fields, materials: materials };
+    }
+    function validateScanResult(record) {
+      if (!record.fields.length || record.fields.some(function (field) { return !field.label; })) { alert('请填写所有官网字段名称'); return false; }
+      if (!record.materials.length || record.materials.some(function (material) { return !material.name; })) { alert('请填写所有材料名称'); return false; }
+      return true;
+    }
+    function saveScanDraft() {
+      var record = collectScanResult();
+      if (!validateScanResult(record)) return;
+      saveActiveScanRecord(record);
+      activeSchool.status = '待确认';
+      closeScanResult();
+      toast('扫描结果已暂存，请确认后开始填报');
+    }
+    function confirmScanResult() {
+      var record = collectScanResult();
+      if (!validateScanResult(record)) return;
+      record.confirmed = true;
+      saveActiveScanRecord(record);
+      activeSchool.status = '待填报';
+      closeScanResult();
+      renderProjectState();
+      toast('扫描结果已确认，可以开始填报');
     }
     function renderDrawerData() {
-      document.getElementById('fieldList').innerHTML = fields.map(function (field) { return '<div class="px-4 py-3 flex items-center justify-between gap-4"><div class="min-w-0"><p class="text-xs text-slate-400">' + field[0] + '</p><p class="text-sm text-slate-800 mt-1 break-words">' + field[1] + '</p></div><button class="text-xs text-blue-600 flex-shrink-0" onclick="copyValue(\'' + field[1].replace(/'/g, "\\'") + '\')">复制</button></div>'; }).join('');
-      document.getElementById('materialList').innerHTML = materials.map(function (material) { return '<div class="flex items-center justify-between gap-3 border border-slate-200 rounded-xl p-3"><div class="min-w-0"><p class="text-sm font-medium text-slate-800">' + material[0] + '</p><p class="text-xs text-slate-400 truncate mt-1">' + material[1] + '</p></div><button class="px-3 py-1.5 rounded-lg bg-blue-50 text-blue-600 text-xs font-medium flex-shrink-0" onclick="downloadMaterial(\'' + material[1] + '\')">下载</button></div>'; }).join('');
+      var record = activeSchool.scanRecord;
+      document.getElementById('drawerFieldCount').textContent = record.fields.length + ' 项';
+      document.getElementById('drawerMaterialCount').textContent = record.materials.length + ' 项 · 下载后手动上传';
+      document.getElementById('fieldList').innerHTML = record.fields.map(function (field) {
+        return '<div class="px-4 py-3 flex items-center justify-between gap-4"><div class="min-w-0"><div class="flex items-center gap-2"><p class="text-xs text-slate-400">' + escapeText(field.label) + '</p>' + (field.status !== 'matched' ? '<span class="text-[11px] text-amber-600">已人工确认</span>' : '') + '</div><p class="text-sm text-slate-800 mt-1 break-words">' + escapeText(field.value || '—') + '</p><p class="text-[11px] text-slate-400 mt-1">' + escapeText(field.source || '未关联 PBS 字段') + '</p></div><button data-value="' + escapeAttr(field.value) + '" class="text-xs text-blue-600 flex-shrink-0" onclick="copyValue(this.dataset.value)">复制</button></div>';
+      }).join('');
+      document.getElementById('materialList').innerHTML = record.materials.map(function (material) {
+        var downloadButton = material.file ? '<button data-file="' + escapeAttr(material.file) + '" class="px-3 py-1.5 rounded-lg bg-blue-50 text-blue-600 text-xs font-medium flex-shrink-0" onclick="downloadMaterial(this.dataset.file)">下载</button>' : '<span class="text-xs text-amber-600">文件缺失</span>';
+        return '<div class="flex items-center justify-between gap-3 border border-slate-200 rounded-xl p-3"><div class="min-w-0"><div class="flex items-center gap-2"><p class="text-sm font-medium text-slate-800">' + escapeText(material.name) + '</p>' + (material.required ? '<span class="text-[11px] text-red-500">必需</span>' : '<span class="text-[11px] text-slate-400">非必需</span>') + '</div><p class="text-xs text-slate-500 mt-1">' + escapeText(material.requirement || '—') + '</p><p class="text-xs text-slate-400 truncate mt-1">' + escapeText(material.file || '尚未匹配文件') + '</p></div>' + downloadButton + '</div>';
+      }).join('');
     }
     function openFillDrawer() {
+      if (!activeSchool.scanRecord || !activeSchool.scanRecord.confirmed) { toast('请先确认扫描结果'); if (activeSchool.scanRecord) openScanResult(activeSchool.scanRecord); return; }
       document.getElementById('drawerTitle').textContent = activeStudent.name + ' · ' + activeSchool.name;
       renderDrawerData();
       document.getElementById('drawerMask').classList.remove('hidden');
@@ -208,7 +410,7 @@
       var link = document.createElement('a'); link.href = URL.createObjectURL(blob); link.download = name; link.click(); URL.revokeObjectURL(link.href); toast('材料已下载，请手动上传至院校系统');
     }
     function saveFillProgress() { toast('填报进度已保存'); }
-    function completeFill() { activeSchool.status = '已完成'; closeFillDrawer(); toast('已标记填报完成，请确认院校系统已手动提交'); }
+    function completeFill() { activeSchool.status = '已完成'; closeFillDrawer(); renderProjectState(); toast('已标记填报完成，请确认院校系统已手动提交'); }
     function toast(message) { var el = document.getElementById('toast'); el.textContent = message; el.classList.remove('hidden'); clearTimeout(window.toastTimer); window.toastTimer = setTimeout(function () { el.classList.add('hidden'); }, 2400); }
     function logoutPlugin() { localStorage.removeItem('pbs_plugin_session_v1'); location.href = '登录.html'; }
     try {

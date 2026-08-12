@@ -839,10 +839,6 @@
             <input id="add-password" type="password" autocomplete="new-password" class="w-full h-10 px-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="8 位以上，含字母与数字">
           </div>
           <div class="col-span-2">
-            <label class="block text-sm text-gray-600 mb-2">所属机构 <span class="text-red-500">*</span></label>
-            <select id="add-org" class="w-full h-10 px-3 border border-gray-300 rounded-lg bg-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500"></select>
-          </div>
-          <div class="col-span-2">
             <label class="block text-sm text-gray-600 mb-2">用户角色 <span class="text-red-500">*</span><span class="text-xs text-blue-500 font-normal ml-1">（可多选，权限并集生效）</span></label>
             <div id="add-roles" class="grid grid-cols-3 gap-2 max-h-48 overflow-y-auto p-1"></div>
           </div>
@@ -877,10 +873,6 @@
             <label class="block text-sm text-gray-600 mb-2">手机号 <span class="text-red-500">*</span></label>
             <input id="edit-phone" type="text" class="w-full h-10 px-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
           </div>
-        </div>
-        <div>
-          <label class="block text-sm text-gray-600 mb-2">所属机构 <span class="text-red-500">*</span></label>
-          <select id="edit-org" class="w-full h-10 px-3 border border-gray-300 rounded-lg bg-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500"></select>
         </div>
         <div>
           <label class="block text-sm text-gray-600 mb-2">角色 <span class="text-xs text-blue-500 font-normal">（可多选，至少保留一个）</span></label>
@@ -1087,14 +1079,6 @@
           '<input type="checkbox" value="' + role + '"' + (selected.indexOf(role) >= 0 ? ' checked' : '') + ' class="w-4 h-4 accent-blue-600">' + role + '</label>';
       }).join('');
     }
-    function populateOrganizationSelect(selectId, selectedOrganization) {
-      var select = document.getElementById(selectId);
-      select.innerHTML = '<option value="">请选择所属机构</option>' + organizationData.map(function (organization) {
-        return '<option value="' + organization.name + '"' + (organization.name === selectedOrganization ? ' selected' : '') + '>' + organization.name + '</option>';
-      }).join('');
-      select.disabled = !isPlatformPersonnelManager;
-      select.classList.toggle('bg-gray-100', !isPlatformPersonnelManager);
-    }
     function selectedRoles(containerId) {
       return Array.from(document.querySelectorAll('#' + containerId + ' input[type="checkbox"]:checked')).map(function (input) { return input.value; });
     }
@@ -1125,7 +1109,6 @@
 
     function openAddUser() {
       document.getElementById('addUserForm').reset();
-      populateOrganizationSelect('add-org', personnelScopeOrg);
       renderRoleOptions('add-roles', []);
       showModalError('add-user-error', '');
       document.getElementById('addUserModal').classList.remove('hidden');
@@ -1142,9 +1125,10 @@
       var name = gv('add-name');
       var phone = gv('add-phone');
       var password = gv('add-password');
-      var organization = gv('add-org');
+      var organization = personnelScopeOrg;
       var roles = selectedRoles('add-roles');
-      if (!account || !name || !phone || !password || !organization) { showModalError('add-user-error', '请完整填写所有必填项'); return; }
+      if (!account || !name || !phone || !password) { showModalError('add-user-error', '请完整填写所有必填项'); return; }
+      if (!organization) { showModalError('add-user-error', '当前机构信息缺失，请返回后重新进入人员管理'); return; }
       if (personnelData.some(function (person) { return person.account.toLowerCase() === account.toLowerCase(); })) { showModalError('add-user-error', '用户名已存在，请更换后重试'); return; }
       if (!/^1\d{10}$/.test(phone)) { showModalError('add-user-error', '请输入正确的 11 位手机号'); return; }
       if (password.length < 8 || !/[A-Za-z]/.test(password) || !/\d/.test(password)) { showModalError('add-user-error', '初始密码需为 8 位以上，并同时包含字母与数字'); return; }
@@ -1287,7 +1271,6 @@
       editingPersonId = id;
       document.getElementById('edit-account').value = p.account;
       document.getElementById('edit-phone').value = p.phone;
-      populateOrganizationSelect('edit-org', p.org);
       renderRoleOptions('edit-roles', p.roles);
       showModalError('edit-user-error', '');
       document.getElementById('editPersonModal').classList.remove('hidden');
@@ -1307,9 +1290,8 @@
       if (!p) { closeEditPerson(); return; }
       var account = gv('edit-account');
       var phone = gv('edit-phone');
-      var organization = gv('edit-org');
       var checkedRoles = selectedRoles('edit-roles');
-      if (!account || !phone || !organization) { showModalError('edit-user-error', '请完整填写所有必填项'); return; }
+      if (!account || !phone) { showModalError('edit-user-error', '请完整填写所有必填项'); return; }
       if (personnelData.some(function (person) { return person.id !== editingPersonId && person.account.toLowerCase() === account.toLowerCase(); })) { showModalError('edit-user-error', '用户名已存在，请更换后重试'); return; }
       if (!/^1\d{10}$/.test(phone)) { showModalError('edit-user-error', '请输入正确的 11 位手机号'); return; }
       if (!checkedRoles.length) {
@@ -1317,7 +1299,6 @@
       }
       p.account = account;
       p.phone = phone;
-      p.org = organization;
       p.roles = checkedRoles;
       var updatedName = p.name;
       closeEditPerson();

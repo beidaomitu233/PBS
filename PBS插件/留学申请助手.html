@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>PBS插件 - 留学申请助手</title>
   <script src="../assets/vendor/tailwind-runtime.js"></script>
+  <script>if (!localStorage.getItem('pbs_plugin_session_v1')) location.replace('登录.html');</script>
   <style>
     body { font-family: "Microsoft YaHei", "PingFang SC", sans-serif; }
     .drawer { transform: translateX(100%); transition: transform .25s ease; }
@@ -16,7 +17,7 @@
     <section class="flex-1 min-w-0">
       <header class="h-16 bg-white border-b border-slate-200 px-6 flex items-center justify-between">
         <div class="flex items-center gap-3"><div class="w-9 h-9 rounded-xl bg-blue-600 text-white flex items-center justify-center font-bold">P</div><div><h1 class="text-sm font-semibold text-slate-900">PBS 留学申请助手</h1><p class="text-xs text-slate-400">浏览器插件原型</p></div></div>
-        <span class="text-xs text-emerald-600">已连接 PBS</span>
+        <div class="flex items-center gap-4"><span class="inline-flex items-center gap-1.5 text-xs text-emerald-600"><span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>已连接 PBS</span><div class="h-5 w-px bg-slate-200"></div><div class="text-right"><p id="pluginUserName" class="text-sm font-medium text-slate-800">陈晨</p><p class="text-xs text-slate-400">网申人员</p></div><button class="text-xs text-slate-500 hover:text-blue-600" onclick="logoutPlugin()">退出登录</button></div>
       </header>
 
       <main class="max-w-5xl mx-auto p-6">
@@ -170,6 +171,11 @@
     function saveFillProgress() { toast('填报进度已保存'); }
     function completeFill() { activeSchool.status = '已完成'; closeFillDrawer(); toast('已标记填报完成，请确认院校系统已手动提交'); }
     function toast(message) { var el = document.getElementById('toast'); el.textContent = message; el.classList.remove('hidden'); clearTimeout(window.toastTimer); window.toastTimer = setTimeout(function () { el.classList.add('hidden'); }, 2400); }
+    function logoutPlugin() { localStorage.removeItem('pbs_plugin_session_v1'); location.href = '登录.html'; }
+    try {
+      var pluginSession = JSON.parse(localStorage.getItem('pbs_plugin_session_v1') || '{}');
+      if (pluginSession.name) document.getElementById('pluginUserName').textContent = pluginSession.name;
+    } catch (e) {}
     renderStudents();
   </script>
 </body>

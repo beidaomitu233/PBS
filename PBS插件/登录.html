@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>登录 - PBS 留学申请助手</title>
+  <script src="../assets/vendor/tailwind-runtime.js"></script>
+  <style>
+    body { font-family: "Microsoft YaHei", "PingFang SC", sans-serif; }
+    .login-grid { background-image: linear-gradient(rgba(255,255,255,.06) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.06) 1px, transparent 1px); background-size: 32px 32px; }
+  </style>
+</head>
+<body class="min-h-screen bg-slate-100">
+  <main class="min-h-screen grid lg:grid-cols-[1.05fr_.95fr]">
+    <section class="relative hidden lg:flex overflow-hidden bg-gradient-to-br from-blue-700 via-blue-700 to-indigo-800 text-white p-14 flex-col justify-between">
+      <div class="login-grid absolute inset-0"></div>
+      <div class="absolute -top-20 -right-16 w-72 h-72 rounded-full bg-cyan-300 opacity-20"></div>
+      <div class="absolute -bottom-24 -left-16 w-80 h-80 rounded-full bg-indigo-300 opacity-20"></div>
+      <div class="relative flex items-center gap-3">
+        <span class="w-11 h-11 rounded-xl bg-white text-blue-700 shadow-lg flex items-center justify-center text-xl font-bold">P</span>
+        <div><p class="font-semibold">PBS 留学</p><p class="text-xs text-blue-200 mt-0.5">留学申请助手</p></div>
+      </div>
+      <div class="relative max-w-lg">
+        <p class="text-sm text-blue-200 mb-4">PBS 网申人员工作入口</p>
+        <h1 class="text-4xl font-semibold leading-tight">集中查看学生任务，辅助完成院校申请填报</h1>
+        <p class="text-sm text-blue-100 leading-7 mt-6">按学生与院校管理申请任务，核对申请字段并下载材料，由网申人员在学校官网手动填写、上传和提交。</p>
+      </div>
+      <p class="relative text-xs text-blue-200">PBS Overseas Application Assistant</p>
+    </section>
+
+    <section class="flex items-center justify-center px-5 py-10 sm:px-10">
+      <div class="w-full max-w-md">
+        <div class="lg:hidden flex items-center gap-3 mb-9">
+          <span class="w-10 h-10 rounded-xl bg-blue-600 text-white flex items-center justify-center text-lg font-bold">P</span>
+          <div><p class="font-semibold text-slate-900">PBS 留学</p><p class="text-xs text-slate-400">留学申请助手</p></div>
+        </div>
+        <div class="bg-white rounded-2xl border border-slate-200 shadow-xl p-7 sm:p-8">
+          <div class="mb-7">
+            <span class="inline-flex px-2.5 py-1 rounded-full bg-blue-50 text-blue-600 text-xs font-medium mb-4">网申人员专用</span>
+            <h2 class="text-2xl font-semibold text-slate-900">登录留学申请助手</h2>
+            <p class="text-sm text-slate-500 mt-2">使用 PBS 网申人员账号登录</p>
+          </div>
+          <form onsubmit="loginPlugin(event)" class="space-y-5">
+            <div>
+              <label class="block text-sm font-medium text-slate-700 mb-2" for="pluginAccount">账号</label>
+              <input id="pluginAccount" autocomplete="username" class="w-full h-11 px-4 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="请输入账号" value="wangshen">
+            </div>
+            <div>
+              <div class="flex items-center justify-between mb-2"><label class="text-sm font-medium text-slate-700" for="pluginPassword">密码</label><span class="text-xs text-slate-400">演示密码：pbs123456</span></div>
+              <div class="relative">
+                <input id="pluginPassword" type="password" autocomplete="current-password" class="w-full h-11 pl-4 pr-12 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="请输入密码" value="pbs123456">
+                <button type="button" class="absolute right-0 top-0 w-11 h-11 text-xs text-slate-400 hover:text-blue-600" onclick="togglePassword(this)">显示</button>
+              </div>
+            </div>
+            <label class="flex items-center gap-2 text-sm text-slate-600"><input type="checkbox" checked class="w-4 h-4 accent-blue-600">记住登录状态</label>
+            <button type="submit" class="w-full h-11 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium transition-colors">登录</button>
+          </form>
+          <div class="flex items-center gap-3 my-6"><span class="h-px bg-slate-200 flex-1"></span><span class="text-xs text-slate-400">演示快捷入口</span><span class="h-px bg-slate-200 flex-1"></span></div>
+          <button type="button" onclick="demoLogin()" class="w-full h-11 bg-blue-50 border border-blue-200 text-blue-700 rounded-lg hover:bg-blue-100 font-medium transition-colors">一键登录（演示）</button>
+          <p class="text-center text-xs text-slate-400 mt-4">演示身份：陈晨 · 网申人员</p>
+        </div>
+        <p class="text-center text-xs text-slate-400 mt-6">当前页面仅用于原型演示</p>
+      </div>
+    </section>
+  </main>
+  <script>
+    function enterAssistant() {
+      localStorage.setItem('pbs_plugin_session_v1', JSON.stringify({ account: 'wangshen', name: '陈晨', role: '网申人员', org: 'PBS留学总部', demo: true }));
+      location.href = '留学申请助手.html';
+    }
+    function loginPlugin(event) {
+      event.preventDefault();
+      var account = document.getElementById('pluginAccount').value.trim();
+      var password = document.getElementById('pluginPassword').value;
+      if (!account || !password) { alert('请输入账号和密码'); return; }
+      if (account !== 'wangshen' || password !== 'pbs123456') { alert('演示账号或密码错误'); return; }
+      enterAssistant();
+    }
+    function demoLogin() { enterAssistant(); }
+    function togglePassword(button) {
+      var input = document.getElementById('pluginPassword');
+      input.type = input.type === 'password' ? 'text' : 'password';
+      button.textContent = input.type === 'password' ? '显示' : '隐藏';
+    }
+  </script>
+</body>
+</html>

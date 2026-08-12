@@ -3,7 +3,7 @@
 <html lang="zh-CN" class="light" data-theme="light"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>人员管理 - PBS留学CRM系统</title>
+  <title>机构成员管理 - PBS留学CRM系统</title>
   <script src="./assets/vendor/tailwind-runtime.js"></script>
   <style data-vd-inlined-stylesheet="../colors_and_type.css">
 /* PBS留学CRM系统 - 企业级设计规范 */
@@ -655,48 +655,24 @@
 
     <!-- 主内容区 -->
     <main class="flex-1 p-6">
-      <!-- 一级：机构列表 -->
-      <section id="organizationDirectory">
-        <div class="flex items-center justify-between mb-6">
-          <div>
-            <h1 class="text-2xl font-semibold text-gray-800">机构与人员</h1>
-            <p class="text-sm text-gray-400 mt-1">按机构管理 PBS 人员账号与角色权限</p>
-          </div>
-          <button data-dom-id="btn-add-personnel" onclick="openDirectoryPersonnelInvite()" class="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium">
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
-            新增/邀请人员
-          </button>
-        </div>
-        <div class="grid grid-cols-3 gap-4 mb-6">
-          <div class="bg-white rounded-xl border border-gray-100 shadow-sm p-5"><p class="text-sm text-gray-500">机构总数</p><p id="organizationTotal" class="text-2xl font-semibold text-gray-900 mt-2">0</p></div>
-          <div class="bg-white rounded-xl border border-gray-100 shadow-sm p-5"><p class="text-sm text-gray-500">已有人员机构</p><p id="organizationStaffed" class="text-2xl font-semibold text-gray-900 mt-2">0</p></div>
-          <div class="bg-white rounded-xl border border-gray-100 shadow-sm p-5"><p class="text-sm text-gray-500">暂无人员机构</p><p id="organizationEmpty" class="text-2xl font-semibold text-gray-900 mt-2">0</p></div>
-        </div>
-        <div class="bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden">
-          <div class="p-5 border-b border-gray-100">
-            <div class="w-80"><label class="block text-sm text-gray-600 mb-2">关键词搜索</label><input id="organizationSearch" type="text" class="w-full h-10 px-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="输入机构名称" oninput="renderOrganizationDirectory()"></div>
-          </div>
-          <table class="w-full">
-            <thead class="bg-gray-50"><tr><th class="px-5 py-4 text-left text-sm font-medium text-gray-500">机构名称</th><th class="px-5 py-4 text-left text-sm font-medium text-gray-500">创建时间</th><th class="px-5 py-4 text-left text-sm font-medium text-gray-500">PBS 人员</th><th class="px-5 py-4 text-left text-sm font-medium text-gray-500">操作</th></tr></thead>
-            <tbody id="organizationTableBody" class="divide-y divide-gray-100"></tbody>
-          </table>
-          <div id="organizationEmptyState" class="hidden py-14 text-center text-sm text-gray-400">未找到匹配的机构</div>
-        </div>
-      </section>
-
-      <!-- 二级：所选机构的 PBS 人员 -->
-      <section id="organizationPersonnelView" class="hidden">
+      <section id="organizationPersonnelView">
       <!-- 页面标题栏 -->
       <div class="flex items-center justify-between mb-6">
         <div>
-          <button id="backToOrganizationDirectory" class="inline-flex items-center gap-2 px-3 py-2 mb-4 bg-white border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 text-sm font-medium transition-colors" onclick="showOrganizationDirectory()"><span aria-hidden="true">←</span>返回机构列表</button>
-          <h1 class="text-2xl font-semibold text-gray-800">人员管理</h1>
+          <button id="backToOrganizationDirectory" class="inline-flex items-center gap-2 px-3 py-2 mb-4 bg-white border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 text-sm font-medium transition-colors" onclick="showOrganizationDirectory()"><span aria-hidden="true">←</span>返回机构管理</button>
+          <h1 class="text-2xl font-semibold text-gray-800">机构成员管理</h1>
           <p id="personnelScopeHint" class="text-sm text-gray-400 mt-1">统一管理账号、人员状态与角色权限</p>
         </div>
-        <button id="addOrganizationUserButton" onclick="openAddUser()" class="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium">
+        <div class="flex items-end gap-3">
+          <div id="platformOrganizationSwitcher" class="hidden">
+            <label class="block text-xs text-gray-500 mb-1.5">当前机构</label>
+            <select id="organizationSwitcher" class="w-56 h-10 px-3 border border-gray-300 rounded-lg bg-white text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500" onchange="switchOrganization(this.value)"></select>
+          </div>
+          <button id="addOrganizationUserButton" onclick="openAddUser()" class="flex items-center gap-2 px-4 h-10 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium">
           <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
           新增用户
-        </button>
+          </button>
+        </div>
       </div>
 
       <!-- 高级筛选区（筛选区与搜索区合并） -->
@@ -936,15 +912,9 @@
     </div>
   </div>
 
+  <script src="./assets/js/pbs-organization-data.js"></script>
   <script>
-    // 机构主体与 PBS 人员采用两级管理。
-    const organizationData = [
-      { id: 'ORG-100001', name: 'PBS留学总部', createdAt: '2025-01-08 09:30' },
-      { id: 'ORG-100002', name: '上海启明留学', createdAt: '2025-03-18 14:20' },
-      { id: 'ORG-100003', name: '北京知行教育', createdAt: '2025-05-06 10:15' },
-      { id: 'ORG-100004', name: '广州远航教育', createdAt: '2026-02-12 16:40' },
-      { id: 'ORG-100005', name: '深圳新途教育', createdAt: '2026-06-25 11:05' }
-    ];
+    const organizationData = (window.PBS_ORGANIZATIONS || []).slice();
 
     // 模拟数据（每个人员可配置多个角色）
     const personnelData = [
@@ -1012,51 +982,23 @@
     function getOrganizationByName(name) {
       return organizationData.find(function (organization) { return organization.name === name; });
     }
-    function getOrganizationPersonnelCount(name) {
-      return personnelData.filter(function (person) { return person.org === name; }).length;
-    }
-    function renderOrganizationDirectory() {
-      var keywordEl = document.getElementById('organizationSearch');
-      var keyword = keywordEl ? keywordEl.value.trim().toLowerCase() : '';
-      var rows = organizationData.filter(function (organization) {
-        return !keyword || organization.name.toLowerCase().indexOf(keyword) >= 0;
-      });
-      document.getElementById('organizationTotal').textContent = organizationData.length;
-      document.getElementById('organizationStaffed').textContent = organizationData.filter(function (organization) { return getOrganizationPersonnelCount(organization.name) > 0; }).length;
-      document.getElementById('organizationEmpty').textContent = organizationData.filter(function (organization) { return getOrganizationPersonnelCount(organization.name) === 0; }).length;
-      var tbody = document.getElementById('organizationTableBody');
-      tbody.innerHTML = rows.map(function (organization) {
-        var count = getOrganizationPersonnelCount(organization.name);
-        return '<tr class="hover:bg-gray-50 transition-colors">' +
-          '<td class="px-5 py-4 text-sm font-medium text-gray-900">' + organization.name + '</td>' +
-          '<td class="px-5 py-4 text-sm text-gray-600">' + organization.createdAt + '</td>' +
-          '<td class="px-5 py-4"><span class="inline-flex px-2.5 py-1 rounded-full text-xs font-medium ' + (count ? 'bg-blue-50 text-blue-700' : 'bg-gray-100 text-gray-500') + '">' + count + ' 人</span></td>' +
-          '<td class="px-5 py-4"><button class="text-sm text-blue-600 hover:text-blue-800 font-medium" onclick="openOrganization(\'' + organization.id + '\')">查看</button></td></tr>';
-      }).join('');
-      document.getElementById('organizationEmptyState').classList.toggle('hidden', rows.length > 0);
-    }
-    function openDirectoryPersonnelInvite() {
-      personnelScopeOrg = '';
-      window.pbsCurrentPersonnelOrganization = '';
-      window.pbsOpenOverlay('新增人员弹窗.html');
-    }
     function openOrganization(id) {
       var organization = getOrganizationById(id) || getOrganizationByName(id);
       if (!organization) return;
       personnelScopeOrg = organization.name;
       window.pbsCurrentPersonnelOrganization = organization.name;
-      document.getElementById('organizationDirectory').classList.add('hidden');
-      document.getElementById('organizationPersonnelView').classList.remove('hidden');
       document.getElementById('personnelScopeHint').textContent = organization.name + ' · PBS 人员独立管理';
+      var switcher = document.getElementById('organizationSwitcher');
+      if (switcher) switcher.value = organization.id;
+      if (isPlatformPersonnelManager && window.history && history.replaceState) {
+        try { history.replaceState(null, '', location.pathname + '?org=' + encodeURIComponent(organization.id)); } catch (e) {}
+      }
       resetFilter();
     }
+    function switchOrganization(id) { openOrganization(id); }
     function showOrganizationDirectory() {
       if (!isPlatformPersonnelManager) return;
-      personnelScopeOrg = '';
-      window.pbsCurrentPersonnelOrganization = '';
-      document.getElementById('organizationPersonnelView').classList.add('hidden');
-      document.getElementById('organizationDirectory').classList.remove('hidden');
-      renderOrganizationDirectory();
+      location.href = '机构管理 - PBS留学CRM系统.html';
     }
 
     var ROLE_COLORS = {
@@ -1146,7 +1088,6 @@
       });
       closeAddUser();
       applyFilter();
-      renderOrganizationDirectory();
       showPersonnelToast('用户“' + name + '”已创建，首次登录需修改密码');
     }
 
@@ -1303,7 +1244,6 @@
       var updatedName = p.name;
       closeEditPerson();
       filterList();
-      renderOrganizationDirectory();
       showPersonnelToast('用户“' + updatedName + '”已保存，操作已记入日志');
     }
     function togglePersonStatus(id) {
@@ -1321,7 +1261,6 @@
       data.status = '正常';
       personnelData.unshift(data);
       applyFilter();
-      renderOrganizationDirectory();
     };
     function closeNotificationModal() { document.getElementById('notificationModal').classList.add('hidden'); }
     function toggleUserMenu() { var m = document.getElementById('userMenu'); if (m) m.classList.toggle('hidden'); }
@@ -1329,7 +1268,6 @@
     document.addEventListener('DOMContentLoaded', function () {
       var session = window.pbsGetSession ? window.pbsGetSession() : null;
       isPlatformPersonnelManager = !session || session.role === '超级管理员' || session.role === '平台运维人员';
-      renderOrganizationDirectory();
       if (!isPlatformPersonnelManager) {
         var sessionOrganizationName = session.org || 'PBS留学总部';
         var sessionOrganization = getOrganizationByName(sessionOrganizationName);
@@ -1340,8 +1278,12 @@
         document.getElementById('backToOrganizationDirectory').classList.add('hidden');
         openOrganization(sessionOrganization.id);
       } else {
-        document.getElementById('organizationDirectory').classList.remove('hidden');
-        document.getElementById('organizationPersonnelView').classList.add('hidden');
+        document.getElementById('platformOrganizationSwitcher').classList.remove('hidden');
+        var switcher = document.getElementById('organizationSwitcher');
+        switcher.innerHTML = organizationData.map(function (organization) { return '<option value="' + organization.id + '">' + organization.name + '</option>'; }).join('');
+        var requestedOrganization = new URLSearchParams(location.search).get('org');
+        var initialOrganization = getOrganizationById(requestedOrganization) || getOrganizationByName(requestedOrganization) || organizationData[0];
+        if (initialOrganization) openOrganization(initialOrganization.id);
       }
       var notifBtn = document.querySelector('[data-dom-id="btn-notification"]');
       if (notifBtn) {
@@ -1349,7 +1291,6 @@
           document.getElementById('notificationModal').classList.remove('hidden');
         });
       }
-      if (isPlatformPersonnelManager) renderOrganizationDirectory();
     });
   </script>
   <script src="./assets/js/pbs-app.js"></script>

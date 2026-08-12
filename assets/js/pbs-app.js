@@ -66,7 +66,8 @@
     { key: 'doc', label: '文书交付', icon: 'doc', roles: ['文书人员', '文书机构管理员'],
       children: [
         { label: '任务列表', file: '任务列表页 - 文书交付系统.html' },
-        { label: '模板库', file: '模板库列表 - 文书交付系统.html' }] },
+        { label: '模板库', file: '模板库列表 - 文书交付系统.html' },
+        { label: '案例库', file: '案例库 - 文书交付系统.html' }] },
     { key: 'apply', label: '网申管理', icon: 'globe', roles: ['网申人员', '项目经理'],
       children: [
         { label: '网申任务列表', file: '网申任务列表页 - 留学申请管理系统.html' },
@@ -82,7 +83,8 @@
       children: [
         { label: '选校任务列表', file: '选校任务列表页 - 留学申请管理系统.html', roles: ['机构管理员', '销售人员管理员', '销售人员'] },
         { label: '院校列表', file: '选校工作台页 - 留学申请管理系统.html', href: '选校工作台页 - 留学申请管理系统.html?mode=catalog', roles: ['销售人员管理员', '销售人员'] }] },
-    { key: 'personnel', label: '人员管理', icon: 'idcard', roles: ['平台运维人员', '机构管理员'], single: true, file: '人员管理 - PBS留学CRM系统.html' },
+    { key: 'organization', label: '机构管理', icon: 'users', roles: ['平台运维人员'], single: true, file: '机构管理 - PBS留学CRM系统.html' },
+    { key: 'personnel', label: '机构成员管理', icon: 'idcard', roles: ['平台运维人员', '机构管理员'], single: true, file: '人员管理 - PBS留学CRM系统.html' },
     { key: 'usermgmt', label: '系统管理', icon: 'users', roles: ['平台运维人员'],
       children: [
         { label: '角色权限管理', file: '角色权限管理 - 留学申请管理系统.html', roles: ['平台运维人员'] },
@@ -92,28 +94,19 @@
 
   /* ---------------- 页面级权限（RBAC） ---------------- */
   var PAGE_PERMS = {
-    '管理员工作台 - 留学申请管理系统.html': ['平台运维人员'],
-    '管理员工作台 - 留学申请管理系统.html': ['机构管理员'],
-    '管理员工作台 - 留学申请管理系统.html': ['销售人员管理员'],
-    '管理员工作台 - 留学申请管理系统.html': ['销售人员'],
-    '管理员工作台 - 留学申请管理系统.html': ['项目经理'],
-    '管理员工作台 - 留学申请管理系统.html': ['文书人员'],
-    '管理员工作台 - 留学申请管理系统.html': ['网申人员'],
-    '管理员工作台 - 留学申请管理系统.html': ['文书审核'],
-    '管理员工作台 - 留学申请管理系统.html': ['文书机构管理员'],
+    '管理员工作台 - 留学申请管理系统.html': ROLES.slice(),
     '学生档案列表页 - 留学申请管理系统.html': ['平台运维人员', '机构管理员', '销售人员管理员', '销售人员', '项目经理', '文书人员', '网申人员', '文书审核'],
     '学生档案详情页 - 留学申请管理系统.html': ['平台运维人员', '机构管理员', '销售人员管理员', '销售人员', '项目经理', '文书人员', '网申人员', '文书审核'],
-    '学生档案详情页 - 留学申请管理系统.html': ['机构管理员', '销售人员', '项目经理'],
     '项目池列表页 - 留学申请管理系统.html': ['机构管理员'],
     '项目详情页 - 留学申请管理系统.html': ['机构管理员'],
     'PMO看板 - 留学申请管理系统.html': ['机构管理员'],
     '我的项目列表页 - 留学申请管理系统.html': ['项目经理'],
     '我的项目详情页 - 留学申请管理系统.html': ['项目经理'],
-    '我的项目详情页 - 留学申请管理系统.html': ['项目经理'],
     '任务列表页 - 文书交付系统.html': ['文书人员', '文书机构管理员'],
     '文书编辑器 - 文书交付系统.html': ['文书人员', '文书机构管理员'],
     '模板库列表 - 文书交付系统.html': ['文书人员', '文书机构管理员'],
     '模板库编辑 - 文书交付系统.html': ['文书人员', '文书机构管理员'],
+    '案例库 - 文书交付系统.html': ['文书人员', '文书机构管理员'],
     '网申任务列表页 - 留学申请管理系统.html': ['网申人员', '项目经理'],
     '网申任务详情页 - 留学申请管理系统.html': ['网申人员', '项目经理'],
     '网申模板库 - 留学申请管理系统.html': ['网申人员', '项目经理'],
@@ -122,6 +115,7 @@
     '结项归档列表 - PBS留学CRM系统.html': ['项目经理', '文书人员', '网申人员'],
     '结项详情页 - 留学申请管理系统.html': ['项目经理', '文书人员', '网申人员'],
     '用户管理 - 留学申请管理系统.html': ['平台运维人员'],
+    '机构管理 - PBS留学CRM系统.html': ['平台运维人员'],
     '人员管理 - PBS留学CRM系统.html': ['平台运维人员', '机构管理员'],
     '角色权限管理 - 留学申请管理系统.html': ['平台运维人员'],
     '操作日志审计 - 留学申请管理系统.html': ['平台运维人员'],
@@ -154,115 +148,9 @@
     return f;
   }
 
-  /* ---------------- 侧边栏渲染 ---------------- */
-  function ensureStaticNav(aside, session, file) {
-    if (!session) return;
-    var nav = aside.querySelector('nav');
-    if (!nav) return;
-
-    if (!nav.querySelector('a[href="业务流程图 - 留学申请管理系统.html"]')) {
-      var flowLink = document.createElement('a');
-      var flowActive = file === '业务流程图 - 留学申请管理系统.html';
-      flowLink.href = '业务流程图 - 留学申请管理系统.html';
-      flowLink.className = 'flex items-center gap-3 px-4 py-3 rounded-lg font-medium transition-colors ' +
-        (flowActive ? 'bg-blue-50 text-blue-700' : 'text-gray-600 hover:text-gray-800 hover:bg-gray-50');
-      flowLink.innerHTML = svgIcon(ICONS.map, 'w-5 h-5') + '<span>业务流程图</span>';
-      var workbenchLink = nav.querySelector('a[href="管理员工作台 - 留学申请管理系统.html"]');
-      if (workbenchLink) workbenchLink.insertAdjacentElement('afterend', flowLink);
-      else nav.insertBefore(flowLink, nav.firstChild);
-    }
-
-    var canManageAi = session.role === '超级管理员' || session.role === '平台运维人员' || session.role === '机构管理员';
-    if (canManageAi && !nav.querySelector('a[href="AI管理 - 留学申请管理系统.html"]')) {
-      var auditLink = nav.querySelector('a[href="操作日志审计 - 留学申请管理系统.html"]');
-      var container = auditLink ? auditLink.parentElement : nav;
-      var aiLink = document.createElement('a');
-      aiLink.href = 'AI管理 - 留学申请管理系统.html';
-      aiLink.className = 'flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-colors ' +
-        (file === 'AI管理 - 留学申请管理系统.html' ? 'bg-blue-50 text-blue-600' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-800');
-      aiLink.innerHTML = '<span class="w-1.5 h-1.5 rounded-full ' +
-        (file === 'AI管理 - 留学申请管理系统.html' ? 'bg-blue-600' : 'bg-gray-300') + '"></span>AI管理';
-      container.appendChild(aiLink);
-    }
-
-    var canUseApplication = session.role === '超级管理员' || session.role === '网申人员' || session.role === '项目经理';
-    if (canUseApplication && !nav.querySelector('a[href="网申模板库 - 留学申请管理系统.html"]')) {
-      var taskLink = nav.querySelector('a[href="网申任务列表页 - 留学申请管理系统.html"]');
-      if (taskLink) {
-        var templateLink = document.createElement('a');
-        var templateActive = file === '网申模板库 - 留学申请管理系统.html';
-        templateLink.href = '网申模板库 - 留学申请管理系统.html';
-        templateLink.className = 'flex items-center gap-2 px-4 py-2 rounded-lg text-sm transition-colors ' +
-          (templateActive ? 'bg-blue-50 text-blue-600 font-medium' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-800');
-        templateLink.innerHTML = '<span class="w-1.5 h-1.5 rounded-full ' +
-          (templateActive ? 'bg-blue-600' : 'bg-gray-300') + '"></span>网申模板库';
-        taskLink.insertAdjacentElement('afterend', templateLink);
-      }
-    }
-
-    /* 选校任务列表按角色隔离；选校执行人员保留独立工作台入口 */
-    var schoolRoles = ['机构管理员', '销售人员管理员', '销售人员'];
-    if (session.role === '超级管理员' || schoolRoles.indexOf(session.role) >= 0) {
-      var taskEntry = nav.querySelector('a[href="选校任务列表页 - 留学申请管理系统.html"]') || nav.querySelector('a[href="选校订单池页 - 留学申请管理系统.html"]');
-      if (taskEntry) {
-        var schoolChildContainer = taskEntry.parentElement;
-        schoolChildContainer.querySelectorAll('a[href="选校订单池页 - 留学申请管理系统.html"]').forEach(function (link) {
-          if (link !== taskEntry) link.remove();
-        });
-        taskEntry.href = '选校任务列表页 - 留学申请管理系统.html';
-        var taskActive = file === '选校任务列表页 - 留学申请管理系统.html';
-        taskEntry.className = 'flex items-center gap-2 px-4 py-2 rounded-lg text-sm transition-colors ' + (taskActive ? 'bg-blue-50 text-blue-600 font-medium' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-800');
-        taskEntry.innerHTML = '<span class="w-1.5 h-1.5 rounded-full ' + (taskActive ? 'bg-blue-600' : 'bg-gray-300') + '"></span>选校任务列表';
-        var canUseSchoolWorkbench = session.role === '超级管理员' || session.role === '销售人员管理员' || session.role === '销售人员';
-        var schoolWorkbench = schoolChildContainer.querySelector('a[href^="选校工作台页 - 留学申请管理系统.html"]');
-        if (canUseSchoolWorkbench && !schoolWorkbench) {
-          schoolWorkbench = document.createElement('a');
-          schoolChildContainer.appendChild(schoolWorkbench);
-        }
-        if (schoolWorkbench) {
-          if (!canUseSchoolWorkbench) schoolWorkbench.remove();
-          else {
-            schoolWorkbench.href = '选校工作台页 - 留学申请管理系统.html?mode=catalog';
-            var workbenchActive = file === '选校工作台页 - 留学申请管理系统.html' && new URLSearchParams(location.search).get('mode') === 'catalog';
-            schoolWorkbench.className = 'flex items-center gap-2 px-4 py-2 rounded-lg text-sm transition-colors ' + (workbenchActive ? 'bg-blue-50 text-blue-600 font-medium' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-800');
-            schoolWorkbench.innerHTML = '<span class="w-1.5 h-1.5 rounded-full ' + (workbenchActive ? 'bg-blue-600' : 'bg-gray-300') + '"></span>院校列表';
-          }
-        }
-        var groupTitle = schoolChildContainer.previousElementSibling;
-        if (groupTitle) {
-          var groupLabel = groupTitle.querySelector('span');
-          if (groupLabel) groupLabel.textContent = '选校管理';
-        }
-      }
-    }
-
-    /* 用户管理并入人员管理，静态旧菜单统一收口。 */
-    nav.querySelectorAll('a[href="用户管理 - 留学申请管理系统.html"]').forEach(function (link) { link.remove(); });
-    var canManagePersonnel = session.role === '超级管理员' || session.role === '平台运维人员' || session.role === '机构管理员';
-    var platformPersonnelView = session.role === '超级管理员' || session.role === '平台运维人员';
-    var roleLink = nav.querySelector('a[href="角色权限管理 - 留学申请管理系统.html"]');
-    var systemGroup = roleLink && roleLink.parentElement ? roleLink.parentElement.parentElement : null;
-    nav.querySelectorAll('a[href="人员管理 - PBS留学CRM系统.html"]').forEach(function (link) { link.remove(); });
-    if (canManagePersonnel) {
-      var personnelLink = document.createElement('a');
-      var personnelActive = file === '人员管理 - PBS留学CRM系统.html';
-      personnelLink.href = '人员管理 - PBS留学CRM系统.html';
-      personnelLink.className = 'flex items-center gap-3 px-4 py-3 rounded-lg font-medium transition-colors ' + (personnelActive ? 'bg-blue-50 text-blue-700' : 'text-gray-600 hover:text-gray-800 hover:bg-gray-50');
-      personnelLink.innerHTML = svgIcon(ICONS.idcard, 'w-5 h-5') + '<span>人员管理</span>';
-      if (systemGroup) systemGroup.insertAdjacentElement('afterend', personnelLink);
-      else nav.appendChild(personnelLink);
-    }
-    if (!platformPersonnelView && systemGroup) systemGroup.remove();
-    nav.querySelectorAll(':scope > div').forEach(function (group) {
-      var label = group.querySelector(':scope > div span');
-      if (label && label.textContent.trim() === '用户管理') label.textContent = '系统管理';
-    });
-  }
-
   function renderSidebar(session, file) {
     var aside = document.getElementById('pbs-sidebar');
     if (!aside) return;
-    if (aside.querySelector('nav a')) { ensureStaticNav(aside, session, file); return; } /* 静态导航已存在则补充共享入口 */
     var role = session.role;
     var workbenchFile = ROLE_WORKBENCH[role];
 

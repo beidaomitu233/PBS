@@ -2,10 +2,10 @@
 (function () {
   'use strict';
 
-  var AI_STORAGE_KEY = 'pbs_ai_management_v3';
-  var LEGACY_AI_STORAGE_KEY = 'pbs_ai_management_v2';
+  var AI_STORAGE_KEY = 'pbs_ai_management_v4';
+  var LEGACY_AI_STORAGE_KEYS = ['pbs_ai_management_v3', 'pbs_ai_management_v2'];
   var OPERATION_LOG_KEY = 'pbs_operation_logs_v1';
-  var AI_TABS = ['vendors', 'models', 'params', 'prompts', 'evaluation'];
+  var AI_TABS = ['models', 'prompts', 'evaluation'];
   var activePrompt = 0;
   var currentReportId = '';
   var pendingPublishPromptKey = '';
@@ -23,20 +23,20 @@
     openai_compatible: { name: 'OpenAI 兼容服务', short: 'OA', color: '#475569', url: '' }
   };
 
-  var DEFAULT_PROVIDERS = Object.keys(PROVIDER_PRESETS).map(function (type) {
-    var p = PROVIDER_PRESETS[type];
-    return { id: type, type: type, name: p.name, defaultUrl: p.url, customUrl: '', hasKey: false, keyLast4: '', enabled: false, status: 'unconfigured', latency: null, auth: 'Bearer Token', header: 'Authorization', timeout: 60, rotate: '到期前 14 天', builtin: true };
-  });
+  var DEFAULT_MODEL_PARAMS = { temperature: 0.2, topP: 0.9, maxTokens: 8192, timeout: 60, retry: 1, concurrency: 20, stream: true };
+
+  function defaultModel(id, name, providerType, modelId, maxTokens) {
+    var preset = PROVIDER_PRESETS[providerType];
+    return { id: id, name: name, providerType: providerType, modelId: modelId, endpoint: preset.url, hasKey: false, keyLast4: '', connectionStatus: 'unconfigured', latency: null, auth: 'Bearer Token', header: 'Authorization', context: 131072, inputPrice: 0, outputPrice: 0, enabled: true, params: Object.assign({}, DEFAULT_MODEL_PARAMS, { maxTokens: maxTokens }) };
+  }
 
   var DEFAULT_MODELS = [
-    { id: 'm-qwen', name: 'Qwen 主模型', providerId: 'qwen', modelId: 'qwen-plus', context: 131072, maxOutput: 8192, inputPrice: 0, outputPrice: 0, enabled: true },
-    { id: 'm-deepseek', name: 'DeepSeek 次模型', providerId: 'deepseek', modelId: 'deepseek-v4-flash', context: 131072, maxOutput: 65536, inputPrice: 0, outputPrice: 0, enabled: true },
-    { id: 'm-kimi', name: 'Kimi 长文本模型', providerId: 'kimi', modelId: 'kimi-k2.6', context: 131072, maxOutput: 32768, inputPrice: 0, outputPrice: 0, enabled: true },
-    { id: 'm-seed', name: 'Seed 通用模型', providerId: 'seed', modelId: 'doubao-seed-2-0-lite-260215', context: 131072, maxOutput: 32768, inputPrice: 0, outputPrice: 0, enabled: true },
-    { id: 'm-glm', name: 'GLM 通用模型', providerId: 'glm', modelId: 'glm-5.2', context: 131072, maxOutput: 32768, inputPrice: 0, outputPrice: 0, enabled: true }
+    defaultModel('m-qwen', 'Qwen 主模型', 'qwen', 'qwen-plus', 8192),
+    defaultModel('m-deepseek', 'DeepSeek 次模型', 'deepseek', 'deepseek-v4-flash', 65536),
+    defaultModel('m-kimi', 'Kimi 长文本模型', 'kimi', 'kimi-k2.6', 32768),
+    defaultModel('m-seed', 'Seed 通用模型', 'seed', 'doubao-seed-2-0-lite-260215', 32768),
+    defaultModel('m-glm', 'GLM 通用模型', 'glm', 'glm-5.2', 32768)
   ];
-
-  var DEFAULT_PARAMS = { temperature: 0.2, topP: 0.9, maxTokens: 8192, timeout: 60, retry: 1, concurrency: 20, thinking: '自动', stream: true };
 
   var BASE_PROMPTS = [
     { id: 'asset', module: '学生档案', title: '资产文件 AI 解析', version: 'v1.2.0', vars: ['file_text', 'file_type', 'student_id', 'field_dictionary'], system: '你是留学申请材料结构化专家。仅依据文件内容提取信息，不得补全或猜测。每个字段必须返回原文证据、页码和置信度；敏感信息只标记存在，不输出原值。无法确定时返回 null。', user: '请按字段字典解析 {{file_type}} 文件。\n学生标识：{{student_id}}\n字段字典：{{field_dictionary}}\nOCR 文本：{{file_text}}', schema: '{"document_type":"string","fields":[{"name":"string","value":"string|null","evidence":"string","page":0,"confidence":0.0}],"warnings":["string"]}', metric: '字段 Exact Match、证据定位准确率、缺失字段召回率', threshold: 'Exact Match ≥95%；证据准确率 ≥98%；幻觉率 ≤0.5%' },
@@ -87,10 +87,8 @@
 
   function defaultAiState() {
     return {
-      providers: cloneJson(DEFAULT_PROVIDERS),
       models: cloneJson(DEFAULT_MODELS),
       globalRoute: { primary: 'm-qwen', backup: 'm-deepseek' },
-      paramsGlobal: cloneJson(DEFAULT_PARAMS),
       promptOverrides: {},
       promptStatus: {},
       caseTemplateOverrides: {},
@@ -104,25 +102,39 @@
     var saved = null;
     try { saved = JSON.parse(localStorage.getItem(AI_STORAGE_KEY) || 'null'); } catch (e) { saved = null; }
     if (!saved) {
-      try { saved = JSON.parse(localStorage.getItem(LEGACY_AI_STORAGE_KEY) || 'null'); } catch (e2) { saved = null; }
+      LEGACY_AI_STORAGE_KEYS.some(function (key) {
+        try { saved = JSON.parse(localStorage.getItem(key) || 'null'); } catch (e2) { saved = null; }
+        return !!saved;
+      });
     }
     if (saved && typeof saved === 'object') {
-      ['providers', 'models', 'globalRoute', 'promptOverrides', 'promptStatus', 'caseTemplateOverrides', 'selectedCaseTemplate', 'evalResults'].forEach(function (key) {
+      ['models', 'globalRoute', 'promptOverrides', 'promptStatus', 'caseTemplateOverrides', 'selectedCaseTemplate', 'evalResults'].forEach(function (key) {
         if (saved[key] !== undefined) state[key] = saved[key];
       });
-      if (saved.paramsGlobal) state.paramsGlobal = saved.paramsGlobal;
     }
-    if (!Array.isArray(state.providers)) state.providers = cloneJson(DEFAULT_PROVIDERS);
-    DEFAULT_PROVIDERS.forEach(function (preset) {
-      if (!state.providers.some(function (p) { return p.id === preset.id; })) state.providers.push(cloneJson(preset));
-    });
     if (!Array.isArray(state.models) || !state.models.length) state.models = cloneJson(DEFAULT_MODELS);
     state.models.forEach(function (model) {
+      var legacyProvider = saved && Array.isArray(saved.providers) ? saved.providers.find(function (provider) { return provider.id === model.providerId; }) : null;
+      var providerType = model.providerType || (legacyProvider && legacyProvider.type) || model.providerId || 'openai_compatible';
+      if (!PROVIDER_PRESETS[providerType]) providerType = 'openai_compatible';
+      var preset = PROVIDER_PRESETS[providerType];
+      var legacyEndpoint = legacyProvider ? ((legacyProvider.customUrl || '').trim() || (legacyProvider.defaultUrl || '').trim()) : '';
+      model.providerType = providerType;
+      model.endpoint = model.endpoint || legacyEndpoint || preset.url;
+      model.hasKey = model.hasKey !== undefined ? !!model.hasKey : !!(legacyProvider && legacyProvider.hasKey);
+      model.keyLast4 = model.keyLast4 || (legacyProvider && legacyProvider.keyLast4) || '';
+      model.connectionStatus = model.connectionStatus || (legacyProvider && legacyProvider.status) || 'unconfigured';
+      model.latency = model.latency || (legacyProvider && legacyProvider.latency) || null;
+      model.auth = model.auth || (legacyProvider && legacyProvider.auth) || 'Bearer Token';
+      model.header = model.header || (legacyProvider && legacyProvider.header) || 'Authorization';
       model.context = 131072;
+      model.params = Object.assign({}, DEFAULT_MODEL_PARAMS, saved && saved.paramsGlobal ? saved.paramsGlobal : {}, model.params || {}, { maxTokens: Number((model.params && model.params.maxTokens) || model.maxOutput || (saved && saved.paramsGlobal && saved.paramsGlobal.maxTokens) || DEFAULT_MODEL_PARAMS.maxTokens), stream: true });
+      delete model.params.thinking;
+      delete model.providerId;
+      delete model.maxOutput;
       delete model.capabilities;
       delete model.thinking;
     });
-    state.paramsGlobal = Object.assign(cloneJson(DEFAULT_PARAMS), state.paramsGlobal || {}, { stream: true });
     if (!state.promptOverrides || typeof state.promptOverrides !== 'object') state.promptOverrides = {};
     if (!state.promptStatus || typeof state.promptStatus !== 'object') state.promptStatus = {};
     if (!state.caseTemplateOverrides || typeof state.caseTemplateOverrides !== 'object') state.caseTemplateOverrides = {};
@@ -225,167 +237,31 @@
     });
     document.querySelectorAll('.tabbar .tab').forEach(function (tab) { tab.setAttribute('aria-controls', 'pane-' + tab.dataset.tab); });
     document.querySelectorAll('.tabs .pane').forEach(function (pane) { pane.setAttribute('role', 'tabpanel'); });
-    activateAiTab('vendors');
+    activateAiTab('models');
   }
 
-  function providerById(id) { return aiState.providers.find(function (p) { return p.id === id; }); }
   function modelById(id) { return aiState.models.find(function (m) { return m.id === id; }); }
-  function resolvedProviderUrl(provider) { return (provider.customUrl || '').trim() || (provider.defaultUrl || '').trim(); }
-  function providerReady(id) {
-    var provider = providerById(id);
-    return !!(provider && provider.enabled && provider.hasKey && provider.status === 'connected');
-  }
-  function maskKey(provider) { return provider.hasKey ? '•••••••• ' + escapeHtml(provider.keyLast4 || '****') : '未填写'; }
-  function providerStatus(provider) {
-    if (provider.status === 'testing') return '<span class="status-line warn">测试中</span>';
-    if (provider.status === 'connected') return '<span class="status-line good">正常' + (provider.latency ? ' · ' + provider.latency + 'ms' : '') + '</span>';
-    if (provider.status === 'failed') return '<span class="status-line bad">连接失败</span>';
-    return '<span class="status-line subtle">待配置</span>';
-  }
-
-  function renderProviders() {
-    byId('providerRows').innerHTML = aiState.providers.map(function (provider) {
-      var preset = PROVIDER_PRESETS[provider.type] || PROVIDER_PRESETS.openai_compatible;
-      var url = resolvedProviderUrl(provider);
-      return '<tr><td><div class="provider"><div class="provider-logo" style="background:' + preset.color + '">' + escapeHtml(preset.short) + '</div><b>' + escapeHtml(provider.name) + '</b></div></td>' +
-        '<td class="provider-url">' + (url ? escapeHtml(url) : '<span class="danger-text">未设置</span>') + '</td>' +
-        '<td><span class="key-mask ' + (provider.hasKey ? '' : 'danger-text') + '">' + maskKey(provider) + '</span></td>' +
-        '<td>' + providerStatus(provider) + '</td>' +
-        '<td><label class="switch"><input type="checkbox" ' + (provider.enabled ? 'checked' : '') + ' onchange="toggleProvider(\'' + provider.id + '\',this.checked)"><span class="slider"></span></label></td>' +
-        '<td><button class="btn sm" onclick="testProviderById(\'' + provider.id + '\',this)">测试连接</button> <button class="btn ghost sm" onclick="openProviderEditor(\'' + provider.id + '\')">编辑</button></td></tr>';
-    }).join('');
-    updateSummary();
-    populateProviderSelect();
+  function modelReady(model) { return !!(model && model.enabled && model.hasKey && model.endpoint && model.connectionStatus === 'connected'); }
+  function modelProviderPreset(model) { return PROVIDER_PRESETS[model.providerType] || PROVIDER_PRESETS.openai_compatible; }
+  function maskModelKey(model) { return model.hasKey ? '•••••••• ' + escapeHtml(model.keyLast4 || '****') : '未填写'; }
+  function modelConnectionStatus(model) {
+    if (!model.enabled) return '<span class="status-line subtle">已停用</span>';
+    if (model.connectionStatus === 'testing') return '<span class="status-line warn">测试中</span>';
+    if (model.connectionStatus === 'connected') return '<span class="status-line good">正常' + (model.latency ? ' · ' + model.latency + 'ms' : '') + '</span>';
+    if (model.connectionStatus === 'failed') return '<span class="status-line bad">连接失败</span>';
+    return '<span class="status-line subtle">待测试</span>';
   }
 
   function updateSummary() {
-    var configured = aiState.providers.filter(function (p) { return p.hasKey && resolvedProviderUrl(p); }).length;
-    var connected = aiState.providers.filter(function (p) { return providerReady(p.id); }).length;
-    var availableModels = aiState.models.filter(function (m) { return m.enabled && providerReady(m.providerId); }).length;
-    byId('providerCount').textContent = configured + ' / ' + aiState.providers.length;
-    byId('providerSummary').textContent = connected ? connected + ' 个连接正常' : '等待填写 API Key 并测试连接';
-    byId('providerSummary').className = 'metric-sub ' + (connected ? 'good' : 'warn');
+    var configured = aiState.models.filter(function (model) { return model.hasKey && model.endpoint; }).length;
+    var availableModels = aiState.models.filter(modelReady).length;
+    byId('modelTotalCount').textContent = String(aiState.models.length);
+    byId('modelConfigSummary').textContent = configured + ' 个已完成连接配置';
+    byId('modelConfigSummary').className = 'metric-sub ' + (configured ? 'good' : 'warn');
     byId('modelCount').textContent = String(availableModels);
-    byId('modelSummary').textContent = availableModels ? '已通过连接校验' : '厂商连接后可用';
+    byId('modelSummary').textContent = availableModels ? '已通过连接校验' : '请配置并测试模型连接';
+    byId('modelSummary').className = 'metric-sub ' + (availableModels ? 'good' : 'warn');
   }
-
-  window.openProviderEditor = function (id) {
-    var provider = id ? providerById(id) : null;
-    window.providerFormTested = false;
-    byId('providerEditId').value = provider ? provider.id : '';
-    byId('providerModalTitle').textContent = provider ? '编辑模型厂商' : '新增模型厂商';
-    byId('providerType').value = provider ? provider.type : 'openai_compatible';
-    byId('providerType').disabled = !!(provider && provider.builtin);
-    byId('newProviderName').value = provider ? provider.name : '';
-    byId('newProviderEndpoint').value = provider ? resolvedProviderUrl(provider) : '';
-    byId('providerApiKey').value = '';
-    byId('providerApiKey').placeholder = provider && provider.hasKey ? '留空保留已保存密钥（末四位 ' + provider.keyLast4 + '）' : '请输入 API Key';
-    byId('providerAuth').value = provider ? provider.auth : 'Bearer Token';
-    byId('providerHeader').value = provider ? provider.header : 'Authorization';
-    byId('providerTimeout').value = provider ? provider.timeout : 60;
-    byId('providerRotate').value = provider ? provider.rotate : '到期前 14 天';
-    byId('providerFormError').textContent = '';
-    if (!provider) window.applyProviderPreset(true);
-    openModal('providerModal');
-  };
-
-  window.applyProviderPreset = function (force) {
-    var preset = PROVIDER_PRESETS[byId('providerType').value] || PROVIDER_PRESETS.openai_compatible;
-    if (force) {
-      byId('newProviderName').value = preset.name;
-      byId('newProviderEndpoint').value = preset.url;
-    }
-  };
-
-  window.toggleApiKey = function () {
-    var input = byId('providerApiKey');
-    input.type = input.type === 'password' ? 'text' : 'password';
-  };
-
-  function validateProviderForm() {
-    var existing = providerById(byId('providerEditId').value);
-    var name = byId('newProviderName').value.trim();
-    var url = byId('newProviderEndpoint').value.trim();
-    var key = byId('providerApiKey').value.trim();
-    if (!name) return '请填写厂商名称';
-    if (!url || !/^https?:\/\//i.test(url)) return '请填写以 http:// 或 https:// 开头的请求地址';
-    if (!key && !(existing && existing.hasKey)) return '请填写 API Key';
-    return '';
-  }
-
-  window.testProviderForm = function (button) {
-    var error = validateProviderForm();
-    byId('providerFormError').textContent = error;
-    if (error) return;
-    var old = button.textContent;
-    button.textContent = '测试中…';
-    button.disabled = true;
-    setTimeout(function () {
-      window.providerFormTested = true;
-      button.textContent = '连接成功 · 236ms';
-      button.disabled = false;
-      showToast('连接测试成功');
-      setTimeout(function () { button.textContent = old; }, 1000);
-    }, 700);
-  };
-
-  window.saveProvider = function () {
-    var error = validateProviderForm();
-    byId('providerFormError').textContent = error;
-    if (error) return;
-    var provider = providerById(byId('providerEditId').value);
-    var type = byId('providerType').value;
-    var preset = PROVIDER_PRESETS[type] || PROVIDER_PRESETS.openai_compatible;
-    var rawKey = byId('providerApiKey').value.trim();
-    if (!provider) {
-      provider = { id: 'custom_' + Date.now(), type: type, builtin: false, status: 'unconfigured', latency: null, hasKey: false, keyLast4: '', enabled: true };
-      aiState.providers.push(provider);
-    }
-    provider.name = byId('newProviderName').value.trim();
-    provider.defaultUrl = preset.url;
-    var endpoint = byId('newProviderEndpoint').value.trim();
-    provider.customUrl = endpoint === preset.url ? '' : endpoint;
-    provider.auth = byId('providerAuth').value;
-    provider.header = byId('providerHeader').value.trim() || 'Authorization';
-    provider.timeout = Number(byId('providerTimeout').value) || 60;
-    provider.rotate = byId('providerRotate').value;
-    if (rawKey) { provider.hasKey = true; provider.keyLast4 = rawKey.slice(-4); }
-    provider.enabled = true;
-    if (window.providerFormTested) { provider.status = 'connected'; provider.latency = 236; }
-    else if (provider.status !== 'connected') { provider.status = 'unconfigured'; provider.latency = null; }
-    commitAutoSave('修改模型厂商', provider.name + '，API Key 已保存为掩码', 'provider-' + provider.id, true);
-    closeModal('providerModal');
-    renderProviders();
-    renderModels();
-    populateModelSelectors();
-    showToast(provider.name + ' 已自动保存');
-  };
-
-  window.toggleProvider = function (id, enabled) {
-    var provider = providerById(id);
-    if (!provider) return;
-    provider.enabled = enabled;
-    commitAutoSave(enabled ? '启用模型厂商' : '停用模型厂商', provider.name, 'provider-toggle-' + id, true);
-    renderProviders();
-    renderModels();
-  };
-
-  window.testProviderById = function (id) {
-    var provider = providerById(id);
-    if (!provider) return;
-    if (!provider.hasKey || !resolvedProviderUrl(provider)) { showToast('请先补全厂商配置'); window.openProviderEditor(id); return; }
-    provider.status = 'testing';
-    renderProviders();
-    setTimeout(function () {
-      provider.status = 'connected';
-      provider.latency = 180 + Math.floor(Math.random() * 120);
-      provider.enabled = true;
-      commitAutoSave('测试模型厂商连接', provider.name + '，连接成功 ' + provider.latency + 'ms', 'provider-test-' + id, true);
-      renderProviders();
-      renderModels();
-      showToast(provider.name + ' 连接成功');
-    }, 700);
-  };
 
   function modelRouteRole(modelId) {
     var roles = [];
@@ -396,63 +272,158 @@
 
   function renderModels() {
     byId('modelRows').innerHTML = aiState.models.map(function (model) {
-      var provider = providerById(model.providerId) || { name: '未选择厂商' };
-      var ready = providerReady(model.providerId) && model.enabled;
-      return '<tr><td><b>' + escapeHtml(model.name) + '</b><div class="subtle">最大输出 ' + Number(model.maxOutput || 0).toLocaleString() + ' Token</div></td>' +
-        '<td>' + escapeHtml(provider.name) + '<br><span class="subtle">' + escapeHtml(model.modelId) + '</span></td>' +
+      var preset = modelProviderPreset(model);
+      var params = Object.assign({}, DEFAULT_MODEL_PARAMS, model.params || {});
+      return '<tr><td><b>' + escapeHtml(model.name) + '</b><div class="subtle">' + escapeHtml(model.modelId) + '</div></td>' +
+        '<td><div class="provider"><div class="provider-logo" style="background:' + preset.color + '">' + escapeHtml(preset.short) + '</div><b>' + escapeHtml(preset.name) + '</b></div><div class="provider-url subtle" title="' + escapeHtml(model.endpoint) + '">' + escapeHtml(model.endpoint || '未设置请求地址') + '</div><div class="key-mask subtle">' + maskModelKey(model) + '</div></td>' +
+        '<td><div class="model-param-summary">Temperature ' + params.temperature + ' · Top P ' + params.topP + '<br>最大输出 ' + Number(params.maxTokens).toLocaleString() + ' · 超时 ' + params.timeout + ' 秒</div></td>' +
         '<td>' + escapeHtml(modelRouteRole(model.id)) + '</td>' +
-        '<td><label class="switch"><input type="checkbox" ' + (model.enabled ? 'checked' : '') + ' onchange="toggleModel(\'' + model.id + '\',this.checked)"><span class="slider"></span></label><div class="help ' + (ready ? 'good' : 'warn') + '">' + (ready ? '可用' : '待厂商连接') + '</div></td>' +
-        '<td><button class="btn ghost sm" onclick="openModelEditor(\'' + model.id + '\')">编辑</button></td></tr>';
+        '<td><label class="switch"><input type="checkbox" ' + (model.enabled ? 'checked' : '') + ' onchange="toggleModel(\'' + model.id + '\',this.checked)"><span class="slider"></span></label><div class="help">' + modelConnectionStatus(model) + '</div></td>' +
+        '<td><button class="btn sm" onclick="testModelById(\'' + model.id + '\')">测试连接</button> <button class="btn ghost sm" onclick="openModelEditor(\'' + model.id + '\')">编辑</button></td></tr>';
     }).join('');
     updateSummary();
   }
 
-  function populateProviderSelect() {
-    var select = byId('modelProvider');
-    if (!select) return;
-    var old = select.value;
-    select.innerHTML = aiState.providers.map(function (provider) { return '<option value="' + provider.id + '">' + escapeHtml(provider.name) + '</option>'; }).join('');
-    if (old && providerById(old)) select.value = old;
-  }
-
   window.openModelEditor = function (id) {
     var model = id ? modelById(id) : null;
+    window.modelFormTested = false;
     byId('modelEditId').value = model ? model.id : '';
     byId('modelModalTitle').textContent = model ? '编辑模型' : '新增模型';
-    populateProviderSelect();
     byId('newModelName').value = model ? model.name : '';
-    byId('modelProvider').value = model ? model.providerId : aiState.providers[0].id;
+    byId('modelProviderType').value = model ? model.providerType : 'qwen';
     byId('newModelId').value = model ? model.modelId : '';
-    byId('modelMaxOutput').value = model ? model.maxOutput : 8192;
+    byId('modelEndpoint').value = model ? model.endpoint : PROVIDER_PRESETS.qwen.url;
+    byId('modelApiKey').value = '';
+    byId('modelApiKey').type = 'password';
+    byId('modelApiKey').placeholder = model && model.hasKey ? '留空保留已保存密钥（末四位 ' + model.keyLast4 + '）' : '请输入 API Key';
+    byId('modelAuth').value = model ? model.auth : 'Bearer Token';
+    byId('modelHeader').value = model ? model.header : 'Authorization';
+    var params = Object.assign({}, DEFAULT_MODEL_PARAMS, model ? model.params : {});
+    byId('modelTemperature').value = params.temperature;
+    byId('modelTopP').value = params.topP;
+    byId('modelMaxOutput').value = params.maxTokens;
+    byId('modelTimeout').value = params.timeout;
+    byId('modelRetry').value = params.retry;
+    byId('modelConcurrency').value = params.concurrency;
     byId('modelInputPrice').value = model ? model.inputPrice : 0;
     byId('modelOutputPrice').value = model ? model.outputPrice : 0;
     byId('modelFormError').textContent = '';
+    var testButton = byId('modelTestButton');
+    testButton.disabled = false;
+    testButton.textContent = '测试连接';
     openModal('modelModal');
   };
 
+  window.applyModelProviderPreset = function (force) {
+    var preset = PROVIDER_PRESETS[byId('modelProviderType').value] || PROVIDER_PRESETS.openai_compatible;
+    if (force) byId('modelEndpoint').value = preset.url;
+    markModelConnectionDirty();
+  };
+
+  function markModelConnectionDirty() {
+    window.modelFormTested = false;
+    var button = byId('modelTestButton');
+    if (button) { button.disabled = false; button.textContent = '测试连接'; }
+  }
+
+  window.toggleModelApiKey = function () {
+    var input = byId('modelApiKey');
+    input.type = input.type === 'password' ? 'text' : 'password';
+  };
+
+  function modelFormValues() {
+    return {
+      name: byId('newModelName').value.trim(),
+      providerType: byId('modelProviderType').value,
+      modelId: byId('newModelId').value.trim(),
+      endpoint: byId('modelEndpoint').value.trim(),
+      rawKey: byId('modelApiKey').value.trim(),
+      auth: byId('modelAuth').value,
+      header: byId('modelHeader').value.trim() || 'Authorization',
+      params: {
+        temperature: Number(byId('modelTemperature').value),
+        topP: Number(byId('modelTopP').value),
+        maxTokens: Number(byId('modelMaxOutput').value),
+        timeout: Number(byId('modelTimeout').value),
+        retry: Number(byId('modelRetry').value),
+        concurrency: Number(byId('modelConcurrency').value),
+        stream: true
+      }
+    };
+  }
+
+  function validateModelForm(values) {
+    var existing = modelById(byId('modelEditId').value);
+    if (!values.name) return '请填写模型名称';
+    if (!values.modelId) return '请填写 Model ID';
+    if (!values.endpoint || !/^https?:\/\//i.test(values.endpoint)) return '请填写以 http:// 或 https:// 开头的请求地址';
+    if (!values.rawKey && !(existing && existing.hasKey)) return '请填写 API Key';
+    if (values.params.temperature < 0 || values.params.temperature > 2) return 'Temperature 需要在 0 到 2 之间';
+    if (values.params.topP < 0 || values.params.topP > 1) return 'Top P 需要在 0 到 1 之间';
+    if (values.params.maxTokens <= 0 || values.params.timeout <= 0 || values.params.retry < 0 || values.params.retry > 3 || values.params.concurrency <= 0) return '请检查模型参数';
+    return '';
+  }
+
+  window.testModelConnection = function (button) {
+    var values = modelFormValues();
+    var error = validateModelForm(values);
+    byId('modelFormError').textContent = error;
+    if (error) return;
+    button.disabled = true;
+    button.textContent = '测试中…';
+    setTimeout(function () {
+      window.modelFormTested = true;
+      button.disabled = false;
+      button.textContent = '连接成功 · 236ms';
+      showToast('模型连接测试成功');
+    }, 700);
+  };
+
   window.saveModel = function () {
-    var name = byId('newModelName').value.trim();
-    var modelId = byId('newModelId').value.trim();
-    var providerId = byId('modelProvider').value;
-    var error = !name ? '请填写模型名称' : (!modelId ? '请填写 Model ID' : (!providerId ? '请选择厂商' : ''));
+    var values = modelFormValues();
+    var error = validateModelForm(values);
     byId('modelFormError').textContent = error;
     if (error) return;
     var model = modelById(byId('modelEditId').value);
-    if (!model) { model = { id: 'model_' + Date.now(), enabled: true }; aiState.models.push(model); }
-    model.name = name;
-    model.providerId = providerId;
-    model.modelId = modelId;
+    var isNew = !model;
+    if (!model) { model = { id: 'model_' + Date.now(), enabled: true, hasKey: false, keyLast4: '', connectionStatus: 'unconfigured', latency: null }; aiState.models.push(model); }
+    var connectionChanged = isNew || model.providerType !== values.providerType || model.endpoint !== values.endpoint || model.modelId !== values.modelId || !!values.rawKey;
+    model.name = values.name;
+    model.providerType = values.providerType;
+    model.modelId = values.modelId;
+    model.endpoint = values.endpoint;
+    model.auth = values.auth;
+    model.header = values.header;
+    if (values.rawKey) { model.hasKey = true; model.keyLast4 = values.rawKey.slice(-4); }
+    if (window.modelFormTested) { model.connectionStatus = 'connected'; model.latency = 236; }
+    else if (connectionChanged) { model.connectionStatus = 'unconfigured'; model.latency = null; }
     model.context = 131072;
-    model.maxOutput = Number(byId('modelMaxOutput').value) || 8192;
+    model.params = values.params;
     model.inputPrice = Number(byId('modelInputPrice').value) || 0;
     model.outputPrice = Number(byId('modelOutputPrice').value) || 0;
     delete model.capabilities;
     delete model.thinking;
-    commitAutoSave('修改模型配置', model.name + ' / ' + model.modelId + '，默认上下文 128K', 'model-' + model.id, true);
+    commitAutoSave('修改模型', model.name + ' / ' + model.modelId + '，Temperature ' + model.params.temperature + '，Top P ' + model.params.topP + '，最大输出 ' + model.params.maxTokens + ' Token', 'model-' + model.id, true);
     closeModal('modelModal');
     renderModels();
     populateModelSelectors();
     showToast(model.name + ' 已自动保存');
+  };
+
+  window.testModelById = function (id) {
+    var model = modelById(id);
+    if (!model) return;
+    if (!model.hasKey || !model.endpoint) { showToast('请先补全模型连接配置'); window.openModelEditor(id); return; }
+    model.connectionStatus = 'testing';
+    renderModels();
+    setTimeout(function () {
+      model.connectionStatus = 'connected';
+      model.latency = 180 + Math.floor(Math.random() * 120);
+      model.enabled = true;
+      commitAutoSave('测试模型连接', model.name + '，连接成功 ' + model.latency + 'ms', 'model-test-' + id, true);
+      renderModels();
+      showToast(model.name + ' 连接成功');
+    }, 700);
   };
 
   window.toggleModel = function (id, enabled) {
@@ -496,43 +467,6 @@
     var backupName = (modelById(backup) || {}).name || '未配置';
     commitAutoSave('修改主次模型', primaryName + ' → ' + backupName, 'global-route');
     renderModels();
-  };
-
-  function loadParams() {
-    var params = aiState.paramsGlobal;
-    byId('temperature').value = params.temperature;
-    byId('topP').value = params.topP;
-    byId('maxTokens').value = params.maxTokens;
-    byId('timeout').value = params.timeout;
-    byId('retryCount').value = params.retry;
-    byId('concurrency').value = params.concurrency;
-    byId('thinkingMode').value = params.thinking;
-  }
-
-  function autoSaveParams() {
-    var params = {
-      temperature: Number(byId('temperature').value),
-      topP: Number(byId('topP').value),
-      maxTokens: Number(byId('maxTokens').value),
-      timeout: Number(byId('timeout').value),
-      retry: Number(byId('retryCount').value),
-      concurrency: Number(byId('concurrency').value),
-      thinking: byId('thinkingMode').value,
-      stream: true
-    };
-    if (params.temperature < 0 || params.temperature > 2 || params.topP < 0 || params.topP > 1 || params.maxTokens <= 0 || params.timeout <= 0 || params.retry < 0 || params.concurrency <= 0) {
-      setAutoSaveState('error', '参数有误，尚未保存');
-      return;
-    }
-    aiState.paramsGlobal = params;
-    commitAutoSave('修改默认请求参数', 'Temperature ' + params.temperature + '，Top P ' + params.topP + '，最大输出 ' + params.maxTokens + ' Token，流式响应开启', 'request-params');
-  }
-
-  window.resetParams = function () {
-    aiState.paramsGlobal = cloneJson(DEFAULT_PARAMS);
-    loadParams();
-    commitAutoSave('恢复默认请求参数', '默认参数已恢复，流式响应开启', 'request-params-reset', true);
-    showToast('默认请求参数已恢复');
   };
 
   function caseTemplateById(id) { return CASE_TEMPLATES.find(function (item) { return item.id === id; }) || CASE_TEMPLATES[0]; }
@@ -857,7 +791,7 @@
     var dataset = byId('evalDataset').value;
     var scope = byId('evalScope').value;
     if (!item) return;
-    if (!modelById(aiState.globalRoute.primary)) { showToast('请先在模型配置中选择主模型'); return; }
+    if (!modelById(aiState.globalRoute.primary)) { showToast('请先在模型管理中选择主模型'); return; }
     if (dataset === 'custom' && !customDatasetCount) { showToast('请先上传自定义评测集'); return; }
     var samples = scope === 'quick' ? 20 : (dataset === 'custom' ? customDatasetCount : item.samples);
     var datasetName = dataset === 'gold' ? '发布金标集' : dataset === 'regression' ? '回归问题集' : '自定义评测集';
@@ -942,8 +876,9 @@
   };
 
   function initializeAutoSaveInputs() {
-    document.querySelectorAll('.param-input').forEach(function (input) {
-      input.addEventListener(input.tagName === 'SELECT' ? 'change' : 'input', autoSaveParams);
+    ['newModelId', 'modelEndpoint', 'modelApiKey', 'modelAuth', 'modelHeader'].forEach(function (id) {
+      var input = byId(id);
+      if (input) input.addEventListener(input.tagName === 'SELECT' ? 'change' : 'input', markModelConnectionDirty);
     });
     document.querySelectorAll('.prompt-input').forEach(function (input) {
       input.addEventListener('input', function () { capturePromptForm(true); });
@@ -954,10 +889,8 @@
     initializeTabs();
     initializeDialogs();
     initializeEvalActions();
-    renderProviders();
     renderModels();
     populateModelSelectors();
-    loadParams();
     renderPrompts();
     renderEval();
     initializeAutoSaveInputs();

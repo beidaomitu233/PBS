@@ -335,14 +335,14 @@
     <main class="p-6">
       <!-- 操作按钮区 -->
       <div class="flex items-center justify-end gap-3 mb-6">
-        <button class="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors" onclick="document.getElementById(&#39;drawerDistribute&#39;).classList.remove(&#39;hidden&#39;)" data-dom-id="btn-distribute-task">
+        <button class="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors" onclick="openDistributeDrawer()" data-dom-id="btn-distribute-task">
           <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
           </svg>
-          分配任务
+          <span id="distributeButtonText">分配任务</span>
         </button>
-        <button class="flex items-center gap-2 px-4 py-2 bg-orange-500 text-white rounded-lg hover:bg-orange-600 transition-colors" onclick="document.getElementById(&#39;drawerChangeTask&#39;).classList.remove(&#39;hidden&#39;)" data-dom-id="btn-change-task">
-          更换分配
+        <button class="flex items-center gap-2 px-4 py-2 bg-orange-500 text-white rounded-lg hover:bg-orange-600 transition-colors" onclick="openChangeTaskDrawer()" data-dom-id="btn-change-task">
+          <span id="changeButtonText">更换分配</span>
         </button>
         <button class="flex items-center gap-2 px-4 py-2 bg-white border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors" onclick="window.location.href=&#39;我的项目详情页 - 留学申请管理系统.html&#39;" data-dom-id="btn-back-my-project-detail">
           <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -350,6 +350,19 @@
           </svg>
           返回项目详情
         </button>
+      </div>
+
+      <div id="institutionAssignmentLockNotice" class="hidden mb-6 rounded-xl border border-blue-200 bg-blue-50 px-5 py-4">
+        <div class="flex items-start gap-3">
+          <span class="w-9 h-9 rounded-lg bg-blue-100 text-blue-600 flex items-center justify-center flex-shrink-0">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 11c0-1.105.895-2 2-2s2 .895 2 2v2m-6 0V9a4 4 0 118 0v4m-9 0h10a1 1 0 011 1v6a1 1 0 01-1 1H9a1 1 0 01-1-1v-6a1 1 0 011-1z"></path></svg>
+          </span>
+          <div>
+            <p class="text-sm font-semibold text-blue-900">院校目标成员已由机构管理员分配</p>
+            <p id="institutionAssignmentNames" class="text-xs text-blue-700 mt-1"></p>
+            <p class="text-xs text-blue-600 mt-1">该分配已锁定，项目经理不可修改。</p>
+          </div>
+        </div>
       </div>
 
       <!-- 院校目标基础信息栏 -->
@@ -555,6 +568,7 @@
 
   <script>
     // 院校目标数据（与 我的项目详情页.html 表格数据一致）
+    var currentGoalAssignmentId = 'cmu';
     var subProjectData = {
       '1': {
         school: '卡内基梅隆大学',
@@ -659,7 +673,8 @@
       var params = new URLSearchParams(window.location.search);
       var id = params.get('id') || '1';
       var data = subProjectData[id];
-      if (!data) data = subProjectData['1'];
+      if (!data) { id = '1'; data = subProjectData['1']; }
+      currentGoalAssignmentId = id === '1' ? 'cmu' : 'stanford';
 
       // 填充基础信息
       document.getElementById('info-school').textContent = data.school;
@@ -762,20 +777,7 @@
         tooltip.classList.add('hidden');
       });
 
-      // 操作按钮跳转
-      var btnDistribute = document.querySelector('[data-dom-id="btn-distribute-task"]');
-      if (btnDistribute) {
-        btnDistribute.addEventListener('click', function() {
-          document.getElementById('drawerDistribute').classList.remove('hidden');
-        });
-      }
-
-      var btnChangeTask = document.querySelector('[data-dom-id="btn-change-task"]');
-      if (btnChangeTask) {
-        btnChangeTask.addEventListener('click', function() {
-          document.getElementById('drawerChangeTask').classList.remove('hidden');
-        });
-      }
+      applyInstitutionAssignmentLock();
 
       var btnBack = document.querySelector('[data-dom-id="btn-back-my-project-detail"]');
       if (btnBack) {
@@ -1124,6 +1126,58 @@
   </style>
 
   <script>
+    var PROJECT_ASSIGNMENT_KEY = 'pbs_project_assignment_PRJ20260701001';
+    var institutionGoalAssignment = null;
+    function getInstitutionGoalAssignment() {
+      try {
+        var projectAssignment = JSON.parse(localStorage.getItem(PROJECT_ASSIGNMENT_KEY) || '{}');
+        var goalAssignments = projectAssignment.goalAssignments || {};
+        var assignment = goalAssignments[currentGoalAssignmentId];
+        return assignment && assignment.done ? assignment : null;
+      } catch (e) { return null; }
+    }
+    function applyInstitutionAssignmentLock() {
+      institutionGoalAssignment = getInstitutionGoalAssignment();
+      if (!institutionGoalAssignment) { return; }
+      var documentPeople = [];
+      Object.keys(institutionGoalAssignment.docs || {}).forEach(function(key) {
+        var person = institutionGoalAssignment.docs[key] && institutionGoalAssignment.docs[key].person;
+        if (person && documentPeople.indexOf(person) < 0) { documentPeople.push(person); }
+      });
+      var summary = [];
+      if (documentPeople.length) { summary.push('文书交付：' + documentPeople.join('、')); }
+      if (institutionGoalAssignment.reviewer) { summary.push('文书审核：' + institutionGoalAssignment.reviewer); }
+      if (institutionGoalAssignment.network) { summary.push('网申：' + institutionGoalAssignment.network); }
+      document.getElementById('institutionAssignmentNames').textContent = summary.join(' ｜ ');
+      document.getElementById('institutionAssignmentLockNotice').classList.remove('hidden');
+      var distributeButton = document.querySelector('[data-dom-id="btn-distribute-task"]');
+      var changeButton = document.querySelector('[data-dom-id="btn-change-task"]');
+      [distributeButton, changeButton].forEach(function(button) {
+        if (!button) { return; }
+        button.disabled = true;
+        button.classList.remove('bg-blue-600', 'hover:bg-blue-700', 'bg-orange-500', 'hover:bg-orange-600', 'text-white');
+        button.classList.add('bg-gray-200', 'text-gray-500', 'cursor-not-allowed');
+        button.title = '机构管理员已完成分配，项目经理不可修改';
+      });
+      document.getElementById('distributeButtonText').textContent = '机构已分配';
+      document.getElementById('changeButtonText').textContent = '分配已锁定';
+    }
+    function openDistributeDrawer() {
+      institutionGoalAssignment = getInstitutionGoalAssignment();
+      if (institutionGoalAssignment) {
+        showDistToast('该院校目标已由机构管理员分配，项目经理不可修改');
+        return;
+      }
+      document.getElementById('drawerDistribute').classList.remove('hidden');
+    }
+    function openChangeTaskDrawer() {
+      institutionGoalAssignment = getInstitutionGoalAssignment();
+      if (institutionGoalAssignment) {
+        showDistToast('该院校目标成员分配已锁定');
+        return;
+      }
+      document.getElementById('drawerChangeTask').classList.remove('hidden');
+    }
     function closeDrawerDistribute() {
       document.getElementById('drawerDistribute').classList.add('hidden');
     }

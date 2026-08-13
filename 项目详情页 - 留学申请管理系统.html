@@ -785,7 +785,7 @@
     </main>
   
 
-  <!-- 分配抽屉（与院校目标详情页同款样式，权限更高：可分配项目经理及团队所有人） -->
+  <!-- 分配抽屉：项目经理必填，院校目标成员可由机构提前分配 -->
   <div id="drawerAssign" class="fixed inset-0 z-50 hidden">
     <div class="absolute inset-0 bg-black bg-opacity-30" onclick="closeAssignDrawer()"></div>
     <div class="drawer flex flex-col" style="width:520px;">
@@ -793,7 +793,7 @@
       <div class="flex items-center justify-between px-6 py-4 border-b border-gray-200 flex-shrink-0">
         <div class="flex items-center gap-3">
           <h2 class="text-lg font-semibold text-gray-800">分配任务</h2>
-          <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">项目 · 全角色</span>
+          <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-50 text-red-600">项目经理必填</span>
         </div>
         <button class="p-1 text-gray-400 hover:text-gray-600" onclick="closeAssignDrawer()">
           <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
@@ -837,27 +837,32 @@
               <svg class="w-4 h-4 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5.121 17.804A13.937 13.937 0 0112 16c2.5 0 4.847.655 6.879 1.804M15 10a3 3 0 11-6 0 3 3 0 016 0zm6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
             </span>
             <span class="text-sm font-semibold text-gray-800">项目经理</span>
-            <span class="text-[10px] px-1.5 py-0.5 rounded bg-indigo-50 text-indigo-600 font-medium">仅项目级可分配</span>
+            <span class="text-[10px] px-1.5 py-0.5 rounded bg-red-50 text-red-600 font-medium">必填</span>
           </div>
           <p class="text-xs text-gray-400 mb-3 pl-10">统筹整个项目，协调文书、审核、网申各环节</p>
           <div class="relative mb-3" data-sel="pm">
             <div class="flex items-center w-full h-10 px-4 border border-gray-300 rounded-lg cursor-pointer bg-white" onclick="togglePersonDropdown(&#39;pm&#39;)">
-              <span class="text-sm flex-1 text-gray-900 font-medium" id="pmPlaceholder">张老师</span>
+              <span class="text-gray-400 text-sm flex-1" id="pmPlaceholder">请选择项目经理</span>
               <svg class="w-5 h-5 text-gray-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
             </div>
             <div id="pmDropdown" class="absolute left-0 right-0 mt-1 bg-white border border-gray-200 rounded-lg shadow-lg z-20 max-h-64 overflow-y-auto hidden"><div class="px-3 py-1.5 text-[10px] text-gray-400 border-b border-gray-100 sticky top-0 bg-white">团队所有人 · 可按需分配任意成员</div><div class="px-3 py-2 hover:bg-blue-50 cursor-pointer text-sm flex items-center gap-3" onclick="selectPerson(&#39;pm&#39;, &#39;张老师&#39;)"><div class="w-8 h-8 bg-gradient-to-br from-blue-500 to-purple-500 rounded-full flex items-center justify-center flex-shrink-0"><span class="text-white text-xs font-medium">张</span></div><div class="flex-1"><p class="font-medium text-gray-900">张老师</p><p class="text-xs text-gray-500">项目经理</p></div></div><div class="px-3 py-2 hover:bg-blue-50 cursor-pointer text-sm flex items-center gap-3" onclick="selectPerson(&#39;pm&#39;, &#39;王老师&#39;)"><div class="w-8 h-8 bg-gradient-to-br from-green-500 to-teal-500 rounded-full flex items-center justify-center flex-shrink-0"><span class="text-white text-xs font-medium">王</span></div><div class="flex-1"><p class="font-medium text-gray-900">王老师</p><p class="text-xs text-gray-500">项目经理</p></div></div><div class="px-3 py-2 hover:bg-blue-50 cursor-pointer text-sm flex items-center gap-3" onclick="selectPerson(&#39;pm&#39;, &#39;李老师&#39;)"><div class="w-8 h-8 bg-gradient-to-br from-orange-500 to-red-500 rounded-full flex items-center justify-center flex-shrink-0"><span class="text-white text-xs font-medium">李</span></div><div class="flex-1"><p class="font-medium text-gray-900">李老师</p><p class="text-xs text-gray-500">项目经理</p></div></div><div class="px-3 py-2 hover:bg-blue-50 cursor-pointer text-sm flex items-center gap-3" onclick="selectPerson(&#39;pm&#39;, &#39;赵老师&#39;)"><div class="w-8 h-8 bg-gradient-to-br from-purple-500 to-pink-500 rounded-full flex items-center justify-center flex-shrink-0"><span class="text-white text-xs font-medium">赵</span></div><div class="flex-1"><p class="font-medium text-gray-900">赵老师</p><p class="text-xs text-gray-500">项目经理</p></div></div><div class="px-3 py-2 hover:bg-blue-50 cursor-pointer text-sm flex items-center gap-3" onclick="selectPerson(&#39;pm&#39;, &#39;刘老师&#39;)"><div class="w-8 h-8 bg-gradient-to-br from-blue-500 to-indigo-500 rounded-full flex items-center justify-center flex-shrink-0"><span class="text-white text-xs font-medium">刘</span></div><div class="flex-1"><p class="font-medium text-gray-900">刘老师</p><p class="text-xs text-gray-500">文书顾问</p></div></div><div class="px-3 py-2 hover:bg-blue-50 cursor-pointer text-sm flex items-center gap-3" onclick="selectPerson(&#39;pm&#39;, &#39;陈老师&#39;)"><div class="w-8 h-8 bg-gradient-to-br from-amber-500 to-orange-500 rounded-full flex items-center justify-center flex-shrink-0"><span class="text-white text-xs font-medium">陈</span></div><div class="flex-1"><p class="font-medium text-gray-900">陈老师</p><p class="text-xs text-gray-500">文书顾问</p></div></div><div class="px-3 py-2 hover:bg-blue-50 cursor-pointer text-sm flex items-center gap-3" onclick="selectPerson(&#39;pm&#39;, &#39;杨老师&#39;)"><div class="w-8 h-8 bg-gradient-to-br from-cyan-500 to-blue-500 rounded-full flex items-center justify-center flex-shrink-0"><span class="text-white text-xs font-medium">杨</span></div><div class="flex-1"><p class="font-medium text-gray-900">杨老师</p><p class="text-xs text-gray-500">文书顾问</p></div></div><div class="px-3 py-2 hover:bg-blue-50 cursor-pointer text-sm flex items-center gap-3" onclick="selectPerson(&#39;pm&#39;, &#39;孙老师&#39;)"><div class="w-8 h-8 bg-gradient-to-br from-green-500 to-teal-500 rounded-full flex items-center justify-center flex-shrink-0"><span class="text-white text-xs font-medium">孙</span></div><div class="flex-1"><p class="font-medium text-gray-900">孙老师</p><p class="text-xs text-gray-500">审核专员</p></div></div><div class="px-3 py-2 hover:bg-blue-50 cursor-pointer text-sm flex items-center gap-3" onclick="selectPerson(&#39;pm&#39;, &#39;周老师&#39;)"><div class="w-8 h-8 bg-gradient-to-br from-pink-500 to-rose-500 rounded-full flex items-center justify-center flex-shrink-0"><span class="text-white text-xs font-medium">周</span></div><div class="flex-1"><p class="font-medium text-gray-900">周老师</p><p class="text-xs text-gray-500">审核专员</p></div></div><div class="px-3 py-2 hover:bg-blue-50 cursor-pointer text-sm flex items-center gap-3" onclick="selectPerson(&#39;pm&#39;, &#39;吴老师&#39;)"><div class="w-8 h-8 bg-gradient-to-br from-purple-500 to-indigo-500 rounded-full flex items-center justify-center flex-shrink-0"><span class="text-white text-xs font-medium">吴</span></div><div class="flex-1"><p class="font-medium text-gray-900">吴老师</p><p class="text-xs text-gray-500">网申专员</p></div></div><div class="px-3 py-2 hover:bg-blue-50 cursor-pointer text-sm flex items-center gap-3" onclick="selectPerson(&#39;pm&#39;, &#39;郑老师&#39;)"><div class="w-8 h-8 bg-gradient-to-br from-cyan-500 to-blue-500 rounded-full flex items-center justify-center flex-shrink-0"><span class="text-white text-xs font-medium">郑</span></div><div class="flex-1"><p class="font-medium text-gray-900">郑老师</p><p class="text-xs text-gray-500">网申专员</p></div></div></div>
           </div>
-          <p id="pmLoadHint" class="text-xs text-gray-400 bg-gray-50 rounded-lg px-3 py-2"><span class="text-gray-700 font-medium">张老师</span> ｜ 当前负责 <span class="text-red-600 font-medium">5人 / 上限 5人</span> ｜ 擅长：本科申请、硕士申请 · 美国、英国</p>
+          <p id="pmLoadHint" class="text-xs text-gray-400 bg-gray-50 rounded-lg px-3 py-2">选择项目经理后显示其负荷与擅长方向</p>
         </div>
-        <!-- 院校目标分配（逐个进行：点击卡片切换，分配完成后灰掉） -->
+        <!-- 院校目标成员可选分配 -->
         <div class="flex items-center justify-between mb-3">
-          <h3 class="text-sm font-medium text-gray-700">院校目标分配（逐个进行）</h3>
-          <span id="goalProgress" class="text-xs font-medium text-blue-600">0/3 已分配</span>
+          <h3 class="text-sm font-medium text-gray-700">院校目标成员（可选）</h3>
+          <div class="flex items-center gap-3">
+            <span id="goalProgress" class="text-xs font-medium text-blue-600">0/3 已由机构分配</span>
+            <button id="optionalGoalToggle" type="button" class="text-xs font-medium text-blue-600 hover:text-blue-800" onclick="toggleOptionalAssignment('optionalGoalAssignmentPanel','optionalGoalToggle','提前分配','收起')">提前分配</button>
+          </div>
         </div>
-        <p class="text-xs text-gray-400 mb-2">点击下方院校目标卡片进行人员分配；完成一个后该卡片灰掉，再继续分配下一个。</p>
+        <p class="text-xs text-gray-400 mb-2">机构可提前完成院校目标成员分配；未分配的目标由项目经理后续补充。机构已完成的目标将对项目经理锁定。</p>
+        <div id="optionalGoalAssignmentPanel" class="hidden">
         <div id="goalTabs" class="space-y-2 mb-4"><div class="rounded-lg p-2.5 cursor-pointer transition-colors border-2 border-blue-500 bg-blue-50" onclick="switchGoal(&#39;cmu&#39;)"><div class="flex items-center justify-between gap-2"><p class="text-xs font-medium text-gray-900">1. 卡内基梅隆大学 · 计算机科学</p><span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-medium bg-blue-600 text-white flex-shrink-0">分配中</span></div><p class="text-[10px] text-gray-500 mt-0.5">尊享套餐：选校规划 + 文书 + 网申 + 面试辅导</p></div><div class="rounded-lg p-2.5 cursor-pointer transition-colors border border-gray-200 bg-white hover:border-gray-300" onclick="switchGoal(&#39;berkeley&#39;)"><div class="flex items-center justify-between gap-2"><p class="text-xs font-medium text-gray-900">2. 加州大学伯克利分校 · 数据科学</p><span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-medium bg-yellow-100 text-yellow-700 flex-shrink-0">待分配</span></div><p class="text-[10px] text-gray-500 mt-0.5">标准套餐：文书 + 网申</p></div><div class="rounded-lg p-2.5 cursor-pointer transition-colors border border-gray-200 bg-white hover:border-gray-300" onclick="switchGoal(&#39;nyu&#39;)"><div class="flex items-center justify-between gap-2"><p class="text-xs font-medium text-gray-900">3. 纽约大学 · 计算机科学</p><span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-medium bg-yellow-100 text-yellow-700 flex-shrink-0">待分配</span></div><p class="text-[10px] text-gray-500 mt-0.5">标准套餐：文书 + 网申</p></div></div>
         <!-- 当前院校目标的分配面板（JS 动态渲染） -->
         <div id="goalPanel" class="mb-4"><div class="border border-blue-200 rounded-xl p-3 bg-blue-50 bg-opacity-40"><div class="border border-gray-200 rounded-xl p-4 mb-3 bg-white"><div class="flex items-center gap-2 mb-1"><span class="w-8 h-8 rounded-lg bg-blue-100 flex items-center justify-center"><svg class="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg></span><span class="text-sm font-semibold text-gray-800">文书交付人员</span><span class="text-[10px] px-1.5 py-0.5 rounded bg-blue-50 text-blue-600 font-medium">按文书分配</span></div><p class="text-xs text-gray-400 mb-3 pl-10">每种文书单独指定交付人员及交付 DDL，可选团队所有人</p><div class="border border-gray-100 rounded-lg p-3 mb-2 bg-gray-50"><p class="text-xs font-semibold text-gray-700 mb-2">PS 个人陈述（1000词 · 学术背景+研究方向）</p><div class="flex items-center gap-2"><div class="relative flex-1" data-sel="gd_PS"><div class="flex items-center w-full h-9 px-3 border border-gray-300 rounded-lg cursor-pointer bg-white" onclick="togglePersonDropdown(&#39;gd_PS&#39;)"><span class="text-gray-400 text-sm flex-1" id="gd_PSPlaceholder">选择交付人员</span><svg class="w-4 h-4 text-gray-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg></div><div id="gd_PSDropdown" class="hidden absolute left-0 right-0 mt-1 bg-white border border-gray-200 rounded-lg shadow-lg z-20 max-h-64 overflow-y-auto"></div></div><input type="date" value="2026-10-15" id="gDdl_PS" title="交付 DDL" class="w-[132px] flex-shrink-0 h-9 px-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"></div></div><div class="border border-gray-100 rounded-lg p-3 mb-2 bg-gray-50"><p class="text-xs font-semibold text-gray-700 mb-2">RL 推荐信×2（500词/封 · 导师推荐）</p><div class="flex items-center gap-2"><div class="relative flex-1" data-sel="gd_RL"><div class="flex items-center w-full h-9 px-3 border border-gray-300 rounded-lg cursor-pointer bg-white" onclick="togglePersonDropdown(&#39;gd_RL&#39;)"><span class="text-gray-400 text-sm flex-1" id="gd_RLPlaceholder">选择交付人员</span><svg class="w-4 h-4 text-gray-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg></div><div id="gd_RLDropdown" class="hidden absolute left-0 right-0 mt-1 bg-white border border-gray-200 rounded-lg shadow-lg z-20 max-h-64 overflow-y-auto"></div></div><input type="date" value="2026-10-12" id="gDdl_RL" title="交付 DDL" class="w-[132px] flex-shrink-0 h-9 px-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"></div></div><div class="border border-gray-100 rounded-lg p-3 mb-2 bg-gray-50"><p class="text-xs font-semibold text-gray-700 mb-2">CV 简历（2页 · 科研经历重点）</p><div class="flex items-center gap-2"><div class="relative flex-1" data-sel="gd_CV"><div class="flex items-center w-full h-9 px-3 border border-gray-300 rounded-lg cursor-pointer bg-white" onclick="togglePersonDropdown(&#39;gd_CV&#39;)"><span class="text-gray-400 text-sm flex-1" id="gd_CVPlaceholder">选择交付人员</span><svg class="w-4 h-4 text-gray-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg></div><div id="gd_CVDropdown" class="hidden absolute left-0 right-0 mt-1 bg-white border border-gray-200 rounded-lg shadow-lg z-20 max-h-64 overflow-y-auto"></div></div><input type="date" value="2026-10-08" id="gDdl_CV" title="交付 DDL" class="w-[132px] flex-shrink-0 h-9 px-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"></div></div><p class="text-xs text-gray-400 bg-gray-50 rounded-lg px-3 py-2">需知晓：材料准备 DDL 2026-10-01 ｜ 网申提交 DDL 2026-11-01</p></div><div class="border border-gray-200 rounded-xl p-4 mb-3 bg-white"><div class="flex items-center gap-2 mb-1"><span class="w-8 h-8 rounded-lg bg-green-100 flex items-center justify-center"><svg class="w-4 h-4 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg></span><span class="text-sm font-semibold text-gray-800">文书审核人员</span></div><p class="text-xs text-gray-400 mb-3 pl-10">需知晓：文书交付 · 网申提交</p><div class="mb-3"><div class="relative flex-1" data-sel="gReviewer"><div class="flex items-center w-full h-9 px-3 border border-gray-300 rounded-lg cursor-pointer bg-white" onclick="togglePersonDropdown(&#39;gReviewer&#39;)"><span class="text-gray-400 text-sm flex-1" id="gReviewerPlaceholder">点击选择审核人员</span><svg class="w-4 h-4 text-gray-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg></div><div id="gReviewerDropdown" class="hidden absolute left-0 right-0 mt-1 bg-white border border-gray-200 rounded-lg shadow-lg z-20 max-h-64 overflow-y-auto"></div></div></div><div class="grid grid-cols-2 gap-2"><div><label class="block text-xs text-gray-500 mb-1">文书交付</label><input type="date" value="2026-10-15" id="gDdlDocReview" class="w-full h-9 px-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"></div><div><label class="block text-xs text-gray-500 mb-1">网申提交</label><input type="date" value="2026-11-01" id="gDdlAppReview" class="w-full h-9 px-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"></div></div></div><div class="border border-gray-200 rounded-xl p-4 mb-3 bg-white"><div class="flex items-center gap-2 mb-1"><span class="w-8 h-8 rounded-lg bg-purple-100 flex items-center justify-center"><svg class="w-4 h-4 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9"></path></svg></span><span class="text-sm font-semibold text-gray-800">网申人员</span></div><p class="text-xs text-gray-400 mb-3 pl-10">需知晓：网申提交</p><div class="mb-3"><div class="relative flex-1" data-sel="gNetwork"><div class="flex items-center w-full h-9 px-3 border border-gray-300 rounded-lg cursor-pointer bg-white" onclick="togglePersonDropdown(&#39;gNetwork&#39;)"><span class="text-gray-400 text-sm flex-1" id="gNetworkPlaceholder">点击选择网申人员</span><svg class="w-4 h-4 text-gray-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg></div><div id="gNetworkDropdown" class="hidden absolute left-0 right-0 mt-1 bg-white border border-gray-200 rounded-lg shadow-lg z-20 max-h-64 overflow-y-auto"></div></div></div><div class="mb-3"><label class="block text-xs text-gray-500 mb-1">网申提交 DDL</label><input type="date" value="2026-11-01" id="gDdlAppNetwork" class="w-full h-9 px-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"></div><p class="text-xs text-gray-400 bg-gray-50 rounded-lg px-3 py-2">材料准备 DDL：2026-10-01（需在此之前齐备）</p></div><button class="w-full h-10 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm font-medium" onclick="completeGoal()">完成本院校目标分配</button></div></div>
+        </div>
 
         <!-- 任务要求 -->
         <div class="mb-2">
@@ -891,7 +896,7 @@
     </div>
   </div>
 
-  <!-- 更换抽屉（与院校目标详情页同款样式，权限更高：可更换项目经理及团队所有人） -->
+  <!-- 更换抽屉：项目经理必填，院校目标成员按需更换 -->
   <div id="drawerChange" class="fixed inset-0 z-50 hidden">
     <div class="absolute inset-0 bg-black bg-opacity-30" onclick="closeChangePMDrawer()"></div>
     <div class="drawer flex flex-col" style="width:520px;">
@@ -899,7 +904,7 @@
       <div class="flex items-center justify-between px-6 py-4 border-b border-gray-200 flex-shrink-0">
         <div class="flex items-center gap-3">
           <h2 class="text-lg font-semibold text-gray-800">更换项目人员</h2>
-          <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">项目 · 全角色</span>
+          <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-50 text-red-600">项目经理必填</span>
         </div>
         <button class="p-1 text-gray-400 hover:text-gray-600" onclick="closeChangePMDrawer()">
           <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
@@ -939,15 +944,20 @@
           </div>
           <p id="chgPmLoadHint" class="text-xs text-gray-400 bg-gray-50 rounded-lg px-3 py-2">选择新项目经理后显示其负荷与擅长方向</p>
         </div>
-        <!-- 院校目标人员更换（逐个进行：点击卡片切换，更换完成后灰掉） -->
+        <!-- 院校目标人员按需更换 -->
         <div class="flex items-center justify-between mb-3">
-          <h3 class="text-sm font-medium text-gray-700">院校目标人员更换（逐个进行）</h3>
-          <span id="chgGoalProgress" class="text-xs font-medium text-blue-600">0/3 已更换</span>
+          <h3 class="text-sm font-medium text-gray-700">院校目标人员（可选更换）</h3>
+          <div class="flex items-center gap-3">
+            <span id="chgGoalProgress" class="text-xs font-medium text-blue-600">0/3 已更换</span>
+            <button id="optionalChangeToggle" type="button" class="text-xs font-medium text-blue-600 hover:text-blue-800" onclick="toggleOptionalAssignment('optionalChangeAssignmentPanel','optionalChangeToggle','按需更换','收起')">按需更换</button>
+          </div>
         </div>
-        <p class="text-xs text-gray-400 mb-2">点击下方院校目标卡片更换人员；完成一个后该卡片灰掉，再继续更换下一个。</p>
+        <p class="text-xs text-gray-400 mb-2">只需处理本次需要调整的院校目标；未更换的目标继续保留当前成员。</p>
+        <div id="optionalChangeAssignmentPanel" class="hidden">
         <div id="chgGoalTabs" class="space-y-2 mb-4"></div>
         <!-- 当前院校目标的更换面板（JS 动态渲染） -->
         <div id="chgGoalPanel" class="mb-4"></div>
+        </div>
 
         <!-- 任务要求 -->
         <div class="mb-2">
@@ -1145,8 +1155,18 @@
     var chgActiveGoalId = 'cmu';
     var selectedPersons = {};
 
-    /* 项目级权限更高：所有角色下拉均展示团队所有人 */
-    function personListFor(key) { return TEAM; }
+    /* 按岗位展示可分配人员，避免把文书、审核或网申人员误选为项目经理 */
+    function personRoleFor(key) {
+      var normalized = key.toLowerCase();
+      if (normalized === 'pm' || normalized === 'chgpm') { return '项目经理'; }
+      if (normalized.indexOf('reviewer') !== -1) { return '审核专员'; }
+      if (normalized.indexOf('network') !== -1) { return '网申专员'; }
+      return '文书顾问';
+    }
+    function personListFor(key) {
+      var role = personRoleFor(key);
+      return TEAM.filter(function(person) { return person.role === role; });
+    }
 
     function togglePersonDropdown(key) {
       var dd = document.getElementById(key + 'Dropdown');
@@ -1162,7 +1182,7 @@
     }
     function renderPersonList(key) {
       var list = document.getElementById(key + 'Dropdown');
-      list.innerHTML = '<div class="px-3 py-1.5 text-[10px] text-gray-400 border-b border-gray-100 sticky top-0 bg-white">团队所有人 · 可按需分配任意成员</div>';
+      list.innerHTML = '<div class="px-3 py-1.5 text-[10px] text-gray-400 border-b border-gray-100 sticky top-0 bg-white">仅显示' + personRoleFor(key) + '</div>';
       personListFor(key).forEach(function(p) {
         var isSel = selectedPersons[key] === p.name;
         var div = document.createElement('div');
@@ -1226,14 +1246,14 @@
           cardCls = 'border-2 border-blue-500 bg-blue-50';
           badge = done
             ? '<span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-medium bg-green-100 text-green-700 flex-shrink-0">✓ 已分配</span>'
-            : '<span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-medium bg-blue-600 text-white flex-shrink-0">分配中</span>';
+            : '<span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-medium bg-blue-600 text-white flex-shrink-0">可选分配</span>';
         } else if (done) {
           /* 分配完成后灰掉 */
           cardCls = 'border border-gray-200 bg-gray-100 opacity-80';
           badge = '<span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-medium bg-green-100 text-green-700 flex-shrink-0">✓ 已分配</span>';
         } else {
           cardCls = 'border border-gray-200 bg-white hover:border-gray-300';
-          badge = '<span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-medium bg-yellow-100 text-yellow-700 flex-shrink-0">待分配</span>';
+          badge = '<span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-medium bg-gray-100 text-gray-600 flex-shrink-0">由PM分配</span>';
         }
         var grayed = done && !active;
         var nameCls = grayed ? 'text-xs font-medium text-gray-400' : 'text-xs font-medium text-gray-900';
@@ -1251,7 +1271,7 @@
           '<p class="' + pkgCls + '">' + g.pkg + '</p>' + sub + '</div>';
       });
       document.getElementById('goalTabs').innerHTML = html;
-      document.getElementById('goalProgress').textContent = goalDoneCount(goalAssign) + '/' + GOALS.length + ' 已分配';
+      document.getElementById('goalProgress').textContent = goalDoneCount(goalAssign) + '/' + GOALS.length + ' 已由机构分配';
     }
 
     function personPh(key, person, defaultText) {
@@ -1279,7 +1299,7 @@
         '<span class="w-8 h-8 rounded-lg bg-blue-100 flex items-center justify-center"><svg class="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg></span>' +
         '<span class="text-sm font-semibold text-gray-800">文书交付人员</span>' +
         '<span class="text-[10px] px-1.5 py-0.5 rounded bg-blue-50 text-blue-600 font-medium">按文书分配</span></div>' +
-        '<p class="text-xs text-gray-400 mb-3 pl-10">每种文书单独指定交付人员及交付 DDL，可选团队所有人</p>';
+        '<p class="text-xs text-gray-400 mb-3 pl-10">每种文书单独指定交付人员及交付 DDL，仅显示文书交付人员</p>';
       g.docs.forEach(function(d) {
         var key = 'gd_' + d.key;
         var saved = docs[d.key];
@@ -1364,10 +1384,10 @@
       if (next) {
         activeGoalId = next;
         renderGoalTabs(); renderGoalPanel();
-        showPageToast('「' + g.name + '」分配完成，请继续分配下一个院校目标', true);
+        showPageToast('「' + g.name + '」已由机构分配；如需可继续处理其他目标', true);
       } else {
         renderGoalTabs(); renderGoalPanel();
-        showPageToast('全部院校目标已分配完成，请点击确认分配', true);
+        showPageToast('全部院校目标已由机构分配，可点击确认分配', true);
       }
     }
 
@@ -1383,13 +1403,13 @@
           cardCls = 'border-2 border-blue-500 bg-blue-50';
           badge = done
             ? '<span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-medium bg-green-100 text-green-700 flex-shrink-0">✓ 已更换</span>'
-            : '<span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-medium bg-blue-600 text-white flex-shrink-0">更换中</span>';
+            : '<span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-medium bg-blue-600 text-white flex-shrink-0">按需更换</span>';
         } else if (done) {
           cardCls = 'border border-gray-200 bg-gray-100 opacity-80';
           badge = '<span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-medium bg-green-100 text-green-700 flex-shrink-0">✓ 已更换</span>';
         } else {
           cardCls = 'border border-gray-200 bg-white hover:border-gray-300';
-          badge = '<span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-medium bg-yellow-100 text-yellow-700 flex-shrink-0">待更换</span>';
+          badge = '<span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-medium bg-gray-100 text-gray-600 flex-shrink-0">保持当前</span>';
         }
         var grayed = done && !active;
         var nameCls = grayed ? 'text-xs font-medium text-gray-400' : 'text-xs font-medium text-gray-900';
@@ -1423,7 +1443,7 @@
         '<span class="w-8 h-8 rounded-lg bg-blue-100 flex items-center justify-center"><svg class="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg></span>' +
         '<span class="text-sm font-semibold text-gray-800">文书交付人员</span>' +
         '<span class="text-[10px] px-1.5 py-0.5 rounded bg-blue-50 text-blue-600 font-medium">按文书更换</span></div>' +
-        '<p class="text-xs text-gray-400 mb-3 pl-10">每种文书单独指定新交付人员及交付 DDL，可选团队所有人</p>';
+        '<p class="text-xs text-gray-400 mb-3 pl-10">每种文书单独指定新交付人员及交付 DDL，仅显示文书交付人员</p>';
       g.docs.forEach(function(d) {
         var key = 'cgd_' + d.key;
         var saved = docs[d.key];
@@ -1510,7 +1530,7 @@
       if (next) {
         chgActiveGoalId = next;
         renderChgGoalTabs(); renderChgGoalPanel();
-        showPageToast('「' + g.name + '」更换完成，请继续更换下一个院校目标', true);
+        showPageToast('「' + g.name + '」更换完成；如需可继续处理其他目标', true);
       } else {
         renderChgGoalTabs(); renderChgGoalPanel();
         showPageToast('全部院校目标已更换完成，请点击确认更换', true);
@@ -1518,9 +1538,23 @@
     }
 
     /* ---------------- 抽屉开合 ---------------- */
+    function toggleOptionalAssignment(panelId, buttonId, openText, closeText) {
+      var panel = document.getElementById(panelId);
+      var button = document.getElementById(buttonId);
+      var opening = panel.classList.contains('hidden');
+      panel.classList.toggle('hidden', !opening);
+      button.textContent = opening ? closeText : openText;
+    }
+    function collapseOptionalAssignment(panelId, buttonId, openText) {
+      var panel = document.getElementById(panelId);
+      var button = document.getElementById(buttonId);
+      if (panel) { panel.classList.add('hidden'); }
+      if (button) { button.textContent = openText; }
+    }
     function openAssignDrawer() {
       renderGoalTabs();
       renderGoalPanel();
+      collapseOptionalAssignment('optionalGoalAssignmentPanel', 'optionalGoalToggle', '提前分配');
       document.getElementById('drawerAssign').classList.remove('hidden');
       document.body.style.overflow = 'hidden';
     }
@@ -1531,6 +1565,7 @@
     function openChangePMDrawer() {
       renderChgGoalTabs();
       renderChgGoalPanel();
+      collapseOptionalAssignment('optionalChangeAssignmentPanel', 'optionalChangeToggle', '按需更换');
       document.getElementById('drawerChange').classList.remove('hidden');
       document.body.style.overflow = 'hidden';
     }
@@ -1556,16 +1591,28 @@
     }
     function distVal(id) { var el = document.getElementById(id); return el ? el.value : ''; }
 
-    /* ---------------- 确认分配（项目经理 + 全部院校目标完成） ---------------- */
-    function confirmAssign() {
-      if (!selectedPersons.pm) { showPageToast('请选择项目经理'); return; }
-      saveActiveGoalDraft();
-      var undone = [];
-      GOALS.forEach(function(g) { if (!(goalAssign[g.id] && goalAssign[g.id].done)) { undone.push(g.name); } });
-      if (undone.length) { showPageToast('还有 ' + undone.length + ' 个院校目标未分配：' + undone.join('、')); return; }
+    var PROJECT_ASSIGNMENT_KEY = 'pbs_project_assignment_PRJ20260701001';
+    function persistProjectAssignment(store, projectManager, replaceGoalAssignments) {
+      var existing = {};
+      try { existing = JSON.parse(localStorage.getItem(PROJECT_ASSIGNMENT_KEY) || '{}'); } catch (e) { existing = {}; }
+      var completed = replaceGoalAssignments ? {} : (existing.goalAssignments || {});
+      GOALS.forEach(function(g) {
+        if (store[g.id] && store[g.id].done) {
+          completed[g.id] = JSON.parse(JSON.stringify(store[g.id]));
+        }
+      });
+      localStorage.setItem(PROJECT_ASSIGNMENT_KEY, JSON.stringify({
+        projectManager: projectManager,
+        assignedBy: '机构管理员',
+        assignedAt: new Date().toISOString(),
+        goalAssignments: completed
+      }));
+    }
+    function buildCompletedGoalBlocks(store) {
       var blocks = '';
       GOALS.forEach(function(g) {
-        var st = goalAssign[g.id];
+        var st = store[g.id];
+        if (!st || !st.done) { return; }
         var rows = '';
         g.docs.forEach(function(d) {
           var dd = st.docs[d.key];
@@ -1575,9 +1622,24 @@
         rows += '<p class="text-xs text-gray-500 flex justify-between"><span>网申提交</span><span class="text-gray-900 font-medium">' + st.network + ' · ' + st.networkDdl + '</span></p>';
         blocks += '<div class="border border-gray-100 rounded-lg p-3"><p class="font-medium text-gray-900 mb-1.5">' + g.name + '</p><div class="space-y-1">' + rows + '</div></div>';
       });
+      return blocks;
+    }
+
+    /* ---------------- 确认分配（仅项目经理必填） ---------------- */
+    function confirmAssign() {
+      if (!selectedPersons.pm) { showPageToast('请选择项目经理'); return; }
+      saveActiveGoalDraft();
+      var assignedCount = goalDoneCount(goalAssign);
+      var blocks = buildCompletedGoalBlocks(goalAssign);
+      if (!assignedCount) {
+        blocks = '<div class="border border-blue-100 bg-blue-50 rounded-lg p-3"><p class="text-sm font-medium text-blue-800">院校目标成员暂不分配</p><p class="text-xs text-blue-600 mt-1">由项目经理在各院校目标详情中补充分配。</p></div>';
+      } else if (assignedCount < GOALS.length) {
+        blocks += '<div class="border border-blue-100 bg-blue-50 rounded-lg p-3 text-xs text-blue-700">其余 ' + (GOALS.length - assignedCount) + ' 个院校目标由项目经理补充分配。</div>';
+      }
+      persistProjectAssignment(goalAssign, selectedPersons.pm, true);
       var html =
         '<div class="bg-gray-50 rounded-lg p-3"><p class="text-xs text-gray-400 mb-1">项目</p><p class="font-medium text-gray-900">PRJ20260701001 — 张明（本科申请 · 3个院校目标）</p></div>' +
-        '<div class="border border-gray-100 rounded-lg p-3"><p class="font-medium text-gray-900 mb-1.5">项目经理：' + selectedPersons.pm + '</p><p class="text-xs text-gray-500">统筹整个项目，协调全部 3 个院校目标的各环节交付</p></div>' +
+        '<div class="border border-gray-100 rounded-lg p-3"><p class="font-medium text-gray-900 mb-1.5">项目经理：' + selectedPersons.pm + '</p><p class="text-xs text-gray-500">已完成项目级分配，等待项目经理接收。</p></div>' +
         blocks;
       document.getElementById('assignSummary').innerHTML = html;
       document.getElementById('assignSuccessModal').classList.remove('hidden');
@@ -1587,28 +1649,19 @@
       closeAssignDrawer();
     }
 
-    /* ---------------- 确认更换（新项目经理 + 全部院校目标更换完成） ---------------- */
+    /* ---------------- 确认更换（仅新项目经理必填） ---------------- */
     function confirmChangePM() {
       if (!selectedPersons.chgPm) { showPageToast('请选择新项目经理'); return; }
       saveChgActiveGoalDraft();
-      var undone = [];
-      GOALS.forEach(function(g) { if (!(chgGoalAssign[g.id] && chgGoalAssign[g.id].done)) { undone.push(g.name); } });
-      if (undone.length) { showPageToast('还有 ' + undone.length + ' 个院校目标未更换：' + undone.join('、')); return; }
-      var blocks = '';
-      GOALS.forEach(function(g) {
-        var st = chgGoalAssign[g.id];
-        var rows = '';
-        g.docs.forEach(function(d) {
-          var dd = st.docs[d.key];
-          rows += '<p class="text-xs text-gray-500 flex justify-between"><span>' + d.name + '（原：' + g.current[d.key] + '）</span><span class="text-gray-900 font-medium">' + dd.person + ' · ' + dd.ddl + '</span></p>';
-        });
-        rows += '<p class="text-xs text-gray-500 flex justify-between"><span>文书审核（原：' + g.current.reviewer + '）</span><span class="text-gray-900 font-medium">' + st.reviewer + '</span></p>';
-        rows += '<p class="text-xs text-gray-500 flex justify-between"><span>网申提交（原：' + g.current.network + '）</span><span class="text-gray-900 font-medium">' + st.network + ' · ' + st.networkDdl + '</span></p>';
-        blocks += '<div class="border border-gray-100 rounded-lg p-3"><p class="font-medium text-gray-900 mb-1.5">' + g.name + '</p><div class="space-y-1">' + rows + '</div></div>';
-      });
+      var changedCount = goalDoneCount(chgGoalAssign);
+      var blocks = buildCompletedGoalBlocks(chgGoalAssign);
+      if (!changedCount) {
+        blocks = '<div class="border border-gray-100 bg-gray-50 rounded-lg p-3 text-xs text-gray-600">院校目标成员未调整，继续保留当前分配。</div>';
+      }
+      persistProjectAssignment(chgGoalAssign, selectedPersons.chgPm, false);
       var html =
         '<div class="bg-gray-50 rounded-lg p-3"><p class="text-xs text-gray-400 mb-1">项目</p><p class="font-medium text-gray-900">PRJ20260701001 — 张明（本科申请 · 3个院校目标）</p></div>' +
-        '<div class="border border-gray-100 rounded-lg p-3"><p class="font-medium text-gray-900 mb-1.5">项目经理：' + selectedPersons.chgPm + '</p><p class="text-xs text-gray-500">原：张老师 ｜ 更换后统筹全部 3 个院校目标</p></div>' +
+        '<div class="border border-gray-100 rounded-lg p-3"><p class="font-medium text-gray-900 mb-1.5">项目经理：' + selectedPersons.chgPm + '</p><p class="text-xs text-gray-500">原：张老师 ｜ 本次调整 ' + changedCount + ' 个院校目标成员</p></div>' +
         blocks;
       document.getElementById('chgSummary').innerHTML = html;
       document.getElementById('chgSuccessModal').classList.remove('hidden');

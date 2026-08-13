@@ -291,16 +291,16 @@
 
     <!-- 登录表单 -->
     <form onsubmit="handleLogin(event)">
-      <!-- 用户名/邮箱 -->
+      <!-- 用户名/手机号 -->
       <div class="mb-5">
-        <label class="block text-sm font-medium text-gray-700 mb-2">用户名/邮箱</label>
+        <label class="block text-sm font-medium text-gray-700 mb-2">用户名/手机号</label>
         <div class="relative">
           <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
             <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 12a4 4 0 10-8 0 4 4 0 008 0zm0 0c0 1.346-.8 2.534-2 3.022v5.678a2.5 2.5 0 01-5 0v-5.678c-1.2-.488-2-1.676-2-3.022zm0 0a4 4 0 00-8 0 4 4 0 008 0zm0 0v1.5a2.5 2.5 0 005 0V12a4 4 0 00-8 0z"></path>
             </svg>
           </div>
-          <input type="text" id="username" placeholder="请输入用户名或邮箱" class="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none input-focus" required="">
+          <input type="text" id="username" placeholder="请输入用户名或手机号" class="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none input-focus" required="">
         </div>
       </div>
 
@@ -359,6 +359,17 @@
     var PBS_ACCOUNTS = [
       { u: 'test',     e: 'test@pbs.com',     p: 'pbs123456', name: '测试账号', role: '超级管理员',     org: 'PBS留学总部' }
     ];
+    var MANAGED_ACCOUNT_KEY = 'pbs_managed_accounts_v1';
+    function getLoginAccounts() {
+      var managed = [];
+      try {
+        managed = JSON.parse(localStorage.getItem(MANAGED_ACCOUNT_KEY) || '[]');
+        if (!Array.isArray(managed)) managed = [];
+      } catch (error) {
+        managed = [];
+      }
+      return PBS_ACCOUNTS.concat(managed);
+    }
     var ROLE_WORKBENCH = {
       '超级管理员': '管理员工作台 - 留学申请管理系统.html',
       '平台运维人员': '管理员工作台 - 留学申请管理系统.html',
@@ -389,13 +400,16 @@
       var u = document.getElementById('username').value.trim();
       var p = document.getElementById('password').value;
       var acc = null;
-      for (var i = 0; i < PBS_ACCOUNTS.length; i++) {
-        if (PBS_ACCOUNTS[i].u === u || PBS_ACCOUNTS[i].e === u) { acc = PBS_ACCOUNTS[i]; break; }
+      var loginAccounts = getLoginAccounts();
+      for (var i = 0; i < loginAccounts.length; i++) {
+        if (loginAccounts[i].u === u || loginAccounts[i].phone === u || loginAccounts[i].e === u) { acc = loginAccounts[i]; break; }
       }
-      if (!acc) { alert('账号不存在。请使用下方演示账号登录（可点击一键登录）'); return; }
-      if (acc.p !== p) { alert('密码错误。演示密码统一为：pbs123456'); return; }
-      var session = { account: acc.u, name: acc.name, role: acc.role, org: acc.org, email: acc.e };
+      if (!acc) { alert('账号不存在，请联系机构管理员确认账号信息'); return; }
+      if (acc.status === '停用') { alert('该账号已停用，请联系机构管理员'); return; }
+      if (acc.p !== p) { alert('密码错误，请重新输入'); return; }
+      var session = { account: acc.u, name: acc.name, role: acc.role, roles: acc.roles || [acc.role], org: acc.org, email: acc.e, phone: acc.phone || '', mustChangePassword: !!acc.mustChangePassword };
       localStorage.setItem('pbs_session_v1', JSON.stringify(session));
+      if (acc.mustChangePassword) alert('首次登录成功，请及时修改初始密码');
       location.href = ROLE_WORKBENCH[acc.role];
     }
 

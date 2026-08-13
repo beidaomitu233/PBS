@@ -847,6 +847,11 @@
           </div>
         </div>
         <div>
+          <label class="block text-sm text-gray-600 mb-2">登录密码 <span class="text-red-500">*</span></label>
+          <input id="edit-password" type="password" autocomplete="new-password" class="w-full h-10 px-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="8 位以上，并同时包含字母与数字">
+          <p class="text-xs text-gray-400 mt-1">保存后，该用户使用新密码登录系统。</p>
+        </div>
+        <div>
           <label class="block text-sm text-gray-600 mb-2">角色 <span class="text-xs text-blue-500 font-normal">（可多选，至少保留一个）</span></label>
           <div id="edit-roles" class="grid grid-cols-2 gap-2 max-h-56 overflow-y-auto p-1"></div>
         </div>
@@ -1042,6 +1047,38 @@
       window.setTimeout(function () { toast.remove(); }, 2600);
     }
 
+    var MANAGED_ACCOUNT_KEY = 'pbs_managed_accounts_v1';
+    function getManagedAccounts() {
+      try {
+        var accounts = JSON.parse(localStorage.getItem(MANAGED_ACCOUNT_KEY) || '[]');
+        return Array.isArray(accounts) ? accounts : [];
+      } catch (error) {
+        return [];
+      }
+    }
+    function saveManagedAccount(originalAccount, data) {
+      var accounts = getManagedAccounts();
+      var original = String(originalAccount || '').toLowerCase();
+      var index = accounts.findIndex(function (account) {
+        return String(account.u || '').toLowerCase() === original;
+      });
+      var loginAccount = {
+        u: data.account,
+        e: data.email || '',
+        phone: data.phone || '',
+        p: data.password,
+        name: data.name,
+        role: data.roles[0],
+        roles: data.roles.slice(),
+        org: data.org,
+        status: data.status || '正常',
+        mustChangePassword: !!data.mustChangePassword
+      };
+      if (index >= 0) { accounts[index] = loginAccount; }
+      else { accounts.push(loginAccount); }
+      localStorage.setItem(MANAGED_ACCOUNT_KEY, JSON.stringify(accounts));
+    }
+
     function openAddUser() {
       document.getElementById('addUserForm').reset();
       renderRoleOptions('add-roles', []);
@@ -1064,7 +1101,7 @@
       var roles = selectedRoles('add-roles');
       if (!account || !name || !phone || !password) { showModalError('add-user-error', '请完整填写所有必填项'); return; }
       if (!organization) { showModalError('add-user-error', '当前机构信息缺失，请返回后重新进入人员管理'); return; }
-      if (personnelData.some(function (person) { return person.account.toLowerCase() === account.toLowerCase(); })) { showModalError('add-user-error', '用户名已存在，请更换后重试'); return; }
+      if (personnelData.some(function (person) { return person.account.toLowerCase() === account.toLowerCase(); }) || getManagedAccounts().some(function (item) { return String(item.u || '').toLowerCase() === account.toLowerCase(); })) { showModalError('add-user-error', '用户名已存在，请更换后重试'); return; }
       if (!/^1\d{10}$/.test(phone)) { showModalError('add-user-error', '请输入正确的 11 位手机号'); return; }
       if (password.length < 8 || !/[A-Za-z]/.test(password) || !/\d/.test(password)) { showModalError('add-user-error', '初始密码需为 8 位以上，并同时包含字母与数字'); return; }
       if (!roles.length) { showModalError('add-user-error', '请至少选择一个用户角色'); return; }
@@ -1076,6 +1113,17 @@
         email: '—',
         org: organization,
         roles: roles,
+        status: '正常',
+        mustChangePassword: true
+      });
+      saveManagedAccount(account, {
+        account: account,
+        email: '',
+        phone: phone,
+        password: password,
+        name: name,
+        roles: roles,
+        org: organization,
         status: '正常',
         mustChangePassword: true
       });
@@ -1205,6 +1253,7 @@
       editingPersonId = id;
       document.getElementById('edit-account').value = p.account;
       document.getElementById('edit-phone').value = p.phone;
+      document.getElementById('edit-password').value = '';
       renderRoleOptions('edit-roles', p.roles);
       showModalError('edit-user-error', '');
       document.getElementById('editPersonModal').classList.remove('hidden');
@@ -1224,27 +1273,51 @@
       if (!p) { closeEditPerson(); return; }
       var account = gv('edit-account');
       var phone = gv('edit-phone');
+      var password = gv('edit-password');
       var checkedRoles = selectedRoles('edit-roles');
-      if (!account || !phone) { showModalError('edit-user-error', '请完整填写所有必填项'); return; }
-      if (personnelData.some(function (person) { return person.id !== editingPersonId && person.account.toLowerCase() === account.toLowerCase(); })) { showModalError('edit-user-error', '用户名已存在，请更换后重试'); return; }
+      if (!account || !phone || !password) { showModalError('edit-user-error', '请完整填写用户名、手机号和登录密码'); return; }
+      if (personnelData.some(function (person) { return person.id !== editingPersonId && person.account.toLowerCase() === account.toLowerCase(); }) || getManagedAccounts().some(function (item) { return String(item.u || '').toLowerCase() === account.toLowerCase() && String(item.u || '').toLowerCase() !== p.account.toLowerCase(); })) { showModalError('edit-user-error', '用户名已存在，请更换后重试'); return; }
       if (!/^1\d{10}$/.test(phone)) { showModalError('edit-user-error', '请输入正确的 11 位手机号'); return; }
+      if (password.length < 8 || !/[A-Za-z]/.test(password) || !/\d/.test(password)) { showModalError('edit-user-error', '登录密码需为 8 位以上，并同时包含字母与数字'); return; }
       if (!checkedRoles.length) {
         showModalError('edit-user-error', '请至少为用户保留一个角色'); return;
       }
+      var originalAccount = p.account;
       p.account = account;
       p.phone = phone;
       p.roles = checkedRoles;
+      p.mustChangePassword = true;
+      saveManagedAccount(originalAccount, {
+        account: account,
+        email: p.email === '—' ? '' : p.email,
+        phone: phone,
+        password: password,
+        name: p.name,
+        roles: checkedRoles,
+        org: p.org,
+        status: p.status,
+        mustChangePassword: true
+      });
       var updatedName = p.name;
       closeEditPerson();
       filterList();
-      showPersonnelToast('用户“' + updatedName + '”已保存，操作已记入日志');
+      showPersonnelToast('用户“' + updatedName + '”已保存，可使用新密码登录');
     }
     function togglePersonStatus(id) {
+      var changedPerson = null;
       for (var i = 0; i < personnelData.length; i++) {
         if (personnelData[i].id === id) {
           personnelData[i].status = personnelData[i].status === '正常' ? '停用' : '正常';
+          changedPerson = personnelData[i];
           break;
         }
+      }
+      if (changedPerson) {
+        var accounts = getManagedAccounts();
+        accounts.forEach(function (account) {
+          if (String(account.u || '').toLowerCase() === changedPerson.account.toLowerCase()) account.status = changedPerson.status;
+        });
+        localStorage.setItem(MANAGED_ACCOUNT_KEY, JSON.stringify(accounts));
       }
       filterList();
     }

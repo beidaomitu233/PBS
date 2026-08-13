@@ -646,10 +646,10 @@
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
             </svg>
-            分配
+            分配项目经理
           </button>
-          <button class="flex items-center gap-2 px-4 py-2 bg-orange-500 text-white rounded-lg hover:bg-orange-600 transition-colors" data-dom-id="btn-change-pm">
-            更换
+          <button class="hidden flex items-center gap-2 px-4 py-2 bg-orange-500 text-white rounded-lg hover:bg-orange-600 transition-colors" data-dom-id="btn-change-pm">
+            更换项目经理
           </button>
         </div>
         <button class="flex items-center gap-2 px-4 py-2 bg-white border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors" data-dom-id="btn-back-pool">
@@ -674,7 +674,7 @@
           <div>
             <span class="text-sm text-gray-500">项目状态</span>
             <p class="text-lg font-semibold">
-              <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
+              <span id="projectStatusBadge" data-project-status class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
                 待分配
               </span>
             </p>
@@ -696,7 +696,7 @@
               <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
               客户信息（申请人）
             </h2>
-            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-400 text-yellow-900">待分配</span>
+            <span data-project-status class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">待分配</span>
           </div>
           <div class="flex items-center gap-4 mb-4">
             <div class="w-14 h-14 bg-white bg-opacity-20 rounded-full flex items-center justify-center text-xl font-semibold">建</div>
@@ -785,15 +785,15 @@
     </main>
   
 
-  <!-- 分配抽屉：项目经理必填，院校目标成员可由机构提前分配 -->
+  <!-- 分配抽屉：一个项目仅分配一名项目经理 -->
   <div id="drawerAssign" class="fixed inset-0 z-50 hidden">
     <div class="absolute inset-0 bg-black bg-opacity-30" onclick="closeAssignDrawer()"></div>
     <div class="drawer flex flex-col" style="width:520px;">
       <!-- 头部 -->
       <div class="flex items-center justify-between px-6 py-4 border-b border-gray-200 flex-shrink-0">
         <div class="flex items-center gap-3">
-          <h2 class="text-lg font-semibold text-gray-800">分配任务</h2>
-          <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-50 text-red-600">项目经理必填</span>
+          <h2 class="text-lg font-semibold text-gray-800">分配项目经理</h2>
+          <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-50 text-blue-600">一个项目仅一名</span>
         </div>
         <button class="p-1 text-gray-400 hover:text-gray-600" onclick="closeAssignDrawer()">
           <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
@@ -829,8 +829,8 @@
           </div>
         </div>
         <!-- 项目分配信息 -->
-        <h3 class="text-sm font-medium text-gray-700 mb-3">项目分配信息</h3>
-        <!-- 卡片一：项目经理（仅项目级可分配） -->
+        <h3 class="text-sm font-medium text-gray-700 mb-3">项目经理</h3>
+        <!-- 项目经理单选：重新选择时替换当前选择，不追加人员 -->
         <div class="border border-gray-200 rounded-xl p-4 mb-4">
           <div class="flex items-center gap-2 mb-1">
             <span class="w-8 h-8 rounded-lg bg-indigo-100 flex items-center justify-center">
@@ -839,7 +839,7 @@
             <span class="text-sm font-semibold text-gray-800">项目经理</span>
             <span class="text-[10px] px-1.5 py-0.5 rounded bg-red-50 text-red-600 font-medium">必填</span>
           </div>
-          <p class="text-xs text-gray-400 mb-3 pl-10">统筹整个项目，协调文书、审核、网申各环节</p>
+          <p class="text-xs text-gray-400 mb-3 pl-10">一个项目对应一名项目经理，负责接收项目并统筹全部院校目标</p>
           <div class="relative mb-3" data-sel="pm">
             <div class="flex items-center w-full h-10 px-4 border border-gray-300 rounded-lg cursor-pointer bg-white" onclick="togglePersonDropdown(&#39;pm&#39;)">
               <span class="text-gray-400 text-sm flex-1" id="pmPlaceholder">请选择项目经理</span>
@@ -849,20 +849,22 @@
           </div>
           <p id="pmLoadHint" class="text-xs text-gray-400 bg-gray-50 rounded-lg px-3 py-2">选择项目经理后显示其负荷与擅长方向</p>
         </div>
-        <!-- 院校目标成员可选分配 -->
-        <div class="flex items-center justify-between mb-3">
+        <!-- 院校目标成员不在机构分配项目经理时维护 -->
+        <div class="hidden flex items-center justify-between mb-3" aria-hidden="true">
           <h3 class="text-sm font-medium text-gray-700">院校目标成员（可选）</h3>
           <div class="flex items-center gap-3">
             <span id="goalProgress" class="text-xs font-medium text-blue-600">0/3 已由机构分配</span>
             <button id="optionalGoalToggle" type="button" class="text-xs font-medium text-blue-600 hover:text-blue-800" onclick="toggleOptionalAssignment('optionalGoalAssignmentPanel','optionalGoalToggle','提前分配','收起')">提前分配</button>
           </div>
         </div>
-        <p class="text-xs text-gray-400 mb-2">机构可提前完成院校目标成员分配；未分配的目标由项目经理后续补充。机构已完成的目标将对项目经理锁定。</p>
+        <p class="hidden text-xs text-gray-400 mb-2" aria-hidden="true">机构不在此处维护院校目标成员。</p>
         <div id="optionalGoalAssignmentPanel" class="hidden">
         <div id="goalTabs" class="space-y-2 mb-4"><div class="rounded-lg p-2.5 cursor-pointer transition-colors border-2 border-blue-500 bg-blue-50" onclick="switchGoal(&#39;cmu&#39;)"><div class="flex items-center justify-between gap-2"><p class="text-xs font-medium text-gray-900">1. 卡内基梅隆大学 · 计算机科学</p><span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-medium bg-blue-600 text-white flex-shrink-0">分配中</span></div><p class="text-[10px] text-gray-500 mt-0.5">尊享套餐：选校规划 + 文书 + 网申 + 面试辅导</p></div><div class="rounded-lg p-2.5 cursor-pointer transition-colors border border-gray-200 bg-white hover:border-gray-300" onclick="switchGoal(&#39;berkeley&#39;)"><div class="flex items-center justify-between gap-2"><p class="text-xs font-medium text-gray-900">2. 加州大学伯克利分校 · 数据科学</p><span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-medium bg-yellow-100 text-yellow-700 flex-shrink-0">待分配</span></div><p class="text-[10px] text-gray-500 mt-0.5">标准套餐：文书 + 网申</p></div><div class="rounded-lg p-2.5 cursor-pointer transition-colors border border-gray-200 bg-white hover:border-gray-300" onclick="switchGoal(&#39;nyu&#39;)"><div class="flex items-center justify-between gap-2"><p class="text-xs font-medium text-gray-900">3. 纽约大学 · 计算机科学</p><span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-medium bg-yellow-100 text-yellow-700 flex-shrink-0">待分配</span></div><p class="text-[10px] text-gray-500 mt-0.5">标准套餐：文书 + 网申</p></div></div>
         <!-- 当前院校目标的分配面板（JS 动态渲染） -->
         <div id="goalPanel" class="mb-4"><div class="border border-blue-200 rounded-xl p-3 bg-blue-50 bg-opacity-40"><div class="border border-gray-200 rounded-xl p-4 mb-3 bg-white"><div class="flex items-center gap-2 mb-1"><span class="w-8 h-8 rounded-lg bg-blue-100 flex items-center justify-center"><svg class="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg></span><span class="text-sm font-semibold text-gray-800">文书交付人员</span><span class="text-[10px] px-1.5 py-0.5 rounded bg-blue-50 text-blue-600 font-medium">按文书分配</span></div><p class="text-xs text-gray-400 mb-3 pl-10">每种文书单独指定交付人员及交付 DDL，可选团队所有人</p><div class="border border-gray-100 rounded-lg p-3 mb-2 bg-gray-50"><p class="text-xs font-semibold text-gray-700 mb-2">PS 个人陈述（1000词 · 学术背景+研究方向）</p><div class="flex items-center gap-2"><div class="relative flex-1" data-sel="gd_PS"><div class="flex items-center w-full h-9 px-3 border border-gray-300 rounded-lg cursor-pointer bg-white" onclick="togglePersonDropdown(&#39;gd_PS&#39;)"><span class="text-gray-400 text-sm flex-1" id="gd_PSPlaceholder">选择交付人员</span><svg class="w-4 h-4 text-gray-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg></div><div id="gd_PSDropdown" class="hidden absolute left-0 right-0 mt-1 bg-white border border-gray-200 rounded-lg shadow-lg z-20 max-h-64 overflow-y-auto"></div></div><input type="date" value="2026-10-15" id="gDdl_PS" title="交付 DDL" class="w-[132px] flex-shrink-0 h-9 px-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"></div></div><div class="border border-gray-100 rounded-lg p-3 mb-2 bg-gray-50"><p class="text-xs font-semibold text-gray-700 mb-2">RL 推荐信×2（500词/封 · 导师推荐）</p><div class="flex items-center gap-2"><div class="relative flex-1" data-sel="gd_RL"><div class="flex items-center w-full h-9 px-3 border border-gray-300 rounded-lg cursor-pointer bg-white" onclick="togglePersonDropdown(&#39;gd_RL&#39;)"><span class="text-gray-400 text-sm flex-1" id="gd_RLPlaceholder">选择交付人员</span><svg class="w-4 h-4 text-gray-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg></div><div id="gd_RLDropdown" class="hidden absolute left-0 right-0 mt-1 bg-white border border-gray-200 rounded-lg shadow-lg z-20 max-h-64 overflow-y-auto"></div></div><input type="date" value="2026-10-12" id="gDdl_RL" title="交付 DDL" class="w-[132px] flex-shrink-0 h-9 px-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"></div></div><div class="border border-gray-100 rounded-lg p-3 mb-2 bg-gray-50"><p class="text-xs font-semibold text-gray-700 mb-2">CV 简历（2页 · 科研经历重点）</p><div class="flex items-center gap-2"><div class="relative flex-1" data-sel="gd_CV"><div class="flex items-center w-full h-9 px-3 border border-gray-300 rounded-lg cursor-pointer bg-white" onclick="togglePersonDropdown(&#39;gd_CV&#39;)"><span class="text-gray-400 text-sm flex-1" id="gd_CVPlaceholder">选择交付人员</span><svg class="w-4 h-4 text-gray-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg></div><div id="gd_CVDropdown" class="hidden absolute left-0 right-0 mt-1 bg-white border border-gray-200 rounded-lg shadow-lg z-20 max-h-64 overflow-y-auto"></div></div><input type="date" value="2026-10-08" id="gDdl_CV" title="交付 DDL" class="w-[132px] flex-shrink-0 h-9 px-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"></div></div><p class="text-xs text-gray-400 bg-gray-50 rounded-lg px-3 py-2">需知晓：材料准备 DDL 2026-10-01 ｜ 网申提交 DDL 2026-11-01</p></div><div class="border border-gray-200 rounded-xl p-4 mb-3 bg-white"><div class="flex items-center gap-2 mb-1"><span class="w-8 h-8 rounded-lg bg-green-100 flex items-center justify-center"><svg class="w-4 h-4 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg></span><span class="text-sm font-semibold text-gray-800">文书审核人员</span></div><p class="text-xs text-gray-400 mb-3 pl-10">需知晓：文书交付 · 网申提交</p><div class="mb-3"><div class="relative flex-1" data-sel="gReviewer"><div class="flex items-center w-full h-9 px-3 border border-gray-300 rounded-lg cursor-pointer bg-white" onclick="togglePersonDropdown(&#39;gReviewer&#39;)"><span class="text-gray-400 text-sm flex-1" id="gReviewerPlaceholder">点击选择审核人员</span><svg class="w-4 h-4 text-gray-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg></div><div id="gReviewerDropdown" class="hidden absolute left-0 right-0 mt-1 bg-white border border-gray-200 rounded-lg shadow-lg z-20 max-h-64 overflow-y-auto"></div></div></div><div class="grid grid-cols-2 gap-2"><div><label class="block text-xs text-gray-500 mb-1">文书交付</label><input type="date" value="2026-10-15" id="gDdlDocReview" class="w-full h-9 px-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"></div><div><label class="block text-xs text-gray-500 mb-1">网申提交</label><input type="date" value="2026-11-01" id="gDdlAppReview" class="w-full h-9 px-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"></div></div></div><div class="border border-gray-200 rounded-xl p-4 mb-3 bg-white"><div class="flex items-center gap-2 mb-1"><span class="w-8 h-8 rounded-lg bg-purple-100 flex items-center justify-center"><svg class="w-4 h-4 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9"></path></svg></span><span class="text-sm font-semibold text-gray-800">网申人员</span></div><p class="text-xs text-gray-400 mb-3 pl-10">需知晓：网申提交</p><div class="mb-3"><div class="relative flex-1" data-sel="gNetwork"><div class="flex items-center w-full h-9 px-3 border border-gray-300 rounded-lg cursor-pointer bg-white" onclick="togglePersonDropdown(&#39;gNetwork&#39;)"><span class="text-gray-400 text-sm flex-1" id="gNetworkPlaceholder">点击选择网申人员</span><svg class="w-4 h-4 text-gray-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg></div><div id="gNetworkDropdown" class="hidden absolute left-0 right-0 mt-1 bg-white border border-gray-200 rounded-lg shadow-lg z-20 max-h-64 overflow-y-auto"></div></div></div><div class="mb-3"><label class="block text-xs text-gray-500 mb-1">网申提交 DDL</label><input type="date" value="2026-11-01" id="gDdlAppNetwork" class="w-full h-9 px-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"></div><p class="text-xs text-gray-400 bg-gray-50 rounded-lg px-3 py-2">材料准备 DDL：2026-10-01（需在此之前齐备）</p></div><button class="w-full h-10 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm font-medium" onclick="completeGoal()">完成本院校目标分配</button></div></div>
         </div>
+
+        <div class="mb-4 rounded-lg border border-blue-100 bg-blue-50 px-3 py-2 text-xs text-blue-700">项目经理接收项目后，在各院校目标详情中分配文书、审核和网申人员。</div>
 
         <!-- 任务要求 -->
         <div class="mb-2">
@@ -896,15 +898,15 @@
     </div>
   </div>
 
-  <!-- 更换抽屉：项目经理必填，院校目标成员按需更换 -->
+  <!-- 更换抽屉：仅替换该项目唯一的项目经理 -->
   <div id="drawerChange" class="fixed inset-0 z-50 hidden">
     <div class="absolute inset-0 bg-black bg-opacity-30" onclick="closeChangePMDrawer()"></div>
     <div class="drawer flex flex-col" style="width:520px;">
       <!-- 头部 -->
       <div class="flex items-center justify-between px-6 py-4 border-b border-gray-200 flex-shrink-0">
         <div class="flex items-center gap-3">
-          <h2 class="text-lg font-semibold text-gray-800">更换项目人员</h2>
-          <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-50 text-red-600">项目经理必填</span>
+          <h2 class="text-lg font-semibold text-gray-800">更换项目经理</h2>
+          <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-50 text-blue-600">替换原负责人</span>
         </div>
         <button class="p-1 text-gray-400 hover:text-gray-600" onclick="closeChangePMDrawer()">
           <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
@@ -919,12 +921,11 @@
             <div class="flex justify-between"><span class="text-gray-500">学生姓名</span><span class="text-gray-900 font-medium">张明</span></div>
             <div class="flex justify-between"><span class="text-gray-500">项目号</span><span class="text-gray-900">PRJ20260701001</span></div>
             <div class="flex justify-between"><span class="text-gray-500">购买项目</span><span class="text-gray-900">美国本科申请 + 英国本科申请</span></div>
-            <div class="flex justify-between"><span class="text-gray-500">当前项目经理</span><span class="text-gray-900 font-medium">张老师</span></div>
-            <div class="flex justify-between"><span class="text-gray-500">当前团队</span><span class="text-gray-900">刘老师（文书）· 孙老师（审核）· 吴老师（网申）</span></div>
+            <div class="flex justify-between"><span class="text-gray-500">当前项目经理</span><span id="currentProjectManager" class="text-gray-900 font-medium">张老师</span></div>
           </div>
         </div>
         <!-- 项目分配信息 -->
-        <h3 class="text-sm font-medium text-gray-700 mb-3">项目分配信息</h3>
+        <h3 class="text-sm font-medium text-gray-700 mb-3">新项目经理</h3>
         <!-- 卡片一：项目经理（仅项目级可更换） -->
         <div class="border border-gray-200 rounded-xl p-4 mb-4">
           <div class="flex items-center gap-2 mb-1">
@@ -934,7 +935,7 @@
             <span class="text-sm font-semibold text-gray-800">项目经理</span>
             <span class="text-[10px] px-1.5 py-0.5 rounded bg-indigo-50 text-indigo-600 font-medium">仅项目级可更换</span>
           </div>
-          <p class="text-xs text-gray-400 mb-3 pl-10">当前：张老师 ｜ 更换后新经理将统筹全部 3 个院校目标</p>
+          <p id="currentManagerSummary" class="text-xs text-gray-400 mb-3 pl-10">当前：张老师 ｜ 更换后新经理将接管整个项目</p>
           <div class="relative mb-3" data-sel="chgPm">
             <div class="flex items-center w-full h-10 px-4 border border-gray-300 rounded-lg cursor-pointer bg-white" onclick="togglePersonDropdown(&#39;chgPm&#39;)">
               <span class="text-gray-400 text-sm flex-1" id="chgPmPlaceholder">点击选择新项目经理</span>
@@ -944,20 +945,22 @@
           </div>
           <p id="chgPmLoadHint" class="text-xs text-gray-400 bg-gray-50 rounded-lg px-3 py-2">选择新项目经理后显示其负荷与擅长方向</p>
         </div>
-        <!-- 院校目标人员按需更换 -->
-        <div class="flex items-center justify-between mb-3">
+        <!-- 更换项目经理时不修改院校目标成员 -->
+        <div class="hidden flex items-center justify-between mb-3" aria-hidden="true">
           <h3 class="text-sm font-medium text-gray-700">院校目标人员（可选更换）</h3>
           <div class="flex items-center gap-3">
             <span id="chgGoalProgress" class="text-xs font-medium text-blue-600">0/3 已更换</span>
             <button id="optionalChangeToggle" type="button" class="text-xs font-medium text-blue-600 hover:text-blue-800" onclick="toggleOptionalAssignment('optionalChangeAssignmentPanel','optionalChangeToggle','按需更换','收起')">按需更换</button>
           </div>
         </div>
-        <p class="text-xs text-gray-400 mb-2">只需处理本次需要调整的院校目标；未更换的目标继续保留当前成员。</p>
+        <p class="hidden text-xs text-gray-400 mb-2" aria-hidden="true">更换项目经理时不修改院校目标成员。</p>
         <div id="optionalChangeAssignmentPanel" class="hidden">
         <div id="chgGoalTabs" class="space-y-2 mb-4"></div>
         <!-- 当前院校目标的更换面板（JS 动态渲染） -->
         <div id="chgGoalPanel" class="mb-4"></div>
         </div>
+
+        <div class="mb-4 rounded-lg border border-blue-100 bg-blue-50 px-3 py-2 text-xs text-blue-700">更换后，该项目仅保留新项目经理；各院校目标原有成员不变。</div>
 
         <!-- 任务要求 -->
         <div class="mb-2">
@@ -1165,7 +1168,12 @@
     }
     function personListFor(key) {
       var role = personRoleFor(key);
-      return TEAM.filter(function(person) { return person.role === role; });
+      var people = TEAM.filter(function(person) { return person.role === role; });
+      if (key.toLowerCase() === 'chgpm') {
+        var currentManager = readProjectAssignment().projectManager;
+        people = people.filter(function(person) { return person.name !== currentManager; });
+      }
+      return people;
     }
 
     function togglePersonDropdown(key) {
@@ -1552,9 +1560,6 @@
       if (button) { button.textContent = openText; }
     }
     function openAssignDrawer() {
-      renderGoalTabs();
-      renderGoalPanel();
-      collapseOptionalAssignment('optionalGoalAssignmentPanel', 'optionalGoalToggle', '提前分配');
       document.getElementById('drawerAssign').classList.remove('hidden');
       document.body.style.overflow = 'hidden';
     }
@@ -1563,9 +1568,17 @@
       document.body.style.overflow = '';
     }
     function openChangePMDrawer() {
-      renderChgGoalTabs();
-      renderChgGoalPanel();
-      collapseOptionalAssignment('optionalChangeAssignmentPanel', 'optionalChangeToggle', '按需更换');
+      var currentManager = readProjectAssignment().projectManager;
+      if (!currentManager) {
+        showPageToast('请先为项目分配项目经理');
+        return;
+      }
+      selectedPersons.chgPm = null;
+      var placeholder = document.getElementById('chgPmPlaceholder');
+      placeholder.textContent = '点击选择新项目经理';
+      placeholder.className = 'text-gray-400 text-sm flex-1';
+      document.getElementById('currentProjectManager').textContent = currentManager;
+      document.getElementById('currentManagerSummary').textContent = '当前：' + currentManager + ' ｜ 更换后新经理将接管整个项目';
       document.getElementById('drawerChange').classList.remove('hidden');
       document.body.style.overflow = 'hidden';
     }
@@ -1592,21 +1605,37 @@
     function distVal(id) { var el = document.getElementById(id); return el ? el.value : ''; }
 
     var PROJECT_ASSIGNMENT_KEY = 'pbs_project_assignment_PRJ20260701001';
-    function persistProjectAssignment(store, projectManager, replaceGoalAssignments) {
-      var existing = {};
-      try { existing = JSON.parse(localStorage.getItem(PROJECT_ASSIGNMENT_KEY) || '{}'); } catch (e) { existing = {}; }
-      var completed = replaceGoalAssignments ? {} : (existing.goalAssignments || {});
-      GOALS.forEach(function(g) {
-        if (store[g.id] && store[g.id].done) {
-          completed[g.id] = JSON.parse(JSON.stringify(store[g.id]));
-        }
-      });
+    function readProjectAssignment() {
+      try { return JSON.parse(localStorage.getItem(PROJECT_ASSIGNMENT_KEY) || '{}'); }
+      catch (e) { return {}; }
+    }
+    function persistProjectManager(projectManager) {
+      var existing = readProjectAssignment();
       localStorage.setItem(PROJECT_ASSIGNMENT_KEY, JSON.stringify({
         projectManager: projectManager,
         assignedBy: '机构管理员',
         assignedAt: new Date().toISOString(),
-        goalAssignments: completed
+        goalAssignments: existing.goalAssignments || {}
       }));
+    }
+    function syncProjectAssignmentState() {
+      var assignment = readProjectAssignment();
+      var assigned = !!assignment.projectManager;
+      var assignButton = document.querySelector('[data-dom-id="btn-assign"]');
+      var changeButton = document.querySelector('[data-dom-id="btn-change-pm"]');
+      if (assignButton) { assignButton.classList.toggle('hidden', assigned); }
+      if (changeButton) { changeButton.classList.toggle('hidden', !assigned); }
+      document.querySelectorAll('[data-project-status]').forEach(function(statusBadge) {
+        statusBadge.textContent = assigned ? '已分配' : '待分配';
+        statusBadge.classList.toggle('bg-yellow-100', !assigned);
+        statusBadge.classList.toggle('text-yellow-800', !assigned);
+        statusBadge.classList.toggle('bg-green-100', assigned);
+        statusBadge.classList.toggle('text-green-800', assigned);
+      });
+      if (assigned) {
+        document.getElementById('currentProjectManager').textContent = assignment.projectManager;
+        document.getElementById('currentManagerSummary').textContent = '当前：' + assignment.projectManager + ' ｜ 更换后新经理将接管整个项目';
+      }
     }
     function buildCompletedGoalBlocks(store) {
       var blocks = '';
@@ -1625,50 +1654,40 @@
       return blocks;
     }
 
-    /* ---------------- 确认分配（仅项目经理必填） ---------------- */
+    /* ---------------- 确认分配（一个项目仅一名项目经理） ---------------- */
     function confirmAssign() {
       if (!selectedPersons.pm) { showPageToast('请选择项目经理'); return; }
-      saveActiveGoalDraft();
-      var assignedCount = goalDoneCount(goalAssign);
-      var blocks = buildCompletedGoalBlocks(goalAssign);
-      if (!assignedCount) {
-        blocks = '<div class="border border-blue-100 bg-blue-50 rounded-lg p-3"><p class="text-sm font-medium text-blue-800">院校目标成员暂不分配</p><p class="text-xs text-blue-600 mt-1">由项目经理在各院校目标详情中补充分配。</p></div>';
-      } else if (assignedCount < GOALS.length) {
-        blocks += '<div class="border border-blue-100 bg-blue-50 rounded-lg p-3 text-xs text-blue-700">其余 ' + (GOALS.length - assignedCount) + ' 个院校目标由项目经理补充分配。</div>';
-      }
-      persistProjectAssignment(goalAssign, selectedPersons.pm, true);
+      persistProjectManager(selectedPersons.pm);
       var html =
         '<div class="bg-gray-50 rounded-lg p-3"><p class="text-xs text-gray-400 mb-1">项目</p><p class="font-medium text-gray-900">PRJ20260701001 — 张明（本科申请 · 3个院校目标）</p></div>' +
-        '<div class="border border-gray-100 rounded-lg p-3"><p class="font-medium text-gray-900 mb-1.5">项目经理：' + selectedPersons.pm + '</p><p class="text-xs text-gray-500">已完成项目级分配，等待项目经理接收。</p></div>' +
-        blocks;
+        '<div class="border border-blue-100 bg-blue-50 rounded-lg p-3"><p class="font-medium text-blue-900 mb-1.5">项目经理：' + selectedPersons.pm + '</p><p class="text-xs text-blue-700">该经理负责整个项目，等待其接收项目。</p></div>' +
+        '<p class="text-xs text-gray-500">院校目标成员由项目经理后续在院校目标详情中分配。</p>';
       document.getElementById('assignSummary').innerHTML = html;
       document.getElementById('assignSuccessModal').classList.remove('hidden');
     }
     function finishAssign() {
       document.getElementById('assignSuccessModal').classList.add('hidden');
       closeAssignDrawer();
+      syncProjectAssignmentState();
     }
 
-    /* ---------------- 确认更换（仅新项目经理必填） ---------------- */
+    /* ---------------- 确认更换（替换项目唯一经理） ---------------- */
     function confirmChangePM() {
       if (!selectedPersons.chgPm) { showPageToast('请选择新项目经理'); return; }
-      saveChgActiveGoalDraft();
-      var changedCount = goalDoneCount(chgGoalAssign);
-      var blocks = buildCompletedGoalBlocks(chgGoalAssign);
-      if (!changedCount) {
-        blocks = '<div class="border border-gray-100 bg-gray-50 rounded-lg p-3 text-xs text-gray-600">院校目标成员未调整，继续保留当前分配。</div>';
-      }
-      persistProjectAssignment(chgGoalAssign, selectedPersons.chgPm, false);
+      var originalManager = readProjectAssignment().projectManager;
+      if (selectedPersons.chgPm === originalManager) { showPageToast('新项目经理不能与当前项目经理相同'); return; }
+      persistProjectManager(selectedPersons.chgPm);
       var html =
         '<div class="bg-gray-50 rounded-lg p-3"><p class="text-xs text-gray-400 mb-1">项目</p><p class="font-medium text-gray-900">PRJ20260701001 — 张明（本科申请 · 3个院校目标）</p></div>' +
-        '<div class="border border-gray-100 rounded-lg p-3"><p class="font-medium text-gray-900 mb-1.5">项目经理：' + selectedPersons.chgPm + '</p><p class="text-xs text-gray-500">原：张老师 ｜ 本次调整 ' + changedCount + ' 个院校目标成员</p></div>' +
-        blocks;
+        '<div class="border border-blue-100 bg-blue-50 rounded-lg p-3"><p class="font-medium text-blue-900 mb-1.5">新项目经理：' + selectedPersons.chgPm + '</p><p class="text-xs text-blue-700">原项目经理：' + originalManager + ' ｜ 新经理接管整个项目</p></div>' +
+        '<p class="text-xs text-gray-500">各院校目标原有成员保持不变。</p>';
       document.getElementById('chgSummary').innerHTML = html;
       document.getElementById('chgSuccessModal').classList.remove('hidden');
     }
     function finishChange() {
       document.getElementById('chgSuccessModal').classList.add('hidden');
       closeChangePMDrawer();
+      syncProjectAssignmentState();
     }
 
     /* ---------------- 支付节点自定义配置 ---------------- */
@@ -1815,6 +1834,7 @@
     }
 
     document.addEventListener('DOMContentLoaded', function() {
+      syncProjectAssignmentState();
       var assignBtn = document.querySelector('[data-dom-id="btn-assign"]');
       if (assignBtn) assignBtn.addEventListener('click', openAssignDrawer);
 

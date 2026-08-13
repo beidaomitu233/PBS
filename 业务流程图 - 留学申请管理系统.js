@@ -182,6 +182,7 @@
   var allowedIds = session && roleViews[session.role] ? roleViews[session.role] : null;
   var activeId = 'main';
   var editorDraft = null;
+  var draggedEditorStep = null;
 
   function visibleViews() { return allowedIds ? views.filter(function (view) { return allowedIds.indexOf(view.id) >= 0; }) : views; }
   function currentView() { return views.find(function (view) { return view.id === activeId; }) || views[0]; }
@@ -241,11 +242,11 @@
           '<input class="input note-input" value="' + escapeHtml(step.note) + '" placeholder="例如：机构管理员分配项目经理" aria-label="卡片说明">' +
           '<select class="select page-select" aria-label="跳转页面">' + pageOptions(step.page) + '</select>' +
           '<select class="select type-select" aria-label="节点类型">' + typeOptions(step.type) + '</select>' +
-          '<div class="row-controls"><button onclick="moveEditorStep(' + laneIndex + ',' + stepIndex + ',-1)" aria-label="上移">↑</button><button onclick="moveEditorStep(' + laneIndex + ',' + stepIndex + ',1)" aria-label="下移">↓</button><button class="remove" onclick="removeEditorStep(' + laneIndex + ',' + stepIndex + ')" aria-label="删除">×</button></div>' +
+          '<div class="row-controls"><button type="button" class="drag-handle" draggable="true" ondragstart="startEditorDrag(event,' + laneIndex + ',' + stepIndex + ')" ondragend="endEditorDrag()" onkeydown="keyboardEditorDrag(event,' + laneIndex + ',' + stepIndex + ')" aria-label="拖拽调整顺序" title="按住拖拽排序；也可按 Alt + 上下方向键">⠿</button><button type="button" class="remove" onclick="removeEditorStep(' + laneIndex + ',' + stepIndex + ')" aria-label="删除">×</button></div>' +
           '</div>';
       }).join('');
-      var columns = '<div class="editor-columns"><span>序号</span><span>卡片标题</span><span>卡片说明</span><span>点击后跳转页面</span><span>节点类型</span><span>排序 / 删除</span></div>';
-      return '<section class="editor-lane"><div class="editor-lane-head"><h4>' + escapeHtml(lane.title || editorDraft.label) + '</h4><button class="btn sm" onclick="addEditorStep(' + laneIndex + ')">添加卡片</button></div><div class="editor-rows">' + columns + rows + '</div></section>';
+      var columns = '<div class="editor-columns"><span>序号</span><span>卡片标题</span><span>卡片说明</span><span>点击后跳转页面</span><span>节点类型</span><span>拖拽排序 / 删除</span></div>';
+      return '<section class="editor-lane"><div class="editor-lane-head"><h4>' + escapeHtml(lane.title || editorDraft.label) + '</h4><button class="btn sm" onclick="addEditorStep(' + laneIndex + ')">添加卡片</button></div><div class="editor-rows" data-editor-lane="' + laneIndex + '" ondragover="overEditorDrag(event,' + laneIndex + ')" ondragleave="leaveEditorDrag(event)" ondrop="dropEditorStep(event,' + laneIndex + ')">' + columns + rows + '</div></section>';
     }).join('');
   }
 
@@ -282,14 +283,76 @@
     editorDraft.lanes[laneIndex].steps.splice(stepIndex, 1);
     renderEditor();
   };
-  window.moveEditorStep = function (laneIndex, stepIndex, offset) {
+
+  function clearEditorDropMarkers() {
+    byId('editorLanes').querySelectorAll('.editor-row').forEach(function (row) {
+      row.classList.remove('drag-before', 'drag-after');
+    });
+  }
+  function clearEditorDragState() {
+    clearEditorDropMarkers();
+    byId('editorLanes').querySelectorAll('.editor-row.dragging').forEach(function (row) { row.classList.remove('dragging'); });
+  }
+  function reorderEditorStep(laneIndex, stepIndex, targetIndex) {
     syncEditorInputs();
     var steps = editorDraft.lanes[laneIndex].steps;
-    var target = stepIndex + offset;
-    if (target < 0 || target >= steps.length) return;
+    if (targetIndex < 0 || targetIndex >= steps.length || targetIndex === stepIndex) return false;
     var moved = steps.splice(stepIndex, 1)[0];
-    steps.splice(target, 0, moved);
+    steps.splice(targetIndex, 0, moved);
     renderEditor();
+    return true;
+  }
+  window.startEditorDrag = function (event, laneIndex, stepIndex) {
+    syncEditorInputs();
+    draggedEditorStep = { laneIndex: laneIndex, stepIndex: stepIndex };
+    event.dataTransfer.effectAllowed = 'move';
+    event.dataTransfer.setData('text/plain', laneIndex + ':' + stepIndex);
+    var row = event.target.closest('.editor-row');
+    setTimeout(function () { if (row) row.classList.add('dragging'); }, 0);
+  };
+  window.overEditorDrag = function (event, laneIndex) {
+    if (!draggedEditorStep || draggedEditorStep.laneIndex !== laneIndex) return;
+    var row = event.target.closest('.editor-row');
+    if (!row) return;
+    event.preventDefault();
+    event.dataTransfer.dropEffect = 'move';
+    clearEditorDropMarkers();
+    var rect = row.getBoundingClientRect();
+    row.classList.add(event.clientY < rect.top + rect.height / 2 ? 'drag-before' : 'drag-after');
+  };
+  window.leaveEditorDrag = function (event) {
+    var row = event.target.closest('.editor-row');
+    if (row && !row.contains(event.relatedTarget)) row.classList.remove('drag-before', 'drag-after');
+  };
+  window.dropEditorStep = function (event, laneIndex) {
+    if (!draggedEditorStep || draggedEditorStep.laneIndex !== laneIndex) return;
+    var row = event.target.closest('.editor-row');
+    if (!row) return;
+    event.preventDefault();
+    var targetIndex = Number(row.dataset.step);
+    var rect = row.getBoundingClientRect();
+    var insertAfter = event.clientY >= rect.top + rect.height / 2;
+    if (insertAfter) targetIndex += 1;
+    if (draggedEditorStep.stepIndex < targetIndex) targetIndex -= 1;
+    var fromIndex = draggedEditorStep.stepIndex;
+    draggedEditorStep = null;
+    clearEditorDragState();
+    if (reorderEditorStep(laneIndex, fromIndex, targetIndex)) showToast('卡片顺序已调整');
+  };
+  window.endEditorDrag = function () {
+    draggedEditorStep = null;
+    clearEditorDragState();
+  };
+  window.keyboardEditorDrag = function (event, laneIndex, stepIndex) {
+    if (!event.altKey || (event.key !== 'ArrowUp' && event.key !== 'ArrowDown')) return;
+    event.preventDefault();
+    var targetIndex = stepIndex + (event.key === 'ArrowUp' ? -1 : 1);
+    if (!reorderEditorStep(laneIndex, stepIndex, targetIndex)) return;
+    setTimeout(function () {
+      var handle = byId('editorLanes').querySelector('.editor-row[data-lane="' + laneIndex + '"][data-step="' + targetIndex + '"] .drag-handle');
+      if (handle) handle.focus();
+    }, 0);
+    showToast('卡片顺序已调整');
   };
 
   window.saveFlowEditor = function () {

@@ -203,7 +203,7 @@
 
   function stepHtml(step, index) {
     return '<a class="step ' + escapeHtml(step.type || '') + '" href="' + encodeURI(step.page) + '" aria-label="进入' + escapeHtml(step.title) + '对应页面">' +
-      '<div class="step-number">' + (index + 1) + '</div><h4>' + escapeHtml(step.title) + '</h4><p>' + escapeHtml(step.note) + '</p><span class="step-link">进入页面 →</span></a>';
+      '<div class="step-number">' + (index + 1) + '</div><h4>' + escapeHtml(step.title) + '</h4><p>' + escapeHtml(step.note) + '</p></a>';
   }
 
   function renderFlow(view) {
@@ -237,14 +237,15 @@
       var rows = lane.steps.map(function (step, stepIndex) {
         return '<div class="editor-row" data-lane="' + laneIndex + '" data-step="' + stepIndex + '">' +
           '<div class="row-index">' + (stepIndex + 1) + '</div>' +
-          '<input class="input title-input" value="' + escapeHtml(step.title) + '" aria-label="卡片标题">' +
-          '<input class="input note-input" value="' + escapeHtml(step.note) + '" aria-label="卡片说明">' +
+          '<input class="input title-input" value="' + escapeHtml(step.title) + '" placeholder="例如：项目分配" aria-label="卡片标题">' +
+          '<input class="input note-input" value="' + escapeHtml(step.note) + '" placeholder="例如：机构管理员分配项目经理" aria-label="卡片说明">' +
           '<select class="select page-select" aria-label="跳转页面">' + pageOptions(step.page) + '</select>' +
           '<select class="select type-select" aria-label="节点类型">' + typeOptions(step.type) + '</select>' +
           '<div class="row-controls"><button onclick="moveEditorStep(' + laneIndex + ',' + stepIndex + ',-1)" aria-label="上移">↑</button><button onclick="moveEditorStep(' + laneIndex + ',' + stepIndex + ',1)" aria-label="下移">↓</button><button class="remove" onclick="removeEditorStep(' + laneIndex + ',' + stepIndex + ')" aria-label="删除">×</button></div>' +
           '</div>';
       }).join('');
-      return '<section class="editor-lane"><div class="editor-lane-head"><h4>' + escapeHtml(lane.title || editorDraft.label) + '</h4><button class="btn sm" onclick="addEditorStep(' + laneIndex + ')">添加卡片</button></div><div class="editor-rows">' + rows + '</div></section>';
+      var columns = '<div class="editor-columns"><span>序号</span><span>卡片标题</span><span>卡片说明</span><span>点击后跳转页面</span><span>节点类型</span><span>排序 / 删除</span></div>';
+      return '<section class="editor-lane"><div class="editor-lane-head"><h4>' + escapeHtml(lane.title || editorDraft.label) + '</h4><button class="btn sm" onclick="addEditorStep(' + laneIndex + ')">添加卡片</button></div><div class="editor-rows">' + columns + rows + '</div></section>';
     }).join('');
   }
 

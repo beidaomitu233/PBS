@@ -66,7 +66,6 @@
   /* ---------------- 菜单定义（RBAC） ---------------- */
   var MENUS = [
     { key: 'workbench', label: '工作台首页', icon: 'home', roles: ROLES.slice(), single: true },
-    { key: 'businessflow', label: '业务流程图', icon: 'map', roles: ROLES.slice(), single: true, file: '业务流程图 - 留学申请管理系统.html' },
     { key: 'student', label: '学生档案', icon: 'idcard',
       roles: ['平台运维人员', '机构管理员', '销售人员管理员', '销售人员', '项目经理', '文书人员', '网申人员', '文书审核'],
       children: [{ label: '学生档案列表', file: '学生档案列表页 - 留学申请管理系统.html' }] },
@@ -136,7 +135,6 @@
     '角色权限管理 - 留学申请管理系统.html': ['平台运维人员'],
     '操作日志审计 - 留学申请管理系统.html': ['平台运维人员'],
     'AI管理 - 留学申请管理系统.html': ['平台运维人员', '机构管理员'],
-    '业务流程图 - 留学申请管理系统.html': ROLES.slice(),
     '文书审核列表页 - 留学申请管理系统.html': ['文书审核'],
     '文书审核详情页 - 留学申请管理系统.html': ['文书审核'],
     '选校订单池页 - 留学申请管理系统.html': ['机构管理员', '销售人员管理员', '销售人员'],
@@ -218,12 +216,6 @@
       var studentTarget = studentMenu.children[0].file;
       var studentActive = !workbenchView && NAV_ACTIVE_FILES[studentTarget].indexOf(file) >= 0;
       html += '<a href="' + encodeURI(studentTarget) + '" class="pbs-pm-primary-link ' + (studentActive ? 'is-active' : '') + '">' + svgIcon(ICONS.idcard, 'w-5 h-5') + '<span>学生档案</span></a>';
-    }
-
-    var businessFlowMenu = menuMap.businessflow;
-    if (role !== '项目经理' && businessFlowMenu && roleCanAccess(role, businessFlowMenu.roles)) {
-      var businessActive = !workbenchView && file === businessFlowMenu.file;
-      html += '<a href="' + encodeURI(businessFlowMenu.file) + '" class="pbs-pm-primary-link ' + (businessActive ? 'is-active' : '') + '">' + svgIcon(ICONS.map, 'w-5 h-5') + '<span>业务流程图</span></a>';
     }
 
     html += '<p class="pbs-pm-flow-caption">业务功能流程</p><div class="pbs-pm-flow">';
@@ -558,6 +550,10 @@
     var session = getSession();
     if (!session || !session.role) { session = { account: 'demo_admin', name: '演示管理员', role: '超级管理员', org: 'PBS留学', email: 'demo@pbs.local' }; }
     session = withPreviewRole(session);
+    if (file === '业务流程图 - 留学申请管理系统.html') {
+      location.replace(ROLE_WORKBENCH[session.role] || ROLE_WORKBENCH['超级管理员']);
+      return;
+    }
     /* 页面级RBAC（超级管理员放行所有页面） */
     var perms = PAGE_PERMS[file];
     if (perms && !roleCanAccess(session.role, perms)) {

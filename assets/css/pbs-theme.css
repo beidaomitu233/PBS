@@ -193,6 +193,105 @@ span.rounded-full { letter-spacing: 0.01em; }
   cursor: pointer;
 }
 
+/* ---------- 项目经理流程式导航 ---------- */
+.pbs-pm-navigation {
+  overflow-y: auto;
+}
+.pbs-pm-primary-link {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 44px;
+  margin-bottom: 4px;
+  padding: 0 14px;
+  border-radius: 10px;
+  color: #5F5B6F;
+  font-size: 14px;
+  font-weight: 600;
+  transition: color .16s ease, background-color .16s ease;
+}
+.pbs-pm-primary-link:hover,
+.pbs-pm-primary-link.is-active {
+  color: #5E4FC4;
+  background: #F1EFFF;
+}
+.pbs-pm-flow-caption {
+  margin: 20px 10px 12px;
+  color: #A09BAF;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: .08em;
+}
+.pbs-pm-flow-step {
+  position: relative;
+  padding: 0 0 12px 0;
+}
+.pbs-pm-flow-step:not(:last-child)::after {
+  content: '';
+  position: absolute;
+  top: 34px;
+  bottom: -2px;
+  left: 17px;
+  width: 1px;
+  background: #DDD9EC;
+}
+.pbs-pm-flow-heading {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  min-height: 36px;
+  color: #4F4A60;
+  font-size: 14px;
+  font-weight: 700;
+}
+.pbs-pm-flow-number {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  flex: 0 0 34px;
+  border: 1px solid #D8D3EB;
+  border-radius: 50%;
+  background: #FFFFFF;
+  color: #776B9A;
+  font-size: 13px;
+  font-weight: 800;
+  box-shadow: 0 3px 8px rgba(67, 54, 112, .06);
+}
+.pbs-pm-flow-step.is-active .pbs-pm-flow-heading {
+  color: #5E4FC4;
+}
+.pbs-pm-flow-step.is-active .pbs-pm-flow-number {
+  border-color: #7C6AED;
+  background: #7C6AED;
+  color: #FFFFFF;
+}
+.pbs-pm-flow-children {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  gap: 3px;
+  margin: 3px 0 0 45px;
+}
+.pbs-pm-flow-link {
+  display: block;
+  padding: 7px 10px;
+  border-radius: 8px;
+  color: #777286;
+  font-size: 13px;
+  line-height: 18px;
+  transition: color .16s ease, background-color .16s ease;
+}
+.pbs-pm-flow-link:hover,
+.pbs-pm-flow-link.is-active {
+  color: #5E4FC4;
+  background: #F3F1FF;
+  font-weight: 600;
+}
+
 /* ---------- 5.1 项目经理驾驶舱 ---------- */
 .pm-cockpit-hero {
   position: relative;

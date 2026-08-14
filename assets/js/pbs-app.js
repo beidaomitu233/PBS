@@ -186,11 +186,72 @@
     return f;
   }
 
+  function renderProjectManagerNavigation(file, workbenchFile) {
+    var studentFiles = ['学生档案列表页 - 留学申请管理系统.html', '学生档案详情页 - 留学申请管理系统.html'];
+    var steps = [
+      { number: 1, label: '项目管理', children: [
+        { label: '项目池列表', file: '项目池列表页 - 留学申请管理系统.html', activeFiles: ['项目池列表页 - 留学申请管理系统.html', '项目详情页 - 留学申请管理系统.html'] },
+        { label: '我的项目列表', file: '我的项目列表页 - 留学申请管理系统.html', activeFiles: ['我的项目列表页 - 留学申请管理系统.html', '我的项目详情页 - 留学申请管理系统.html'] }
+      ] },
+      { number: 2, label: '文书交付', children: [
+        { label: '任务列表', file: '任务列表页 - 文书交付系统.html', activeFiles: ['任务列表页 - 文书交付系统.html', '文书编辑器 - 文书交付系统.html'] },
+        { label: '模板库', file: '模板库列表 - 文书交付系统.html', activeFiles: ['模板库列表 - 文书交付系统.html', '模板库编辑 - 文书交付系统.html'] },
+        { label: '案例库', file: '案例库 - 文书交付系统.html' }
+      ] },
+      { number: 3, label: '文书审核', children: [
+        { label: '文书审核列表', file: '文书审核列表页 - 留学申请管理系统.html', activeFiles: ['文书审核列表页 - 留学申请管理系统.html', '文书审核详情页 - 留学申请管理系统.html'] }
+      ] },
+      { number: 4, label: '网申管理', children: [
+        { label: '网申任务列表', file: '网申任务列表页 - 留学申请管理系统.html', activeFiles: ['网申任务列表页 - 留学申请管理系统.html', '网申任务详情页 - 留学申请管理系统.html'] },
+        { label: '网申模板库', file: '网申模板库 - 留学申请管理系统.html' }
+      ] },
+      { number: 5, label: '监控管理', children: [
+        { label: '监控任务列表', file: '监控任务列表 - PBS留学CRM.html', activeFiles: ['监控任务列表 - PBS留学CRM.html', '监控详情页 - 留学申请管理系统.html'] }
+      ] },
+      { number: 6, label: '结项归档', children: [
+        { label: '结项归档列表', file: '结项归档列表 - PBS留学CRM系统.html', activeFiles: ['结项归档列表 - PBS留学CRM系统.html', '结项详情页 - 留学申请管理系统.html'] }
+      ] }
+    ];
+    var workbenchActive = file === workbenchFile;
+    var studentActive = studentFiles.indexOf(file) >= 0;
+    var html = '<nav class="p-4 flex-1 pbs-pm-navigation">' +
+      '<a href="' + encodeURI(workbenchFile) + '" class="pbs-pm-primary-link ' + (workbenchActive ? 'is-active' : '') + '">' + svgIcon(ICONS.home, 'w-5 h-5') + '<span>工作台</span></a>' +
+      '<a href="' + encodeURI(studentFiles[0]) + '" class="pbs-pm-primary-link ' + (studentActive ? 'is-active' : '') + '">' + svgIcon(ICONS.idcard, 'w-5 h-5') + '<span>学生档案</span></a>' +
+      '<p class="pbs-pm-flow-caption">项目交付流程</p><div class="pbs-pm-flow">';
+    steps.forEach(function(step) {
+      var stepActive = step.children.some(function(child) {
+        return (child.activeFiles || [child.file]).indexOf(file) >= 0;
+      });
+      html += '<div class="pbs-pm-flow-step ' + (stepActive ? 'is-active' : '') + '">' +
+        '<div class="pbs-pm-flow-heading"><span class="pbs-pm-flow-number">' + step.number + '</span><span>' + step.label + '</span></div>' +
+        '<div class="pbs-pm-flow-children">';
+      step.children.forEach(function(child) {
+        var childActive = (child.activeFiles || [child.file]).indexOf(file) >= 0;
+        html += '<a href="' + encodeURI(child.file) + '" class="pbs-pm-flow-link ' + (childActive ? 'is-active' : '') + '">' + child.label + '</a>';
+      });
+      html += '</div></div>';
+    });
+    return html + '</div></nav>';
+  }
+
   function renderSidebar(session, file) {
     var aside = document.getElementById('pbs-sidebar');
     if (!aside) return;
     var role = session.role;
     var workbenchFile = ROLE_WORKBENCH[role];
+
+    if (role === '项目经理') {
+      var pmHtml = renderProjectManagerNavigation(file, workbenchFile);
+      pmHtml += '<div class="p-4 border-t border-gray-100">' +
+        '<div class="flex items-center gap-3 px-3 py-3 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl">' +
+        '<div class="w-9 h-9 bg-gradient-to-br from-blue-500 to-purple-500 rounded-full flex items-center justify-center flex-shrink-0">' +
+        '<span class="text-white text-sm font-medium">' + session.name.charAt(0) + '</span></div>' +
+        '<div class="min-w-0"><p class="text-sm font-semibold text-gray-800 truncate">' + session.name + '</p>' +
+        '<p class="text-xs text-blue-600 truncate">' + (session.previewLabel || session.role) + '</p></div></div></div>';
+      aside.innerHTML = pmHtml;
+      if (aside.className.indexOf('flex') < 0) { aside.className += ' flex flex-col'; }
+      return;
+    }
 
     var html = '<nav class="p-4 space-y-1 flex-1">';
     MENUS.forEach(function (m) {

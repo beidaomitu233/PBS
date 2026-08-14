@@ -391,7 +391,10 @@
       </div>
       </section>
 
-      <!-- 学生信息卡片组 -->
+      <!-- 学生信息卡片组：置于院校目标驾驶舱下方 -->
+      <div class="flex items-center justify-between mb-3">
+        <div><h2 class="text-lg font-semibold text-gray-900">学生资料与学术背景</h2><p class="text-xs text-gray-400 mt-1">项目共用的学生基础资料</p></div>
+      </div>
       <details class="pm-archive mb-6" open>
         <summary class="hidden" aria-hidden="true">学生资料与学术背景</summary>
       <div class="grid grid-cols-3 gap-6">
@@ -514,8 +517,8 @@
       </div>
       </details>
 
-      <!-- 院校目标列表区 -->
-      <div id="schoolGoalListSection" class="bg-white rounded-xl shadow-sm border border-gray-100 p-5 mb-6">
+      <!-- 已移除的旧院校目标列表，仅保留数据样例供原型后续复用 -->
+      <template id="schoolGoalListLegacyTemplate">
         <h3 class="text-base font-semibold text-gray-800 mb-4">院校目标列表</h3>
         <table id="subProjectTable" class="w-full">
           <thead class="bg-gray-50">
@@ -631,7 +634,7 @@
             </tr>
           </tbody>
         </table>
-      </div>
+      </template>
 
     </main>
   
@@ -916,11 +919,6 @@
     };
 
     document.addEventListener('DOMContentLoaded', function() {
-      var cockpitSection = document.getElementById('schoolCockpitSection');
-      var schoolGoalListSection = document.getElementById('schoolGoalListSection');
-      if (cockpitSection && schoolGoalListSection && schoolGoalListSection.parentNode) {
-        schoolGoalListSection.parentNode.insertBefore(cockpitSection, schoolGoalListSection);
-      }
       switchSchoolCockpit('cmu', document.querySelector('[data-school-cockpit="cmu"]'));
       var tooltip = document.getElementById('roundTooltip');
       var tooltipTitle = document.getElementById('tooltipTitle');

@@ -370,12 +370,12 @@
           <p class="text-xs font-semibold text-gray-400 px-3 mb-2">当前院校目标</p>
           <button type="button" class="project-flow-button is-active" data-project-stage="today" onclick="switchProjectStage('today',this)"><span class="project-flow-index">!</span><span class="min-w-0"><span class="block text-sm font-semibold">今日行动</span><span class="block text-xs text-red-500 mt-0.5">3 项需处理</span></span></button>
           <p class="text-xs font-semibold text-gray-400 px-3 mt-5 mb-2">目标申请流程</p>
-          <button type="button" class="project-flow-button is-done" data-project-stage="goal" onclick="switchProjectStage('goal',this)"><span class="project-flow-index">1</span><span><span class="block text-sm font-medium">目标确认</span><span class="block text-xs text-gray-400 mt-0.5">已完成</span></span></button>
-          <button type="button" class="project-flow-button is-done" data-project-stage="material" onclick="switchProjectStage('material',this)"><span class="project-flow-index">2</span><span><span class="block text-sm font-medium">材料准备</span><span class="block text-xs text-gray-400 mt-0.5">5 / 6</span></span></button>
-          <button type="button" class="project-flow-button is-risk" data-project-stage="essay" onclick="switchProjectStage('essay',this)"><span class="project-flow-index">3</span><span><span class="block text-sm font-medium">文书交付</span><span class="block text-xs text-red-500 mt-0.5">1 项临期</span></span></button>
-          <button type="button" class="project-flow-button" data-project-stage="apply" onclick="switchProjectStage('apply',this)"><span class="project-flow-index">4</span><span><span class="block text-sm font-medium">网申提交</span><span class="block text-xs text-gray-400 mt-0.5">准备中</span></span></button>
-          <button type="button" class="project-flow-button" data-project-stage="result" onclick="switchProjectStage('result',this)"><span class="project-flow-index">5</span><span><span class="block text-sm font-medium">申请结果</span><span class="block text-xs text-gray-400 mt-0.5">未开始</span></span></button>
-          <button type="button" class="project-flow-button" data-project-stage="archive" onclick="switchProjectStage('archive',this)"><span class="project-flow-index">6</span><span><span class="block text-sm font-medium">目标结项</span><span class="block text-xs text-gray-400 mt-0.5">未开始</span></span></button>
+          <button type="button" class="project-flow-button is-done" data-project-stage="goal" onclick="switchProjectStage('goal',this)"><span class="project-flow-index">1</span><span class="project-flow-copy"><span class="block text-sm font-medium">目标确认</span><span class="project-flow-meta"><span data-stage-status>已完成</span><span data-stage-duration>用时 3 天</span></span></span></button>
+          <button type="button" class="project-flow-button is-risk" data-project-stage="material" onclick="switchProjectStage('material',this)"><span class="project-flow-index">2</span><span class="project-flow-copy"><span class="block text-sm font-medium">材料准备</span><span class="project-flow-meta"><span data-stage-status>缺 1 项</span><span data-stage-duration>用时 12 天</span></span></span></button>
+          <button type="button" class="project-flow-button is-risk" data-project-stage="essay" onclick="switchProjectStage('essay',this)"><span class="project-flow-index">3</span><span class="project-flow-copy"><span class="block text-sm font-medium">文书交付</span><span class="project-flow-meta"><span data-stage-status>1 项临期</span><span data-stage-duration>已用 9 天</span></span></span></button>
+          <button type="button" class="project-flow-button" data-project-stage="apply" onclick="switchProjectStage('apply',this)"><span class="project-flow-index">4</span><span class="project-flow-copy"><span class="block text-sm font-medium">网申提交</span><span class="project-flow-meta"><span data-stage-status>准备中</span><span data-stage-duration>尚未开始</span></span></span></button>
+          <button type="button" class="project-flow-button" data-project-stage="result" onclick="switchProjectStage('result',this)"><span class="project-flow-index">5</span><span class="project-flow-copy"><span class="block text-sm font-medium">申请结果</span><span class="project-flow-meta"><span data-stage-status>未开始</span><span data-stage-duration>尚未开始</span></span></span></button>
+          <button type="button" class="project-flow-button" data-project-stage="archive" onclick="switchProjectStage('archive',this)"><span class="project-flow-index">6</span><span class="project-flow-copy"><span class="block text-sm font-medium">目标结项</span><span class="project-flow-meta"><span data-stage-status>未开始</span><span data-stage-duration>尚未开始</span></span></span></button>
         </aside>
         <div id="projectStageContent" class="project-flow-content">
           <div class="flex items-start justify-between gap-5 mb-5"><div><p class="text-xs font-medium text-purple-600 mb-1">卡内基梅隆大学 · 人工智能</p><h2 class="text-xl font-semibold text-gray-900">该院校目标今日行动</h2></div><span class="text-xs text-gray-500">按紧急程度排序</span></div>
@@ -699,12 +699,14 @@
       cmu: {
         name: '卡内基梅隆大学 · 人工智能', short: 'CMU', round: 'ED', ddl: '2026-11-01', current: '文书交付',
         material: '5 / 6', materialStatus: '缺 1 项', missingMaterial: '护照复印件', essay: '4 / 6', essayStatus: '1 项临期', essayOwner: '刘老师',
-        account: '已绑定', fields: '32 / 36', todayCount: '3 项需处理', todayMine: '2', todayWaiting: '1', nextDdl: '今天 18:00'
+        account: '已绑定', fields: '32 / 36', todayCount: '3 项需处理', todayMine: '2', todayWaiting: '1', nextDdl: '今天 18:00',
+        stageDurations: { goal: '用时 3 天', material: '用时 12 天', essay: '已用 9 天', apply: '尚未开始', result: '尚未开始', archive: '尚未开始' }
       },
       stanford: {
         name: '斯坦福大学 · 计算机科学', short: 'Stanford', round: 'RD', ddl: '2026-12-15', current: '材料准备',
         material: '4 / 6', materialStatus: '缺 2 项', missingMaterial: '申请邮箱、GRE 成绩单', essay: '1 / 6', essayStatus: '待推进', essayOwner: '刘老师',
-        account: '待补充', fields: '0 / 36', todayCount: '2 项需处理', todayMine: '1', todayWaiting: '1', nextDdl: '2026-10-20'
+        account: '待补充', fields: '0 / 36', todayCount: '2 项需处理', todayMine: '1', todayWaiting: '1', nextDdl: '2026-10-20',
+        stageDurations: { goal: '用时 2 天', material: '已用 6 天', essay: '尚未开始', apply: '尚未开始', result: '尚未开始', archive: '尚未开始' }
       }
     };
     function getSchoolStageView(stage) {
@@ -712,27 +714,27 @@
       var detailId = currentSchoolCockpit === 'cmu' ? '1' : '2';
       var views = {
         goal: {
-          kicker: school.name, title: '目标确认', status: '已完成', metrics: [['申请轮次',school.round],['网申 DDL',school.ddl],['当前阶段',school.current]],
+          kicker: school.name, title: '目标确认', status: '已完成', metrics: [['申请轮次',school.round],['网申 DDL',school.ddl],['当前阶段',school.current],['阶段用时',school.stageDurations.goal]],
           body: '<div class="project-action-card"><span class="project-action-icon">✓</span><div><p class="text-sm font-semibold text-gray-900">院校与专业目标已确认</p><p class="text-xs text-gray-500 mt-1">申请轮次、目标专业和阶段截止时间均已维护</p></div><button class="px-4 py-2 text-sm font-medium text-purple-600 bg-purple-50 rounded-lg" onclick="location.href=\'院校目标详情页 - 留学申请管理系统.html?id=' + detailId + '\'">查看目标</button></div>'
         },
         material: {
-          kicker: school.name, title: '材料准备', status: school.materialStatus, metrics: [['材料齐全度',school.material],['待补材料',school.missingMaterial],['负责人','张老师']],
+          kicker: school.name, title: '材料准备', status: school.materialStatus, metrics: [['材料齐全度',school.material],['待补材料',school.missingMaterial],['负责人','张老师'],['阶段用时',school.stageDurations.material]],
           body: '<div class="project-action-card is-warning"><span class="project-action-icon">!</span><div><p class="text-sm font-semibold text-gray-900">待补充：' + school.missingMaterial + '</p><p class="text-xs text-gray-500 mt-1">补齐后由项目经理确认，再同步给该目标的文书与网申任务</p></div><button class="px-4 py-2 text-sm font-medium text-purple-600 bg-purple-50 rounded-lg" onclick="location.href=\'院校目标详情页 - 留学申请管理系统.html?id=' + detailId + '\'">管理材料</button></div>'
         },
         essay: {
-          kicker: school.name, title: '文书交付', status: school.essayStatus, metrics: [['完成进度',school.essay],['最近 DDL',currentSchoolCockpit === 'cmu' ? '今天 18:00' : '2026-11-30'],['负责人',school.essayOwner]],
+          kicker: school.name, title: '文书交付', status: school.essayStatus, metrics: [['完成进度',school.essay],['最近 DDL',currentSchoolCockpit === 'cmu' ? '今天 18:00' : '2026-11-30'],['负责人',school.essayOwner],['阶段用时',school.stageDurations.essay]],
           body: currentSchoolCockpit === 'cmu' ? '<div class="project-action-card is-urgent"><span class="project-action-icon">PS</span><div><p class="text-sm font-semibold text-gray-900">个人陈述终稿等待 PM 确认</p><p class="text-xs text-gray-500 mt-1">刘老师已交付终稿 · 今天 18:00 前需确认</p></div><button class="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg" onclick="location.href=\'文书审核详情页 - 留学申请管理系统.html\'">去确认</button></div>' : '<div class="project-action-card"><span class="project-action-icon">RL</span><div><p class="text-sm font-semibold text-gray-900">推荐信初稿准备中</p><p class="text-xs text-gray-500 mt-1">当前在刘老师 · 预计 2026-10-28 提交初稿</p></div><button class="px-4 py-2 text-sm font-medium text-purple-600 bg-purple-50 rounded-lg" onclick="showProjectCockpitToast(\'已向刘老师发送催办提醒\')">催办</button></div>'
         },
         apply: {
-          kicker: school.name, title: '网申提交', status: school.account === '已绑定' ? '准备中' : '存在卡点', metrics: [['申请账号',school.account],['字段准备',school.fields],['材料齐全',school.material]],
+          kicker: school.name, title: '网申提交', status: school.account === '已绑定' ? '准备中' : '存在卡点', metrics: [['申请账号',school.account],['字段准备',school.fields],['材料齐全',school.material],['阶段用时',school.stageDurations.apply]],
           body: school.account === '已绑定' ? '<div class="project-action-card"><span class="project-action-icon">✓</span><div><p class="text-sm font-semibold text-gray-900">申请账号已就绪</p><p class="text-xs text-gray-500 mt-1">已匹配 ' + school.fields + ' 个字段，材料补齐后可继续填报</p></div><button class="px-4 py-2 text-sm font-medium text-purple-600 bg-purple-50 rounded-lg" onclick="location.href=\'网申任务详情页 - 留学申请管理系统.html\'">查看任务</button></div>' : '<div class="project-action-card is-warning"><span class="project-action-icon">!</span><div><p class="text-sm font-semibold text-gray-900">申请账号待补充</p><p class="text-xs text-gray-500 mt-1">当前卡在项目经理，补充后网申人员可开始字段核对</p></div><button class="px-4 py-2 text-sm font-medium text-purple-600 bg-purple-50 rounded-lg" onclick="location.href=\'网申任务详情页 - 留学申请管理系统.html\'">补充账号</button></div>'
         },
         result: {
-          kicker: school.name, title: '申请结果', status: '未开始', metrics: [['提交状态','未提交'],['结果状态','待更新'],['Offer','0']],
+          kicker: school.name, title: '申请结果', status: '未开始', metrics: [['提交状态','未提交'],['结果状态','待更新'],['Offer','0'],['阶段用时',school.stageDurations.result]],
           body: '<div class="project-action-card"><span class="project-action-icon">5</span><div><p class="text-sm font-semibold text-gray-900">完成该院校网申后进入结果更新</p><p class="text-xs text-gray-500 mt-1">申请结果由经办人员手动填写，Offer 图片同步至监控详情</p></div><span class="text-xs text-gray-400">等待网申提交</span></div>'
         },
         archive: {
-          kicker: school.name, title: '目标结项', status: '未开始', metrics: [['当前阶段',school.current],['待完成节点','3'],['归档状态','未发起']],
+          kicker: school.name, title: '目标结项', status: '未开始', metrics: [['当前阶段',school.current],['待完成节点','3'],['归档状态','未发起'],['阶段用时',school.stageDurations.archive]],
           body: '<div class="project-action-card"><span class="project-action-icon">6</span><div><p class="text-sm font-semibold text-gray-900">该院校目标完成结果确认后可结项</p><p class="text-xs text-gray-500 mt-1">结项只影响当前院校目标，不影响同一学生下的其他院校目标</p></div><button class="px-4 py-2 text-sm font-medium text-gray-400 bg-gray-100 rounded-lg" disabled>暂不可结项</button></div>'
         }
       };
@@ -787,8 +789,10 @@
         }
         if (stageMeta[stage]) {
           if (stageMeta[stage][1]) { item.classList.add(stageMeta[stage][1]); }
-          var statusLabel = item.querySelectorAll('.block')[1];
+          var statusLabel = item.querySelector('[data-stage-status]');
+          var durationLabel = item.querySelector('[data-stage-duration]');
           if (statusLabel) { statusLabel.textContent = stageMeta[stage][0]; }
+          if (durationLabel) { durationLabel.textContent = school.stageDurations[stage]; }
         }
       });
       var content = document.getElementById('projectStageContent');

@@ -12,13 +12,25 @@
   var ROLES = ['超级管理员', '平台运维人员', '机构管理员', '销售人员管理员', '销售人员', '项目经理',
     '文书人员', '网申人员', '文书审核', '文书机构管理员'];
 
+  /* 权限继承：PM覆盖项目交付团队；机构管理员在自身权限外继承PM全部权限 */
+  var ROLE_INHERITANCE = {
+    '项目经理': ['文书人员', '网申人员', '文书审核', '文书机构管理员'],
+    '机构管理员': ['项目经理', '文书人员', '网申人员', '文书审核', '文书机构管理员']
+  };
+  function roleCanAccess(role, allowedRoles) {
+    if (role === '超级管理员') return true;
+    if (!allowedRoles || !allowedRoles.length) return false;
+    var capabilities = [role].concat(ROLE_INHERITANCE[role] || []);
+    return capabilities.some(function (capability) { return allowedRoles.indexOf(capability) >= 0; });
+  }
+
   var ROLE_WORKBENCH = {
     '超级管理员': '管理员工作台 - 留学申请管理系统.html',
     '平台运维人员': '管理员工作台 - 留学申请管理系统.html',
     '机构管理员': '管理员工作台 - 留学申请管理系统.html',
     '销售人员管理员': '选校任务列表页 - 留学申请管理系统.html',
     '销售人员': '选校任务列表页 - 留学申请管理系统.html',
-    '项目经理': '我的项目列表页 - 留学申请管理系统.html',
+    '项目经理': '项目经理工作台 - 留学申请管理系统.html',
     '文书人员': '任务列表页 - 文书交付系统.html',
     '网申人员': '网申任务列表页 - 留学申请管理系统.html',
     '文书审核': '文书审核列表页 - 留学申请管理系统.html',
@@ -98,6 +110,7 @@
   /* ---------------- 页面级权限（RBAC） ---------------- */
   var PAGE_PERMS = {
     '管理员工作台 - 留学申请管理系统.html': ROLES.slice(),
+    '项目经理工作台 - 留学申请管理系统.html': ['项目经理'],
     '学生档案列表页 - 留学申请管理系统.html': ['平台运维人员', '机构管理员', '销售人员管理员', '销售人员', '项目经理', '文书人员', '网申人员', '文书审核'],
     '学生档案详情页 - 留学申请管理系统.html': ['平台运维人员', '机构管理员', '销售人员管理员', '销售人员', '项目经理', '文书人员', '网申人员', '文书审核'],
     '项目池列表页 - 留学申请管理系统.html': ['机构管理员', '项目经理'],
@@ -181,7 +194,7 @@
 
     var html = '<nav class="p-4 space-y-1 flex-1">';
     MENUS.forEach(function (m) {
-      if (role !== '超级管理员' && m.roles.indexOf(role) < 0) return;
+      if (!roleCanAccess(role, m.roles)) return;
 
       if (m.single) { /* 单项直链菜单（工作台首页 / 人员管理） */
         var target = m.file || workbenchFile;
@@ -194,7 +207,7 @@
 
       /* 分组菜单 */
       var children = (m.children || []).filter(function (c) {
-        return role === '超级管理员' || !c.roles || c.roles.indexOf(role) >= 0;
+        return !c.roles || roleCanAccess(role, c.roles);
       });
       if (!children.length) return;
 
@@ -420,7 +433,7 @@
     },
     /* 客户详情页：仅项目经理可编辑档案，其余角色隐藏"编辑档案"按钮 */
     '学生档案详情页 - 留学申请管理系统.html': function (session) {
-      if (session && ['项目经理'].indexOf(session.role) < 0) {
+      if (session && !roleCanAccess(session.role, ['项目经理'])) {
         document.querySelectorAll('button, a').forEach(function (el) {
           if (el.textContent.replace(/\s/g, '') === '编辑档案') el.style.display = 'none';
         });
@@ -508,7 +521,7 @@
     session = withPreviewRole(session);
     /* 页面级RBAC（超级管理员放行所有页面） */
     var perms = PAGE_PERMS[file];
-    if (perms && session.role !== '超级管理员' && perms.indexOf(session.role) < 0) {
+    if (perms && !roleCanAccess(session.role, perms)) {
       showForbiddenToast(session.role);
       setTimeout(function () { location.replace(ROLE_WORKBENCH[session.role]); }, 1200);
       return;

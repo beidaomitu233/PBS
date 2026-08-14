@@ -239,6 +239,10 @@ span.rounded-full { letter-spacing: 0.01em; }
   grid-template-columns: minmax(0, 1.35fr) minmax(320px, .85fr);
   gap: 16px;
 }
+.hidden.pm-cockpit-hero,
+.hidden.pm-cockpit-grid {
+  display: none !important;
+}
 .pm-panel {
   border: 1px solid #ECEAF4;
   border-radius: 18px;

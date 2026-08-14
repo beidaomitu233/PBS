@@ -343,8 +343,48 @@
         </button>
       </div>
 
+      <section class="project-cockpit-header mb-4">
+        <div class="min-w-0">
+          <div class="flex items-center gap-3 mb-2"><h1 class="text-2xl font-semibold text-gray-900">李雪 · 硕士申请</h1><span class="text-xs px-2.5 py-1 rounded-full bg-blue-50 text-blue-700 font-medium">交付中</span></div>
+          <p class="text-sm text-gray-500">PRJ20260701002 · 项目经理：王老师 · 当前阶段：文书交付</p>
+        </div>
+        <div class="flex items-center gap-8 flex-shrink-0">
+          <div><p class="text-xs text-gray-400">整体进度</p><p class="text-lg font-semibold text-gray-900 mt-1">62%</p></div>
+          <div><p class="text-xs text-gray-400">下一截止</p><p class="text-sm font-semibold text-red-600 mt-1">今天 18:00</p></div>
+          <div><p class="text-xs text-gray-400">当前卡点</p><p class="text-sm font-semibold text-gray-900 mt-1">等待 PM 确认</p></div>
+        </div>
+      </section>
+
+      <section class="project-cockpit-shell mb-6">
+        <aside class="project-flow-rail">
+          <p class="text-xs font-semibold text-gray-400 px-3 mb-2">项目驾驶舱</p>
+          <button type="button" class="project-flow-button is-active" data-project-stage="today" onclick="switchProjectStage('today',this)"><span class="project-flow-index">!</span><span class="min-w-0"><span class="block text-sm font-semibold">今日行动</span><span class="block text-xs text-red-500 mt-0.5">3 项需处理</span></span></button>
+          <p class="text-xs font-semibold text-gray-400 px-3 mt-5 mb-2">申请流程</p>
+          <button type="button" class="project-flow-button is-done" data-project-stage="intake" onclick="switchProjectStage('intake',this)"><span class="project-flow-index">1</span><span><span class="block text-sm font-medium">项目接收</span><span class="block text-xs text-gray-400 mt-0.5">已完成</span></span></button>
+          <button type="button" class="project-flow-button is-done" data-project-stage="profile" onclick="switchProjectStage('profile',this)"><span class="project-flow-index">2</span><span><span class="block text-sm font-medium">学生档案</span><span class="block text-xs text-gray-400 mt-0.5">完整度 92%</span></span></button>
+          <button type="button" class="project-flow-button is-done" data-project-stage="school" onclick="switchProjectStage('school',this)"><span class="project-flow-index">3</span><span><span class="block text-sm font-medium">院校目标</span><span class="block text-xs text-gray-400 mt-0.5">2 个目标</span></span></button>
+          <button type="button" class="project-flow-button is-risk" data-project-stage="essay" onclick="switchProjectStage('essay',this)"><span class="project-flow-index">4</span><span><span class="block text-sm font-medium">文书交付</span><span class="block text-xs text-red-500 mt-0.5">1 项临期</span></span></button>
+          <button type="button" class="project-flow-button" data-project-stage="apply" onclick="switchProjectStage('apply',this)"><span class="project-flow-index">5</span><span><span class="block text-sm font-medium">网申提交</span><span class="block text-xs text-gray-400 mt-0.5">待开始</span></span></button>
+          <button type="button" class="project-flow-button" data-project-stage="result" onclick="switchProjectStage('result',this)"><span class="project-flow-index">6</span><span><span class="block text-sm font-medium">结果确认</span><span class="block text-xs text-gray-400 mt-0.5">未开始</span></span></button>
+          <button type="button" class="project-flow-button" data-project-stage="archive" onclick="switchProjectStage('archive',this)"><span class="project-flow-index">7</span><span><span class="block text-sm font-medium">结项归档</span><span class="block text-xs text-gray-400 mt-0.5">未开始</span></span></button>
+        </aside>
+        <div id="projectStageContent" class="project-flow-content">
+          <div class="flex items-start justify-between gap-5 mb-5"><div><p class="text-xs font-medium text-purple-600 mb-1">今日行动</p><h2 class="text-xl font-semibold text-gray-900">现在最需要推进的事项</h2></div><span class="text-xs text-gray-500">按紧急程度排序</span></div>
+          <div class="project-stage-summary mb-5">
+            <div class="project-stage-metric"><p class="text-xs text-gray-400">需我处理</p><p class="text-2xl font-semibold text-gray-900 mt-2">2</p></div>
+            <div class="project-stage-metric"><p class="text-xs text-gray-400">等待他人</p><p class="text-2xl font-semibold text-gray-900 mt-2">1</p></div>
+            <div class="project-stage-metric"><p class="text-xs text-gray-400">最近 DDL</p><p class="text-sm font-semibold text-red-600 mt-3">今天 18:00</p></div>
+          </div>
+          <div class="project-action-card is-urgent"><span class="project-action-icon">1</span><div><div class="flex items-center gap-2"><p class="text-sm font-semibold text-gray-900">确认 CMU 个人陈述终稿</p><span class="text-xs text-red-500">今天 18:00</span></div><p class="text-xs text-gray-500 mt-1">当前在刘老师 · 文书已提交审核，等待你确认后进入网申准备</p></div><button class="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg" onclick="location.href='文书审核详情页 - 留学申请管理系统.html'">去确认</button></div>
+          <div class="project-action-card is-warning"><span class="project-action-icon">2</span><div><div class="flex items-center gap-2"><p class="text-sm font-semibold text-gray-900">补充斯坦福网申账号</p><span class="text-xs text-amber-600">明天</span></div><p class="text-xs text-gray-500 mt-1">账号尚未维护，网申人员无法开始字段核对</p></div><button class="px-4 py-2 text-sm font-medium text-purple-600 bg-purple-50 rounded-lg" onclick="switchProjectStage('apply',document.querySelector('[data-project-stage=apply]'))">去补充</button></div>
+          <div class="project-action-card"><span class="project-action-icon">3</span><div><div class="flex items-center gap-2"><p class="text-sm font-semibold text-gray-900">催办推荐信审核</p><span class="text-xs text-gray-500">已停留 18 小时</span></div><p class="text-xs text-gray-500 mt-1">当前在孙老师 · 预计明天 12:00 完成</p></div><button class="px-4 py-2 text-sm font-medium text-purple-600 bg-purple-50 rounded-lg" onclick="showProjectCockpitToast('已向孙老师发送催办提醒')">催办</button></div>
+        </div>
+      </section>
+
       <!-- 学生信息卡片组 -->
-      <div class="grid grid-cols-3 gap-6 mb-6">
+      <details class="pm-archive mb-6">
+        <summary class="flex items-center justify-between bg-white rounded-xl px-5 py-4 shadow-sm border border-gray-100"><div><h2 class="text-base font-semibold text-gray-900">学生资料与学术背景</h2><p class="text-xs text-gray-400 mt-1">低频信息，需查看时展开</p></div><span class="pm-archive-arrow text-gray-400">⌄</span></summary>
+      <div class="grid grid-cols-3 gap-6 mt-3">
         <!-- 学生信息卡片 -->
         <div class="bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden">
           <div class="h-1.5 bg-gradient-to-r from-blue-500 to-indigo-600"></div>
@@ -462,6 +502,7 @@
         </div>
       </div>
       </div>
+      </details>
 
       <!-- 院校目标列表区 -->
       <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-5 mb-6">
@@ -640,6 +681,63 @@
   </div>
 
   <script>
+    var projectTodayHtml = '';
+    var PROJECT_STAGE_VIEWS = {
+      intake: {
+        kicker: '流程 1 / 7', title: '项目接收', status: '已完成', metrics: [['完成状态','已接收'],['完成时间','2026-07-14 09:30'],['负责人','王老师']],
+        body: '<div class="project-action-card"><span class="project-action-icon">✓</span><div><p class="text-sm font-semibold text-gray-900">项目已接收并进入服务</p><p class="text-xs text-gray-500 mt-1">机构已完成项目经理分配，接收记录与任务要求均已留存</p></div><span class="text-xs text-green-600 font-medium">已完成</span></div>'
+      },
+      profile: {
+        kicker: '流程 2 / 7', title: '学生档案', status: '进行中', metrics: [['档案完整度','92%'],['缺失信息','1 项'],['最后更新','昨天 16:40']],
+        body: '<div class="project-action-card is-warning"><span class="project-action-icon">!</span><div><p class="text-sm font-semibold text-gray-900">申请邮箱恢复手机号待补充</p><p class="text-xs text-gray-500 mt-1">不影响当前文书阶段，但需在网申开始前完成</p></div><button class="px-4 py-2 text-sm font-medium text-purple-600 bg-purple-50 rounded-lg" onclick="location.href=\'学生档案详情页 - 留学申请管理系统.html\'">补充档案</button></div><div class="project-action-card"><span class="project-action-icon">✓</span><div><p class="text-sm font-semibold text-gray-900">基础资料与学术背景已齐全</p><p class="text-xs text-gray-500 mt-1">身份、成绩、语言、申请方向均已核对</p></div><span class="text-xs text-green-600 font-medium">已核对</span></div>'
+      },
+      school: {
+        kicker: '流程 3 / 7', title: '院校目标', status: '2 个目标', metrics: [['目标数量','2'],['进行中','1'],['待启动','1']],
+        body: '<div class="project-action-card"><span class="project-action-icon">1</span><div><p class="text-sm font-semibold text-gray-900">卡内基梅隆大学 · 人工智能</p><p class="text-xs text-gray-500 mt-1">当前：文书交付 · 申请轮次：ED · 网申 DDL 2026-11-01</p></div><button class="px-4 py-2 text-sm font-medium text-purple-600 bg-purple-50 rounded-lg" onclick="location.href=\'院校目标详情页 - 留学申请管理系统.html?id=1\'">查看</button></div><div class="project-action-card"><span class="project-action-icon">2</span><div><p class="text-sm font-semibold text-gray-900">斯坦福大学 · 计算机科学</p><p class="text-xs text-gray-500 mt-1">当前：待启动 · 申请轮次：RD · 网申 DDL 2026-12-15</p></div><button class="px-4 py-2 text-sm font-medium text-purple-600 bg-purple-50 rounded-lg" onclick="location.href=\'院校目标详情页 - 留学申请管理系统.html?id=2\'">查看</button></div>'
+      },
+      essay: {
+        kicker: '流程 4 / 7', title: '文书交付', status: '1 项临期', metrics: [['整体进度','4 / 6'],['最近 DDL','今天 18:00'],['当前负责人','刘老师']],
+        body: '<div class="project-action-card is-urgent"><span class="project-action-icon">PS</span><div><p class="text-sm font-semibold text-gray-900">CMU 个人陈述 · 等待 PM 确认</p><p class="text-xs text-gray-500 mt-1">刘老师已交付终稿 · 今天 18:00 前需确认</p></div><button class="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg" onclick="location.href=\'文书审核详情页 - 留学申请管理系统.html\'">去确认</button></div><div class="project-action-card"><span class="project-action-icon">RL</span><div><p class="text-sm font-semibold text-gray-900">斯坦福推荐信 · 审核中</p><p class="text-xs text-gray-500 mt-1">当前在孙老师 · 已停留 18 小时 · 预计明天完成</p></div><button class="px-4 py-2 text-sm font-medium text-purple-600 bg-purple-50 rounded-lg" onclick="showProjectCockpitToast(\'已向孙老师发送催办提醒\')">催办</button></div>'
+      },
+      apply: {
+        kicker: '流程 5 / 7', title: '网申提交', status: '准备中', metrics: [['账号就绪','1 / 2'],['字段准备','68%'],['材料齐全','5 / 6']],
+        body: '<div class="project-action-card is-warning"><span class="project-action-icon">!</span><div><p class="text-sm font-semibold text-gray-900">斯坦福申请账号待补充</p><p class="text-xs text-gray-500 mt-1">当前卡在项目经理，补充后网申人员可开始字段核对</p></div><button class="px-4 py-2 text-sm font-medium text-purple-600 bg-purple-50 rounded-lg" onclick="location.href=\'网申任务详情页 - 留学申请管理系统.html\'">补充账号</button></div><div class="project-action-card"><span class="project-action-icon">CMU</span><div><p class="text-sm font-semibold text-gray-900">CMU 网申准备正常</p><p class="text-xs text-gray-500 mt-1">字段已匹配 32 / 36 · 缺失材料 1 项 · 网申人员吴老师</p></div><button class="px-4 py-2 text-sm font-medium text-purple-600 bg-purple-50 rounded-lg" onclick="location.href=\'网申任务详情页 - 留学申请管理系统.html\'">查看任务</button></div>'
+      },
+      result: {
+        kicker: '流程 6 / 7', title: '结果确认', status: '未开始', metrics: [['已提交院校','0'],['待更新结果','0'],['Offer','0']],
+        body: '<div class="project-action-card"><span class="project-action-icon">6</span><div><p class="text-sm font-semibold text-gray-900">提交网申后进入结果确认</p><p class="text-xs text-gray-500 mt-1">申请结果由经办人员手动填写，Offer 图片将同步到监控详情</p></div><span class="text-xs text-gray-400">等待网申提交</span></div>'
+      },
+      archive: {
+        kicker: '流程 7 / 7', title: '结项归档', status: '未开始', metrics: [['服务阶段','4 / 7'],['待完成节点','3'],['归档状态','未发起']],
+        body: '<div class="project-action-card"><span class="project-action-icon">7</span><div><p class="text-sm font-semibold text-gray-900">完成结果确认后可发起结项</p><p class="text-xs text-gray-500 mt-1">商城订单取消不会自动结项，需由项目经理核对服务情况后手动发起归档</p></div><button class="px-4 py-2 text-sm font-medium text-gray-400 bg-gray-100 rounded-lg" disabled>暂不可结项</button></div>'
+      }
+    };
+    function renderProjectStageView(view) {
+      var metrics = '';
+      (view.metrics || []).forEach(function(item) {
+        metrics += '<div class="project-stage-metric"><p class="text-xs text-gray-400">' + item[0] + '</p><p class="text-base font-semibold text-gray-900 mt-2">' + item[1] + '</p></div>';
+      });
+      return '<div class="flex items-start justify-between gap-5 mb-5"><div><p class="text-xs font-medium text-purple-600 mb-1">' + view.kicker + '</p><h2 class="text-xl font-semibold text-gray-900">' + view.title + '</h2></div><span class="text-xs text-gray-500">' + view.status + '</span></div><div class="project-stage-summary mb-5">' + metrics + '</div>' + view.body;
+    }
+    function switchProjectStage(stage, button) {
+      document.querySelectorAll('[data-project-stage]').forEach(function(item) { item.classList.remove('is-active'); });
+      if (button) { button.classList.add('is-active'); }
+      var content = document.getElementById('projectStageContent');
+      if (!content) { return; }
+      if (stage === 'today') { content.innerHTML = projectTodayHtml; return; }
+      if (PROJECT_STAGE_VIEWS[stage]) { content.innerHTML = renderProjectStageView(PROJECT_STAGE_VIEWS[stage]); }
+    }
+    function showProjectCockpitToast(message) {
+      var old = document.getElementById('projectCockpitToast');
+      if (old) { old.remove(); }
+      var toast = document.createElement('div');
+      toast.id = 'projectCockpitToast';
+      toast.style.cssText = 'position:fixed;top:24px;left:50%;transform:translateX(-50%);z-index:100;padding:10px 16px;border-radius:10px;background:#242136;color:#fff;font-size:14px;box-shadow:0 10px 30px rgba(0,0,0,.18)';
+      toast.textContent = message;
+      document.body.appendChild(toast);
+      setTimeout(function() { toast.remove(); }, 2000);
+    }
+
     var roundData = {
       '卡内基梅隆大学': {
         rounds: [
@@ -754,6 +852,8 @@
     };
 
     document.addEventListener('DOMContentLoaded', function() {
+      var initialStageContent = document.getElementById('projectStageContent');
+      if (initialStageContent) { projectTodayHtml = initialStageContent.innerHTML; }
       var tooltip = document.getElementById('roundTooltip');
       var tooltipTitle = document.getElementById('tooltipTitle');
       var tooltipBody = document.getElementById('tooltipBody');

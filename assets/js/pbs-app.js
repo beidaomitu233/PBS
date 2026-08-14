@@ -6,6 +6,7 @@
   'use strict';
 
   var SESSION_KEY = 'pbs_session_v1';
+  var PREVIEW_ROLE_KEY = 'pbs_role_preview_v51';
 
   /* ---------------- 角色定义 ---------------- */
   var ROLES = ['超级管理员', '平台运维人员', '机构管理员', '销售人员管理员', '销售人员', '项目经理',
@@ -15,13 +16,13 @@
     '超级管理员': '管理员工作台 - 留学申请管理系统.html',
     '平台运维人员': '管理员工作台 - 留学申请管理系统.html',
     '机构管理员': '管理员工作台 - 留学申请管理系统.html',
-    '销售人员管理员': '管理员工作台 - 留学申请管理系统.html',
-    '销售人员': '管理员工作台 - 留学申请管理系统.html',
-    '项目经理': '管理员工作台 - 留学申请管理系统.html',
-    '文书人员': '管理员工作台 - 留学申请管理系统.html',
-    '网申人员': '管理员工作台 - 留学申请管理系统.html',
-    '文书审核': '管理员工作台 - 留学申请管理系统.html',
-    '文书机构管理员': '管理员工作台 - 留学申请管理系统.html'
+    '销售人员管理员': '选校任务列表页 - 留学申请管理系统.html',
+    '销售人员': '选校任务列表页 - 留学申请管理系统.html',
+    '项目经理': '我的项目列表页 - 留学申请管理系统.html',
+    '文书人员': '任务列表页 - 文书交付系统.html',
+    '网申人员': '网申任务列表页 - 留学申请管理系统.html',
+    '文书审核': '文书审核列表页 - 留学申请管理系统.html',
+    '文书机构管理员': '任务列表页 - 文书交付系统.html'
   };
 
   /* 组件页（弹窗/抽屉，用于iframe弹层，不做权限校验与侧边栏渲染） */
@@ -138,9 +139,31 @@
       return raw ? JSON.parse(raw) : null;
     } catch (e) { return null; }
   }
-  window.pbsGetSession = getSession;
+  function getPreviewRole() {
+    try {
+      var role = localStorage.getItem(PREVIEW_ROLE_KEY) || 'all';
+      return role === 'all' || ROLES.indexOf(role) >= 0 ? role : 'all';
+    } catch (e) { return 'all'; }
+  }
+  function withPreviewRole(session) {
+    var previewRole = getPreviewRole();
+    var effective = {};
+    Object.keys(session || {}).forEach(function (key) { effective[key] = session[key]; });
+    effective.previewRole = previewRole;
+    effective.previewLabel = previewRole === 'all' ? '全部角色' : previewRole;
+    effective.role = previewRole === 'all' ? '超级管理员' : previewRole;
+    return effective;
+  }
+  window.pbsGetSession = function () {
+    var session = getSession();
+    if (!session || !session.role) {
+      session = { account: 'demo_admin', name: '演示管理员', role: '超级管理员', org: 'PBS留学', email: 'demo@pbs.local' };
+    }
+    return withPreviewRole(session);
+  };
   window.pbsLogout = function () {
     localStorage.removeItem(SESSION_KEY);
+    localStorage.removeItem(PREVIEW_ROLE_KEY);
     location.href = '登录 - PBS留学申请管理平台.html';
   };
 
@@ -201,7 +224,7 @@
       '<div class="w-9 h-9 bg-gradient-to-br from-blue-500 to-purple-500 rounded-full flex items-center justify-center flex-shrink-0">' +
       '<span class="text-white text-sm font-medium">' + session.name.charAt(0) + '</span></div>' +
       '<div class="min-w-0"><p class="text-sm font-semibold text-gray-800 truncate">' + session.name + '</p>' +
-      '<p class="text-xs text-blue-600 truncate">' + session.role + '</p></div></div></div>';
+      '<p class="text-xs text-blue-600 truncate">' + (session.previewLabel || session.role) + '</p></div></div></div>';
 
     aside.innerHTML = html;
     if (aside.className.indexOf('flex') < 0) {
@@ -210,9 +233,42 @@
   }
 
   /* ---------------- 顶栏用户区 ---------------- */
+  function renderRoleSwitcher(header, session) {
+    if (document.getElementById('pbsRoleSwitcher')) return;
+    var headerRow = header.querySelector('.h-16.flex.items-center.justify-between') ||
+      header.querySelector('.h-14.flex.items-center.justify-between') ||
+      header.querySelector('.h-full.flex.items-center.justify-between') ||
+      header.querySelector('.topbar-inner');
+    if (!headerRow) return;
+    var rightArea = headerRow.lastElementChild;
+    if (!rightArea) return;
+    var wrapper = document.createElement('div');
+    wrapper.id = 'pbsRoleSwitcher';
+    wrapper.className = 'pbs-role-switcher';
+    var options = '<option value="all">全部角色</option>';
+    ROLES.forEach(function (role) {
+      options += '<option value="' + role + '">' + role + '</option>';
+    });
+    wrapper.innerHTML = '<span class="pbs-role-switcher-label">角色视角</span>' +
+      '<select aria-label="切换角色视角">' + options + '</select>';
+    var select = wrapper.querySelector('select');
+    select.value = session.previewRole || 'all';
+    select.addEventListener('change', function () {
+      var role = select.value;
+      try { localStorage.setItem(PREVIEW_ROLE_KEY, role); } catch (e) {}
+      if (role === 'all') {
+        location.href = ROLE_WORKBENCH['超级管理员'];
+      } else {
+        location.href = ROLE_WORKBENCH[role] || ROLE_WORKBENCH['超级管理员'];
+      }
+    });
+    rightArea.insertBefore(wrapper, rightArea.firstChild);
+  }
+
   function bindHeader(session) {
     var header = document.querySelector('header');
     if (!header) return;
+    renderRoleSwitcher(header, session);
 
     /* 用户头像（header内最后一个不在用户菜单里的.rounded-full span） */
     var avatarSpans = header.querySelectorAll('.rounded-full span');
@@ -240,12 +296,12 @@
     /* 第一行显示姓名，第二行显示 角色 · 机构 */
     if (texts[0]) texts[0].textContent = session.name;
     if (texts[1]) {
-      texts[1].textContent = session.role + (session.org ? ' · ' + session.org : '');
+      texts[1].textContent = (session.previewLabel || session.role) + (session.org ? ' · ' + session.org : '');
     } else if (texts[0] && !userArea.querySelector('.pbs-role-badge')) {
       /* 无副标题时补角色徽章 */
       var badge = document.createElement('span');
       badge.className = 'pbs-role-badge hidden sm:inline-block text-xs px-2.5 py-1 bg-blue-50 text-blue-700 rounded-full font-medium';
-      badge.textContent = session.role;
+      badge.textContent = session.previewLabel || session.role;
       userArea.insertBefore(badge, avatarSpan.parentElement);
     }
 
@@ -259,7 +315,7 @@
       if (nameP && !menu.querySelector('.pbs-menu-role')) {
         var roleLine = document.createElement('p');
         roleLine.className = 'pbs-menu-role text-xs text-blue-600 mt-0.5';
-        roleLine.textContent = session.role + (session.org ? ' · ' + session.org : '');
+        roleLine.textContent = (session.previewLabel || session.role) + (session.org ? ' · ' + session.org : '');
         nameP.parentNode.appendChild(roleLine);
       }
       var av = menu.querySelector('.w-10.h-10 span');
@@ -281,7 +337,7 @@
       '<div class="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-500 rounded-full flex items-center justify-center">' +
       '<span class="text-white text-base font-medium">' + session.name.charAt(0) + '</span></div>' +
       '<div><p class="text-sm font-semibold text-gray-900">' + session.name + '</p>' +
-      '<p class="text-xs text-blue-600 mt-0.5">' + session.role + (session.org ? ' · ' + session.org : '') + '</p>' +
+      '<p class="text-xs text-blue-600 mt-0.5">' + (session.previewLabel || session.role) + (session.org ? ' · ' + session.org : '') + '</p>' +
       '<p class="text-xs text-gray-500">' + (session.email || '') + '</p></div></div></div>' +
       '<div class="py-1">' +
       '<a href="#" class="flex items-center gap-3 px-5 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition-colors">' +
@@ -449,6 +505,7 @@
 
     var session = getSession();
     if (!session || !session.role) { session = { account: 'demo_admin', name: '演示管理员', role: '超级管理员', org: 'PBS留学', email: 'demo@pbs.local' }; }
+    session = withPreviewRole(session);
     /* 页面级RBAC（超级管理员放行所有页面） */
     var perms = PAGE_PERMS[file];
     if (perms && session.role !== '超级管理员' && perms.indexOf(session.role) < 0) {

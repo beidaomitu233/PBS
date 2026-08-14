@@ -416,7 +416,13 @@
     <main class="flex-1 p-6">
       <!-- 页面标题栏 -->
       <div class="flex items-center justify-between mb-6">
-        <h1 class="text-2xl font-semibold text-gray-800">我的项目</h1>
+        <div>
+          <div class="flex items-center gap-3">
+            <h1 class="text-2xl font-semibold text-gray-800">项目驾驶舱</h1>
+            <span class="text-xs px-2.5 py-1 rounded-full bg-purple-50 text-purple-600 font-medium">项目经理视角</span>
+          </div>
+          <p class="text-sm text-gray-500 mt-1">2026年8月14日 · 优先处理临期、卡点和待确认事项</p>
+        </div>
         <div class="flex items-center gap-3">
           <button onclick="openPendingDrawer()" class="relative inline-flex items-center gap-2 h-9 pl-4 pr-3 bg-blue-50 border border-blue-200 rounded-full text-sm font-medium text-blue-700 hover:bg-blue-100 transition-colors" data-dom-id="btn-pending-task">
             <span class="relative flex h-2 w-2">
@@ -429,10 +435,85 @@
         </div>
       </div>
 
+      <section class="pm-cockpit-hero mb-4">
+        <div class="flex items-center justify-between gap-4 mb-5 relative z-10">
+          <div>
+            <p class="text-xs font-medium text-purple-600 mb-1">今日工作焦点</p>
+            <h2 class="text-xl font-semibold text-gray-900">先处理 2 项临期任务，再跟进 3 项团队卡点</h2>
+          </div>
+          <button type="button" class="text-sm text-purple-600 font-medium hover:text-purple-800" onclick="setCockpitFilter('all')">查看全部事项</button>
+        </div>
+        <div class="pm-kpi-grid relative z-10">
+          <button type="button" class="pm-kpi-card is-active text-left" data-cockpit-filter="today" onclick="setCockpitFilter('today')">
+            <div class="flex items-center justify-between"><span class="text-sm text-gray-500">今日需推进</span><span class="text-xs text-red-500">2项临期</span></div>
+            <p class="pm-kpi-number mt-3">6</p><p class="text-xs text-gray-400 mt-2">跨 4 个项目</p>
+          </button>
+          <button type="button" class="pm-kpi-card text-left" data-cockpit-filter="risk" onclick="setCockpitFilter('risk')">
+            <div class="flex items-center justify-between"><span class="text-sm text-gray-500">即将超期</span><span class="text-xs text-red-500">需立即处理</span></div>
+            <p class="pm-kpi-number mt-3 text-red-600">2</p><p class="text-xs text-gray-400 mt-2">最近 DDL：今天 18:00</p>
+          </button>
+          <button type="button" class="pm-kpi-card text-left" data-cockpit-filter="waiting" onclick="setCockpitFilter('waiting')">
+            <div class="flex items-center justify-between"><span class="text-sm text-gray-500">等待他人</span><span class="text-xs text-purple-600">可一键催办</span></div>
+            <p class="pm-kpi-number mt-3">3</p><p class="text-xs text-gray-400 mt-2">文书 2 · 学生 1</p>
+          </button>
+          <button type="button" class="pm-kpi-card text-left" data-cockpit-filter="mine" onclick="setCockpitFilter('mine')">
+            <div class="flex items-center justify-between"><span class="text-sm text-gray-500">需我处理</span><span class="text-xs text-blue-600">PM 待办</span></div>
+            <p class="pm-kpi-number mt-3">4</p><p class="text-xs text-gray-400 mt-2">确认 2 · 补充 2</p>
+          </button>
+        </div>
+      </section>
 
+      <section class="pm-cockpit-grid mb-6">
+        <div class="pm-panel p-5">
+          <div class="flex items-center justify-between mb-2">
+            <div><h2 class="text-base font-semibold text-gray-900">今天先处理</h2><p class="text-xs text-gray-400 mt-1">按风险和截止时间排序</p></div>
+            <span id="cockpitTaskCount" class="text-xs text-gray-500">4 项</span>
+          </div>
+          <div id="cockpitTaskList">
+            <div class="pm-task-row" data-task-group="today risk mine" data-priority="urgent">
+              <span class="pm-task-dot"></span>
+              <div><div class="flex items-center gap-2"><p class="text-sm font-semibold text-gray-900">确认李雪的 CMU 文书终稿</p><span class="text-xs text-red-500">今天 18:00</span></div><p class="text-xs text-gray-500 mt-1">PRJ20260701002 · 当前在刘老师，等待 PM 最终确认</p></div>
+              <button class="px-3 py-1.5 text-xs font-medium text-white bg-blue-600 rounded-lg" onclick="location.href='我的项目详情页 - 留学申请管理系统.html'">立即处理</button>
+            </div>
+            <div class="pm-task-row" data-task-group="today waiting" data-priority="warning">
+              <span class="pm-task-dot"></span>
+              <div><div class="flex items-center gap-2"><p class="text-sm font-semibold text-gray-900">催收陈雨桐护照复印件</p><span class="text-xs text-amber-600">今天</span></div><p class="text-xs text-gray-500 mt-1">PRJ20260701008 · 学生材料缺失，已影响网申字段准备</p></div>
+              <button class="px-3 py-1.5 text-xs font-medium text-purple-600 bg-purple-50 rounded-lg" onclick="showTaskToast('已向陈雨桐发送材料催办提醒','success')">催办</button>
+            </div>
+            <div class="pm-task-row" data-task-group="today waiting" data-priority="waiting">
+              <span class="pm-task-dot"></span>
+              <div><div class="flex items-center gap-2"><p class="text-sm font-semibold text-gray-900">跟进斯坦福推荐信审核</p><span class="text-xs text-gray-500">明天 12:00</span></div><p class="text-xs text-gray-500 mt-1">PRJ20260701002 · 当前在孙老师，已停留 18 小时</p></div>
+              <button class="px-3 py-1.5 text-xs font-medium text-purple-600 bg-purple-50 rounded-lg" onclick="showTaskToast('已向孙老师发送审核催办','success')">催办</button>
+            </div>
+            <div class="pm-task-row" data-task-group="today mine" data-priority="normal">
+              <span class="pm-task-dot"></span>
+              <div><div class="flex items-center gap-2"><p class="text-sm font-semibold text-gray-900">接收刘晓的本科申请项目</p><span class="text-xs text-gray-500">待接收</span></div><p class="text-xs text-gray-500 mt-1">PRJ20260701005 · 机构已完成项目经理分配</p></div>
+              <button class="px-3 py-1.5 text-xs font-medium text-purple-600 bg-purple-50 rounded-lg" onclick="openPendingDrawer()">查看任务</button>
+            </div>
+          </div>
+        </div>
+        <div class="pm-panel p-5">
+          <div class="flex items-center justify-between mb-3"><div><h2 class="text-base font-semibold text-gray-900">项目进度</h2><p class="text-xs text-gray-400 mt-1">优先关注有风险的项目</p></div><span class="text-xs text-green-600">3 正常 · 2 风险</span></div>
+          <div class="pm-project-health">
+            <div><div class="flex items-center justify-between gap-3"><p class="text-sm font-semibold text-gray-900">李雪 · 硕士申请</p><span class="text-xs text-red-500">文书临期</span></div><p class="text-xs text-gray-400 mt-1 mb-2">当前：文书交付 · 下一步：PM确认</p><div class="pm-mini-progress"><span style="width:62%"></span></div></div><span class="text-sm font-semibold text-gray-700">62%</span>
+          </div>
+          <div class="pm-project-health">
+            <div><div class="flex items-center justify-between gap-3"><p class="text-sm font-semibold text-gray-900">陈雨桐 · 硕士申请</p><span class="text-xs text-amber-600">材料缺失</span></div><p class="text-xs text-gray-400 mt-1 mb-2">当前：材料准备 · 卡在学生</p><div class="pm-mini-progress"><span style="width:38%"></span></div></div><span class="text-sm font-semibold text-gray-700">38%</span>
+          </div>
+          <div class="pm-project-health">
+            <div><div class="flex items-center justify-between gap-3"><p class="text-sm font-semibold text-gray-900">王梓豪 · 博士申请</p><span class="text-xs text-green-600">正常</span></div><p class="text-xs text-gray-400 mt-1 mb-2">当前：院校目标确认 · 进度正常</p><div class="pm-mini-progress"><span style="width:48%"></span></div></div><span class="text-sm font-semibold text-gray-700">48%</span>
+          </div>
+          <button class="w-full mt-4 h-9 text-sm font-medium text-purple-600 bg-purple-50 rounded-lg hover:bg-purple-100" onclick="document.getElementById('projectTable').scrollIntoView({behavior:'smooth'})">查看全部项目</button>
+        </div>
+      </section>
 
       <!-- 高级筛选区（筛选区与搜索区合并） -->
-      <div class="bg-white rounded-xl p-5 mb-6 shadow-sm border border-gray-100">
+      <details class="pm-archive mb-4">
+        <summary class="flex items-center justify-between bg-white rounded-xl px-5 py-4 shadow-sm border border-gray-100">
+          <div><h2 class="text-base font-semibold text-gray-900">筛选项目</h2><p class="text-xs text-gray-400 mt-1">按项目、学生、状态或 DDL 查询</p></div>
+          <span class="pm-archive-arrow text-gray-400">⌄</span>
+        </summary>
+      <div class="bg-white rounded-xl p-5 mt-2 shadow-sm border border-gray-100">
         <div class="flex items-end gap-4 flex-wrap">
           <div class="flex-1 min-w-[200px]">
             <label class="block text-sm text-gray-600 mb-2">关键词搜索</label>
@@ -500,8 +581,10 @@
           </button>
         </div>
       </div>
+      </details>
 
       <!-- 项目列表卡片/表格 -->
+      <div class="flex items-center justify-between mb-3"><div><h2 class="text-lg font-semibold text-gray-900">全部项目</h2><p class="text-xs text-gray-400 mt-1">项目进度、关键 DDL 与当前状态</p></div><span class="text-xs text-gray-500">共 15 个项目</span></div>
       <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
         <table id="projectTable" class="w-full">
           <thead class="bg-gray-50">
@@ -735,6 +818,20 @@
 
   <script>
     var OFFLINE_PROJECTS_KEY = 'pbs_offline_projects_v1';
+    function setCockpitFilter(filter) {
+      var visibleCount = 0;
+      document.querySelectorAll('[data-cockpit-filter]').forEach(function(card) {
+        card.classList.toggle('is-active', card.getAttribute('data-cockpit-filter') === filter);
+      });
+      document.querySelectorAll('#cockpitTaskList [data-task-group]').forEach(function(row) {
+        var groups = (row.getAttribute('data-task-group') || '').split(' ');
+        var visible = filter === 'all' || groups.indexOf(filter) >= 0;
+        row.style.display = visible ? 'grid' : 'none';
+        if (visible) { visibleCount++; }
+      });
+      var count = document.getElementById('cockpitTaskCount');
+      if (count) { count.textContent = visibleCount + ' 项'; }
+    }
     function getMyProjectSession() {
       if (window.pbsGetSession) {
         var sharedSession = window.pbsGetSession();

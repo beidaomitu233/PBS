@@ -49,36 +49,6 @@
         </div>
       </section>
 
-      <section class="pm-panel p-5 mb-4" aria-labelledby="pendingAssignmentTitle">
-        <div class="flex items-center justify-between gap-4 mb-4">
-          <div>
-            <div class="flex items-center gap-2"><h2 id="pendingAssignmentTitle" class="text-base font-semibold text-gray-900">分配任务待接收</h2><span class="text-xs px-2 py-0.5 rounded-full bg-red-50 text-red-600 font-medium">3 项</span></div>
-            <p class="text-xs text-gray-400 mt-1">仅展示已分配但执行人尚未接收的团队任务</p>
-          </div>
-          <span class="text-xs text-gray-400">更新时间：今天 10:30</span>
-        </div>
-        <div class="pm-assignment-grid">
-          <article class="pm-assignment-card is-overdue">
-            <div class="flex items-start justify-between gap-3"><span class="text-xs font-medium text-red-600">文书审核</span><span class="pm-waiting-time is-overdue">已等待 1天6小时</span></div>
-            <h3 class="text-sm font-semibold text-gray-900 mt-3">审核 CMU 个人陈述终稿</h3>
-            <p class="text-xs text-gray-400 mt-1">李雪 · 卡内基梅隆大学</p>
-            <div class="pm-assignment-owner"><span class="pm-owner-avatar">孙</span><div class="min-w-0"><p class="text-sm text-gray-700">孙老师 <span class="text-xs text-gray-400">审核人员</span></p><p class="text-xs text-gray-400 mt-0.5">分配于 8月13日 04:30</p></div><button type="button" class="pm-remind-button" onclick="showWorkbenchToast('已向孙老师发送接收提醒')">催接收</button></div>
-          </article>
-          <article class="pm-assignment-card is-warning">
-            <div class="flex items-start justify-between gap-3"><span class="text-xs font-medium text-amber-600">网申管理</span><span class="pm-waiting-time is-warning">已等待 18小时</span></div>
-            <h3 class="text-sm font-semibold text-gray-900 mt-3">接收 Stanford 网申准备任务</h3>
-            <p class="text-xs text-gray-400 mt-1">李雪 · 斯坦福大学</p>
-            <div class="pm-assignment-owner"><span class="pm-owner-avatar">周</span><div class="min-w-0"><p class="text-sm text-gray-700">周老师 <span class="text-xs text-gray-400">网申人员</span></p><p class="text-xs text-gray-400 mt-0.5">分配于 8月13日 16:30</p></div><button type="button" class="pm-remind-button" onclick="showWorkbenchToast('已向周老师发送接收提醒')">催接收</button></div>
-          </article>
-          <article class="pm-assignment-card">
-            <div class="flex items-start justify-between gap-3"><span class="text-xs font-medium text-purple-600">文书交付</span><span class="pm-waiting-time">已等待 6小时</span></div>
-            <h3 class="text-sm font-semibold text-gray-900 mt-3">接收推荐信初稿撰写任务</h3>
-            <p class="text-xs text-gray-400 mt-1">陈雨桐 · 加州大学伯克利分校</p>
-            <div class="pm-assignment-owner"><span class="pm-owner-avatar">刘</span><div class="min-w-0"><p class="text-sm text-gray-700">刘老师 <span class="text-xs text-gray-400">文书交付人员</span></p><p class="text-xs text-gray-400 mt-0.5">分配于 今天 04:30</p></div><button type="button" class="pm-remind-button" onclick="showWorkbenchToast('已向刘老师发送接收提醒')">催接收</button></div>
-          </article>
-        </div>
-      </section>
-
       <section class="pm-cockpit-grid">
         <div class="pm-panel p-5">
           <div class="flex items-center justify-between mb-2"><div><h2 class="text-base font-semibold text-gray-900">今天先处理</h2><p class="text-xs text-gray-400 mt-1">按风险和截止时间排序</p></div><span id="workbenchTaskCount" class="text-xs text-gray-500">4 项</span></div>
@@ -94,6 +64,34 @@
           <div class="pm-project-health"><div><div class="flex items-center justify-between gap-3"><p class="text-sm font-semibold text-gray-900">李雪 · 硕士申请</p><span class="text-xs text-red-500">文书临期</span></div><p class="text-xs text-gray-400 mt-1 mb-2">当前：CMU 文书交付 · 下一步：PM确认</p><div class="pm-mini-progress"><span style="width:62%"></span></div></div><span class="text-sm font-semibold text-gray-700">62%</span></div>
           <div class="pm-project-health"><div><div class="flex items-center justify-between gap-3"><p class="text-sm font-semibold text-gray-900">陈雨桐 · 硕士申请</p><span class="text-xs text-amber-600">材料缺失</span></div><p class="text-xs text-gray-400 mt-1 mb-2">当前：材料准备 · 卡在学生</p><div class="pm-mini-progress"><span style="width:38%"></span></div></div><span class="text-sm font-semibold text-gray-700">38%</span></div>
           <div class="pm-project-health"><div><div class="flex items-center justify-between gap-3"><p class="text-sm font-semibold text-gray-900">王梓豪 · 博士申请</p><span class="text-xs text-green-600">正常</span></div><p class="text-xs text-gray-400 mt-1 mb-2">当前：院校目标确认 · 进度正常</p><div class="pm-mini-progress"><span style="width:48%"></span></div></div><span class="text-sm font-semibold text-gray-700">48%</span></div>
+        </div>
+      </section>
+
+      <section class="pm-panel p-5 mt-4" aria-labelledby="pendingAssignmentTitle">
+        <div class="flex items-center justify-between gap-4 mb-4">
+          <div>
+            <div class="flex items-center gap-2"><h2 id="pendingAssignmentTitle" class="text-base font-semibold text-gray-900">分配任务待接收</h2><span class="text-xs px-2 py-0.5 rounded-full bg-red-50 text-red-600 font-medium">3 项</span></div>
+            <p class="text-xs text-gray-400 mt-1">已分配给团队成员、但对方尚未接收的任务</p>
+          </div>
+          <span class="text-xs text-gray-400">更新时间：今天 10:30</span>
+        </div>
+        <div class="pm-assignment-list" role="table" aria-label="分配任务待接收列表">
+          <div class="pm-assignment-list-header" role="row"><span role="columnheader">任务</span><span role="columnheader">接收人</span><span role="columnheader">分配时间</span><span role="columnheader">已等待</span><span role="columnheader">操作</span></div>
+          <div class="pm-assignment-row is-overdue" role="row">
+            <div role="cell"><p class="text-sm font-semibold text-gray-900">审核 CMU 个人陈述终稿</p><p class="text-xs text-gray-400 mt-1">文书审核 · 李雪 · 卡内基梅隆大学</p></div>
+            <div class="pm-assignment-person" role="cell"><span class="pm-owner-avatar">孙</span><div><p class="text-sm text-gray-700">孙老师</p><p class="text-xs text-gray-400 mt-0.5">审核人员</p></div></div>
+            <span class="text-sm text-gray-600" role="cell">8月13日 04:30</span><span role="cell"><span class="pm-waiting-time is-overdue">1天6小时</span></span><span role="cell"><button type="button" class="pm-remind-button" onclick="showWorkbenchToast('已向孙老师发送接收提醒')">催接收</button></span>
+          </div>
+          <div class="pm-assignment-row is-warning" role="row">
+            <div role="cell"><p class="text-sm font-semibold text-gray-900">接收 Stanford 网申准备任务</p><p class="text-xs text-gray-400 mt-1">网申管理 · 李雪 · 斯坦福大学</p></div>
+            <div class="pm-assignment-person" role="cell"><span class="pm-owner-avatar">周</span><div><p class="text-sm text-gray-700">周老师</p><p class="text-xs text-gray-400 mt-0.5">网申人员</p></div></div>
+            <span class="text-sm text-gray-600" role="cell">8月13日 16:30</span><span role="cell"><span class="pm-waiting-time is-warning">18小时</span></span><span role="cell"><button type="button" class="pm-remind-button" onclick="showWorkbenchToast('已向周老师发送接收提醒')">催接收</button></span>
+          </div>
+          <div class="pm-assignment-row" role="row">
+            <div role="cell"><p class="text-sm font-semibold text-gray-900">接收推荐信初稿撰写任务</p><p class="text-xs text-gray-400 mt-1">文书交付 · 陈雨桐 · 加州大学伯克利分校</p></div>
+            <div class="pm-assignment-person" role="cell"><span class="pm-owner-avatar">刘</span><div><p class="text-sm text-gray-700">刘老师</p><p class="text-xs text-gray-400 mt-0.5">文书交付人员</p></div></div>
+            <span class="text-sm text-gray-600" role="cell">今天 04:30</span><span role="cell"><span class="pm-waiting-time">6小时</span></span><span role="cell"><button type="button" class="pm-remind-button" onclick="showWorkbenchToast('已向刘老师发送接收提醒')">催接收</button></span>
+          </div>
         </div>
       </section>
     </main>

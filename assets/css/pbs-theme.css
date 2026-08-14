@@ -465,19 +465,36 @@ span.rounded-full { letter-spacing: 0.01em; }
 .pm-task-row[data-priority="waiting"] .pm-task-dot { background: #8B5CF6; box-shadow: 0 0 0 5px #EDE9FE; }
 .pm-mini-progress { height: 7px; border-radius: 99px; background: #ECEAF3; overflow: hidden; }
 .pm-mini-progress > span { display: block; height: 100%; border-radius: inherit; background: linear-gradient(90deg,#8B7CF6,#6A5AD8); }
-.pm-assignment-grid {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 12px;
-}
-.pm-assignment-card {
-  padding: 15px;
+.pm-assignment-list {
+  overflow-x: auto;
   border: 1px solid #ECEAF4;
-  border-radius: 15px;
-  background: #FCFCFE;
+  border-radius: 14px;
+  background: #FFFFFF;
 }
-.pm-assignment-card.is-overdue { border-color: #FECACA; background: #FFF9F9; }
-.pm-assignment-card.is-warning { border-color: #FDE7A9; background: #FFFCF4; }
+.pm-assignment-list-header,
+.pm-assignment-row {
+  display: grid;
+  grid-template-columns: minmax(300px, 2fr) minmax(170px, 1fr) 150px 120px 72px;
+  gap: 16px;
+  align-items: center;
+  min-width: 890px;
+}
+.pm-assignment-list-header {
+  padding: 11px 16px;
+  border-bottom: 1px solid #E8E6EF;
+  background: #F8F7FC;
+  color: #777286;
+  font-size: 12px;
+  font-weight: 600;
+}
+.pm-assignment-row {
+  position: relative;
+  padding: 14px 16px;
+  border-bottom: 1px solid #F0EEF5;
+}
+.pm-assignment-row:last-child { border-bottom: 0; }
+.pm-assignment-row.is-overdue { box-shadow: inset 3px 0 #EF4444; }
+.pm-assignment-row.is-warning { box-shadow: inset 3px 0 #F59E0B; }
 .pm-waiting-time {
   padding: 3px 8px;
   border-radius: 999px;
@@ -489,14 +506,11 @@ span.rounded-full { letter-spacing: 0.01em; }
 }
 .pm-waiting-time.is-overdue { background: #FEE2E2; color: #DC2626; }
 .pm-waiting-time.is-warning { background: #FEF3C7; color: #B45309; }
-.pm-assignment-owner {
+.pm-assignment-person {
   display: grid;
-  grid-template-columns: 32px minmax(0, 1fr) auto;
+  grid-template-columns: 32px minmax(0, 1fr);
   gap: 9px;
   align-items: center;
-  margin-top: 14px;
-  padding-top: 12px;
-  border-top: 1px solid rgba(229, 227, 237, .85);
 }
 .pm-owner-avatar {
   display: flex;
@@ -637,7 +651,6 @@ span.rounded-full { letter-spacing: 0.01em; }
 @media (max-width: 1180px) {
   .pm-kpi-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .pm-cockpit-grid { grid-template-columns: 1fr; }
-  .pm-assignment-grid { grid-template-columns: 1fr; }
   .project-cockpit-shell { grid-template-columns: 210px minmax(0, 1fr); }
   .pbs-role-switcher-label { display: none; }
 }

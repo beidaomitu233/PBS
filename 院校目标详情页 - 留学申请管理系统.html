@@ -341,7 +341,7 @@
           </svg>
           <span id="distributeButtonText">分配任务</span>
         </button>
-        <button class="flex items-center gap-2 px-4 py-2 bg-orange-500 text-white rounded-lg hover:bg-orange-600 transition-colors" onclick="openChangeTaskDrawer()" data-dom-id="btn-change-task">
+        <button class="hidden flex items-center gap-2 px-4 py-2 bg-orange-500 text-white rounded-lg hover:bg-orange-600 transition-colors" onclick="openChangeTaskDrawer()" data-dom-id="btn-change-task">
           <span id="changeButtonText">更换分配</span>
         </button>
         <button class="flex items-center gap-2 px-4 py-2 bg-white border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors" onclick="window.location.href=&#39;我的项目详情页 - 留学申请管理系统.html&#39;" data-dom-id="btn-back-my-project-detail">
@@ -360,7 +360,7 @@
           <div>
             <p class="text-sm font-semibold text-blue-900">院校目标成员已由机构管理员分配</p>
             <p id="institutionAssignmentNames" class="text-xs text-blue-700 mt-1"></p>
-            <p class="text-xs text-blue-600 mt-1">该分配已锁定，项目经理不可修改。</p>
+            <p class="text-xs text-blue-600 mt-1">机构已完成的成员与交付时间已锁定，项目经理不可修改。</p>
           </div>
         </div>
       </div>
@@ -777,6 +777,7 @@
         tooltip.classList.add('hidden');
       });
 
+      syncGoalAssignmentActions();
       applyInstitutionAssignmentLock();
 
       var btnBack = document.querySelector('[data-dom-id="btn-back-my-project-detail"]');
@@ -1128,26 +1129,40 @@
   <script>
     var PROJECT_ASSIGNMENT_KEY = 'pbs_project_assignment_PRJ20260701001';
     var institutionGoalAssignment = null;
-    function getInstitutionGoalAssignment() {
+    function getCurrentGoalAssignment() {
       try {
         var projectAssignment = JSON.parse(localStorage.getItem(PROJECT_ASSIGNMENT_KEY) || '{}');
-        var goalAssignments = projectAssignment.goalAssignments || {};
-        var assignment = goalAssignments[currentGoalAssignmentId];
-        return assignment && assignment.done ? assignment : null;
+        return (projectAssignment.goalAssignments || {})[currentGoalAssignmentId] || null;
       } catch (e) { return null; }
+    }
+    function getInstitutionGoalAssignment() {
+      var assignment = getCurrentGoalAssignment();
+      return assignment && assignment.done && (assignment.locked || assignment.assignedBy === '机构管理员') ? assignment : null;
+    }
+    function syncGoalAssignmentActions() {
+      var assignment = getCurrentGoalAssignment();
+      var institutionAssignment = getInstitutionGoalAssignment();
+      var distributeButton = document.querySelector('[data-dom-id="btn-distribute-task"]');
+      var changeButton = document.querySelector('[data-dom-id="btn-change-task"]');
+      if (institutionAssignment) { return; }
+      var assignedByProjectManager = assignment && assignment.done && assignment.assignedBy === '项目经理';
+      if (distributeButton) { distributeButton.classList.toggle('hidden', !!assignedByProjectManager); }
+      if (changeButton) { changeButton.classList.toggle('hidden', !assignedByProjectManager); }
     }
     function applyInstitutionAssignmentLock() {
       institutionGoalAssignment = getInstitutionGoalAssignment();
       if (!institutionGoalAssignment) { return; }
       var documentPeople = [];
       Object.keys(institutionGoalAssignment.docs || {}).forEach(function(key) {
-        var person = institutionGoalAssignment.docs[key] && institutionGoalAssignment.docs[key].person;
-        if (person && documentPeople.indexOf(person) < 0) { documentPeople.push(person); }
+        var documentAssignment = institutionGoalAssignment.docs[key] || {};
+        if (documentAssignment.person) {
+          documentPeople.push(key + '：' + documentAssignment.person + (documentAssignment.ddl ? '（' + documentAssignment.ddl + '）' : ''));
+        }
       });
       var summary = [];
-      if (documentPeople.length) { summary.push('文书交付：' + documentPeople.join('、')); }
+      if (documentPeople.length) { summary.push('文书交付：' + documentPeople.join('；')); }
       if (institutionGoalAssignment.reviewer) { summary.push('文书审核：' + institutionGoalAssignment.reviewer); }
-      if (institutionGoalAssignment.network) { summary.push('网申：' + institutionGoalAssignment.network); }
+      if (institutionGoalAssignment.network) { summary.push('网申：' + institutionGoalAssignment.network + (institutionGoalAssignment.networkDdl ? '（' + institutionGoalAssignment.networkDdl + '）' : '')); }
       document.getElementById('institutionAssignmentNames').textContent = summary.join(' ｜ ');
       document.getElementById('institutionAssignmentLockNotice').classList.remove('hidden');
       var distributeButton = document.querySelector('[data-dom-id="btn-distribute-task"]');
@@ -1272,12 +1287,38 @@
       setTimeout(function(){ t.classList.add('hidden'); }, 2200);
     }
     function distVal(id) { var el = document.getElementById(id); return el ? el.value : ''; }
+    function persistGoalAssignment(assignment) {
+      var projectAssignment = {};
+      try { projectAssignment = JSON.parse(localStorage.getItem(PROJECT_ASSIGNMENT_KEY) || '{}'); }
+      catch (e) { projectAssignment = {}; }
+      projectAssignment.goalAssignments = projectAssignment.goalAssignments || {};
+      projectAssignment.goalAssignments[currentGoalAssignmentId] = assignment;
+      localStorage.setItem(PROJECT_ASSIGNMENT_KEY, JSON.stringify(projectAssignment));
+    }
     function confirmDistribute() {
       for (var i = 0; i < DELIVERY_DOCS.length; i++) {
         if (!selectedPersons['delivery' + DELIVERY_DOCS[i].key]) { showDistToast('请选择' + DELIVERY_DOCS[i].name + '的交付人员'); return; }
       }
       if (!selectedPersons.reviewer) { showDistToast('请选择文书审核人员'); return; }
       if (!selectedPersons.network) { showDistToast('请选择网申人员'); return; }
+      var savedDocs = {};
+      DELIVERY_DOCS.forEach(function(documentItem) {
+        savedDocs[documentItem.key] = {
+          person: selectedPersons['delivery' + documentItem.key],
+          ddl: distVal('ddlDoc' + documentItem.key)
+        };
+      });
+      persistGoalAssignment({
+        docs: savedDocs,
+        reviewer: selectedPersons.reviewer,
+        reviewerDocDdl: distVal('ddlDocReview'),
+        reviewerAppDdl: distVal('ddlAppReview'),
+        network: selectedPersons.network,
+        networkDdl: distVal('ddlAppNetwork'),
+        assignedBy: '项目经理',
+        locked: false,
+        done: true
+      });
       var goalName = document.getElementById('drawerSubProjectName').textContent;
       var docRows = '';
       DELIVERY_DOCS.forEach(function(d) {
@@ -1296,6 +1337,7 @@
     function finishDistribute() {
       document.getElementById('distSuccessModal').classList.add('hidden');
       closeDrawerDistribute();
+      syncGoalAssignmentActions();
     }
 
     /* ---------------- 更换任务抽屉 ---------------- */
@@ -1309,6 +1351,24 @@
       }
       if (!selectedPersons.chgReviewer) { showDistToast('请选择文书审核人员'); return; }
       if (!selectedPersons.chgNetwork) { showDistToast('请选择网申人员'); return; }
+      var changedDocs = {};
+      DELIVERY_DOCS.forEach(function(documentItem) {
+        changedDocs[documentItem.key] = {
+          person: selectedPersons['chgDelivery' + documentItem.key],
+          ddl: distVal('chgDdlDoc' + documentItem.key)
+        };
+      });
+      persistGoalAssignment({
+        docs: changedDocs,
+        reviewer: selectedPersons.chgReviewer,
+        reviewerDocDdl: distVal('chgDdlDocReview'),
+        reviewerAppDdl: distVal('chgDdlAppReview'),
+        network: selectedPersons.chgNetwork,
+        networkDdl: distVal('chgDdlAppNetwork'),
+        assignedBy: '项目经理',
+        locked: false,
+        done: true
+      });
       var docRows = '';
       DELIVERY_DOCS.forEach(function(d) {
         docRows += '<p class="text-xs text-gray-500 flex justify-between"><span>' + d.name + '（原：' + CHG_ORIGINAL[d.key] + '）</span><span class="text-gray-900 font-medium">' + selectedPersons['chgDelivery' + d.key] + ' · ' + distVal('chgDdlDoc' + d.key) + '</span></p>';
@@ -1326,6 +1386,7 @@
     function finishChange() {
       document.getElementById('chgSuccessModal').classList.add('hidden');
       closeDrawerChangeTask();
+      syncGoalAssignmentActions();
     }
     function closeDrawerChangeTask() {
       document.getElementById('drawerChangeTask').classList.add('hidden');

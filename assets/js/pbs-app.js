@@ -412,13 +412,127 @@
     }
   }, true);
 
-  /* 通知按钮兜底：页面无内嵌通知弹窗时，用弹层打开系统消息 */
+  /* ---------------- 全角色消息提醒 ---------------- */
+  var ROLE_NOTIFICATIONS = {
+    all: [
+      { type: '项目管理', title: '2 个项目待分配项目经理', detail: '线上申请服务订单进入项目池，等待机构管理员处理', time: '10 分钟前', level: 'warning' },
+      { type: '任务接收', title: '孙老师尚未接收 CMU 文书审核任务', detail: '李雪 · 卡内基梅隆大学，已等待 1 天 6 小时', time: '30 分钟前', level: 'danger' },
+      { type: '文书审核', title: '3 份文书终稿等待审核', detail: '最近截止时间为今天 18:00', time: '1 小时前', level: 'primary' }
+    ],
+    '超级管理员': [
+      { type: '平台概况', title: '3 项跨机构业务需要关注', detail: '包含项目分配、任务接收与文书审核事项', time: '10 分钟前', level: 'warning' },
+      { type: '机构同步', title: '新机构主体数据已完成同步', detail: '机构信息已进入机构管理列表', time: '35 分钟前', level: 'primary' },
+      { type: '系统审计', title: '今日新增 18 条操作日志', detail: '未发现失败操作', time: '1 小时前', level: 'success' }
+    ],
+    '平台运维人员': [
+      { type: '机构同步', title: '2 个机构主体完成数据同步', detail: '可在机构管理中查看最新成员状态', time: '20 分钟前', level: 'success' },
+      { type: '权限管理', title: '1 项角色权限配置待复核', detail: '机构管理员权限范围发生调整', time: '45 分钟前', level: 'warning' },
+      { type: '操作审计', title: '今日新增 18 条操作日志', detail: '全部操作执行成功', time: '1 小时前', level: 'primary' }
+    ],
+    '机构管理员': [
+      { type: '项目分配', title: '2 个项目待分配项目经理', detail: '项目池中有新的线上申请服务订单', time: '10 分钟前', level: 'danger' },
+      { type: '任务接收', title: '3 项团队任务尚未接收', detail: '其中 1 项已等待超过 24 小时', time: '30 分钟前', level: 'warning' },
+      { type: '支付节点', title: '1 个付款节点状态待确认', detail: '李雪 · 文书交付阶段', time: '2 小时前', level: 'primary' }
+    ],
+    '销售人员管理员': [
+      { type: '选校任务', title: '2 个选校任务等待分配', detail: '新订单已进入选校任务列表', time: '15 分钟前', level: 'warning' },
+      { type: '方案确认', title: '周雨薇的选校方案 V3 待确认', detail: '客户已打开分享页面', time: '40 分钟前', level: 'primary' },
+      { type: '团队进度', title: '1 项选校任务临近截止时间', detail: '请在今天 18:00 前完成方案提交', time: '1 小时前', level: 'danger' }
+    ],
+    '销售人员': [
+      { type: '选校任务', title: '新的选校任务已分配给你', detail: '孙可欣 · 美国计算机科学方向', time: '12 分钟前', level: 'primary' },
+      { type: '客户反馈', title: '客户已查看选校方案 V2', detail: '可继续补充沟通记录', time: '50 分钟前', level: 'success' },
+      { type: '方案截止', title: '周雨薇的方案今天需要更新', detail: '距离内部截止时间还有 6 小时', time: '1 小时前', level: 'warning' }
+    ],
+    '项目经理': [
+      { type: '任务接收', title: '孙老师尚未接收文书审核任务', detail: '李雪 · CMU 个人陈述终稿，已等待 1 天 6 小时', time: '30 分钟前', level: 'danger' },
+      { type: '材料准备', title: '陈雨桐仍缺少护照复印件', detail: '材料缺失已影响网申字段准备', time: '45 分钟前', level: 'warning' },
+      { type: '文书确认', title: 'CMU 个人陈述终稿等待你确认', detail: '截止时间：今天 18:00', time: '1 小时前', level: 'primary' }
+    ],
+    '文书人员': [
+      { type: '任务分配', title: '新的个人陈述任务已分配给你', detail: '李雪 · 卡内基梅隆大学', time: '8 分钟前', level: 'primary' },
+      { type: '修改意见', title: '陈雨桐的推荐信收到修改意见', detail: '项目经理补充了 2 条修改要求', time: '35 分钟前', level: 'warning' },
+      { type: '交付截止', title: '1 项文书任务今天到期', detail: '请在今天 18:00 前提交终稿', time: '1 小时前', level: 'danger' }
+    ],
+    '网申人员': [
+      { type: '任务分配', title: 'Stanford 网申任务已分配给你', detail: '李雪 · 计算机科学硕士', time: '15 分钟前', level: 'primary' },
+      { type: '材料更新', title: '申请材料清单已更新', detail: '新增 1 份语言成绩单', time: '42 分钟前', level: 'success' },
+      { type: '字段检查', title: '4 个官网字段需要人工核对', detail: 'AI 未能稳定匹配对应内容', time: '1 小时前', level: 'warning' }
+    ],
+    '文书审核': [
+      { type: '待审核', title: 'CMU 个人陈述终稿等待审核', detail: '李雪 · 截止时间今天 18:00', time: '10 分钟前', level: 'danger' },
+      { type: '待审核', title: 'Stanford 推荐信初稿等待审核', detail: '李雪 · 刘老师提交', time: '35 分钟前', level: 'primary' },
+      { type: '修改完成', title: '陈雨桐的简历已重新提交', detail: '已根据上一轮意见完成修改', time: '1 小时前', level: 'success' }
+    ],
+    '文书机构管理员': [
+      { type: '任务分发', title: '2 项文书任务等待分发', detail: '请指定文书交付人员', time: '12 分钟前', level: 'warning' },
+      { type: '任务接收', title: '1 项已分配任务超过 12 小时未接收', detail: '陈雨桐 · 推荐信初稿', time: '40 分钟前', level: 'danger' },
+      { type: '交付进度', title: '今日已有 4 份文书完成交付', detail: '全部进入审核流程', time: '1 小时前', level: 'success' }
+    ]
+  };
+
+  var lastNotificationTrigger = null;
+  function notificationItemsFor(session) {
+    var key = session.previewRole === 'all' ? 'all' : session.role;
+    return ROLE_NOTIFICATIONS[key] || ROLE_NOTIFICATIONS.all;
+  }
+  function ensureNotificationCenter() {
+    var layer = document.getElementById('pbsNotificationCenter');
+    if (layer) return layer;
+    layer = document.createElement('div');
+    layer.id = 'pbsNotificationCenter';
+    layer.className = 'pbs-notification-layer';
+    layer.setAttribute('aria-hidden', 'true');
+    layer.innerHTML =
+      '<button type="button" class="pbs-notification-backdrop" data-pbs-notification-close aria-label="关闭消息提醒"></button>' +
+      '<section class="pbs-notification-dialog" role="dialog" aria-modal="true" aria-labelledby="pbsNotificationTitle">' +
+      '<header class="pbs-notification-header"><div><div class="pbs-notification-heading"><h2 id="pbsNotificationTitle">消息提醒</h2><span id="pbsNotificationRole"></span></div><p>查看当前角色需要关注的最新事项</p></div>' +
+      '<button type="button" class="pbs-notification-close" data-pbs-notification-close aria-label="关闭">×</button></header>' +
+      '<div id="pbsNotificationList" class="pbs-notification-list"></div>' +
+      '<footer class="pbs-notification-footer"><span id="pbsNotificationCount"></span><div><button type="button" class="pbs-notification-confirm" data-pbs-notification-close>关闭</button></div></footer>' +
+      '</section>';
+    layer.addEventListener('click', function (e) {
+      if (e.target.closest('[data-pbs-notification-close]')) window.pbsCloseNotifications();
+    });
+    document.body.appendChild(layer);
+    return layer;
+  }
+  window.pbsOpenNotifications = function (trigger) {
+    var session = window.pbsGetSession();
+    var items = notificationItemsFor(session);
+    var layer = ensureNotificationCenter();
+    var role = layer.querySelector('#pbsNotificationRole');
+    var list = layer.querySelector('#pbsNotificationList');
+    var count = layer.querySelector('#pbsNotificationCount');
+    lastNotificationTrigger = trigger || document.activeElement;
+    role.textContent = session.previewLabel || session.role;
+    list.innerHTML = items.map(function (item) {
+      return '<article class="pbs-notification-item is-' + item.level + '"><span class="pbs-notification-dot"></span><div><div class="pbs-notification-meta"><span>' + item.type + '</span><time>' + item.time + '</time></div><h3>' + item.title + '</h3><p>' + item.detail + '</p></div></article>';
+    }).join('');
+    count.textContent = items.length + ' 条消息';
+    layer.classList.add('is-open');
+    layer.setAttribute('aria-hidden', 'false');
+    document.body.style.overflow = 'hidden';
+    var closeButton = layer.querySelector('.pbs-notification-close');
+    if (closeButton) closeButton.focus();
+  };
+  window.pbsCloseNotifications = function () {
+    var layer = document.getElementById('pbsNotificationCenter');
+    if (!layer) return;
+    layer.classList.remove('is-open');
+    layer.setAttribute('aria-hidden', 'true');
+    document.body.style.overflow = '';
+    if (lastNotificationTrigger && typeof lastNotificationTrigger.focus === 'function') lastNotificationTrigger.focus();
+  };
   document.addEventListener('click', function (e) {
-    var b = e.target.closest('[data-dom-id="btn-notification"]');
-    if (b && !document.getElementById('notificationModal')) {
-      e.preventDefault();
-      window.pbsOpenOverlay('系统消息弹窗.html', { width: '560px' });
-    }
+    var button = e.target.closest('[data-dom-id="btn-notification"]');
+    if (!button) return;
+    e.preventDefault();
+    e.stopImmediatePropagation();
+    window.pbsOpenNotifications(button);
+  }, true);
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape' && document.getElementById('pbsNotificationCenter')) window.pbsCloseNotifications();
   });
 
   /* ---------------- 弹层（iframe方式加载组件页） ---------------- */

@@ -1066,7 +1066,11 @@
         var el = document.getElementById(id);
         if (el) el.value = '';
       });
-      document.querySelectorAll('input[name="svc-items"]').forEach(function(cb) { cb.checked = false; });
+      var docNode = document.querySelector('[data-stage="文书"] [data-field="node-name"]');
+      var appNode = document.querySelector('[data-stage="网申"] [data-field="node-name"]');
+      if (docNode) docNode.value = '文书服务启动';
+      if (appNode) appNode.value = '网申服务启动';
+      document.querySelectorAll('[data-field="node-amount"]').forEach(function(input) { input.value = ''; });
       document.querySelectorAll('.field-error').forEach(function(el) { el.remove(); });
       document.querySelectorAll('.border-red-500').forEach(function(el) { el.classList.remove('border-red-500'); });
     }
@@ -1084,60 +1088,6 @@
       document.querySelectorAll('.field-error').forEach(function(el) { el.remove(); });
       document.querySelectorAll('.border-red-500').forEach(function(el) { el.classList.remove('border-red-500'); });
     }
-    function addPackageItem() {
-      var list = document.getElementById('packageList');
-      var idx = list.children.length + 1;
-      var div = document.createElement('div');
-      div.className = 'package-item bg-white rounded-lg p-2.5 border border-gray-200';
-      div.innerHTML = '<div class="flex items-center justify-between mb-1.5">' +
-        '<span class="text-xs font-medium text-gray-500">套餐 ' + idx + '</span>' +
-        '<button class="text-gray-400 hover:text-red-500 transition-colors" onclick="removePackageItem(this)">' +
-        '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>' +
-        '</button></div>' +
-        '<div class="space-y-1.5">' +
-        '<input type="text" data-field="pkg-name" placeholder="套餐名称，如：卡内基梅隆大学+计算机科学" class="w-full h-8 px-2 border border-gray-300 rounded focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-xs">' +
-        '<div class="flex gap-3 py-0.5">' +
-        '<label class="flex items-center gap-1 text-xs text-gray-700 cursor-pointer"><input type="checkbox" data-field="svc-school" class="w-3.5 h-3.5 text-blue-600 border-gray-300 rounded focus:ring-blue-500"> 选校</label>' +
-        '<label class="flex items-center gap-1 text-xs text-gray-700 cursor-pointer"><input type="checkbox" data-field="svc-doc" class="w-3.5 h-3.5 text-blue-600 border-gray-300 rounded focus:ring-blue-500"> 文书</label>' +
-        '<label class="flex items-center gap-1 text-xs text-gray-700 cursor-pointer"><input type="checkbox" data-field="svc-apply" class="w-3.5 h-3.5 text-blue-600 border-gray-300 rounded focus:ring-blue-500"> 网申</label>' +
-        '<label class="flex items-center gap-1 text-xs text-gray-700 cursor-pointer"><input type="checkbox" data-field="svc-interview" class="w-3.5 h-3.5 text-blue-600 border-gray-300 rounded focus:ring-blue-500"> 面试辅导</label>' +
-        '</div>' +
-        '<input type="number" data-field="pkg-amount" min="0" step="0.01" placeholder="合同金额（元）" class="w-full h-8 px-2 border border-gray-300 rounded focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-xs">' +
-        '</div>';
-      list.appendChild(div);
-      updatePkgDelButtons();
-    }
-    function removePackageItem(btn) {
-      var item = btn.closest('.package-item');
-      if (item) {
-        item.remove();
-        updatePkgIndex();
-        updatePkgDelButtons();
-      }
-    }
-    function updatePkgIndex() {
-      var items = document.querySelectorAll('.package-item');
-      items.forEach(function(item, i) {
-        var label = item.querySelector('.text-xs.font-medium.text-gray-500');
-        if (label) label.textContent = '套餐 ' + (i + 1);
-      });
-    }
-    function updatePkgDelButtons() {
-      var items = document.querySelectorAll('.package-item');
-      items.forEach(function(item, i) {
-        var delBtn = item.querySelector('.pkg-del-btn') || item.querySelector('button[onclick^="removePackageItem"]');
-        if (delBtn) {
-          if (items.length === 1) {
-            delBtn.classList.add('hidden');
-            delBtn.classList.remove('inline-flex');
-          } else {
-            delBtn.classList.remove('hidden');
-            delBtn.classList.add('inline-flex');
-          }
-        }
-      });
-    }
-
     function showToast(msg) {
       var toast = document.getElementById('toast');
       document.getElementById('toastMsg').textContent = msg;
@@ -1157,7 +1107,7 @@
       var cstWechat = document.getElementById('cst-wechat');
       if (!cstWechat.value.trim()) { showFieldError(cstWechat, '请填写微信号'); ok = false; }
       var cstSource = document.getElementById('cst-source');
-      if (!cstSource.value) { showFieldError(cstSource, '请选择来源渠道'); ok = false; }
+      if (!cstSource.value.trim()) { showFieldError(cstSource, '请填写来源渠道'); ok = false; }
       // 学生信息校验
       var stuName = document.getElementById('stu-name');
       if (!stuName.value.trim()) { showFieldError(stuName, '请填写学生姓名'); ok = false; }
@@ -1179,23 +1129,18 @@
       if (!stuCountry.value.trim()) { showFieldError(stuCountry, '请填写意向国家'); ok = false; }
       var stuMajor = document.getElementById('stu-major');
       if (!stuMajor.value.trim()) { showFieldError(stuMajor, '请填写意向专业'); ok = false; }
-      // 项目服务套餐校验
-      var pkgItems = document.querySelectorAll('.package-item');
-      pkgItems.forEach(function(item, idx) {
-        var pName = item.querySelector('[data-field="pkg-name"]');
-        if (!pName.value.trim()) { showFieldError(pName, '请填写套餐名称'); ok = false; }
-        var pSvcs = item.querySelectorAll('input[type="checkbox"]:checked');
-        if (pSvcs.length === 0) {
-          var err = item.querySelector('.pkg-svc-error');
-          if (!err) {
-            err = document.createElement('p'); err.className = 'pkg-svc-error field-error text-xs text-red-500 mt-0.5';
-            item.appendChild(err);
-          }
-          err.textContent = '请至少选择一项服务';
-          ok = false;
-        }
-        var pAmt = item.querySelector('[data-field="pkg-amount"]');
-        if (!pAmt.value.trim()) { showFieldError(pAmt, '请填写合同金额'); ok = false; }
+      // 线下项目固定文书、网申两个阶段，支付节点独立配置
+      var paymentNodes = [];
+      document.querySelectorAll('.payment-node-item').forEach(function(item) {
+        var nodeName = item.querySelector('[data-field="node-name"]');
+        var nodeAmount = item.querySelector('[data-field="node-amount"]');
+        if (!nodeName.value.trim()) { showFieldError(nodeName, '请填写节点名称'); ok = false; }
+        if (!nodeAmount.value.trim() || Number(nodeAmount.value) <= 0) { showFieldError(nodeAmount, '请填写大于 0 的付款金额'); ok = false; }
+        paymentNodes.push({
+          stage: item.dataset.stage,
+          name: nodeName.value.trim(),
+          amount: Number(nodeAmount.value || 0)
+        });
       });
 
       if (!ok) return;
@@ -1217,6 +1162,9 @@
         status: '已分配',
         projectManager: projectManager,
         source: '线下',
+        sourceChannel: cstSource.value.trim(),
+        serviceStages: ['文书', '网申'],
+        paymentNodes: paymentNodes,
         createdAt: createdAt
       });
       localStorage.setItem(OFFLINE_PROJECTS_KEY, JSON.stringify(projects));
@@ -1224,7 +1172,7 @@
       renderOfflineProjects();
       configurePoolRoleView();
       applyFilter();
-      showToast('项目档案已创建：' + projectNo + '，已自动分配给' + projectManager + '并加入“我的项目”');
+      showToast('项目档案已创建：' + projectNo + '，文书与网申支付节点已同步生成');
     }
     function closeNotificationModal() {
       document.getElementById('notificationModal').classList.add('hidden');
@@ -1317,16 +1265,7 @@
                 </div>
                 <div>
                   <label class="block text-xs text-gray-500 mb-1">来源渠道 <span class="text-red-500">*</span></label>
-                  <select id="cst-source" class="w-full h-9 px-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm">
-                    <option value="">请选择</option>
-                    <option>官网表单</option>
-                    <option>小红书</option>
-                    <option>微信公众号</option>
-                    <option>线下活动</option>
-                    <option>转介绍</option>
-                    <option>抖音</option>
-                    <option>其他</option>
-                  </select>
+                  <input id="cst-source" type="text" placeholder="如：转介绍、线下活动" class="w-full h-9 px-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm">
                 </div>
               </div>
             </div>
@@ -1406,35 +1345,27 @@
               </div>
             </div>
           </div>
-          <!-- 左下：项目服务套餐 -->
+          <!-- 左下：线下支付节点 -->
           <div class="bg-gray-50 rounded-xl p-3 border border-gray-100 h-full overflow-y-auto">
-            <div class="flex items-center justify-between mb-2">
+            <div class="mb-3">
               <h4 class="text-sm font-semibold text-gray-700 flex items-center gap-2">
-                <span class="w-1 h-4 bg-purple-600 rounded-full"></span>项目服务套餐
+                <span class="w-1 h-4 bg-purple-600 rounded-full"></span>服务阶段与支付节点
               </h4>
-              <button onclick="addPackageItem()" class="text-xs text-blue-600 hover:text-blue-800 font-medium flex items-center gap-1">
-                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
-                新增
-              </button>
+              <p class="mt-1 text-xs text-gray-400">线下项目仅包含文书、网申两个阶段；支付节点独立配置，不与线上支付信息同步。</p>
             </div>
-            <div id="packageList" class="space-y-3">
-              <!-- 套餐项模板 -->
-              <div class="package-item bg-white rounded-lg p-2.5 border border-gray-200">
-                <div class="flex items-center justify-between mb-1.5">
-                  <span class="text-xs font-medium text-gray-500">套餐 1</span>
-                  <button class="pkg-del-btn text-gray-400 hover:text-red-500 transition-colors hidden" onclick="removePackageItem(this)">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
-                  </button>
+            <div class="space-y-3">
+              <div class="payment-node-item bg-white rounded-lg p-3 border border-gray-200" data-stage="文书">
+                <div class="flex items-center gap-2 mb-2"><span class="w-6 h-6 rounded-full bg-blue-50 text-blue-600 text-xs font-semibold flex items-center justify-center">1</span><span class="text-sm font-medium text-gray-800">文书阶段</span></div>
+                <div class="grid grid-cols-2 gap-2">
+                  <input type="text" data-field="node-name" value="文书服务启动" placeholder="节点名称" class="w-full h-8 px-2 border border-gray-300 rounded focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-xs">
+                  <input type="number" data-field="node-amount" min="0.01" step="0.01" placeholder="付款金额（元）" class="w-full h-8 px-2 border border-gray-300 rounded focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-xs">
                 </div>
-                <div class="space-y-1.5">
-                  <input type="text" data-field="pkg-name" placeholder="套餐名称，如：卡内基梅隆大学+计算机科学" class="w-full h-8 px-2 border border-gray-300 rounded focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-xs">
-                  <div class="flex gap-3 py-0.5">
-                    <label class="flex items-center gap-1 text-xs text-gray-700 cursor-pointer"><input type="checkbox" data-field="svc-school" class="w-3.5 h-3.5 text-blue-600 border-gray-300 rounded focus:ring-blue-500"> 选校</label>
-                    <label class="flex items-center gap-1 text-xs text-gray-700 cursor-pointer"><input type="checkbox" data-field="svc-doc" class="w-3.5 h-3.5 text-blue-600 border-gray-300 rounded focus:ring-blue-500"> 文书</label>
-                    <label class="flex items-center gap-1 text-xs text-gray-700 cursor-pointer"><input type="checkbox" data-field="svc-apply" class="w-3.5 h-3.5 text-blue-600 border-gray-300 rounded focus:ring-blue-500"> 网申</label>
-                    <label class="flex items-center gap-1 text-xs text-gray-700 cursor-pointer"><input type="checkbox" data-field="svc-interview" class="w-3.5 h-3.5 text-blue-600 border-gray-300 rounded focus:ring-blue-500"> 面试辅导</label>
-                  </div>
-                  <input type="number" data-field="pkg-amount" min="0" step="0.01" placeholder="合同金额（元）" class="w-full h-8 px-2 border border-gray-300 rounded focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-xs">
+              </div>
+              <div class="payment-node-item bg-white rounded-lg p-3 border border-gray-200" data-stage="网申">
+                <div class="flex items-center gap-2 mb-2"><span class="w-6 h-6 rounded-full bg-purple-50 text-purple-600 text-xs font-semibold flex items-center justify-center">2</span><span class="text-sm font-medium text-gray-800">网申阶段</span></div>
+                <div class="grid grid-cols-2 gap-2">
+                  <input type="text" data-field="node-name" value="网申服务启动" placeholder="节点名称" class="w-full h-8 px-2 border border-gray-300 rounded focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-xs">
+                  <input type="number" data-field="node-amount" min="0.01" step="0.01" placeholder="付款金额（元）" class="w-full h-8 px-2 border border-gray-300 rounded focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-xs">
                 </div>
               </div>
             </div>

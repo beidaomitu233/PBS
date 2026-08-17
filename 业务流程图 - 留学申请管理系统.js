@@ -37,7 +37,7 @@
     {
       id: 'main', label: '主业务流程', description: '申请服务与选校咨询两类订单的完整链路',
       lanes: [
-        { title: '申请服务订单', note: '先付款，后服务', steps: [
+        { title: '线上项目', note: '先付款，后服务', steps: [
           { title: '订单创建', note: '线上同步或线下录入', page: '项目池列表页 - 留学申请管理系统.html' },
           { title: '项目分配', note: '机构管理员分配 PM', page: '项目池列表页 - 留学申请管理系统.html' },
           { title: '档案与选校', note: '补充档案并确认目标', page: '学生档案详情页 - 留学申请管理系统.html' },

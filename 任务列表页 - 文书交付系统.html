@@ -371,11 +371,11 @@
         <div class="flex items-end gap-4 flex-wrap">
           <div class="flex-1 min-w-[200px]">
             <label class="block text-sm text-gray-600 mb-2">关键词搜索</label>
-            <input id="flt-kw" type="text" placeholder="搜索客户姓名/院校目标/DDL..." class="w-full h-10 px-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+            <input id="flt-kw" type="text" placeholder="搜索学生姓名/院校目标/DDL..." class="w-full h-10 px-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
           </div>
 <div>
-            <label class="block text-sm text-gray-600 mb-2">客户姓名</label>
-            <input id="flt-name" type="text" placeholder="客户姓名" class="w-36 h-10 px-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+            <label class="block text-sm text-gray-600 mb-2">学生姓名</label>
+            <input id="flt-name" type="text" placeholder="学生姓名" class="w-36 h-10 px-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
           </div>
           <div>
             <label class="block text-sm text-gray-600 mb-2">院校目标</label>
@@ -385,10 +385,9 @@
             <label class="block text-sm text-gray-600 mb-2">文书状态</label>
             <select id="flt-status" class="w-32 h-10 px-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
               <option value="">全部</option>
-              <option>待撰写</option>
               <option>撰写中</option>
               <option>审核中</option>
-              <option>已驳回</option>
+              <option>待修改</option>
               <option>已完成</option>
             </select>
           </div>
@@ -416,7 +415,7 @@
           <thead class="bg-gray-50">
             <tr>
               <th class="px-5 py-4 text-left text-sm font-medium text-gray-500">序号</th>
-              <th class="px-5 py-4 text-left text-sm font-medium text-gray-500">客户姓名</th>
+              <th class="px-5 py-4 text-left text-sm font-medium text-gray-500">学生姓名</th>
               <th class="px-5 py-4 text-left text-sm font-medium text-gray-500">院校目标</th>
               <th class="px-5 py-4 text-left text-sm font-medium text-gray-500">DDL</th>
               <th class="px-5 py-4 text-left text-sm font-medium text-gray-500">文书状态</th>
@@ -424,7 +423,7 @@
             </tr>
           </thead>
           <tbody class="divide-y divide-gray-100" id="taskTbody">
-            <tr data-kw="1李李雪卡内基梅隆大学人工智能2026-11-01待撰写详情" data-name="李李雪" data-target="卡内基梅隆大学人工智能" data-ddl="2026-11-01" data-status="待撰写" class="hover:bg-gray-50">
+            <tr data-kw="1李李雪卡内基梅隆大学人工智能2026-11-01撰写中详情" data-name="李李雪" data-target="卡内基梅隆大学人工智能" data-ddl="2026-11-01" data-status="撰写中" class="hover:bg-gray-50">
               <td class="px-5 py-4 text-sm text-gray-500">1</td>
               <td class="px-5 py-4">
                 <div class="flex items-center gap-3">
@@ -443,7 +442,7 @@
               <td class="px-5 py-4 text-sm text-gray-600">2026-11-01</td>
               <td class="px-5 py-4">
                 <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-600">
-                  待撰写
+                  撰写中
                 </span>
               </td>
               <td class="px-5 py-4">
@@ -508,7 +507,7 @@
                 </button>
               </td>
             </tr>
-            <tr data-kw="4刘刘芳哈佛大学公共卫生2026-11-20已驳回详情" data-name="刘刘芳" data-target="哈佛大学公共卫生" data-ddl="2026-11-20" data-status="已驳回" class="hover:bg-gray-50">
+            <tr data-kw="4刘刘芳哈佛大学公共卫生2026-11-20待修改详情" data-name="刘刘芳" data-target="哈佛大学公共卫生" data-ddl="2026-11-20" data-status="待修改" class="hover:bg-gray-50">
               <td class="px-5 py-4 text-sm text-gray-500">4</td>
               <td class="px-5 py-4">
                 <div class="flex items-center gap-3">
@@ -527,7 +526,7 @@
               <td class="px-5 py-4 text-sm text-gray-600">2026-11-20</td>
               <td class="px-5 py-4">
                 <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
-                  已驳回
+                  待修改
                 </span>
               </td>
               <td class="px-5 py-4">
@@ -617,7 +616,7 @@
           <h3 class="text-sm font-semibold text-gray-800">新任务待签收</h3>
         </div>
         <div class="space-y-1.5 text-sm text-gray-600 mb-4">
-          <p>客户姓名：<strong class="text-gray-900">李雪</strong></p>
+          <p>学生姓名：<strong class="text-gray-900">李雪</strong></p>
           <p>院校目标：<strong class="text-gray-900">卡内基梅隆大学 · 人工智能</strong></p>
           <p>申请层次：<strong class="text-gray-900">硕士申请</strong></p>
           <p>分配时间：<strong class="text-gray-900">2026-07-16 14:30</strong></p>
@@ -636,7 +635,7 @@
           <h3 class="text-sm font-semibold text-gray-800">新任务待签收</h3>
         </div>
         <div class="space-y-1.5 text-sm text-gray-600 mb-4">
-          <p>客户姓名：<strong class="text-gray-900">王明</strong></p>
+          <p>学生姓名：<strong class="text-gray-900">王明</strong></p>
           <p>院校目标：<strong class="text-gray-900">斯坦福大学 · 计算机科学</strong></p>
           <p>申请层次：<strong class="text-gray-900">硕士申请</strong></p>
           <p>分配时间：<strong class="text-gray-900">2026-07-17 09:15</strong></p>
@@ -792,21 +791,21 @@
       // 追加到任务列表表格
       var tbody = document.getElementById('taskTbody');
       var newIndex = tbody.querySelectorAll('tr[data-kw]').length + 1;
-      var kw = newIndex + info.initial + info.name + info.school + info.major + '待撰写详情';
+      var kw = newIndex + info.initial + info.name + info.school + info.major + '撰写中详情';
       var tr = document.createElement('tr');
       tr.className = 'hover:bg-gray-50';
       tr.setAttribute('data-kw', kw);
       tr.setAttribute('data-name', info.initial + info.name);
       tr.setAttribute('data-target', info.school + info.major);
       tr.setAttribute('data-ddl', '');
-      tr.setAttribute('data-status', '待撰写');
+      tr.setAttribute('data-status', '撰写中');
       tr.innerHTML = '<td class="px-5 py-4 text-sm text-gray-500">' + newIndex + '</td>' +
         '<td class="px-5 py-4"><div class="flex items-center gap-3">' +
         '<div class="w-8 h-8 bg-gradient-to-br ' + info.color + ' rounded-full flex items-center justify-center"><span class="text-white text-xs font-medium">' + info.initial + '</span></div>' +
         '<span class="text-sm font-medium text-gray-900">' + info.name + '</span></div></td>' +
         '<td class="px-5 py-4"><div><p class="text-sm text-gray-900">' + info.school + '</p><p class="text-xs text-gray-500">' + info.major + '</p></div></td>' +
         '<td class="px-5 py-4 text-sm text-gray-600">—</td>' +
-        '<td class="px-5 py-4"><span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-600">待撰写</span></td>' +
+        '<td class="px-5 py-4"><span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-700">撰写中</span></td>' +
         '<td class="px-5 py-4"><button class="text-blue-600 hover:text-blue-800 text-sm font-medium" data-dom-id="btn-task-detail-' + newIndex + '">详情</button></td>';
       tbody.appendChild(tr);
       tr.querySelector('button').addEventListener('click', function() { window.location.href = '文书编辑器 - 文书交付系统.html'; });

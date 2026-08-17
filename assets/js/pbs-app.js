@@ -415,7 +415,7 @@
   /* ---------------- 全角色消息提醒 ---------------- */
   var ROLE_NOTIFICATIONS = {
     all: [
-      { type: '项目管理', title: '2 个项目待分配项目经理', detail: '线上申请服务订单进入项目池，等待机构管理员处理', time: '10 分钟前', level: 'warning' },
+      { type: '项目管理', title: '2 个项目待分配项目经理', detail: '线上项目进入项目池，等待机构管理员处理', time: '10 分钟前', level: 'warning' },
       { type: '任务接收', title: '孙老师尚未接收 CMU 文书审核任务', detail: '李雪 · 卡内基梅隆大学，已等待 1 天 6 小时', time: '30 分钟前', level: 'danger' },
       { type: '文书审核', title: '3 份文书终稿等待审核', detail: '最近截止时间为今天 18:00', time: '1 小时前', level: 'primary' }
     ],
@@ -430,7 +430,7 @@
       { type: '操作审计', title: '今日新增 18 条操作日志', detail: '全部操作执行成功', time: '1 小时前', level: 'primary' }
     ],
     '机构管理员': [
-      { type: '项目分配', title: '2 个项目待分配项目经理', detail: '项目池中有新的线上申请服务订单', time: '10 分钟前', level: 'danger' },
+      { type: '项目分配', title: '2 个项目待分配项目经理', detail: '项目池中有新的线上项目', time: '10 分钟前', level: 'danger' },
       { type: '任务接收', title: '3 项团队任务尚未接收', detail: '其中 1 项已等待超过 24 小时', time: '30 分钟前', level: 'warning' },
       { type: '支付节点', title: '1 个付款节点状态待确认', detail: '李雪 · 文书交付阶段', time: '2 小时前', level: 'primary' }
     ],

@@ -730,7 +730,7 @@
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
             </svg>
             最近扫描邮件
-            <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-purple-50 text-purple-600 border border-purple-100" title="由监控AI自动识别邮件类型并打标，分类结果与网申状态联动">AI 智能分类</span>
+            <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-purple-50 text-purple-600 border border-purple-100" title="系统仅识别邮件状态，具体事项由经办人处理">AI 状态识别</span>
           </h3>
           <span class="text-sm text-gray-500">共 5 封</span>
         </div>
@@ -743,7 +743,7 @@
               <div class="flex items-start justify-between mb-2">
                 <div class="flex items-center gap-3">
                   <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                    Offer
+                     正常
                   </span>
                   <span class="text-sm font-medium text-gray-900">admissions@cmu.edu</span>
                 </div>
@@ -764,6 +764,7 @@
                   <li>Acceptance Form</li>
                   <li>Financial Aid Information</li>
                 </ul>
+                <div class="mt-3 p-3 rounded-lg bg-blue-50 border border-blue-100"><p class="text-xs font-medium text-blue-700">附件：Official_Offer_Letter.pdf</p><p class="text-xs text-blue-600 mt-1">系统不处理附件，仅识别邮件状态；附件由经办人下载并人工处理。</p></div>
                 <p>We look forward to welcoming you to Carnegie Mellon University.</p>
                 <p class="font-medium">Admissions Office<br>Carnegie Mellon University</p>
               </div>
@@ -776,7 +777,7 @@
               <div class="flex items-start justify-between mb-2">
                 <div class="flex items-center gap-3">
                   <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
-                    面试
+                     正常
                   </span>
                   <span class="text-sm font-medium text-gray-900">interview.cs@cmu.edu</span>
                 </div>
@@ -829,6 +830,7 @@
                   <li>Statement of Purpose (revised version)</li>
                 </ol>
                 <p>Please submit these documents through the application portal by July 25, 2026.</p>
+                <div class="mt-3 p-3 rounded-lg bg-yellow-50 border border-yellow-100"><p class="text-xs font-medium text-yellow-800">附件：Additional_Documents_Checklist.pdf</p><p class="text-xs text-yellow-700 mt-1">系统不解析或处理附件，仅标记为“补材料”；经办人根据邮件和附件人工处理。</p></div>
               </div>
             </div>
           </div>
@@ -866,7 +868,7 @@
               <div class="flex items-start justify-between mb-2">
                 <div class="flex items-center gap-3">
                   <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
-                    其他
+                     正常
                   </span>
                   <span class="text-sm font-medium text-gray-900">info@cmu.edu</span>
                 </div>
@@ -1029,7 +1031,7 @@
       </div>
 
       <!-- 状态历史记录（时间轴） -->
-      <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-5" data-section="history-timeline">
+      <div class="hidden bg-white rounded-xl shadow-sm border border-gray-100 p-5" data-section="history-timeline" aria-hidden="true">
         <h3 class="text-base font-semibold text-gray-800 mb-6 flex items-center gap-2">
           <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>

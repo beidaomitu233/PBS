@@ -991,7 +991,7 @@
           <div class="col-span-3"><label class="text-xs text-gray-500 block mb-1">结果图片</label><div class="border-2 border-dashed border-gray-300 rounded-lg p-4"><input id="resultOfferImageInput" type="file" accept="image/*" class="hidden" onchange="previewResultImage(this.files[0])"><div id="resultOfferImageEmpty" class="text-center"><button type="button" class="px-4 py-2 text-sm text-blue-600 bg-blue-50 rounded-lg hover:bg-blue-100 font-medium" onclick="document.getElementById('resultOfferImageInput').click()">上传 Offer / 结果图片</button><p class="text-xs text-gray-400 mt-2">支持 JPG、PNG，保存后同步至项目结果确认页面</p></div><div id="resultOfferImagePreview" class="hidden flex items-center gap-4"><img id="resultOfferImage" class="w-36 h-24 object-contain bg-gray-50 border border-gray-200 rounded-lg" alt="申请结果图片预览"><div><p id="resultOfferImageName" class="text-sm text-gray-700 mb-2"></p><div class="flex gap-3"><button type="button" class="text-xs text-blue-600 hover:underline" onclick="document.getElementById('resultOfferImageInput').click()">更换图片</button><button type="button" class="text-xs text-red-600 hover:underline" onclick="removeResultImage()">移除</button></div></div></div></div></div>
           <div class="col-span-3"><label class="text-xs text-gray-500 block mb-1">备注</label><textarea id="resultRemark" rows="3" class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 resize-none" placeholder="填写结果说明"></textarea></div>
         </div>
-        <div class="flex justify-end gap-3 mt-4"><button data-dom-id="btn-export-website-form" class="h-9 px-5 text-blue-600 bg-blue-50 rounded-lg hover:bg-blue-100 text-sm font-medium" onclick="exportWebsiteFormTemplate()">保存为模板</button><button class="h-9 px-5 bg-blue-600 text-white rounded-lg hover:bg-blue-700 text-sm font-medium" onclick="saveAdmissionResult()">保存申请结果</button></div>
+        <div class="flex justify-end gap-3 mt-4"><button class="h-9 px-5 bg-blue-600 text-white rounded-lg hover:bg-blue-700 text-sm font-medium" onclick="saveAdmissionResult()">保存申请结果</button></div>
       </div>
 
     </main>
@@ -1014,11 +1014,9 @@
           <label class="block text-sm font-medium text-gray-700 mb-1.5">网申状态 <span class="text-red-500">*</span></label>
           <select class="w-full h-10 px-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm" id="progressStatus">
             <option value="not-started">未开始</option>
-            <option value="ongoing">进行中</option>
-            <option value="in-progress" selected="">网申中</option>
-            <option value="supplementing">补交材料中</option>
+            <option value="ongoing" selected="">进行中</option>
             <option value="reviewing">审核中</option>
-            <option value="submitted">已提交</option>
+            <option value="supplementing">补交材料中</option>
             <option value="completed">已完成</option>
           </select>
         </div>
@@ -1166,41 +1164,8 @@
           </svg>
         </button>
       </div>
-      <p class="text-xs text-gray-400 mb-4">可注册新的申请专用邮箱，也可绑定学生已有邮箱。</p>
-      <div class="flex border-b border-gray-200 mb-5">
-        <button id="emailRegisterTab" class="px-4 py-2 text-sm font-medium text-blue-600 border-b-2 border-blue-600" onclick="switchEmailBindingTab('register')">邮箱注册</button>
-        <button id="emailManualTab" class="px-4 py-2 text-sm font-medium text-gray-500 border-b-2 border-transparent" onclick="switchEmailBindingTab('manual')">邮箱绑定</button>
-      </div>
-      <div id="emailRegisterPanel" class="space-y-4">
-        <div>
-          <label class="block text-sm font-medium text-gray-700 mb-1.5">邮箱账号 <span class="text-red-500">*</span></label>
-          <input id="regEmail" type="email" class="w-full h-10 px-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm" placeholder="例如：zhangming2027@outlook.com" value="zhangming2027@outlook.com">
-        </div>
-        <div>
-          <label class="block text-sm font-medium text-gray-700 mb-1.5">登录密码 <span class="text-red-500">*</span></label>
-          <input id="regEmailPwd" type="password" class="w-full h-10 px-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm" placeholder="8-20位，含字母和数字">
-        </div>
-        <div>
-          <label class="block text-sm font-medium text-gray-700 mb-1.5">确认密码 <span class="text-red-500">*</span></label>
-          <input id="regEmailPwd2" type="password" class="w-full h-10 px-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm" placeholder="再次输入密码">
-        </div>
-        <div>
-          <label class="block text-sm font-medium text-gray-700 mb-1.5">手机号码 <span class="text-red-500">*</span></label>
-          <input id="regPhone" type="tel" class="w-full h-10 px-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm" placeholder="用于接收验证码">
-        </div>
-        <div>
-          <label class="block text-sm font-medium text-gray-700 mb-1.5">短信验证码 <span class="text-red-500">*</span></label>
-          <div class="flex items-center gap-2">
-            <input id="regSmsCode" type="text" class="flex-1 h-10 px-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm" placeholder="6位验证码">
-            <button class="h-10 px-4 text-sm text-blue-600 bg-blue-50 rounded-lg hover:bg-blue-100 font-medium flex-shrink-0" onclick="getEmailCode(this)">获取验证码</button>
-          </div>
-        </div>
-      </div>
-      <div id="emailRegisterActions" class="flex items-center gap-3 mt-6">
-        <button class="flex-1 h-10 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium" onclick="confirmEmailRegister()">注册并关联</button>
-        <button class="flex-1 h-10 bg-white border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors font-medium" onclick="closeEmailBindingModal()">取消</button>
-      </div>
-      <div id="emailManualPanel" class="hidden space-y-4">
+      <p class="text-xs text-gray-400 mb-5">绑定已有申请邮箱，系统通过 IMAP 协议读取邮件状态。</p>
+      <div id="emailManualPanel" class="space-y-4">
         <div><label class="block text-sm font-medium text-gray-700 mb-1.5">邮箱账号 <span class="text-red-500">*</span></label><input id="manualEmailAccount" type="email" class="w-full h-10 px-3 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500" placeholder="请输入已有邮箱账号"></div>
         <div><label class="block text-sm font-medium text-gray-700 mb-1.5">邮箱密码 / 授权码 <span class="text-red-500">*</span></label><input id="manualEmailPassword" type="password" class="w-full h-10 px-3 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500" placeholder="请输入邮箱密码或授权码"></div>
         <p class="text-xs text-gray-400">使用 IMAP 协议连接，请先在邮箱中开启 IMAP 服务；建议优先使用邮箱授权码。</p>
@@ -1525,15 +1490,7 @@
       }
     });
 
-    // ===== 关联邮箱：注册或手动绑定 =====
-    function switchEmailBindingTab(mode) {
-      var isRegister = mode === 'register';
-      document.getElementById('emailRegisterPanel').classList.toggle('hidden', !isRegister);
-      document.getElementById('emailRegisterActions').classList.toggle('hidden', !isRegister);
-      document.getElementById('emailManualPanel').classList.toggle('hidden', isRegister);
-      document.getElementById('emailRegisterTab').className = 'px-4 py-2 text-sm font-medium border-b-2 ' + (isRegister ? 'text-blue-600 border-blue-600' : 'text-gray-500 border-transparent');
-      document.getElementById('emailManualTab').className = 'px-4 py-2 text-sm font-medium border-b-2 ' + (!isRegister ? 'text-blue-600 border-blue-600' : 'text-gray-500 border-transparent');
-    }
+    // ===== 关联邮箱：绑定已有邮箱 =====
     function confirmManualEmailBinding() {
       var email = document.getElementById('manualEmailAccount').value.trim();
       var password = document.getElementById('manualEmailPassword').value;
@@ -1544,49 +1501,9 @@
       alert('邮箱已通过 IMAP 协议绑定');
       closeEmailBindingModal();
     }
-    function openEmailBindingModal() {
-      switchEmailBindingTab('register');
-      document.getElementById('emailBindingModal').classList.remove('hidden');
-    }
+    function openEmailBindingModal() { document.getElementById('emailBindingModal').classList.remove('hidden'); }
     function closeEmailBindingModal() {
       document.getElementById('emailBindingModal').classList.add('hidden');
-    }
-    function getEmailCode(btn) {
-      var phone = document.getElementById('regPhone').value.trim();
-      if (!phone) { alert('请先填写手机号码'); return; }
-      alert('验证码已发送至 ' + phone + '，请注意查收。');
-      btn.disabled = true;
-      btn.classList.add('opacity-50');
-      var sec = 60;
-      btn.textContent = sec + 's 后重发';
-      var timer = setInterval(function() {
-        sec--;
-        if (sec <= 0) {
-          clearInterval(timer);
-          btn.disabled = false;
-          btn.classList.remove('opacity-50');
-          btn.textContent = '获取验证码';
-        } else {
-          btn.textContent = sec + 's 后重发';
-        }
-      }, 1000);
-    }
-    function confirmEmailRegister() {
-      var email = document.getElementById('regEmail').value.trim();
-      var pwd = document.getElementById('regEmailPwd').value;
-      var pwd2 = document.getElementById('regEmailPwd2').value;
-      var phone = document.getElementById('regPhone').value.trim();
-      var code = document.getElementById('regSmsCode').value.trim();
-      if (!email) { alert('请输入邮箱账号'); return; }
-      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { alert('邮箱格式不正确'); return; }
-      if (!pwd || pwd.length < 8) { alert('密码至少8位'); return; }
-      if (pwd !== pwd2) { alert('两次输入的密码不一致'); return; }
-      if (!phone) { alert('请输入手机号码'); return; }
-      if (!code) { alert('请输入短信验证码'); return; }
-      document.getElementById('linkedEmailText').textContent = email;
-      document.getElementById('wf-email').value = email;
-      alert('邮箱注册成功！\n邮箱账号：' + email + '\n已自动关联到当前网申任务。');
-      closeEmailBindingModal();
     }
 
     // ===== 网申进度线：从EV系统导入 =====
@@ -1670,7 +1587,7 @@
       alert('已复用模板 ' + version + '，官网字段与申请材料清单已同步更新');
     }
 
-    // ===== 申请官网字段表单：保存 / 保存为模板 =====
+    // ===== 申请官网字段表单：保存 =====
     function collectWebsiteFormData() {
       var data = {};
       document.querySelectorAll('[data-wf-label]').forEach(function(el) {
@@ -1691,10 +1608,6 @@
       }
       alert('申请官网字段表单已保存！\n保存字段数：' + Object.keys(data).length);
     }
-    function exportWebsiteFormTemplate() {
-      alert('已保存到网申模板库：卡内基梅隆大学 · 计算机科学。\n后续同校任务将优先复用，不再重复扫描。');
-    }
-
     var selectedResultImageData = localStorage.getItem('pbs_offer_image_cmu') || '';
     function renderResultImage(name) {
       var hasImage = !!selectedResultImageData;

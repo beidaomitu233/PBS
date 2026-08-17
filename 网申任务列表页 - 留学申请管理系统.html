@@ -681,11 +681,11 @@
         <div class="flex items-end gap-4 flex-wrap">
           <div class="flex-1 min-w-[200px]">
             <label class="block text-sm text-gray-600 mb-2">关键词搜索</label>
-            <input id="flt-kw" type="text" placeholder="搜索客户姓名/学校/专业/编号..." class="w-full h-10 px-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+            <input id="flt-kw" type="text" placeholder="搜索学生姓名/学校/专业/编号..." class="w-full h-10 px-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
           </div>
 <div>
-            <label class="block text-sm text-gray-600 mb-2">客户姓名</label>
-            <input id="flt-name" type="text" placeholder="客户姓名" class="w-36 h-10 px-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+            <label class="block text-sm text-gray-600 mb-2">学生姓名</label>
+            <input id="flt-name" type="text" placeholder="学生姓名" class="w-36 h-10 px-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
           </div>
           <div>
             <label class="block text-sm text-gray-600 mb-2">学校</label>
@@ -696,9 +696,10 @@
             <select id="flt-status" class="w-32 h-10 px-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
               <option value="">全部</option>
               <option>未开始</option>
-              <option>填写中</option>
+              <option>进行中</option>
               <option>审核中</option>
-              <option>已提交</option>
+              <option>补交材料中</option>
+              <option>已完成</option>
             </select>
           </div>
         </div>
@@ -741,19 +742,20 @@
           <thead class="bg-gray-50">
             <tr>
               <th class="px-5 py-4 text-left text-sm font-medium text-gray-500">序号</th>
-              <th class="px-5 py-4 text-left text-sm font-medium text-gray-500">客户姓名</th>
+              <th class="px-5 py-4 text-left text-sm font-medium text-gray-500">学生姓名</th>
               <th class="px-5 py-4 text-left text-sm font-medium text-gray-500">学校</th>
               <th class="px-5 py-4 text-left text-sm font-medium text-gray-500">专业</th>
               <th class="px-5 py-4 text-left text-sm font-medium text-gray-500">申请轮次</th>
-              <th class="px-5 py-4 text-left text-sm font-medium text-gray-500">DDL</th>
-              <th class="px-5 py-4 text-left text-sm font-medium text-gray-500">申请材料</th>
+              <th class="px-5 py-4 text-left text-sm font-medium text-gray-500">DDL倒计时</th>
+              <th class="px-5 py-4 text-left text-sm font-medium text-gray-500">已接受天数</th>
+              <th class="px-5 py-4 text-left text-sm font-medium text-gray-500">材料齐备</th>
               <th class="px-5 py-4 text-left text-sm font-medium text-gray-500">网申状态</th>
               <th class="px-5 py-4 text-left text-sm font-medium text-gray-500">分配时间</th>
               <th class="px-5 py-4 text-left text-sm font-medium text-gray-500">操作</th>
             </tr>
           </thead>
           <tbody class="divide-y divide-gray-100" id="appTaskTbody">
-            <tr data-kw="1李李雪卡内基梅隆大学人工智能Round12026-11-013/5未开始2026-07-1509:30详情" data-name="李李雪" data-school="卡内基梅隆大学" data-major="人工智能" data-round="Round1" data-ddl="2026-11-01" data-material="3/5" data-status="未开始" data-time="2026-07-1509:30" class="hover:bg-gray-50">
+            <tr data-kw="1李雪卡内基梅隆大学人工智能Round1剩余76天3/5进行中" data-name="李雪" data-school="卡内基梅隆大学" data-major="人工智能" data-round="Round1" data-round-start="2026-08-01" data-base-status="进行中" data-ddl="2026-11-01" data-material="3/5" data-status="进行中" data-time="2026-07-1509:30" class="hover:bg-gray-50">
               <td class="px-5 py-4 text-sm text-gray-500">1</td>
               <td class="px-5 py-4">
                 <div class="flex items-center gap-3">
@@ -770,11 +772,12 @@
                   Round 1
                 </button>
               </td>
-              <td class="px-5 py-4 text-sm text-gray-600">2026-11-01</td>
+              <td class="px-5 py-4"><span class="text-sm font-medium text-orange-600" title="2026-11-01">剩余 76 天</span></td>
+              <td class="px-5 py-4 text-sm text-gray-600">33 天</td>
               <td class="px-5 py-4"><div class="flex items-center gap-2"><span class="text-sm font-semibold text-gray-800">3/5</span><span class="w-14 h-1.5 rounded-full bg-gray-100 overflow-hidden"><span class="block h-full bg-blue-500 rounded-full" style="width:60%"></span></span></div></td>
               <td class="px-5 py-4">
-                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-700">
-                  未开始
+                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                  进行中
                 </span>
               </td>
               <td class="px-5 py-4 text-sm text-gray-500">2026-07-15 09:30</td>
@@ -784,7 +787,7 @@
                 </button>
               </td>
             </tr>
-            <tr data-kw="2王王明斯坦福大学计算机科学Round22026-12-156/6已提交2026-07-1414:20详情" data-name="王王明" data-school="斯坦福大学" data-major="计算机科学" data-round="Round2" data-ddl="2026-12-15" data-material="6/6" data-status="已提交" data-time="2026-07-1414:20" class="hover:bg-gray-50">
+            <tr data-kw="2王明斯坦福大学计算机科学Round2剩余120天6/6已完成" data-name="王明" data-school="斯坦福大学" data-major="计算机科学" data-round="Round2" data-round-start="2026-08-01" data-base-status="已完成" data-ddl="2026-12-15" data-material="6/6" data-status="已完成" data-time="2026-07-1414:20" class="hover:bg-gray-50">
               <td class="px-5 py-4 text-sm text-gray-500">2</td>
               <td class="px-5 py-4">
                 <div class="flex items-center gap-3">
@@ -801,11 +804,12 @@
                   Round 2
                 </button>
               </td>
-              <td class="px-5 py-4 text-sm text-gray-600">2026-12-15</td>
+              <td class="px-5 py-4"><span class="text-sm font-medium text-gray-700" title="2026-12-15">剩余 120 天</span></td>
+              <td class="px-5 py-4 text-sm text-gray-600">34 天</td>
               <td class="px-5 py-4"><div class="flex items-center gap-2"><span class="text-sm font-semibold text-gray-800">6/6</span><span class="w-14 h-1.5 rounded-full bg-gray-100 overflow-hidden"><span class="block h-full bg-green-500 rounded-full" style="width:100%"></span></span></div></td>
               <td class="px-5 py-4">
                 <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
-                  已提交
+                  已完成
                 </span>
               </td>
               <td class="px-5 py-4 text-sm text-gray-500">2026-07-14 14:20</td>
@@ -815,7 +819,7 @@
                 </button>
               </td>
             </tr>
-            <tr data-kw="3张张华麻省理工学院数据科学Round12026-10-304/6填写中2026-07-1311:00详情" data-name="张张华" data-school="麻省理工学院" data-major="数据科学" data-round="Round1" data-ddl="2026-10-30" data-material="4/6" data-status="填写中" data-time="2026-07-1311:00" class="hover:bg-gray-50">
+            <tr data-kw="3张华麻省理工学院数据科学Round1剩余74天4/6补交材料中" data-name="张华" data-school="麻省理工学院" data-major="数据科学" data-round="Round1" data-round-start="2026-08-10" data-base-status="补交材料中" data-ddl="2026-10-30" data-material="4/6" data-status="补交材料中" data-time="2026-07-1311:00" class="hover:bg-gray-50">
               <td class="px-5 py-4 text-sm text-gray-500">3</td>
               <td class="px-5 py-4">
                 <div class="flex items-center gap-3">
@@ -832,11 +836,12 @@
                   Round 1
                 </button>
               </td>
-              <td class="px-5 py-4 text-sm text-gray-600">2026-10-30</td>
+              <td class="px-5 py-4"><span class="text-sm font-medium text-orange-600" title="2026-10-30">剩余 74 天</span></td>
+              <td class="px-5 py-4 text-sm text-gray-600">35 天</td>
               <td class="px-5 py-4"><div class="flex items-center gap-2"><span class="text-sm font-semibold text-gray-800">4/6</span><span class="w-14 h-1.5 rounded-full bg-gray-100 overflow-hidden"><span class="block h-full bg-blue-500 rounded-full" style="width:67%"></span></span></div></td>
               <td class="px-5 py-4">
                 <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
-                  填写中
+                  补交材料中
                 </span>
               </td>
               <td class="px-5 py-4 text-sm text-gray-500">2026-07-13 11:00</td>
@@ -846,7 +851,7 @@
                 </button>
               </td>
             </tr>
-            <tr data-kw="4刘刘芳哈佛大学公共卫生Round12026-11-205/5审核中2026-07-1216:45详情" data-name="刘刘芳" data-school="哈佛大学" data-major="公共卫生" data-round="Round1" data-ddl="2026-11-20" data-material="5/5" data-status="审核中" data-time="2026-07-1216:45" class="hover:bg-gray-50">
+            <tr data-kw="4刘芳哈佛大学公共卫生Round1剩余95天5/5审核中" data-name="刘芳" data-school="哈佛大学" data-major="公共卫生" data-round="Round1" data-round-start="2026-08-05" data-base-status="审核中" data-ddl="2026-11-20" data-material="5/5" data-status="审核中" data-time="2026-07-1216:45" class="hover:bg-gray-50">
               <td class="px-5 py-4 text-sm text-gray-500">4</td>
               <td class="px-5 py-4">
                 <div class="flex items-center gap-3">
@@ -863,7 +868,8 @@
                   Round 1
                 </button>
               </td>
-              <td class="px-5 py-4 text-sm text-gray-600">2026-11-20</td>
+              <td class="px-5 py-4"><span class="text-sm font-medium text-gray-700" title="2026-11-20">剩余 95 天</span></td>
+              <td class="px-5 py-4 text-sm text-gray-600">36 天</td>
               <td class="px-5 py-4"><div class="flex items-center gap-2"><span class="text-sm font-semibold text-gray-800">5/5</span><span class="w-14 h-1.5 rounded-full bg-gray-100 overflow-hidden"><span class="block h-full bg-green-500 rounded-full" style="width:100%"></span></span></div></td>
               <td class="px-5 py-4">
                 <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-purple-100 text-purple-800">
@@ -877,7 +883,7 @@
                 </button>
               </td>
             </tr>
-            <tr data-kw="5陈陈磊剑桥大学金融学Round22026-09-152/5未开始2026-07-1108:15详情" data-name="陈陈磊" data-school="剑桥大学" data-major="金融学" data-round="Round2" data-ddl="2026-09-15" data-material="2/5" data-status="未开始" data-time="2026-07-1108:15" class="hover:bg-gray-50">
+            <tr data-kw="5陈磊剑桥大学金融学Round2剩余29天2/5未开始" data-name="陈磊" data-school="剑桥大学" data-major="金融学" data-round="Round2" data-round-start="2026-08-20" data-base-status="进行中" data-ddl="2026-09-15" data-material="2/5" data-status="未开始" data-time="2026-07-1108:15" class="hover:bg-gray-50">
               <td class="px-5 py-4 text-sm text-gray-500">5</td>
               <td class="px-5 py-4">
                 <div class="flex items-center gap-3">
@@ -894,7 +900,8 @@
                   Round 2
                 </button>
               </td>
-              <td class="px-5 py-4 text-sm text-gray-600">2026-09-15</td>
+              <td class="px-5 py-4"><span class="text-sm font-medium text-red-600" title="2026-09-15">剩余 29 天</span></td>
+              <td class="px-5 py-4 text-sm text-gray-600">37 天</td>
               <td class="px-5 py-4"><div class="flex items-center gap-2"><span class="text-sm font-semibold text-gray-800">2/5</span><span class="w-14 h-1.5 rounded-full bg-gray-100 overflow-hidden"><span class="block h-full bg-blue-500 rounded-full" style="width:40%"></span></span></div></td>
               <td class="px-5 py-4">
                 <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-700">
@@ -909,7 +916,7 @@
               </td>
             </tr>
                       <tr id="flt-empty" class="hidden">
-              <td colspan="10" class="px-6 py-10 text-center text-sm text-gray-400">暂无符合条件的数据，请调整筛选条件</td>
+              <td colspan="11" class="px-6 py-10 text-center text-sm text-gray-400">暂无符合条件的数据，请调整筛选条件</td>
             </tr>
 </tbody>
         </table>
@@ -961,7 +968,7 @@
           <p class="text-sm font-medium text-gray-800">收到 1 条新网申任务推送</p>
         </div>
         <div class="space-y-2 text-sm mb-4">
-          <div class="flex justify-between"><span class="text-gray-500">客户姓名</span><span class="text-gray-900 font-medium">孙梓涵</span></div>
+          <div class="flex justify-between"><span class="text-gray-500">学生姓名</span><span class="text-gray-900 font-medium">孙梓涵</span></div>
           <div class="flex justify-between"><span class="text-gray-500">学校</span><span class="text-gray-900">哥伦比亚大学</span></div>
           <div class="flex justify-between"><span class="text-gray-500">专业</span><span class="text-gray-900">金融工程</span></div>
           <div class="flex justify-between"><span class="text-gray-500">申请轮次</span><span class="text-gray-900">Round 1</span></div>
@@ -1191,14 +1198,16 @@
       var now = new Date();
       var timeStr = now.getFullYear() + '-' + String(now.getMonth() + 1).padStart(2, '0') + '-' + String(now.getDate()).padStart(2, '0') + ' ' + String(now.getHours()).padStart(2, '0') + ':' + String(now.getMinutes()).padStart(2, '0');
       var timeCompact = timeStr.replace(' ', '');
-      var kw = newIndex + '孙孙梓涵哥伦比亚大学金融工程Round12026-12-01未开始' + timeCompact + '详情';
+      var kw = newIndex + '孙梓涵哥伦比亚大学金融工程Round1剩余106天0/5未开始' + timeCompact + '详情';
       var tr = document.createElement('tr');
       tr.className = 'hover:bg-gray-50';
       tr.setAttribute('data-kw', kw);
-      tr.setAttribute('data-name', '孙孙梓涵');
+      tr.setAttribute('data-name', '孙梓涵');
       tr.setAttribute('data-school', '哥伦比亚大学');
       tr.setAttribute('data-major', '金融工程');
       tr.setAttribute('data-round', 'Round1');
+      tr.setAttribute('data-round-start', '2026-09-01');
+      tr.setAttribute('data-base-status', '进行中');
       tr.setAttribute('data-ddl', '2026-12-01');
       tr.setAttribute('data-material', '0/5');
       tr.setAttribute('data-status', '未开始');
@@ -1208,7 +1217,8 @@
         '<td class="px-5 py-4 text-sm text-gray-900">哥伦比亚大学</td>' +
         '<td class="px-5 py-4 text-sm text-gray-600">金融工程</td>' +
         '<td class="px-5 py-4"><button class="text-sm text-blue-600 hover:text-blue-800 font-medium underline" onclick="document.getElementById(\'timelineModal\').classList.remove(\'hidden\')">Round 1</button></td>' +
-        '<td class="px-5 py-4 text-sm text-gray-600">2026-12-01</td>' +
+        '<td class="px-5 py-4"><span class="text-sm font-medium text-gray-700" title="2026-12-01">剩余 106 天</span></td>' +
+        '<td class="px-5 py-4 text-sm text-gray-600">0 天</td>' +
         '<td class="px-5 py-4"><div class="flex items-center gap-2"><span class="text-sm font-semibold text-gray-800">0/5</span><span class="w-14 h-1.5 rounded-full bg-gray-100 overflow-hidden"><span class="block h-full bg-blue-500 rounded-full" style="width:0%"></span></span></div></td>' +
         '<td class="px-5 py-4"><span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-700">未开始</span></td>' +
         '<td class="px-5 py-4 text-sm text-gray-500">' + timeStr + '</td>' +
@@ -1226,6 +1236,26 @@
     }
     /* ---------- 高级筛选 ---------- */
     function gv(id) { var el = document.getElementById(id); return el ? (el.value || '').trim() : ''; }
+    function syncRoundStatuses() {
+      var today = new Date();
+      today.setHours(0, 0, 0, 0);
+      document.querySelectorAll('#appTaskTbody tr[data-round-start]').forEach(function(tr) {
+        var start = new Date(tr.dataset.roundStart + 'T00:00:00');
+        var status = today < start ? '未开始' : (tr.dataset.baseStatus || tr.dataset.status);
+        tr.dataset.status = status;
+        var badge = tr.querySelector('td:nth-child(9) span');
+        if (!badge) return;
+        badge.textContent = status;
+        var colors = {
+          '未开始': 'bg-gray-100 text-gray-700',
+          '进行中': 'bg-blue-100 text-blue-800',
+          '审核中': 'bg-purple-100 text-purple-800',
+          '补交材料中': 'bg-yellow-100 text-yellow-800',
+          '已完成': 'bg-green-100 text-green-800'
+        };
+        badge.className = 'inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ' + colors[status];
+      });
+    }
     function applyFilter() {
       var rows = document.querySelectorAll('#appTaskTbody tr[data-kw]');
       var visible = 0;
@@ -1267,6 +1297,7 @@
     }
     /* 回车快捷搜索 */
     document.addEventListener('DOMContentLoaded', function() {
+      syncRoundStatuses();
       document.querySelectorAll('input[id^="flt-"]').forEach(function (inp) {
         inp.addEventListener('keydown', function (e) { if (e.key === 'Enter') applyFilter(); });
       });

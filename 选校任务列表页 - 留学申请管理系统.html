@@ -674,10 +674,6 @@
             <label class="block text-sm text-gray-600 mb-2">关键词搜索</label>
             <input id="flt-kw" type="text" placeholder="搜索咨询单编号/客户/学生/专业..." class="w-full h-10 px-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
           </div>
-<div>
-            <label class="block text-sm text-gray-600 mb-2">客户姓名</label>
-            <input id="flt-name" type="text" placeholder="客户姓名" class="w-36 h-10 px-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-          </div>
           <div>
             <label class="block text-sm text-gray-600 mb-2">学生姓名</label>
             <input id="flt-student" type="text" placeholder="学生姓名" class="w-36 h-10 px-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
@@ -687,8 +683,6 @@
             <select id="flt-status" class="w-32 h-10 px-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
               <option value="">全部</option>
               <option>咨询中</option>
-              <option>选校中</option>
-              <option>待确认</option>
               <option>已结单</option>
             </select>
           </div>
@@ -744,83 +738,78 @@
       <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
         <table class="w-full">
           <thead class="bg-gray-50">
-            <tr><th class="px-5 py-4 text-left text-sm font-medium text-gray-500">序号</th><th class="px-5 py-4 text-left text-sm font-medium text-gray-500">项目号</th><th class="px-5 py-4 text-left text-sm font-medium text-gray-500">客户姓名</th><th class="px-5 py-4 text-left text-sm font-medium text-gray-500">销售人员</th><th class="px-5 py-4 text-left text-sm font-medium text-gray-500">学生姓名</th><th class="px-5 py-4 text-left text-sm font-medium text-gray-500">申请层次</th><th class="px-5 py-4 text-left text-sm font-medium text-gray-500">意向国家</th><th class="px-5 py-4 text-left text-sm font-medium text-gray-500">意向专业</th><th class="px-5 py-4 text-left text-sm font-medium text-gray-500">咨询状态</th><th class="px-5 py-4 text-left text-sm font-medium text-gray-500">创建时间</th><th class="px-5 py-4 text-left text-sm font-medium text-gray-500">操作</th></tr>
+            <tr><th class="px-5 py-4 text-left text-sm font-medium text-gray-500">序号</th><th class="px-5 py-4 text-left text-sm font-medium text-gray-500">项目号</th><th class="px-5 py-4 text-left text-sm font-medium text-gray-500">销售人员</th><th class="px-5 py-4 text-left text-sm font-medium text-gray-500">学生姓名</th><th class="px-5 py-4 text-left text-sm font-medium text-gray-500">申请层次</th><th class="px-5 py-4 text-left text-sm font-medium text-gray-500">意向国家</th><th class="px-5 py-4 text-left text-sm font-medium text-gray-500">意向专业</th><th class="px-5 py-4 text-left text-sm font-medium text-gray-500">咨询状态</th><th class="px-5 py-4 text-left text-sm font-medium text-gray-500">创建时间</th><th class="px-5 py-4 text-left text-sm font-medium text-gray-500">操作</th></tr>
           </thead>
           <tbody class="divide-y divide-gray-100" id="selTaskTbody">
-            <tr data-kw="1PRJ-M-2607-0007孙建国陈晨孙可欣本科申请美国计算机科学咨询中2026-07-2009:00进入工作台查看方案" data-project="PRJ-M-2607-0007" data-name="孙建国" data-sales="陈晨" data-student="孙可欣" data-level="本科申请" data-country="美国" data-major="计算机科学" data-status="咨询中" data-time="2026-07-2009:00" class="hover:bg-gray-50 transition-colors">
+            <tr data-kw="1PRJ-M-2607-0007陈晨孙可欣本科申请美国计算机科学咨询中2026-07-2009:00进入工作台查看方案" data-project="PRJ-M-2607-0007" data-sales="陈晨" data-student="孙可欣" data-level="本科申请" data-country="美国" data-major="计算机科学" data-status="咨询中" data-time="2026-07-2009:00" class="hover:bg-gray-50 transition-colors">
               <td class="px-5 py-4 text-sm text-gray-900">1</td>
               <td class="px-5 py-4 text-sm font-medium text-gray-900">PRJ-M-2607-0007</td>
-              <td class="px-5 py-4 text-sm text-gray-900">孙建国</td>
               <td class="px-5 py-4 text-sm text-gray-600">陈晨</td>
               <td class="px-5 py-4 text-sm text-gray-600">孙可欣</td>
               <td class="px-5 py-4 text-sm text-gray-600">本科申请</td>
               <td class="px-5 py-4 text-sm text-gray-600">美国</td>
               <td class="px-5 py-4 text-sm text-gray-600">计算机科学</td>
-              <td class="px-5 py-4"><span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">咨询中</span></td>
+              <td class="px-5 py-4"><select class="h-8 px-2 border border-blue-200 bg-blue-50 text-blue-700 rounded-lg text-xs font-medium" onchange="updateSelectionStatus(this)"><option selected>咨询中</option><option>已结单</option></select></td>
               <td class="px-5 py-4 text-sm text-gray-500">2026-07-20 09:00</td>
               <td class="px-5 py-4 whitespace-nowrap">
                 <button class="sales-workbench-action text-blue-600 hover:text-blue-800 text-sm font-medium mr-3" onclick="location.href=&#39;选校工作台页 - 留学申请管理系统.html&#39;">进入工作台</button>
                 <button class="text-blue-600 hover:text-blue-800 text-sm font-medium" onclick="location.href=&#39;选校方案详情页 - 留学申请管理系统.html&#39;">查看方案</button>
               </td>
             </tr>
-            <tr data-kw="2PRJ-M-2607-0003周立群李欣周雨薇硕士申请美国电子工程选校中2026-07-1710:00进入工作台查看方案" data-project="PRJ-M-2607-0003" data-name="周立群" data-sales="李欣" data-student="周雨薇" data-level="硕士申请" data-country="美国" data-major="电子工程" data-status="选校中" data-time="2026-07-1710:00" class="hover:bg-gray-50 transition-colors">
+            <tr data-kw="2PRJ-M-2607-0003李欣周雨薇硕士申请美国电子工程咨询中2026-07-1710:00进入工作台查看方案" data-project="PRJ-M-2607-0003" data-sales="李欣" data-student="周雨薇" data-level="硕士申请" data-country="美国" data-major="电子工程" data-status="咨询中" data-time="2026-07-1710:00" class="hover:bg-gray-50 transition-colors">
               <td class="px-5 py-4 text-sm text-gray-900">2</td>
               <td class="px-5 py-4 text-sm font-medium text-gray-900">PRJ-M-2607-0003</td>
-              <td class="px-5 py-4 text-sm text-gray-900">周立群</td>
               <td class="px-5 py-4 text-sm text-gray-600">李欣</td>
               <td class="px-5 py-4 text-sm text-gray-600">周雨薇</td>
               <td class="px-5 py-4 text-sm text-gray-600">硕士申请</td>
               <td class="px-5 py-4 text-sm text-gray-600">美国</td>
               <td class="px-5 py-4 text-sm text-gray-600">电子工程</td>
-              <td class="px-5 py-4"><span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-purple-100 text-purple-800">选校中</span></td>
+              <td class="px-5 py-4"><select class="h-8 px-2 border border-blue-200 bg-blue-50 text-blue-700 rounded-lg text-xs font-medium" onchange="updateSelectionStatus(this)"><option selected>咨询中</option><option>已结单</option></select></td>
               <td class="px-5 py-4 text-sm text-gray-500">2026-07-17 10:00</td>
               <td class="px-5 py-4 whitespace-nowrap">
                 <button class="sales-workbench-action text-blue-600 hover:text-blue-800 text-sm font-medium mr-3" onclick="location.href=&#39;选校工作台页 - 留学申请管理系统.html&#39;">进入工作台</button>
                 <button class="text-blue-600 hover:text-blue-800 text-sm font-medium" onclick="location.href=&#39;选校方案详情页 - 留学申请管理系统.html&#39;">查看方案</button>
               </td>
             </tr>
-            <tr data-kw="3PRJ-M-2607-0004吴国强陈晨吴子墨博士申请加拿大数据科学待确认2026-07-1809:30进入工作台查看方案" data-project="PRJ-M-2607-0004" data-name="吴国强" data-sales="陈晨" data-student="吴子墨" data-level="博士申请" data-country="加拿大" data-major="数据科学" data-status="待确认" data-time="2026-07-1809:30" class="hover:bg-gray-50 transition-colors">
+            <tr data-kw="3PRJ-M-2607-0004陈晨吴子墨博士申请加拿大数据科学咨询中2026-07-1809:30进入工作台查看方案" data-project="PRJ-M-2607-0004" data-sales="陈晨" data-student="吴子墨" data-level="博士申请" data-country="加拿大" data-major="数据科学" data-status="咨询中" data-time="2026-07-1809:30" class="hover:bg-gray-50 transition-colors">
               <td class="px-5 py-4 text-sm text-gray-900">3</td>
               <td class="px-5 py-4 text-sm font-medium text-gray-900">PRJ-M-2607-0004</td>
-              <td class="px-5 py-4 text-sm text-gray-900">吴国强</td>
               <td class="px-5 py-4 text-sm text-gray-600">陈晨</td>
               <td class="px-5 py-4 text-sm text-gray-600">吴子墨</td>
               <td class="px-5 py-4 text-sm text-gray-600">博士申请</td>
               <td class="px-5 py-4 text-sm text-gray-600">加拿大</td>
               <td class="px-5 py-4 text-sm text-gray-600">数据科学</td>
-              <td class="px-5 py-4"><span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-orange-100 text-orange-800">待确认</span></td>
+              <td class="px-5 py-4"><select class="h-8 px-2 border border-blue-200 bg-blue-50 text-blue-700 rounded-lg text-xs font-medium" onchange="updateSelectionStatus(this)"><option selected>咨询中</option><option>已结单</option></select></td>
               <td class="px-5 py-4 text-sm text-gray-500">2026-07-18 09:30</td>
               <td class="px-5 py-4 whitespace-nowrap">
                 <button class="sales-workbench-action text-blue-600 hover:text-blue-800 text-sm font-medium mr-3" onclick="location.href=&#39;选校工作台页 - 留学申请管理系统.html&#39;">进入工作台</button>
                 <button class="text-blue-600 hover:text-blue-800 text-sm font-medium" onclick="location.href=&#39;选校方案详情页 - 留学申请管理系统.html&#39;">查看方案</button>
               </td>
             </tr>
-            <tr data-kw="4PRJ-M-2607-0005郑海峰周扬郑晓萌本科申请英国金融选校中2026-07-1914:20进入工作台查看方案" data-project="PRJ-M-2607-0005" data-name="郑海峰" data-sales="周扬" data-student="郑晓萌" data-level="本科申请" data-country="英国" data-major="金融" data-status="选校中" data-time="2026-07-1914:20" class="hover:bg-gray-50 transition-colors">
+            <tr data-kw="4PRJ-M-2607-0005周扬郑晓萌本科申请英国金融咨询中2026-07-1914:20进入工作台查看方案" data-project="PRJ-M-2607-0005" data-sales="周扬" data-student="郑晓萌" data-level="本科申请" data-country="英国" data-major="金融" data-status="咨询中" data-time="2026-07-1914:20" class="hover:bg-gray-50 transition-colors">
               <td class="px-5 py-4 text-sm text-gray-900">4</td>
               <td class="px-5 py-4 text-sm font-medium text-gray-900">PRJ-M-2607-0005</td>
-              <td class="px-5 py-4 text-sm text-gray-900">郑海峰</td>
               <td class="px-5 py-4 text-sm text-gray-600">周扬</td>
               <td class="px-5 py-4 text-sm text-gray-600">郑晓萌</td>
               <td class="px-5 py-4 text-sm text-gray-600">本科申请</td>
               <td class="px-5 py-4 text-sm text-gray-600">英国</td>
               <td class="px-5 py-4 text-sm text-gray-600">金融</td>
-              <td class="px-5 py-4"><span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-purple-100 text-purple-800">选校中</span></td>
+              <td class="px-5 py-4"><select class="h-8 px-2 border border-blue-200 bg-blue-50 text-blue-700 rounded-lg text-xs font-medium" onchange="updateSelectionStatus(this)"><option selected>咨询中</option><option>已结单</option></select></td>
               <td class="px-5 py-4 text-sm text-gray-500">2026-07-19 14:20</td>
               <td class="px-5 py-4 whitespace-nowrap">
                 <button class="sales-workbench-action text-blue-600 hover:text-blue-800 text-sm font-medium mr-3" onclick="location.href=&#39;选校工作台页 - 留学申请管理系统.html&#39;">进入工作台</button>
                 <button class="text-blue-600 hover:text-blue-800 text-sm font-medium" onclick="location.href=&#39;选校方案详情页 - 留学申请管理系统.html&#39;">查看方案</button>
               </td>
             </tr>
-            <tr data-kw="5PRJ-M-2607-0006冯丽华李欣冯天翊硕士申请美国市场营销已结单2026-07-1116:00进入工作台查看方案" data-project="PRJ-M-2607-0006" data-name="冯丽华" data-sales="李欣" data-student="冯天翊" data-level="硕士申请" data-country="美国" data-major="市场营销" data-status="已结单" data-time="2026-07-1116:00" class="hover:bg-gray-50 transition-colors">
+            <tr data-kw="5PRJ-M-2607-0006李欣冯天翊硕士申请美国市场营销已结单2026-07-1116:00进入工作台查看方案" data-project="PRJ-M-2607-0006" data-sales="李欣" data-student="冯天翊" data-level="硕士申请" data-country="美国" data-major="市场营销" data-status="已结单" data-time="2026-07-1116:00" class="hover:bg-gray-50 transition-colors">
               <td class="px-5 py-4 text-sm text-gray-900">5</td>
               <td class="px-5 py-4 text-sm font-medium text-gray-900">PRJ-M-2607-0006</td>
-              <td class="px-5 py-4 text-sm text-gray-900">冯丽华</td>
               <td class="px-5 py-4 text-sm text-gray-600">李欣</td>
               <td class="px-5 py-4 text-sm text-gray-600">冯天翊</td>
               <td class="px-5 py-4 text-sm text-gray-600">硕士申请</td>
               <td class="px-5 py-4 text-sm text-gray-600">美国</td>
               <td class="px-5 py-4 text-sm text-gray-600">市场营销</td>
-              <td class="px-5 py-4"><span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">已结单</span></td>
+              <td class="px-5 py-4"><select class="h-8 px-2 border border-green-200 bg-green-50 text-green-700 rounded-lg text-xs font-medium" onchange="updateSelectionStatus(this)"><option>咨询中</option><option selected>已结单</option></select></td>
               <td class="px-5 py-4 text-sm text-gray-500">2026-07-11 16:00</td>
               <td class="px-5 py-4 whitespace-nowrap">
                 <button class="sales-workbench-action text-blue-600 hover:text-blue-800 text-sm font-medium mr-3" onclick="location.href=&#39;选校工作台页 - 留学申请管理系统.html&#39;">进入工作台</button>
@@ -828,7 +817,7 @@
               </td>
             </tr>
                       <tr id="flt-empty" class="hidden">
-              <td colspan="11" class="px-6 py-10 text-center text-sm text-gray-400">暂无符合条件的数据，请调整筛选条件</td>
+              <td colspan="10" class="px-6 py-10 text-center text-sm text-gray-400">暂无符合条件的数据，请调整筛选条件</td>
             </tr>
 </tbody>
         </table>
@@ -910,7 +899,7 @@
     <div id="createModalPanel" class="absolute w-[640px] max-h-[90vh] bg-white rounded-2xl shadow-2xl flex flex-col overflow-hidden top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2" style="">
       <!-- 头部 -->
       <div id="createModalHeader" class="flex items-center justify-between px-6 py-3 border-b border-gray-100 bg-white flex-shrink-0 cursor-move select-none">
-        <h3 class="text-lg font-semibold text-gray-800">新建任务</h3>
+        <div><h3 class="text-lg font-semibold text-gray-800">新建选校任务</h3><p class="text-xs text-gray-400 mt-0.5">学生信息仅保存在当前选校列表，不创建学生档案</p></div>
         <button onclick="closeCreateModal()" class="text-gray-400 hover:text-gray-600 transition-colors">
           <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
         </button>
@@ -918,63 +907,8 @@
       <!-- 表单主体 -->
       <div class="flex-1 overflow-y-auto p-4">
         <div class="grid grid-cols-2 gap-3">
-          <!-- 左上：客户信息 -->
-          <div class="bg-gray-50 rounded-xl p-3 border border-gray-100 h-full">
-            <h4 class="text-sm font-semibold text-gray-700 mb-2 flex items-center gap-2">
-              <span class="w-1 h-4 bg-blue-600 rounded-full"></span>客户信息
-            </h4>
-            <div class="space-y-2">
-              <div>
-                <label class="block text-xs text-gray-500 mb-1">
-                  客户姓名 <span class="text-red-500">*</span>
-                  <span class="text-[10px] text-gray-400 font-normal ml-1">（可搜索已有客户）</span>
-                </label>
-                <input id="cst-name" type="text" list="existingCustomers" placeholder="输入或选择客户姓名" class="w-full h-9 px-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm">
-                <datalist id="existingCustomers">
-                  <option value="张建国">
-                  </option><option value="李慧敏">
-                  </option><option value="王建军">
-                </option></datalist>
-              </div>
-              <div class="grid grid-cols-2 gap-3">
-                <div>
-                  <label class="block text-xs text-gray-500 mb-1">与学生关系 <span class="text-red-500">*</span></label>
-                  <select id="cst-relation" class="w-full h-9 px-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm">
-                    <option value="">请选择</option>
-                    <option>父亲</option>
-                    <option>母亲</option>
-                    <option>本人</option>
-                    <option>其他亲属</option>
-                  </select>
-                </div>
-                <div>
-                  <label class="block text-xs text-gray-500 mb-1">联系电话 <span class="text-red-500">*</span></label>
-                  <input id="cst-phone" type="tel" placeholder="联系电话" class="w-full h-9 px-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm">
-                </div>
-              </div>
-              <div class="grid grid-cols-2 gap-3">
-                <div>
-                  <label class="block text-xs text-gray-500 mb-1">微信号 <span class="text-red-500">*</span></label>
-                  <input id="cst-wechat" type="text" placeholder="微信号" class="w-full h-9 px-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm">
-                </div>
-                <div>
-                  <label class="block text-xs text-gray-500 mb-1">来源渠道 <span class="text-red-500">*</span></label>
-                  <select id="cst-source" class="w-full h-9 px-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm">
-                    <option value="">请选择</option>
-                    <option>官网表单</option>
-                    <option>小红书</option>
-                    <option>微信公众号</option>
-                    <option>线下活动</option>
-                    <option>转介绍</option>
-                    <option>抖音</option>
-                    <option>其他</option>
-                  </select>
-                </div>
-              </div>
-            </div>
-          </div>
-          <!-- 右上：学生信息（申请人） -->
-          <div class="bg-gray-50 rounded-xl p-3 border border-gray-100 h-full">
+          <!-- 学生信息（申请人） -->
+          <div class="bg-gray-50 rounded-xl p-4 border border-gray-100 h-full col-span-2">
             <h4 class="text-sm font-semibold text-gray-700 mb-2 flex items-center gap-2">
               <span class="w-1 h-4 bg-green-600 rounded-full"></span>学生信息（申请人）
             </h4>
@@ -982,18 +916,13 @@
               <div>
                 <label class="block text-xs text-gray-500 mb-1">
                   学生姓名 <span class="text-red-500">*</span>
-                  <span class="text-[10px] text-gray-400 font-normal ml-1">（可搜索已有档案）</span>
+                  <span class="text-[10px] text-gray-400 font-normal ml-1">（仅用于当前选校任务）</span>
                 </label>
-                <input id="stu-name" type="text" list="existingStudents" placeholder="输入或选择学生姓名" class="w-full h-9 px-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm">
-                <datalist id="existingStudents">
-                  <option value="张明">
-                  </option><option value="李雪">
-                  </option><option value="王伟">
-                </option></datalist>
+                <input id="stu-name" type="text" placeholder="输入学生姓名" class="w-full h-9 px-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm">
               </div>
               <div class="grid grid-cols-3 gap-3">
                 <div>
-                  <label class="block text-xs text-gray-500 mb-1">性别 <span class="text-red-500">*</span></label>
+                  <label class="block text-xs text-gray-500 mb-1">性别</label>
                   <select id="stu-gender" class="w-full h-9 px-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm">
                     <option value="">请选择</option>
                     <option>男</option>
@@ -1001,11 +930,11 @@
                   </select>
                 </div>
                 <div>
-                  <label class="block text-xs text-gray-500 mb-1">出生日期 <span class="text-red-500">*</span></label>
+                  <label class="block text-xs text-gray-500 mb-1">出生日期</label>
                   <input id="stu-birth" type="date" class="w-full h-9 px-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm">
                 </div>
                 <div>
-                  <label class="block text-xs text-gray-500 mb-1">申请层次 <span class="text-red-500">*</span></label>
+                  <label class="block text-xs text-gray-500 mb-1">申请层次</label>
                   <select id="stu-level" class="w-full h-9 px-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm">
                     <option value="">请选择</option>
                     <option>本科</option>
@@ -1016,26 +945,11 @@
               </div>
               <div class="grid grid-cols-2 gap-3">
                 <div>
-                  <label class="block text-xs text-gray-500 mb-1">身份信息 <span class="text-red-500">*</span></label>
-                  <select id="stu-id-type" class="w-full h-9 px-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm">
-                    <option value="">请选择</option>
-                    <option>大陆籍</option>
-                    <option>港澳台</option>
-                    <option>外籍</option>
-                  </select>
-                </div>
-                <div>
-                  <label class="block text-xs text-gray-500 mb-1">身份证号 <span class="text-red-500">*</span></label>
-                  <input id="stu-idcard" type="text" placeholder="身份证号" class="w-full h-9 px-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm">
-                </div>
-              </div>
-              <div class="grid grid-cols-2 gap-3">
-                <div>
-                  <label class="block text-xs text-gray-500 mb-1">学生电话 <span class="text-red-500">*</span></label>
+                  <label class="block text-xs text-gray-500 mb-1">学生电话</label>
                   <input id="stu-phone" type="tel" placeholder="学生电话" class="w-full h-9 px-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm">
                 </div>
                 <div>
-                  <label class="block text-xs text-gray-500 mb-1">现居住地 <span class="text-red-500">*</span></label>
+                  <label class="block text-xs text-gray-500 mb-1">现居住地</label>
                   <input id="stu-address" type="text" placeholder="现居住地" class="w-full h-9 px-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm">
                 </div>
               </div>
@@ -1200,7 +1114,7 @@
     })();
 
     function resetCreateForm() {
-      ['cst-name','cst-relation','cst-phone','cst-wechat','cst-source','stu-name','stu-gender','stu-birth','stu-level','stu-id-type','stu-idcard','stu-phone','stu-address','stu-country','stu-major','order-remark'].forEach(function(id) {
+      ['stu-name','stu-gender','stu-birth','stu-level','stu-phone','stu-address','stu-country','stu-major','order-remark'].forEach(function(id) {
         var el = document.getElementById(id);
         if (el) el.value = '';
       });
@@ -1229,34 +1143,9 @@
     function submitCreateTask() {
       clearFieldErrors();
       var ok = true;
-      // 客户信息校验
-      var cstName = document.getElementById('cst-name');
-      if (!cstName.value.trim()) { showFieldError(cstName, '请填写客户姓名'); ok = false; }
-      var cstRelation = document.getElementById('cst-relation');
-      if (!cstRelation.value) { showFieldError(cstRelation, '请选择与学生关系'); ok = false; }
-      var cstPhone = document.getElementById('cst-phone');
-      if (!cstPhone.value.trim()) { showFieldError(cstPhone, '请填写联系电话'); ok = false; }
-      var cstWechat = document.getElementById('cst-wechat');
-      if (!cstWechat.value.trim()) { showFieldError(cstWechat, '请填写微信号'); ok = false; }
-      var cstSource = document.getElementById('cst-source');
-      if (!cstSource.value) { showFieldError(cstSource, '请选择来源渠道'); ok = false; }
-      // 学生信息（申请人）校验
       var stuName = document.getElementById('stu-name');
       if (!stuName.value.trim()) { showFieldError(stuName, '请填写学生姓名'); ok = false; }
-      var stuGender = document.getElementById('stu-gender');
-      if (!stuGender.value) { showFieldError(stuGender, '请选择性别'); ok = false; }
-      var stuBirth = document.getElementById('stu-birth');
-      if (!stuBirth.value) { showFieldError(stuBirth, '请选择出生年月日'); ok = false; }
       var stuLevel = document.getElementById('stu-level');
-      if (!stuLevel.value) { showFieldError(stuLevel, '请选择申请层次'); ok = false; }
-      var stuIdType = document.getElementById('stu-id-type');
-      if (!stuIdType.value) { showFieldError(stuIdType, '请选择身份信息'); ok = false; }
-      var stuIdcard = document.getElementById('stu-idcard');
-      if (!stuIdcard.value.trim()) { showFieldError(stuIdcard, '请填写身份证号'); ok = false; }
-      var stuPhone = document.getElementById('stu-phone');
-      if (!stuPhone.value.trim()) { showFieldError(stuPhone, '请填写学生联系电话'); ok = false; }
-      var stuAddress = document.getElementById('stu-address');
-      if (!stuAddress.value.trim()) { showFieldError(stuAddress, '请填写现居住地'); ok = false; }
       var stuCountry = document.getElementById('stu-country');
       if (!stuCountry.value.trim()) { showFieldError(stuCountry, '请填写意向国家'); ok = false; }
       var stuMajor = document.getElementById('stu-major');
@@ -1271,8 +1160,46 @@
       var seq = String(Math.floor(Math.random() * 9000) + 1000);
       var projectNo = 'PRJ-M-' + yy + mm + '-' + seq;
 
+      var tbody = document.getElementById('selTaskTbody');
+      var emptyRow = document.getElementById('flt-empty');
+      var index = tbody.querySelectorAll('tr[data-project]').length + 1;
+      var levelText = stuLevel.value ? stuLevel.value + (stuLevel.value.indexOf('申请') === -1 ? '申请' : '') : '未填写';
+      var timeText = now.getFullYear() + '-' + String(now.getMonth() + 1).padStart(2, '0') + '-' + String(now.getDate()).padStart(2, '0') + ' ' + String(now.getHours()).padStart(2, '0') + ':' + String(now.getMinutes()).padStart(2, '0');
+      var tr = document.createElement('tr');
+      tr.className = 'hover:bg-gray-50 transition-colors';
+      tr.dataset.project = projectNo;
+      tr.dataset.sales = selectionListSession && selectionListSession.name ? selectionListSession.name : '当前销售';
+      tr.dataset.student = stuName.value.trim();
+      tr.dataset.level = levelText;
+      tr.dataset.country = stuCountry.value.trim();
+      tr.dataset.major = stuMajor.value.trim();
+      tr.dataset.status = '咨询中';
+      tr.dataset.time = timeText.replace(' ', '');
+      tr.dataset.kw = index + projectNo + tr.dataset.sales + tr.dataset.student + levelText + tr.dataset.country + tr.dataset.major + '咨询中' + tr.dataset.time;
+      tr.innerHTML = '<td class="px-5 py-4 text-sm text-gray-900">' + index + '</td>' +
+        '<td class="px-5 py-4 text-sm font-medium text-gray-900">' + projectNo + '</td>' +
+        '<td class="px-5 py-4 text-sm text-gray-600">' + tr.dataset.sales + '</td>' +
+        '<td class="px-5 py-4 text-sm text-gray-600">' + tr.dataset.student + '</td>' +
+        '<td class="px-5 py-4 text-sm text-gray-600">' + levelText + '</td>' +
+        '<td class="px-5 py-4 text-sm text-gray-600">' + tr.dataset.country + '</td>' +
+        '<td class="px-5 py-4 text-sm text-gray-600">' + tr.dataset.major + '</td>' +
+        '<td class="px-5 py-4"><select class="h-8 px-2 border border-blue-200 bg-blue-50 text-blue-700 rounded-lg text-xs font-medium" onchange="updateSelectionStatus(this)"><option selected>咨询中</option><option>已结单</option></select></td>' +
+        '<td class="px-5 py-4 text-sm text-gray-500">' + timeText + '</td>' +
+        '<td class="px-5 py-4 whitespace-nowrap"><button class="sales-workbench-action text-blue-600 hover:text-blue-800 text-sm font-medium mr-3" onclick="location.href=\'选校工作台页 - 留学申请管理系统.html\'">进入工作台</button><button class="text-blue-600 hover:text-blue-800 text-sm font-medium" onclick="location.href=\'选校方案详情页 - 留学申请管理系统.html\'">查看方案</button></td>';
+      if (emptyRow) tbody.insertBefore(tr, emptyRow); else tbody.appendChild(tr);
       showToast('选校任务已创建，项目号：' + projectNo + '，状态：咨询中');
       closeCreateModal();
+      applyFilter();
+    }
+    function updateSelectionStatus(select) {
+      var row = select.closest('tr');
+      row.dataset.status = select.value;
+      var closed = select.value === '已结单';
+      select.className = 'h-8 px-2 rounded-lg text-xs font-medium border ' + (closed
+        ? 'border-green-200 bg-green-50 text-green-700'
+        : 'border-blue-200 bg-blue-50 text-blue-700');
+      showToast('选校任务状态已更新为：' + select.value);
+      applyFilter();
     }
     function closeRejectModal() {
       document.getElementById('rejectModal').classList.add('hidden');
@@ -1292,7 +1219,6 @@
         if (role === '销售人员' && d.sales !== selectionListSession.name) ok = false;
         var v_kw = gv('flt-kw'); if (ok && v_kw && d.kw.indexOf(v_kw) < 0) ok = false;
         var v_project = gv('flt-project'); if (ok && v_project && (d.project||'').indexOf(v_project) < 0) ok = false;
-        var v_name = gv('flt-name'); if (ok && v_name && (d.name||'').indexOf(v_name) < 0) ok = false;
         var v_student = gv('flt-student'); if (ok && v_student && (d.student||'').indexOf(v_student) < 0) ok = false;
         var v_level = gv('flt-level'); if (ok && v_level && d.level !== v_level) ok = false;
         var v_country = gv('flt-country'); if (ok && v_country && d.country !== v_country) ok = false;
@@ -1307,7 +1233,7 @@
       if (empty) empty.classList.toggle('hidden', visible > 0);
     }
     function resetFilter() {
-      ['flt-kw','flt-project','flt-name','flt-sales','flt-student','flt-level','flt-country','flt-major','flt-status','flt-time'].forEach(function (id) { var el = document.getElementById(id); if (el) el.value = ''; });
+      ['flt-kw','flt-project','flt-sales','flt-student','flt-level','flt-country','flt-major','flt-status','flt-time'].forEach(function (id) { var el = document.getElementById(id); if (el) el.value = ''; });
       applyFilter();
     }
     function toggleMore() {

@@ -418,7 +418,7 @@
           <p class="text-xs text-gray-500 mb-3">适用于CS/AI方向硕士申请，包含完整的PS写作框架</p>
           <div class="flex items-center justify-between">
             <div class="text-xs text-gray-400">
-              <span>硕士 · 使用 128 次</span>
+              <span>硕士</span>
             </div>
             <div class="flex items-center gap-2">
               <button class="text-xs text-blue-600 hover:text-blue-800 font-medium" data-dom-id="btn-view-template-1">查看</button>
@@ -439,7 +439,7 @@
           <p class="text-xs text-gray-500 mb-3">适用于硕博申请的学术简历模板，含科研经历板块</p>
           <div class="flex items-center justify-between">
             <div class="text-xs text-gray-400">
-              <span>硕士 · 使用 95 次</span>
+              <span>硕士</span>
             </div>
             <div class="flex items-center gap-2">
               <button class="text-xs text-blue-600 hover:text-blue-800 font-medium" data-dom-id="btn-view-template-2">查看</button>
@@ -460,7 +460,7 @@
           <p class="text-xs text-gray-500 mb-3">适用于导师/教授推荐信，支持多种推荐场景</p>
           <div class="flex items-center justify-between">
             <div class="text-xs text-gray-400">
-              <span>博士 · 使用 72 次</span>
+              <span>博士</span>
             </div>
             <div class="flex items-center gap-2">
               <button class="text-xs text-blue-600 hover:text-blue-800 font-medium" data-dom-id="btn-view-template-3">查看</button>
@@ -481,7 +481,7 @@
           <p class="text-xs text-gray-500 mb-3">适用于跨专业申请，突出转专业动机和学习能力</p>
           <div class="flex items-center justify-between">
             <div class="text-xs text-gray-400">
-              <span>硕士 · 使用 56 次</span>
+              <span>硕士</span>
             </div>
             <div class="flex items-center gap-2">
               <button class="text-xs text-blue-600 hover:text-blue-800 font-medium" data-dom-id="btn-view-template-4">查看</button>
@@ -502,7 +502,7 @@
           <p class="text-xs text-gray-500 mb-3">适用于博士申请的研究计划书，含方法论框架</p>
           <div class="flex items-center justify-between">
             <div class="text-xs text-gray-400">
-              <span>博士 · 使用 43 次</span>
+              <span>博士</span>
             </div>
             <div class="flex items-center gap-2">
               <button class="text-xs text-blue-600 hover:text-blue-800 font-medium" data-dom-id="btn-view-template-5">查看</button>
@@ -523,7 +523,7 @@
           <p class="text-xs text-gray-500 mb-3">强调科研经历与学术能力，适合研究导向申请</p>
           <div class="flex items-center justify-between">
             <div class="text-xs text-gray-400">
-              <span>硕士 · 使用 89 次</span>
+              <span>硕士</span>
             </div>
             <div class="flex items-center gap-2">
               <button class="text-xs text-blue-600 hover:text-blue-800 font-medium" data-dom-id="btn-view-template-6">查看</button>
@@ -560,6 +560,18 @@
     </main>
   </div>
 
+  <!-- 模板内容查看弹窗 -->
+  <div id="templateViewModal" class="fixed inset-0 z-50 hidden">
+    <div class="absolute inset-0 bg-black bg-opacity-30" onclick="closeTemplateViewModal()"></div>
+    <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[760px] max-w-[92vw] max-h-[82vh] bg-white rounded-2xl shadow-2xl flex flex-col">
+      <div class="flex items-center justify-between px-6 py-4 border-b border-gray-200">
+        <h3 id="template-view-title" class="text-lg font-semibold text-gray-900">模板内容</h3>
+        <button class="p-1 text-gray-400 hover:text-gray-600" onclick="closeTemplateViewModal()"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg></button>
+      </div>
+      <div id="template-view-content" class="flex-1 overflow-y-auto px-8 py-6 space-y-5 text-sm text-gray-700 leading-7"></div>
+    </div>
+  </div>
+
   <!-- 系统消息弹窗 -->
   <div id="notificationModal" class="fixed inset-0 z-50 hidden">
     <div class="absolute inset-0 bg-black bg-opacity-30" onclick="closeNotificationModal()"></div>
@@ -581,7 +593,7 @@
           </div>
           <div class="flex items-start gap-3 p-2 bg-white rounded-lg">
             <div class="w-2 h-2 bg-red-500 rounded-full mt-1.5 flex-shrink-0"></div>
-            <div><p class="text-sm text-gray-900">你的模板"转专业PS框架"被套用 12 次</p><p class="text-xs text-gray-400 mt-0.5">1 小时前</p></div>
+            <div><p class="text-sm text-gray-900">模板"转专业PS框架"内容已更新</p><p class="text-xs text-gray-400 mt-0.5">1 小时前</p></div>
           </div>
         </div>
       </div>
@@ -603,20 +615,44 @@
       var createBtn = document.querySelector('[data-dom-id="btn-create-template"]');
       if (createBtn) {
         createBtn.addEventListener('click', function() {
-      window.location.href = '模板库编辑 - 文书交付系统.html';
+          window.location.href = '模板库编辑 - 文书交付系统.html?mode=new';
         });
       }
 
-      // 查看模板详情
+      var templateData = {
+        1: { title: 'AI方向PS标准模板', sections: [['一、背景与动机', '说明申请人工智能方向的兴趣起点，以课程、项目或真实问题作为动机来源。'], ['二、学术准备', '结合本科院校、专业课程、GPA 与核心能力，说明已具备的学术基础。'], ['三、科研与实践', '围绕科研项目、实习职责和可量化成果，呈现解决问题的方法与成长。'], ['四、申请目标', '连接目标院校资源、研究方向和个人长期规划，形成完整的申请逻辑。']] },
+        2: { title: '学术CV标准模板', sections: [['教育背景', '按时间倒序展示院校、专业、学位与核心成绩。'], ['科研经历', '展示课题目标、承担工作、方法工具与成果产出。'], ['实习与项目', '突出与申请方向相关的职责、技术和业务结果。'], ['技能与荣誉', '汇总语言、软件技能、竞赛与奖项。']] },
+        3: { title: '学术推荐信模板', sections: [['推荐关系', '交代推荐人与申请人的认识时间、合作场景及熟悉程度。'], ['能力评价', '通过具体事例评价学术能力、研究潜力和团队协作。'], ['综合推荐', '总结申请人的突出优势与项目匹配度，并给出明确推荐意见。']] },
+        4: { title: '转专业PS框架', sections: [['转专业动机', '说明原专业经历如何促成新方向兴趣，避免割裂式叙述。'], ['能力迁移', '展示原专业训练中可迁移到目标领域的方法、工具与思维。'], ['准备与目标', '用课程、项目和实践证明准备程度，并说明后续学习规划。']] },
+        5: { title: '研究计划模板', sections: [['研究背景', '界定研究问题、现实意义与现有研究不足。'], ['研究问题与方法', '列明核心问题、数据来源、研究方法和执行步骤。'], ['预期成果', '说明理论贡献、实践价值和阶段性成果。']] },
+        6: { title: '科研型PS模板', sections: [['学术兴趣', '从关键课程或研究问题切入，形成稳定的研究主线。'], ['研究经历', '说明问题定义、方法选择、个人贡献和研究结果。'], ['项目匹配', '对应目标项目课程、实验室与导师方向说明匹配关系。']] }
+      };
+
+      // 查看模板内容
       document.querySelectorAll('[data-dom-id^="btn-view-template-"]').forEach(function(el) {
         el.addEventListener('click', function() {
-      window.location.href = '模板库编辑 - 文书交付系统.html';
+          var id = el.getAttribute('data-dom-id').split('-').pop();
+          var data = templateData[id];
+          document.getElementById('template-view-title').textContent = data.title;
+          document.getElementById('template-view-content').innerHTML = data.sections.map(function(section) {
+            return '<section><h4 class="font-semibold text-gray-900 mb-1">' + section[0] + '</h4><p>' + section[1] + '</p></section>';
+          }).join('');
+          document.getElementById('templateViewModal').classList.remove('hidden');
+        });
+      });
+
+      document.querySelectorAll('[data-dom-id^="btn-edit-template-"]').forEach(function(el) {
+        el.addEventListener('click', function() {
+          window.location.href = '模板库编辑 - 文书交付系统.html?mode=edit';
         });
       });
     });
 
     function closeNotificationModal() {
       document.getElementById('notificationModal').classList.add('hidden');
+    }
+    function closeTemplateViewModal() {
+      document.getElementById('templateViewModal').classList.add('hidden');
     }
   </script>
   <script src="./assets/js/pbs-app.js"></script>

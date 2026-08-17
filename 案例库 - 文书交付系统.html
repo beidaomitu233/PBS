@@ -86,7 +86,7 @@
       </div>
 
       <!-- 数据概览 -->
-      <div class="grid grid-cols-4 gap-4 mb-6">
+      <div class="hidden grid-cols-4 gap-4 mb-6" aria-hidden="true">
         <div class="bg-white rounded-xl p-5 shadow-sm border border-gray-100 flex items-center gap-4">
           <div class="w-11 h-11 rounded-lg bg-blue-50 flex items-center justify-center flex-shrink-0">
             <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path></svg>
@@ -650,6 +650,22 @@
     </div>
   </div>
 
+  <!-- 批量解析确认 -->
+  <div id="batchParseModal" class="fixed inset-0 z-50 hidden">
+    <div class="absolute inset-0 bg-black bg-opacity-30" onclick="closeBatchParseModal()"></div>
+    <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[520px] max-w-[92vw] bg-white rounded-2xl shadow-2xl">
+      <div class="flex items-center justify-between px-6 py-4 border-b border-gray-200">
+        <div><h3 class="text-lg font-semibold text-gray-900">解析已选文书</h3><p class="text-xs text-gray-400 mt-1">仅处理当前列表中已勾选的文书文件</p></div>
+        <button class="p-1 text-gray-400 hover:text-gray-600" onclick="closeBatchParseModal()"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg></button>
+      </div>
+      <div id="batch-parse-files" class="px-6 py-5 space-y-2 max-h-72 overflow-y-auto"></div>
+      <div class="flex justify-end gap-3 px-6 py-4 border-t border-gray-100 bg-gray-50 rounded-b-2xl">
+        <button class="px-4 py-2 text-sm border border-gray-300 bg-white text-gray-700 rounded-lg" onclick="closeBatchParseModal()">取消</button>
+        <button class="px-5 py-2 text-sm bg-blue-600 text-white rounded-lg hover:bg-blue-700" onclick="confirmBatchParse()">开始解析</button>
+      </div>
+    </div>
+  </div>
+
   <!-- 案例详情抽屉 -->
   <div id="caseDrawer" class="fixed inset-0 z-50 hidden">
     <div class="absolute inset-0 bg-black bg-opacity-30" onclick="closeDrawer()"></div>
@@ -707,56 +723,26 @@
             <h4 class="text-sm font-medium text-gray-700">AI 解析结果</h4>
             <span class="text-xs text-gray-400">解析于 2026-07-28 14:32</span>
           </div>
-          <div class="space-y-2">
-            <div class="flex items-center gap-3 p-3 border border-gray-200 rounded-lg">
-              <div class="flex-1 min-w-0">
-                <p class="text-sm font-medium text-gray-800">一、背景与动机</p>
-                <p class="text-xs text-gray-400 truncate">兴趣起源、关键事件触发</p>
-              </div>
-              <span class="text-xs px-2 py-0.5 bg-green-50 text-green-600 rounded-full flex-shrink-0">置信度 98%</span>
+          <div class="space-y-3">
+            <div class="p-4 border border-gray-200 rounded-xl bg-white">
+              <p class="text-sm font-medium text-gray-800 mb-2">一、背景与动机</p>
+              <p class="text-xs text-gray-600 leading-5">文本从大二参与机器学习课程项目切入：申请人首次把分类算法用于真实校园数据，发现模型效果不仅取决于算法，还与数据质量和场景理解密切相关。该经历成为其持续学习人工智能并关注可信模型应用的兴趣起点。</p>
             </div>
-            <div class="flex items-center gap-3 p-3 border border-gray-200 rounded-lg">
-              <div class="flex-1 min-w-0">
-                <p class="text-sm font-medium text-gray-800">二、学术准备</p>
-                <p class="text-xs text-gray-400 truncate">核心课程、GPA、专业排名</p>
-              </div>
-              <span class="text-xs px-2 py-0.5 bg-green-50 text-green-600 rounded-full flex-shrink-0">置信度 96%</span>
+            <div class="p-4 border border-gray-200 rounded-xl bg-white">
+              <p class="text-sm font-medium text-gray-800 mb-2">二、学术准备</p>
+              <p class="text-xs text-gray-600 leading-5">本科阶段系统完成数据结构、概率统计、线性代数和机器学习等课程，并通过课程设计建立从问题抽象、特征工程到模型评估的完整方法。GPA 与核心课程表现共同说明其已具备研究生阶段学习所需的数学和编程基础。</p>
             </div>
-            <div class="flex items-center gap-3 p-3 border border-gray-200 rounded-lg">
-              <div class="flex-1 min-w-0">
-                <p class="text-sm font-medium text-gray-800">三、研究经历</p>
-                <p class="text-xs text-gray-400 truncate">项目目标、个人职责、成果产出</p>
-              </div>
-              <span class="text-xs px-2 py-0.5 bg-green-50 text-green-600 rounded-full flex-shrink-0">置信度 95%</span>
+            <div class="p-4 border border-gray-200 rounded-xl bg-white">
+              <p class="text-sm font-medium text-gray-800 mb-2">三、研究经历</p>
+              <p class="text-xs text-gray-600 leading-5">研究段落围绕低资源文本分类课题展开，申请人负责数据清洗、基线模型复现与实验对比。通过调整样本策略和损失函数，验证集 F1 得分得到提升；同时记录了实验失败原因，体现出持续迭代和研究复盘能力。</p>
             </div>
-            <div class="flex items-center gap-3 p-3 border border-gray-200 rounded-lg">
-              <div class="flex-1 min-w-0">
-                <p class="text-sm font-medium text-gray-800">四、实习/实践经历</p>
-                <p class="text-xs text-gray-400 truncate">公司与岗位、工作内容、能力提升</p>
-              </div>
-              <span class="text-xs px-2 py-0.5 bg-yellow-50 text-yellow-600 rounded-full flex-shrink-0">置信度 82%</span>
+            <div class="p-4 border border-gray-200 rounded-xl bg-white">
+              <p class="text-sm font-medium text-gray-800 mb-2">四、实习与实践</p>
+              <p class="text-xs text-gray-600 leading-5">实习内容重点展示申请人如何将模型能力转化为可交付功能：参与需求澄清、数据标注规则制定和接口联调，并与产品及工程团队共同处理异常样本。该段落补充了科研之外的协作、落地和责任意识。</p>
             </div>
-            <div class="flex items-center gap-3 p-3 border border-gray-200 rounded-lg">
-              <div class="flex-1 min-w-0">
-                <p class="text-sm font-medium text-gray-800">五、职业规划与动机升华</p>
-                <p class="text-xs text-gray-400 truncate">短期/长期目标、院校匹配度</p>
-              </div>
-              <span class="text-xs px-2 py-0.5 bg-green-50 text-green-600 rounded-full flex-shrink-0">置信度 93%</span>
-            </div>
-          </div>
-          <!-- 提取变量 -->
-          <div class="mt-3">
-            <p class="text-xs text-gray-500 mb-2">提取变量（12）</p>
-            <div class="flex flex-wrap gap-1.5">
-              <span class="text-xs px-2 py-1 bg-blue-50 text-blue-700 rounded">[学生姓名]</span>
-              <span class="text-xs px-2 py-1 bg-blue-50 text-blue-700 rounded">[申请方向]</span>
-              <span class="text-xs px-2 py-1 bg-blue-50 text-blue-700 rounded">[本科院校]</span>
-              <span class="text-xs px-2 py-1 bg-blue-50 text-blue-700 rounded">[专业名称]</span>
-              <span class="text-xs px-2 py-1 bg-blue-50 text-blue-700 rounded">[GPA]</span>
-              <span class="text-xs px-2 py-1 bg-blue-50 text-blue-700 rounded">[项目名称]</span>
-              <span class="text-xs px-2 py-1 bg-blue-50 text-blue-700 rounded">[实习公司]</span>
-              <span class="text-xs px-2 py-1 bg-blue-50 text-blue-700 rounded">[目标院校]</span>
-              <span class="text-xs px-2 py-1 bg-gray-100 text-gray-500 rounded">+4</span>
+            <div class="p-4 border border-gray-200 rounded-xl bg-white">
+              <p class="text-sm font-medium text-gray-800 mb-2">五、申请目标与规划</p>
+              <p class="text-xs text-gray-600 leading-5">结尾将既有经历与目标项目的课程、实验室方向相连接，说明短期希望深化自然语言处理和模型评估能力，长期计划在教育或公共服务场景推动可靠人工智能应用，从而形成清晰且可验证的申请目标。</p>
             </div>
           </div>
         </div>
@@ -883,9 +869,24 @@
     }
 
     function batchParse() {
+      var selected = document.querySelectorAll('.row-check:checked');
+      if (selected.length === 0) { showToast('请先在文书文件列表勾选需要解析的文件'); return; }
+      var box = document.getElementById('batch-parse-files');
+      box.innerHTML = '';
+      selected.forEach(function(check) {
+        var name = check.closest('tr').querySelector('td:nth-child(2) p').textContent.trim();
+        var row = document.createElement('div');
+        row.className = 'flex items-center justify-between gap-3 px-3 py-2.5 bg-gray-50 border border-gray-100 rounded-lg';
+        row.innerHTML = '<span class="text-sm text-gray-800 truncate">' + name + '</span><span class="text-xs text-blue-600 flex-shrink-0">待解析</span>';
+        box.appendChild(row);
+      });
+      document.getElementById('batchParseModal').classList.remove('hidden');
+    }
+    function closeBatchParseModal() { document.getElementById('batchParseModal').classList.add('hidden'); }
+    function confirmBatchParse() {
       var n = document.querySelectorAll('.row-check:checked').length;
-      if (n === 0) { showToast('请先勾选需要解析的案例'); return; }
-      showToast('已将 ' + n + ' 个案例加入 AI 解析队列，完成后可生成模板');
+      closeBatchParseModal();
+      showToast('已开始解析当前选中的 ' + n + ' 份文书文件');
     }
 
     // ================= 上传弹窗 =================

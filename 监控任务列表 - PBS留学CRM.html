@@ -381,7 +381,9 @@
             <select id="flt-status" class="w-32 h-10 px-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
               <option value="">全部</option>
               <option>正常</option>
-              <option>异常</option>
+              <option>拒信</option>
+              <option>补材料</option>
+              <option>监控失败</option>
             </select>
           </div>
         </div>
@@ -509,10 +511,10 @@
     // ========== 模拟监控任务数据 ==========
     var monitorData = [
       { id: 1, type: '邮箱', subtype: '邮箱', target: 'service@cmu.edu', subproject: '卡内基梅隆大学 / 人工智能', subprojectType: '学校', frequency: '每天', lastRun: '2026-07-17 08:00', status: '正常' },
-      { id: 2, type: '官网', subtype: '官网', target: 'https://apply.stanford.edu', subproject: '斯坦福大学 / 计算机科学', subprojectType: '学校', frequency: '每天', lastRun: '2026-07-17 07:30', status: '异常' },
-      { id: 3, type: '邮箱', subtype: '邮箱', target: 'admission@mit.edu', subproject: '麻省理工学院 / 数据科学', subprojectType: '学校', frequency: '每天', lastRun: '2026-07-17 06:00', status: '正常' },
+      { id: 2, type: '官网', subtype: '官网', target: 'https://apply.stanford.edu', subproject: '斯坦福大学 / 计算机科学', subprojectType: '学校', frequency: '每天', lastRun: '2026-07-17 07:30', status: '监控失败' },
+      { id: 3, type: '邮箱', subtype: '邮箱', target: 'admission@mit.edu', subproject: '麻省理工学院 / 数据科学', subprojectType: '学校', frequency: '每天', lastRun: '2026-07-17 06:00', status: '补材料' },
       { id: 4, type: '官网', subtype: '官网', target: 'https://apply.harvard.edu', subproject: '哈佛大学 / 公共卫生', subprojectType: '学校', frequency: '每天', lastRun: '2026-07-16 23:00', status: '正常' },
-      { id: 5, type: '邮箱', subtype: '邮箱', target: 'info@cam.ac.uk', subproject: '剑桥大学 / 金融学', subprojectType: '专业', frequency: '每天', lastRun: '2026-07-16 22:00', status: '异常' }
+      { id: 5, type: '邮箱', subtype: '邮箱', target: 'info@cam.ac.uk', subproject: '剑桥大学 / 金融学', subprojectType: '专业', frequency: '每天', lastRun: '2026-07-16 22:00', status: '拒信' }
     ];
 
     var filteredData = [];
@@ -539,7 +541,9 @@
       data.forEach(function(item) {
         var statusClass = item.status === '正常'
           ? 'bg-green-100 text-green-800'
-          : 'bg-red-100 text-red-800';
+          : item.status === '补材料'
+            ? 'bg-yellow-100 text-yellow-800'
+            : 'bg-red-100 text-red-800';
 
         var typeIcon = item.type === '邮箱'
           ? '<svg class="w-4 h-4 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>'

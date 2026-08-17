@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>网申模板编辑 - 留学申请管理系统</title>
+  <script src="./assets/vendor/tailwind-runtime.js"></script>
+  <link rel="stylesheet" href="./assets/css/pbs-theme.css">
+  <style>
+    *{box-sizing:border-box}html,body{margin:0;min-height:100%;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;background:#f5f7fb;color:#1f2937}button,input,select,textarea{font:inherit}button{cursor:pointer}.layout{display:flex;min-height:calc(100vh - 64px);align-items:flex-start}.main{flex:1;min-width:0;padding:24px 28px 56px}.card{background:#fff;border:1px solid #e5e7eb;border-radius:14px;box-shadow:0 1px 3px rgba(15,23,42,.04)}.input{width:100%;height:40px;border:1px solid #d1d5db;border-radius:9px;padding:0 12px;background:#fff;font-size:14px;outline:none}.input:focus,.textarea:focus{border-color:#3b82f6;box-shadow:0 0 0 3px rgba(59,130,246,.1)}.textarea{width:100%;min-height:74px;border:1px solid #d1d5db;border-radius:9px;padding:10px 12px;background:#fff;font-size:14px;line-height:1.5;resize:vertical;outline:none}.btn{height:38px;padding:0 15px;border:1px solid #d1d5db;border-radius:9px;background:#fff;color:#374151;font-size:13px;font-weight:600}.btn:hover{background:#f9fafb}.btn.primary{background:#2563eb;border-color:#2563eb;color:#fff}.btn.primary:hover{background:#1d4ed8}.btn.danger{color:#dc2626;border-color:#fecaca;background:#fff}.modal{position:fixed;inset:0;z-index:100;display:none;align-items:center;justify-content:center;padding:20px;background:rgba(17,24,39,.45)}.modal.show{display:flex}.dialog{width:min(920px,96vw);max-height:90vh;display:flex;flex-direction:column;background:#fff;border-radius:16px;box-shadow:0 24px 70px rgba(0,0,0,.22)}.dialog-body{overflow:auto}.version-item.active{border-color:#2563eb;background:#eff6ff}.toast{position:fixed;left:50%;bottom:28px;transform:translate(-50%,18px);opacity:0;pointer-events:none;background:#111827;color:#fff;border-radius:9px;padding:10px 16px;font-size:13px;transition:.2s;z-index:130}.toast.show{opacity:1;transform:translate(-50%,0)}@media(max-width:960px){#pbs-sidebar{display:none}.main{padding:20px 16px}.editor-grid{grid-template-columns:1fr}.field-grid{min-width:760px}}
+  </style>
+  <script src="./assets/js/pbs-app.js" defer></script>
+</head>
+<body>
+  <header class="bg-white border-b border-gray-200 sticky top-0 z-50">
+    <div class="h-16 flex items-center justify-between px-6">
+      <div class="flex items-center gap-3"><div class="w-10 h-10 rounded-xl flex items-center justify-center" style="background:linear-gradient(135deg,#8B7CF6,#6A5AD8)"><span class="text-white font-bold text-lg">P</span></div><span class="text-xl font-semibold text-gray-800">留学申请管理系统</span></div>
+      <div class="flex items-center gap-3 pl-6 border-l border-gray-200"><span class="pbs-role-badge text-xs px-2.5 py-1 bg-blue-50 text-blue-700 rounded-full font-medium">网申人员</span><div class="w-8 h-8 bg-gradient-to-br from-blue-500 to-purple-500 rounded-full flex items-center justify-center"><span class="text-white text-sm font-medium">王</span></div><span class="text-sm text-gray-700">王志强</span></div>
+    </div>
+  </header>
+  <div class="layout">
+    <aside id="pbs-sidebar" class="w-56 bg-white border-r border-gray-200 min-h-[calc(100vh-64px)] flex-shrink-0"></aside>
+    <main class="main">
+      <div class="flex items-center gap-2 text-sm text-gray-500 mb-4"><a class="hover:text-blue-600" href="网申模板库 - 留学申请管理系统.html">网申模板库</a><span>/</span><span id="breadcrumbMode" class="text-gray-800">修改模板</span></div>
+      <div class="flex items-start justify-between gap-4 mb-6">
+        <div><div class="flex items-center gap-3"><h1 id="pageTitle" class="text-2xl font-bold text-gray-900">修改网申模板</h1><span id="currentVersion" class="px-2.5 py-1 rounded-full bg-blue-50 text-blue-700 text-xs font-semibold">V3.2</span></div><p class="text-sm text-gray-500 mt-1">维护申请官网字段与申请材料清单。</p></div>
+        <div class="flex items-center gap-3"><a href="网申模板库 - 留学申请管理系统.html" class="btn inline-flex items-center justify-center">取消</a><button class="btn" onclick="openVersionHistory()">查看历史版本</button><button class="btn primary" onclick="saveNewVersion()">保存新版本</button></div>
+      </div>
+
+      <section class="card p-5 mb-5">
+        <div class="flex items-center justify-between mb-4"><h2 class="text-base font-semibold text-gray-900">模板信息</h2><span class="text-xs text-gray-400">带 * 为必填项</span></div>
+        <div class="grid grid-cols-2 gap-4 editor-grid">
+          <div><label class="block text-sm text-gray-600 mb-2">模板名称 <span class="text-red-500">*</span></label><input id="templateName" class="input" placeholder="例如：CMU 计算机科学硕士网申模板"></div>
+          <div><label class="block text-sm text-gray-600 mb-2">国家 / 地区 <span class="text-red-500">*</span></label><select id="templateRegion" class="input"><option value="">请选择</option><option>美国</option><option>英国</option><option>中国香港</option><option>加拿大</option><option>澳大利亚</option></select></div>
+          <div><label class="block text-sm text-gray-600 mb-2">院校 <span class="text-red-500">*</span></label><input id="templateSchool" class="input" placeholder="请输入院校名称"></div>
+          <div><label class="block text-sm text-gray-600 mb-2">专业 <span class="text-red-500">*</span></label><input id="templateProgram" class="input" placeholder="请输入专业名称"></div>
+        </div>
+      </section>
+
+      <section class="card mb-5 overflow-hidden">
+        <div class="flex items-center justify-between px-5 py-4 border-b border-gray-200"><div><h2 class="text-base font-semibold text-gray-900">申请官网字段</h2><p class="text-xs text-gray-400 mt-1">共 <span id="fieldCount">0</span> 个字段</p></div><button class="btn primary" onclick="addFieldRow()">+ 添加字段</button></div>
+        <div class="overflow-x-auto">
+          <div class="field-grid grid grid-cols-[minmax(220px,1.4fr)_150px_120px_minmax(220px,1fr)_64px] gap-3 px-5 py-3 bg-gray-50 text-xs font-medium text-gray-500"><span>字段名称</span><span>字段类型</span><span>是否必填</span><span>填写说明</span><span>操作</span></div>
+          <div id="fieldRows" class="divide-y divide-gray-100"></div>
+        </div>
+      </section>
+
+      <section class="card overflow-hidden">
+        <div class="flex items-center justify-between px-5 py-4 border-b border-gray-200"><div><h2 class="text-base font-semibold text-gray-900">申请材料清单</h2><p class="text-xs text-gray-400 mt-1">共 <span id="materialCount">0</span> 项材料</p></div><button class="btn primary" onclick="addMaterialRow()">+ 添加材料</button></div>
+        <div class="overflow-x-auto">
+          <div class="field-grid grid grid-cols-[minmax(220px,1.2fr)_120px_minmax(300px,1.6fr)_64px] gap-3 px-5 py-3 bg-gray-50 text-xs font-medium text-gray-500"><span>材料名称</span><span>是否必需</span><span>材料要求</span><span>操作</span></div>
+          <div id="materialRows" class="divide-y divide-gray-100"></div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <div id="versionModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="versionModalTitle">
+    <div class="dialog">
+      <div class="flex items-center justify-between px-6 py-4 border-b border-gray-200"><div><h2 id="versionModalTitle" class="text-lg font-semibold text-gray-900">历史版本</h2><p class="text-xs text-gray-500 mt-1">选择版本查看当时保存的字段、材料数量与变更内容。</p></div><button class="w-8 h-8 rounded-lg bg-gray-100 text-gray-500 text-xl" onclick="closeVersionHistory()" aria-label="关闭">×</button></div>
+      <div class="dialog-body grid grid-cols-[300px_1fr] min-h-[430px]">
+        <div id="versionList" class="p-4 border-r border-gray-200 space-y-3 overflow-y-auto"></div>
+        <div id="versionDetail" class="p-6"></div>
+      </div>
+      <div class="flex justify-end px-6 py-4 border-t border-gray-200"><button class="btn" onclick="closeVersionHistory()">关闭</button></div>
+    </div>
+  </div>
+  <div id="editorToast" class="toast" role="status"></div>
+  <script src="./网申模板编辑 - 留学申请管理系统.js"></script>
+</body>
+</html>

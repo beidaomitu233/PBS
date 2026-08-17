@@ -510,11 +510,11 @@
   <script>
     // ========== 模拟监控任务数据 ==========
     var monitorData = [
-      { id: 1, type: '邮箱', subtype: '邮箱', target: 'service@cmu.edu', subproject: '卡内基梅隆大学 / 人工智能', subprojectType: '学校', frequency: '每天', lastRun: '2026-07-17 08:00', status: '正常' },
-      { id: 2, type: '官网', subtype: '官网', target: 'https://apply.stanford.edu', subproject: '斯坦福大学 / 计算机科学', subprojectType: '学校', frequency: '每天', lastRun: '2026-07-17 07:30', status: '监控失败' },
-      { id: 3, type: '邮箱', subtype: '邮箱', target: 'admission@mit.edu', subproject: '麻省理工学院 / 数据科学', subprojectType: '学校', frequency: '每天', lastRun: '2026-07-17 06:00', status: '补材料' },
-      { id: 4, type: '官网', subtype: '官网', target: 'https://apply.harvard.edu', subproject: '哈佛大学 / 公共卫生', subprojectType: '学校', frequency: '每天', lastRun: '2026-07-16 23:00', status: '正常' },
-      { id: 5, type: '邮箱', subtype: '邮箱', target: 'info@cam.ac.uk', subproject: '剑桥大学 / 金融学', subprojectType: '专业', frequency: '每天', lastRun: '2026-07-16 22:00', status: '拒信' }
+      { id: 1, type: '邮箱', subtype: '邮箱', target: 'service@cmu.edu', student: '张明', subproject: '卡内基梅隆大学 / 人工智能', subprojectType: '学校', frequency: '每天', lastRun: '2026-07-17 08:00', status: '正常' },
+      { id: 2, type: '官网', subtype: '官网', target: 'https://apply.stanford.edu', student: '李雪', subproject: '斯坦福大学 / 计算机科学', subprojectType: '学校', frequency: '每天', lastRun: '2026-07-17 07:30', status: '监控失败' },
+      { id: 3, type: '邮箱', subtype: '邮箱', target: 'admission@mit.edu', student: '王伟', subproject: '麻省理工学院 / 数据科学', subprojectType: '学校', frequency: '每天', lastRun: '2026-07-17 06:00', status: '补材料' },
+      { id: 4, type: '官网', subtype: '官网', target: 'https://apply.harvard.edu', student: '刘芳', subproject: '哈佛大学 / 公共卫生', subprojectType: '学校', frequency: '每天', lastRun: '2026-07-16 23:00', status: '正常' },
+      { id: 5, type: '邮箱', subtype: '邮箱', target: 'info@cam.ac.uk', student: '陈磊', subproject: '剑桥大学 / 金融学', subprojectType: '专业', frequency: '每天', lastRun: '2026-07-16 22:00', status: '拒信' }
     ];
 
     var filteredData = [];
@@ -558,7 +558,7 @@
           '</td>' +
           '<td class="px-5 py-4">' +
             '<div class="text-sm text-gray-900">' + item.subproject + '</div>' +
-            '<div class="text-xs text-gray-400 mt-0.5">' + item.target + '</div>' +
+            '<div class="text-xs text-gray-400 mt-0.5"><span class="text-gray-600 font-medium">' + item.student + '</span> · ' + item.target + '</div>' +
           '</td>' +
           '<td class="px-5 py-4 text-sm text-gray-600">' + item.frequency + '</td>' +
           '<td class="px-5 py-4 text-sm text-gray-500">' + item.lastRun + '</td>' +
@@ -585,9 +585,9 @@
       var kw = gv('flt-kw').toLowerCase();
       var type = gv('flt-type'), sub = gv('flt-sub'), freq = gv('flt-freq'), run = gv('flt-run'), status = gv('flt-status');
       filteredData = monitorData.filter(function(item) {
-        if (kw && (item.type + item.target + item.subproject + item.frequency + item.lastRun + item.status).toLowerCase().indexOf(kw) < 0) return false;
+        if (kw && (item.type + item.student + item.target + item.subproject + item.frequency + item.lastRun + item.status).toLowerCase().indexOf(kw) < 0) return false;
         if (type && item.type !== type) return false;
-        if (sub && item.subproject.indexOf(sub) < 0 && item.target.indexOf(sub) < 0) return false;
+        if (sub && item.subproject.indexOf(sub) < 0 && item.student.indexOf(sub) < 0 && item.target.indexOf(sub) < 0) return false;
         if (freq && item.frequency !== freq) return false;
         if (run && item.lastRun.indexOf(run) < 0) return false;
         if (status && item.status !== status) return false;

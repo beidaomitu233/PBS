@@ -166,6 +166,15 @@
               <option>已归档</option>
             </select>
           </div>
+          <div>
+            <label class="block text-sm text-gray-600 mb-2">所属机构</label>
+            <select id="flt-org" class="min-w-40 h-10 px-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm">
+              <option value="">全部机构</option>
+              <option>PBS留学总部</option>
+              <option>上海启明留学</option>
+              <option>北京知行教育</option>
+            </select>
+          </div>
         </div>
         <!-- 展开更多筛选项 -->
         <div id="flt-more" class="hidden flex items-end gap-4 flex-wrap mt-4 pt-4 border-t border-gray-100">
@@ -819,11 +828,12 @@
       icon.style.transform = hidden ? '' : 'rotate(180deg)';
     }
 
-    function applyFilter() {
+    function applyFilter(silent) {
       var kw = document.getElementById('flt-kw').value.trim().toLowerCase();
       var type = document.getElementById('flt-type').value;
       var level = document.getElementById('flt-level').value;
       var status = document.getElementById('flt-status').value;
+      var org = document.getElementById('flt-org').value;
       var direction = document.getElementById('flt-direction').value;
       var school = document.getElementById('flt-school').value.trim().toLowerCase();
       var uploader = document.getElementById('flt-uploader').value.trim().toLowerCase();
@@ -836,6 +846,7 @@
         if (type && r.dataset.type !== type) ok = false;
         if (level && r.dataset.level !== level) ok = false;
         if (status && r.dataset.status !== status) ok = false;
+        if (org && r.dataset.org !== org) ok = false;
         if (direction && r.dataset.direction !== direction) ok = false;
         if (school && (r.dataset.school || '').toLowerCase().indexOf(school) === -1) ok = false;
         if (uploader && (r.dataset.uploader || '').toLowerCase().indexOf(uploader) === -1) ok = false;
@@ -844,12 +855,14 @@
         if (ok) visible++;
       });
       document.getElementById('flt-empty').classList.toggle('hidden', visible > 0);
-      if (visible > 0) showToast('筛选完成，命中 ' + visible + ' 个案例（当前页）');
+      if (visible > 0 && silent !== true) showToast('筛选完成，命中 ' + visible + ' 个案例（当前页）');
     }
 
     function resetFilter() {
       ['flt-kw','flt-school','flt-uploader','flt-time'].forEach(function(id){ document.getElementById(id).value = ''; });
       ['flt-type','flt-level','flt-status','flt-direction'].forEach(function(id){ document.getElementById(id).value = ''; });
+      var orgFilter = document.getElementById('flt-org');
+      if (!orgFilter.disabled) orgFilter.value = '';
       applyFilter();
     }
 
@@ -952,7 +965,26 @@
       toastTimer = setTimeout(function(){ toast.classList.add('hidden'); }, 2600);
     }
 
-    document.addEventListener('DOMContentLoaded', updateSelected);
+    document.addEventListener('DOMContentLoaded', function() {
+      var session = window.pbsGetSession ? window.pbsGetSession() : { role: '超级管理员', org: 'PBS留学总部' };
+      var isPlatformScope = session.role === '超级管理员' || session.role === '平台运维人员';
+      var organizationNames = ['PBS留学总部', 'PBS留学总部', '上海启明留学', '北京知行教育', '上海启明留学', '北京知行教育', 'PBS留学总部', '北京知行教育'];
+      var rows = document.querySelectorAll('#caseTbody tr:not(#flt-empty)');
+      rows.forEach(function(row, index) {
+        row.dataset.org = organizationNames[index] || 'PBS留学总部';
+        var detail = row.querySelector('td:nth-child(2) .text-xs.text-gray-400');
+        if (detail) detail.textContent += ' · ' + row.dataset.org;
+      });
+      var orgFilter = document.getElementById('flt-org');
+      if (!isPlatformScope) {
+        orgFilter.value = organizationNames.indexOf(session.org) >= 0 ? session.org : 'PBS留学总部';
+        orgFilter.disabled = true;
+        orgFilter.title = '机构角色仅查看本机构案例';
+      }
+      orgFilter.addEventListener('change', function() { applyFilter(); });
+      applyFilter(true);
+      updateSelected();
+    });
   </script>
   <script src="./assets/js/pbs-app.js"></script>
 

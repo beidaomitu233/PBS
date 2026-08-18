@@ -346,49 +346,38 @@
       <section class="project-cockpit-header mb-4">
         <div class="min-w-0">
           <div class="flex items-center gap-3 mb-2"><h1 class="text-2xl font-semibold text-gray-900">李雪 · 硕士申请</h1><span class="text-xs px-2.5 py-1 rounded-full bg-blue-50 text-blue-700 font-medium">交付中</span></div>
-          <p class="text-sm text-gray-500">PRJ20260701002 · 项目经理：王老师 · 当前阶段：文书交付</p>
-        </div>
-        <div class="flex items-center gap-8 flex-shrink-0">
-          <div><p class="text-xs text-gray-400">整体进度</p><p class="text-lg font-semibold text-gray-900 mt-1">62%</p></div>
-          <div><p class="text-xs text-gray-400">下一截止</p><p class="text-sm font-semibold text-red-600 mt-1">今天 18:00</p></div>
-          <div><p class="text-xs text-gray-400">当前卡点</p><p class="text-sm font-semibold text-gray-900 mt-1">等待 PM 确认</p></div>
+          <p class="text-sm text-gray-500">PRJ20260701002</p>
         </div>
       </section>
 
       <section id="schoolCockpitSection" class="mb-6">
         <div class="pm-panel p-4 mb-3">
           <div class="flex items-center justify-between gap-4">
-            <div><h2 class="text-base font-semibold text-gray-900">院校目标驾驶舱</h2><p class="text-xs text-gray-400 mt-1">切换院校后查看该目标独立的流程、进度和待办</p></div>
-            <div class="flex items-center gap-2" role="tablist" aria-label="院校目标切换">
-              <button type="button" class="px-4 h-9 text-sm font-medium text-white bg-blue-600 rounded-lg" data-school-cockpit="cmu" onclick="switchSchoolCockpit('cmu',this)">卡内基梅隆大学 · 人工智能</button>
-              <button type="button" class="px-4 h-9 text-sm font-medium text-gray-600 bg-gray-100 rounded-lg" data-school-cockpit="stanford" onclick="switchSchoolCockpit('stanford',this)">斯坦福大学 · 计算机科学</button>
+            <div><h2 class="text-base font-semibold text-gray-900">院校目标驾驶舱</h2><p class="text-xs text-gray-400 mt-1">查看所选院校目标的阶段进展与关键时间</p></div>
+            <div class="project-school-selector">
+              <label for="schoolCockpitSelect">院校目标</label>
+              <select id="schoolCockpitSelect" onchange="switchSchoolCockpit(this.value)" aria-label="切换院校目标">
+                <option value="cmu">卡内基梅隆大学 · 人工智能</option>
+                <option value="stanford">斯坦福大学 · 计算机科学</option>
+              </select>
             </div>
           </div>
         </div>
-      <div class="project-cockpit-shell">
-        <aside class="project-flow-rail">
-          <p class="text-xs font-semibold text-gray-400 px-3 mb-2">当前院校目标</p>
-          <button type="button" class="project-flow-button is-active" data-project-stage="today" onclick="switchProjectStage('today',this)"><span class="project-flow-index">!</span><span class="min-w-0"><span class="block text-sm font-semibold">今日行动</span><span class="block text-xs text-red-500 mt-0.5">3 项需处理</span></span></button>
-          <p class="text-xs font-semibold text-gray-400 px-3 mt-5 mb-2">目标申请流程</p>
-          <button type="button" class="project-flow-button is-done" data-project-stage="goal" onclick="switchProjectStage('goal',this)"><span class="project-flow-index">1</span><span class="project-flow-copy"><span class="block text-sm font-medium">目标确认</span><span class="project-flow-meta"><span data-stage-status>已完成</span><span data-stage-duration>用时 3 天</span></span></span></button>
-          <button type="button" class="project-flow-button is-risk" data-project-stage="material" onclick="switchProjectStage('material',this)"><span class="project-flow-index">2</span><span class="project-flow-copy"><span class="block text-sm font-medium">材料准备</span><span class="project-flow-meta"><span data-stage-status>缺 1 项</span><span data-stage-duration>用时 12 天</span></span></span></button>
-          <button type="button" class="project-flow-button is-risk" data-project-stage="essay" onclick="switchProjectStage('essay',this)"><span class="project-flow-index">3</span><span class="project-flow-copy"><span class="block text-sm font-medium">文书交付</span><span class="project-flow-meta"><span data-stage-status>1 项临期</span><span data-stage-duration>已用 9 天</span></span></span></button>
-          <button type="button" class="project-flow-button" data-project-stage="apply" onclick="switchProjectStage('apply',this)"><span class="project-flow-index">4</span><span class="project-flow-copy"><span class="block text-sm font-medium">网申提交</span><span class="project-flow-meta"><span data-stage-status>准备中</span><span data-stage-duration>尚未开始</span></span></span></button>
-          <button type="button" class="project-flow-button" data-project-stage="result" onclick="switchProjectStage('result',this)"><span class="project-flow-index">5</span><span class="project-flow-copy"><span class="block text-sm font-medium">申请结果</span><span class="project-flow-meta"><span data-stage-status>未开始</span><span data-stage-duration>尚未开始</span></span></span></button>
-          <button type="button" class="project-flow-button" data-project-stage="archive" onclick="switchProjectStage('archive',this)"><span class="project-flow-index">6</span><span class="project-flow-copy"><span class="block text-sm font-medium">目标结项</span><span class="project-flow-meta"><span data-stage-status>未开始</span><span data-stage-duration>尚未开始</span></span></span></button>
-        </aside>
-        <div id="projectStageContent" class="project-flow-content">
-          <div class="flex items-start justify-between gap-5 mb-5"><div><p class="text-xs font-medium text-purple-600 mb-1">卡内基梅隆大学 · 人工智能</p><h2 class="text-xl font-semibold text-gray-900">该院校目标今日行动</h2></div><span class="text-xs text-gray-500">按紧急程度排序</span></div>
-          <div class="project-stage-summary mb-5">
-            <div class="project-stage-metric"><p class="text-xs text-gray-400">需我处理</p><p class="text-2xl font-semibold text-gray-900 mt-2">2</p></div>
-            <div class="project-stage-metric"><p class="text-xs text-gray-400">等待他人</p><p class="text-2xl font-semibold text-gray-900 mt-2">1</p></div>
-            <div class="project-stage-metric"><p class="text-xs text-gray-400">最近 DDL</p><p class="text-sm font-semibold text-red-600 mt-3">今天 18:00</p></div>
-          </div>
-          <div class="project-action-card is-urgent"><span class="project-action-icon">1</span><div><div class="flex items-center gap-2"><p class="text-sm font-semibold text-gray-900">确认 CMU 个人陈述终稿</p><span class="text-xs text-red-500">今天 18:00</span></div><p class="text-xs text-gray-500 mt-1">当前在刘老师 · 文书已提交审核，等待你确认后进入网申准备</p></div><button class="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg" onclick="location.href='文书审核详情页 - 留学申请管理系统.html'">去确认</button></div>
-          <div class="project-action-card is-warning"><span class="project-action-icon">2</span><div><div class="flex items-center gap-2"><p class="text-sm font-semibold text-gray-900">补充 CMU 护照材料</p><span class="text-xs text-amber-600">明天</span></div><p class="text-xs text-gray-500 mt-1">材料尚未齐全，网申人员无法完成材料清单核对</p></div><button class="px-4 py-2 text-sm font-medium text-purple-600 bg-purple-50 rounded-lg" onclick="switchProjectStage('material',document.querySelector('[data-project-stage=material]'))">去补充</button></div>
-          <div class="project-action-card"><span class="project-action-icon">3</span><div><div class="flex items-center gap-2"><p class="text-sm font-semibold text-gray-900">催办推荐信审核</p><span class="text-xs text-gray-500">已停留 18 小时</span></div><p class="text-xs text-gray-500 mt-1">当前在孙老师 · 预计明天 12:00 完成</p></div><button class="px-4 py-2 text-sm font-medium text-purple-600 bg-purple-50 rounded-lg" onclick="showProjectCockpitToast('已向孙老师发送催办提醒')">催办</button></div>
+        <div class="pm-panel p-4 mb-3">
+          <div class="flex items-center justify-between gap-4 mb-3"><div><h3 class="text-sm font-semibold text-gray-900">项目关键 DDL</h3><p class="text-xs text-gray-400 mt-1">随院校目标切换显示对应时间</p></div><span id="schoolCockpitMeta" class="text-xs text-gray-500"></span></div>
+          <div id="projectDdlStrip" class="project-ddl-strip"></div>
         </div>
-      </div>
+        <div class="project-cockpit-shell">
+          <aside class="project-flow-rail">
+            <p class="text-xs font-semibold text-gray-400 px-3 mb-2">院校申请流程</p>
+            <button type="button" class="project-flow-button is-risk" data-project-stage="material" onclick="switchProjectStage('material',this)"><span class="project-flow-index">1</span><span class="project-flow-copy"><span class="block text-sm font-medium">材料齐备</span><span class="project-flow-meta"><span data-stage-status>5/6 已上传</span><span data-stage-duration>已用 12 天</span></span></span></button>
+            <button type="button" class="project-flow-button is-active is-risk" data-project-stage="essay" onclick="switchProjectStage('essay',this)"><span class="project-flow-index">2</span><span class="project-flow-copy"><span class="block text-sm font-medium">文书交付</span><span class="project-flow-meta"><span data-stage-status>1 项临期</span><span data-stage-duration>已用 9 天</span></span></span></button>
+            <button type="button" class="project-flow-button" data-project-stage="apply" onclick="switchProjectStage('apply',this)"><span class="project-flow-index">3</span><span class="project-flow-copy"><span class="block text-sm font-medium">网申提交</span><span class="project-flow-meta"><span data-stage-status>准备中</span><span data-stage-duration>尚未开始</span></span></span></button>
+            <button type="button" class="project-flow-button" data-project-stage="result" onclick="switchProjectStage('result',this)"><span class="project-flow-index">4</span><span class="project-flow-copy"><span class="block text-sm font-medium">申请结果</span><span class="project-flow-meta"><span data-stage-status>未开始</span><span data-stage-duration>尚未开始</span></span></span></button>
+            <button type="button" class="project-flow-button" data-project-stage="archive" onclick="switchProjectStage('archive',this)"><span class="project-flow-index">5</span><span class="project-flow-copy"><span class="block text-sm font-medium">目标结项</span><span class="project-flow-meta"><span data-stage-status>未开始</span><span data-stage-duration>尚未开始</span></span></span></button>
+          </aside>
+          <div id="projectStageContent" class="project-flow-content" aria-live="polite"></div>
+        </div>
       </section>
 
       <!-- 学生信息卡片组：置于院校目标驾驶舱下方 -->
@@ -517,124 +506,6 @@
       </div>
       </details>
 
-      <!-- 已移除的旧院校目标列表，仅保留数据样例供原型后续复用 -->
-      <template id="schoolGoalListLegacyTemplate">
-        <h3 class="text-base font-semibold text-gray-800 mb-4">院校目标列表</h3>
-        <table id="subProjectTable" class="w-full">
-          <thead class="bg-gray-50">
-            <tr>
-              <th class="px-4 py-3 text-left text-sm font-medium text-gray-500">序号</th>
-              <th class="px-4 py-3 text-left text-sm font-medium text-gray-500">学校</th>
-              <th class="px-4 py-3 text-left text-sm font-medium text-gray-500">专业</th>
-              <th class="px-4 py-3 text-left text-sm font-medium text-gray-500">语言成绩要求</th>
-              <th class="px-4 py-3 text-left text-sm font-medium text-gray-500">学术成绩要求</th>
-              <th class="px-4 py-3 text-left text-sm font-medium text-gray-500">文书要求</th>
-              <th class="px-4 py-3 text-left text-sm font-medium text-gray-500">申请轮次</th>
-              <th class="px-4 py-3 text-left text-sm font-medium text-gray-500">材料准备DDL</th>
-<th class="px-4 py-3 text-left text-sm font-medium text-gray-500">文书完成DDL</th>
-<th class="px-4 py-3 text-left text-sm font-medium text-gray-500">网申提交DDL</th>
-              <th class="px-4 py-3 text-left text-sm font-medium text-gray-500">交付人员</th>
-              <th class="px-4 py-3 text-left text-sm font-medium text-gray-500">文书状态</th>
-              <th class="px-4 py-3 text-left text-sm font-medium text-gray-500">院校目标状态</th>
-              <th class="px-4 py-3 text-left text-sm font-medium text-gray-500">操作</th>
-            </tr>
-          </thead>
-          <tbody class="divide-y divide-gray-100">
-            <tr class="hover:bg-gray-50 transition-colors cursor-pointer" data-dom-id="btn-sub-project-detail-1">
-              <td class="px-4 py-4 text-sm text-gray-900">1</td>
-              <td class="px-4 py-4 text-sm font-medium text-gray-900">卡内基梅隆大学</td>
-              <td class="px-4 py-4 text-sm text-gray-600">人工智能</td>
-              <td class="px-4 py-4 text-sm">
-                <span class="inline-flex items-center gap-1.5 px-2 py-1 rounded-lg bg-green-50 text-green-700 cursor-pointer" data-tooltip-type="score" data-tooltip-key="CMU-IELTS">
-                  <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
-                  雅思7.5
-                </span>
-                <span class="inline-flex items-center gap-1.5 px-2 py-1 rounded-lg bg-green-50 text-green-700 mt-1 cursor-pointer" data-tooltip-type="score" data-tooltip-key="CMU-TOEFL">
-                  <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
-                  托福105
-                </span>
-              </td>
-              <td class="px-4 py-4 text-sm">
-                <span class="inline-flex items-center gap-1.5 px-2 py-1 rounded-lg bg-green-50 text-green-700 cursor-pointer" data-tooltip-type="academic" data-tooltip-key="CMU-GPA">
-                  <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
-                  GPA 3.8+
-                </span>
-                <span class="inline-flex items-center gap-1.5 px-2 py-1 rounded-lg bg-green-50 text-green-700 mt-1 cursor-pointer" data-tooltip-type="academic" data-tooltip-key="CMU-ALEVEL">
-                  <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
-                  A-Level A*AA
-                </span>
-              </td>
-              <td class="px-4 py-4 text-sm text-gray-500">
-                <div class="space-y-1 cursor-pointer">
-                  <div class="text-blue-600 hover:text-blue-800 hover:underline" data-tooltip-type="doc" data-tooltip-key="CMU-PS">PS(1000词) 学术背景+研究方向</div>
-                  <div class="text-blue-600 hover:text-blue-800 hover:underline" data-tooltip-type="doc" data-tooltip-key="CMU-RL">RL×2(500词/封) 导师推荐</div>
-                  <div class="text-blue-600 hover:text-blue-800 hover:underline" data-tooltip-type="doc" data-tooltip-key="CMU-CV">CV(2页) 科研经历重点</div>
-                </div>
-              </td>
-              <td class="px-4 py-4 text-sm text-gray-600" style="cursor: pointer; color: rgb(37, 99, 235);">早申（ED）</td>
-              <td class="px-4 py-4 text-sm text-gray-600 whitespace-nowrap"><span class="cursor-pointer border-b border-dashed border-gray-300 hover:text-blue-600 hover:border-blue-400" data-tooltip-type="ddl" data-tooltip-key="CMU-DDL-material">2026-09-15</span></td>
-<td class="px-4 py-4 text-sm text-gray-600 whitespace-nowrap"><span class="cursor-pointer border-b border-dashed border-gray-300 hover:text-blue-600 hover:border-blue-400" data-tooltip-type="ddl" data-tooltip-key="CMU-DDL-essay">2026-10-15</span></td>
-<td class="px-4 py-4 text-sm text-gray-600 whitespace-nowrap"><span class="cursor-pointer border-b border-dashed border-gray-300 hover:text-blue-600 hover:border-blue-400" data-tooltip-type="ddl" data-tooltip-key="CMU-DDL-apply">2026-11-01</span></td>
-              <td class="px-4 py-4 text-sm text-gray-600">张老师</td>
-              <td class="px-4 py-4">
-                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">待提交</span>
-              </td>
-              <td class="px-4 py-4">
-                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">交付中</span>
-              </td>
-              <td class="px-4 py-4">
-                <button class="text-blue-600 hover:text-blue-800 text-sm font-medium" onclick="window.location.href=&#39;我的项目详情页 - 留学申请管理系统.html&#39;">详情</button>
-              </td>
-            </tr>
-            <tr class="hover:bg-gray-50 transition-colors cursor-pointer" data-dom-id="btn-sub-project-detail-2">
-              <td class="px-4 py-4 text-sm text-gray-900">2</td>
-              <td class="px-4 py-4 text-sm font-medium text-gray-900">斯坦福大学</td>
-              <td class="px-4 py-4 text-sm text-gray-600">计算机科学</td>
-              <td class="px-4 py-4 text-sm">
-                <span class="inline-flex items-center gap-1.5 px-2 py-1 rounded-lg bg-green-50 text-green-700 cursor-pointer" data-tooltip-type="score" data-tooltip-key="Stanford-IELTS">
-                  <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
-                  雅思7.0
-                </span>
-                <span class="inline-flex items-center gap-1.5 px-2 py-1 rounded-lg bg-green-50 text-green-700 mt-1 cursor-pointer" data-tooltip-type="score" data-tooltip-key="Stanford-TOEFL">
-                  <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
-                  托福100
-                </span>
-              </td>
-              <td class="px-4 py-4 text-sm">
-                <span class="inline-flex items-center gap-1.5 px-2 py-1 rounded-lg bg-green-50 text-green-700 cursor-pointer" data-tooltip-type="academic" data-tooltip-key="Stanford-GPA">
-                  <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
-                  GPA 3.7+
-                </span>
-                <span class="inline-flex items-center gap-1.5 px-2 py-1 rounded-lg bg-yellow-50 text-yellow-700 mt-1 cursor-pointer" data-tooltip-type="academic" data-tooltip-key="Stanford-GRE">
-                  <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
-                  GRE 325+
-                </span>
-              </td>
-              <td class="px-4 py-4 text-sm text-gray-500">
-                <div class="space-y-1 cursor-pointer">
-                  <div class="text-blue-600 hover:text-blue-800 hover:underline" data-tooltip-type="doc" data-tooltip-key="Stanford-PS">PS(800词) 转专业动机</div>
-                  <div class="text-blue-600 hover:text-blue-800 hover:underline" data-tooltip-type="doc" data-tooltip-key="Stanford-RL">RL×3(400词/封) 推荐信</div>
-                  <div class="text-blue-600 hover:text-blue-800 hover:underline" data-tooltip-type="doc" data-tooltip-key="Stanford-CV">CV(1页) 精简版</div>
-                </div>
-              </td>
-              <td class="px-4 py-4 text-sm text-gray-600" style="cursor: pointer; color: rgb(37, 99, 235);">常规（RD）</td>
-              <td class="px-4 py-4 text-sm text-gray-600 whitespace-nowrap"><span class="cursor-pointer border-b border-dashed border-gray-300 hover:text-blue-600 hover:border-blue-400" data-tooltip-type="ddl" data-tooltip-key="Stanford-DDL-material">2026-10-20</span></td>
-<td class="px-4 py-4 text-sm text-gray-600 whitespace-nowrap"><span class="cursor-pointer border-b border-dashed border-gray-300 hover:text-blue-600 hover:border-blue-400" data-tooltip-type="ddl" data-tooltip-key="Stanford-DDL-essay">2026-11-30</span></td>
-<td class="px-4 py-4 text-sm text-gray-600 whitespace-nowrap"><span class="cursor-pointer border-b border-dashed border-gray-300 hover:text-blue-600 hover:border-blue-400" data-tooltip-type="ddl" data-tooltip-key="Stanford-DDL-apply">2026-12-15</span></td>
-              <td class="px-4 py-4 text-sm text-gray-600">张老师</td>
-              <td class="px-4 py-4">
-                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">待提交</span>
-              </td>
-              <td class="px-4 py-4">
-                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">待启动</span>
-              </td>
-              <td class="px-4 py-4">
-                <button class="text-blue-600 hover:text-blue-800 text-sm font-medium" onclick="window.location.href=&#39;我的项目详情页 - 留学申请管理系统.html&#39;">详情</button>
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </template>
 
     </main>
   
@@ -685,67 +556,91 @@
     </div>
   </div>
 
-  <!-- 申请轮次悬浮提示 -->
-  <div id="roundTooltip" class="fixed z-[9999] hidden" style="left: 1390.12px; top: 914.667px;">
-    <div class="bg-white rounded-xl shadow-2xl border border-gray-200 p-4 w-[340px]">
-      <h3 class="text-sm font-semibold text-gray-800 mb-3" id="tooltipTitle">卡内基梅隆大学 - 申请轮次时间轴</h3>
-      <div id="tooltipBody" class="space-y-2"><div class="flex items-center justify-between py-1.5 border-b border-gray-100"><span class="text-sm text-gray-700">早申（ED）</span><span class="text-sm font-medium text-red-600">2026-11-01</span></div><div class="flex items-center justify-between py-1.5 border-b border-gray-100"><span class="text-sm text-gray-700">早申（EA）</span><span class="text-sm font-medium text-red-600">2026-12-01</span></div><div class="flex items-center justify-between py-1.5"><span class="text-sm text-gray-700">常规（RD）</span><span class="text-sm font-medium text-red-600">2027-01-15</span></div></div>
-    </div>
   </div>
 
   <script>
     var currentSchoolCockpit = 'cmu';
     var SCHOOL_COCKPITS = {
       cmu: {
-        name: '卡内基梅隆大学 · 人工智能', short: 'CMU', round: 'ED', ddl: '2026-11-01', current: '文书交付',
-        material: '5 / 6', materialStatus: '缺 1 项', missingMaterial: '护照复印件', essay: '4 / 6', essayStatus: '1 项临期', essayOwner: '刘老师',
-        account: '已绑定', fields: '32 / 36', todayCount: '3 项需处理', todayMine: '2', todayWaiting: '1', nextDdl: '今天 18:00',
-        stageDurations: { goal: '用时 3 天', material: '用时 12 天', essay: '已用 9 天', apply: '尚未开始', result: '尚未开始', archive: '尚未开始' }
+        name: '卡内基梅隆大学 · 人工智能', short: 'CMU', round: 'ED', current: '文书交付', defaultStage: 'essay',
+        materials: [
+          { name: '本科成绩单', source: '学生档案', uploaded: true },
+          { name: '个人陈述（PS）', source: '文书任务', uploaded: true },
+          { name: '推荐信（RL）', source: '文书任务', uploaded: true },
+          { name: '简历（CV）', source: '文书任务', uploaded: true },
+          { name: '语言成绩单', source: '学生档案', uploaded: true },
+          { name: '护照复印件', source: '学生档案', uploaded: false }
+        ],
+        ddls: [
+          { title: '材料准备 DDL', managed: '2026-09-25', merchant: '2026-09-28' },
+          { title: '文书交付 DDL', managed: '2026-10-15', merchant: '2026-10-10', near: true },
+          { title: '网申提交 DDL', managed: '2026-11-01', merchant: '2026-10-25' }
+        ],
+        essay: '4 / 6', essayStatus: '1 项临期', essayOwner: '刘老师', account: '已绑定', fields: '32 / 36',
+        stageDurations: { material: '已用 12 天', essay: '已用 9 天', apply: '尚未开始', result: '尚未开始', archive: '尚未开始' }
       },
       stanford: {
-        name: '斯坦福大学 · 计算机科学', short: 'Stanford', round: 'RD', ddl: '2026-12-15', current: '材料准备',
-        material: '4 / 6', materialStatus: '缺 2 项', missingMaterial: '申请邮箱、GRE 成绩单', essay: '1 / 6', essayStatus: '待推进', essayOwner: '刘老师',
-        account: '待补充', fields: '0 / 36', todayCount: '2 项需处理', todayMine: '1', todayWaiting: '1', nextDdl: '2026-10-20',
-        stageDurations: { goal: '用时 2 天', material: '已用 6 天', essay: '尚未开始', apply: '尚未开始', result: '尚未开始', archive: '尚未开始' }
+        name: '斯坦福大学 · 计算机科学', short: 'Stanford', round: 'RD', current: '材料齐备', defaultStage: 'material',
+        materials: [
+          { name: '本科成绩单', source: '学生档案', uploaded: true },
+          { name: '个人陈述（PS）', source: '文书任务', uploaded: true },
+          { name: '推荐信（RL）', source: '文书任务', uploaded: true },
+          { name: '简历（CV）', source: '文书任务', uploaded: true },
+          { name: 'GRE 成绩单', source: '学生档案', uploaded: false },
+          { name: '护照复印件', source: '学生档案', uploaded: false }
+        ],
+        ddls: [
+          { title: '材料准备 DDL', managed: '2026-10-20', merchant: '2026-11-10', near: true },
+          { title: '文书交付 DDL', managed: '2026-11-30', merchant: '2026-12-20' },
+          { title: '网申提交 DDL', managed: '2026-12-15', merchant: '2027-01-05' }
+        ],
+        essay: '1 / 6', essayStatus: '待推进', essayOwner: '刘老师', account: '待补充', fields: '0 / 36',
+        stageDurations: { material: '已用 6 天', essay: '尚未开始', apply: '尚未开始', result: '尚未开始', archive: '尚未开始' }
       }
     };
+    function getMaterialStats(school) {
+      var uploaded = school.materials.filter(function(item) { return item.uploaded; });
+      var missing = school.materials.filter(function(item) { return !item.uploaded; });
+      return { uploaded: uploaded.length, total: school.materials.length, missing: missing };
+    }
+    function renderProjectDdls(school) {
+      return school.ddls.map(function(item) {
+        return '<div class="project-ddl-card' + (item.near ? ' is-near' : '') + '"><p class="project-ddl-title">' + item.title + '</p><p class="project-ddl-line"><span>管理配置</span><strong>' + item.managed + '</strong></p><p class="project-ddl-line"><span>商户配置</span><strong>' + item.merchant + '</strong></p></div>';
+      }).join('');
+    }
+    function renderMaterialChecklist(school, detailId) {
+      var rows = school.materials.map(function(item) {
+        return '<div class="project-material-row"><div><p class="text-sm font-medium text-gray-900">' + item.name + '</p></div><span class="text-xs text-gray-500">来源：' + item.source + '</span><span class="project-material-status' + (item.uploaded ? '' : ' is-missing') + '">' + (item.uploaded ? '已上传' : '缺失') + '</span></div>';
+      }).join('');
+      return '<div class="flex items-center justify-between gap-4 mb-3"><p class="text-xs text-gray-500">状态按该院校申请材料清单自动统计</p><button class="px-4 py-2 text-sm font-medium text-purple-600 bg-purple-50 rounded-lg" onclick="location.href=\'院校目标详情页 - 留学申请管理系统.html?id=' + detailId + '\'">查看材料清单</button></div><div class="project-material-list">' + rows + '</div>';
+    }
     function getSchoolStageView(stage) {
       var school = SCHOOL_COCKPITS[currentSchoolCockpit];
       var detailId = currentSchoolCockpit === 'cmu' ? '1' : '2';
+      var materialStats = getMaterialStats(school);
       var views = {
-        goal: {
-          kicker: school.name, title: '目标确认', status: '已完成', metrics: [['申请轮次',school.round],['网申 DDL',school.ddl],['当前阶段',school.current],['阶段用时',school.stageDurations.goal]],
-          body: '<div class="project-action-card"><span class="project-action-icon">✓</span><div><p class="text-sm font-semibold text-gray-900">院校与专业目标已确认</p><p class="text-xs text-gray-500 mt-1">申请轮次、目标专业和阶段截止时间均已维护</p></div><button class="px-4 py-2 text-sm font-medium text-purple-600 bg-purple-50 rounded-lg" onclick="location.href=\'院校目标详情页 - 留学申请管理系统.html?id=' + detailId + '\'">查看目标</button></div>'
-        },
         material: {
-          kicker: school.name, title: '材料准备', status: school.materialStatus, metrics: [['材料齐全度',school.material],['待补材料',school.missingMaterial],['负责人','张老师'],['阶段用时',school.stageDurations.material]],
-          body: '<div class="project-action-card is-warning"><span class="project-action-icon">!</span><div><p class="text-sm font-semibold text-gray-900">待补充：' + school.missingMaterial + '</p><p class="text-xs text-gray-500 mt-1">补齐后由项目经理确认，再同步给该目标的文书与网申任务</p></div><button class="px-4 py-2 text-sm font-medium text-purple-600 bg-purple-50 rounded-lg" onclick="location.href=\'院校目标详情页 - 留学申请管理系统.html?id=' + detailId + '\'">管理材料</button></div>'
+          kicker: school.name, title: '材料齐备', status: materialStats.missing.length ? '缺 ' + materialStats.missing.length + ' 项' : '已齐备', metrics: [['已上传',materialStats.uploaded + ' / ' + materialStats.total],['缺失材料',materialStats.missing.length ? materialStats.missing.map(function(item) { return item.name; }).join('、') : '无'],['材料 DDL',school.ddls[0].managed],['阶段用时',school.stageDurations.material]],
+          body: renderMaterialChecklist(school, detailId)
         },
         essay: {
-          kicker: school.name, title: '文书交付', status: school.essayStatus, metrics: [['完成进度',school.essay],['最近 DDL',currentSchoolCockpit === 'cmu' ? '今天 18:00' : '2026-11-30'],['负责人',school.essayOwner],['阶段用时',school.stageDurations.essay]],
+          kicker: school.name, title: '文书交付', status: school.essayStatus, metrics: [['完成进度',school.essay],['文书 DDL',school.ddls[1].managed],['负责人',school.essayOwner],['阶段用时',school.stageDurations.essay]],
           body: currentSchoolCockpit === 'cmu' ? '<div class="project-action-card is-urgent"><span class="project-action-icon">PS</span><div><p class="text-sm font-semibold text-gray-900">个人陈述终稿等待 PM 确认</p><p class="text-xs text-gray-500 mt-1">刘老师已交付终稿 · 今天 18:00 前需确认</p></div><button class="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg" onclick="location.href=\'文书审核详情页 - 留学申请管理系统.html\'">去确认</button></div>' : '<div class="project-action-card"><span class="project-action-icon">RL</span><div><p class="text-sm font-semibold text-gray-900">推荐信初稿准备中</p><p class="text-xs text-gray-500 mt-1">当前在刘老师 · 预计 2026-10-28 提交初稿</p></div><button class="px-4 py-2 text-sm font-medium text-purple-600 bg-purple-50 rounded-lg" onclick="showProjectCockpitToast(\'已向刘老师发送催办提醒\')">催办</button></div>'
         },
         apply: {
-          kicker: school.name, title: '网申提交', status: school.account === '已绑定' ? '准备中' : '存在卡点', metrics: [['申请账号',school.account],['字段准备',school.fields],['材料齐全',school.material],['阶段用时',school.stageDurations.apply]],
+          kicker: school.name, title: '网申提交', status: school.account === '已绑定' ? '准备中' : '存在卡点', metrics: [['申请账号',school.account],['字段准备',school.fields],['材料齐备',materialStats.uploaded + ' / ' + materialStats.total],['网申 DDL',school.ddls[2].managed],['阶段用时',school.stageDurations.apply]],
           body: school.account === '已绑定' ? '<div class="project-action-card"><span class="project-action-icon">✓</span><div><p class="text-sm font-semibold text-gray-900">申请账号已就绪</p><p class="text-xs text-gray-500 mt-1">已匹配 ' + school.fields + ' 个字段，材料补齐后可继续填报</p></div><button class="px-4 py-2 text-sm font-medium text-purple-600 bg-purple-50 rounded-lg" onclick="location.href=\'网申任务详情页 - 留学申请管理系统.html\'">查看任务</button></div>' : '<div class="project-action-card is-warning"><span class="project-action-icon">!</span><div><p class="text-sm font-semibold text-gray-900">申请账号待补充</p><p class="text-xs text-gray-500 mt-1">当前卡在项目经理，补充后网申人员可开始字段核对</p></div><button class="px-4 py-2 text-sm font-medium text-purple-600 bg-purple-50 rounded-lg" onclick="location.href=\'网申任务详情页 - 留学申请管理系统.html\'">补充账号</button></div>'
         },
         result: {
           kicker: school.name, title: '申请结果', status: '未开始', metrics: [['提交状态','未提交'],['结果状态','待更新'],['Offer','0'],['阶段用时',school.stageDurations.result]],
-          body: '<div class="project-action-card"><span class="project-action-icon">5</span><div><p class="text-sm font-semibold text-gray-900">完成该院校网申后进入结果更新</p><p class="text-xs text-gray-500 mt-1">申请结果由经办人员手动填写，Offer 图片同步至监控详情</p></div><span class="text-xs text-gray-400">等待网申提交</span></div>'
+          body: '<div class="project-action-card"><span class="project-action-icon">4</span><div><p class="text-sm font-semibold text-gray-900">完成该院校网申后进入结果更新</p><p class="text-xs text-gray-500 mt-1">申请结果由经办人员手动填写，Offer 图片同步至监控详情</p></div><span class="text-xs text-gray-400">等待网申提交</span></div>'
         },
         archive: {
           kicker: school.name, title: '目标结项', status: '未开始', metrics: [['当前阶段',school.current],['待完成节点','3'],['归档状态','未发起'],['阶段用时',school.stageDurations.archive]],
-          body: '<div class="project-action-card"><span class="project-action-icon">6</span><div><p class="text-sm font-semibold text-gray-900">该院校目标完成结果确认后可结项</p><p class="text-xs text-gray-500 mt-1">结项只影响当前院校目标，不影响同一学生下的其他院校目标</p></div><button class="px-4 py-2 text-sm font-medium text-gray-400 bg-gray-100 rounded-lg" disabled>暂不可结项</button></div>'
+          body: '<div class="project-action-card"><span class="project-action-icon">5</span><div><p class="text-sm font-semibold text-gray-900">该院校目标完成结果确认后可结项</p><p class="text-xs text-gray-500 mt-1">结项只影响当前院校目标，不影响同一学生下的其他院校目标</p></div><button class="px-4 py-2 text-sm font-medium text-gray-400 bg-gray-100 rounded-lg" disabled>暂不可结项</button></div>'
         }
       };
       return views[stage];
-    }
-    function renderSchoolTodayView() {
-      var school = SCHOOL_COCKPITS[currentSchoolCockpit];
-      var actions = currentSchoolCockpit === 'cmu'
-        ? '<div class="project-action-card is-urgent"><span class="project-action-icon">1</span><div><div class="flex items-center gap-2"><p class="text-sm font-semibold text-gray-900">确认 CMU 个人陈述终稿</p><span class="text-xs text-red-500">今天 18:00</span></div><p class="text-xs text-gray-500 mt-1">当前在刘老师 · 文书已提交审核，等待你确认后进入网申准备</p></div><button class="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg" onclick="location.href=\'文书审核详情页 - 留学申请管理系统.html\'">去确认</button></div><div class="project-action-card is-warning"><span class="project-action-icon">2</span><div><p class="text-sm font-semibold text-gray-900">补充 CMU 护照材料</p><p class="text-xs text-gray-500 mt-1">材料尚未齐全，网申人员无法完成材料清单核对</p></div><button class="px-4 py-2 text-sm font-medium text-purple-600 bg-purple-50 rounded-lg" onclick="switchProjectStage(\'material\',document.querySelector(\'[data-project-stage=material]\'))">去补充</button></div><div class="project-action-card"><span class="project-action-icon">3</span><div><p class="text-sm font-semibold text-gray-900">催办推荐信审核</p><p class="text-xs text-gray-500 mt-1">当前在孙老师 · 已停留 18 小时</p></div><button class="px-4 py-2 text-sm font-medium text-purple-600 bg-purple-50 rounded-lg" onclick="showProjectCockpitToast(\'已向孙老师发送催办提醒\')">催办</button></div>'
-        : '<div class="project-action-card is-warning"><span class="project-action-icon">1</span><div><p class="text-sm font-semibold text-gray-900">补充 Stanford 申请邮箱</p><p class="text-xs text-gray-500 mt-1">当前卡在项目经理，账号补充后网申人员才能开始字段核对</p></div><button class="px-4 py-2 text-sm font-medium text-purple-600 bg-purple-50 rounded-lg" onclick="switchProjectStage(\'apply\',document.querySelector(\'[data-project-stage=apply]\'))">去补充</button></div><div class="project-action-card"><span class="project-action-icon">2</span><div><p class="text-sm font-semibold text-gray-900">跟进 Stanford 推荐信初稿</p><p class="text-xs text-gray-500 mt-1">当前在刘老师 · 预计 2026-10-28 提交</p></div><button class="px-4 py-2 text-sm font-medium text-purple-600 bg-purple-50 rounded-lg" onclick="showProjectCockpitToast(\'已向刘老师发送催办提醒\')">催办</button></div>';
-      return '<div class="flex items-start justify-between gap-5 mb-5"><div><p class="text-xs font-medium text-purple-600 mb-1">' + school.name + '</p><h2 class="text-xl font-semibold text-gray-900">该院校目标今日行动</h2></div><span class="text-xs text-gray-500">按紧急程度排序</span></div><div class="project-stage-summary mb-5"><div class="project-stage-metric"><p class="text-xs text-gray-400">需我处理</p><p class="text-2xl font-semibold text-gray-900 mt-2">' + school.todayMine + '</p></div><div class="project-stage-metric"><p class="text-xs text-gray-400">等待他人</p><p class="text-2xl font-semibold text-gray-900 mt-2">' + school.todayWaiting + '</p></div><div class="project-stage-metric"><p class="text-xs text-gray-400">最近 DDL</p><p class="text-sm font-semibold text-red-600 mt-3">' + school.nextDdl + '</p></div></div>' + actions;
     }
     function renderProjectStageView(view) {
       var metrics = '';
@@ -759,34 +654,24 @@
       if (button) { button.classList.add('is-active'); }
       var content = document.getElementById('projectStageContent');
       if (!content) { return; }
-      if (stage === 'today') { content.innerHTML = renderSchoolTodayView(); return; }
       var view = getSchoolStageView(stage);
       if (view) { content.innerHTML = renderProjectStageView(view); }
     }
-    function switchSchoolCockpit(schoolId, button) {
+    function switchSchoolCockpit(schoolId) {
       if (!SCHOOL_COCKPITS[schoolId]) { return; }
       currentSchoolCockpit = schoolId;
-      document.querySelectorAll('[data-school-cockpit]').forEach(function(item) {
-        var active = item === button || item.getAttribute('data-school-cockpit') === schoolId;
-        item.classList.toggle('bg-blue-600', active);
-        item.classList.toggle('text-white', active);
-        item.classList.toggle('bg-gray-100', !active);
-        item.classList.toggle('text-gray-600', !active);
-        item.setAttribute('aria-selected', active ? 'true' : 'false');
-      });
       var school = SCHOOL_COCKPITS[schoolId];
+      var selector = document.getElementById('schoolCockpitSelect');
+      if (selector) { selector.value = schoolId; }
+      document.getElementById('schoolCockpitMeta').textContent = '申请轮次 ' + school.round + ' · 当前阶段 ' + school.current;
+      document.getElementById('projectDdlStrip').innerHTML = renderProjectDdls(school);
+      var materialStats = getMaterialStats(school);
       var stageMeta = schoolId === 'cmu'
-        ? { goal: ['已完成','is-done'], material: ['缺 1 项','is-risk'], essay: ['1 项临期','is-risk'], apply: ['准备中',''], result: ['未开始',''], archive: ['未开始',''] }
-        : { goal: ['已完成','is-done'], material: ['缺 2 项','is-risk'], essay: ['待推进',''], apply: ['账号待补充','is-risk'], result: ['未开始',''], archive: ['未开始',''] };
+        ? { material: [materialStats.uploaded + '/' + materialStats.total + ' 已上传','is-risk'], essay: ['1 项临期','is-risk'], apply: ['准备中',''], result: ['未开始',''], archive: ['未开始',''] }
+        : { material: [materialStats.uploaded + '/' + materialStats.total + ' 已上传','is-risk'], essay: ['待推进',''], apply: ['账号待补充','is-risk'], result: ['未开始',''], archive: ['未开始',''] };
       document.querySelectorAll('[data-project-stage]').forEach(function(item) {
         item.classList.remove('is-active', 'is-done', 'is-risk');
         var stage = item.getAttribute('data-project-stage');
-        if (stage === 'today') {
-          item.classList.add('is-active');
-          var todayLabel = item.querySelectorAll('.block')[1];
-          if (todayLabel) { todayLabel.textContent = school.todayCount; }
-          return;
-        }
         if (stageMeta[stage]) {
           if (stageMeta[stage][1]) { item.classList.add(stageMeta[stage][1]); }
           var statusLabel = item.querySelector('[data-stage-status]');
@@ -795,8 +680,8 @@
           if (durationLabel) { durationLabel.textContent = school.stageDurations[stage]; }
         }
       });
-      var content = document.getElementById('projectStageContent');
-      if (content) { content.innerHTML = renderSchoolTodayView(); }
+      var defaultButton = document.querySelector('[data-project-stage="' + school.defaultStage + '"]');
+      switchProjectStage(school.defaultStage, defaultButton);
     }
     function showProjectCockpitToast(message) {
       var old = document.getElementById('projectCockpitToast');
@@ -809,320 +694,14 @@
       setTimeout(function() { toast.remove(); }, 2000);
     }
 
-    var roundData = {
-      '卡内基梅隆大学': {
-        rounds: [
-          { round: '早申（ED）', deadline: '2026-11-01' },
-          { round: '早申（EA）', deadline: '2026-12-01' },
-          { round: '常规（RD）', deadline: '2027-01-15' }
-        ]
-      },
-      '斯坦福大学': {
-        rounds: [
-          { round: '限制性早申（REA）', deadline: '2026-11-15' },
-          { round: '常规（RD）', deadline: '2027-01-05' }
-        ]
-      }
-    };
-
-    var docData = {
-      'CMU-PS': { title: '个人陈述（PS）— 卡内基梅隆大学', items: [
-        { label: '字数要求', value: '1000词' },
-        { label: '必须包含', value: '学术背景、研究方向、选择CMU的原因' },
-        { label: '推荐结构', value: '引言(10%) + 学术经历(60%) + 未来规划(20%) + 结语(10%)' }
-      ]},
-      'CMU-RL': { title: '推荐信（RL）— 卡内基梅隆大学', items: [
-        { label: '数量要求', value: '2封' },
-        { label: '推荐人要求', value: '至少1封来自学术导师' },
-        { label: '每封字数', value: '500词以内' }
-      ]},
-      'CMU-CV': { title: '简历（CV）— 卡内基梅隆大学', items: [
-        { label: '页数要求', value: '2页' },
-        { label: '重点内容', value: '科研经历、论文发表、技术项目' },
-        { label: '格式要求', value: 'PDF格式，A4纸张' }
-      ]},
-      'Stanford-PS': { title: '个人陈述（PS）— 斯坦福大学', items: [
-        { label: '字数要求', value: '800词' },
-        { label: '必须包含', value: '转专业动机、个人经历、职业目标' },
-        { label: '推荐结构', value: '引言(15%) + 转专业动机(50%) + 未来规划(25%) + 结语(10%)' }
-      ]},
-      'Stanford-RL': { title: '推荐信（RL）— 斯坦福大学', items: [
-        { label: '数量要求', value: '3封' },
-        { label: '推荐人要求', value: '学术+工作各至少1封' },
-        { label: '每封字数', value: '400词以内' }
-      ]},
-      'Stanford-CV': { title: '简历（CV）— 斯坦福大学', items: [
-        { label: '页数要求', value: '1页' },
-        { label: '重点内容', value: '精简版，突出核心成就' },
-        { label: '格式要求', value: 'PDF格式，A4纸张' }
-      ]}
-    };
-
-    var academicData = {
-      'papers': { title: '论文发表', items: [
-        { label: '期刊', value: 'IEEE Transactions on Neural Networks' },
-        { label: '论文名称', value: 'Deep Reinforcement Learning for Multi-Agent Path Planning' }
-      ]},
-      'patent': { title: '专利获得', items: [
-        { label: '专利名称', value: '一种基于深度学习的智能路径规划方法及系统' },
-        { label: '申请时间', value: '2025-06-15' }
-      ]}
-    };
-
-    var scoreData = {
-      'CMU-IELTS': { title: '雅思成绩详情 — 卡内基梅隆大学', items: [
-        { label: '总分', value: '7.5' },
-        { label: 'L 听力', value: '8.0' },
-        { label: 'R 阅读', value: '7.5' },
-        { label: 'W 写作', value: '6.5' },
-        { label: 'S 口语', value: '7.0' }
-      ]},
-      'CMU-TOEFL': { title: '托福成绩详情 — 卡内基梅隆大学', items: [
-        { label: '总分', value: '105' },
-        { label: 'L 听力', value: '27' },
-        { label: 'R 阅读', value: '28' },
-        { label: 'W 写作', value: '25' },
-        { label: 'S 口语', value: '25' }
-      ]},
-      'CMU-GRE': { title: 'GRE成绩详情 — 卡内基梅隆大学', items: [
-        { label: '总分', value: '330' },
-        { label: 'V 语文', value: '160' },
-        { label: 'Q 数学', value: '170' },
-        { label: 'AW 写作', value: '4.0' }
-      ]},
-      'Stanford-IELTS': { title: '雅思成绩详情 — 斯坦福大学', items: [
-        { label: '总分', value: '7.0' },
-        { label: 'L 听力', value: '7.0' },
-        { label: 'R 阅读', value: '7.0' },
-        { label: 'W 写作', value: '6.5' },
-        { label: 'S 口语', value: '6.5' }
-      ]},
-      'Stanford-TOEFL': { title: '托福成绩详情 — 斯坦福大学', items: [
-        { label: '总分', value: '100' },
-        { label: 'L 听力', value: '25' },
-        { label: 'R 阅读', value: '27' },
-        { label: 'W 写作', value: '24' },
-        { label: 'S 口语', value: '24' }
-      ]},
-      'Stanford-GRE': { title: 'GRE成绩详情 — 斯坦福大学', items: [
-        { label: '总分', value: '328' },
-        { label: 'V 语文', value: '158' },
-        { label: 'Q 数学', value: '170' },
-        { label: 'AW 写作', value: '4.0' }
-      ]}
-    };
-
-    // DDL 数据：项目经理设置的DDL（页面展示） vs 商户传来的DDL（浮窗展示）
-    var ddlData = {
-      'CMU-DDL-material': { title: '材料准备DDL — 卡内基梅隆大学', ours: '2026-09-15', merchant: '2026-10-01', source: '商户：美申通留学' },
-      'CMU-DDL-essay': { title: '文书完成DDL — 卡内基梅隆大学', ours: '2026-10-15', merchant: '2026-10-31', source: '商户：美申通留学' },
-      'CMU-DDL-apply': { title: '网申提交DDL — 卡内基梅隆大学', ours: '2026-11-01', merchant: '2026-11-01', source: '商户：美申通留学' },
-      'Stanford-DDL-material': { title: '材料准备DDL — 斯坦福大学', ours: '2026-10-20', merchant: '2026-11-10', source: '商户：美申通留学' },
-      'Stanford-DDL-essay': { title: '文书完成DDL — 斯坦福大学', ours: '2026-11-30', merchant: '2026-12-20', source: '商户：美申通留学' },
-      'Stanford-DDL-apply': { title: '网申提交DDL — 斯坦福大学', ours: '2026-12-15', merchant: '2027-01-05', source: '商户：美申通留学' }
-    };
-
     document.addEventListener('DOMContentLoaded', function() {
-      switchSchoolCockpit('cmu', document.querySelector('[data-school-cockpit="cmu"]'));
-      var tooltip = document.getElementById('roundTooltip');
-      var tooltipTitle = document.getElementById('tooltipTitle');
-      var tooltipBody = document.getElementById('tooltipBody');
-      var hideTimer = null;
-
-      function showTooltip(school, cell) {
-        var data = roundData[school];
-        if (!data) return;
-        tooltipTitle.textContent = school + ' - 申请轮次时间轴';
-        tooltipBody.innerHTML = '';
-        data.rounds.forEach(function(item, idx) {
-          var div = document.createElement('div');
-          div.className = 'flex items-center justify-between py-1.5' + (idx < data.rounds.length - 1 ? ' border-b border-gray-100' : '');
-          div.innerHTML = '<span class="text-sm text-gray-700">' + item.round + '</span><span class="text-sm font-medium text-red-600">' + item.deadline + '</span>';
-          tooltipBody.appendChild(div);
-        });
-        var rect = cell.getBoundingClientRect();
-        tooltip.style.left = (rect.left + window.scrollX) + 'px';
-        tooltip.style.top = (rect.bottom + window.scrollY + 8) + 'px';
-        tooltip.classList.remove('hidden');
-      }
-
-      function scheduleHide() {
-        clearTimeout(hideTimer);
-        hideTimer = setTimeout(function() {
-          if (!tooltip.matches(':hover') && !window.__roundCellHovered) {
-            tooltip.classList.add('hidden');
-          }
-        }, 80);
-      }
-
-      document.querySelectorAll('#subProjectTable tbody tr').forEach(function(tr) {
-        var roundCell = tr.querySelectorAll('td')[6];
-        if (!roundCell) return;
-
-        roundCell.style.cursor = 'pointer';
-        roundCell.style.color = '#2563EB';
-
-        roundCell.addEventListener('mouseenter', function() {
-          window.__roundCellHovered = true;
-          var schoolCell = tr.querySelectorAll('td')[1];
-          var school = schoolCell ? schoolCell.textContent.trim() : '';
-          clearTimeout(hideTimer);
-          showTooltip(school, roundCell);
-        });
-
-        roundCell.addEventListener('mouseleave', function() {
-          window.__roundCellHovered = false;
-          scheduleHide();
-        });
-      });
-
-      // 绑定文书 tooltip
-      document.querySelectorAll('[data-tooltip-type="doc"]').forEach(function(el) {
-        el.addEventListener('mouseenter', function() {
-          var key = el.getAttribute('data-tooltip-key');
-          var data = docData[key];
-          if (!data) return;
-          tooltipTitle.textContent = data.title;
-          tooltipBody.innerHTML = '';
-          data.items.forEach(function(item, idx) {
-            var div = document.createElement('div');
-            div.className = 'flex items-center justify-between py-1.5' + (idx < data.items.length - 1 ? ' border-b border-gray-100' : '');
-            div.innerHTML = '<span class="text-xs text-gray-400">' + item.label + '</span><span class="text-sm text-gray-800 font-medium">' + item.value + '</span>';
-            tooltipBody.appendChild(div);
-          });
-          var rect = el.getBoundingClientRect();
-          tooltip.style.left = (rect.left + window.scrollX) + 'px';
-          tooltip.style.top = (rect.bottom + window.scrollY + 8) + 'px';
-          tooltip.classList.remove('hidden');
-          clearTimeout(hideTimer);
-        });
-        el.addEventListener('mouseleave', function() {
-          clearTimeout(hideTimer);
-          hideTimer = setTimeout(function() {
-            if (!tooltip.matches(':hover')) {
-              tooltip.classList.add('hidden');
-            }
-          }, 80);
-        });
-      });
-
-      // 绑定学术成绩 tooltip
-      document.querySelectorAll('[data-tooltip-type="academic"]').forEach(function(el) {
-        el.addEventListener('mouseenter', function() {
-          var key = el.getAttribute('data-tooltip-key');
-          var data = academicData[key];
-          if (!data) return;
-          tooltipTitle.textContent = data.title;
-          tooltipBody.innerHTML = '';
-          data.items.forEach(function(item, idx) {
-            var div = document.createElement('div');
-            div.className = 'flex items-start justify-between py-1.5' + (idx < data.items.length - 1 ? ' border-b border-gray-100' : '');
-            div.innerHTML = '<span class="text-xs text-gray-400 w-20 flex-shrink-0">' + item.label + '</span><span class="text-sm text-gray-800 font-medium text-right">' + item.value + '</span>';
-            tooltipBody.appendChild(div);
-          });
-          var rect = el.getBoundingClientRect();
-          tooltip.style.left = (rect.left + window.scrollX) + 'px';
-          tooltip.style.top = (rect.bottom + window.scrollY + 8) + 'px';
-          tooltip.classList.remove('hidden');
-          clearTimeout(hideTimer);
-        });
-        el.addEventListener('mouseleave', function() {
-          clearTimeout(hideTimer);
-          hideTimer = setTimeout(function() {
-            if (!tooltip.matches(':hover')) {
-              tooltip.classList.add('hidden');
-            }
-          }, 80);
-        });
-      });
-
-      // 绑定成绩小分 tooltip (语言成绩小分/标化成绩)
-      document.querySelectorAll('[data-tooltip-type="score"]').forEach(function(el) {
-        el.addEventListener('mouseenter', function() {
-          var key = el.getAttribute('data-tooltip-key');
-          var data = scoreData[key];
-          if (!data) return;
-          tooltipTitle.textContent = data.title;
-          tooltipBody.innerHTML = '';
-          data.items.forEach(function(item, idx) {
-            var div = document.createElement('div');
-            div.className = 'flex items-center justify-between py-1.5' + (idx < data.items.length - 1 ? ' border-b border-gray-100' : '');
-            div.innerHTML = '<span class="text-xs text-gray-400">' + item.label + '</span><span class="text-sm text-gray-800 font-medium">' + item.value + '</span>';
-            tooltipBody.appendChild(div);
-          });
-          var rect = el.getBoundingClientRect();
-          tooltip.style.left = (rect.left + window.scrollX) + 'px';
-          tooltip.style.top = (rect.bottom + window.scrollY + 8) + 'px';
-          tooltip.classList.remove('hidden');
-          clearTimeout(hideTimer);
-        });
-        el.addEventListener('mouseleave', function() {
-          clearTimeout(hideTimer);
-          hideTimer = setTimeout(function() {
-            if (!tooltip.matches(':hover')) {
-              tooltip.classList.add('hidden');
-            }
-          }, 80);
-        });
-      });
-
-      // 绑定 DDL tooltip（页面展示项目经理设置的DDL，浮窗展示商户传来的DDL）
-      document.querySelectorAll('[data-tooltip-type="ddl"]').forEach(function(el) {
-        el.addEventListener('mouseenter', function() {
-          var key = el.getAttribute('data-tooltip-key');
-          var data = ddlData[key];
-          if (!data) return;
-          tooltipTitle.textContent = data.title;
-          tooltipBody.innerHTML = '';
-          var rows = [
-            { label: '项目经理设置的DDL', value: data.ours, cls: 'text-gray-800' },
-            { label: '商户传来的DDL', value: data.merchant, cls: 'text-red-600' },
-            { label: '来源', value: data.source, cls: 'text-gray-500' }
-          ];
-          rows.forEach(function(item, idx) {
-            var div = document.createElement('div');
-            div.className = 'flex items-center justify-between py-1.5' + (idx < rows.length - 1 ? ' border-b border-gray-100' : '');
-            div.innerHTML = '<span class="text-xs text-gray-400">' + item.label + '</span><span class="text-sm font-medium ' + item.cls + '">' + item.value + '</span>';
-            tooltipBody.appendChild(div);
-          });
-          var rect = el.getBoundingClientRect();
-          tooltip.style.left = (rect.left + window.scrollX) + 'px';
-          tooltip.style.top = (rect.bottom + window.scrollY + 8) + 'px';
-          tooltip.classList.remove('hidden');
-          clearTimeout(hideTimer);
-        });
-        el.addEventListener('mouseleave', function() {
-          clearTimeout(hideTimer);
-          hideTimer = setTimeout(function() {
-            if (!tooltip.matches(':hover')) {
-              tooltip.classList.add('hidden');
-            }
-          }, 80);
-        });
-      });
-
-      tooltip.addEventListener('mouseenter', function() {
-        clearTimeout(hideTimer);
-      });
-
-      tooltip.addEventListener('mouseleave', function() {
-        tooltip.classList.add('hidden');
-      });
-
+      switchSchoolCockpit('cmu');
       var notifBtn = document.querySelector('[data-dom-id="btn-notification"]');
       if (notifBtn) {
         notifBtn.addEventListener('click', function() {
           document.getElementById('notificationModal').classList.remove('hidden');
         });
       }
-
-      // 院校目标详情跳转
-      document.querySelectorAll('[data-dom-id^="btn-sub-project-detail-"]').forEach(function(el) {
-        el.addEventListener('click', function() {
-          var id = el.getAttribute('data-dom-id').replace('btn-sub-project-detail-', '');
-      window.location.href = '院校目标详情页 - 留学申请管理系统.html?id=' + id;
-        });
-      });
     });
 
     function closeNotificationModal() {

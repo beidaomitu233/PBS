@@ -270,71 +270,6 @@
         border-radius: 50%;
       }
     </style>
-    <!-- 商户DDL悬浮提示框样式 -->
-    <style>
-      /* 有商户DDL的单元格：虚线下划线提示可悬浮 */
-      #myProjTbody td.ddl-has-merchant {
-        cursor: help;
-      }
-      #myProjTbody td.ddl-has-merchant > span {
-        border-bottom: 1px dashed #9CA3AF;
-        padding-bottom: 1px;
-      }
-      #myProjTbody td.ddl-has-merchant:hover > span {
-        color: #2563EB;
-        border-bottom-color: #2563EB;
-      }
-      /* 悬浮框本体 */
-      #ddlMerchantTip {
-        position: fixed;
-        z-index: 9999;
-        pointer-events: none;
-        background: #1F2937;
-        color: #FFFFFF;
-        border-radius: 8px;
-        padding: 8px 12px;
-        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
-        opacity: 0;
-        transform: translate(-50%, -100%) translateY(-10px) scale(0.96);
-        transition: opacity 0.15s ease, transform 0.15s ease;
-        white-space: nowrap;
-      }
-      #ddlMerchantTip.show {
-        opacity: 1;
-        transform: translate(-50%, -100%) translateY(-10px) scale(1);
-      }
-      #ddlMerchantTip .tip-title {
-        font-size: 11px;
-        color: #9CA3AF;
-        margin-bottom: 6px;
-      }
-      #ddlMerchantTip .tip-row {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        gap: 18px;
-        font-size: 12px;
-        line-height: 1.8;
-      }
-      #ddlMerchantTip .tip-source { color: #D1D5DB; }
-      #ddlMerchantTip .tip-date {
-        font-size: 13px;
-        font-weight: 600;
-        color: #FFFFFF;
-        font-variant-numeric: tabular-nums;
-      }
-      /* 小三角箭头 */
-      #ddlMerchantTip::after {
-        content: '';
-        position: absolute;
-        left: 50%;
-        bottom: -5px;
-        transform: translateX(-50%);
-        border-left: 5px solid transparent;
-        border-right: 5px solid transparent;
-        border-top: 5px solid #1F2937;
-      }
-    </style>
   </head>
 <body class="min-h-screen">
   <!-- 顶部导航栏 -->
@@ -550,18 +485,6 @@
             <input id="flt-project" type="text" placeholder="PRJ-..." class="w-40 h-10 px-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
           </div>
           <div>
-            <label class="block text-sm text-gray-600 mb-2">材料准备DDL</label>
-            <input id="flt-matddl" type="text" placeholder="如 2026-10-01" class="w-36 h-10 px-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-          </div>
-          <div>
-            <label class="block text-sm text-gray-600 mb-2">文书交付DDL</label>
-            <input id="flt-docddl" type="text" placeholder="如 2026-10-15" class="w-36 h-10 px-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-          </div>
-          <div>
-            <label class="block text-sm text-gray-600 mb-2">网申提交DDL</label>
-            <input id="flt-appddl" type="text" placeholder="如 2026-11-01" class="w-36 h-10 px-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-          </div>
-          <div>
             <label class="block text-sm text-gray-600 mb-2">分配时间</label>
             <input id="flt-time" type="text" placeholder="如 2026-07-14" class="w-40 h-10 px-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
           </div>
@@ -578,7 +501,7 @@
       </details>
 
       <!-- 项目列表卡片/表格 -->
-      <div class="flex items-center justify-between mb-3"><div><h2 class="text-lg font-semibold text-gray-900">我的项目列表</h2><p class="text-xs text-gray-400 mt-1">项目状态与关键截止时间</p></div><span class="text-xs text-gray-500">共 15 个项目</span></div>
+      <div class="flex items-center justify-between mb-3"><div><h2 class="text-lg font-semibold text-gray-900">我的项目列表</h2><p class="text-xs text-gray-400 mt-1">项目状态与分配信息</p></div><span class="text-xs text-gray-500">共 15 个项目</span></div>
       <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
         <table id="projectTable" class="w-full">
           <thead class="bg-gray-50">
@@ -589,15 +512,12 @@
               <th class="px-5 py-4 text-left text-sm font-medium text-gray-500">学生姓名</th>
               <th class="px-5 py-4 text-left text-sm font-medium text-gray-500">申请层次</th>
               <th class="px-5 py-4 text-left text-sm font-medium text-gray-500">项目状态</th>
-              <th class="px-5 py-4 text-left text-sm font-medium text-gray-500">材料准备DDL</th>
-              <th class="px-5 py-4 text-left text-sm font-medium text-gray-500">文书交付DDL</th>
-              <th class="px-5 py-4 text-left text-sm font-medium text-gray-500">网申提交DDL</th>
               <th class="px-5 py-4 text-left text-sm font-medium text-gray-500">分配时间</th>
               <th class="px-5 py-4 text-left text-sm font-medium text-gray-500">操作</th>
             </tr>
           </thead>
           <tbody class="divide-y divide-gray-100" id="myProjTbody">
-            <tr data-kw="1PRJ20260701002李慧敏李雪硕士申请交付中2026-09-252026-10-152026-11-012026-07-1409:30详情" data-project="PRJ20260701002" data-name="李慧敏" data-student="李雪" data-level="硕士申请" data-status="交付中" data-matddl="2026-09-25" data-docddl="2026-10-15" data-appddl="2026-11-01" data-matddl-m="2026-09-28" data-docddl-m="2026-10-10" data-appddl-m="2026-10-25" data-time="2026-07-1409:30" class="hover:bg-gray-50 transition-colors cursor-pointer" data-dom-id="btn-my-project-detail-1">
+            <tr data-kw="1PRJ20260701002李慧敏李雪硕士申请交付中2026-07-1409:30详情" data-project="PRJ20260701002" data-name="李慧敏" data-student="李雪" data-level="硕士申请" data-status="交付中" data-time="2026-07-1409:30" class="hover:bg-gray-50 transition-colors cursor-pointer" data-dom-id="btn-my-project-detail-1">
               <td class="px-5 py-4 text-sm text-gray-900">1</td>
               <td class="px-5 py-4 text-sm text-gray-900">PRJ20260701002</td>
               <td class="px-5 py-4 text-sm font-medium text-gray-900">李慧敏</td>
@@ -606,15 +526,12 @@
               <td class="px-5 py-4">
                 <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">交付中</span>
               </td>
-              <td class="px-5 py-4 text-sm text-gray-500 ddl-has-merchant"><span>2026-09-25</span></td>
-              <td class="px-5 py-4 text-sm text-gray-500 ddl-has-merchant"><span>2026-10-15</span></td>
-              <td class="px-5 py-4 text-sm text-gray-500 ddl-has-merchant"><span>2026-11-01</span></td>
               <td class="px-5 py-4 text-sm text-gray-500">2026-07-1409:30</td>
               <td class="px-5 py-4">
                 <button class="text-blue-600 hover:text-blue-800 text-sm font-medium" data-dom-id="btn-my-project-detail-1">详情</button>
               </td>
             </tr>
-            <tr data-kw="2PRJ20260701005刘洋刘晓本科申请待接收——详情" data-project="PRJ20260701005" data-name="刘洋" data-student="刘晓" data-level="本科申请" data-status="待接收" data-matddl="—" data-docddl="—" data-appddl="—" data-matddl-m="2026-10-05" data-docddl-m="2026-10-20" data-appddl-m="2026-11-05" data-time="—" class="hover:bg-gray-50 transition-colors cursor-pointer" data-dom-id="btn-my-project-detail-2">
+            <tr data-kw="2PRJ20260701005刘洋刘晓本科申请待接收——详情" data-project="PRJ20260701005" data-name="刘洋" data-student="刘晓" data-level="本科申请" data-status="待接收" data-time="—" class="hover:bg-gray-50 transition-colors cursor-pointer" data-dom-id="btn-my-project-detail-2">
               <td class="px-5 py-4 text-sm text-gray-900">2</td>
               <td class="px-5 py-4 text-sm text-gray-900">PRJ20260701005</td>
               <td class="px-5 py-4 text-sm font-medium text-gray-900">刘洋</td>
@@ -623,15 +540,12 @@
               <td class="px-5 py-4">
                 <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">待接收</span>
               </td>
-              <td class="px-5 py-4 text-sm text-gray-500 ddl-has-merchant"><span>—</span></td>
-              <td class="px-5 py-4 text-sm text-gray-500 ddl-has-merchant"><span>—</span></td>
-              <td class="px-5 py-4 text-sm text-gray-500 ddl-has-merchant"><span>—</span></td>
               <td class="px-5 py-4 text-sm text-gray-500">—</td>
               <td class="px-5 py-4">
                 <button class="text-blue-600 hover:text-blue-800 text-sm font-medium" data-dom-id="btn-my-project-detail-2">详情</button>
               </td>
             </tr>
-            <tr data-kw="3PRJ20260701008陈晨陈雨桐硕士申请已退回2026-09-202026-10-052026-10-202026-07-1514:00详情" data-project="PRJ20260701008" data-name="陈晨" data-student="陈雨桐" data-level="硕士申请" data-status="已退回" data-matddl="2026-09-20" data-docddl="2026-10-05" data-appddl="2026-10-20" data-matddl-m="2026-09-15" data-docddl-m="2026-09-30" data-appddl-m="2026-10-15" data-time="2026-07-1514:00" class="hover:bg-gray-50 transition-colors cursor-pointer" data-dom-id="btn-my-project-detail-3">
+            <tr data-kw="3PRJ20260701008陈晨陈雨桐硕士申请已退回2026-07-1514:00详情" data-project="PRJ20260701008" data-name="陈晨" data-student="陈雨桐" data-level="硕士申请" data-status="已退回" data-time="2026-07-1514:00" class="hover:bg-gray-50 transition-colors cursor-pointer" data-dom-id="btn-my-project-detail-3">
               <td class="px-5 py-4 text-sm text-gray-900">3</td>
               <td class="px-5 py-4 text-sm text-gray-900">PRJ20260701008</td>
               <td class="px-5 py-4 text-sm font-medium text-gray-900">陈晨</td>
@@ -640,15 +554,12 @@
               <td class="px-5 py-4">
                 <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">已退回</span>
               </td>
-              <td class="px-5 py-4 text-sm text-gray-500 ddl-has-merchant"><span>2026-09-20</span></td>
-              <td class="px-5 py-4 text-sm text-gray-500 ddl-has-merchant"><span>2026-10-05</span></td>
-              <td class="px-5 py-4 text-sm text-gray-500 ddl-has-merchant"><span>2026-10-20</span></td>
               <td class="px-5 py-4 text-sm text-gray-500">2026-07-1514:00</td>
               <td class="px-5 py-4">
                 <button class="text-blue-600 hover:text-blue-800 text-sm font-medium" data-dom-id="btn-my-project-detail-3">详情</button>
               </td>
             </tr>
-            <tr data-kw="4PRJ20260701012王磊王梓豪博士申请已分配2026-11-012026-11-152026-12-012026-07-1610:15详情" data-project="PRJ20260701012" data-name="王磊" data-student="王梓豪" data-level="博士申请" data-status="已分配" data-matddl="2026-11-01" data-docddl="2026-11-15" data-appddl="2026-12-01" data-matddl-m="2026-10-25" data-docddl-m="2026-11-08" data-appddl-m="2026-11-22" data-time="2026-07-1610:15" class="hover:bg-gray-50 transition-colors cursor-pointer" data-dom-id="btn-my-project-detail-4">
+            <tr data-kw="4PRJ20260701012王磊王梓豪博士申请已分配2026-07-1610:15详情" data-project="PRJ20260701012" data-name="王磊" data-student="王梓豪" data-level="博士申请" data-status="已分配" data-time="2026-07-1610:15" class="hover:bg-gray-50 transition-colors cursor-pointer" data-dom-id="btn-my-project-detail-4">
               <td class="px-5 py-4 text-sm text-gray-900">4</td>
               <td class="px-5 py-4 text-sm text-gray-900">PRJ20260701012</td>
               <td class="px-5 py-4 text-sm font-medium text-gray-900">王磊</td>
@@ -657,15 +568,12 @@
               <td class="px-5 py-4">
                 <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">已分配</span>
               </td>
-              <td class="px-5 py-4 text-sm text-gray-500 ddl-has-merchant"><span>2026-11-01</span></td>
-              <td class="px-5 py-4 text-sm text-gray-500 ddl-has-merchant"><span>2026-11-15</span></td>
-              <td class="px-5 py-4 text-sm text-gray-500 ddl-has-merchant"><span>2026-12-01</span></td>
               <td class="px-5 py-4 text-sm text-gray-500">2026-07-1610:15</td>
               <td class="px-5 py-4">
                 <button class="text-blue-600 hover:text-blue-800 text-sm font-medium" data-dom-id="btn-my-project-detail-4">详情</button>
               </td>
             </tr>
-            <tr data-kw="5PRJ20260701018赵敏赵欣怡本科申请已结项2026-08-012026-08-152026-09-012026-07-1008:00详情" data-project="PRJ20260701018" data-name="赵敏" data-student="赵欣怡" data-level="本科申请" data-status="已结项" data-matddl="2026-08-01" data-docddl="2026-08-15" data-appddl="2026-09-01" data-matddl-m="2026-07-28" data-docddl-m="2026-08-10" data-appddl-m="2026-08-25" data-time="2026-07-1008:00" class="hover:bg-gray-50 transition-colors cursor-pointer" data-dom-id="btn-my-project-detail-5">
+            <tr data-kw="5PRJ20260701018赵敏赵欣怡本科申请已结项2026-07-1008:00详情" data-project="PRJ20260701018" data-name="赵敏" data-student="赵欣怡" data-level="本科申请" data-status="已结项" data-time="2026-07-1008:00" class="hover:bg-gray-50 transition-colors cursor-pointer" data-dom-id="btn-my-project-detail-5">
               <td class="px-5 py-4 text-sm text-gray-900">5</td>
               <td class="px-5 py-4 text-sm text-gray-900">PRJ20260701018</td>
               <td class="px-5 py-4 text-sm font-medium text-gray-900">赵敏</td>
@@ -674,16 +582,13 @@
               <td class="px-5 py-4">
                 <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-600">已结项</span>
               </td>
-              <td class="px-5 py-4 text-sm text-gray-500 ddl-has-merchant"><span>2026-08-01</span></td>
-              <td class="px-5 py-4 text-sm text-gray-500 ddl-has-merchant"><span>2026-08-15</span></td>
-              <td class="px-5 py-4 text-sm text-gray-500 ddl-has-merchant"><span>2026-09-01</span></td>
               <td class="px-5 py-4 text-sm text-gray-500">2026-07-1008:00</td>
               <td class="px-5 py-4">
                 <button class="text-blue-600 hover:text-blue-800 text-sm font-medium" data-dom-id="btn-my-project-detail-5">详情</button>
               </td>
             </tr>
                       <tr id="flt-empty" class="hidden">
-              <td colspan="11" class="px-6 py-10 text-center text-sm text-gray-400">暂无符合条件的数据，请调整筛选条件</td>
+              <td colspan="8" class="px-6 py-10 text-center text-sm text-gray-400">暂无符合条件的数据，请调整筛选条件</td>
             </tr>
 </tbody>
         </table>
@@ -771,7 +676,7 @@
           <div class="flex items-start gap-3 p-2 bg-white rounded-lg">
             <div class="w-2 h-2 bg-red-500 rounded-full mt-1.5 flex-shrink-0"></div>
             <div class="flex-1">
-              <p class="text-sm text-gray-900">项目 PRJ20260701002 · 材料准备DDL</p>
+              <p class="text-sm text-gray-900">项目 PRJ20260701002 · 材料清单待补充</p>
               <div class="grid grid-cols-[72px_1fr] gap-x-3 text-xs mt-1.5">
                 <span class="text-gray-500">管理配置</span><span class="text-gray-800 font-medium">2026-09-25</span>
                 <span class="text-gray-500">商户配置</span><span class="text-gray-800 font-medium">2026-09-28</span>
@@ -867,12 +772,6 @@
         tr.setAttribute('data-student', project.student || '');
         tr.setAttribute('data-level', project.level || '');
         tr.setAttribute('data-status', '已分配');
-        tr.setAttribute('data-matddl', '—');
-        tr.setAttribute('data-docddl', '—');
-        tr.setAttribute('data-appddl', '—');
-        tr.setAttribute('data-matddl-m', '—');
-        tr.setAttribute('data-docddl-m', '—');
-        tr.setAttribute('data-appddl-m', '—');
         tr.setAttribute('data-time', createdAt);
         tr.onclick = openMyProjectDetail;
         tr.innerHTML =
@@ -882,9 +781,6 @@
           '<td class="px-5 py-4 text-sm text-gray-900">' + escapeMyProjectText(project.student) + '</td>' +
           '<td class="px-5 py-4 text-sm text-gray-600">' + escapeMyProjectText(project.level) + '</td>' +
           '<td class="px-5 py-4"><span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">已分配</span></td>' +
-          '<td class="px-5 py-4 text-sm text-gray-500 ddl-has-merchant"><span>—</span></td>' +
-          '<td class="px-5 py-4 text-sm text-gray-500 ddl-has-merchant"><span>—</span></td>' +
-          '<td class="px-5 py-4 text-sm text-gray-500 ddl-has-merchant"><span>—</span></td>' +
           '<td class="px-5 py-4 text-sm text-gray-500">' + escapeMyProjectText(createdAt) + '</td>' +
           '<td class="px-5 py-4"><button class="text-blue-600 hover:text-blue-800 text-sm font-medium" onclick="event.stopPropagation(); openMyProjectDetail()">详情</button></td>';
         tbody.insertBefore(tr, emptyRow);
@@ -969,12 +865,6 @@
       tr.setAttribute('data-student', '张明');
       tr.setAttribute('data-level', '本科申请');
       tr.setAttribute('data-status', '已分配');
-      tr.setAttribute('data-matddl', '');
-      tr.setAttribute('data-docddl', '');
-      tr.setAttribute('data-appddl', '');
-      tr.setAttribute('data-matddl-m', '');
-      tr.setAttribute('data-docddl-m', '');
-      tr.setAttribute('data-appddl-m', '');
       tr.setAttribute('data-time', timeStr);
       tr.onclick = openMyProjectDetail;
       tr.innerHTML = '<td class="px-5 py-4 text-sm text-gray-900">' + newIndex + '</td>' +
@@ -983,9 +873,6 @@
         '<td class="px-5 py-4 text-sm text-gray-900">张明</td>' +
         '<td class="px-5 py-4 text-sm text-gray-600">本科申请</td>' +
         '<td class="px-5 py-4"><span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">已分配</span></td>' +
-        '<td class="px-5 py-4 text-sm text-gray-500">—</td>' +
-        '<td class="px-5 py-4 text-sm text-gray-500">—</td>' +
-        '<td class="px-5 py-4 text-sm text-gray-500">—</td>' +
         '<td class="px-5 py-4 text-sm text-gray-500">' + timeStr + '</td>' +
         '<td class="px-5 py-4"><button class="text-blue-600 hover:text-blue-800 text-sm font-medium" onclick="event.stopPropagation(); openMyProjectDetail()">详情</button></td>';
       tbody.insertBefore(tr, document.getElementById('flt-empty'));
@@ -1012,9 +899,6 @@
         var v_student = gv('flt-student'); if (ok && v_student && (d.student||'').indexOf(v_student) < 0) ok = false;
         var v_level = gv('flt-level'); if (ok && v_level && d.level !== v_level) ok = false;
         var v_status = gv('flt-status'); if (ok && v_status && d.status !== v_status) ok = false;
-        var v_matddl = gv('flt-matddl'); if (ok && v_matddl && (d.matddl||'').indexOf(v_matddl) < 0) ok = false;
-        var v_docddl = gv('flt-docddl'); if (ok && v_docddl && (d.docddl||'').indexOf(v_docddl) < 0) ok = false;
-        var v_appddl = gv('flt-appddl'); if (ok && v_appddl && (d.appddl||'').indexOf(v_appddl) < 0) ok = false;
         var v_time = gv('flt-time'); if (ok && v_time && (d.time||'').indexOf(v_time) < 0) ok = false;
         tr.classList.toggle('hidden', !ok);
         if (ok) visible++;
@@ -1023,7 +907,7 @@
       if (empty) empty.classList.toggle('hidden', visible > 0);
     }
     function resetFilter() {
-      ['flt-kw','flt-project','flt-name','flt-student','flt-level','flt-status','flt-matddl','flt-docddl','flt-appddl','flt-time'].forEach(function (id) { var el = document.getElementById(id); if (el) el.value = ''; });
+      ['flt-kw','flt-project','flt-name','flt-student','flt-level','flt-status','flt-time'].forEach(function (id) { var el = document.getElementById(id); if (el) el.value = ''; });
       applyFilter();
     }
     function toggleMore() {
@@ -1050,77 +934,6 @@
     });
   </script>
 
-  <!-- 商户DDL悬浮提示 -->
-  <script>
-    (function () {
-      /* 三个DDL列：同时展示管理配置与商户配置 */
-      var DDL_COLS = [
-        { idx: 6, name: '材料准备DDL', manageKey: 'matddl', merchantKey: 'matddlM' },
-        { idx: 7, name: '文书交付DDL', manageKey: 'docddl', merchantKey: 'docddlM' },
-        { idx: 8, name: '网申提交DDL', manageKey: 'appddl', merchantKey: 'appddlM' }
-      ];
-
-      document.addEventListener('DOMContentLoaded', function () {
-        /* 创建悬浮框 */
-        var tip = document.createElement('div');
-        tip.id = 'ddlMerchantTip';
-        tip.innerHTML = '<div class="tip-title"></div><div class="tip-row"><span class="tip-source">管理配置</span><span class="tip-date" data-tip="manage"></span></div><div class="tip-row"><span class="tip-source">商户配置</span><span class="tip-date" data-tip="merchant"></span></div>';
-        document.body.appendChild(tip);
-        var tipTitle = tip.querySelector('.tip-title');
-        var manageDate = tip.querySelector('[data-tip="manage"]');
-        var merchantDate = tip.querySelector('[data-tip="merchant"]');
-
-        /* 给有商户DDL数据的单元格加可悬浮标记（虚线下划线） */
-        document.querySelectorAll('#myProjTbody tr[data-kw]').forEach(function (tr) {
-          var tds = tr.children;
-          DDL_COLS.forEach(function (col) {
-            var val = tr.dataset[col.merchantKey];
-            var td = tds[col.idx];
-            if (val && td && !td.classList.contains('ddl-has-merchant')) {
-              td.classList.add('ddl-has-merchant');
-              td.innerHTML = '<span>' + td.textContent + '</span>';
-            }
-          });
-        });
-
-        function showTip(td) {
-          var col = null;
-          for (var i = 0; i < DDL_COLS.length; i++) {
-            if (DDL_COLS[i].idx === td.cellIndex) { col = DDL_COLS[i]; break; }
-          }
-          if (!col) return;
-          var row = td.parentElement;
-          var merchantVal = row.dataset[col.merchantKey];
-          if (!merchantVal) return;
-          tipTitle.textContent = col.name;
-          manageDate.textContent = row.dataset[col.manageKey] || '—';
-          merchantDate.textContent = merchantVal;
-          var rect = td.getBoundingClientRect();
-          tip.classList.add('show');
-          /* 悬浮于单元格正上方居中，防止超出视口左右边缘 */
-          var x = rect.left + rect.width / 2;
-          var half = tip.offsetWidth / 2;
-          x = Math.max(half + 8, Math.min(window.innerWidth - half - 8, x));
-          tip.style.left = x + 'px';
-          tip.style.top = rect.top + 'px';
-        }
-
-        function hideTip() { tip.classList.remove('show'); }
-
-        var tbody = document.getElementById('myProjTbody');
-        tbody.addEventListener('mouseover', function (e) {
-          var td = e.target.closest('td');
-          if (td && td.classList.contains('ddl-has-merchant')) showTip(td);
-        });
-        tbody.addEventListener('mouseout', function (e) {
-          var td = e.target.closest('td');
-          if (td && td.classList.contains('ddl-has-merchant') && !td.contains(e.relatedTarget)) hideTip();
-        });
-        tbody.addEventListener('mouseleave', hideTip);
-        window.addEventListener('scroll', hideTip, true);
-      });
-    })();
-  </script>
   <script src="./assets/js/pbs-app.js"></script>
 
 
@@ -1152,4 +965,4 @@
       </svg>
     </a>
   </div>
-    <div id="ddlMerchantTip"><div class="tip-label"></div><div class="tip-date"></div></div></body></html>
+    </body></html>

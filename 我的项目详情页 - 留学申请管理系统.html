@@ -348,23 +348,18 @@
           <div class="flex items-center gap-3 mb-2"><h1 class="text-2xl font-semibold text-gray-900">李雪 · 硕士申请</h1><span class="text-xs px-2.5 py-1 rounded-full bg-blue-50 text-blue-700 font-medium">交付中</span></div>
           <p class="text-sm text-gray-500">PRJ20260701002</p>
         </div>
+        <div class="project-school-selector">
+          <label for="schoolCockpitSelect">院校目标</label>
+          <select id="schoolCockpitSelect" onchange="switchSchoolCockpit(this.value)" aria-label="切换院校目标">
+            <option value="cmu">卡内基梅隆大学 · 人工智能</option>
+            <option value="stanford">斯坦福大学 · 计算机科学</option>
+          </select>
+        </div>
       </section>
 
       <section id="schoolCockpitSection" class="mb-6">
-        <div class="pm-panel p-4 mb-3">
-          <div class="flex items-center justify-between gap-4">
-            <div><h2 class="text-base font-semibold text-gray-900">院校目标驾驶舱</h2><p class="text-xs text-gray-400 mt-1">查看所选院校目标的阶段进展与关键时间</p></div>
-            <div class="project-school-selector">
-              <label for="schoolCockpitSelect">院校目标</label>
-              <select id="schoolCockpitSelect" onchange="switchSchoolCockpit(this.value)" aria-label="切换院校目标">
-                <option value="cmu">卡内基梅隆大学 · 人工智能</option>
-                <option value="stanford">斯坦福大学 · 计算机科学</option>
-              </select>
-            </div>
-          </div>
-        </div>
-        <div class="pm-panel p-4 mb-3">
-          <div class="flex items-center justify-between gap-4 mb-3"><div><h3 class="text-sm font-semibold text-gray-900">项目关键 DDL</h3><p class="text-xs text-gray-400 mt-1">随院校目标切换显示对应时间</p></div><span id="schoolCockpitMeta" class="text-xs text-gray-500"></span></div>
+        <div class="pm-panel project-ddl-panel mb-3">
+          <div class="project-ddl-heading"><h3>项目关键 DDL</h3><span id="schoolCockpitMeta"></span></div>
           <div id="projectDdlStrip" class="project-ddl-strip"></div>
         </div>
         <div class="project-cockpit-shell">
@@ -380,7 +375,7 @@
         </div>
       </section>
 
-      <!-- 学生信息卡片组：置于院校目标驾驶舱下方 -->
+      <!-- 学生信息卡片组：置于项目流程下方 -->
       <div class="flex items-center justify-between mb-3">
         <div><h2 class="text-lg font-semibold text-gray-900">学生资料与学术背景</h2><p class="text-xs text-gray-400 mt-1">项目共用的学生基础资料</p></div>
       </div>

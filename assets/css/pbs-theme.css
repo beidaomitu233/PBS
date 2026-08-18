@@ -590,26 +590,48 @@ span.rounded-full { letter-spacing: 0.01em; }
 .project-ddl-strip {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 12px;
+  gap: 8px;
+}
+.project-ddl-panel {
+  display: grid;
+  grid-template-columns: 132px minmax(0, 1fr);
+  align-items: center;
+  gap: 14px;
+  padding: 10px 12px;
+  border-radius: 14px;
+  box-shadow: 0 4px 14px rgba(35, 30, 80, .045);
+}
+.project-ddl-heading h3 {
+  margin: 0;
+  color: #332E48;
+  font-size: 12px;
+  font-weight: 700;
+}
+.project-ddl-heading span {
+  display: block;
+  margin-top: 4px;
+  color: #918C9F;
+  font-size: 10px;
+  line-height: 1.4;
 }
 .project-ddl-card {
-  padding: 14px 16px;
+  padding: 8px 10px;
   border: 1px solid #EAE7F3;
-  border-radius: 14px;
+  border-radius: 10px;
   background: #FAFAFD;
 }
 .project-ddl-card.is-near { border-color: #FDE68A; background: #FFFCF3; }
-.project-ddl-title { color: #5F5A6E; font-size: 13px; font-weight: 650; }
+.project-ddl-title { color: #5F5A6E; font-size: 11px; font-weight: 650; }
 .project-ddl-line {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 10px;
-  margin-top: 8px;
+  gap: 8px;
+  margin-top: 3px;
   color: #9A96A5;
-  font-size: 12px;
+  font-size: 10px;
 }
-.project-ddl-line strong { color: #332E48; font-size: 13px; font-weight: 650; }
+.project-ddl-line strong { color: #332E48; font-size: 11px; font-weight: 650; }
 .project-cockpit-shell {
   display: grid;
   grid-template-columns: 246px minmax(0, 1fr);
@@ -726,6 +748,7 @@ span.rounded-full { letter-spacing: 0.01em; }
   .pm-cockpit-grid { grid-template-columns: 1fr; }
   .project-cockpit-shell { grid-template-columns: 210px minmax(0, 1fr); }
   .project-school-selector select { width: 280px; }
+  .project-ddl-panel { grid-template-columns: 112px minmax(0, 1fr); }
   .pbs-role-switcher-label { display: none; }
 }
 
@@ -735,4 +758,9 @@ span.rounded-full { letter-spacing: 0.01em; }
   .pbs-notification-header,
   .pbs-notification-list,
   .pbs-notification-footer { padding-left: 16px; padding-right: 16px; }
+  .project-cockpit-header { align-items: flex-start; flex-direction: column; }
+  .project-school-selector { width: 100%; align-items: flex-start; flex-direction: column; }
+  .project-school-selector select { width: 100%; }
+  .project-ddl-panel { grid-template-columns: 1fr; }
+  .project-ddl-strip { grid-template-columns: 1fr; }
 }

@@ -365,6 +365,14 @@
             <input id="flt-kw" type="text" placeholder="搜索关联客户/院校目标/邮箱/网址..." class="w-full h-10 px-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
           </div>
 <div>
+            <label class="block text-sm text-gray-600 mb-2">客户姓名</label>
+            <input id="flt-customer" type="text" placeholder="客户姓名" class="w-32 h-10 px-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+          </div>
+          <div>
+            <label class="block text-sm text-gray-600 mb-2">学生姓名</label>
+            <input id="flt-student" type="text" placeholder="学生姓名" class="w-32 h-10 px-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+          </div>
+          <div>
             <label class="block text-sm text-gray-600 mb-2">监控类型</label>
             <select id="flt-type" class="w-32 h-10 px-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
               <option value="">全部</option>
@@ -373,16 +381,17 @@
             </select>
           </div>
           <div>
-            <label class="block text-sm text-gray-600 mb-2">关联院校目标</label>
-            <input id="flt-sub" type="text" placeholder="关联院校目标" class="w-44 h-10 px-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+            <label class="block text-sm text-gray-600 mb-2">学校/专业</label>
+            <input id="flt-sub" type="text" placeholder="学校或专业" class="w-44 h-10 px-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
           </div>
           <div>
             <label class="block text-sm text-gray-600 mb-2">监控状态</label>
             <select id="flt-status" class="w-32 h-10 px-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
               <option value="">全部</option>
               <option>正常</option>
-              <option>拒信</option>
+              <option>人工确认</option>
               <option>补材料</option>
+              <option>拒信</option>
               <option>监控失败</option>
             </select>
           </div>
@@ -398,7 +407,7 @@
             </select>
           </div>
           <div>
-            <label class="block text-sm text-gray-600 mb-2">最后执行时间</label>
+            <label class="block text-sm text-gray-600 mb-2">上次监控时间</label>
             <input id="flt-run" type="text" placeholder="如 2026-07-17" class="w-44 h-10 px-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
           </div>
         </div>
@@ -417,15 +426,18 @@
         <table class="w-full">
           <thead class="bg-gray-50">
             <tr>
+              <th class="px-5 py-4 text-left text-sm font-medium text-gray-500">客户姓名</th>
+              <th class="px-5 py-4 text-left text-sm font-medium text-gray-500">学生姓名</th>
+              <th class="px-5 py-4 text-left text-sm font-medium text-gray-500">学校</th>
+              <th class="px-5 py-4 text-left text-sm font-medium text-gray-500">专业</th>
               <th class="px-5 py-4 text-left text-sm font-medium text-gray-500">监控类型</th>
-              <th class="px-5 py-4 text-left text-sm font-medium text-gray-500">关联院校目标</th>
               <th class="px-5 py-4 text-left text-sm font-medium text-gray-500">监控频率</th>
-              <th class="px-5 py-4 text-left text-sm font-medium text-gray-500">最后执行时间</th>
               <th class="px-5 py-4 text-left text-sm font-medium text-gray-500">监控状态</th>
+              <th class="px-5 py-4 text-left text-sm font-medium text-gray-500">上次监控时间</th>
               <th class="px-5 py-4 text-left text-sm font-medium text-gray-500">操作</th>
             </tr>
           </thead>
-          <tbody class="divide-y divide-gray-100" id="monitorTableBody"><tr class="hover:bg-gray-50" data-monitor-id="1"><td class="px-5 py-4"><div class="flex items-center gap-2"><svg class="w-4 h-4 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg><span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">邮箱</span></div></td><td class="px-5 py-4"><div class="text-sm text-gray-900">卡内基梅隆大学 / 人工智能</div><div class="text-xs text-gray-400 mt-0.5">service@cmu.edu</div></td><td class="px-5 py-4 text-sm text-gray-600">每天</td><td class="px-5 py-4 text-sm text-gray-500">2026-07-17 08:00</td><td class="px-5 py-4"><span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">正常</span></td><td class="px-5 py-4"><div class="flex items-center gap-3"><button class="text-blue-600 hover:text-blue-800 text-sm font-medium" data-dom-id="btn-monitor-detail-1" onclick="viewMonitorDetail(1)">详情</button><button class="text-sm font-medium px-2 py-1 text-orange-600 hover:text-orange-800 border border-orange-200 rounded-md hover:bg-orange-50" onclick="triggerMonitor(1)">手动触发</button></div></td></tr><tr class="hover:bg-gray-50" data-monitor-id="2"><td class="px-5 py-4"><div class="flex items-center gap-2"><svg class="w-4 h-5 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9"></path></svg><span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">官网</span></div></td><td class="px-5 py-4"><div class="text-sm text-gray-900">斯坦福大学 / 计算机科学</div><div class="text-xs text-gray-400 mt-0.5">https://apply.stanford.edu</div></td><td class="px-5 py-4 text-sm text-gray-600">每天</td><td class="px-5 py-4 text-sm text-gray-500">2026-07-17 07:30</td><td class="px-5 py-4"><span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">异常</span></td><td class="px-5 py-4"><div class="flex items-center gap-3"><button class="text-blue-600 hover:text-blue-800 text-sm font-medium" data-dom-id="btn-monitor-detail-2" onclick="viewMonitorDetail(2)">详情</button><button class="text-sm font-medium px-2 py-1 text-orange-600 hover:text-orange-800 border border-orange-200 rounded-md hover:bg-orange-50" onclick="triggerMonitor(2)">手动触发</button></div></td></tr><tr class="hover:bg-gray-50" data-monitor-id="3"><td class="px-5 py-4"><div class="flex items-center gap-2"><svg class="w-4 h-4 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg><span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">邮箱</span></div></td><td class="px-5 py-4"><div class="text-sm text-gray-900">麻省理工学院 / 数据科学</div><div class="text-xs text-gray-400 mt-0.5">admission@mit.edu</div></td><td class="px-5 py-4 text-sm text-gray-600">每天</td><td class="px-5 py-4 text-sm text-gray-500">2026-07-17 06:00</td><td class="px-5 py-4"><span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">正常</span></td><td class="px-5 py-4"><div class="flex items-center gap-3"><button class="text-blue-600 hover:text-blue-800 text-sm font-medium" data-dom-id="btn-monitor-detail-3" onclick="viewMonitorDetail(3)">详情</button><button class="text-sm font-medium px-2 py-1 text-orange-600 hover:text-orange-800 border border-orange-200 rounded-md hover:bg-orange-50" onclick="triggerMonitor(3)">手动触发</button></div></td></tr><tr class="hover:bg-gray-50" data-monitor-id="4"><td class="px-5 py-4"><div class="flex items-center gap-2"><svg class="w-4 h-5 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9"></path></svg><span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">官网</span></div></td><td class="px-5 py-4"><div class="text-sm text-gray-900">哈佛大学 / 公共卫生</div><div class="text-xs text-gray-400 mt-0.5">https://apply.harvard.edu</div></td><td class="px-5 py-4 text-sm text-gray-600">每天</td><td class="px-5 py-4 text-sm text-gray-500">2026-07-16 23:00</td><td class="px-5 py-4"><span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">正常</span></td><td class="px-5 py-4"><div class="flex items-center gap-3"><button class="text-blue-600 hover:text-blue-800 text-sm font-medium" data-dom-id="btn-monitor-detail-4" onclick="viewMonitorDetail(4)">详情</button><button class="text-sm font-medium px-2 py-1 text-orange-600 hover:text-orange-800 border border-orange-200 rounded-md hover:bg-orange-50" onclick="triggerMonitor(4)">手动触发</button></div></td></tr><tr class="hover:bg-gray-50" data-monitor-id="5"><td class="px-5 py-4"><div class="flex items-center gap-2"><svg class="w-4 h-4 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg><span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">邮箱</span></div></td><td class="px-5 py-4"><div class="text-sm text-gray-900">剑桥大学 / 金融学</div><div class="text-xs text-gray-400 mt-0.5">info@cam.ac.uk</div></td><td class="px-5 py-4 text-sm text-gray-600">每天</td><td class="px-5 py-4 text-sm text-gray-500">2026-07-16 22:00</td><td class="px-5 py-4"><span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">异常</span></td><td class="px-5 py-4"><div class="flex items-center gap-3"><button class="text-blue-600 hover:text-blue-800 text-sm font-medium" data-dom-id="btn-monitor-detail-5" onclick="viewMonitorDetail(5)">详情</button><button class="text-sm font-medium px-2 py-1 text-orange-600 hover:text-orange-800 border border-orange-200 rounded-md hover:bg-orange-50" onclick="triggerMonitor(5)">手动触发</button></div></td></tr></tbody>
+          <tbody class="divide-y divide-gray-100" id="monitorTableBody"></tbody>
         </table>
 
         <!-- 分页控件 -->
@@ -510,11 +522,11 @@
   <script>
     // ========== 模拟监控任务数据 ==========
     var monitorData = [
-      { id: 1, type: '邮箱', subtype: '邮箱', target: 'service@cmu.edu', student: '张明', subproject: '卡内基梅隆大学 / 人工智能', subprojectType: '学校', frequency: '每天', lastRun: '2026-07-17 08:00', status: '正常' },
-      { id: 2, type: '官网', subtype: '官网', target: 'https://apply.stanford.edu', student: '李雪', subproject: '斯坦福大学 / 计算机科学', subprojectType: '学校', frequency: '每天', lastRun: '2026-07-17 07:30', status: '监控失败' },
-      { id: 3, type: '邮箱', subtype: '邮箱', target: 'admission@mit.edu', student: '王伟', subproject: '麻省理工学院 / 数据科学', subprojectType: '学校', frequency: '每天', lastRun: '2026-07-17 06:00', status: '补材料' },
-      { id: 4, type: '官网', subtype: '官网', target: 'https://apply.harvard.edu', student: '刘芳', subproject: '哈佛大学 / 公共卫生', subprojectType: '学校', frequency: '每天', lastRun: '2026-07-16 23:00', status: '正常' },
-      { id: 5, type: '邮箱', subtype: '邮箱', target: 'info@cam.ac.uk', student: '陈磊', subproject: '剑桥大学 / 金融学', subprojectType: '专业', frequency: '每天', lastRun: '2026-07-16 22:00', status: '拒信' }
+      { id: 1, type: '邮箱', target: 'service@cmu.edu', customer: '张建国', student: '张明', school: '卡内基梅隆大学', major: '人工智能', frequency: '每天', lastRun: '2026-08-18 08:00', status: '正常' },
+      { id: 2, type: '官网', target: 'https://apply.stanford.edu', customer: '李建国', student: '李雪', school: '斯坦福大学', major: '计算机科学', frequency: '每天', lastRun: '2026-08-18 07:30', status: '监控失败' },
+      { id: 3, type: '邮箱', target: 'admission@mit.edu', customer: '王建军', student: '王伟', school: '麻省理工学院', major: '数据科学', frequency: '每天', lastRun: '2026-08-18 06:00', status: '补材料' },
+      { id: 4, type: '官网', target: 'https://apply.harvard.edu', customer: '刘志强', student: '刘芳', school: '哈佛大学', major: '公共卫生', frequency: '每周', lastRun: '2026-08-16 23:00', status: '人工确认' },
+      { id: 5, type: '邮箱', target: 'info@cam.ac.uk', customer: '陈国强', student: '陈磊', school: '剑桥大学', major: '金融学', frequency: '每天', lastRun: '2026-08-16 22:00', status: '拒信' }
     ];
 
     var filteredData = [];
@@ -538,38 +550,42 @@
       if (totalCount) totalCount.textContent = data.length;
 
       var html = '';
+      var statusColors = {
+        '正常': 'bg-green-100 text-green-800',
+        '人工确认': 'bg-orange-100 text-orange-800',
+        '补材料': 'bg-yellow-100 text-yellow-800',
+        '拒信': 'bg-red-100 text-red-800',
+        '监控失败': 'bg-gray-100 text-gray-600'
+      };
       data.forEach(function(item) {
-        var statusClass = item.status === '正常'
-          ? 'bg-green-100 text-green-800'
-          : item.status === '补材料'
-            ? 'bg-yellow-100 text-yellow-800'
-            : 'bg-red-100 text-red-800';
+        var statusClass = statusColors[item.status] || 'bg-gray-100 text-gray-600';
 
         var typeIcon = item.type === '邮箱'
           ? '<svg class="w-4 h-4 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>'
           : '<svg class="w-4 h-5 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9"/></svg>';
 
         html += '<tr class="hover:bg-gray-50" data-monitor-id="' + item.id + '">' +
+          '<td class="px-5 py-4 text-sm font-medium text-gray-900">' + item.customer + '</td>' +
+          '<td class="px-5 py-4 text-sm text-gray-900">' + item.student + '</td>' +
+          '<td class="px-5 py-4 text-sm text-gray-900">' + item.school + '</td>' +
+          '<td class="px-5 py-4 text-sm text-gray-600">' + item.major + '</td>' +
           '<td class="px-5 py-4">' +
             '<div class="flex items-center gap-2">' +
               typeIcon +
               '<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">' + item.type + '</span>' +
             '</div>' +
-          '</td>' +
-          '<td class="px-5 py-4">' +
-            '<div class="text-sm text-gray-900">' + item.subproject + '</div>' +
-            '<div class="text-xs text-gray-400 mt-0.5"><span class="text-gray-600 font-medium">' + item.student + '</span> · ' + item.target + '</div>' +
+            '<div class="text-xs text-gray-400 mt-1 ml-6">' + item.target + '</div>' +
           '</td>' +
           '<td class="px-5 py-4 text-sm text-gray-600">' + item.frequency + '</td>' +
-          '<td class="px-5 py-4 text-sm text-gray-500">' + item.lastRun + '</td>' +
           '<td class="px-5 py-4">' +
             '<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ' + statusClass + '">' +
               item.status +
             '</span>' +
           '</td>' +
+          '<td class="px-5 py-4 text-sm text-gray-500">' + item.lastRun + '</td>' +
           '<td class="px-5 py-4">' +
             '<div class="flex items-center gap-3">' +
-              '<button class="text-blue-600 hover:text-blue-800 text-sm font-medium" data-dom-id="btn-monitor-detail-' + item.id + '" onclick="viewMonitorDetail(' + item.id + ')">详情</button>' +
+              '<button class="text-blue-600 hover:text-blue-800 text-sm font-medium" data-dom-id="btn-monitor-detail-' + item.id + '" onclick="viewMonitorDetail(' + item.id + ')">进入监控详情</button>' +
               '<button class="text-sm font-medium px-2 py-1 text-orange-600 hover:text-orange-800 border border-orange-200 rounded-md hover:bg-orange-50" onclick="triggerMonitor(' + item.id + ')">手动触发</button>' +
             '</div>' +
           '</td>' +
@@ -583,11 +599,13 @@
     function gv(id) { var el = document.getElementById(id); return el ? (el.value || '').trim() : ''; }
     function applyFilter() {
       var kw = gv('flt-kw').toLowerCase();
-      var type = gv('flt-type'), sub = gv('flt-sub'), freq = gv('flt-freq'), run = gv('flt-run'), status = gv('flt-status');
+      var type = gv('flt-type'), sub = gv('flt-sub'), freq = gv('flt-freq'), run = gv('flt-run'), status = gv('flt-status'), customer = gv('flt-customer'), student = gv('flt-student');
       filteredData = monitorData.filter(function(item) {
-        if (kw && (item.type + item.student + item.target + item.subproject + item.frequency + item.lastRun + item.status).toLowerCase().indexOf(kw) < 0) return false;
+        if (kw && (item.type + item.customer + item.student + item.school + item.major + item.target + item.frequency + item.lastRun + item.status).toLowerCase().indexOf(kw) < 0) return false;
+        if (customer && item.customer.indexOf(customer) < 0) return false;
+        if (student && item.student.indexOf(student) < 0) return false;
         if (type && item.type !== type) return false;
-        if (sub && item.subproject.indexOf(sub) < 0 && item.student.indexOf(sub) < 0 && item.target.indexOf(sub) < 0) return false;
+        if (sub && item.school.indexOf(sub) < 0 && item.major.indexOf(sub) < 0) return false;
         if (freq && item.frequency !== freq) return false;
         if (run && item.lastRun.indexOf(run) < 0) return false;
         if (status && item.status !== status) return false;
@@ -601,7 +619,7 @@
 
     function searchMonitorList() { applyFilter(); }
     function resetFilter() {
-      ['flt-kw','flt-type','flt-sub','flt-freq','flt-run','flt-status'].forEach(function (id) { var el = document.getElementById(id); if (el) el.value = ''; });
+      ['flt-kw','flt-customer','flt-student','flt-type','flt-sub','flt-freq','flt-run','flt-status'].forEach(function (id) { var el = document.getElementById(id); if (el) el.value = ''; });
       applyFilter();
     }
     function toggleMore() {

@@ -356,7 +356,8 @@
 
   <script>
     var PBS_ACCOUNTS = [
-      { u: 'test',     e: 'test@pbs.com',     p: 'pbs123456', name: '测试账号', role: '超级管理员',     org: 'PBS留学总部' }
+      { u: 'test',     e: 'test@pbs.com',     p: 'pbs123456', name: '测试账号', role: '超级管理员',     org: 'PBS留学总部' },
+      { u: 'ops',      e: 'ops@pbs.com',      p: 'pbs123456', name: '王运维',   role: '平台运维人员',   org: 'PBS留学总部' }
     ];
     var MANAGED_ACCOUNT_KEY = 'pbs_managed_accounts_v1';
     function getLoginAccounts() {
@@ -371,7 +372,7 @@
     }
     var ROLE_WORKBENCH = {
       '超级管理员': '管理员工作台 - 留学申请管理系统.html',
-      '平台运维人员': '管理员工作台 - 留学申请管理系统.html',
+      '平台运维人员': '平台运维工作台 - PBS留学CRM系统.html',
       '机构管理员': '管理员工作台 - 留学申请管理系统.html',
       '销售人员管理员': '管理员工作台 - 留学申请管理系统.html',
       '销售人员': '管理员工作台 - 留学申请管理系统.html',

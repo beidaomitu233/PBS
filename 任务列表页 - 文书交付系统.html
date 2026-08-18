@@ -371,15 +371,29 @@
         <div class="flex items-end gap-4 flex-wrap">
           <div class="flex-1 min-w-[200px]">
             <label class="block text-sm text-gray-600 mb-2">关键词搜索</label>
-            <input id="flt-kw" type="text" placeholder="搜索学生姓名/院校目标/DDL..." class="w-full h-10 px-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+            <input id="flt-kw" type="text" placeholder="搜索客户/学生/学校/专业..." class="w-full h-10 px-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
           </div>
 <div>
+            <label class="block text-sm text-gray-600 mb-2">客户姓名</label>
+            <input id="flt-customer" type="text" placeholder="客户姓名" class="w-36 h-10 px-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+          </div>
+          <div>
             <label class="block text-sm text-gray-600 mb-2">学生姓名</label>
             <input id="flt-name" type="text" placeholder="学生姓名" class="w-36 h-10 px-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
           </div>
           <div>
-            <label class="block text-sm text-gray-600 mb-2">院校目标</label>
-            <input id="flt-target" type="text" placeholder="院校目标" class="w-44 h-10 px-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+            <label class="block text-sm text-gray-600 mb-2">文书类型</label>
+            <select id="flt-type" class="w-28 h-10 px-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+              <option value="">全部</option>
+              <option>PS</option>
+              <option>CV</option>
+              <option>RL</option>
+              <option>RP</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-sm text-gray-600 mb-2">学校/专业</label>
+            <input id="flt-target" type="text" placeholder="学校或专业" class="w-44 h-10 px-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
           </div>
           <div>
             <label class="block text-sm text-gray-600 mb-2">文书状态</label>
@@ -387,7 +401,7 @@
               <option value="">全部</option>
               <option>撰写中</option>
               <option>审核中</option>
-              <option>待修改</option>
+              <option>需修改</option>
               <option>已完成</option>
             </select>
           </div>
@@ -395,7 +409,7 @@
         <!-- 展开更多筛选项 -->
         <div id="flt-more" class="hidden flex items-end gap-4 flex-wrap mt-4 pt-4 border-t border-gray-100">
 <div>
-            <label class="block text-sm text-gray-600 mb-2">DDL</label>
+            <label class="block text-sm text-gray-600 mb-2">DDL日期</label>
             <input id="flt-ddl" type="text" placeholder="如 2026-07-20" class="w-36 h-10 px-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
           </div>
         </div>
@@ -411,20 +425,27 @@
 
       <!-- 任务列表表格 -->
       <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden mb-6">
-        <table class="w-full">
+        <div class="overflow-x-auto">
+        <table class="w-full min-w-[1200px]">
           <thead class="bg-gray-50">
             <tr>
               <th class="px-5 py-4 text-left text-sm font-medium text-gray-500">序号</th>
+              <th class="px-5 py-4 text-left text-sm font-medium text-gray-500">客户姓名</th>
               <th class="px-5 py-4 text-left text-sm font-medium text-gray-500">学生姓名</th>
-              <th class="px-5 py-4 text-left text-sm font-medium text-gray-500">院校目标</th>
-              <th class="px-5 py-4 text-left text-sm font-medium text-gray-500">DDL</th>
+              <th class="px-5 py-4 text-left text-sm font-medium text-gray-500">学校</th>
+              <th class="px-5 py-4 text-left text-sm font-medium text-gray-500">专业</th>
+              <th class="px-5 py-4 text-left text-sm font-medium text-gray-500">文书类型</th>
               <th class="px-5 py-4 text-left text-sm font-medium text-gray-500">文书状态</th>
+              <th class="px-5 py-4 text-left text-sm font-medium text-gray-500">文书交付人员</th>
+              <th class="px-5 py-4 text-left text-sm font-medium text-gray-500">DDL倒计时</th>
+              <th class="px-5 py-4 text-left text-sm font-medium text-gray-500">当前环节滞留时长</th>
               <th class="px-5 py-4 text-left text-sm font-medium text-gray-500">操作</th>
             </tr>
           </thead>
           <tbody class="divide-y divide-gray-100" id="taskTbody">
-            <tr data-kw="1李李雪卡内基梅隆大学人工智能2026-11-01撰写中详情" data-name="李李雪" data-target="卡内基梅隆大学人工智能" data-ddl="2026-11-01" data-status="撰写中" class="hover:bg-gray-50">
+            <tr data-kw="1李建国李雪卡内基梅隆大学人工智能PS撰写中2026-11-01" data-name="李雪" data-customer="李建国" data-type="PS" data-target="卡内基梅隆大学人工智能" data-ddl="2026-11-01" data-status="撰写中" class="hover:bg-gray-50">
               <td class="px-5 py-4 text-sm text-gray-500">1</td>
+              <td class="px-5 py-4 text-sm text-gray-900">李建国</td>
               <td class="px-5 py-4">
                 <div class="flex items-center gap-3">
                   <div class="w-8 h-8 bg-gradient-to-br from-blue-500 to-purple-500 rounded-full flex items-center justify-center">
@@ -433,26 +454,22 @@
                   <span class="text-sm font-medium text-gray-900">李雪</span>
                 </div>
               </td>
+              <td class="px-5 py-4 text-sm text-gray-900">卡内基梅隆大学</td>
+              <td class="px-5 py-4 text-sm text-gray-600">人工智能</td>
+              <td class="px-5 py-4 text-sm text-gray-900">PS</td>
               <td class="px-5 py-4">
-                <div>
-                  <p class="text-sm text-gray-900">卡内基梅隆大学</p>
-                  <p class="text-xs text-gray-500">人工智能</p>
-                </div>
+                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">撰写中</span>
               </td>
-              <td class="px-5 py-4 text-sm text-gray-600">2026-11-01</td>
-              <td class="px-5 py-4">
-                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-600">
-                  撰写中
-                </span>
-              </td>
-              <td class="px-5 py-4">
-                <button class="text-blue-600 hover:text-blue-800 text-sm font-medium" data-dom-id="btn-task-detail-1">
-                  详情
-                </button>
+              <td class="px-5 py-4 text-sm text-gray-900">陈文书</td>
+              <td class="px-5 py-4 text-sm text-gray-600">剩 75 天</td>
+              <td class="px-5 py-4 text-sm text-gray-600">2 天</td>
+              <td class="px-5 py-4 whitespace-nowrap">
+                <div class="flex items-center gap-3"><button class="text-blue-600 hover:text-blue-800 text-sm font-medium" data-dom-id="btn-task-detail-1">进入文书编辑器</button><button class="text-orange-600 hover:text-orange-800 text-sm font-medium" onclick="event.stopPropagation(); showTaskToast('已催办该任务', 'success')">催办</button></div>
               </td>
             </tr>
-            <tr data-kw="2王王明斯坦福大学计算机科学2026-12-15撰写中详情" data-name="王王明" data-target="斯坦福大学计算机科学" data-ddl="2026-12-15" data-status="撰写中" class="hover:bg-gray-50">
+            <tr data-kw="2王建华王明斯坦福大学计算机科学CV撰写中2026-12-15" data-name="王明" data-customer="王建华" data-type="CV" data-target="斯坦福大学计算机科学" data-ddl="2026-12-15" data-status="撰写中" class="hover:bg-gray-50">
               <td class="px-5 py-4 text-sm text-gray-500">2</td>
+              <td class="px-5 py-4 text-sm text-gray-900">王建华</td>
               <td class="px-5 py-4">
                 <div class="flex items-center gap-3">
                   <div class="w-8 h-8 bg-gradient-to-br from-orange-500 to-red-500 rounded-full flex items-center justify-center">
@@ -461,26 +478,22 @@
                   <span class="text-sm font-medium text-gray-900">王明</span>
                 </div>
               </td>
+              <td class="px-5 py-4 text-sm text-gray-900">斯坦福大学</td>
+              <td class="px-5 py-4 text-sm text-gray-600">计算机科学</td>
+              <td class="px-5 py-4 text-sm text-gray-900">CV</td>
               <td class="px-5 py-4">
-                <div>
-                  <p class="text-sm text-gray-900">斯坦福大学</p>
-                  <p class="text-xs text-gray-500">计算机科学</p>
-                </div>
+                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">撰写中</span>
               </td>
-              <td class="px-5 py-4 text-sm text-gray-600">2026-12-15</td>
-              <td class="px-5 py-4">
-                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
-                  撰写中
-                </span>
-              </td>
-              <td class="px-5 py-4">
-                <button class="text-blue-600 hover:text-blue-800 text-sm font-medium" data-dom-id="btn-task-detail-2">
-                  详情
-                </button>
+              <td class="px-5 py-4 text-sm text-gray-900">周文书</td>
+              <td class="px-5 py-4 text-sm text-gray-600">剩 119 天</td>
+              <td class="px-5 py-4 text-sm text-gray-600">5 天</td>
+              <td class="px-5 py-4 whitespace-nowrap">
+                <div class="flex items-center gap-3"><button class="text-blue-600 hover:text-blue-800 text-sm font-medium" data-dom-id="btn-task-detail-2">进入文书编辑器</button><button class="text-orange-600 hover:text-orange-800 text-sm font-medium" onclick="event.stopPropagation(); showTaskToast('已催办该任务', 'success')">催办</button></div>
               </td>
             </tr>
-            <tr data-kw="3张张华麻省理工学院数据科学2026-10-30审核中详情" data-name="张张华" data-target="麻省理工学院数据科学" data-ddl="2026-10-30" data-status="审核中" class="hover:bg-gray-50">
+            <tr data-kw="3张国庆张华麻省理工学院数据科学RL审核中2026-10-30" data-name="张华" data-customer="张国庆" data-type="RL" data-target="麻省理工学院数据科学" data-ddl="2026-10-30" data-status="审核中" class="hover:bg-gray-50">
               <td class="px-5 py-4 text-sm text-gray-500">3</td>
+              <td class="px-5 py-4 text-sm text-gray-900">张国庆</td>
               <td class="px-5 py-4">
                 <div class="flex items-center gap-3">
                   <div class="w-8 h-8 bg-gradient-to-br from-green-500 to-teal-500 rounded-full flex items-center justify-center">
@@ -489,26 +502,22 @@
                   <span class="text-sm font-medium text-gray-900">张华</span>
                 </div>
               </td>
+              <td class="px-5 py-4 text-sm text-gray-900">麻省理工学院</td>
+              <td class="px-5 py-4 text-sm text-gray-600">数据科学</td>
+              <td class="px-5 py-4 text-sm text-gray-900">RL</td>
               <td class="px-5 py-4">
-                <div>
-                  <p class="text-sm text-gray-900">麻省理工学院</p>
-                  <p class="text-xs text-gray-500">数据科学</p>
-                </div>
+                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-orange-100 text-orange-800">审核中</span>
               </td>
-              <td class="px-5 py-4 text-sm text-gray-600">2026-10-30</td>
-              <td class="px-5 py-4">
-                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-orange-100 text-orange-800">
-                  审核中
-                </span>
-              </td>
-              <td class="px-5 py-4">
-                <button class="text-blue-600 hover:text-blue-800 text-sm font-medium" data-dom-id="btn-task-detail-3">
-                  详情
-                </button>
+              <td class="px-5 py-4 text-sm text-gray-900">吴文书</td>
+              <td class="px-5 py-4 text-sm text-gray-600">剩 73 天</td>
+              <td class="px-5 py-4 text-sm text-gray-600">1 天</td>
+              <td class="px-5 py-4 whitespace-nowrap">
+                <div class="flex items-center gap-3"><button class="text-blue-600 hover:text-blue-800 text-sm font-medium" data-dom-id="btn-task-detail-3">进入文书编辑器</button><button class="text-orange-600 hover:text-orange-800 text-sm font-medium" onclick="event.stopPropagation(); showTaskToast('已催办该任务', 'success')">催办</button></div>
               </td>
             </tr>
-            <tr data-kw="4刘刘芳哈佛大学公共卫生2026-11-20待修改详情" data-name="刘刘芳" data-target="哈佛大学公共卫生" data-ddl="2026-11-20" data-status="待修改" class="hover:bg-gray-50">
+            <tr data-kw="4刘志强刘芳哈佛大学公共卫生PS需修改2026-11-20" data-name="刘芳" data-customer="刘志强" data-type="PS" data-target="哈佛大学公共卫生" data-ddl="2026-11-20" data-status="需修改" class="hover:bg-gray-50">
               <td class="px-5 py-4 text-sm text-gray-500">4</td>
+              <td class="px-5 py-4 text-sm text-gray-900">刘志强</td>
               <td class="px-5 py-4">
                 <div class="flex items-center gap-3">
                   <div class="w-8 h-8 bg-gradient-to-br from-pink-500 to-rose-500 rounded-full flex items-center justify-center">
@@ -517,26 +526,22 @@
                   <span class="text-sm font-medium text-gray-900">刘芳</span>
                 </div>
               </td>
+              <td class="px-5 py-4 text-sm text-gray-900">哈佛大学</td>
+              <td class="px-5 py-4 text-sm text-gray-600">公共卫生</td>
+              <td class="px-5 py-4 text-sm text-gray-900">PS</td>
               <td class="px-5 py-4">
-                <div>
-                  <p class="text-sm text-gray-900">哈佛大学</p>
-                  <p class="text-xs text-gray-500">公共卫生</p>
-                </div>
+                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">撰写中</span><span class="ml-1 inline-flex items-center px-1.5 py-0.5 rounded text-xs font-medium border border-red-300 text-red-600">需修改·第2轮</span>
               </td>
-              <td class="px-5 py-4 text-sm text-gray-600">2026-11-20</td>
-              <td class="px-5 py-4">
-                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
-                  待修改
-                </span>
-              </td>
-              <td class="px-5 py-4">
-                <button class="text-blue-600 hover:text-blue-800 text-sm font-medium" data-dom-id="btn-task-detail-4">
-                  详情
-                </button>
+              <td class="px-5 py-4 text-sm text-gray-900">陈文书</td>
+              <td class="px-5 py-4 text-sm text-gray-600">剩 94 天</td>
+              <td class="px-5 py-4 text-sm text-gray-600">3 天</td>
+              <td class="px-5 py-4 whitespace-nowrap">
+                <div class="flex items-center gap-3"><button class="text-blue-600 hover:text-blue-800 text-sm font-medium" data-dom-id="btn-task-detail-4">进入文书编辑器</button><button class="text-orange-600 hover:text-orange-800 text-sm font-medium" onclick="event.stopPropagation(); showTaskToast('已催办该任务', 'success')">催办</button></div>
               </td>
             </tr>
-            <tr data-kw="5陈陈磊剑桥大学金融学2026-09-15已完成详情" data-name="陈陈磊" data-target="剑桥大学金融学" data-ddl="2026-09-15" data-status="已完成" class="hover:bg-gray-50">
+            <tr data-kw="5陈国强陈磊剑桥大学金融学RP已完成2026-09-15" data-name="陈磊" data-customer="陈国强" data-type="RP" data-target="剑桥大学金融学" data-ddl="2026-09-15" data-status="已完成" class="hover:bg-gray-50">
               <td class="px-5 py-4 text-sm text-gray-500">5</td>
+              <td class="px-5 py-4 text-sm text-gray-900">陈国强</td>
               <td class="px-5 py-4">
                 <div class="flex items-center gap-3">
                   <div class="w-8 h-8 bg-gradient-to-br from-indigo-500 to-cyan-500 rounded-full flex items-center justify-center">
@@ -545,29 +550,25 @@
                   <span class="text-sm font-medium text-gray-900">陈磊</span>
                 </div>
               </td>
+              <td class="px-5 py-4 text-sm text-gray-900">剑桥大学</td>
+              <td class="px-5 py-4 text-sm text-gray-600">金融学</td>
+              <td class="px-5 py-4 text-sm text-gray-900">RP</td>
               <td class="px-5 py-4">
-                <div>
-                  <p class="text-sm text-gray-900">剑桥大学</p>
-                  <p class="text-xs text-gray-500">金融学</p>
-                </div>
+                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">已完成</span>
               </td>
-              <td class="px-5 py-4 text-sm text-gray-600">2026-09-15</td>
-              <td class="px-5 py-4">
-                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                  已完成
-                </span>
-              </td>
-              <td class="px-5 py-4">
-                <button class="text-blue-600 hover:text-blue-800 text-sm font-medium" data-dom-id="btn-task-detail-5">
-                  详情
-                </button>
+              <td class="px-5 py-4 text-sm text-gray-900">郑文书</td>
+              <td class="px-5 py-4 text-sm text-red-600 font-medium">剩 28 天</td>
+              <td class="px-5 py-4 text-sm text-gray-600">—</td>
+              <td class="px-5 py-4 whitespace-nowrap">
+                <div class="flex items-center gap-3"><button class="text-blue-600 hover:text-blue-800 text-sm font-medium" data-dom-id="btn-task-detail-5">进入文书编辑器</button><button class="text-orange-600 hover:text-orange-800 text-sm font-medium" onclick="event.stopPropagation(); showTaskToast('已催办该任务', 'success')">催办</button></div>
               </td>
             </tr>
-                      <tr id="flt-empty" class="hidden">
-              <td colspan="6" class="px-6 py-10 text-center text-sm text-gray-400">暂无符合条件的数据，请调整筛选条件</td>
+            <tr id="flt-empty" class="hidden">
+              <td colspan="11" class="px-6 py-10 text-center text-sm text-gray-400">暂无符合条件的数据，请调整筛选条件</td>
             </tr>
 </tbody>
         </table>
+        </div>
 
         <!-- 分页控件 -->
         <div class="flex items-center justify-between px-6 py-4 border-t border-gray-100">
@@ -686,8 +687,27 @@
         <h3 class="text-lg font-semibold text-gray-800">系统消息</h3>
       </div>
       <div class="bg-blue-50 rounded-xl p-4 mb-5">
-        <p class="text-sm text-gray-700 font-medium mb-3">你有 3 条未读消息</p>
+        <p class="text-sm text-gray-700 font-medium mb-3">你有 5 条未读消息</p>
         <div class="space-y-3">
+          <!-- 催办消息：项目经理催办文书任务，消息中包含催办内容 -->
+          <div class="border border-red-100 bg-red-50/70 rounded-lg p-3">
+            <div class="flex items-center gap-2 mb-1.5">
+              <span class="text-[10px] px-1.5 py-0.5 rounded bg-red-100 text-red-600 font-semibold">催办</span>
+              <p class="text-xs text-gray-500">项目经理 · 王老师 · 25 分钟前</p>
+            </div>
+            <p class="text-sm text-gray-900 font-medium">催办任务：「李雪 · 卡内基梅隆大学」个人陈述（PS）终稿</p>
+            <p class="text-xs text-gray-600 mt-1 bg-white rounded px-2 py-1.5 border border-red-100">催办说明：文书交付已超期 1 天，请今天 18:00 前提交终稿并进入审核。</p>
+            <button type="button" class="mt-2 px-3 py-1 text-xs font-medium text-white bg-red-500 rounded-lg hover:bg-red-600" onclick="closeNotificationModal();location.href='文书编辑器 - 文书交付系统.html'">立即处理</button>
+          </div>
+          <div class="border border-red-100 bg-red-50/70 rounded-lg p-3">
+            <div class="flex items-center gap-2 mb-1.5">
+              <span class="text-[10px] px-1.5 py-0.5 rounded bg-red-100 text-red-600 font-semibold">催办</span>
+              <p class="text-xs text-gray-500">项目经理 · 王老师 · 3 小时前</p>
+            </div>
+            <p class="text-sm text-gray-900 font-medium">催办任务：「陈雨桐 · 加州大学伯克利分校」推荐信初稿撰写（待接收）</p>
+            <p class="text-xs text-gray-600 mt-1 bg-white rounded px-2 py-1.5 border border-red-100">催办说明：任务已分配 6 小时未接收，请尽快接收并确认排期。</p>
+            <button type="button" class="mt-2 px-3 py-1 text-xs font-medium text-white bg-red-500 rounded-lg hover:bg-red-600" onclick="closeNotificationModal()">立即接收</button>
+          </div>
           <div class="flex items-start gap-3 p-2 bg-white rounded-lg">
             <div class="w-2 h-2 bg-red-500 rounded-full mt-1.5 flex-shrink-0"></div>
             <div>
@@ -791,22 +811,29 @@
       // 追加到任务列表表格
       var tbody = document.getElementById('taskTbody');
       var newIndex = tbody.querySelectorAll('tr[data-kw]').length + 1;
-      var kw = newIndex + info.initial + info.name + info.school + info.major + '撰写中详情';
+      var kw = newIndex + info.initial + info.name + info.school + info.major + 'PS撰写中';
       var tr = document.createElement('tr');
       tr.className = 'hover:bg-gray-50';
       tr.setAttribute('data-kw', kw);
-      tr.setAttribute('data-name', info.initial + info.name);
+      tr.setAttribute('data-name', info.name);
+      tr.setAttribute('data-customer', '');
+      tr.setAttribute('data-type', 'PS');
       tr.setAttribute('data-target', info.school + info.major);
       tr.setAttribute('data-ddl', '');
       tr.setAttribute('data-status', '撰写中');
       tr.innerHTML = '<td class="px-5 py-4 text-sm text-gray-500">' + newIndex + '</td>' +
+        '<td class="px-5 py-4 text-sm text-gray-900">—</td>' +
         '<td class="px-5 py-4"><div class="flex items-center gap-3">' +
         '<div class="w-8 h-8 bg-gradient-to-br ' + info.color + ' rounded-full flex items-center justify-center"><span class="text-white text-xs font-medium">' + info.initial + '</span></div>' +
         '<span class="text-sm font-medium text-gray-900">' + info.name + '</span></div></td>' +
-        '<td class="px-5 py-4"><div><p class="text-sm text-gray-900">' + info.school + '</p><p class="text-xs text-gray-500">' + info.major + '</p></div></td>' +
+        '<td class="px-5 py-4 text-sm text-gray-900">' + info.school + '</td>' +
+        '<td class="px-5 py-4 text-sm text-gray-600">' + info.major + '</td>' +
+        '<td class="px-5 py-4 text-sm text-gray-900">PS</td>' +
+        '<td class="px-5 py-4"><span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">撰写中</span></td>' +
+        '<td class="px-5 py-4 text-sm text-gray-900">—</td>' +
         '<td class="px-5 py-4 text-sm text-gray-600">—</td>' +
-        '<td class="px-5 py-4"><span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-700">撰写中</span></td>' +
-        '<td class="px-5 py-4"><button class="text-blue-600 hover:text-blue-800 text-sm font-medium" data-dom-id="btn-task-detail-' + newIndex + '">详情</button></td>';
+        '<td class="px-5 py-4 text-sm text-gray-600">0 天</td>' +
+        '<td class="px-5 py-4 whitespace-nowrap"><div class="flex items-center gap-3"><button class="text-blue-600 hover:text-blue-800 text-sm font-medium" data-dom-id="btn-task-detail-' + newIndex + '">进入文书编辑器</button><button class="text-orange-600 hover:text-orange-800 text-sm font-medium" onclick="event.stopPropagation(); showTaskToast(\'已催办该任务\', \'success\')">催办</button></div></td>';
       tbody.appendChild(tr);
       tr.querySelector('button').addEventListener('click', function() { window.location.href = '文书编辑器 - 文书交付系统.html'; });
       if (typeof applyFilter === 'function') applyFilter();
@@ -835,6 +862,8 @@
       rows.forEach(function (tr) {
         var d = tr.dataset, ok = true;
         var v_kw = gv('flt-kw'); if (ok && v_kw && d.kw.indexOf(v_kw) < 0) ok = false;
+        var v_customer = gv('flt-customer'); if (ok && v_customer && (d.customer||'').indexOf(v_customer) < 0) ok = false;
+        var v_type = gv('flt-type'); if (ok && v_type && d.type !== v_type) ok = false;
         var v_name = gv('flt-name'); if (ok && v_name && (d.name||'').indexOf(v_name) < 0) ok = false;
         var v_target = gv('flt-target'); if (ok && v_target && (d.target||'').indexOf(v_target) < 0) ok = false;
         var v_ddl = gv('flt-ddl'); if (ok && v_ddl && (d.ddl||'').indexOf(v_ddl) < 0) ok = false;
@@ -846,7 +875,7 @@
       if (empty) empty.classList.toggle('hidden', visible > 0);
     }
     function resetFilter() {
-      ['flt-kw','flt-name','flt-target','flt-ddl','flt-status'].forEach(function (id) { var el = document.getElementById(id); if (el) el.value = ''; });
+      ['flt-kw','flt-customer','flt-name','flt-type','flt-target','flt-ddl','flt-status'].forEach(function (id) { var el = document.getElementById(id); if (el) el.value = ''; });
       applyFilter();
     }
     function toggleMore() {

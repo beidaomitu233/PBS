@@ -129,10 +129,10 @@
   window.saveNewVersion = function () {
     syncRows();
     var name = document.getElementById('templateName').value.trim();
-    var region = document.getElementById('templateRegion').value;
+    var region = document.getElementById('templateRegion').value.trim();
     var school = document.getElementById('templateSchool').value.trim();
     var program = document.getElementById('templateProgram').value.trim();
-    if (!name || !region || !school || !program) { showToast('请完整填写模板信息'); return; }
+    if (!name || !school || !program) { showToast('请完整填写模板信息（国家/地区为选填）'); return; }
     if (!fields.length || fields.some(function (item) { return !item.name; })) { showToast('请至少添加一个完整的官网字段'); return; }
     if (!materials.length || materials.some(function (item) { return !item.name; })) { showToast('请至少添加一项完整的申请材料'); return; }
     var current = document.getElementById('currentVersion').textContent;

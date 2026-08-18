@@ -15,7 +15,7 @@
         <span class="text-xl font-semibold text-gray-800">留学申请管理系统</span>
       </div>
       <div class="flex items-center gap-6">
-        <button type="button" class="relative p-2 text-gray-500 hover:text-gray-700" data-dom-id="btn-notification" onclick="showWorkbenchToast('暂无新的系统消息')" aria-label="系统消息">🔔<span class="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full"></span></button>
+        <button type="button" class="relative p-2 text-gray-500 hover:text-gray-700" data-dom-id="btn-notification" onclick="openPmMsgModal()" aria-label="系统消息">🔔<span class="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full"></span></button>
         <div class="flex items-center gap-3 pl-6 border-l border-gray-200 relative" id="userMenuContainer">
           <span class="pbs-role-badge hidden sm:inline-block text-xs px-2.5 py-1 bg-blue-50 text-blue-700 rounded-full font-medium">项目经理</span>
           <div class="w-8 h-8 bg-gradient-to-br from-blue-500 to-purple-500 rounded-full flex items-center justify-center"><span class="text-white text-sm font-medium">王</span></div>
@@ -54,8 +54,8 @@
           <div class="flex items-center justify-between mb-2"><div><h2 class="text-base font-semibold text-gray-900">今天先处理</h2><p class="text-xs text-gray-400 mt-1">按风险和截止时间排序</p></div><span id="workbenchTaskCount" class="text-xs text-gray-500">4 项</span></div>
           <div id="workbenchTaskList">
             <div class="pm-task-row" data-task-group="today risk mine" data-priority="urgent"><span class="pm-task-dot"></span><div><div class="flex items-center gap-2"><p class="text-sm font-semibold text-gray-900">确认李雪的 CMU 文书终稿</p><span class="text-xs text-red-500">今天 18:00</span></div><p class="text-xs text-gray-500 mt-1">当前在刘老师，等待 PM 最终确认</p></div><button class="px-3 py-1.5 text-xs font-medium text-white bg-blue-600 rounded-lg" onclick="location.href='我的项目详情页 - 留学申请管理系统.html'">立即处理</button></div>
-            <div class="pm-task-row" data-task-group="today risk waiting" data-priority="warning"><span class="pm-task-dot"></span><div><div class="flex items-center gap-2"><p class="text-sm font-semibold text-gray-900">催收陈雨桐护照复印件</p><span class="text-xs text-amber-600">今天</span></div><p class="text-xs text-gray-500 mt-1">学生材料缺失，已影响网申字段准备</p></div><button class="px-3 py-1.5 text-xs font-medium text-purple-600 bg-purple-50 rounded-lg" onclick="showWorkbenchToast('已向陈雨桐发送材料催办提醒')">催办</button></div>
-            <div class="pm-task-row" data-task-group="today waiting" data-priority="waiting"><span class="pm-task-dot"></span><div><div class="flex items-center gap-2"><p class="text-sm font-semibold text-gray-900">跟进斯坦福推荐信审核</p><span class="text-xs text-gray-500">明天 12:00</span></div><p class="text-xs text-gray-500 mt-1">当前在孙老师，已停留 18 小时</p></div><button class="px-3 py-1.5 text-xs font-medium text-purple-600 bg-purple-50 rounded-lg" onclick="showWorkbenchToast('已向孙老师发送审核催办')">催办</button></div>
+            <div class="pm-task-row" data-task-group="today risk waiting" data-priority="warning"><span class="pm-task-dot"></span><div><div class="flex items-center gap-2"><p class="text-sm font-semibold text-gray-900">催收陈雨桐护照复印件</p><span class="text-xs text-amber-600">今天</span></div><p class="text-xs text-gray-500 mt-1">学生材料缺失，已影响网申字段准备</p></div><button class="px-3 py-1.5 text-xs font-medium text-purple-600 bg-purple-50 rounded-lg" onclick="openUrgeModal('催收陈雨桐护照复印件','陈雨桐','学生')">催办</button></div>
+            <div class="pm-task-row" data-task-group="today waiting" data-priority="waiting"><span class="pm-task-dot"></span><div><div class="flex items-center gap-2"><p class="text-sm font-semibold text-gray-900">跟进斯坦福推荐信审核</p><span class="text-xs text-gray-500">明天 12:00</span></div><p class="text-xs text-gray-500 mt-1">当前在孙老师，已停留 18 小时</p></div><button class="px-3 py-1.5 text-xs font-medium text-purple-600 bg-purple-50 rounded-lg" onclick="openUrgeModal('跟进斯坦福推荐信审核','孙老师','审核人员')">催办</button></div>
             <div class="pm-task-row" data-task-group="today mine" data-priority="normal"><span class="pm-task-dot"></span><div><div class="flex items-center gap-2"><p class="text-sm font-semibold text-gray-900">接收刘晓的本科申请项目</p><span class="text-xs text-gray-500">待接收</span></div><p class="text-xs text-gray-500 mt-1">机构已完成项目经理分配</p></div><button class="px-3 py-1.5 text-xs font-medium text-purple-600 bg-purple-50 rounded-lg" onclick="location.href='我的项目列表页 - 留学申请管理系统.html'">查看任务</button></div>
           </div>
         </div>
@@ -80,21 +80,101 @@
           <div class="pm-assignment-row is-overdue" role="row">
             <div role="cell"><p class="text-sm font-semibold text-gray-900">审核 CMU 个人陈述终稿</p><p class="text-xs text-gray-400 mt-1">文书审核 · 李雪 · 卡内基梅隆大学</p></div>
             <div class="pm-assignment-person" role="cell"><span class="pm-owner-avatar">孙</span><div><p class="text-sm text-gray-700">孙老师</p><p class="text-xs text-gray-400 mt-0.5">审核人员</p></div></div>
-            <span class="text-sm text-gray-600" role="cell">8月13日 04:30</span><span role="cell"><span class="pm-waiting-time is-overdue">1天6小时</span></span><span role="cell"><button type="button" class="pm-remind-button" onclick="showWorkbenchToast('已向孙老师发送接收提醒')">催接收</button></span>
+            <span class="text-sm text-gray-600" role="cell">8月13日 04:30</span><span role="cell"><span class="pm-waiting-time is-overdue">1天6小时</span></span><span role="cell"><button type="button" class="pm-remind-button" onclick="openUrgeModal('审核 CMU 个人陈述终稿','孙老师','审核人员')">催办</button></span>
           </div>
           <div class="pm-assignment-row is-warning" role="row">
             <div role="cell"><p class="text-sm font-semibold text-gray-900">接收 Stanford 网申准备任务</p><p class="text-xs text-gray-400 mt-1">网申管理 · 李雪 · 斯坦福大学</p></div>
             <div class="pm-assignment-person" role="cell"><span class="pm-owner-avatar">周</span><div><p class="text-sm text-gray-700">周老师</p><p class="text-xs text-gray-400 mt-0.5">网申人员</p></div></div>
-            <span class="text-sm text-gray-600" role="cell">8月13日 16:30</span><span role="cell"><span class="pm-waiting-time is-warning">18小时</span></span><span role="cell"><button type="button" class="pm-remind-button" onclick="showWorkbenchToast('已向周老师发送接收提醒')">催接收</button></span>
+            <span class="text-sm text-gray-600" role="cell">8月13日 16:30</span><span role="cell"><span class="pm-waiting-time is-warning">18小时</span></span><span role="cell"><button type="button" class="pm-remind-button" onclick="openUrgeModal('接收 Stanford 网申准备任务','周老师','网申人员')">催办</button></span>
           </div>
           <div class="pm-assignment-row" role="row">
             <div role="cell"><p class="text-sm font-semibold text-gray-900">接收推荐信初稿撰写任务</p><p class="text-xs text-gray-400 mt-1">文书交付 · 陈雨桐 · 加州大学伯克利分校</p></div>
             <div class="pm-assignment-person" role="cell"><span class="pm-owner-avatar">刘</span><div><p class="text-sm text-gray-700">刘老师</p><p class="text-xs text-gray-400 mt-0.5">文书交付人员</p></div></div>
-            <span class="text-sm text-gray-600" role="cell">今天 04:30</span><span role="cell"><span class="pm-waiting-time">6小时</span></span><span role="cell"><button type="button" class="pm-remind-button" onclick="showWorkbenchToast('已向刘老师发送接收提醒')">催接收</button></span>
+            <span class="text-sm text-gray-600" role="cell">今天 04:30</span><span role="cell"><span class="pm-waiting-time">6小时</span></span><span role="cell"><button type="button" class="pm-remind-button" onclick="openUrgeModal('接收推荐信初稿撰写任务','刘老师','文书交付人员')">催办</button></span>
           </div>
         </div>
       </section>
     </main>
+  </div>
+
+  <!-- ========== 催办弹窗（项目经理/机构管理员对任务发起催办） ========== -->
+  <div id="urgeModal" class="hidden fixed inset-0 z-[60] flex items-center justify-center p-6" style="background:rgba(17,24,39,.45)">
+    <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md">
+      <div class="flex items-center justify-between px-6 py-4 border-b border-gray-100">
+        <h3 class="text-base font-semibold text-gray-900">发起催办</h3>
+        <button type="button" class="w-8 h-8 rounded-lg bg-gray-100 text-gray-500 text-xl leading-none" onclick="closeUrgeModal()" aria-label="关闭">×</button>
+      </div>
+      <div class="p-6 space-y-4">
+        <div class="bg-purple-50 rounded-xl p-4">
+          <p class="text-xs text-purple-500 mb-1">催办任务</p>
+          <p id="urgeTaskName" class="text-sm font-semibold text-gray-900">—</p>
+          <p class="text-xs text-gray-500 mt-1">催办对象：<span id="urgeTarget" class="font-medium text-gray-700">—</span></p>
+        </div>
+        <div>
+          <label class="block text-sm text-gray-600 mb-2">催办说明 <span class="text-xs text-gray-400">（将随催办消息一同发送给对方）</span></label>
+          <textarea id="urgeNote" rows="3" class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-purple-500 focus:border-purple-500 resize-none">请优先处理该任务，完成后请及时反馈进度。</textarea>
+        </div>
+        <p class="text-xs text-gray-400 flex items-start gap-1.5"><span>💡</span>发送后，对方将在「消息提醒」中收到本条催办，消息中包含任务信息与催办说明。</p>
+      </div>
+      <div class="flex gap-3 px-6 py-4 border-t border-gray-100">
+        <button type="button" class="flex-1 h-10 bg-white border border-gray-300 text-gray-600 rounded-lg hover:bg-gray-50 text-sm" onclick="closeUrgeModal()">取消</button>
+        <button type="button" class="flex-1 h-10 bg-purple-600 text-white rounded-lg hover:bg-purple-700 text-sm font-medium" onclick="sendUrge()">发送催办</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========== 系统消息弹窗（含收到的催办内容） ========== -->
+  <div id="pmMsgModal" class="hidden fixed inset-0 z-[60] flex items-center justify-center p-6" style="background:rgba(17,24,39,.45)">
+    <div class="bg-white rounded-2xl shadow-2xl w-full max-w-lg max-h-[85vh] flex flex-col">
+      <div class="flex items-center justify-between px-6 py-4 border-b border-gray-100">
+        <div class="flex items-center gap-2"><h3 class="text-base font-semibold text-gray-900">消息提醒</h3><span class="text-xs px-2 py-0.5 rounded-full bg-red-50 text-red-600 font-medium">3 条未读</span></div>
+        <button type="button" class="w-8 h-8 rounded-lg bg-gray-100 text-gray-500 text-xl leading-none" onclick="closePmMsgModal()" aria-label="关闭">×</button>
+      </div>
+      <div class="p-5 space-y-3 overflow-y-auto">
+        <!-- 催办消息（机构管理员 → 项目经理） -->
+        <div class="border border-red-100 bg-red-50/60 rounded-xl p-4">
+          <div class="flex items-center gap-2 mb-2">
+            <span class="text-xs px-2 py-0.5 rounded-full bg-red-100 text-red-600 font-semibold">催办</span>
+            <p class="text-sm font-semibold text-gray-900">机构管理员 · 王志强 催办了任务</p>
+          </div>
+          <p class="text-sm text-gray-800">「陈雨桐 · 硕士申请」学生材料补齐</p>
+          <div class="mt-2 bg-white rounded-lg px-3 py-2 border border-red-100">
+            <p class="text-xs text-gray-500 mb-0.5">催办说明</p>
+            <p class="text-sm text-gray-700">护照复印件缺失已影响网申字段准备，请今天内跟进学生提交。</p>
+          </div>
+          <div class="flex items-center justify-between mt-2.5">
+            <p class="text-xs text-gray-400">催办时间：今天 14:20</p>
+            <button type="button" class="px-3 py-1.5 text-xs font-medium text-white bg-red-500 rounded-lg hover:bg-red-600" onclick="closePmMsgModal();showWorkbenchToast('已定位到对应任务')">立即处理</button>
+          </div>
+        </div>
+        <div class="border border-red-100 bg-red-50/60 rounded-xl p-4">
+          <div class="flex items-center gap-2 mb-2">
+            <span class="text-xs px-2 py-0.5 rounded-full bg-red-100 text-red-600 font-semibold">催办</span>
+            <p class="text-sm font-semibold text-gray-900">机构管理员 · 王志强 催办了任务</p>
+          </div>
+          <p class="text-sm text-gray-800">「李雪 · 卡内基梅隆大学」文书交付</p>
+          <div class="mt-2 bg-white rounded-lg px-3 py-2 border border-red-100">
+            <p class="text-xs text-gray-500 mb-0.5">催办说明</p>
+            <p class="text-sm text-gray-700">文书交付已超期 1 天，请协调文书老师今天 18:00 前提交终稿。</p>
+          </div>
+          <div class="flex items-center justify-between mt-2.5">
+            <p class="text-xs text-gray-400">催办时间：今天 11:05</p>
+            <button type="button" class="px-3 py-1.5 text-xs font-medium text-white bg-red-500 rounded-lg hover:bg-red-600" onclick="closePmMsgModal();showWorkbenchToast('已定位到对应任务')">立即处理</button>
+          </div>
+        </div>
+        <!-- 普通消息 -->
+        <div class="border border-gray-100 rounded-xl p-4 flex items-start gap-3">
+          <div class="w-2 h-2 bg-blue-500 rounded-full mt-1.5 flex-shrink-0"></div>
+          <div>
+            <p class="text-sm text-gray-900">新项目 PRJ-M-2608-0005 已分配给你，请及时接收</p>
+            <p class="text-xs text-gray-400 mt-1">1 小时前</p>
+          </div>
+        </div>
+      </div>
+      <div class="px-6 py-4 border-t border-gray-100">
+        <button type="button" class="w-full h-10 bg-blue-600 text-white rounded-lg hover:bg-blue-700 text-sm font-medium" onclick="closePmMsgModal()">我知道了</button>
+      </div>
+    </div>
   </div>
 
   <script>
@@ -118,6 +198,29 @@
       toast.textContent = message;
       document.body.appendChild(toast);
       setTimeout(function(){ toast.remove(); }, 2000);
+    }
+    /* ---------- 催办逻辑 ---------- */
+    var urgeContext = { task: '', target: '', role: '' };
+    function openUrgeModal(task, target, role) {
+      urgeContext = { task: task, target: target, role: role };
+      document.getElementById('urgeTaskName').textContent = task;
+      document.getElementById('urgeTarget').textContent = target + '（' + role + '）';
+      document.getElementById('urgeModal').classList.remove('hidden');
+    }
+    function closeUrgeModal() {
+      document.getElementById('urgeModal').classList.add('hidden');
+    }
+    function sendUrge() {
+      var note = document.getElementById('urgeNote').value.trim();
+      closeUrgeModal();
+      showWorkbenchToast('催办消息已发送给 ' + urgeContext.target + '，对方将在消息提醒中看到催办内容');
+    }
+    /* ---------- 消息提醒弹窗 ---------- */
+    function openPmMsgModal() {
+      document.getElementById('pmMsgModal').classList.remove('hidden');
+    }
+    function closePmMsgModal() {
+      document.getElementById('pmMsgModal').classList.add('hidden');
     }
   </script>
   <script src="./assets/js/pbs-app.js"></script>

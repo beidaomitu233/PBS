@@ -770,12 +770,8 @@
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"></path>
             </svg>
             支付信息
-            <button class="ml-auto flex items-center gap-1 px-2.5 py-1 text-xs font-normal text-gray-500 border border-gray-300 rounded-lg hover:text-blue-600 hover:border-blue-400 hover:bg-blue-50 transition-colors" onclick="openPayConfig()" title="自定义支付节点">
-              <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
-              配置节点
-            </button>
           </h3>
-          <div id="paymentInfo" class="space-y-3 text-sm"><div class="mb-4 pb-3 border-b border-gray-100"><div class="flex items-center justify-between mb-2"><span class="text-gray-900 font-semibold">累计支付金额 <span class="text-lg">¥38,000</span></span></div><div class="flex items-center gap-2"><div class="flex-1 h-2 bg-gray-100 rounded-full overflow-hidden"><div class="h-full bg-blue-500 rounded-full transition-all duration-500" style="width: 20%"></div></div><span class="text-xs text-gray-500">1/5</span></div></div><div class="relative"><div class="flex items-start gap-3 pb-1 relative"><div class="absolute left-[11px] top-[28px] w-0.5 h-[calc(100%+4px)] bg-blue-500"></div><div class="flex-shrink-0 w-6 h-6 rounded-full border-2 flex items-center justify-center z-10 bg-blue-600 text-white border-blue-600"><svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg></div><div class="flex-1 min-w-0 pb-4"><div class="flex items-center justify-between"><span class="text-sm text-gray-900">定金</span><span class="text-sm text-gray-900 font-medium">¥38,000</span></div><p class="text-xs text-blue-600 mt-0.5">2026-07-02 11:00</p></div></div><div class="flex items-start gap-3 pb-1 relative"><div class="absolute left-[11px] top-[28px] w-0.5 h-[calc(100%+4px)] bg-gray-200"></div><div class="flex-shrink-0 w-6 h-6 rounded-full border-2 flex items-center justify-center z-10 bg-white text-gray-400 border-gray-300"><span class="text-xs font-medium">2</span></div><div class="flex-1 min-w-0 pb-4"><div class="flex items-center justify-between"><span class="text-sm text-gray-400">文书</span><span class="text-sm text-gray-400">—</span></div><p class="text-xs text-gray-300 mt-0.5">待支付</p></div></div><div class="flex items-start gap-3 pb-1 relative"><div class="absolute left-[11px] top-[28px] w-0.5 h-[calc(100%+4px)] bg-gray-200"></div><div class="flex-shrink-0 w-6 h-6 rounded-full border-2 flex items-center justify-center z-10 bg-white text-gray-400 border-gray-300"><span class="text-xs font-medium">3</span></div><div class="flex-1 min-w-0 pb-4"><div class="flex items-center justify-between"><span class="text-sm text-gray-400">网申</span><span class="text-sm text-gray-400">—</span></div><p class="text-xs text-gray-300 mt-0.5">待支付</p></div></div><div class="flex items-start gap-3 pb-1 relative"><div class="absolute left-[11px] top-[28px] w-0.5 h-[calc(100%+4px)] bg-gray-200"></div><div class="flex-shrink-0 w-6 h-6 rounded-full border-2 flex items-center justify-center z-10 bg-white text-gray-400 border-gray-300"><span class="text-xs font-medium">4</span></div><div class="flex-1 min-w-0 pb-4"><div class="flex items-center justify-between"><span class="text-sm text-gray-400">面试辅导</span><span class="text-sm text-gray-400">—</span></div><p class="text-xs text-gray-300 mt-0.5">待支付</p></div></div><div class="flex items-start gap-3 pb-1 relative"><div class="flex-shrink-0 w-6 h-6 rounded-full border-2 flex items-center justify-center z-10 bg-white text-gray-400 border-gray-300"><span class="text-xs font-medium">5</span></div><div class="flex-1 min-w-0 pb-4"><div class="flex items-center justify-between"><span class="text-sm text-gray-400">尾款</span><span class="text-sm text-gray-400">—</span></div><p class="text-xs text-gray-300 mt-0.5">待支付</p></div></div></div></div>
+<div id="paymentInfo" class="text-sm"></div>
         </div>
       </div>
 
@@ -993,67 +989,56 @@
     </div>
   </div>
 
-  <!-- 支付节点配置抽屉（节点可自定义、可自行配置） -->
-  <div id="payConfigDrawer" class="fixed inset-0 z-50 hidden">
-    <div class="absolute inset-0 bg-black bg-opacity-30" onclick="closePayConfig()"></div>
-    <div class="drawer flex flex-col" style="width:520px;">
-      <!-- 头部 -->
-      <div class="flex items-center justify-between px-6 py-4 border-b border-gray-200 flex-shrink-0">
-        <div class="flex items-center gap-3">
-          <h2 class="text-lg font-semibold text-gray-800">配置支付节点</h2>
-          <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800" id="payConfigPkg">卡内基梅隆大学+计算机科学</span>
-        </div>
-        <button class="p-1 text-gray-400 hover:text-gray-600" onclick="closePayConfig()">
-          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
-        </button>
-      </div>
-      <!-- 主体（可滚动） -->
-      <div class="flex-1 overflow-y-auto px-6 py-5">
-        <div class="bg-blue-50 border border-blue-100 rounded-xl p-3 mb-4 flex items-start gap-2">
-          <svg class="w-4 h-4 text-blue-600 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-          <p class="text-xs text-blue-700 leading-relaxed">线上项目由商城同步支付状态并自动锁定已支付节点；线下项目由项目经理手动锁定。机构管理员纠正支付状态时需二次确认。</p>
-        </div>
-        <div id="payNodeList" class="space-y-2 mb-3"></div>
-        <button class="w-full h-10 border-2 border-dashed border-gray-300 text-gray-500 rounded-lg hover:border-blue-400 hover:text-blue-600 transition-colors text-sm font-medium flex items-center justify-center gap-1.5" onclick="addPayNode()">
-          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path></svg>
-          添加支付节点
-        </button>
-      </div>
-      <!-- 底部操作按钮（固定） -->
-      <div class="flex-shrink-0 px-6 py-4 border-t border-gray-200 bg-white">
-        <div class="flex items-center gap-3">
-          <button class="flex-1 h-10 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium" onclick="savePayConfig()">保存配置</button>
-          <button class="flex-1 h-10 bg-white border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors font-medium" onclick="closePayConfig()">取消</button>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- 支付状态二次确认 -->
-  <div id="payStatusConfirmModal" class="hidden fixed inset-0 flex items-center justify-center" style="z-index:120">
-    <div class="absolute inset-0 bg-black bg-opacity-40" onclick="closePayStatusConfirm()"></div>
-    <div class="relative w-[420px] bg-white rounded-xl shadow-2xl p-6">
-      <div class="flex items-start gap-3">
-        <span class="w-10 h-10 rounded-full bg-yellow-100 flex items-center justify-center flex-shrink-0">
-          <svg class="w-5 h-5 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
-        </span>
-        <div>
-          <h3 id="payStatusConfirmTitle" class="text-lg font-semibold text-gray-800">确认修改支付状态</h3>
-          <p id="payStatusConfirmText" class="text-sm text-gray-600 mt-2 leading-relaxed"></p>
-        </div>
-      </div>
-      <div class="flex items-center gap-3 mt-6">
-        <button class="flex-1 h-10 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium" onclick="confirmPayStatusChange()">确认修改</button>
-        <button class="flex-1 h-10 bg-white border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 font-medium" onclick="closePayStatusConfirm()">取消</button>
-      </div>
-    </div>
-  </div>
-
   <!-- 页面提示 Toast -->
   <div id="pageToast" class="hidden fixed top-6 left-1/2 transform -translate-x-1/2 z-[70] px-4 py-2.5 bg-red-500 text-white text-sm rounded-lg shadow-lg"></div>
 
   <style>
     .drawer { position: fixed; right: 0; top: 0; height: 100vh; width: 480px; background: white; box-shadow: -4px 0 20px rgba(0,0,0,0.15); z-index: 100; }
+
+    /* ---------------- 支付信息 · 服务条目清单 ---------------- */
+    /* 顶部汇总面板：淡紫渐变 */
+    .pay-summary { padding: 14px 16px; border: 1px solid #EAE7F7; border-radius: 16px; background: linear-gradient(120deg, #FFFFFF 0%, #F6F4FF 58%, #EEEAFF 100%); }
+    .pay-summary-row { display: flex; align-items: flex-end; justify-content: space-between; gap: 12px; }
+    .pay-summary-label { font-size: 11px; color: #918C9F; letter-spacing: .02em; }
+    .pay-summary-amount { margin-top: 3px; font-size: 24px; line-height: 1.1; font-weight: 800; color: #242136; }
+    .pay-summary-count { margin-top: 3px; font-size: 12px; color: #918C9F; }
+    .pay-summary-count strong { font-size: 18px; font-weight: 800; color: #5B4CC7; }
+    .pay-progress { margin-top: 10px; height: 7px; border-radius: 99px; background: #ECEAF3; overflow: hidden; }
+    .pay-progress-fill { height: 100%; border-radius: inherit; background: linear-gradient(90deg, #8B7CF6, #6A5AD8); transition: width .5s ease; }
+    /* 院校分组 */
+    .pay-group + .pay-group { margin-top: 14px; padding-top: 2px; border-top: 1px dashed #E4E1EE; }
+    .pay-group-head { display: flex; align-items: center; gap: 9px; margin: 14px 0 10px; }
+    .pay-group-icon { display: flex; align-items: center; justify-content: center; width: 30px; height: 30px; flex: 0 0 30px; border-radius: 9px; background: #F1EFFF; color: #6A5AD8; }
+    .pay-group-name { font-size: 13px; font-weight: 700; color: #242136; }
+    .pay-group-major { padding: 2px 8px; border-radius: 999px; background: #F4F3FA; color: #777286; font-size: 11px; white-space: nowrap; }
+    .pay-group-count { margin-left: auto; font-size: 11px; color: #A09BAF; white-space: nowrap; }
+    /* 服务条目卡 */
+    .pay-items { display: grid; gap: 8px; }
+    .pay-item { display: flex; align-items: center; gap: 12px; padding: 11px 13px; border: 1px solid #ECEAF4; border-radius: 13px; background: #FFFFFF; transition: box-shadow .18s ease, transform .18s ease, border-color .18s ease; }
+    .pay-item:hover { box-shadow: 0 8px 20px rgba(40, 34, 90, .08); transform: translateY(-1px); }
+    .pay-item.is-paid { border-color: #DDD6F8; border-left: 3px solid #7C6AED; background: linear-gradient(120deg, #FFFFFF, #FAF9FF); }
+    .pay-item.is-done { border-left-color: #10B981; }
+    .pay-item.is-locked { background: #F8F7FB; border-style: dashed; border-color: #DDD9E8; }
+    .pay-item.is-locked:hover { transform: none; box-shadow: none; }
+    .pay-item-main { flex: 1; min-width: 0; }
+    .pay-item-line1 { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+    .pay-name { font-size: 13px; font-weight: 600; color: #2A2736; }
+    .pay-item.is-locked .pay-name { color: #A09BAF; }
+    .pay-pill { display: inline-flex; align-items: center; padding: 2px 8px; border-radius: 999px; font-size: 11px; font-weight: 600; white-space: nowrap; }
+    .pay-pill.pill-green { background: #ECFDF5; color: #047857; }
+    .pay-pill.pill-violet { background: #EFECFF; color: #5B4CC7; }
+    .pay-pill.pill-gray { background: #F1F0F6; color: #9A96A5; }
+    .pay-sub { margin-top: 3px; font-size: 11px; color: #9A96A5; }
+    .pay-amount { font-size: 15px; font-weight: 750; color: #242136; white-space: nowrap; }
+    .pay-item.is-locked .pay-amount { color: #B7B3C4; }
+    /* 条目操作按钮 */
+    .pay-btn { padding: 6px 13px; border-radius: 999px; border: none; cursor: pointer; background: #7C6AED; color: #FFFFFF; font-size: 12px; font-weight: 600; white-space: nowrap; box-shadow: 0 5px 13px rgba(124, 106, 237, .30); transition: background .18s ease, box-shadow .18s ease, transform .15s ease; }
+    .pay-btn:hover { background: #6A5AD8; transform: translateY(-1px); box-shadow: 0 8px 18px rgba(124, 106, 237, .38); }
+    .pay-btn-done { padding: 6px 13px; border-radius: 999px; border: 1px solid #CDEBDD; background: #ECFDF5; color: #047857; font-size: 12px; font-weight: 600; white-space: nowrap; cursor: default; }
+    /* 保录取全包模式 */
+    .pay-allin-btn { width: 100%; margin-top: 12px; display: flex; align-items: center; justify-content: center; gap: 6px; padding: 9px 12px; border-radius: 999px; cursor: pointer; border: 1px solid #F5D9A8; background: linear-gradient(120deg, #FFFBEB, #FEF3C7); color: #B45309; font-size: 12px; font-weight: 600; transition: box-shadow .18s ease, transform .15s ease; }
+    .pay-allin-btn:hover { box-shadow: 0 8px 18px rgba(245, 158, 11, .20); transform: translateY(-1px); }
+    .pay-allin-on { margin-top: 12px; display: flex; align-items: center; justify-content: center; gap: 6px; padding: 9px 12px; border-radius: 999px; border: 1px solid #F5D9A8; background: #FFFBEB; color: #B45309; font-size: 12px; font-weight: 600; }
   </style>
 
   <!-- 系统消息弹窗 -->
@@ -1739,148 +1724,6 @@
       syncProjectAssignmentState();
     }
 
-    /* ---------------- 支付节点自定义配置 ---------------- */
-    var payConfigDraft = null;
-    var pendingPayStatusIndex = null;
-
-    function parseAmt(s) {
-      if (s === null || s === undefined) { return 0; }
-      var n = parseFloat(String(s).replace(/[¥,，\s]/g, ''));
-      return isNaN(n) ? 0 : n;
-    }
-    function fmtAmt(n) { return '¥' + Number(n).toLocaleString('en-US'); }
-
-    function openPayConfig() {
-      var data = packageData[selectedPackageId];
-      payConfigDraft = data.payments.map(function(p) {
-        return { type: p.type, amount: p.amount, time: p.time, paid: p.paid };
-      });
-      document.getElementById('payConfigPkg').textContent = data.name;
-      renderPayNodeList();
-      document.getElementById('payConfigDrawer').classList.remove('hidden');
-      document.body.style.overflow = 'hidden';
-    }
-    function closePayConfig() {
-      document.getElementById('payConfigDrawer').classList.add('hidden');
-      document.getElementById('payStatusConfirmModal').classList.add('hidden');
-      document.body.style.overflow = '';
-      payConfigDraft = null;
-      pendingPayStatusIndex = null;
-    }
-    function syncDraftFromDOM() {
-      if (!payConfigDraft) { return; }
-      document.querySelectorAll('#payNodeList > div[data-idx]').forEach(function(row) {
-        var i = parseInt(row.getAttribute('data-idx'), 10);
-        var node = payConfigDraft[i];
-        if (!node) { return; }
-        node.type = row.querySelector('[data-field="name"]').value;
-        if (!node.paid) {
-          var v = row.querySelector('[data-field="amount"]').value.trim();
-          node.amount = v ? fmtAmt(parseFloat(v)) : '—';
-        }
-      });
-    }
-    function renderPayNodeList() {
-      var wrap = document.getElementById('payNodeList');
-      var html = '';
-      payConfigDraft.forEach(function(p, i) {
-        var lockBadge = p.paid
-          ? '<span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-medium bg-green-100 text-green-700 flex-shrink-0">已支付 · 已锁定</span>'
-          : '<span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-medium bg-gray-100 text-gray-500 flex-shrink-0">待支付</span>';
-        var delBtn = p.paid
-          ? '<span class="w-8 h-8 flex items-center justify-center text-gray-300 flex-shrink-0" title="已支付节点不可删除"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg></span>'
-          : '<button class="w-8 h-8 flex items-center justify-center text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-lg flex-shrink-0 transition-colors" title="删除节点" onclick="removePayNode(' + i + ')"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg></button>';
-        var amountVal = p.paid ? parseAmt(p.amount) : (p.amount && p.amount !== '—' ? parseAmt(p.amount) : '');
-        var amountInput = p.paid
-          ? '<input type="text" value="' + p.amount + '" disabled class="w-full h-9 pl-7 pr-2 text-sm border border-gray-200 rounded-lg bg-gray-50 text-gray-400 cursor-not-allowed">'
-          : '<input type="number" min="0" step="100" value="' + amountVal + '" placeholder="金额" data-field="amount" class="w-full h-9 pl-7 pr-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500">';
-        var subLine = p.paid
-          ? '<p class="text-[10px] text-blue-600 mt-2 pl-8">支付时间：' + p.time + '</p>'
-          : '<p class="text-[10px] text-gray-400 mt-2 pl-8">待支付 · 金额与节点可编辑</p>';
-        html += '<div class="border border-gray-200 rounded-lg p-3" data-idx="' + i + '">' +
-          '<div class="flex items-center gap-2">' +
-          '<span class="w-6 h-6 rounded-full ' + (p.paid ? 'bg-blue-600 text-white' : 'bg-blue-100 text-blue-600') + ' text-xs flex items-center justify-center flex-shrink-0 font-medium">' + (i + 1) + '</span>' +
-          '<input type="text" value="' + p.type + '" placeholder="节点名称（如：定金 / 文书 / 尾款）" data-field="name" class="flex-1 min-w-0 h-9 px-3 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500">' +
-          '<div class="relative w-[128px] flex-shrink-0"><span class="absolute left-3 top-1/2 -translate-y-1/2 text-sm text-gray-400">¥</span>' + amountInput + '</div>' +
-          delBtn +
-          '</div>' +
-          '<div class="flex items-center justify-between mt-2"><span class="pl-8">' + lockBadge + '</span>' +
-          '<button class="px-3 py-1 text-xs text-blue-600 bg-blue-50 rounded-md hover:bg-blue-100 font-medium" onclick="requestPayStatusChange(' + i + ')">管理支付状态</button></div>' +
-          subLine +
-          '</div>';
-      });
-      wrap.innerHTML = html;
-    }
-    function addPayNode() {
-      syncDraftFromDOM();
-      payConfigDraft.push({ type: '', amount: '—', time: null, paid: false });
-      renderPayNodeList();
-      var rows = document.querySelectorAll('#payNodeList > div[data-idx]');
-      var last = rows[rows.length - 1];
-      if (last) { last.querySelector('[data-field="name"]').focus(); }
-    }
-    function removePayNode(i) {
-      syncDraftFromDOM();
-      if (payConfigDraft[i] && payConfigDraft[i].paid) { showPageToast('已支付节点不可删除'); return; }
-      if (payConfigDraft.length <= 1) { showPageToast('至少保留 1 个支付节点'); return; }
-      payConfigDraft.splice(i, 1);
-      renderPayNodeList();
-    }
-    function requestPayStatusChange(i) {
-      syncDraftFromDOM();
-      var node = payConfigDraft && payConfigDraft[i];
-      if (!node) { return; }
-      if (!node.paid && parseAmt(node.amount) <= 0) {
-        showPageToast('标记为已支付前，请先填写支付金额');
-        return;
-      }
-      pendingPayStatusIndex = i;
-      var target = node.paid ? '待支付' : '已支付';
-      document.getElementById('payStatusConfirmTitle').textContent = '确认改为“' + target + '”';
-      document.getElementById('payStatusConfirmText').textContent = node.paid
-        ? '节点“' + node.type + '”改回待支付后，原支付时间将清空，金额和节点将恢复编辑。'
-        : '节点“' + node.type + '”标记为已支付后，将记录当前支付时间并锁定金额。';
-      document.getElementById('payStatusConfirmModal').classList.remove('hidden');
-    }
-    function closePayStatusConfirm() {
-      document.getElementById('payStatusConfirmModal').classList.add('hidden');
-      pendingPayStatusIndex = null;
-    }
-    function currentDateTime() {
-      var now = new Date();
-      function pad(v) { return String(v).padStart(2, '0'); }
-      return now.getFullYear() + '-' + pad(now.getMonth() + 1) + '-' + pad(now.getDate()) + ' ' + pad(now.getHours()) + ':' + pad(now.getMinutes());
-    }
-    function confirmPayStatusChange() {
-      if (pendingPayStatusIndex === null || !payConfigDraft[pendingPayStatusIndex]) { closePayStatusConfirm(); return; }
-      var node = payConfigDraft[pendingPayStatusIndex];
-      node.paid = !node.paid;
-      node.time = node.paid ? currentDateTime() : null;
-      var result = node.paid ? '已支付' : '待支付';
-      document.getElementById('payStatusConfirmModal').classList.add('hidden');
-      pendingPayStatusIndex = null;
-      renderPayNodeList();
-      showPageToast('支付状态已改为“' + result + '”，请保存配置');
-    }
-    function savePayConfig() {
-      syncDraftFromDOM();
-      for (var i = 0; i < payConfigDraft.length; i++) {
-        if (!payConfigDraft[i].type || !payConfigDraft[i].type.trim()) {
-          showPageToast('第 ' + (i + 1) + ' 个节点名称不能为空');
-          return;
-        }
-        payConfigDraft[i].type = payConfigDraft[i].type.trim();
-      }
-      var data = packageData[selectedPackageId];
-      data.payments = payConfigDraft;
-      /* 重算累计支付金额（已支付节点金额之和） */
-      var total = 0;
-      data.payments.forEach(function(p) { if (p.paid) { total += parseAmt(p.amount); } });
-      data.totalPaid = fmtAmt(total);
-      renderPaymentInfo();
-      closePayConfig();
-      showPageToast('支付节点配置已保存');
-    }
 
     document.addEventListener('DOMContentLoaded', function() {
       syncProjectAssignmentState();
@@ -1907,28 +1750,47 @@
       document.getElementById('notificationModal').classList.add('hidden');
     }
 
-    // ========== 套餐支付信息动态切换 ==========
+    // ========== 套餐支付信息动态切换（服务条目清单模式） ==========
+    function fmtAmt(n) { return '¥' + Number(n).toLocaleString('en-US'); }
+    function currentDateTime() {
+      var now = new Date();
+      function pad(v) { return String(v).padStart(2, '0'); }
+      return now.getFullYear() + '-' + pad(now.getMonth() + 1) + '-' + pad(now.getDate()) + ' ' + pad(now.getHours()) + ':' + pad(now.getMinutes());
+    }
+
+    // 每个套餐由「院校目标分组 + 独立服务条目」构成；条目支付/任务状态互相独立，支持并行推进
     var packageData = {
       cmu: {
         name: '卡内基梅隆大学+计算机科学',
-        totalPaid: '¥44,000',
-        payments: [
-          { type: '定金', amount: '¥30,000', time: '2026-07-01 10:00', paid: true },
-          { type: '文书', amount: '¥14,000', time: '2026-07-05 14:30', paid: true },
-          { type: '网申', amount: '¥10,000', time: null, paid: false },
-          { type: '面试辅导', amount: '¥4,000', time: null, paid: false },
-          { type: '尾款', amount: '¥0', time: null, paid: false }
+        allInclusive: false,
+        groups: [
+          {
+            school: '卡内基梅隆大学',
+            major: '计算机科学',
+            items: [
+              { id: 'cmu-ps', name: 'PS 文书（个人陈述）', amount: 18000, paid: true, payTime: '2026-07-05 14:30', delivered: false },
+              { id: 'cmu-rl', name: 'RL 推荐信（2 封）', amount: 8000, paid: true, payTime: '2026-07-05 14:30', delivered: true },
+              { id: 'cmu-cv', name: 'CV 简历', amount: 6000, paid: true, payTime: '2026-08-10 10:20', delivered: false },
+              { id: 'cmu-apply', name: '网申服务', amount: 20000, paid: true, payTime: '2026-08-10 10:20', delivered: false },
+              { id: 'cmu-interview', name: '面试辅导', amount: 6000, paid: false, payTime: null, delivered: false }
+            ]
+          }
         ]
       },
       ic: {
         name: '帝国理工学院+金融工程',
-        totalPaid: '¥38,000',
-        payments: [
-          { type: '定金', amount: '¥38,000', time: '2026-07-02 11:00', paid: true },
-          { type: '文书', amount: '—', time: null, paid: false },
-          { type: '网申', amount: '—', time: null, paid: false },
-          { type: '面试辅导', amount: '—', time: null, paid: false },
-          { type: '尾款', amount: '—', time: null, paid: false }
+        allInclusive: false,
+        groups: [
+          {
+            school: '帝国理工学院',
+            major: '金融工程',
+            items: [
+              { id: 'ic-ps', name: 'PS 文书（个人陈述）', amount: 16000, paid: true, payTime: '2026-07-02 11:00', delivered: false },
+              { id: 'ic-cv', name: 'CV 简历', amount: 6000, paid: true, payTime: '2026-07-02 11:00', delivered: true },
+              { id: 'ic-apply', name: '网申服务', amount: 12000, paid: true, payTime: '2026-08-12 09:40', delivered: false },
+              { id: 'ic-school', name: '选校报告', amount: 4000, paid: false, payTime: null, delivered: false }
+            ]
+          }
         ]
       }
     };
@@ -1948,64 +1810,123 @@
       renderPaymentInfo();
     }
 
+    // 条目任务状态推导：未支付=待付款锁定；已支付未反馈=进行中；已反馈=已交付反馈
+    function itemTaskStatus(it) {
+      if (!it.paid) { return 'locked'; }
+      return it.delivered ? 'delivered' : 'inprogress';
+    }
+    function findPayItem(itemId) {
+      var data = packageData[selectedPackageId];
+      for (var g = 0; g < data.groups.length; g++) {
+        var items = data.groups[g].items;
+        for (var i = 0; i < items.length; i++) {
+          if (items[i].id === itemId) { return { group: data.groups[g], item: items[i] }; }
+        }
+      }
+      return null;
+    }
+
+    // 反馈交付：仅通知商城该条目对应的服务已完成交付，不影响其他条目
+    function deliverItem(itemId) {
+      var found = findPayItem(itemId);
+      if (!found) { return; }
+      var it = found.item;
+      if (!it.paid || it.delivered) { return; }
+      it.delivered = true;
+      renderPaymentInfo();
+      showPageToast('已通知商城：“' + found.group.school + ' · ' + it.name + '”已完成交付', true);
+    }
+
+    // 保录取全包模式：一次性解锁全部条目，所有条目并行进行中，可分别反馈交付
+    function switchAllInclusive() {
+      var data = packageData[selectedPackageId];
+      if (data.allInclusive) { return; }
+      data.allInclusive = true;
+      var now = currentDateTime();
+      data.groups.forEach(function(g) {
+        g.items.forEach(function(it) {
+          if (!it.paid) { it.paid = true; it.payTime = now; }
+        });
+      });
+      renderPaymentInfo();
+      showPageToast('已切换为保录取全包模式：全部服务条目已解锁，可分别反馈交付', true);
+    }
+
     function renderPaymentInfo() {
       var data = packageData[selectedPackageId];
-      var paidCount = 0;
-      data.payments.forEach(function(p) {
-        if (p.paid) {
-          paidCount++;
-        }
+      var paidAmt = 0, paidCnt = 0, totalCnt = 0;
+      data.groups.forEach(function(g) {
+        g.items.forEach(function(it) {
+          totalCnt++;
+          if (it.paid) { paidCnt++; paidAmt += it.amount; }
+        });
       });
-      var total = data.payments.length;
-      var progressPercent = Math.round((paidCount / total) * 100);
+      var pct = totalCnt ? Math.round(paidCnt / totalCnt * 100) : 0;
 
-      var html = '';
+      // 顶部汇总面板：累计已到账金额 + 支付进度（已支付条目数/总条目数）
+      var html = '<div class="pay-summary">' +
+        '<div class="pay-summary-row">' +
+        '<div><p class="pay-summary-label">累计已到账金额</p>' +
+        '<p class="pay-summary-amount">' + fmtAmt(paidAmt) + '</p></div>' +
+        '<div style="text-align:right"><p class="pay-summary-label">支付进度（已支付条目/总条目）</p>' +
+        '<p class="pay-summary-count"><strong>' + paidCnt + '</strong>/' + totalCnt + ' 条目 · ' + pct + '%</p></div>' +
+        '</div>' +
+        '<div class="pay-progress"><div class="pay-progress-fill" style="width: ' + pct + '%"></div></div>' +
+        '</div>';
 
-      // 顶部概览 - 累计金额 + 进度条
-      html += '<div class="mb-4 pb-3 border-b border-gray-100">' +
-        '<div class="flex items-center justify-between mb-2">' +
-        '<span class="text-gray-900 font-semibold">累计支付金额 <span class="text-lg">' + data.totalPaid + '</span></span></div>' +
-        '<div class="flex items-center gap-2"><div class="flex-1 h-2 bg-gray-100 rounded-full overflow-hidden">' +
-        '<div class="h-full bg-blue-500 rounded-full transition-all duration-500" style="width: ' + progressPercent + '%"></div></div>' +
-        '<span class="text-xs text-gray-500">' + paidCount + '/' + total + '</span></div></div>';
+      // 服务条目清单：按院校目标分组平铺，条目平等展示、无先后顺序
+      data.groups.forEach(function(g) {
+        var gPaid = 0;
+        g.items.forEach(function(it) { if (it.paid) { gPaid++; } });
+        html += '<div class="pay-group">' +
+          '<div class="pay-group-head">' +
+          '<span class="pay-group-icon"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14l9-5-9-5-9 5 9 5zm0 0l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z"></path></svg></span>' +
+          '<span class="pay-group-name">' + g.school + '</span>' +
+          '<span class="pay-group-major">' + g.major + '</span>' +
+          '<span class="pay-group-count">' + gPaid + '/' + g.items.length + ' 已到账</span></div>' +
+          '<div class="pay-items">';
 
-      // 支付流程步骤
-      html += '<div class="relative">';
-      data.payments.forEach(function(p, i) {
-        var isLast = i === data.payments.length - 1;
-        var isPaid = p.paid;
-        var circleClass = isPaid ? 'bg-blue-600 text-white border-blue-600' : 'bg-white text-gray-400 border-gray-300';
-        var lineClass = isPaid ? 'bg-blue-500' : 'bg-gray-200';
-        var labelClass = isPaid ? 'text-gray-900' : 'text-gray-400';
-        var amountClass = isPaid ? 'text-gray-900 font-medium' : 'text-gray-400';
+        g.items.forEach(function(it) {
+          var st = itemTaskStatus(it);
+          var itemCls = st === 'locked' ? 'pay-item is-locked' : (st === 'delivered' ? 'pay-item is-paid is-done' : 'pay-item is-paid');
+          var payPill = it.paid
+            ? '<span class="pay-pill pill-green">💰 已到账</span>'
+            : '<span class="pay-pill pill-gray">⏳ 待支付</span>';
+          var taskPill = '';
+          var actionHtml = '';
+          var subHtml = '';
+          if (st === 'locked') {
+            taskPill = '<span class="pay-pill pill-gray">🔒 待付款锁定</span>';
+            subHtml = '<p class="pay-sub">支付到账后自动解锁，与其他条目并行推进</p>';
+          } else if (st === 'delivered') {
+            taskPill = '<span class="pay-pill pill-green">✅ 已交付反馈</span>';
+            actionHtml = '<span class="pay-btn-done">✅ 已反馈</span>';
+            subHtml = it.payTime ? '<p class="pay-sub">到账时间 ' + it.payTime + '</p>' : '';
+          } else {
+            taskPill = '<span class="pay-pill pill-violet">进行中</span>';
+            actionHtml = '<button class="pay-btn" data-item-id="' + it.id + '" onclick="deliverItem(this.dataset.itemId)">📤 反馈交付</button>';
+            subHtml = it.payTime ? '<p class="pay-sub">到账时间 ' + it.payTime + '</p>' : '';
+          }
+          html += '<div class="' + itemCls + '">' +
+            '<div class="pay-item-main">' +
+            '<div class="pay-item-line1">' +
+            '<span class="pay-name">' + it.name + '</span>' +
+            payPill + taskPill +
+            '</div>' + subHtml + '</div>' +
+            '<span class="pay-amount">' + fmtAmt(it.amount) + '</span>' +
+            actionHtml +
+            '</div>';
+        });
 
-        html += '<div class="flex items-start gap-3 pb-1 relative">';
-        // 竖线
-        if (!isLast) {
-          html += '<div class="absolute left-[11px] top-[28px] w-0.5 h-[calc(100%+4px)] ' + lineClass + '"></div>';
-        }
-        // 圆点
-        html += '<div class="flex-shrink-0 w-6 h-6 rounded-full border-2 flex items-center justify-center z-10 ' + circleClass + '">';
-        if (isPaid) {
-          html += '<svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>';
-        } else {
-          html += '<span class="text-xs font-medium">' + (i + 1) + '</span>';
-        }
-        html += '</div>';
-        // 内容
-        html += '<div class="flex-1 min-w-0 pb-4">';
-        html += '<div class="flex items-center justify-between">';
-        html += '<span class="text-sm ' + labelClass + '">' + p.type + '</span>';
-        html += '<span class="text-sm ' + amountClass + '">' + p.amount + '</span>';
-        html += '</div>';
-        if (p.paid) {
-          html += '<p class="text-xs text-blue-600 mt-0.5">' + p.time + '</p>';
-        } else {
-          html += '<p class="text-xs text-gray-300 mt-0.5">待支付</p>';
-        }
         html += '</div></div>';
       });
-      html += '</div>';
+
+      // 保录取全包模式入口（卡片底部）
+      if (data.allInclusive) {
+        html += '<div class="pay-allin-on">⚡ 保录取全包模式已开启 · 全部条目已解锁，可分别反馈交付</div>';
+      } else {
+        html += '<button class="pay-allin-btn" onclick="switchAllInclusive()">⚡ 切换为保录取全包模式</button>';
+      }
 
       document.getElementById('paymentInfo').innerHTML = html;
     }

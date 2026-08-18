@@ -684,6 +684,10 @@
             <input id="flt-kw" type="text" placeholder="搜索学生姓名/学校/专业/编号..." class="w-full h-10 px-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
           </div>
 <div>
+            <label class="block text-sm text-gray-600 mb-2">客户姓名</label>
+            <input id="flt-customer" type="text" placeholder="客户姓名" class="w-36 h-10 px-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+          </div>
+          <div>
             <label class="block text-sm text-gray-600 mb-2">学生姓名</label>
             <input id="flt-name" type="text" placeholder="学生姓名" class="w-36 h-10 px-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
           </div>
@@ -696,10 +700,10 @@
             <select id="flt-status" class="w-32 h-10 px-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
               <option value="">全部</option>
               <option>未开始</option>
+              <option>待领取</option>
               <option>进行中</option>
               <option>审核中</option>
-              <option>补交材料中</option>
-              <option>已完成</option>
+              <option>已提交</option>
             </select>
           </div>
         </div>
@@ -721,10 +725,6 @@
             <label class="block text-sm text-gray-600 mb-2">DDL</label>
             <input id="flt-ddl" type="text" placeholder="如 2026-11-01" class="w-36 h-10 px-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
           </div>
-          <div>
-            <label class="block text-sm text-gray-600 mb-2">分配时间</label>
-            <input id="flt-time" type="text" placeholder="如 2026-07-15" class="w-40 h-10 px-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-          </div>
         </div>
         <div class="flex items-center gap-3 mt-4">
           <button onclick="applyFilter()" class="px-6 h-10 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">搜索</button>
@@ -738,25 +738,28 @@
 
       <!-- 网申任务列表表格 -->
       <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden mb-6">
-        <table class="w-full">
+        <div class="overflow-x-auto">
+        <table class="w-full min-w-[1300px]">
           <thead class="bg-gray-50">
             <tr>
               <th class="px-5 py-4 text-left text-sm font-medium text-gray-500">序号</th>
+              <th class="px-5 py-4 text-left text-sm font-medium text-gray-500">客户姓名</th>
               <th class="px-5 py-4 text-left text-sm font-medium text-gray-500">学生姓名</th>
               <th class="px-5 py-4 text-left text-sm font-medium text-gray-500">学校</th>
               <th class="px-5 py-4 text-left text-sm font-medium text-gray-500">专业</th>
               <th class="px-5 py-4 text-left text-sm font-medium text-gray-500">申请轮次</th>
-              <th class="px-5 py-4 text-left text-sm font-medium text-gray-500">DDL倒计时</th>
-              <th class="px-5 py-4 text-left text-sm font-medium text-gray-500">已接受天数</th>
-              <th class="px-5 py-4 text-left text-sm font-medium text-gray-500">材料齐备</th>
               <th class="px-5 py-4 text-left text-sm font-medium text-gray-500">网申状态</th>
-              <th class="px-5 py-4 text-left text-sm font-medium text-gray-500">分配时间</th>
+              <th class="px-5 py-4 text-left text-sm font-medium text-gray-500">网申人员</th>
+              <th class="px-5 py-4 text-left text-sm font-medium text-gray-500">DDL倒计时</th>
+              <th class="px-5 py-4 text-left text-sm font-medium text-gray-500">任务停留时长</th>
+              <th class="px-5 py-4 text-left text-sm font-medium text-gray-500">材料齐备度</th>
               <th class="px-5 py-4 text-left text-sm font-medium text-gray-500">操作</th>
             </tr>
           </thead>
           <tbody class="divide-y divide-gray-100" id="appTaskTbody">
-            <tr data-kw="1李雪卡内基梅隆大学人工智能Round1剩余76天3/5进行中" data-name="李雪" data-school="卡内基梅隆大学" data-major="人工智能" data-round="Round1" data-round-start="2026-08-01" data-base-status="进行中" data-ddl="2026-11-01" data-material="3/5" data-status="进行中" data-time="2026-07-1509:30" class="hover:bg-gray-50">
+            <tr data-kw="1李建国李雪卡内基梅隆大学人工智能Round1进行中孙网申2026-11-01" data-name="李雪" data-customer="李建国" data-school="卡内基梅隆大学" data-major="人工智能" data-round="Round 1" data-ddl="2026-11-01" data-material="3/5" data-status="进行中" class="hover:bg-gray-50">
               <td class="px-5 py-4 text-sm text-gray-500">1</td>
+              <td class="px-5 py-4 text-sm font-medium text-gray-900">李建国</td>
               <td class="px-5 py-4">
                 <div class="flex items-center gap-3">
                   <div class="w-8 h-8 bg-gradient-to-br from-blue-500 to-purple-500 rounded-full flex items-center justify-center">
@@ -768,27 +771,20 @@
               <td class="px-5 py-4 text-sm text-gray-900">卡内基梅隆大学</td>
               <td class="px-5 py-4 text-sm text-gray-600">人工智能</td>
               <td class="px-5 py-4">
-                <button class="text-sm text-blue-600 hover:text-blue-800 font-medium underline" data-dom-id="btn-timeline-1">
-                  Round 1
-                </button>
+                <button class="text-sm text-blue-600 hover:text-blue-800 font-medium underline" data-dom-id="btn-timeline-1">Round 1</button>
               </td>
-              <td class="px-5 py-4"><span class="text-sm font-medium text-orange-600" title="2026-11-01">剩余 76 天</span></td>
-              <td class="px-5 py-4 text-sm text-gray-600">33 天</td>
+              <td class="px-5 py-4"><span class="status-badge inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">进行中</span></td>
+              <td class="px-5 py-4 text-sm text-gray-900">孙网申</td>
+              <td class="px-5 py-4"><span class="text-sm font-medium text-orange-600" title="2026-11-01">剩 75 天</span></td>
+              <td class="px-5 py-4 text-sm text-gray-600">12 天</td>
               <td class="px-5 py-4"><div class="flex items-center gap-2"><span class="text-sm font-semibold text-gray-800">3/5</span><span class="w-14 h-1.5 rounded-full bg-gray-100 overflow-hidden"><span class="block h-full bg-blue-500 rounded-full" style="width:60%"></span></span></div></td>
-              <td class="px-5 py-4">
-                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
-                  进行中
-                </span>
-              </td>
-              <td class="px-5 py-4 text-sm text-gray-500">2026-07-15 09:30</td>
-              <td class="px-5 py-4">
-                <button class="text-blue-600 hover:text-blue-800 text-sm font-medium" data-dom-id="btn-app-task-detail-1">
-                  详情
-                </button>
+              <td class="px-5 py-4 whitespace-nowrap">
+                <div class="flex items-center gap-3"><button class="text-blue-600 hover:text-blue-800 text-sm font-medium" data-dom-id="btn-app-task-detail-1">进入网申详情页</button><button class="text-orange-600 hover:text-orange-800 text-sm font-medium" onclick="event.stopPropagation(); showTaskToast('已催办该任务', 'success')">催办</button></div>
               </td>
             </tr>
-            <tr data-kw="2王明斯坦福大学计算机科学Round2剩余120天6/6已完成" data-name="王明" data-school="斯坦福大学" data-major="计算机科学" data-round="Round2" data-round-start="2026-08-01" data-base-status="已完成" data-ddl="2026-12-15" data-material="6/6" data-status="已完成" data-time="2026-07-1414:20" class="hover:bg-gray-50">
+            <tr data-kw="2王建华王明斯坦福大学计算机科学Round2已提交孙网申2026-12-15" data-name="王明" data-customer="王建华" data-school="斯坦福大学" data-major="计算机科学" data-round="Round 2" data-ddl="2026-12-15" data-material="6/6" data-status="已提交" class="hover:bg-gray-50">
               <td class="px-5 py-4 text-sm text-gray-500">2</td>
+              <td class="px-5 py-4 text-sm font-medium text-gray-900">王建华</td>
               <td class="px-5 py-4">
                 <div class="flex items-center gap-3">
                   <div class="w-8 h-8 bg-gradient-to-br from-orange-500 to-red-500 rounded-full flex items-center justify-center">
@@ -800,27 +796,20 @@
               <td class="px-5 py-4 text-sm text-gray-900">斯坦福大学</td>
               <td class="px-5 py-4 text-sm text-gray-600">计算机科学</td>
               <td class="px-5 py-4">
-                <button class="text-sm text-blue-600 hover:text-blue-800 font-medium underline" data-dom-id="btn-timeline-2">
-                  Round 2
-                </button>
+                <button class="text-sm text-blue-600 hover:text-blue-800 font-medium underline" data-dom-id="btn-timeline-2">Round 2</button>
               </td>
-              <td class="px-5 py-4"><span class="text-sm font-medium text-gray-700" title="2026-12-15">剩余 120 天</span></td>
-              <td class="px-5 py-4 text-sm text-gray-600">34 天</td>
+              <td class="px-5 py-4"><span class="status-badge inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">已提交</span></td>
+              <td class="px-5 py-4 text-sm text-gray-900">孙网申</td>
+              <td class="px-5 py-4"><span class="text-sm font-medium text-gray-700" title="2026-12-15">剩 119 天</span></td>
+              <td class="px-5 py-4 text-sm text-gray-600">—</td>
               <td class="px-5 py-4"><div class="flex items-center gap-2"><span class="text-sm font-semibold text-gray-800">6/6</span><span class="w-14 h-1.5 rounded-full bg-gray-100 overflow-hidden"><span class="block h-full bg-green-500 rounded-full" style="width:100%"></span></span></div></td>
-              <td class="px-5 py-4">
-                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
-                  已完成
-                </span>
-              </td>
-              <td class="px-5 py-4 text-sm text-gray-500">2026-07-14 14:20</td>
-              <td class="px-5 py-4">
-                <button class="text-blue-600 hover:text-blue-800 text-sm font-medium" data-dom-id="btn-app-task-detail-2">
-                  详情
-                </button>
+              <td class="px-5 py-4 whitespace-nowrap">
+                <div class="flex items-center gap-3"><button class="text-blue-600 hover:text-blue-800 text-sm font-medium" data-dom-id="btn-app-task-detail-2">进入网申详情页</button><button class="text-orange-600 hover:text-orange-800 text-sm font-medium" onclick="event.stopPropagation(); showTaskToast('已催办该任务', 'success')">催办</button></div>
               </td>
             </tr>
-            <tr data-kw="3张华麻省理工学院数据科学Round1剩余74天4/6补交材料中" data-name="张华" data-school="麻省理工学院" data-major="数据科学" data-round="Round1" data-round-start="2026-08-10" data-base-status="补交材料中" data-ddl="2026-10-30" data-material="4/6" data-status="补交材料中" data-time="2026-07-1311:00" class="hover:bg-gray-50">
+            <tr data-kw="3张国庆张华麻省理工学院数据科学Round1进行中钱网申2026-10-30" data-name="张华" data-customer="张国庆" data-school="麻省理工学院" data-major="数据科学" data-round="Round 1" data-ddl="2026-10-30" data-material="4/6" data-status="进行中" class="hover:bg-gray-50">
               <td class="px-5 py-4 text-sm text-gray-500">3</td>
+              <td class="px-5 py-4 text-sm font-medium text-gray-900">张国庆</td>
               <td class="px-5 py-4">
                 <div class="flex items-center gap-3">
                   <div class="w-8 h-8 bg-gradient-to-br from-green-500 to-teal-500 rounded-full flex items-center justify-center">
@@ -832,27 +821,20 @@
               <td class="px-5 py-4 text-sm text-gray-900">麻省理工学院</td>
               <td class="px-5 py-4 text-sm text-gray-600">数据科学</td>
               <td class="px-5 py-4">
-                <button class="text-sm text-blue-600 hover:text-blue-800 font-medium underline" data-dom-id="btn-timeline-3">
-                  Round 1
-                </button>
+                <button class="text-sm text-blue-600 hover:text-blue-800 font-medium underline" data-dom-id="btn-timeline-3">Round 1</button>
               </td>
-              <td class="px-5 py-4"><span class="text-sm font-medium text-orange-600" title="2026-10-30">剩余 74 天</span></td>
-              <td class="px-5 py-4 text-sm text-gray-600">35 天</td>
+              <td class="px-5 py-4"><span class="status-badge inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">进行中</span><span class="ml-1 inline-flex items-center px-1.5 py-0.5 rounded text-xs font-medium border border-orange-300 text-orange-600">补交材料</span></td>
+              <td class="px-5 py-4 text-sm text-gray-900">钱网申</td>
+              <td class="px-5 py-4"><span class="text-sm font-medium text-orange-600" title="2026-10-30">剩 73 天</span></td>
+              <td class="px-5 py-4 text-sm text-gray-600">8 天</td>
               <td class="px-5 py-4"><div class="flex items-center gap-2"><span class="text-sm font-semibold text-gray-800">4/6</span><span class="w-14 h-1.5 rounded-full bg-gray-100 overflow-hidden"><span class="block h-full bg-blue-500 rounded-full" style="width:67%"></span></span></div></td>
-              <td class="px-5 py-4">
-                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
-                  补交材料中
-                </span>
-              </td>
-              <td class="px-5 py-4 text-sm text-gray-500">2026-07-13 11:00</td>
-              <td class="px-5 py-4">
-                <button class="text-blue-600 hover:text-blue-800 text-sm font-medium" data-dom-id="btn-app-task-detail-3">
-                  详情
-                </button>
+              <td class="px-5 py-4 whitespace-nowrap">
+                <div class="flex items-center gap-3"><button class="text-blue-600 hover:text-blue-800 text-sm font-medium" data-dom-id="btn-app-task-detail-3">进入网申详情页</button><button class="text-orange-600 hover:text-orange-800 text-sm font-medium" onclick="event.stopPropagation(); showTaskToast('已催办该任务', 'success')">催办</button></div>
               </td>
             </tr>
-            <tr data-kw="4刘芳哈佛大学公共卫生Round1剩余95天5/5审核中" data-name="刘芳" data-school="哈佛大学" data-major="公共卫生" data-round="Round1" data-round-start="2026-08-05" data-base-status="审核中" data-ddl="2026-11-20" data-material="5/5" data-status="审核中" data-time="2026-07-1216:45" class="hover:bg-gray-50">
+            <tr data-kw="4刘志强刘芳哈佛大学公共卫生Round1审核中钱网申2026-11-20" data-name="刘芳" data-customer="刘志强" data-school="哈佛大学" data-major="公共卫生" data-round="Round 1" data-ddl="2026-11-20" data-material="5/5" data-status="审核中" class="hover:bg-gray-50">
               <td class="px-5 py-4 text-sm text-gray-500">4</td>
+              <td class="px-5 py-4 text-sm font-medium text-gray-900">刘志强</td>
               <td class="px-5 py-4">
                 <div class="flex items-center gap-3">
                   <div class="w-8 h-8 bg-gradient-to-br from-pink-500 to-rose-500 rounded-full flex items-center justify-center">
@@ -864,27 +846,20 @@
               <td class="px-5 py-4 text-sm text-gray-900">哈佛大学</td>
               <td class="px-5 py-4 text-sm text-gray-600">公共卫生</td>
               <td class="px-5 py-4">
-                <button class="text-sm text-blue-600 hover:text-blue-800 font-medium underline" data-dom-id="btn-timeline-4">
-                  Round 1
-                </button>
+                <button class="text-sm text-blue-600 hover:text-blue-800 font-medium underline" data-dom-id="btn-timeline-4">Round 1</button>
               </td>
-              <td class="px-5 py-4"><span class="text-sm font-medium text-gray-700" title="2026-11-20">剩余 95 天</span></td>
-              <td class="px-5 py-4 text-sm text-gray-600">36 天</td>
+              <td class="px-5 py-4"><span class="status-badge inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-orange-100 text-orange-800">审核中</span></td>
+              <td class="px-5 py-4 text-sm text-gray-900">钱网申</td>
+              <td class="px-5 py-4"><span class="text-sm font-medium text-gray-700" title="2026-11-20">剩 94 天</span></td>
+              <td class="px-5 py-4 text-sm text-gray-600">2 天</td>
               <td class="px-5 py-4"><div class="flex items-center gap-2"><span class="text-sm font-semibold text-gray-800">5/5</span><span class="w-14 h-1.5 rounded-full bg-gray-100 overflow-hidden"><span class="block h-full bg-green-500 rounded-full" style="width:100%"></span></span></div></td>
-              <td class="px-5 py-4">
-                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-purple-100 text-purple-800">
-                  审核中
-                </span>
-              </td>
-              <td class="px-5 py-4 text-sm text-gray-500">2026-07-12 16:45</td>
-              <td class="px-5 py-4">
-                <button class="text-blue-600 hover:text-blue-800 text-sm font-medium" data-dom-id="btn-app-task-detail-4">
-                  详情
-                </button>
+              <td class="px-5 py-4 whitespace-nowrap">
+                <div class="flex items-center gap-3"><button class="text-blue-600 hover:text-blue-800 text-sm font-medium" data-dom-id="btn-app-task-detail-4">进入网申详情页</button><button class="text-orange-600 hover:text-orange-800 text-sm font-medium" onclick="event.stopPropagation(); showTaskToast('已催办该任务', 'success')">催办</button></div>
               </td>
             </tr>
-            <tr data-kw="5陈磊剑桥大学金融学Round2剩余29天2/5未开始" data-name="陈磊" data-school="剑桥大学" data-major="金融学" data-round="Round2" data-round-start="2026-08-20" data-base-status="进行中" data-ddl="2026-09-15" data-material="2/5" data-status="未开始" data-time="2026-07-1108:15" class="hover:bg-gray-50">
+            <tr data-kw="5陈国强陈磊剑桥大学金融学Round2未开始—2026-09-15" data-name="陈磊" data-customer="陈国强" data-school="剑桥大学" data-major="金融学" data-round="Round 2" data-ddl="2026-09-15" data-material="2/5" data-status="未开始" class="hover:bg-gray-50">
               <td class="px-5 py-4 text-sm text-gray-500">5</td>
+              <td class="px-5 py-4 text-sm font-medium text-gray-900">陈国强</td>
               <td class="px-5 py-4">
                 <div class="flex items-center gap-3">
                   <div class="w-8 h-8 bg-gradient-to-br from-indigo-500 to-cyan-500 rounded-full flex items-center justify-center">
@@ -896,30 +871,48 @@
               <td class="px-5 py-4 text-sm text-gray-900">剑桥大学</td>
               <td class="px-5 py-4 text-sm text-gray-600">金融学</td>
               <td class="px-5 py-4">
-                <button class="text-sm text-blue-600 hover:text-blue-800 font-medium underline" data-dom-id="btn-timeline-5">
-                  Round 2
-                </button>
+                <button class="text-sm text-blue-600 hover:text-blue-800 font-medium underline" data-dom-id="btn-timeline-5">Round 2</button>
               </td>
-              <td class="px-5 py-4"><span class="text-sm font-medium text-red-600" title="2026-09-15">剩余 29 天</span></td>
-              <td class="px-5 py-4 text-sm text-gray-600">37 天</td>
+              <td class="px-5 py-4"><span class="status-badge inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-700">未开始</span></td>
+              <td class="px-5 py-4 text-sm text-gray-900">—</td>
+              <td class="px-5 py-4"><span class="text-sm font-medium text-red-600" title="2026-09-15">剩 28 天</span></td>
+              <td class="px-5 py-4 text-sm text-gray-600">—</td>
               <td class="px-5 py-4"><div class="flex items-center gap-2"><span class="text-sm font-semibold text-gray-800">2/5</span><span class="w-14 h-1.5 rounded-full bg-gray-100 overflow-hidden"><span class="block h-full bg-blue-500 rounded-full" style="width:40%"></span></span></div></td>
-              <td class="px-5 py-4">
-                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-700">
-                  未开始
-                </span>
-              </td>
-              <td class="px-5 py-4 text-sm text-gray-500">2026-07-11 08:15</td>
-              <td class="px-5 py-4">
-                <button class="text-blue-600 hover:text-blue-800 text-sm font-medium" data-dom-id="btn-app-task-detail-5">
-                  详情
-                </button>
+              <td class="px-5 py-4 whitespace-nowrap">
+                <div class="flex items-center gap-3"><button class="text-blue-600 hover:text-blue-800 text-sm font-medium" data-dom-id="btn-app-task-detail-5">进入网申详情页</button><button class="text-orange-600 hover:text-orange-800 text-sm font-medium" onclick="event.stopPropagation(); showTaskToast('已催办该任务', 'success')">催办</button></div>
               </td>
             </tr>
-                      <tr id="flt-empty" class="hidden">
-              <td colspan="11" class="px-6 py-10 text-center text-sm text-gray-400">暂无符合条件的数据，请调整筛选条件</td>
+            <tr data-kw="6赵文华赵婷哥伦比亚大学经济学Round1待领取孙网申2026-10-17" data-name="赵婷" data-customer="赵文华" data-school="哥伦比亚大学" data-major="经济学" data-round="Round 1" data-ddl="2026-10-17" data-material="3/5" data-status="待领取" class="hover:bg-gray-50">
+              <td class="px-5 py-4 text-sm text-gray-500">6</td>
+              <td class="px-5 py-4 text-sm font-medium text-gray-900">赵文华</td>
+              <td class="px-5 py-4">
+                <div class="flex items-center gap-3">
+                  <div class="w-8 h-8 bg-gradient-to-br from-cyan-500 to-blue-500 rounded-full flex items-center justify-center">
+                    <span class="text-white text-xs font-medium">赵</span>
+                  </div>
+                  <span class="text-sm font-medium text-gray-900">赵婷</span>
+                </div>
+              </td>
+              <td class="px-5 py-4 text-sm text-gray-900">哥伦比亚大学</td>
+              <td class="px-5 py-4 text-sm text-gray-600">经济学</td>
+              <td class="px-5 py-4">
+                <button class="text-sm text-blue-600 hover:text-blue-800 font-medium underline" data-dom-id="btn-timeline-6">Round 1</button>
+              </td>
+              <td class="px-5 py-4"><span class="status-badge inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">待领取</span></td>
+              <td class="px-5 py-4 text-sm text-gray-900">孙网申</td>
+              <td class="px-5 py-4"><span class="text-sm font-medium text-gray-700" title="2026-10-17">剩 60 天</span></td>
+              <td class="px-5 py-4 text-sm text-gray-600">1 天</td>
+              <td class="px-5 py-4"><div class="flex items-center gap-2"><span class="text-sm font-semibold text-gray-800">3/5</span><span class="w-14 h-1.5 rounded-full bg-gray-100 overflow-hidden"><span class="block h-full bg-blue-500 rounded-full" style="width:60%"></span></span></div></td>
+              <td class="px-5 py-4 whitespace-nowrap">
+                <div class="flex items-center gap-3"><button class="text-blue-600 hover:text-blue-800 text-sm font-medium" data-dom-id="btn-app-task-detail-6">进入网申详情页</button><button class="text-orange-600 hover:text-orange-800 text-sm font-medium" onclick="event.stopPropagation(); showTaskToast('已催办该任务', 'success')">催办</button></div>
+              </td>
+            </tr>
+            <tr id="flt-empty" class="hidden">
+              <td colspan="12" class="px-6 py-10 text-center text-sm text-gray-400">暂无符合条件的数据，请调整筛选条件</td>
             </tr>
 </tbody>
         </table>
+        </div>
 
         <!-- 分页控件 -->
         <div class="flex items-center justify-between px-6 py-4 border-t border-gray-100">
@@ -1097,7 +1090,7 @@
       // 确认签收
       document.querySelectorAll('[data-dom-id^="btn-confirm-"]').forEach(function(el) {
         el.addEventListener('click', function() {
-          alert('任务已确认签收，状态更新为"未开始"');
+          alert('任务已领取，状态更新为"进行中"');
           var pendingArea = document.getElementById('pendingConfirmArea');
           if (pendingArea) {
             pendingArea.style.display = 'none';
@@ -1192,37 +1185,35 @@
       showTaskToast('已接收网申任务（孙梓涵 - 哥伦比亚大学/金融工程），任务已加入网申任务列表', 'success');
       closePendingDrawer();
 
-      // 接收的任务追加到下方网申任务列表，状态为"未开始"
+      // 领取的任务追加到下方网申任务列表，状态为「进行中」
       var tbody = document.getElementById('appTaskTbody');
       var newIndex = tbody.querySelectorAll('tr[data-kw]').length + 1;
       var now = new Date();
       var timeStr = now.getFullYear() + '-' + String(now.getMonth() + 1).padStart(2, '0') + '-' + String(now.getDate()).padStart(2, '0') + ' ' + String(now.getHours()).padStart(2, '0') + ':' + String(now.getMinutes()).padStart(2, '0');
-      var timeCompact = timeStr.replace(' ', '');
-      var kw = newIndex + '孙梓涵哥伦比亚大学金融工程Round1剩余106天0/5未开始' + timeCompact + '详情';
+      var kw = newIndex + '孙志远孙梓涵哥伦比亚大学金融工程Round1进行中孙网申2026-12-01';
       var tr = document.createElement('tr');
       tr.className = 'hover:bg-gray-50';
       tr.setAttribute('data-kw', kw);
       tr.setAttribute('data-name', '孙梓涵');
+      tr.setAttribute('data-customer', '孙志远');
       tr.setAttribute('data-school', '哥伦比亚大学');
       tr.setAttribute('data-major', '金融工程');
       tr.setAttribute('data-round', 'Round1');
-      tr.setAttribute('data-round-start', '2026-09-01');
-      tr.setAttribute('data-base-status', '进行中');
       tr.setAttribute('data-ddl', '2026-12-01');
       tr.setAttribute('data-material', '0/5');
-      tr.setAttribute('data-status', '未开始');
-      tr.setAttribute('data-time', timeCompact);
+      tr.setAttribute('data-status', '进行中');
       tr.innerHTML = '<td class="px-5 py-4 text-sm text-gray-500">' + newIndex + '</td>' +
+        '<td class="px-5 py-4 text-sm font-medium text-gray-900">孙志远</td>' +
         '<td class="px-5 py-4"><div class="flex items-center gap-3"><div class="w-8 h-8 bg-gradient-to-br from-green-500 to-teal-500 rounded-full flex items-center justify-center"><span class="text-white text-xs font-medium">孙</span></div><span class="text-sm font-medium text-gray-900">孙梓涵</span></div></td>' +
         '<td class="px-5 py-4 text-sm text-gray-900">哥伦比亚大学</td>' +
         '<td class="px-5 py-4 text-sm text-gray-600">金融工程</td>' +
         '<td class="px-5 py-4"><button class="text-sm text-blue-600 hover:text-blue-800 font-medium underline" onclick="document.getElementById(\'timelineModal\').classList.remove(\'hidden\')">Round 1</button></td>' +
-        '<td class="px-5 py-4"><span class="text-sm font-medium text-gray-700" title="2026-12-01">剩余 106 天</span></td>' +
+        '<td class="px-5 py-4"><span class="status-badge inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">进行中</span></td>' +
+        '<td class="px-5 py-4 text-sm text-gray-900">孙网申</td>' +
+        '<td class="px-5 py-4"><span class="text-sm font-medium text-gray-700" title="2026-12-01">剩 105 天</span></td>' +
         '<td class="px-5 py-4 text-sm text-gray-600">0 天</td>' +
         '<td class="px-5 py-4"><div class="flex items-center gap-2"><span class="text-sm font-semibold text-gray-800">0/5</span><span class="w-14 h-1.5 rounded-full bg-gray-100 overflow-hidden"><span class="block h-full bg-blue-500 rounded-full" style="width:0%"></span></span></div></td>' +
-        '<td class="px-5 py-4"><span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-700">未开始</span></td>' +
-        '<td class="px-5 py-4 text-sm text-gray-500">' + timeStr + '</td>' +
-        '<td class="px-5 py-4"><button class="text-blue-600 hover:text-blue-800 text-sm font-medium" onclick="location.href=\'网申任务详情页 - 留学申请管理系统.html\'">详情</button></td>';
+        '<td class="px-5 py-4 whitespace-nowrap"><div class="flex items-center gap-3"><button class="text-blue-600 hover:text-blue-800 text-sm font-medium" onclick="location.href=\'网申任务详情页 - 留学申请管理系统.html\'">进入网申详情页</button><button class="text-orange-600 hover:text-orange-800 text-sm font-medium" onclick="event.stopPropagation(); showTaskToast(\'已催办该任务\', \'success\')">催办</button></div></td>';
       var emptyRow = document.getElementById('flt-empty');
       if (emptyRow) { tbody.insertBefore(tr, emptyRow); } else { tbody.appendChild(tr); }
       applyFilter();
@@ -1236,39 +1227,19 @@
     }
     /* ---------- 高级筛选 ---------- */
     function gv(id) { var el = document.getElementById(id); return el ? (el.value || '').trim() : ''; }
-    function syncRoundStatuses() {
-      var today = new Date();
-      today.setHours(0, 0, 0, 0);
-      document.querySelectorAll('#appTaskTbody tr[data-round-start]').forEach(function(tr) {
-        var start = new Date(tr.dataset.roundStart + 'T00:00:00');
-        var status = today < start ? '未开始' : (tr.dataset.baseStatus || tr.dataset.status);
-        tr.dataset.status = status;
-        var badge = tr.querySelector('td:nth-child(9) span');
-        if (!badge) return;
-        badge.textContent = status;
-        var colors = {
-          '未开始': 'bg-gray-100 text-gray-700',
-          '进行中': 'bg-blue-100 text-blue-800',
-          '审核中': 'bg-purple-100 text-purple-800',
-          '补交材料中': 'bg-yellow-100 text-yellow-800',
-          '已完成': 'bg-green-100 text-green-800'
-        };
-        badge.className = 'inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ' + colors[status];
-      });
-    }
     function applyFilter() {
       var rows = document.querySelectorAll('#appTaskTbody tr[data-kw]');
       var visible = 0;
       rows.forEach(function (tr) {
         var d = tr.dataset, ok = true;
         var v_kw = gv('flt-kw'); if (ok && v_kw && d.kw.indexOf(v_kw) < 0) ok = false;
+        var v_customer = gv('flt-customer'); if (ok && v_customer && (d.customer||'').indexOf(v_customer) < 0) ok = false;
         var v_name = gv('flt-name'); if (ok && v_name && (d.name||'').indexOf(v_name) < 0) ok = false;
         var v_school = gv('flt-school'); if (ok && v_school && (d.school||'').indexOf(v_school) < 0) ok = false;
         var v_major = gv('flt-major'); if (ok && v_major && (d.major||'').indexOf(v_major) < 0) ok = false;
         var v_round = gv('flt-round'); if (ok && v_round && d.round !== v_round) ok = false;
         var v_ddl = gv('flt-ddl'); if (ok && v_ddl && (d.ddl||'').indexOf(v_ddl) < 0) ok = false;
         var v_status = gv('flt-status'); if (ok && v_status && d.status !== v_status) ok = false;
-        var v_time = gv('flt-time'); if (ok && v_time && (d.time||'').indexOf(v_time) < 0) ok = false;
         tr.classList.toggle('hidden', !ok);
         if (ok) visible++;
       });
@@ -1276,7 +1247,7 @@
       if (empty) empty.classList.toggle('hidden', visible > 0);
     }
     function resetFilter() {
-      ['flt-kw','flt-name','flt-school','flt-major','flt-round','flt-ddl','flt-status','flt-time'].forEach(function (id) { var el = document.getElementById(id); if (el) el.value = ''; });
+      ['flt-kw','flt-customer','flt-name','flt-school','flt-major','flt-round','flt-ddl','flt-status'].forEach(function (id) { var el = document.getElementById(id); if (el) el.value = ''; });
       applyFilter();
     }
     function toggleMore() {
@@ -1297,7 +1268,6 @@
     }
     /* 回车快捷搜索 */
     document.addEventListener('DOMContentLoaded', function() {
-      syncRoundStatuses();
       document.querySelectorAll('input[id^="flt-"]').forEach(function (inp) {
         inp.addEventListener('keydown', function (e) { if (e.key === 'Enter') applyFilter(); });
       });

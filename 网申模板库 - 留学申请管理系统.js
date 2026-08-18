@@ -26,11 +26,11 @@
   }
   window.filterTemplates = function () {
     var keyword = document.getElementById('templateKeyword').value.trim().toLowerCase();
-    var region = document.getElementById('templateRegion').value;
+    var region = document.getElementById('templateRegion').value.trim().toLowerCase();
     var org = document.getElementById('templateOrganization').value;
     var visible = 0;
     document.querySelectorAll('#templateRows tr').forEach(function (row) {
-      var ok = (!keyword || row.dataset.search.toLowerCase().indexOf(keyword) >= 0) && (!region || row.dataset.region === region) && (!org || row.dataset.org === org);
+      var ok = (!keyword || row.dataset.search.toLowerCase().indexOf(keyword) >= 0) && (!region || row.dataset.region.toLowerCase().indexOf(region) >= 0) && (!org || row.dataset.org === org);
       row.classList.toggle('hidden', !ok);
       if (ok) visible++;
     });

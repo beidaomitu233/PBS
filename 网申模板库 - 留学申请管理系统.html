@@ -34,7 +34,7 @@
       <section class="card p-5 mb-5">
         <div class="flex items-end gap-4 flex-wrap">
           <div class="flex-1 min-w-[240px]"><label class="block text-sm text-gray-600 mb-2">学校 / 专业</label><input id="templateKeyword" class="input w-full" placeholder="搜索学校或专业" oninput="filterTemplates()"></div>
-          <div><label class="block text-sm text-gray-600 mb-2">国家 / 地区</label><select id="templateRegion" class="input w-36" onchange="filterTemplates()"><option value="">全部</option><option>美国</option><option>英国</option><option>中国香港</option></select></div>
+          <div><label class="block text-sm text-gray-600 mb-2">国家 / 地区 <span class="text-xs text-gray-400 font-normal">（选填）</span></label><input id="templateRegion" class="input w-36" placeholder="手动输入" oninput="filterTemplates()"></div>
           <div><label class="block text-sm text-gray-600 mb-2">所属机构</label><select id="templateOrganization" class="input min-w-40" onchange="filterTemplates()"><option value="">全部机构</option><option>PBS留学总部</option><option>上海启明留学</option><option>北京知行教育</option></select></div>
           <button class="btn" onclick="resetTemplateFilter()">重置</button>
         </div>

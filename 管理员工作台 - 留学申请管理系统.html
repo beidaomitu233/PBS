@@ -3,7 +3,7 @@
 <html lang="zh-CN" class="light" data-theme="light"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>管理员工作台 - 留学申请管理系统</title>
+  <title>角色工作台 - 留学申请管理系统</title>
   <script src="./assets/vendor/tailwind-runtime.js"></script>
   <style data-vd-inlined-stylesheet="../colors_and_type.css">
 /* PBS留学CRM系统 - 企业级设计规范 */
@@ -294,7 +294,89 @@
         border-radius: 50%;
       }
     </style>
-  </head>
+  <style>
+  /* ================= 角色工作台（角色 × 指标 × 卡片 × 今日待办 × 日历 × 数据看板） ================= */
+  .wb-head{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;margin:16px 0 14px;flex-wrap:wrap}
+  .wb-title{font-size:20px;font-weight:600;color:#1f2937;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+  .wb-scope{font-size:12px;font-weight:500;padding:2px 10px;border-radius:999px}
+  .wb-sub{font-size:13px;color:#9ca3af;margin-top:4px}
+  .wb-stats{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:14px}
+  .wb-stat{flex:1;min-width:150px;background:#fff;border:1px solid #f3f4f6;border-radius:12px;padding:14px 16px;box-shadow:0 1px 2px rgba(16,24,40,.04)}
+  .wb-stat .l{font-size:13px;color:#6b7280}
+  .wb-stat .v{font-size:28px;font-weight:700;color:#111827;margin-top:6px;line-height:1}
+  .wb-stat .n{font-size:12px;color:#9ca3af;margin-top:6px}
+  .wb-stat.tone-red .v{color:#dc2626}
+  .wb-stat.tone-orange .v{color:#ea580c}
+  .wb-stat.tone-blue .v{color:#2563eb}
+  .wb-stat.tone-purple .v{color:#7c3aed}
+  .wb-cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:12px;margin-bottom:16px}
+  .wb-card{display:block;background:#fff;border:1px solid #f3f4f6;border-left:4px solid #2563eb;border-radius:12px;padding:12px 14px;text-decoration:none;transition:box-shadow .15s}
+  .wb-card:hover{box-shadow:0 6px 16px rgba(16,24,40,.08)}
+  .wb-card .m{font-size:13px;font-weight:600;color:#1f2937}
+  .wb-card .c{font-size:12px;color:#6b7280;margin-top:4px;line-height:1.5}
+  .wb-card .go{font-size:12px;margin-top:8px;font-weight:500}
+  .wb-main{display:grid;grid-template-columns:7fr 5fr;gap:16px;margin-bottom:16px}
+  @media(max-width:1100px){.wb-main{grid-template-columns:1fr}}
+  .wb-panel{background:#fff;border:1px solid #f3f4f6;border-radius:14px;padding:18px;box-shadow:0 1px 2px rgba(16,24,40,.04)}
+  .wb-panel-h{display:flex;align-items:baseline;justify-content:space-between;gap:10px;margin-bottom:12px;flex-wrap:wrap}
+  .wb-panel-t{font-size:15px;font-weight:600;color:#111827}
+  .wb-panel-n{font-size:12px;color:#9ca3af}
+  .wb-group-t{display:flex;align-items:center;gap:8px;font-size:13px;font-weight:600;color:#374151;margin:14px 0 8px}
+  .wb-group-t:first-of-type{margin-top:0}
+  .wb-group-dot{width:8px;height:8px;border-radius:999px;flex-shrink:0}
+  .wb-todo{display:flex;gap:12px;padding:12px;border:1px solid #f3f4f6;border-radius:12px;margin-bottom:8px;align-items:flex-start;transition:border-color .15s,background .15s}
+  .wb-todo:hover{border-color:#dbeafe;background:#fafbff}
+  .wb-todo-bar{width:4px;align-self:stretch;border-radius:4px;flex-shrink:0}
+  .wb-todo-b{flex:1;min-width:0}
+  .wb-todo-t{font-size:14px;font-weight:600;color:#111827;display:flex;align-items:center;gap:8px;flex-wrap:wrap;line-height:1.5}
+  .wb-tag{font-size:11px;font-weight:600;padding:1px 8px;border-radius:999px;color:#fff;flex-shrink:0}
+  .wb-todo-m{font-size:12px;color:#6b7280;margin-top:4px;line-height:1.6}
+  .wb-todo-time{font-size:12px;font-weight:600;margin-top:6px}
+  .wb-act{flex-shrink:0;font-size:12px;font-weight:500;padding:6px 12px;border-radius:8px;border:none;cursor:pointer;background:#2563eb;color:#fff}
+  .wb-act:hover{background:#1d4ed8}
+  .wb-act.ghost{background:#f5f3ff;color:#7c3aed}
+  .wb-act.ghost:hover{background:#ede9fe}
+  .wb-act.plain{background:#f3f4f6;color:#374151}
+  .wb-act.plain:hover{background:#e5e7eb}
+  /* DDL 日历 */
+  .wb-cal-h{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+  .wb-cal-t{font-size:14px;font-weight:600;color:#111827}
+  .wb-cal-nav{display:flex;gap:6px}
+  .wb-cal-nav button{width:26px;height:26px;border-radius:8px;border:1px solid #e5e7eb;background:#fff;color:#6b7280;cursor:pointer;font-size:14px;line-height:1}
+  .wb-cal-nav button:hover{background:#f3f4f6}
+  .wb-cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:4px}
+  .wb-cal-w{font-size:11px;color:#9ca3af;text-align:center;padding:4px 0}
+  .wb-day{position:relative;height:38px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:13px;color:#374151;cursor:pointer;border:1px solid transparent;background:#fff;user-select:none}
+  .wb-day:hover{background:#f3f4f6}
+  .wb-day.out{color:#d1d5db;cursor:default;background:transparent}
+  .wb-day.out:hover{background:transparent}
+  .wb-day.has{font-weight:700;color:#dc2626;background:#fef2f2}
+  .wb-day.has::after{content:'';position:absolute;bottom:4px;left:50%;transform:translateX(-50%);width:5px;height:5px;border-radius:999px;background:#dc2626}
+  .wb-day.today{border-color:#2563eb;color:#2563eb;font-weight:700}
+  .wb-day.sel{background:#2563eb;color:#fff;font-weight:700}
+  .wb-day.sel.has{background:#dc2626;color:#fff}
+  .wb-day.sel::after{background:#fff}
+  .wb-daydetail{margin-top:12px;border-top:1px dashed #e5e7eb;padding-top:12px}
+  .wb-dd{font-size:13px;font-weight:600;color:#111827;margin-bottom:8px}
+  .wb-ev{display:flex;gap:8px;align-items:flex-start;padding:8px 10px;border-radius:10px;background:#f9fafb;margin-bottom:6px}
+  .wb-ev .tg{font-size:11px;font-weight:600;padding:1px 8px;border-radius:999px;color:#fff;flex-shrink:0;margin-top:1px}
+  .wb-ev .tx{font-size:12px;color:#374151;line-height:1.6}
+  .wb-ev-empty{font-size:12px;color:#9ca3af;padding:12px;text-align:center;background:#f9fafb;border-radius:10px}
+  /* 数据看板 */
+  .wb-boards{display:grid;gap:12px}
+  .wb-board-col{background:#fff;border:1px solid #f3f4f6;border-radius:14px;padding:14px;box-shadow:0 1px 2px rgba(16,24,40,.04)}
+  .wb-board-h{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:10px}
+  .wb-board-t{font-size:13px;font-weight:600;color:#111827;display:flex;align-items:center;gap:8px}
+  .wb-board-dot{width:8px;height:8px;border-radius:999px;flex-shrink:0}
+  .wb-board-c{font-size:12px;color:#9ca3af;flex-shrink:0}
+  .wb-bitem{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;padding:9px 10px;border-radius:10px;background:#f9fafb;margin-bottom:6px}
+  .wb-bitem .nm{font-size:13px;color:#1f2937;font-weight:500;line-height:1.5}
+  .wb-bitem .mt{font-size:11px;color:#9ca3af;margin-top:2px;line-height:1.5}
+  .wb-bdg{font-size:11px;font-weight:600;padding:1px 8px;border-radius:999px;flex-shrink:0;white-space:nowrap}
+  .wb-prog{height:6px;border-radius:999px;background:#f3f4f6;overflow:hidden;margin-top:6px}
+  .wb-prog span{display:block;height:100%;border-radius:999px}
+</style>
+</head>
 <body class="min-h-screen">
   <!-- ========== 顶部导航栏 ========== -->
   <header class="bg-white border-b border-gray-200 sticky top-0 z-50 shadow-sm">
@@ -327,12 +409,12 @@
           </div>
           <div class="flex flex-col">
             <span class="text-sm font-medium text-gray-800 leading-tight">测试账号</span>
-            <span class="text-xs text-gray-400 leading-tight">超级管理员 · PBS留学总部</span>
+            <span class="text-xs text-gray-400 leading-tight">机构管理员 · 启航留学</span>
           </div>
           <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
           </svg>
-        <div id="userMenu" class="absolute top-12 right-0 w-64 bg-white rounded-xl shadow-lg border border-gray-100 py-3 hidden z-50"><div class="px-5 py-3 border-b border-gray-100"><div class="flex items-center gap-3"><div class="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-500 rounded-full flex items-center justify-center"><span class="text-white text-base font-medium">测</span></div><div><p class="text-sm font-semibold text-gray-900">测试账号</p><p class="text-xs text-blue-600 mt-0.5">超级管理员 · PBS留学总部</p><p class="text-xs text-gray-500">test@pbs.com</p></div></div></div><div class="py-1"><a href="管理员工作台 - 留学申请管理系统.html" class="flex items-center gap-3 px-5 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition-colors"><svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>个人设置</a><a href="管理员工作台 - 留学申请管理系统.html" class="flex items-center gap-3 px-5 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition-colors"><svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path></svg>退出登录</a></div><div class="px-5 py-2 border-t border-gray-100"><p class="text-xs text-gray-400">PBS留学CRM v2.5</p></div></div></div>
+        <div id="userMenu" class="absolute top-12 right-0 w-64 bg-white rounded-xl shadow-lg border border-gray-100 py-3 hidden z-50"><div class="px-5 py-3 border-b border-gray-100"><div class="flex items-center gap-3"><div class="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-500 rounded-full flex items-center justify-center"><span class="text-white text-base font-medium">测</span></div><div><p class="text-sm font-semibold text-gray-900">测试账号</p><p class="text-xs text-blue-600 mt-0.5">机构管理员 · 启航留学</p><p class="text-xs text-gray-500">test@pbs.com</p></div></div></div><div class="py-1"><a href="管理员工作台 - 留学申请管理系统.html" class="flex items-center gap-3 px-5 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition-colors"><svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>个人设置</a><a href="管理员工作台 - 留学申请管理系统.html" class="flex items-center gap-3 px-5 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition-colors"><svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path></svg>退出登录</a></div><div class="px-5 py-2 border-t border-gray-100"><p class="text-xs text-gray-400">PBS留学CRM v2.5</p></div></div></div>
       </div>
     </div>
   </header>
@@ -342,7 +424,7 @@
     <aside id="pbs-sidebar" class="w-56 bg-white border-r border-gray-200 min-h-[calc(100vh-64px)] flex flex-col"><nav class="p-4 space-y-1 flex-1">
         <a href="管理员工作台 - 留学申请管理系统.html" class="flex items-center gap-3 px-4 py-3 rounded-lg font-medium transition-colors bg-blue-50 text-blue-700"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l9-9 9 9M5 10v10a1 1 0 001 1h3a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1h3a1 1 0 001-1V10"></path></svg><span>工作台首页</span></a>
         <div><div class="flex items-center gap-3 px-4 py-3 rounded-lg font-medium text-gray-700"><svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V8a2 2 0 00-2-2h-5m-4 0V5a2 2 0 114 0v1m-4 0a2 2 0 104 0m-5 8a2 2 0 100-4 2 2 0 000 4zm0 0c1.306 0 2.417.835 2.83 2M9 14a3.001 3.001 0 00-2.83 2"></path></svg><span>学生档案</span></div><div class="ml-8 mt-1 space-y-1"><a href="学生档案列表页 - 留学申请管理系统.html" class="flex items-center gap-2 px-4 py-2 rounded-lg text-sm transition-colors text-gray-600 hover:bg-gray-50 hover:text-gray-800"><span class="w-1.5 h-1.5 rounded-full bg-gray-300"></span>学生档案列表</a></div></div>
-        <div><div class="flex items-center gap-3 px-4 py-3 rounded-lg font-medium text-gray-700"><svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"></path></svg><span>PMO监控台</span></div><div class="ml-8 mt-1 space-y-1"><a href="项目池列表页 - 留学申请管理系统.html" class="flex items-center gap-2 px-4 py-2 rounded-lg text-sm transition-colors text-gray-600 hover:bg-gray-50 hover:text-gray-800"><span class="w-1.5 h-1.5 rounded-full bg-gray-300"></span>项目池列表</a><a href="PMO看板 - 留学申请管理系统.html" class="flex items-center gap-2 px-4 py-2 rounded-lg text-sm transition-colors text-gray-600 hover:bg-gray-50 hover:text-gray-800"><span class="w-1.5 h-1.5 rounded-full bg-gray-300"></span>PMO看板</a></div></div>
+        <div><div class="flex items-center gap-3 px-4 py-3 rounded-lg font-medium text-gray-700"><svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"></path></svg><span>PMO监控台</span></div><div class="ml-8 mt-1 space-y-1"><a href="项目池列表页 - 留学申请管理系统.html" class="flex items-center gap-2 px-4 py-2 rounded-lg text-sm transition-colors text-gray-600 hover:bg-gray-50 hover:text-gray-800"><span class="w-1.5 h-1.5 rounded-full bg-gray-300"></span>项目池列表</a></div></div>
         <div><div class="flex items-center gap-3 px-4 py-3 rounded-lg font-medium text-gray-700"><svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg><span>项目管理</span></div><div class="ml-8 mt-1 space-y-1"><a href="我的项目列表页 - 留学申请管理系统.html" class="flex items-center gap-2 px-4 py-2 rounded-lg text-sm transition-colors text-gray-600 hover:bg-gray-50 hover:text-gray-800"><span class="w-1.5 h-1.5 rounded-full bg-gray-300"></span>我的项目列表</a></div></div>
         <div><div class="flex items-center gap-3 px-4 py-3 rounded-lg font-medium text-gray-700"><svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg><span>文书交付</span></div><div class="ml-8 mt-1 space-y-1"><a href="任务列表页 - 文书交付系统.html" class="flex items-center gap-2 px-4 py-2 rounded-lg text-sm transition-colors text-gray-600 hover:bg-gray-50 hover:text-gray-800"><span class="w-1.5 h-1.5 rounded-full bg-gray-300"></span>任务列表</a><a href="模板库列表 - 文书交付系统.html" class="flex items-center gap-2 px-4 py-2 rounded-lg text-sm transition-colors text-gray-600 hover:bg-gray-50 hover:text-gray-800"><span class="w-1.5 h-1.5 rounded-full bg-gray-300"></span>模板库</a><a href="案例库 - 文书交付系统.html" class="flex items-center gap-2 px-4 py-2 rounded-lg text-sm transition-colors text-gray-600 hover:bg-gray-50 hover:text-gray-800"><span class="w-1.5 h-1.5 rounded-full bg-gray-300"></span>案例库</a></div></div>
         <div><div class="flex items-center gap-3 px-4 py-3 rounded-lg font-medium text-gray-700"><svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg><span>网申管理</span></div><div class="ml-8 mt-1 space-y-1"><a href="网申任务列表页 - 留学申请管理系统.html" class="flex items-center gap-2 px-4 py-2 rounded-lg text-sm transition-colors text-gray-600 hover:bg-gray-50 hover:text-gray-800"><span class="w-1.5 h-1.5 rounded-full bg-gray-300"></span>网申任务列表</a></div></div>
@@ -352,616 +434,35 @@
         <div><div class="flex items-center gap-3 px-4 py-3 rounded-lg font-medium text-gray-700"><svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14l9-5-9-5-9 5 9 5zm0 0l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z"></path></svg><span>选校工作台</span></div><div class="ml-8 mt-1 space-y-1"><a href="选校订单池页 - 留学申请管理系统.html" class="flex items-center gap-2 px-4 py-2 rounded-lg text-sm transition-colors text-gray-600 hover:bg-gray-50 hover:text-gray-800"><span class="w-1.5 h-1.5 rounded-full bg-gray-300"></span>选校订单池</a><a href="选校任务列表页 - 留学申请管理系统.html" class="flex items-center gap-2 px-4 py-2 rounded-lg text-sm transition-colors text-gray-600 hover:bg-gray-50 hover:text-gray-800"><span class="w-1.5 h-1.5 rounded-full bg-gray-300"></span>选校任务列表</a><a href="选校工作台页 - 留学申请管理系统.html" class="flex items-center gap-2 px-4 py-2 rounded-lg text-sm transition-colors text-gray-600 hover:bg-gray-50 hover:text-gray-800"><span class="w-1.5 h-1.5 rounded-full bg-gray-300"></span>选校工作台</a></div></div>
         <div><div class="flex items-center gap-3 px-4 py-3 rounded-lg font-medium text-gray-700"><svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path></svg><span>用户管理</span></div><div class="ml-8 mt-1 space-y-1"><a href="用户管理 - 留学申请管理系统.html" class="flex items-center gap-2 px-4 py-2 rounded-lg text-sm transition-colors text-gray-600 hover:bg-gray-50 hover:text-gray-800"><span class="w-1.5 h-1.5 rounded-full bg-gray-300"></span>用户管理</a><a href="角色权限管理 - 留学申请管理系统.html" class="flex items-center gap-2 px-4 py-2 rounded-lg text-sm transition-colors text-gray-600 hover:bg-gray-50 hover:text-gray-800"><span class="w-1.5 h-1.5 rounded-full bg-gray-300"></span>角色权限管理</a><a href="操作日志审计 - 留学申请管理系统.html" class="flex items-center gap-2 px-4 py-2 rounded-lg text-sm transition-colors text-gray-600 hover:bg-gray-50 hover:text-gray-800"><span class="w-1.5 h-1.5 rounded-full bg-gray-300"></span>操作日志审计</a></div></div>
         <a href="人员管理 - PBS留学CRM系统.html" class="flex items-center gap-3 px-4 py-3 rounded-lg font-medium transition-colors text-gray-600 hover:text-gray-800 hover:bg-gray-50"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path></svg><span>人员管理</span></a>
-      </nav><div class="p-4 border-t border-gray-100"><div class="flex items-center gap-3 px-3 py-3 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl"><div class="w-9 h-9 bg-gradient-to-br from-blue-500 to-purple-500 rounded-full flex items-center justify-center flex-shrink-0"><span class="text-white text-sm font-medium">测</span></div><div class="min-w-0"><p class="text-sm font-semibold text-gray-800 truncate">测试账号</p><p class="text-xs text-blue-600 truncate">超级管理员</p></div></div></div></aside>
+      </nav><div class="p-4 border-t border-gray-100"><div class="flex items-center gap-3 px-3 py-3 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl"><div class="w-9 h-9 bg-gradient-to-br from-blue-500 to-purple-500 rounded-full flex items-center justify-center flex-shrink-0"><span class="text-white text-sm font-medium">测</span></div><div class="min-w-0"><p class="text-sm font-semibold text-gray-800 truncate">测试账号</p><p class="text-xs text-blue-600 truncate">机构管理员</p></div></div></div></aside>
 
     <!-- ========== 主内容区 ========== -->
     <main class="flex-1 p-6 overflow-auto">
       <!-- 页面标题栏 -->
-      <div class="flex items-center justify-between mb-6">
-        <div>
-          <h1 class="text-2xl font-semibold text-gray-800">管理员工作台</h1>
-          <p class="text-sm text-gray-400 mt-1">全局监管 · 欢迎回来，今天有 <span class="text-blue-600 font-medium">6</span> 项待审核事项需要您处理</p>
-        </div>
-        <div class="flex items-center gap-3">
-          <button class="flex items-center gap-2 px-5 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm font-medium shadow-sm" onclick="alert(&#39;正在导出全局运营报表...&#39;)">
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
-            </svg>
-            导出报表
-          </button>
-        </div>
+      <div class="mb-5">
+        <h1 class="text-2xl font-semibold text-gray-800">角色工作台</h1>
+        <p class="text-sm text-gray-400 mt-1">启航留学 · 每个角色一个工作台：指标 × 卡片 × 今日待办 × DDL 日历 × 数据看板 · 数据均来自系统内真实任务 · 今天 2026-08-18</p>
       </div>
 
-      <!-- ===== KPI 概览卡片（4个） ===== -->
-      <div class="grid grid-cols-4 gap-5 mb-6">
-        <!-- KPI 1: 本月新增项目 -->
-        <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-5 hover:shadow-md transition-shadow cursor-pointer" onclick="alert(&#39;本月新增项目：15 个\n\n各部门新增详情：\n- 美国部：8 个\n- 英国部：4 个\n- 澳洲部：2 个\n- 欧洲部：1 个\n\n较上月环比增长 25%&#39;)">
-          <div class="flex items-center justify-between">
-            <div>
-              <p class="text-sm text-gray-500 mb-1">本月新增项目</p>
-              <p class="text-3xl font-bold text-gray-900">15</p>
-              <p class="text-xs text-green-600 mt-1 flex items-center gap-1">
-                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 10l7-7m0 0l7 7m-7-7v18"></path>
-                </svg>
-                环比 +25%
-              </p>
-            </div>
-            <div class="w-12 h-12 bg-blue-50 rounded-xl flex items-center justify-center">
-              <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
-              </svg>
-            </div>
-          </div>
-        </div>
-        <!-- KPI 2: 待审核交付 -->
-        <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-5 hover:shadow-md transition-shadow cursor-pointer" onclick="alert(&#39;待审核交付：6 个\n\n1. 张明-CMU CS - 文书终稿审核\n2. 李华-Stanford EE - 推荐信审核\n3. 王芳-Columbia DS - PS终稿审核\n4. 刘强-MIT MFin - 简历审核\n5. 陈静-UCB EECS - 成绩单认证审核\n6. 赵阳-Cornell MBA - 面试材料审核\n\n请尽快完成审核流程！&#39;)">
-          <div class="flex items-center justify-between">
-            <div>
-              <p class="text-sm text-gray-500 mb-1">待审核交付</p>
-              <div class="flex items-baseline gap-2">
-                <p class="text-3xl font-bold text-orange-600">6</p>
-                <span class="text-xs bg-red-50 text-red-600 px-1.5 py-0.5 rounded-full font-medium">需加急</span>
-              </div>
-              <p class="text-xs text-gray-400 mt-1">超期：2 项</p>
-            </div>
-            <div class="w-12 h-12 bg-orange-50 rounded-xl flex items-center justify-center">
-              <svg class="w-6 h-6 text-orange-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-              </svg>
-            </div>
-          </div>
-        </div>
-        <!-- KPI 3: 本月签约金额 -->
-        <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-5 hover:shadow-md transition-shadow cursor-pointer" onclick="alert(&#39;本月签约金额：¥126,000\n\n签约详情：\n- 美国部：¥78,000\n- 英国部：¥32,000\n- 澳洲部：¥12,000\n- 欧洲部：¥4,000\n\n本月目标完成率：63%（目标 ¥200,000）\n距离月底还有 14 天&#39;)">
-          <div class="flex items-center justify-between">
-            <div>
-              <p class="text-sm text-gray-500 mb-1">本月签约金额</p>
-              <p class="text-3xl font-bold text-green-700">¥126K</p>
-              <p class="text-xs text-green-600 mt-1 flex items-center gap-1">
-                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 10l7-7m0 0l7 7m-7-7v18"></path>
-                </svg>
-                目标完成 63%
-              </p>
-            </div>
-            <div class="w-12 h-12 bg-green-50 rounded-xl flex items-center justify-center">
-              <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-              </svg>
-            </div>
-          </div>
-        </div>
-        <!-- KPI 4: 项目完成率 -->
-        <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-5 hover:shadow-md transition-shadow cursor-pointer" onclick="alert(&#39;项目完成率：78%\n\n项目总量：32 个\n已完成：25 个\n进行中：7 个\n\n各部门完成率：\n- 美国部：82%（15/18）\n- 英国部：75%（6/8）\n- 澳洲部：80%（4/5）\n- 欧洲部：50%（1/2，注意推进）&#39;)">
-          <div class="flex items-center justify-between">
-            <div>
-              <p class="text-sm text-gray-500 mb-1">项目完成率</p>
-              <p class="text-3xl font-bold text-blue-700">78%</p>
-              <div class="w-full h-1.5 bg-gray-100 rounded-full mt-2 overflow-hidden">
-                <div class="progress-bar-fill h-full bg-blue-500 rounded-full" style="width: 78%"></div>
-              </div>
-            </div>
-            <div class="w-12 h-12 bg-blue-50 rounded-xl flex items-center justify-center">
-              <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
-              </svg>
-            </div>
-          </div>
-        </div>
+      <!-- 角色切换（原型预览用） -->
+      <div class="mb-1 flex items-center gap-1.5 bg-white rounded-xl p-1.5 shadow-sm border border-gray-100 w-fit flex-wrap" id="roleTabs">
+        <button type="button" data-role="wsadmin" class="role-tab px-4 py-2 text-sm font-medium rounded-lg bg-blue-600 text-white transition-colors" onclick="switchRole('wsadmin')">文书机构管理员</button>
+        <button type="button" data-role="pm" class="role-tab px-4 py-2 text-sm font-medium rounded-lg text-gray-600 hover:bg-gray-100 transition-colors" onclick="switchRole('pm')">项目经理</button>
+        <button type="button" data-role="writer" class="role-tab px-4 py-2 text-sm font-medium rounded-lg text-gray-600 hover:bg-gray-100 transition-colors" onclick="switchRole('writer')">文书人员</button>
+        <button type="button" data-role="sales" class="role-tab px-4 py-2 text-sm font-medium rounded-lg text-gray-600 hover:bg-gray-100 transition-colors" onclick="switchRole('sales')">销售人员</button>
+        <button type="button" data-role="apply" class="role-tab px-4 py-2 text-sm font-medium rounded-lg text-gray-600 hover:bg-gray-100 transition-colors" onclick="switchRole('apply')">网申人员</button>
+        <button type="button" data-role="audit" class="role-tab px-4 py-2 text-sm font-medium rounded-lg text-gray-600 hover:bg-gray-100 transition-colors" onclick="switchRole('audit')">文书审核</button>
       </div>
-
-      <!-- ===== DDL 紧急度看板（核心） ===== -->
-      <div class="mb-6">
-        <div class="flex items-center justify-between mb-4">
-          <h2 class="text-lg font-semibold text-gray-800">DDL 紧急度看板</h2>
-          <div class="flex items-center gap-3 text-xs text-gray-400">
-            <span class="flex items-center gap-1"><span class="w-2.5 h-2.5 rounded-full bg-red-500"></span>紧急</span>
-            <span class="flex items-center gap-1"><span class="w-2.5 h-2.5 rounded-full bg-yellow-500"></span>重要</span>
-            <span class="flex items-center gap-1"><span class="w-2.5 h-2.5 rounded-full bg-green-500"></span>常规</span>
-          </div>
-        </div>
-        <div class="grid grid-cols-3 gap-4">
-          <!-- 列1: 紧急（交付审核超时、项目异常反馈、合同审批待处理） -->
-          <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-4">
-            <div class="flex items-center justify-between mb-4">
-              <div class="flex items-center gap-2">
-                <span class="w-3 h-3 rounded-full bg-red-500"></span>
-                <h3 class="text-sm font-semibold text-gray-800">紧急</h3>
-              </div>
-              <span class="text-xs bg-red-50 text-red-600 px-2 py-0.5 rounded-full font-medium">今日前处理</span>
-            </div>
-            <div class="space-y-3 kanban-column">
-              <!-- 紧急项目 1: 交付审核超时 -->
-              <div class="task-card bg-red-50 border border-red-100 rounded-xl p-4 cursor-pointer" onclick="alert(&#39;交付审核超时\n\n项目：张明-卡内基梅隆大学CS\n交付物：文书终稿\n提交时间：2026-07-15 14:30\n审核期限：2026-07-16 18:00\n已超时：1 天\n\n当前状态：超时待审核\n操作：请尽快完成审核或重新指派审核人&#39;)">
-                <div class="flex items-start justify-between mb-2">
-                  <div>
-                    <p class="text-sm font-semibold text-gray-900">交付审核超时</p>
-                    <p class="text-xs text-gray-500 mt-0.5">文书终稿审核逾期</p>
-                  </div>
-                  <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-700">超时1天</span>
-                </div>
-                <div class="flex items-center gap-2 text-xs text-gray-500 mb-1">
-                  <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"></path>
-                  </svg>
-                  <span>张明-CMU CS</span>
-                </div>
-                <div class="flex items-center justify-between">
-                  <div class="flex items-center gap-1 text-xs">
-                    <svg class="w-3.5 h-3.5 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                    </svg>
-                    <span class="text-red-600 font-medium">已超时</span>
-                  </div>
-                  <button class="px-3 py-1.5 bg-red-600 text-white text-xs rounded-lg hover:bg-red-700 transition-colors font-medium" onclick="event.stopPropagation();alert(&#39;正在跳转到交付审核页面\n项目：张明-CMU CS\n类型：文书终稿审核\n操作：请审核交付质量&#39;)">
-                    去审核
-                  </button>
-                </div>
-              </div>
-              <!-- 紧急项目 2: 项目异常反馈 -->
-              <div class="task-card bg-red-50 border border-red-100 rounded-xl p-4 cursor-pointer" onclick="alert(&#39;项目异常反馈\n\n项目：赵阳-康奈尔大学MBA\n异常类型：进度严重延迟\n异常描述：文书审核环节已超期3天，项目整体进度停滞\n影响：可能影响后续网申提交时间窗口\n\n当前状态：待管理员介入处理\n建议操作：1. 约谈交付团队负责人 2. 制定追赶计划 3. 与客户沟通调整预期&#39;)">
-                <div class="flex items-start justify-between mb-2">
-                  <div>
-                    <p class="text-sm font-semibold text-gray-900">项目异常反馈</p>
-                    <p class="text-xs text-gray-500 mt-0.5">进度严重延迟</p>
-                  </div>
-                  <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-700">严重</span>
-                </div>
-                <div class="flex items-center gap-2 text-xs text-gray-500 mb-1">
-                  <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
-                  </svg>
-                  <span>赵阳-康奈尔MBA</span>
-                </div>
-                <div class="flex items-center justify-between">
-                  <div class="flex items-center gap-1 text-xs">
-                    <svg class="w-3.5 h-3.5 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01"></path>
-                    </svg>
-                    <span class="text-red-600 font-medium">超期3天</span>
-                  </div>
-                  <button class="px-3 py-1.5 bg-red-600 text-white text-xs rounded-lg hover:bg-red-700 transition-colors font-medium" onclick="event.stopPropagation();alert(&#39;正在打开异常处理页面\n项目：赵阳-康奈尔MBA\n异常类型：进度严重延迟\n操作：启动异常处理流程&#39;)">
-                    介入处理
-                  </button>
-                </div>
-              </div>
-              <!-- 紧急项目 3: 合同审批待处理 -->
-              <div class="task-card bg-red-50 border border-red-100 rounded-xl p-4 cursor-pointer" onclick="alert(&#39;合同审批待处理\n\n合同：王芳-哥伦比亚大学DS服务合同\n金额：¥45,000\n提交人：销售顾问-刘洋\n提交时间：2026-07-16 09:00\n审批时限：48小时\n\n截止时间：2026-07-18 09:00\n请尽快完成审批，避免影响客户签约流程&#39;)">
-                <div class="flex items-start justify-between mb-2">
-                  <div>
-                    <p class="text-sm font-semibold text-gray-900">合同审批待处理</p>
-                    <p class="text-xs text-gray-500 mt-0.5">哥伦比亚大学DS</p>
-                  </div>
-                  <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-700">限时48h</span>
-                </div>
-                <div class="flex items-center gap-2 text-xs text-gray-500 mb-1">
-                  <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
-                  </svg>
-                  <span>¥45,000</span>
-                </div>
-                <div class="flex items-center justify-between">
-                  <div class="flex items-center gap-1 text-xs">
-                    <svg class="w-3.5 h-3.5 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                    </svg>
-                    <span class="text-red-600 font-medium">今日截止</span>
-                  </div>
-                  <button class="px-3 py-1.5 bg-red-600 text-white text-xs rounded-lg hover:bg-red-700 transition-colors font-medium" onclick="event.stopPropagation();alert(&#39;正在打开合同审批页面\n合同：王芳-哥伦比亚大学DS服务合同\n金额：¥45,000\n操作：进行合同审批&#39;)">
-                    去审批
-                  </button>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <!-- 列2: 重要（人员培训安排、月度报告提交、项目质量审核） -->
-          <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-4">
-            <div class="flex items-center justify-between mb-4">
-              <div class="flex items-center gap-2">
-                <span class="w-3 h-3 rounded-full bg-yellow-500"></span>
-                <h3 class="text-sm font-semibold text-gray-800">重要</h3>
-              </div>
-              <span class="text-xs bg-yellow-50 text-yellow-600 px-2 py-0.5 rounded-full font-medium">3日内</span>
-            </div>
-            <div class="space-y-3 kanban-column">
-              <!-- 重要项目 1: 人员培训安排 -->
-              <div class="task-card bg-yellow-50 border border-yellow-100 rounded-xl p-4 cursor-pointer" onclick="alert(&#39;人员培训安排\n\n培训主题：2026年秋季最新申请政策解读\n参与人员：全体交付团队成员（12人）\n培训讲师：张明（管理员）\n计划时间：2026-07-20 14:00-16:00\n截止报名：2026-07-18 18:00\n\n当前状态：待确认培训场地和材料准备\n操作：请确认培训方案并通知参训人员&#39;)">
-                <div class="flex items-start justify-between mb-2">
-                  <div>
-                    <p class="text-sm font-semibold text-gray-900">人员培训安排</p>
-                    <p class="text-xs text-gray-500 mt-0.5">秋季申请政策解读</p>
-                  </div>
-                  <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-700">待确认</span>
-                </div>
-                <div class="flex items-center gap-2 text-xs text-gray-500 mb-1">
-                  <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z"></path>
-                  </svg>
-                  <span>全体交付团队</span>
-                </div>
-                <div class="flex items-center justify-between">
-                  <div class="flex items-center gap-1 text-xs">
-                    <svg class="w-3.5 h-3.5 text-yellow-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                    </svg>
-                    <span class="text-yellow-600 font-medium">7月20日</span>
-                  </div>
-                  <button class="px-3 py-1.5 bg-yellow-500 text-white text-xs rounded-lg hover:bg-yellow-600 transition-colors font-medium" onclick="event.stopPropagation();alert(&#39;正在打开培训管理页面\n操作：确认培训方案、安排场地、通知参训人员&#39;)">
-                    去安排
-                  </button>
-                </div>
-              </div>
-              <!-- 重要项目 2: 月度报告提交 -->
-              <div class="task-card bg-yellow-50 border border-yellow-100 rounded-xl p-4 cursor-pointer" onclick="alert(&#39;月度报告提交\n\n报告类型：2026年7月运营月报\n提交人：各部门负责人\n截止时间：2026-07-19 18:00\n\n需汇总内容：\n1. 美国部 - 本月项目进展及签约情况\n2. 英国部 - 本月项目进展及签约情况\n3. 澳洲部 - 本月项目进展及签约情况\n4. 欧洲部 - 本月项目进展及签约情况\n\n当前进度：已提交 1/4 部门\n操作：催办未提交部门&#39;)">
-                <div class="flex items-start justify-between mb-2">
-                  <div>
-                    <p class="text-sm font-semibold text-gray-900">月度报告提交</p>
-                    <p class="text-xs text-gray-500 mt-0.5">7月运营月报</p>
-                  </div>
-                  <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-700">催办中</span>
-                </div>
-                <div class="flex items-center gap-2 text-xs text-gray-500 mb-1">
-                  <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
-                  </svg>
-                  <span>已提交 1/4 部门</span>
-                </div>
-                <div class="flex items-center justify-between">
-                  <div class="flex items-center gap-1 text-xs">
-                    <svg class="w-3.5 h-3.5 text-yellow-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                    </svg>
-                    <span class="text-yellow-600 font-medium">7月19日</span>
-                  </div>
-                  <button class="px-3 py-1.5 bg-yellow-500 text-white text-xs rounded-lg hover:bg-yellow-600 transition-colors font-medium" onclick="event.stopPropagation();alert(&#39;正在打开月报管理页面\n操作：1. 查看已提交报告 2. 催办未提交部门 3. 汇总生成总报告&#39;)">
-                    去催办
-                  </button>
-                </div>
-              </div>
-              <!-- 重要项目 3: 项目质量审核 -->
-              <div class="task-card bg-yellow-50 border border-yellow-100 rounded-xl p-4 cursor-pointer" onclick="alert(&#39;项目质量审核\n\n审核范围：7月已完成项目质量抽查\n抽查比例：30%（预计 10 个项目）\n审核标准：\n1. 文书质量评分（权重 40%）\n2. 客户满意度评分（权重 30%）\n3. 交付及时性评分（权重 30%）\n\n当前进度：尚未开始\n操作：随机抽取项目并分发给审核组&#39;)">
-                <div class="flex items-start justify-between mb-2">
-                  <div>
-                    <p class="text-sm font-semibold text-gray-900">项目质量审核</p>
-                    <p class="text-xs text-gray-500 mt-0.5">月度质量抽查</p>
-                  </div>
-                  <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-700">待启动</span>
-                </div>
-                <div class="flex items-center gap-2 text-xs text-gray-500 mb-1">
-                  <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path>
-                  </svg>
-                  <span>抽查比例 30%</span>
-                </div>
-                <div class="flex items-center justify-between">
-                  <div class="flex items-center gap-1 text-xs">
-                    <svg class="w-3.5 h-3.5 text-yellow-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                    </svg>
-                    <span class="text-yellow-600 font-medium">7月21日截止</span>
-                  </div>
-                  <button class="px-3 py-1.5 bg-yellow-500 text-white text-xs rounded-lg hover:bg-yellow-600 transition-colors font-medium" onclick="event.stopPropagation();alert(&#39;正在打开质量审核页面\n操作：1. 抽取待审核项目 2. 分配给审核团队 3. 设置审核标准&#39;)">
-                    去启动
-                  </button>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <!-- 列3: 常规（周报提交、新人入职安排、预算审核） -->
-          <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-4">
-            <div class="flex items-center justify-between mb-4">
-              <div class="flex items-center gap-2">
-                <span class="w-3 h-3 rounded-full bg-green-500"></span>
-                <h3 class="text-sm font-semibold text-gray-800">常规</h3>
-              </div>
-              <span class="text-xs bg-green-50 text-green-600 px-2 py-0.5 rounded-full font-medium">7日内</span>
-            </div>
-            <div class="space-y-3 kanban-column">
-              <!-- 常规项目 1: 周报提交 -->
-              <div class="task-card bg-green-50 border border-green-100 rounded-xl p-4 cursor-pointer" onclick="alert(&#39;周报提交\n\n周报周期：2026年第29周（7/13-7/19）\n提交人：全体部门负责人\n截止时间：2026-07-20 12:00\n\n提交状态：\n✓ 美国部 - 已提交\n- 英国部 - 未提交\n- 澳洲部 - 未提交\n- 欧洲部 - 未提交\n\n操作：提醒各部门按时提交周报&#39;)">
-                <div class="flex items-start justify-between mb-2">
-                  <div>
-                    <p class="text-sm font-semibold text-gray-900">周报提交</p>
-                    <p class="text-xs text-gray-500 mt-0.5">第29周工作周报</p>
-                  </div>
-                  <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-700">进行中</span>
-                </div>
-                <div class="flex items-center gap-2 text-xs text-gray-500 mb-1">
-                  <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
-                  </svg>
-                  <span>已提交 1/4 部门</span>
-                </div>
-                <div class="flex items-center justify-between">
-                  <div class="flex items-center gap-1 text-xs">
-                    <svg class="w-3.5 h-3.5 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                    </svg>
-                    <span class="text-green-600 font-medium">7月20日截止</span>
-                  </div>
-                  <button class="px-3 py-1.5 bg-green-600 text-white text-xs rounded-lg hover:bg-green-700 transition-colors font-medium" onclick="event.stopPropagation();alert(&#39;正在打开周报管理页面\n操作：查看已提交周报、催办未提交部门&#39;)">
-                    去查看
-                  </button>
-                </div>
-              </div>
-              <!-- 常规项目 2: 新人入职安排 -->
-              <div class="task-card bg-green-50 border border-green-100 rounded-xl p-4 cursor-pointer" onclick="alert(&#39;新人入职安排\n\n新人姓名：王小华\n岗位：留学顾问（美国部）\n入职时间：2026-07-22\n\n待办事项：\n1. 工位安排 - 待确认\n2. IT设备领取 - 待确认\n3. 系统账号开通 - 待确认\n4. 入职培训安排 - 待确认\n5. 导师指派 - 待确认\n\n操作：完成以上入职准备事项&#39;)">
-                <div class="flex items-start justify-between mb-2">
-                  <div>
-                    <p class="text-sm font-semibold text-gray-900">新人入职安排</p>
-                    <p class="text-xs text-gray-500 mt-0.5">留学顾问-美国部</p>
-                  </div>
-                  <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-700">待准备</span>
-                </div>
-                <div class="flex items-center gap-2 text-xs text-gray-500 mb-1">
-                  <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
-                  </svg>
-                  <span>王小华 - 7月22日入职</span>
-                </div>
-                <div class="flex items-center justify-between">
-                  <div class="flex items-center gap-1 text-xs">
-                    <svg class="w-3.5 h-3.5 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                    </svg>
-                    <span class="text-green-600 font-medium">7月22日</span>
-                  </div>
-                  <button class="px-3 py-1.5 bg-green-600 text-white text-xs rounded-lg hover:bg-green-700 transition-colors font-medium" onclick="event.stopPropagation();alert(&#39;正在打开入职管理页面\n操作：完成新人王小华的入职准备事项&#39;)">
-                    去准备
-                  </button>
-                </div>
-              </div>
-              <!-- 常规项目 3: 预算审核 -->
-              <div class="task-card bg-green-50 border border-green-100 rounded-xl p-4 cursor-pointer" onclick="alert(&#39;预算审核\n\n申请部门：英国部\n预算类型：市场推广费用\n申请金额：¥15,000\n用途：2026年秋季英国留学展会展位费及宣传物料\n申请时间：2026-07-16\n\n当前状态：财务初审已通过，待管理员终审\n操作：审核预算合理性并在系统中审批&#39;)">
-                <div class="flex items-start justify-between mb-2">
-                  <div>
-                    <p class="text-sm font-semibold text-gray-900">预算审核</p>
-                    <p class="text-xs text-gray-500 mt-0.5">英国部市场推广费</p>
-                  </div>
-                  <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-700">待终审</span>
-                </div>
-                <div class="flex items-center gap-2 text-xs text-gray-500 mb-1">
-                  <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                  </svg>
-                  <span>¥15,000</span>
-                </div>
-                <div class="flex items-center justify-between">
-                  <div class="flex items-center gap-1 text-xs">
-                    <svg class="w-3.5 h-3.5 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                    </svg>
-                    <span class="text-green-600 font-medium">7月23日截止</span>
-                  </div>
-                  <button class="px-3 py-1.5 bg-green-600 text-white text-xs rounded-lg hover:bg-green-700 transition-colors font-medium" onclick="event.stopPropagation();alert(&#39;正在打开预算审批页面\n部门：英国部\n预算类型：市场推广费用\n金额：¥15,000\n操作：进行预算终审&#39;)">
-                    去审批
-                  </button>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- ===== 快捷操作 ===== -->
-      <div class="mb-6">
-        <h2 class="text-lg font-semibold text-gray-800 mb-4">快捷操作</h2>
-        <div class="grid grid-cols-4 gap-4">
-          <!-- 审核交付 -->
-          <button class="bg-white rounded-xl shadow-sm border border-gray-100 p-5 hover:shadow-md hover:border-blue-200 transition-all text-left group cursor-pointer" onclick="alert(&#39;正在打开交付审核页面\n待审核交付：6 项\n您可以在此完成所有交付物的质量审核和反馈。&#39;)">
-            <div class="w-12 h-12 bg-blue-50 rounded-xl flex items-center justify-center mb-3 group-hover:bg-blue-100 transition-colors">
-              <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path>
-              </svg>
-            </div>
-            <h3 class="text-sm font-semibold text-gray-800 mb-1 group-hover:text-blue-600 transition-colors">审核交付</h3>
-            <p class="text-xs text-gray-400">质量审核与反馈</p>
-          </button>
-          <!-- 人员管理 -->
-          <button class="bg-white rounded-xl shadow-sm border border-gray-100 p-5 hover:shadow-md hover:border-green-200 transition-all text-left group cursor-pointer" onclick="alert(&#39;正在打开人员管理页面\n您可以管理全体人员信息、角色权限、入职离职等。&#39;)">
-            <div class="w-12 h-12 bg-green-50 rounded-xl flex items-center justify-center mb-3 group-hover:bg-green-100 transition-colors">
-              <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
-              </svg>
-            </div>
-            <h3 class="text-sm font-semibold text-gray-800 mb-1 group-hover:text-green-600 transition-colors">人员管理</h3>
-            <p class="text-xs text-gray-400">组织架构与权限</p>
-          </button>
-          <!-- 数据报表 -->
-          <button class="bg-white rounded-xl shadow-sm border border-gray-100 p-5 hover:shadow-md hover:border-purple-200 transition-all text-left group cursor-pointer" onclick="alert(&#39;正在打开数据报表页面\n查看全局运营数据，包括项目完成率、签约金额、部门业绩等统计报表。&#39;)">
-            <div class="w-12 h-12 bg-purple-50 rounded-xl flex items-center justify-center mb-3 group-hover:bg-purple-100 transition-colors">
-              <svg class="w-6 h-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
-              </svg>
-            </div>
-            <h3 class="text-sm font-semibold text-gray-800 mb-1 group-hover:text-purple-600 transition-colors">数据报表</h3>
-            <p class="text-xs text-gray-400">全局数据统计分析</p>
-          </button>
-          <!-- 系统设置 -->
-          <button class="bg-white rounded-xl shadow-sm border border-gray-100 p-5 hover:shadow-md hover:border-orange-200 transition-all text-left group cursor-pointer" onclick="alert(&#39;正在打开系统设置页面\n管理系统配置、角色权限、流程模板、系统参数等。&#39;)">
-            <div class="w-12 h-12 bg-orange-50 rounded-xl flex items-center justify-center mb-3 group-hover:bg-orange-100 transition-colors">
-              <svg class="w-6 h-6 text-orange-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.066 2.573c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.573 1.066c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.066-2.573c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path>
-              </svg>
-            </div>
-            <h3 class="text-sm font-semibold text-gray-800 mb-1 group-hover:text-orange-500 transition-colors">系统设置</h3>
-            <p class="text-xs text-gray-400">配置与流程管理</p>
-          </button>
-        </div>
-      </div>
-
-      <!-- ===== 全局数据概览 ===== -->
-      <div>
-        <h2 class="text-lg font-semibold text-gray-800 mb-4">全局数据概览</h2>
-        <div class="grid grid-cols-5 gap-5">
-          <!-- 左侧：当月项目完成率环比柱状图（3列） -->
-          <div class="col-span-3 bg-white rounded-xl shadow-sm border border-gray-100 p-5">
-            <div class="flex items-center justify-between mb-5">
-              <h3 class="text-sm font-semibold text-gray-800">当月项目完成率环比</h3>
-              <div class="flex items-center gap-3 text-xs text-gray-400">
-                <span class="flex items-center gap-1"><span class="w-3 h-3 rounded-sm bg-blue-500"></span>当月</span>
-                <span class="flex items-center gap-1"><span class="w-3 h-3 rounded-sm bg-blue-200"></span>上月</span>
-              </div>
-            </div>
-            <!-- 柱状图区域 -->
-            <div class="flex items-end justify-between h-44 px-2 relative">
-              <!-- 网格线 -->
-              <div class="absolute inset-0 flex flex-col-reverse pointer-events-none">
-                <div class="border-t border-gray-100 h-[25%]"></div>
-                <div class="border-t border-gray-100 h-[25%]"></div>
-                <div class="border-t border-gray-100 h-[25%]"></div>
-                <div class="border-t border-gray-100 h-[25%]"></div>
-              </div>
-              <!-- 100% 网格标签 -->
-              <div class="absolute top-0 left-0 text-xs text-gray-300">100%</div>
-              <div class="absolute top-1/4 -translate-y-1/2 left-0 text-xs text-gray-300">75%</div>
-              <div class="absolute top-2/4 -translate-y-1/2 left-0 text-xs text-gray-300">50%</div>
-              <div class="absolute top-3/4 -translate-y-1/2 left-0 text-xs text-gray-300">25%</div>
-
-              <!-- 1月 -->
-              <div class="flex flex-col items-center gap-1 z-10 flex-1">
-                <div class="flex items-end gap-1.5 h-32">
-                  <div class="chart-bar w-6 bg-blue-200 rounded-t-md cursor-pointer" style="height: 52%" title="上月完成率 52%" onclick="event.stopPropagation();alert(&#39;1月数据\n上月完成率：52%\n当月完成率：58%&#39;)"></div>
-                  <div class="chart-bar w-6 bg-blue-500 rounded-t-md cursor-pointer" style="height: 58%" title="当月完成率 58%" onclick="event.stopPropagation();alert(&#39;1月数据\n上月完成率：52%\n当月完成率：58%&#39;)"></div>
-                </div>
-                <span class="text-xs text-gray-500">1月</span>
-              </div>
-              <!-- 2月 -->
-              <div class="flex flex-col items-center gap-1 z-10 flex-1">
-                <div class="flex items-end gap-1.5 h-32">
-                  <div class="chart-bar w-6 bg-blue-200 rounded-t-md cursor-pointer" style="height: 55%" onclick="event.stopPropagation();alert(&#39;2月数据\n上月完成率：55%\n当月完成率：62%&#39;)"></div>
-                  <div class="chart-bar w-6 bg-blue-500 rounded-t-md cursor-pointer" style="height: 62%" onclick="event.stopPropagation();alert(&#39;2月数据\n上月完成率：55%\n当月完成率：62%&#39;)"></div>
-                </div>
-                <span class="text-xs text-gray-500">2月</span>
-              </div>
-              <!-- 3月 -->
-              <div class="flex flex-col items-center gap-1 z-10 flex-1">
-                <div class="flex items-end gap-1.5 h-32">
-                  <div class="chart-bar w-6 bg-blue-200 rounded-t-md cursor-pointer" style="height: 58%" onclick="event.stopPropagation();alert(&#39;3月数据\n上月完成率：58%\n当月完成率：65%&#39;)"></div>
-                  <div class="chart-bar w-6 bg-blue-500 rounded-t-md cursor-pointer" style="height: 65%" onclick="event.stopPropagation();alert(&#39;3月数据\n上月完成率：58%\n当月完成率：65%&#39;)"></div>
-                </div>
-                <span class="text-xs text-gray-500">3月</span>
-              </div>
-              <!-- 4月 -->
-              <div class="flex flex-col items-center gap-1 z-10 flex-1">
-                <div class="flex items-end gap-1.5 h-32">
-                  <div class="chart-bar w-6 bg-blue-200 rounded-t-md cursor-pointer" style="height: 60%" onclick="event.stopPropagation();alert(&#39;4月数据\n上月完成率：60%\n当月完成率：68%&#39;)"></div>
-                  <div class="chart-bar w-6 bg-blue-500 rounded-t-md cursor-pointer" style="height: 68%" onclick="event.stopPropagation();alert(&#39;4月数据\n上月完成率：60%\n当月完成率：68%&#39;)"></div>
-                </div>
-                <span class="text-xs text-gray-500">4月</span>
-              </div>
-              <!-- 5月 -->
-              <div class="flex flex-col items-center gap-1 z-10 flex-1">
-                <div class="flex items-end gap-1.5 h-32">
-                  <div class="chart-bar w-6 bg-blue-200 rounded-t-md cursor-pointer" style="height: 65%" onclick="event.stopPropagation();alert(&#39;5月数据\n上月完成率：65%\n当月完成率：72%&#39;)"></div>
-                  <div class="chart-bar w-6 bg-blue-500 rounded-t-md cursor-pointer" style="height: 72%" onclick="event.stopPropagation();alert(&#39;5月数据\n上月完成率：65%\n当月完成率：72%&#39;)"></div>
-                </div>
-                <span class="text-xs text-gray-500">5月</span>
-              </div>
-              <!-- 6月 -->
-              <div class="flex flex-col items-center gap-1 z-10 flex-1">
-                <div class="flex items-end gap-1.5 h-32">
-                  <div class="chart-bar w-6 bg-blue-200 rounded-t-md cursor-pointer" style="height: 70%" onclick="event.stopPropagation();alert(&#39;6月数据\n上月完成率：70%\n当月完成率：75%&#39;)"></div>
-                  <div class="chart-bar w-6 bg-blue-500 rounded-t-md cursor-pointer" style="height: 75%" onclick="event.stopPropagation();alert(&#39;6月数据\n上月完成率：70%\n当月完成率：75%&#39;)"></div>
-                </div>
-                <span class="text-xs text-gray-500">6月</span>
-              </div>
-              <!-- 7月 -->
-              <div class="flex flex-col items-center gap-1 z-10 flex-1">
-                <div class="flex items-end gap-1.5 h-32">
-                  <div class="chart-bar w-6 bg-blue-200 rounded-t-md cursor-pointer" style="height: 72%" onclick="event.stopPropagation();alert(&#39;7月数据\n上月完成率：72%\n当月完成率：78%&#39;)"></div>
-                  <div class="chart-bar w-6 bg-blue-500 rounded-t-md cursor-pointer" style="height: 78%" onclick="event.stopPropagation();alert(&#39;7月数据\n上月完成率：72%\n当月完成率：78%&#39;)"></div>
-                </div>
-                <span class="text-xs text-gray-500 font-medium text-blue-600">7月</span>
-              </div>
-            </div>
-          </div>
-
-          <!-- 右侧：各部门项目数量分布（2列） -->
-          <div class="col-span-2 bg-white rounded-xl shadow-sm border border-gray-100 p-5">
-            <h3 class="text-sm font-semibold text-gray-800 mb-5">各部门项目数量分布</h3>
-            <div class="space-y-4">
-              <!-- 美国部 -->
-              <div class="data-row p-3 rounded-lg cursor-pointer" onclick="alert(&#39;美国部项目详情\n\n项目总数：18 个\n已完成：15 个（82%）\n进行中：3 个\n\n本月新增：8 个\n本月签约金额：¥78,000\n\n负责人：李雪（PM）\n团队人数：6 人&#39;)">
-                <div class="flex items-center justify-between mb-2">
-                  <div class="flex items-center gap-3">
-                    <div class="w-3 h-3 rounded-full bg-blue-500"></div>
-                    <span class="text-sm font-medium text-gray-800">美国部</span>
-                  </div>
-                  <div class="flex items-center gap-3">
-                    <span class="text-xs text-gray-500">18 个项目</span>
-                    <span class="text-xs font-medium text-blue-600">82%</span>
-                  </div>
-                </div>
-                <div class="w-full h-2 bg-gray-100 rounded-full overflow-hidden">
-                  <div class="h-full bg-blue-500 rounded-full" style="width: 82%"></div>
-                </div>
-              </div>
-              <!-- 英国部 -->
-              <div class="data-row p-3 rounded-lg cursor-pointer" onclick="alert(&#39;英国部项目详情\n\n项目总数：8 个\n已完成：6 个（75%）\n进行中：2 个\n\n本月新增：4 个\n本月签约金额：¥32,000\n\n负责人：王强（PM）\n团队人数：3 人&#39;)">
-                <div class="flex items-center justify-between mb-2">
-                  <div class="flex items-center gap-3">
-                    <div class="w-3 h-3 rounded-full bg-green-500"></div>
-                    <span class="text-sm font-medium text-gray-800">英国部</span>
-                  </div>
-                  <div class="flex items-center gap-3">
-                    <span class="text-xs text-gray-500">8 个项目</span>
-                    <span class="text-xs font-medium text-green-600">75%</span>
-                  </div>
-                </div>
-                <div class="w-full h-2 bg-gray-100 rounded-full overflow-hidden">
-                  <div class="h-full bg-green-500 rounded-full" style="width: 75%"></div>
-                </div>
-              </div>
-              <!-- 澳洲部 -->
-              <div class="data-row p-3 rounded-lg cursor-pointer" onclick="alert(&#39;澳洲部项目详情\n\n项目总数：5 个\n已完成：4 个（80%）\n进行中：1 个\n\n本月新增：2 个\n本月签约金额：¥12,000\n\n负责人：陈丽（PM）\n团队人数：2 人&#39;)">
-                <div class="flex items-center justify-between mb-2">
-                  <div class="flex items-center gap-3">
-                    <div class="w-3 h-3 rounded-full bg-yellow-500"></div>
-                    <span class="text-sm font-medium text-gray-800">澳洲部</span>
-                  </div>
-                  <div class="flex items-center gap-3">
-                    <span class="text-xs text-gray-500">5 个项目</span>
-                    <span class="text-xs font-medium text-yellow-600">80%</span>
-                  </div>
-                </div>
-                <div class="w-full h-2 bg-gray-100 rounded-full overflow-hidden">
-                  <div class="h-full bg-yellow-500 rounded-full" style="width: 80%"></div>
-                </div>
-              </div>
-              <!-- 欧洲部 -->
-              <div class="data-row p-3 rounded-lg cursor-pointer" onclick="alert(&#39;欧洲部项目详情\n\n项目总数：2 个\n已完成：1 个（50%）\n进行中：1 个\n\n本月新增：1 个\n本月签约金额：¥4,000\n\n负责人：赵伟（PM）\n团队人数：1 人\n\n⚠ 注意：该部门完成率较低，需关注推进情况&#39;)">
-                <div class="flex items-center justify-between mb-2">
-                  <div class="flex items-center gap-3">
-                    <div class="w-3 h-3 rounded-full bg-purple-500"></div>
-                    <span class="text-sm font-medium text-gray-800">欧洲部</span>
-                  </div>
-                  <div class="flex items-center gap-3">
-                    <span class="text-xs text-gray-500">2 个项目</span>
-                    <span class="text-xs font-medium text-purple-600">50%</span>
-                  </div>
-                </div>
-                <div class="w-full h-2 bg-gray-100 rounded-full overflow-hidden">
-                  <div class="h-full bg-purple-500 rounded-full" style="width: 50%"></div>
-                </div>
-              </div>
-              <!-- 总计 -->
-              <div class="pt-3 border-t border-gray-100">
-                <div class="flex items-center justify-between">
-                  <span class="text-sm font-semibold text-gray-800">总计</span>
-                  <div class="flex items-center gap-3">
-                    <span class="text-xs text-gray-600">33 个项目</span>
-                    <span class="text-xs font-bold text-blue-700">78%</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
+      <p class="text-xs text-gray-400 mb-6">原型预览：点击切换角色查看各自工作台。管理者（机构管理员/项目经理）可发起催办；执行者看自己的任务与优先级。右侧日历中红色日期为有 DDL/事件的日子，点击查看当日明细。</p>
+            <!-- ================================================================ -->
+      <!-- 六角色工作台面板：内容由脚本按角色数据渲染（指标 × 卡片 × 今日待办 × DDL 日历 × 数据看板） -->
+      <!-- ================================================================ -->
+      <div id="panel-wsadmin" class="role-panel" data-role="wsadmin"></div>
+      <div id="panel-pm" class="role-panel hidden" data-role="pm"></div>
+      <div id="panel-writer" class="role-panel hidden" data-role="writer"></div>
+      <div id="panel-sales" class="role-panel hidden" data-role="sales"></div>
+      <div id="panel-apply" class="role-panel hidden" data-role="apply"></div>
+      <div id="panel-audit" class="role-panel hidden" data-role="audit"></div>
 
     </main>
   </div>
@@ -979,8 +480,27 @@
         <h3 class="text-lg font-semibold text-gray-800">系统消息</h3>
       </div>
       <div class="bg-blue-50 rounded-xl p-4 mb-5">
-        <p class="text-sm text-gray-700 font-medium mb-3">你有 6 条未读消息</p>
+        <p class="text-sm text-gray-700 font-medium mb-3">你有 8 条未读消息</p>
         <div class="space-y-3">
+          <!-- 催办消息：消息中包含催办人与催办说明 -->
+          <div class="border border-red-100 bg-red-50/70 rounded-lg p-3">
+            <div class="flex items-center gap-2 mb-1.5">
+              <span class="text-[10px] px-1.5 py-0.5 rounded bg-red-100 text-red-600 font-semibold">催办</span>
+              <p class="text-xs text-gray-500">项目经理 · 王老师 · 20 分钟前</p>
+            </div>
+            <p class="text-sm text-gray-900 font-medium">催办任务：「赵阳 · 康奈尔 MBA」结项审批</p>
+            <p class="text-xs text-gray-600 mt-1 bg-white rounded px-2 py-1.5 border border-red-100">催办说明：学生已确认录取结果，结项材料已备齐，请今天内完成审批。</p>
+            <button type="button" class="mt-2 px-3 py-1 text-xs font-medium text-white bg-red-500 rounded-lg hover:bg-red-600" onclick="closeNotificationModal();location.href='结项归档列表 - PBS留学CRM系统.html'">立即处理</button>
+          </div>
+          <div class="border border-red-100 bg-red-50/70 rounded-lg p-3">
+            <div class="flex items-center gap-2 mb-1.5">
+              <span class="text-[10px] px-1.5 py-0.5 rounded bg-red-100 text-red-600 font-semibold">催办</span>
+              <p class="text-xs text-gray-500">文书机构管理员 · 周老师 · 1 小时前</p>
+            </div>
+            <p class="text-sm text-gray-900 font-medium">催办任务：「王芳 · 哥伦比亚 DS」服务合同审批（¥45,000）</p>
+            <p class="text-xs text-gray-600 mt-1 bg-white rounded px-2 py-1.5 border border-red-100">催办说明：合同已等待审批 2 天，影响后续文书排期，请尽快审批。</p>
+            <button type="button" class="mt-2 px-3 py-1 text-xs font-medium text-white bg-red-500 rounded-lg hover:bg-red-600" onclick="closeNotificationModal()">立即处理</button>
+          </div>
           <div class="flex items-start gap-3 p-2 bg-white rounded-lg">
             <div class="w-2 h-2 bg-red-500 rounded-full mt-1.5 flex-shrink-0"></div>
             <div>
@@ -1036,6 +556,32 @@
     </div>
   </div>
 
+  <!-- ========== 催办弹窗（项目经理 / 机构管理员可发起） ========== -->
+  <div id="urgeModal" class="fixed inset-0 z-[70] hidden flex items-center justify-center p-6" style="background:rgba(17,24,39,.45)">
+    <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md">
+      <div class="flex items-center justify-between px-6 py-4 border-b border-gray-100">
+        <h3 class="text-base font-semibold text-gray-900">发起催办</h3>
+        <button type="button" class="w-8 h-8 rounded-lg bg-gray-100 text-gray-500 text-xl leading-none" onclick="closeUrgeModal()" aria-label="关闭">×</button>
+      </div>
+      <div class="p-6 space-y-4">
+        <div class="bg-purple-50 rounded-xl p-4">
+          <p class="text-xs text-purple-500 mb-1">催办任务</p>
+          <p id="urgeTaskName" class="text-sm font-semibold text-gray-900">—</p>
+          <p class="text-xs text-gray-500 mt-1">催办对象：<span id="urgeTarget" class="font-medium text-gray-700">—</span></p>
+        </div>
+        <div>
+          <label class="block text-sm text-gray-600 mb-2">催办说明 <span class="text-xs text-gray-400">（将随催办消息一同发送给对方）</span></label>
+          <textarea id="urgeNote" rows="3" class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-purple-500 focus:border-purple-500 resize-none">请优先处理该任务，完成后请及时反馈进度。</textarea>
+        </div>
+        <p class="text-xs text-gray-400 flex items-start gap-1.5"><span>💡</span>发送后，对方将在「消息提醒」中收到本条催办，消息中包含任务信息与催办说明；同一任务 1 小时内不可重复催办。</p>
+      </div>
+      <div class="flex gap-3 px-6 py-4 border-t border-gray-100">
+        <button type="button" class="flex-1 h-10 bg-white border border-gray-300 text-gray-600 rounded-lg hover:bg-gray-50 text-sm" onclick="closeUrgeModal()">取消</button>
+        <button type="button" class="flex-1 h-10 bg-purple-600 text-white rounded-lg hover:bg-purple-700 text-sm font-medium" onclick="sendUrge()">发送催办</button>
+      </div>
+    </div>
+  </div>
+
   <script>
     // 页面加载完成后初始化
     document.addEventListener('DOMContentLoaded', function() {
@@ -1052,7 +598,597 @@
     function closeNotificationModal() {
       document.getElementById('notificationModal').classList.add('hidden');
     }
+
+    /* ---------- 角色工作台切换 ---------- */
+    function switchRole(role) {
+      document.querySelectorAll('.role-panel').forEach(function(panel) { panel.classList.add('hidden'); });
+      var target = document.getElementById('panel-' + role);
+      if (target) target.classList.remove('hidden');
+      document.querySelectorAll('#roleTabs .role-tab').forEach(function(tab) {
+        var active = tab.getAttribute('data-role') === role;
+        tab.classList.toggle('bg-blue-600', active);
+        tab.classList.toggle('text-white', active);
+        tab.classList.toggle('text-gray-600', !active);
+      });
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    /* ---------- 销售人员：申请方向层次切换 ---------- */
+    function switchSalesTab(tab) {
+      ['master', 'bachelor', 'phd'].forEach(function(key) {
+        var btn = document.getElementById('salesTab' + key.charAt(0).toUpperCase() + key.slice(1));
+        if (!btn) return;
+        var active = key === tab;
+        btn.classList.toggle('bg-white', active);
+        btn.classList.toggle('text-blue-600', active);
+        btn.classList.toggle('shadow-sm', active);
+        btn.classList.toggle('text-gray-500', !active);
+      });
+    }
+
+    /* ---------- 通用轻提示 ---------- */
+    function workbenchToast(message) {
+      var old = document.getElementById('wbToast');
+      if (old) old.remove();
+      var toast = document.createElement('div');
+      toast.id = 'wbToast';
+      toast.style.cssText = 'position:fixed;top:24px;left:50%;transform:translateX(-50%);z-index:120;padding:10px 16px;border-radius:10px;background:#242136;color:#fff;font-size:14px;box-shadow:0 10px 30px rgba(0,0,0,.18)';
+      toast.textContent = message;
+      document.body.appendChild(toast);
+      setTimeout(function(){ toast.remove(); }, 2200);
+    }
+
+    /* ---------- 催办逻辑 ---------- */
+    var urgeContext = { task: '', target: '', role: '' };
+    function openUrgeModal(task, target, role) {
+      urgeContext = { task: task, target: target, role: role };
+      document.getElementById('urgeTaskName').textContent = task;
+      document.getElementById('urgeTarget').textContent = target + '（' + role + '）';
+      document.getElementById('urgeModal').classList.remove('hidden');
+    }
+    function closeUrgeModal() {
+      document.getElementById('urgeModal').classList.add('hidden');
+    }
+    function sendUrge() {
+      closeUrgeModal();
+      workbenchToast('催办消息已发送给 ' + urgeContext.target + '，对方将在消息提醒中看到催办内容');
+    }
+
+    // PM能力覆盖 切换（申请层次 / 申请国家）
+    function switchPmTab(tab) {
+      var level = document.getElementById('pmPanelLevel');
+      var country = document.getElementById('pmPanelCountry');
+      var tabL = document.getElementById('pmTabLevel');
+      var tabC = document.getElementById('pmTabCountry');
+      var activeCls = ['bg-white', 'text-blue-600', 'shadow-sm'];
+      var idleCls = ['text-gray-500'];
+      if (tab === 'level') {
+        level.classList.remove('hidden');
+        country.classList.add('hidden');
+        tabL.classList.add.apply(tabL.classList, activeCls);
+        tabL.classList.remove.apply(tabL.classList, idleCls);
+        tabC.classList.remove.apply(tabC.classList, activeCls);
+        tabC.classList.add.apply(tabC.classList, idleCls);
+      } else {
+        country.classList.remove('hidden');
+        level.classList.add('hidden');
+        tabC.classList.add.apply(tabC.classList, activeCls);
+        tabC.classList.remove.apply(tabC.classList, idleCls);
+        tabL.classList.remove.apply(tabL.classList, activeCls);
+        tabL.classList.add.apply(tabL.classList, idleCls);
+      }
+    }
   </script>
+  <script>
+    /* ================= 角色工作台（角色 × 指标 × 卡片 × 今日待办 × DDL 日历 × 数据看板） =================
+       数据全部取自系统内真实页面：任务列表页（文书交付）、网申任务列表页、文书审核列表页、
+       选校订单池页、选校任务列表页、我的项目列表页、项目经理工作台、项目详情页支付信息。未编造系统外数据。 */
+    var WB_TODAY = '2026-08-18';
+    var WB_TODAY_LABEL = '今天 2026-08-18 · 周二';
+    var WB_RED = '#dc2626', WB_ORANGE = '#ea580c', WB_AMBER = '#d97706', WB_BLUE = '#2563eb',
+        WB_PURPLE = '#7c3aed', WB_GREEN = '#059669', WB_CYAN = '#0891b2', WB_GRAY = '#6b7280';
+
+    /* 状态徽标配色（与系统各列表页状态徽标一致） */
+    var WB_BADGE = {
+      '撰写中':['#eff6ff','#1d4ed8'], '需修改':['#fee2e2','#b91c1c'], '审核中':['#ffedd5','#c2410c'],
+      '已完成':['#dcfce7','#15803d'], '进行中':['#eff6ff','#1d4ed8'], '待领取':['#f3f4f6','#4b5563'],
+      '已提交':['#dcfce7','#15803d'], '待接收':['#f5f3ff','#6d28d9'], '未接收':['#fef3c7','#b45309'],
+      '咨询中':['#eff6ff','#1d4ed8'], '选校中':['#dcfce7','#15803d'], '待确认':['#fef3c7','#b45309'],
+      '已结单':['#f3f4f6','#4b5563'], '已退回':['#fee2e2','#b91c1c'], '暂停':['#fef3c7','#b45309'],
+      '已结项':['#f3f4f6','#4b5563'], '已付':['#dcfce7','#15803d'], '待付':['#fef3c7','#b45309'],
+      '文书临期':['#fee2e2','#b91c1c'], '材料缺失':['#fef3c7','#b45309'], '正常':['#dcfce7','#15803d'],
+      '逾期':['#fee2e2','#b91c1c'], '新推送':['#f5f3ff','#6d28d9']
+    };
+
+    /* ---------- 数据构造小工具 ---------- */
+    function wbT(bar, tag, tagC, title, meta, time, timeC, act) {
+      return { bar: bar, tag: tag, tagColor: tagC, title: title, meta: meta, time: time, timeColor: timeC, act: act };
+    }
+    function wbB(nm, bdg, mt, prog, progC) { return { nm: nm, bdg: bdg, mt: mt, prog: prog, progC: progC }; }
+    function wbEv(tg, c, tx) { return { tg: tg, c: c, tx: tx }; }
+
+    /* ================= 六角色工作台数据 ================= */
+    var WB_ROLES = {
+
+      /* ---------- 1. 文书机构管理员 ---------- */
+      wsadmin: {
+        name: '文书机构管理员', scope: '管理视角 · 全模块', scopeBg: '#eff6ff', scopeC: '#1d4ed8',
+        tagline: '项目分配、团队卡点与全模块进度一屏掌握',
+        stats: [
+          { l: '今日待办', v: '5', n: '2 项需我处理 · 3 项团队卡点', t: '' },
+          { l: '待分配项目', v: '2', n: '项目池新增 · 等待分配项目经理', t: 'tone-orange' },
+          { l: '审核积压', v: '4', n: '文书审核中 · 最早 08-15 提交', t: 'tone-red' }
+        ],
+        cards: [
+          { m: 'PMO 项目池', c: '2 个新增项目待分配', color: WB_CYAN, href: '项目池列表页 - 留学申请管理系统.html' },
+          { m: '文书交付', c: '在办任务 5 项 · 1 项需修改', color: WB_BLUE, href: '任务列表页 - 文书交付系统.html' },
+          { m: '网申管理', c: '任务 6 项 · 1 项待领取', color: WB_PURPLE, href: '网申任务列表页 - 留学申请管理系统.html' },
+          { m: '文书审核', c: '审核中 4 份 · 已完成 2 份', color: WB_ORANGE, href: '文书审核列表页 - 留学申请管理系统.html' },
+          { m: '选校工作台', c: '订单 4 笔 · 1 笔待确认', color: WB_GREEN, href: '选校订单池页 - 留学申请管理系统.html' }
+        ],
+        todoCount: 5,
+        todoGroups: [
+          { title: '需要我处理', color: WB_RED, items: [
+            wbT(WB_RED, '待分配', WB_RED, '分配项目池 2 个新增项目', 'PMO监控台 · 项目池列表 · 新下单项目等待分配项目经理', '等待分配 · 越早就位越早启动', WB_GRAY, { l: '去分配', href: '项目池列表页 - 留学申请管理系统.html' }),
+            wbT(WB_AMBER, '订单跟进', WB_AMBER, '吴子墨博士申请订单「待确认」', '选校订单池 · 加拿大 · 数据科学 · 2026-07-18 下单 · 销售：孙鹏', '待客户确认选校方案', WB_AMBER, { l: '去查看', href: '选校订单池页 - 留学申请管理系统.html', cls: 'plain' })
+          ]},
+          { title: '团队卡点 · 可催办', color: WB_ORANGE, items: [
+            wbT(WB_RED, '逾期', WB_RED, '「审核 CMU 个人陈述终稿」尚未接收', '接收人：孙老师（审核人员）· 8月13日 04:30 分配', '已等待 1 天 6 小时', WB_RED, { l: '催办', urge: ['审核 CMU 个人陈述终稿', '孙老师', '审核人员'], cls: 'ghost' }),
+            wbT(WB_ORANGE, '卡点', WB_ORANGE, '「接收 Stanford 网申准备任务」尚未接收', '接收人：周老师（网申人员）· 8月13日 16:30 分配', '已等待 18 小时', WB_ORANGE, { l: '催办', urge: ['接收 Stanford 网申准备任务', '周老师', '网申人员'], cls: 'ghost' }),
+            wbT(WB_AMBER, '卡点', WB_AMBER, '「接收推荐信初稿撰写任务」尚未接收', '接收人：刘老师（文书交付人员）· 今天 04:30 分配', '已等待 6 小时', WB_AMBER, { l: '催办', urge: ['接收推荐信初稿撰写任务', '刘老师', '文书交付人员'], cls: 'ghost' })
+          ]}
+        ],
+        events: {
+          '2026-08-15': [wbEv('审核提交', WB_ORANGE, '赵婷 · 哥伦比亚大学 CV 提交审核（审核人员：王审核）')],
+          '2026-08-16': [wbEv('审核提交', WB_ORANGE, '王明 · 斯坦福大学 CV 提交审核（审核人员：王审核）')],
+          '2026-08-17': [wbEv('审核提交', WB_ORANGE, '李雪 · 卡内基梅隆大学 PS 提交审核（审核人员：王审核）')],
+          '2026-08-18': [wbEv('审核提交', WB_ORANGE, '刘芳 · 哈佛大学 PS 今天 08:40 提交审核（审核人员：李审核）'), wbEv('分配', WB_RED, '「推荐信初稿撰写任务」分配 6 小时未接收（刘老师）')],
+          '2026-09-15': [wbEv('文书DDL', WB_BLUE, '陈磊 · 剑桥大学 金融学 RP（已完成）')],
+          '2026-10-17': [wbEv('网申DDL', WB_PURPLE, '赵婷 · 哥伦比亚大学 经济学 Round 1 截止')],
+          '2026-10-30': [wbEv('文书DDL', WB_BLUE, '张华 · 麻省理工学院 数据科学 RL'), wbEv('网申DDL', WB_PURPLE, '张华 · 麻省理工学院 Round 1 截止')],
+          '2026-11-01': [wbEv('文书DDL', WB_BLUE, '李雪 · 卡内基梅隆大学 人工智能 PS'), wbEv('网申DDL', WB_PURPLE, '李雪 · 卡内基梅隆大学 Round 1 截止')],
+          '2026-11-20': [wbEv('文书DDL', WB_BLUE, '刘芳 · 哈佛大学 公共卫生 PS'), wbEv('网申DDL', WB_PURPLE, '刘芳 · 哈佛大学 Round 1 截止')],
+          '2026-12-01': [wbEv('网申DDL', WB_PURPLE, '孙梓涵 · 哥伦比亚大学 金融工程 Round 1 截止')],
+          '2026-12-15': [wbEv('文书DDL', WB_BLUE, '王明 · 斯坦福大学 计算机科学 CV'), wbEv('网申DDL', WB_PURPLE, '王明 · 斯坦福大学 Round 2 截止')]
+        },
+        boards: [
+          { title: '文书交付 · 任务列表', color: WB_BLUE, items: [
+            wbB('李雪 · 卡内基梅隆大学 人工智能 PS', '撰写中', 'DDL 2026-11-01'),
+            wbB('王明 · 斯坦福大学 计算机科学 CV', '撰写中', 'DDL 2026-12-15'),
+            wbB('张华 · 麻省理工学院 数据科学 RL', '审核中', 'DDL 2026-10-30'),
+            wbB('刘芳 · 哈佛大学 公共卫生 PS', '需修改', 'DDL 2026-11-20'),
+            wbB('陈磊 · 剑桥大学 金融学 RP', '已完成', 'DDL 2026-09-15')
+          ]},
+          { title: '网申管理 · 网申任务列表', color: WB_PURPLE, items: [
+            wbB('李雪 · 卡内基梅隆大学 人工智能 Round 1', '进行中', '材料 3/5 · DDL 2026-11-01 · 孙网申'),
+            wbB('张华 · 麻省理工学院 数据科学 Round 1', '进行中', '材料 4/6 · DDL 2026-10-30 · 钱网申'),
+            wbB('刘芳 · 哈佛大学 公共卫生 Round 1', '审核中', '材料 5/5 · DDL 2026-11-20 · 钱网申'),
+            wbB('赵婷 · 哥伦比亚大学 经济学 Round 1', '待领取', '材料 3/5 · DDL 2026-10-17 · 孙网申'),
+            wbB('王明 · 斯坦福大学 计算机科学 Round 2', '已提交', '材料 6/6 · DDL 2026-12-15 · 孙网申'),
+            wbB('孙梓涵 · 哥伦比亚大学 金融工程 Round 1', '新推送', 'DDL 2026-12-01 · 待接收')
+          ]},
+          { title: '文书审核 · 审核列表', color: WB_ORANGE, items: [
+            wbB('刘芳 · 哈佛大学 PS', '审核中', '今天 08:40 提交 · 李审核'),
+            wbB('李雪 · 卡内基梅隆大学 PS', '审核中', '08-17 10:30 提交 · 王审核'),
+            wbB('王明 · 斯坦福大学 CV', '审核中', '08-16 14:20 提交 · 王审核'),
+            wbB('赵婷 · 哥伦比亚大学 CV', '审核中', '08-15 11:05 提交 · 王审核'),
+            wbB('张华 · 麻省理工学院 RL', '已完成', '08-12 09:15 提交 · 李审核'),
+            wbB('陈磊 · 剑桥大学 RP', '已完成', '08-10 16:00 提交 · 王审核')
+          ]},
+          { title: '选校工作台 · 订单池', color: WB_GREEN, items: [
+            wbB('钱思睿 · 本科申请 / 美国 / 计算机科学', '咨询中', '2026-07-15 下单 · 销售：陈晨'),
+            wbB('孙浩然 · 硕士申请 / 英国 / 金融', '咨询中', '2026-07-16 下单 · 销售：刘洋'),
+            wbB('周雨薇 · 硕士申请 / 美国 / 电子工程', '选校中', '2026-07-17 下单 · 销售：赵敏'),
+            wbB('吴子墨 · 博士申请 / 加拿大 / 数据科学', '待确认', '2026-07-18 下单 · 销售：孙鹏')
+          ]}
+        ]
+      },
+
+      /* ---------- 2. 项目经理 ---------- */
+      pm: {
+        name: '项目经理', scope: '管理视角 · 我的项目', scopeBg: '#f5f3ff', scopeC: '#6d28d9',
+        tagline: '先处理临期与卡点，再推进项目进度',
+        stats: [
+          { l: '今日待办', v: '7', n: '3 项今天先处理 · 1 项近期跟进 · 3 项等待接收', t: '' },
+          { l: '等待他人', v: '3', n: '分配未接收 · 最久 1 天 6 小时', t: 'tone-red' },
+          { l: '我的项目', v: '5', n: '进行中 1 · 待接收 1 · 已退回 1', t: 'tone-blue' }
+        ],
+        cards: [
+          { m: '我的项目列表', c: '5 个项目 · 刘晓项目待接收', color: WB_CYAN, href: '我的项目列表页 - 留学申请管理系统.html' },
+          { m: '文书交付', c: '李雪 CMU PS 终稿等待确认', color: WB_BLUE, href: '任务列表页 - 文书交付系统.html' },
+          { m: '网申管理', c: 'Stanford 网申准备任务待接收', color: WB_PURPLE, href: '网申任务列表页 - 留学申请管理系统.html' },
+          { m: '文书审核', c: 'CMU 个人陈述终稿审核中', color: WB_ORANGE, href: '文书审核列表页 - 留学申请管理系统.html' }
+        ],
+        todoCount: 7,
+        todoGroups: [
+          { title: '今天先处理', color: WB_RED, items: [
+            wbT(WB_RED, '临期', WB_RED, '确认李雪的 CMU 文书终稿', '当前在刘老师 · 等待 PM 最终确认 · 李雪 · 硕士申请', '今天 18:00 前', WB_RED, { l: '立即处理', href: '我的项目详情页 - 留学申请管理系统.html' }),
+            wbT(WB_ORANGE, '材料', WB_ORANGE, '催收陈雨桐护照复印件', '学生材料缺失 · 已影响网申字段准备 · 陈雨桐 · 硕士申请', '今天', WB_ORANGE, { l: '催办', urge: ['催收陈雨桐护照复印件', '陈雨桐', '学生'], cls: 'ghost' }),
+            wbT(WB_PURPLE, '待接收', WB_PURPLE, '接收刘晓的本科申请项目', '机构已完成项目经理分配 · PRJ20260701005', '待接收', WB_GRAY, { l: '查看任务', href: '我的项目列表页 - 留学申请管理系统.html' })
+          ]},
+          { title: '近期跟进', color: WB_AMBER, items: [
+            wbT(WB_AMBER, null, null, '跟进斯坦福推荐信审核', '当前在孙老师 · 已停留 18 小时', '明天 12:00', WB_GRAY, { l: '催办', urge: ['跟进斯坦福推荐信审核', '孙老师', '审核人员'], cls: 'ghost' })
+          ]},
+          { title: '分配任务待接收 · 可催办', color: WB_ORANGE, items: [
+            wbT(WB_RED, '逾期', WB_RED, '审核 CMU 个人陈述终稿', '文书审核 · 李雪 · 卡内基梅隆大学 · 孙老师 · 8月13日 04:30 分配', '已等待 1 天 6 小时', WB_RED, { l: '催办', urge: ['审核 CMU 个人陈述终稿', '孙老师', '审核人员'], cls: 'ghost' }),
+            wbT(WB_ORANGE, null, null, '接收 Stanford 网申准备任务', '网申管理 · 李雪 · 斯坦福大学 · 周老师 · 8月13日 16:30 分配', '已等待 18 小时', WB_ORANGE, { l: '催办', urge: ['接收 Stanford 网申准备任务', '周老师', '网申人员'], cls: 'ghost' }),
+            wbT(WB_AMBER, null, null, '接收推荐信初稿撰写任务', '文书交付 · 陈雨桐 · 加州大学伯克利分校 · 刘老师 · 今天 04:30 分配', '已等待 6 小时', WB_AMBER, { l: '催办', urge: ['接收推荐信初稿撰写任务', '刘老师', '文书交付人员'], cls: 'ghost' })
+          ]}
+        ],
+        events: {
+          '2026-08-13': [wbEv('分配', WB_RED, '04:30 分配「审核 CMU 个人陈述终稿」给孙老师（已等待 1 天 6 小时）'), wbEv('分配', WB_ORANGE, '16:30 分配「Stanford 网申准备任务」给周老师（已等待 18 小时）')],
+          '2026-08-18': [wbEv('临期', WB_RED, '今天 18:00 前确认李雪的 CMU 文书终稿'), wbEv('材料', WB_ORANGE, '催收陈雨桐护照复印件'), wbEv('分配', WB_AMBER, '04:30 分配「推荐信初稿撰写任务」给刘老师（已等待 6 小时）')],
+          '2026-08-19': [wbEv('跟进', WB_CYAN, '12:00 跟进斯坦福推荐信审核（孙老师）')],
+          '2026-11-01': [wbEv('文书DDL', WB_BLUE, '李雪 · 卡内基梅隆大学 人工智能 PS'), wbEv('网申DDL', WB_PURPLE, '李雪 · 卡内基梅隆大学 Round 1 截止')]
+        },
+        boards: [
+          { title: '重点项目状态', color: WB_BLUE, items: [
+            wbB('李雪 · 硕士申请', '文书临期', '当前：CMU 文书交付 · 下一步：PM 确认', 62, WB_RED),
+            wbB('陈雨桐 · 硕士申请', '材料缺失', '当前：材料准备 · 卡在学生', 38, WB_AMBER),
+            wbB('王梓豪 · 博士申请', '正常', '当前：院校目标确认 · 进度正常', 48, WB_GREEN)
+          ]},
+          { title: '我的项目 · 项目列表', color: WB_CYAN, items: [
+            wbB('李雪 · 硕士申请（PRJ20260701002）', '进行中', '更新 2026-07-14 09:30'),
+            wbB('刘晓 · 本科申请（PRJ20260701005）', '待接收', '机构已分配 · 待接收'),
+            wbB('陈雨桐 · 硕士申请（PRJ20260701008）', '已退回', '更新 2026-07-15 14:00'),
+            wbB('王梓豪 · 博士申请（PRJ20260701012）', '暂停', '更新 2026-07-16 10:15'),
+            wbB('赵欣怡 · 本科申请（PRJ20260701018）', '已结项', '更新 2026-07-10 08:00')
+          ]},
+          { title: '分配任务待接收', color: WB_ORANGE, items: [
+            wbB('审核 CMU 个人陈述终稿 · 孙老师（审核人员）', '逾期', '8月13日 04:30 分配 · 已等待 1 天 6 小时'),
+            wbB('接收 Stanford 网申准备任务 · 周老师（网申人员）', '未接收', '8月13日 16:30 分配 · 已等待 18 小时'),
+            wbB('接收推荐信初稿撰写任务 · 刘老师（文书交付）', '未接收', '今天 04:30 分配 · 已等待 6 小时')
+          ]}
+        ]
+      },
+
+      /* ---------- 3. 文书人员 ---------- */
+      writer: {
+        name: '文书人员', scope: '执行视角 · 我的文书任务', scopeBg: '#eff6ff', scopeC: '#1d4ed8',
+        tagline: '先交被催的、先改打回的，再推进撰写中的',
+        stats: [
+          { l: '被催办', v: '1', n: '李雪 CMU PS 终稿 · 今天 18:00 前', t: 'tone-red' },
+          { l: '需修改', v: '1', n: '刘芳 哈佛 PS · DDL 11-20', t: 'tone-orange' },
+          { l: '撰写中', v: '2', n: '李雪 CMU PS · 王明斯坦福 CV', t: 'tone-blue' },
+          { l: '待接收', v: '1', n: '陈雨桐 伯克利推荐信初稿', t: 'tone-purple' }
+        ],
+        cards: [
+          { m: '任务列表', c: '我的任务 5 项 · 1 项被催办', color: WB_BLUE, href: '任务列表页 - 文书交付系统.html' },
+          { m: '模板库', c: '文书模板与范例', color: WB_CYAN, href: '模板库列表 - 文书交付系统.html' },
+          { m: '案例库', c: '优秀文书案例参考', color: WB_GREEN, href: '案例库 - 文书交付系统.html' },
+          { m: '文书编辑器', c: '继续撰写未完成文书', color: WB_PURPLE, href: '文书编辑器 - 文书交付系统.html' }
+        ],
+        todoCount: 5,
+        todoGroups: [
+          { title: '优先处理', color: WB_RED, items: [
+            wbT(WB_RED, '被催办', WB_RED, '李雪 · 卡内基梅隆大学 个人陈述（PS）终稿', '项目经理催办 · 终稿提交后等待 PM 确认 · 客户：李建国', '今天 18:00 前提交', WB_RED, { l: '立即处理', href: '任务列表页 - 文书交付系统.html' }),
+            wbT(WB_RED, '需修改', WB_RED, '刘芳 · 哈佛大学 公共卫生 PS 修改', '审核打回 · 按审核意见修改后重新提交 · 客户：刘志强', 'DDL 2026-11-20', WB_GRAY, { l: '去修改', href: '任务列表页 - 文书交付系统.html' }),
+            wbT(WB_PURPLE, '待接收', WB_PURPLE, '陈雨桐 · 加州大学伯克利分校 推荐信初稿撰写', '项目经理分配 · 今天 04:30 分配 · 已等待 6 小时', '接收后开始撰写', WB_GRAY, { l: '接收任务', toast: '已接收任务（陈雨桐 · 加州大学伯克利分校 推荐信初稿撰写），任务已加入任务列表' })
+          ]},
+          { title: '撰写中', color: WB_BLUE, items: [
+            wbT(WB_BLUE, null, null, '李雪 · 卡内基梅隆大学 人工智能 PS', '撰写中 · 客户：李建国', 'DDL 2026-11-01', WB_GRAY, { l: '继续撰写', href: '文书编辑器 - 文书交付系统.html', cls: 'plain' }),
+            wbT(WB_BLUE, null, null, '王明 · 斯坦福大学 计算机科学 CV', '撰写中 · 客户：王建华', 'DDL 2026-12-15', WB_GRAY, { l: '继续撰写', href: '文书编辑器 - 文书交付系统.html', cls: 'plain' })
+          ]}
+        ],
+        events: {
+          '2026-08-18': [wbEv('被催办', WB_RED, '李雪 · CMU 个人陈述（PS）终稿被项目经理催办 · 今天 18:00 前')],
+          '2026-09-15': [wbEv('文书DDL', WB_BLUE, '陈磊 · 剑桥大学 金融学 RP（已完成）')],
+          '2026-10-30': [wbEv('文书DDL', WB_BLUE, '张华 · 麻省理工学院 数据科学 RL（审核中）')],
+          '2026-11-01': [wbEv('文书DDL', WB_BLUE, '李雪 · 卡内基梅隆大学 人工智能 PS（撰写中）')],
+          '2026-11-20': [wbEv('文书DDL', WB_BLUE, '刘芳 · 哈佛大学 公共卫生 PS（需修改）')],
+          '2026-12-15': [wbEv('文书DDL', WB_BLUE, '王明 · 斯坦福大学 计算机科学 CV（撰写中）')]
+        },
+        boards: [
+          { title: '撰写中', color: WB_BLUE, items: [
+            wbB('李雪 · 卡内基梅隆大学 人工智能 PS', '撰写中', 'DDL 2026-11-01'),
+            wbB('王明 · 斯坦福大学 计算机科学 CV', '撰写中', 'DDL 2026-12-15')
+          ]},
+          { title: '需修改', color: WB_RED, items: [
+            wbB('刘芳 · 哈佛大学 公共卫生 PS', '需修改', '审核打回 · DDL 2026-11-20')
+          ]},
+          { title: '审核中', color: WB_ORANGE, items: [
+            wbB('张华 · 麻省理工学院 数据科学 RL', '审核中', 'DDL 2026-10-30')
+          ]},
+          { title: '已完成', color: WB_GREEN, items: [
+            wbB('陈磊 · 剑桥大学 金融学 RP', '已完成', 'DDL 2026-09-15')
+          ]}
+        ]
+      },
+
+      /* ---------- 4. 销售人员 ---------- */
+      sales: {
+        name: '销售人员', scope: '执行视角 · 订单与回款', scopeBg: '#fffbeb', scopeC: '#b45309',
+        tagline: '待确认先跟、尾款先催、咨询持续跟',
+        stats: [
+          { l: '待确认订单', v: '1', n: '吴子墨博士申请 · 07-18 下单', t: 'tone-red' },
+          { l: '咨询中订单', v: '2', n: '钱思睿 · 孙浩然', t: 'tone-blue' },
+          { l: '待回款节点', v: '1', n: '李雪项目尾款 ¥12,000', t: 'tone-orange' }
+        ],
+        cards: [
+          { m: '选校订单池', c: '订单 4 笔 · 1 笔待确认', color: WB_GREEN, href: '选校订单池页 - 留学申请管理系统.html' },
+          { m: '选校任务列表', c: '咨询任务 5 项 · 1 项已结单', color: WB_CYAN, href: '选校任务列表页 - 留学申请管理系统.html' },
+          { m: '支付节点', c: '李雪项目尾款待付 ¥12,000', color: WB_AMBER, href: '项目详情页 - 留学申请管理系统.html' }
+        ],
+        todoCount: 5,
+        todoGroups: [
+          { title: '今天先处理', color: WB_RED, items: [
+            wbT(WB_RED, '待确认', WB_RED, '跟进吴子墨博士申请订单', '选校订单池 · 加拿大 · 数据科学 · 2026-07-18 下单 · 负责人：孙鹏', '待客户确认选校方案', WB_RED, { l: '去跟进', href: '选校订单池页 - 留学申请管理系统.html' }),
+            wbT(WB_AMBER, '待回款', WB_AMBER, '催收李雪项目尾款 ¥12,000', '文书预付款 ¥24,000（07-05 已付）· 网申预付款 ¥20,000（08-10 已付）· 尾款待付', '尾款 · 待付', WB_AMBER, { l: '去催收', toast: '已提醒客户支付尾款 ¥12,000（李雪项目）' })
+          ]},
+          { title: '持续跟进', color: WB_GREEN, items: [
+            wbT(WB_GREEN, null, null, '钱思睿 · 本科申请 · 美国 计算机科学', '选校订单池 · 咨询中 · 负责人：陈晨', '下单 2026-07-15', WB_GRAY, { l: '去跟进', href: '选校订单池页 - 留学申请管理系统.html', cls: 'plain' }),
+            wbT(WB_GREEN, null, null, '孙浩然 · 硕士申请 · 英国 金融', '选校订单池 · 咨询中 · 负责人：刘洋', '下单 2026-07-16', WB_GRAY, { l: '去跟进', href: '选校订单池页 - 留学申请管理系统.html', cls: 'plain' }),
+            wbT(WB_BLUE, null, null, '孙可欣 · 本科申请 · 美国 计算机科学', '选校任务列表 · 咨询中 · 负责人：陈晨', '选校咨询 2026-07-20 09:00', WB_GRAY, { l: '查看方案', href: '选校任务列表页 - 留学申请管理系统.html', cls: 'plain' })
+          ]}
+        ],
+        events: {
+          '2026-07-15': [wbEv('订单', WB_GREEN, '钱思睿 · 本科/美国/计算机科学 下单（咨询中 · 陈晨）')],
+          '2026-07-16': [wbEv('订单', WB_GREEN, '孙浩然 · 硕士/英国/金融 下单（咨询中 · 刘洋）')],
+          '2026-07-17': [wbEv('订单', WB_GREEN, '周雨薇 · 硕士/美国/电子工程 下单（选校中 · 赵敏）')],
+          '2026-07-18': [wbEv('订单', WB_AMBER, '吴子墨 · 博士/加拿大/数据科学 下单（待确认 · 孙鹏）')],
+          '2026-07-20': [wbEv('咨询', WB_CYAN, '孙可欣 · 本科/美国/计算机科学 选校咨询 09:00（陈晨）')],
+          '2026-08-10': [wbEv('支付', WB_AMBER, '李雪项目网申预付款 ¥20,000 已付 · 尾款 ¥12,000 待付')]
+        },
+        boards: [
+          { title: '选校订单池', color: WB_GREEN, items: [
+            wbB('钱思睿 · 本科申请 / 美国 / 计算机科学', '咨询中', '2026-07-15 下单 · 负责人：陈晨'),
+            wbB('孙浩然 · 硕士申请 / 英国 / 金融', '咨询中', '2026-07-16 下单 · 负责人：刘洋'),
+            wbB('周雨薇 · 硕士申请 / 美国 / 电子工程', '选校中', '2026-07-17 下单 · 负责人：赵敏'),
+            wbB('吴子墨 · 博士申请 / 加拿大 / 数据科学', '待确认', '2026-07-18 下单 · 负责人：孙鹏')
+          ]},
+          { title: '选校任务列表', color: WB_CYAN, items: [
+            wbB('孙可欣 · 本科申请 / 美国 / 计算机科学', '咨询中', '2026-07-20 09:00 · 陈晨'),
+            wbB('周雨薇 · 硕士申请 / 美国 / 电子工程', '咨询中', '2026-07-17 10:00 · 李欣'),
+            wbB('吴子墨 · 博士申请 / 加拿大 / 数据科学', '咨询中', '2026-07-18 09:30 · 陈晨'),
+            wbB('郑晓萌 · 本科申请 / 英国 / 金融', '咨询中', '2026-07-19 14:20 · 周扬'),
+            wbB('冯天翊 · 硕士申请 / 美国 / 市场营销', '已结单', '2026-07-11 16:00 · 李欣')
+          ]},
+          { title: '支付节点 · 李雪 CMU 项目', color: WB_AMBER, items: [
+            wbB('文书预付款 ¥24,000', '已付', '2026-07-05 14:30 支付'),
+            wbB('网申预付款 ¥20,000', '已付', '2026-08-10 10:20 支付'),
+            wbB('尾款 ¥12,000', '待付', '待客户支付')
+          ]}
+        ]
+      },
+
+      /* ---------- 5. 网申人员 ---------- */
+      apply: {
+        name: '网申人员', scope: '执行视角 · 我的网申任务', scopeBg: '#f5f3ff', scopeC: '#6d28d9',
+        tagline: '先接收、再补材料，盯紧最近的网申 DDL',
+        stats: [
+          { l: '被催办', v: '1', n: 'Stanford 网申准备 · 已等待 18 小时', t: 'tone-red' },
+          { l: '待领取', v: '1', n: '赵婷 哥大经济学 · DDL 10-17 最近', t: 'tone-orange' },
+          { l: '进行中', v: '2', n: '张华 MIT · 李雪 CMU', t: 'tone-blue' },
+          { l: '待接收', v: '1', n: '孙梓涵 哥大金融工程（新推送）', t: 'tone-purple' }
+        ],
+        cards: [
+          { m: '网申任务列表', c: '任务 6 项 · 1 项被催办', color: WB_PURPLE, href: '网申任务列表页 - 留学申请管理系统.html' },
+          { m: '网申模板库', c: '模板 5 套 · 覆盖美国/英国/中国香港', color: WB_BLUE, href: '网申模板库 - 留学申请管理系统.html' }
+        ],
+        todoCount: 5,
+        todoGroups: [
+          { title: '优先处理', color: WB_RED, items: [
+            wbT(WB_RED, '被催办', WB_RED, '接收 Stanford 网申准备任务', '项目经理催办 · 8月13日 16:30 分配 · 李雪 · 斯坦福大学', '已等待 18 小时', WB_RED, { l: '立即接收', toast: '已接收 Stanford 网申准备任务，任务已加入网申任务列表' }),
+            wbT(WB_PURPLE, '新推送', WB_PURPLE, '孙梓涵 · 哥伦比亚大学 金融工程 Round 1', '系统推送新网申任务 · 客户：孙志远', 'DDL 2026-12-01', WB_GRAY, { l: '接收任务', toast: '已接收网申任务（孙梓涵 - 哥伦比亚大学/金融工程），任务已加入网申任务列表' }),
+            wbT(WB_ORANGE, '待领取', WB_ORANGE, '赵婷 · 哥伦比亚大学 经济学 Round 1', '材料 3/5 · 客户：赵文华', 'DDL 2026-10-17 · 最近网申 DDL', WB_ORANGE, { l: '领取任务', toast: '已领取网申任务（赵婷 - 哥伦比亚大学/经济学）' })
+          ]},
+          { title: '进行中', color: WB_BLUE, items: [
+            wbT(WB_BLUE, null, null, '张华 · 麻省理工学院 数据科学 Round 1', '材料 4/6 · 客户：张国庆', 'DDL 2026-10-30', WB_GRAY, { l: '进入详情', href: '网申任务详情页 - 留学申请管理系统.html', cls: 'plain' }),
+            wbT(WB_BLUE, null, null, '李雪 · 卡内基梅隆大学 人工智能 Round 1', '材料 3/5 · 客户：李建国', 'DDL 2026-11-01', WB_GRAY, { l: '进入详情', href: '网申任务详情页 - 留学申请管理系统.html', cls: 'plain' })
+          ]}
+        ],
+        events: {
+          '2026-08-18': [wbEv('被催办', WB_RED, 'Stanford 网申准备任务被项目经理催办 · 已等待 18 小时')],
+          '2026-10-17': [wbEv('网申DDL', WB_PURPLE, '赵婷 · 哥伦比亚大学 经济学 Round 1 截止（材料 3/5）')],
+          '2026-10-30': [wbEv('网申DDL', WB_PURPLE, '张华 · 麻省理工学院 数据科学 Round 1 截止（材料 4/6）')],
+          '2026-11-01': [wbEv('网申DDL', WB_PURPLE, '李雪 · 卡内基梅隆大学 人工智能 Round 1 截止（材料 3/5）')],
+          '2026-11-20': [wbEv('网申DDL', WB_PURPLE, '刘芳 · 哈佛大学 公共卫生 Round 1 截止（审核中）')],
+          '2026-12-01': [wbEv('网申DDL', WB_PURPLE, '孙梓涵 · 哥伦比亚大学 金融工程 Round 1 截止（待接收）')],
+          '2026-12-15': [wbEv('网申DDL', WB_PURPLE, '王明 · 斯坦福大学 计算机科学 Round 2 截止（已提交）')]
+        },
+        boards: [
+          { title: '待接收', color: WB_PURPLE, items: [
+            wbB('孙梓涵 · 哥伦比亚大学 金融工程 Round 1', '新推送', 'DDL 2026-12-01 · 系统推送')
+          ]},
+          { title: '待领取', color: WB_GRAY, items: [
+            wbB('赵婷 · 哥伦比亚大学 经济学 Round 1', '待领取', '材料 3/5 · DDL 2026-10-17')
+          ]},
+          { title: '进行中', color: WB_BLUE, items: [
+            wbB('张华 · 麻省理工学院 数据科学 Round 1', '进行中', '材料 4/6 · DDL 2026-10-30'),
+            wbB('李雪 · 卡内基梅隆大学 人工智能 Round 1', '进行中', '材料 3/5 · DDL 2026-11-01')
+          ]},
+          { title: '审核中', color: WB_ORANGE, items: [
+            wbB('刘芳 · 哈佛大学 公共卫生 Round 1', '审核中', '材料 5/5 · DDL 2026-11-20')
+          ]},
+          { title: '已提交', color: WB_GREEN, items: [
+            wbB('王明 · 斯坦福大学 计算机科学 Round 2', '已提交', '材料 6/6 · DDL 2026-12-15')
+          ]}
+        ]
+      },
+
+      /* ---------- 6. 文书审核 ---------- */
+      audit: {
+        name: '文书审核', scope: '执行视角 · 审核队列', scopeBg: '#fff7ed', scopeC: '#c2410c',
+        tagline: '按提交时间清零审核队列，被催办的最先审',
+        stats: [
+          { l: '审核中', v: '4', n: '最早 08-15 提交 · 赵婷 CV', t: 'tone-orange' },
+          { l: '今日新增', v: '1', n: '刘芳 哈佛 PS · 08:40 提交', t: 'tone-blue' },
+          { l: '被催办', v: '1', n: 'CMU 个人陈述终稿 · 等待 1 天 6 小时', t: 'tone-red' },
+          { l: '已完成', v: '2', n: '张华 RL · 陈磊 RP', t: '' }
+        ],
+        cards: [
+          { m: '文书审核列表', c: '队列 6 份 · 审核中 4 份', color: WB_ORANGE, href: '文书审核列表页 - 留学申请管理系统.html' }
+        ],
+        todoCount: 6,
+        todoGroups: [
+          { title: '优先审核', color: WB_RED, items: [
+            wbT(WB_RED, '被催办', WB_RED, '审核 CMU 个人陈述终稿（李雪）', '项目经理催办 · 8月13日 04:30 分配至今未接收 · 文书审核', '已等待 1 天 6 小时', WB_RED, { l: '立即审核', href: '文书审核详情页 - 留学申请管理系统.html' }),
+            wbT(WB_ORANGE, '今日提交', WB_ORANGE, '刘芳 · 哈佛大学 公共卫生 PS', '提交人：陈文书 · 审核人员：李审核', '今天 08:40 提交', WB_ORANGE, { l: '去审核', href: '文书审核详情页 - 留学申请管理系统.html' }),
+            wbT(WB_AMBER, '积压最久', WB_AMBER, '赵婷 · 哥伦比亚大学 CV', '提交人：周文书 · 审核人员：王审核', '08-15 11:05 提交', WB_AMBER, { l: '去审核', href: '文书审核详情页 - 留学申请管理系统.html' })
+          ]},
+          { title: '审核队列', color: WB_ORANGE, items: [
+            wbT(WB_ORANGE, null, null, '李雪 · 卡内基梅隆大学 PS', '提交人：陈文书 · 审核人员：王审核', '08-17 10:30 提交', WB_GRAY, { l: '去审核', href: '文书审核详情页 - 留学申请管理系统.html', cls: 'plain' }),
+            wbT(WB_ORANGE, null, null, '王明 · 斯坦福大学 CV', '提交人：周文书 · 审核人员：王审核', '08-16 14:20 提交', WB_GRAY, { l: '去审核', href: '文书审核详情页 - 留学申请管理系统.html', cls: 'plain' }),
+            wbT(WB_PURPLE, '待接收', WB_PURPLE, '《哥伦比亚大学-经济学-个人陈述》', '提交人：王雨桐 · 文书交付团队新提交审核', '待接收', WB_GRAY, { l: '接收', toast: '已接收审核任务《哥伦比亚大学-经济学-个人陈述》，已加入文书审核列表' })
+          ]}
+        ],
+        events: {
+          '2026-08-10': [wbEv('提交审核', WB_ORANGE, '陈磊 · 剑桥大学 RP 16:00 提交（已完成）')],
+          '2026-08-12': [wbEv('提交审核', WB_ORANGE, '张华 · 麻省理工学院 RL 09:15 提交（已完成）')],
+          '2026-08-15': [wbEv('提交审核', WB_ORANGE, '赵婷 · 哥伦比亚大学 CV 11:05 提交（审核中 · 积压最久）')],
+          '2026-08-16': [wbEv('提交审核', WB_ORANGE, '王明 · 斯坦福大学 CV 14:20 提交（审核中）')],
+          '2026-08-17': [wbEv('提交审核', WB_ORANGE, '李雪 · 卡内基梅隆大学 PS 10:30 提交（审核中）')],
+          '2026-08-18': [wbEv('提交审核', WB_ORANGE, '刘芳 · 哈佛大学 PS 08:40 提交（审核中）'), wbEv('被催办', WB_RED, 'CMU 个人陈述终稿审核被催办 · 已等待 1 天 6 小时')]
+        },
+        boards: [
+          { title: '审核中', color: WB_ORANGE, items: [
+            wbB('刘芳 · 哈佛大学 PS', '审核中', '今天 08:40 提交 · 李审核 · 提交人：陈文书'),
+            wbB('李雪 · 卡内基梅隆大学 PS', '审核中', '08-17 10:30 提交 · 王审核 · 提交人：陈文书'),
+            wbB('王明 · 斯坦福大学 CV', '审核中', '08-16 14:20 提交 · 王审核 · 提交人：周文书'),
+            wbB('赵婷 · 哥伦比亚大学 CV', '审核中', '08-15 11:05 提交 · 王审核 · 提交人：周文书')
+          ]},
+          { title: '已完成', color: WB_GREEN, items: [
+            wbB('张华 · 麻省理工学院 RL', '已完成', '08-12 09:15 提交 · 李审核 · 提交人：吴文书'),
+            wbB('陈磊 · 剑桥大学 RP', '已完成', '08-10 16:00 提交 · 王审核 · 提交人：郑文书')
+          ]}
+        ]
+      }
+    };
+
+    /* ================= 渲染逻辑 ================= */
+    var WB_CAL = {};
+
+    function wbPad(n) { return (n < 10 ? '0' : '') + n; }
+
+    function wbDateLabel(key) {
+      var p = key.split('-');
+      var label = p[0] + ' 年 ' + Number(p[1]) + ' 月 ' + Number(p[2]) + ' 日';
+      if (key === WB_TODAY) label += '（今天）';
+      return label;
+    }
+
+    function wbActBtn(a) {
+      if (!a) return '';
+      var cls = 'wb-act' + (a.cls ? ' ' + a.cls : '');
+      if (a.urge) return '<button type="button" class="' + cls + '" onclick="openUrgeModal(\'' + a.urge[0] + '\',\'' + a.urge[1] + '\',\'' + a.urge[2] + '\')">' + a.l + '</button>';
+      if (a.href) return '<button type="button" class="' + cls + '" onclick="location.href=\'' + a.href + '\')">' + a.l + '</button>';
+      if (a.toast) return '<button type="button" class="' + cls + '" onclick="workbenchToast(\'' + a.toast + '\')">' + a.l + '</button>';
+      return '';
+    }
+
+    function wbTodoRow(it) {
+      return '<div class="wb-todo">'
+        + '<span class="wb-todo-bar" style="background:' + it.bar + '"></span>'
+        + '<div class="wb-todo-b">'
+        + '<div class="wb-todo-t">' + (it.tag ? '<span class="wb-tag" style="background:' + it.tagColor + '">' + it.tag + '</span>' : '') + it.title + '</div>'
+        + '<div class="wb-todo-m">' + it.meta + '</div>'
+        + (it.time ? '<div class="wb-todo-time" style="color:' + (it.timeColor || WB_GRAY) + '">' + it.time + '</div>' : '')
+        + '</div>'
+        + wbActBtn(it.act)
+        + '</div>';
+    }
+
+    function wbBoardCol(b) {
+      var h = '<div class="wb-board-col"><div class="wb-board-h"><span class="wb-board-t"><span class="wb-board-dot" style="background:' + b.color + '"></span>' + b.title + '</span><span class="wb-board-c">' + b.items.length + ' 项</span></div>';
+      for (var i = 0; i < b.items.length; i++) {
+        var it = b.items[i];
+        var bg = WB_BADGE[it.bdg] || ['#f3f4f6', '#374151'];
+        h += '<div class="wb-bitem"><div style="min-width:0"><div class="nm">' + it.nm + '</div>'
+          + (it.mt ? '<div class="mt">' + it.mt + '</div>' : '')
+          + (it.prog != null ? '<div class="wb-prog"><span style="width:' + it.prog + '%;background:' + (it.progC || WB_BLUE) + '"></span></div>' : '')
+          + '</div>'
+          + (it.bdg ? '<span class="wb-bdg" style="background:' + bg[0] + ';color:' + bg[1] + '">' + it.bdg + '</span>' : '')
+          + '</div>';
+      }
+      return h + '</div>';
+    }
+
+    function wbRenderCal(role) {
+      var st = WB_CAL[role], ev = WB_ROLES[role].events || {};
+      var off = (new Date(st.y, st.m - 1, 1).getDay() + 6) % 7;
+      var dim = new Date(st.y, st.m, 0).getDate();
+      var prevDim = new Date(st.y, st.m - 1, 0).getDate();
+      var h = '<div class="wb-cal-h"><span class="wb-cal-t">' + st.y + ' 年 ' + st.m + ' 月</span>'
+        + '<span class="wb-cal-nav"><button type="button" onclick="wbCalShift(\'' + role + '\',-1)" aria-label="上一月">‹</button><button type="button" onclick="wbCalShift(\'' + role + '\',1)" aria-label="下一月">›</button></span></div>';
+      h += '<div class="wb-cal-grid">';
+      var weeks = ['一', '二', '三', '四', '五', '六', '日'];
+      for (var i = 0; i < 7; i++) h += '<div class="wb-cal-w">' + weeks[i] + '</div>';
+      for (var p = off - 1; p >= 0; p--) h += '<div class="wb-day out">' + (prevDim - p) + '</div>';
+      for (var d = 1; d <= dim; d++) {
+        var key = st.y + '-' + wbPad(st.m) + '-' + wbPad(d);
+        var cls = 'wb-day';
+        if (ev[key]) cls += ' has';
+        if (key === WB_TODAY) cls += ' today';
+        if (key === st.sel) cls += ' sel';
+        h += '<div class="' + cls + '" onclick="wbCalSelect(\'' + role + '\',\'' + key + '\')">' + d + '</div>';
+      }
+      var tail = (7 - (off + dim) % 7) % 7;
+      for (var t = 1; t <= tail; t++) h += '<div class="wb-day out">' + t + '</div>';
+      h += '</div>';
+      var list = ev[st.sel] || [];
+      h += '<div class="wb-daydetail"><div class="wb-dd">' + wbDateLabel(st.sel) + ' · ' + (list.length ? list.length + ' 项 DDL/事件' : '无 DDL/事件') + '</div>';
+      if (list.length) {
+        for (var k = 0; k < list.length; k++) {
+          h += '<div class="wb-ev"><span class="tg" style="background:' + list[k].c + '">' + list[k].tg + '</span><span class="tx">' + list[k].tx + '</span></div>';
+        }
+      } else {
+        h += '<div class="wb-ev-empty">这一天没有到期的 DDL · 点击红色日期可查看当日明细</div>';
+      }
+      h += '</div>';
+      document.getElementById('wbCal-' + role).innerHTML = h;
+    }
+
+    function wbCalShift(role, d) {
+      var st = WB_CAL[role];
+      st.m += d;
+      if (st.m < 1) { st.m = 12; st.y--; }
+      if (st.m > 12) { st.m = 1; st.y++; }
+      wbRenderCal(role);
+    }
+
+    function wbCalSelect(role, date) {
+      WB_CAL[role].sel = date;
+      wbRenderCal(role);
+    }
+
+    function wbRenderRole(role) {
+      var R = WB_ROLES[role];
+      var h = '<div class="wb-head"><div><div class="wb-title">' + R.name + '工作台<span class="wb-scope" style="background:' + R.scopeBg + ';color:' + R.scopeC + '">' + R.scope + '</span></div><p class="wb-sub">' + R.tagline + ' · ' + WB_TODAY_LABEL + '</p></div></div>';
+      h += '<div class="wb-stats">';
+      for (var i = 0; i < R.stats.length; i++) {
+        var s = R.stats[i];
+        h += '<div class="wb-stat ' + (s.t || '') + '"><div class="l">' + s.l + '</div><div class="v">' + s.v + '</div><div class="n">' + s.n + '</div></div>';
+      }
+      h += '</div>';
+      h += '<div class="wb-cards">';
+      for (var c = 0; c < R.cards.length; c++) {
+        var cd = R.cards[c];
+        h += '<a class="wb-card" style="border-left-color:' + cd.color + '" href="' + cd.href + '"><div class="m">' + cd.m + '</div><div class="c">' + cd.c + '</div><div class="go" style="color:' + cd.color + '">进入模块 →</div></a>';
+      }
+      h += '</div>';
+      h += '<div class="wb-main"><section class="wb-panel"><div class="wb-panel-h"><span class="wb-panel-t">今日待办</span><span class="wb-panel-n">共 ' + R.todoCount + ' 项 · 按优先级分组</span></div>';
+      for (var g = 0; g < R.todoGroups.length; g++) {
+        var gr = R.todoGroups[g];
+        h += '<div class="wb-group-t"><span class="wb-group-dot" style="background:' + gr.color + '"></span>' + gr.title + '<span class="wb-panel-n">' + gr.items.length + ' 项</span></div>';
+        for (var j = 0; j < gr.items.length; j++) h += wbTodoRow(gr.items[j]);
+      }
+      h += '</section><aside class="wb-panel"><div class="wb-panel-h"><span class="wb-panel-t">DDL 日历</span><span class="wb-panel-n">红色日期 = 有 DDL/事件 · 点击查看</span></div><div id="wbCal-' + role + '"></div></aside></div>';
+      h += '<div class="wb-panel-h" style="margin:2px 0 12px"><span class="wb-panel-t">数据看板</span><span class="wb-panel-n">与今日待办、日历数据一致 · 来自系统各模块列表</span></div>';
+      h += '<div class="wb-boards" style="grid-template-columns:repeat(auto-fit,minmax(250px,1fr))">';
+      for (var b = 0; b < R.boards.length; b++) h += wbBoardCol(R.boards[b]);
+      h += '</div>';
+      document.getElementById('panel-' + role).innerHTML = h;
+    }
+
+    (function initRoleWorkbenches() {
+      var roles = ['wsadmin', 'pm', 'writer', 'sales', 'apply', 'audit'];
+      for (var i = 0; i < roles.length; i++) {
+        WB_CAL[roles[i]] = { y: 2026, m: 8, sel: WB_TODAY };
+        wbRenderRole(roles[i]);
+        wbRenderCal(roles[i]);
+      }
+    })();
+</script>
   <script src="./assets/js/pbs-app.js"></script>
 
 

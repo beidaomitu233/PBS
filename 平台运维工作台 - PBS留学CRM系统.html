@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>平台运维工作台 - PBS留学CRM系统</title>
+  <script src="./assets/vendor/tailwind-runtime.js"></script>
+  <link rel="stylesheet" href="./assets/css/pbs-theme.css">
+  <style>
+    body { font-family: "Microsoft YaHei", "PingFang SC", sans-serif; }
+    #pbs-sidebar { min-height: calc(100vh - 56px); }
+    .kpi-card { transition: all .15s ease; }
+    .kpi-card:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(37,99,235,.10); border-color: #BFDBFE; }
+    .bar-track { background: #F3F4F6; border-radius: 999px; height: 8px; overflow: hidden; }
+    .bar-fill { height: 100%; border-radius: 999px; }
+  </style>
+</head>
+<body class="bg-gray-50 text-gray-800 min-h-screen">
+  <header class="h-14 bg-white border-b border-gray-200 sticky top-0 z-40">
+    <div class="h-full px-6 flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <div class="w-8 h-8 rounded-lg bg-blue-600 text-white flex items-center justify-center font-semibold">P</div>
+        <div><p class="text-sm font-semibold text-gray-900">PBS 留学申请管理平台</p><p class="text-xs text-gray-400">平台运维工作台</p></div>
+      </div>
+      <div class="flex items-center gap-4">
+        <button data-dom-id="btn-notification" class="relative w-9 h-9 rounded-lg text-gray-500 hover:bg-gray-100" aria-label="系统消息">🔔<span class="absolute top-1 right-1 w-2 h-2 rounded-full bg-red-500"></span></button>
+        <div class="flex items-center gap-2">
+          <div class="w-8 h-8 rounded-full bg-gradient-to-br from-blue-500 to-purple-500 text-white flex items-center justify-center"><span class="text-sm">王</span></div>
+          <span class="text-sm text-gray-700">平台运营人员</span>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <div class="flex">
+    <aside id="pbs-sidebar" class="w-56 bg-white border-r border-gray-200 flex flex-col flex-shrink-0"></aside>
+    <main class="flex-1 min-w-0 p-6">
+
+      <!-- 标题栏 + 快捷操作 -->
+      <div class="flex items-start justify-between mb-6 flex-wrap gap-4">
+        <div>
+          <h1 class="text-2xl font-semibold text-gray-900">平台运维工作台</h1>
+          <p class="text-sm text-gray-400 mt-1">跨机构平台运营总览 · 数据更新时间：2026-08-18 15:30</p>
+        </div>
+        <div class="flex items-center gap-2 flex-wrap">
+          <button class="h-9 px-3.5 text-sm bg-white border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50" onclick="location.href='机构管理 - PBS留学CRM系统.html'">机构管理</button>
+          <button class="h-9 px-3.5 text-sm bg-white border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50" onclick="location.href='人员管理 - PBS留学CRM系统.html'">机构成员管理</button>
+          <button class="h-9 px-3.5 text-sm bg-white border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50" onclick="location.href='模板库列表 - 文书交付系统.html'">文书模板库</button>
+          <button class="h-9 px-3.5 text-sm bg-white border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50" onclick="location.href='案例库 - 文书交付系统.html'">案例库</button>
+          <button class="h-9 px-3.5 text-sm bg-white border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50" onclick="location.href='网申模板库 - 留学申请管理系统.html'">网申模板库</button>
+          <button class="h-9 px-3.5 text-sm bg-white border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50" onclick="location.href='角色权限管理 - 留学申请管理系统.html'">角色权限</button>
+          <button class="h-9 px-3.5 text-sm bg-white border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50" onclick="location.href='操作日志审计 - 留学申请管理系统.html'">操作日志</button>
+          <button class="h-9 px-3.5 text-sm bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium" onclick="location.href='AI管理 - 留学申请管理系统.html'">AI管理</button>
+        </div>
+      </div>
+
+      <!-- 第一层：平台概览 KPI -->
+      <div class="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-6 gap-4 mb-6">
+        <div class="kpi-card bg-white rounded-xl border border-gray-100 shadow-sm p-5 cursor-pointer border-l-4" style="border-left-color:#3B82F6" onclick="location.href='机构管理 - PBS留学CRM系统.html'" title="机构主体总数（去重）">
+          <p class="text-sm text-gray-500">机构总数</p>
+          <p id="kpiOrgTotal" class="text-3xl font-semibold text-gray-900 mt-2">-</p>
+          <p class="text-xs text-green-600 mt-2">近6个月新增 +2</p>
+        </div>
+        <div class="kpi-card bg-white rounded-xl border border-gray-100 shadow-sm p-5 cursor-pointer border-l-4" style="border-left-color:#6366F1" onclick="location.href='人员管理 - PBS留学CRM系统.html'" title="全部机构成员账号合计">
+          <p class="text-sm text-gray-500">平台成员总数</p>
+          <p id="kpiMemberTotal" class="text-3xl font-semibold text-gray-900 mt-2">-</p>
+          <p id="kpiStaffedHint" class="text-xs text-gray-400 mt-2">已有成员机构 -</p>
+        </div>
+        <div class="kpi-card bg-white rounded-xl border border-gray-100 shadow-sm p-5 cursor-pointer border-l-4" style="border-left-color:#10B981" onclick="location.href='模板库列表 - 文书交付系统.html'" title="文书模板库模板总数（全机构合计）">
+          <p class="text-sm text-gray-500">文书模板库</p>
+          <p id="kpiDocTemplate" class="text-3xl font-semibold text-gray-900 mt-2">-</p>
+          <p class="text-xs text-gray-400 mt-2">覆盖 3 家机构 · 本月新增 +1</p>
+        </div>
+        <div class="kpi-card bg-white rounded-xl border border-gray-100 shadow-sm p-5 cursor-pointer border-l-4" style="border-left-color:#F59E0B" onclick="location.href='案例库 - 文书交付系统.html'" title="案例库案例总数（全机构合计）">
+          <p class="text-sm text-gray-500">文书案例库</p>
+          <p id="kpiCaseTotal" class="text-3xl font-semibold text-gray-900 mt-2">-</p>
+          <p class="text-xs text-gray-400 mt-2">已解析 92 · 覆盖率 71.9%</p>
+        </div>
+        <div class="kpi-card bg-white rounded-xl border border-gray-100 shadow-sm p-5 cursor-pointer border-l-4" style="border-left-color:#8B5CF6" onclick="location.href='案例库 - 文书交付系统.html'" title="案例库中「录取院校」字段去重计数">
+          <p class="text-sm text-gray-500">案例覆盖院校</p>
+          <p class="text-3xl font-semibold text-gray-900 mt-2">46<span class="text-base font-normal text-gray-400 ml-1">所</span></p>
+          <p class="text-xs text-gray-400 mt-2">美国 24 · 英国 9 · 港新 10</p>
+        </div>
+        <div class="kpi-card bg-white rounded-xl border border-gray-100 shadow-sm p-5 cursor-pointer border-l-4" style="border-left-color:#EC4899" onclick="location.href='网申模板库 - 留学申请管理系统.html'" title="网申模板总数及覆盖院校数（院校去重）">
+          <p class="text-sm text-gray-500">网申模板库</p>
+          <p id="kpiApplyTemplate" class="text-3xl font-semibold text-gray-900 mt-2">-<span class="text-base font-normal text-gray-400 ml-1">个</span></p>
+          <p class="text-xs text-amber-600 mt-2">覆盖院校 5 所 · 3 项待复核</p>
+        </div>
+      </div>
+
+      <!-- 第二层：机构运营一览 -->
+      <div class="bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden mb-6">
+        <div class="p-5 border-b border-gray-100 flex items-end justify-between gap-3 flex-wrap">
+          <div>
+            <h2 class="text-base font-semibold text-gray-900">机构运营一览</h2>
+            <p class="text-xs text-gray-400 mt-1">每个机构的成员规模与内容资产沉淀，点击数字可下钻</p>
+          </div>
+          <div class="w-72">
+            <input id="opsOrgSearch" type="search" class="w-full h-10 px-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm" placeholder="搜索机构名称" oninput="renderOpsOrgs()">
+          </div>
+        </div>
+        <div class="overflow-x-auto">
+          <table class="w-full">
+            <thead class="bg-gray-50">
+              <tr>
+                <th class="px-5 py-3.5 text-left text-sm font-medium text-gray-500">机构名称</th>
+                <th class="px-5 py-3.5 text-left text-sm font-medium text-gray-500">创建时间</th>
+                <th class="px-5 py-3.5 text-left text-sm font-medium text-gray-500">成员数</th>
+                <th class="px-5 py-3.5 text-left text-sm font-medium text-gray-500">文书模板</th>
+                <th class="px-5 py-3.5 text-left text-sm font-medium text-gray-500">案例数</th>
+                <th class="px-5 py-3.5 text-left text-sm font-medium text-gray-500">网申模板</th>
+                <th class="px-5 py-3.5 text-left text-sm font-medium text-gray-500">状态</th>
+                <th class="px-5 py-3.5 text-left text-sm font-medium text-gray-500">操作</th>
+              </tr>
+            </thead>
+            <tbody id="opsOrgTableBody" class="divide-y divide-gray-100"></tbody>
+            <tfoot id="opsOrgTableFoot" class="bg-gray-50/70"></tfoot>
+          </table>
+        </div>
+        <div id="opsOrgEmpty" class="hidden py-14 text-center text-sm text-gray-400">未找到匹配的机构</div>
+      </div>
+
+      <!-- 第三层：内容资产运营 -->
+      <div class="grid grid-cols-1 xl:grid-cols-2 gap-4 mb-6">
+
+        <!-- 文书资产 -->
+        <div class="bg-white rounded-xl border border-gray-100 shadow-sm p-5">
+          <div class="flex items-center justify-between mb-5">
+            <div>
+              <h2 class="text-base font-semibold text-gray-900">文书资产</h2>
+              <p class="text-xs text-gray-400 mt-1">模板库与案例库的规模、质量与院校覆盖</p>
+            </div>
+            <div class="flex gap-2">
+              <button class="text-xs text-blue-600 hover:text-blue-800 font-medium" onclick="location.href='模板库列表 - 文书交付系统.html'">模板库 →</button>
+              <button class="text-xs text-blue-600 hover:text-blue-800 font-medium" onclick="location.href='案例库 - 文书交付系统.html'">案例库 →</button>
+            </div>
+          </div>
+
+          <p class="text-sm text-gray-600 mb-3 font-medium">模板类型分布 <span class="text-xs text-gray-400 font-normal">（共 6 个模板）</span></p>
+          <div class="space-y-2.5 mb-6">
+            <div class="flex items-center gap-3"><span class="w-16 text-xs text-gray-500">PS</span><div class="bar-track flex-1"><div class="bar-fill bg-blue-500" style="width:50%"></div></div><span class="w-8 text-right text-xs text-gray-700">3</span></div>
+            <div class="flex items-center gap-3"><span class="w-16 text-xs text-gray-500">CV</span><div class="bar-track flex-1"><div class="bar-fill bg-green-500" style="width:16.7%"></div></div><span class="w-8 text-right text-xs text-gray-700">1</span></div>
+            <div class="flex items-center gap-3"><span class="w-16 text-xs text-gray-500">RL</span><div class="bar-track flex-1"><div class="bar-fill bg-purple-500" style="width:16.7%"></div></div><span class="w-8 text-right text-xs text-gray-700">1</span></div>
+            <div class="flex items-center gap-3"><span class="w-16 text-xs text-gray-500">RP</span><div class="bar-track flex-1"><div class="bar-fill bg-amber-500" style="width:16.7%"></div></div><span class="w-8 text-right text-xs text-gray-700">1</span></div>
+          </div>
+
+          <p class="text-sm text-gray-600 mb-3 font-medium">案例解析进度 <span class="text-xs text-gray-400 font-normal">（AI 资产质量，共 128 个案例）</span></p>
+          <div class="bar-track mb-2" style="height:10px"><div class="bar-fill bg-emerald-500" style="width:71.9%"></div></div>
+          <div class="flex items-center justify-between text-xs text-gray-500 mb-6">
+            <span>已解析 <span class="text-gray-800 font-medium">92</span>（71.9%）</span>
+            <span>未解析 24 · 解析中 4 · 失败 4</span>
+          </div>
+
+          <p class="text-sm text-gray-600 mb-3 font-medium">案例覆盖院校地区分布 <span class="text-xs text-gray-400 font-normal">（去重共 46 所）</span></p>
+          <div class="space-y-2.5 mb-6">
+            <div class="flex items-center gap-3"><span class="w-16 text-xs text-gray-500">美国</span><div class="bar-track flex-1"><div class="bar-fill bg-blue-500" style="width:52.2%"></div></div><span class="w-8 text-right text-xs text-gray-700">24</span></div>
+            <div class="flex items-center gap-3"><span class="w-16 text-xs text-gray-500">英国</span><div class="bar-track flex-1"><div class="bar-fill bg-indigo-500" style="width:19.6%"></div></div><span class="w-8 text-right text-xs text-gray-700">9</span></div>
+            <div class="flex items-center gap-3"><span class="w-16 text-xs text-gray-500">中国香港</span><div class="bar-track flex-1"><div class="bar-fill bg-cyan-500" style="width:13%"></div></div><span class="w-8 text-right text-xs text-gray-700">6</span></div>
+            <div class="flex items-center gap-3"><span class="w-16 text-xs text-gray-500">新加坡</span><div class="bar-track flex-1"><div class="bar-fill bg-teal-500" style="width:8.7%"></div></div><span class="w-8 text-right text-xs text-gray-700">4</span></div>
+            <div class="flex items-center gap-3"><span class="w-16 text-xs text-gray-500">其他</span><div class="bar-track flex-1"><div class="bar-fill bg-gray-400" style="width:6.5%"></div></div><span class="w-8 text-right text-xs text-gray-700">3</span></div>
+          </div>
+
+          <div class="grid grid-cols-2 gap-3">
+            <div class="bg-gray-50 rounded-lg p-3.5"><p class="text-xs text-gray-500">案例生成模板</p><p class="text-lg font-semibold text-gray-900 mt-1">15 <span class="text-xs font-normal text-gray-400">个</span></p></div>
+            <div class="bg-gray-50 rounded-lg p-3.5"><p class="text-xs text-gray-500">模板累计被引用</p><p class="text-lg font-semibold text-gray-900 mt-1">86 <span class="text-xs font-normal text-gray-400">次</span></p></div>
+          </div>
+        </div>
+
+        <!-- 网申资产 -->
+        <div class="bg-white rounded-xl border border-gray-100 shadow-sm p-5">
+          <div class="flex items-center justify-between mb-5">
+            <div>
+              <h2 class="text-base font-semibold text-gray-900">网申资产</h2>
+              <p class="text-xs text-gray-400 mt-1">网申模板总数、覆盖院校与申请季复核</p>
+            </div>
+            <button class="text-xs text-blue-600 hover:text-blue-800 font-medium" onclick="location.href='网申模板库 - 留学申请管理系统.html'">网申模板库 →</button>
+          </div>
+
+          <p class="text-sm text-gray-600 mb-3 font-medium">模板地区分布 <span class="text-xs text-gray-400 font-normal">（共 5 个模板 · 覆盖 5 所院校）</span></p>
+          <div class="space-y-2.5 mb-6">
+            <div class="flex items-center gap-3"><span class="w-16 text-xs text-gray-500">美国</span><div class="bar-track flex-1"><div class="bar-fill bg-blue-500" style="width:60%"></div></div><span class="w-8 text-right text-xs text-gray-700">3</span></div>
+            <div class="flex items-center gap-3"><span class="w-16 text-xs text-gray-500">英国</span><div class="bar-track flex-1"><div class="bar-fill bg-indigo-500" style="width:20%"></div></div><span class="w-8 text-right text-xs text-gray-700">1</span></div>
+            <div class="flex items-center gap-3"><span class="w-16 text-xs text-gray-500">中国香港</span><div class="bar-track flex-1"><div class="bar-fill bg-cyan-500" style="width:20%"></div></div><span class="w-8 text-right text-xs text-gray-700">1</span></div>
+          </div>
+
+          <p class="text-sm text-gray-600 mb-3 font-medium">覆盖院校清单</p>
+          <div class="border border-gray-100 rounded-lg divide-y divide-gray-50 mb-6">
+            <div class="flex items-center justify-between px-3.5 py-2.5"><div><p class="text-sm text-gray-800">卡内基梅隆大学 <span class="text-xs text-gray-400">计算机科学 · 美国</span></p></div><div class="flex items-center gap-2"><span class="text-xs text-amber-600 bg-amber-50 px-2 py-0.5 rounded-full">待复核</span><span class="text-xs text-gray-400">v3.2 · 08-08</span></div></div>
+            <div class="flex items-center justify-between px-3.5 py-2.5"><div><p class="text-sm text-gray-800">斯坦福大学 <span class="text-xs text-gray-400">计算机科学 · 美国</span></p></div><div class="flex items-center gap-2"><span class="text-xs text-green-600 bg-green-50 px-2 py-0.5 rounded-full">正常</span><span class="text-xs text-gray-400">v2.4 · 08-05</span></div></div>
+            <div class="flex items-center justify-between px-3.5 py-2.5"><div><p class="text-sm text-gray-800">哥伦比亚大学 <span class="text-xs text-gray-400">金融工程 · 美国</span></p></div><div class="flex items-center gap-2"><span class="text-xs text-amber-600 bg-amber-50 px-2 py-0.5 rounded-full">待复核</span><span class="text-xs text-gray-400">v2.1 · 08-01</span></div></div>
+            <div class="flex items-center justify-between px-3.5 py-2.5"><div><p class="text-sm text-gray-800">剑桥大学 <span class="text-xs text-gray-400">金融学 · 英国</span></p></div><div class="flex items-center gap-2"><span class="text-xs text-amber-600 bg-amber-50 px-2 py-0.5 rounded-full">待复核</span><span class="text-xs text-gray-400">v1.8 · 07-28</span></div></div>
+            <div class="flex items-center justify-between px-3.5 py-2.5"><div><p class="text-sm text-gray-800">香港大学 <span class="text-xs text-gray-400">数据科学 · 中国香港</span></p></div><div class="flex items-center gap-2"><span class="text-xs text-green-600 bg-green-50 px-2 py-0.5 rounded-full">正常</span><span class="text-xs text-gray-400">v1.6 · 07-25</span></div></div>
+          </div>
+
+          <div class="grid grid-cols-2 gap-3">
+            <div class="bg-gray-50 rounded-lg p-3.5"><p class="text-xs text-gray-500">平均官网字段</p><p class="text-lg font-semibold text-gray-900 mt-1">35 <span class="text-xs font-normal text-gray-400">个/模板</span></p></div>
+            <div class="bg-amber-50 rounded-lg p-3.5 cursor-pointer hover:bg-amber-100 transition-colors" onclick="location.href='网申模板库 - 留学申请管理系统.html'"><p class="text-xs text-amber-700">申请季待复核</p><p class="text-lg font-semibold text-amber-700 mt-1">3 <span class="text-xs font-normal">项 →</span></p></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 第四层：运维关注 -->
+      <div class="bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden">
+        <div class="p-5 border-b border-gray-100">
+          <h2 class="text-base font-semibold text-gray-900">运维关注</h2>
+          <p class="text-xs text-gray-400 mt-1">平台职责范围内的预警与系统健康状态</p>
+        </div>
+        <div class="divide-y divide-gray-50">
+          <div class="flex items-center gap-4 px-5 py-4 hover:bg-gray-50 transition-colors">
+            <span class="w-2 h-2 rounded-full bg-red-500 flex-shrink-0"></span>
+            <div class="flex-1 min-w-0">
+              <p class="text-sm text-gray-800"><span class="font-medium">空机构预警：</span>广州远航教育（入驻 187 天）、深圳新途教育（入驻 54 天）暂无成员账号</p>
+              <p class="text-xs text-gray-400 mt-0.5">建议完成账号开通与初始化配置，避免机构闲置</p>
+            </div>
+            <button class="text-sm text-blue-600 hover:text-blue-800 font-medium flex-shrink-0" onclick="location.href='人员管理 - PBS留学CRM系统.html'">去开通账号 →</button>
+          </div>
+          <div class="flex items-center gap-4 px-5 py-4 hover:bg-gray-50 transition-colors">
+            <span class="w-2 h-2 rounded-full bg-amber-400 flex-shrink-0"></span>
+            <div class="flex-1 min-w-0">
+              <p class="text-sm text-gray-800"><span class="font-medium">权限配置待复核：</span>1 项角色权限配置待复核（机构管理员权限范围发生调整）</p>
+              <p class="text-xs text-gray-400 mt-0.5">45 分钟前 · 权限管理</p>
+            </div>
+            <button class="text-sm text-blue-600 hover:text-blue-800 font-medium flex-shrink-0" onclick="location.href='角色权限管理 - 留学申请管理系统.html'">去复核 →</button>
+          </div>
+          <div class="flex items-center gap-4 px-5 py-4 hover:bg-gray-50 transition-colors">
+            <span class="w-2 h-2 rounded-full bg-amber-400 flex-shrink-0"></span>
+            <div class="flex-1 min-w-0">
+              <p class="text-sm text-gray-800"><span class="font-medium">网申模板待复核：</span>3 个模板存在申请季复核项（护照有效期 / GRE 政策 / 官网字段差异）</p>
+              <p class="text-xs text-gray-400 mt-0.5">涉及卡内基梅隆大学、哥伦比亚大学、剑桥大学</p>
+            </div>
+            <button class="text-sm text-blue-600 hover:text-blue-800 font-medium flex-shrink-0" onclick="location.href='网申模板库 - 留学申请管理系统.html'">去处理 →</button>
+          </div>
+          <div class="flex items-center gap-4 px-5 py-4 hover:bg-gray-50 transition-colors">
+            <span class="w-2 h-2 rounded-full bg-green-500 flex-shrink-0"></span>
+            <div class="flex-1 min-w-0">
+              <p class="text-sm text-gray-800"><span class="font-medium">操作审计正常：</span>今日新增 18 条操作日志，全部执行成功</p>
+              <p class="text-xs text-gray-400 mt-0.5">1 小时前 · 系统审计</p>
+            </div>
+            <button class="text-sm text-blue-600 hover:text-blue-800 font-medium flex-shrink-0" onclick="location.href='操作日志审计 - 留学申请管理系统.html'">查看日志 →</button>
+          </div>
+          <div class="flex items-center gap-4 px-5 py-4 hover:bg-gray-50 transition-colors">
+            <span class="w-2 h-2 rounded-full bg-green-500 flex-shrink-0"></span>
+            <div class="flex-1 min-w-0">
+              <p class="text-sm text-gray-800"><span class="font-medium">AI 服务正常：</span>主模型运行稳定，提示词库本周更新 2 条</p>
+              <p class="text-xs text-gray-400 mt-0.5">主备容灾配置已生效</p>
+            </div>
+            <button class="text-sm text-blue-600 hover:text-blue-800 font-medium flex-shrink-0" onclick="location.href='AI管理 - 留学申请管理系统.html'">去配置 →</button>
+          </div>
+        </div>
+      </div>
+
+    </main>
+  </div>
+
+  <script src="./assets/js/pbs-organization-data.js"></script>
+  <script>
+    /* 平台运维工作台演示数据：机构成员数与各机构资产分布（与机构管理/人员管理/模板库/案例库/网申模板库口径一致） */
+    var opsOrgs = (window.PBS_ORGANIZATIONS || []).slice();
+    var orgAssets = {
+      'PBS留学总部':  { members: 2, docTemplates: 4, cases: 62, applyTemplates: 2 },
+      '上海启明留学': { members: 2, docTemplates: 1, cases: 41, applyTemplates: 2 },
+      '北京知行教育': { members: 1, docTemplates: 1, cases: 25, applyTemplates: 1 },
+      '广州远航教育': { members: 0, docTemplates: 0, cases: 0,  applyTemplates: 0 },
+      '深圳新途教育': { members: 0, docTemplates: 0, cases: 0,  applyTemplates: 0 }
+    };
+
+    function assetsOf(name) {
+      return orgAssets[name] || { members: 0, docTemplates: 0, cases: 0, applyTemplates: 0 };
+    }
+    function escapeHtml(value) {
+      var element = document.createElement('div');
+      element.textContent = value == null ? '' : String(value);
+      return element.innerHTML;
+    }
+    function countCell(value, href, warnZero) {
+      if (!value) {
+        return '<span class="inline-flex items-center gap-1 text-sm ' + (warnZero ? 'text-amber-600 font-medium' : 'text-gray-400') + '">' + (warnZero ? '⚠ ' : '') + '0</span>';
+      }
+      return '<button type="button" class="text-sm text-blue-600 hover:text-blue-800 font-medium" onclick="location.href=\'' + href + '\'">' + value + '</button>';
+    }
+    function renderOpsOrgs() {
+      var keyword = document.getElementById('opsOrgSearch').value.trim().toLowerCase();
+      var rows = opsOrgs.filter(function (org) { return !keyword || org.name.toLowerCase().indexOf(keyword) >= 0; });
+
+      /* 合计（驱动 KPI 卡，保证两层数字一致） */
+      var total = { members: 0, docTemplates: 0, cases: 0, applyTemplates: 0 };
+      opsOrgs.forEach(function (org) {
+        var a = assetsOf(org.name);
+        total.members += a.members; total.docTemplates += a.docTemplates;
+        total.cases += a.cases; total.applyTemplates += a.applyTemplates;
+      });
+      var staffed = opsOrgs.filter(function (org) { return assetsOf(org.name).members > 0; }).length;
+
+      document.getElementById('kpiOrgTotal').textContent = opsOrgs.length;
+      document.getElementById('kpiMemberTotal').textContent = total.members;
+      document.getElementById('kpiStaffedHint').textContent = '已有成员机构 ' + staffed + '/' + opsOrgs.length;
+      document.getElementById('kpiDocTemplate').textContent = total.docTemplates;
+      document.getElementById('kpiCaseTotal').textContent = total.cases;
+      document.getElementById('kpiApplyTemplate').innerHTML = total.applyTemplates + '<span class="text-base font-normal text-gray-400 ml-1">个</span>';
+
+      document.getElementById('opsOrgTableBody').innerHTML = rows.map(function (org) {
+        var a = assetsOf(org.name);
+        var active = a.members > 0;
+        return '<tr class="hover:bg-gray-50 transition-colors">' +
+          '<td class="px-5 py-4 text-sm font-medium text-gray-900">' + escapeHtml(org.name) + '</td>' +
+          '<td class="px-5 py-4 text-sm text-gray-600">' + escapeHtml(org.createdAt) + '</td>' +
+          '<td class="px-5 py-4">' + (a.members
+            ? '<button type="button" class="inline-flex px-2.5 py-1 rounded-full text-xs font-medium bg-blue-50 text-blue-700 hover:bg-blue-100" onclick="location.href=\'人员管理 - PBS留学CRM系统.html?org=' + encodeURIComponent(org.id) + '\'">' + a.members + ' 人</button>'
+            : '<span class="inline-flex px-2.5 py-1 rounded-full text-xs font-medium bg-amber-50 text-amber-700">⚠ 0 人</span>') + '</td>' +
+          '<td class="px-5 py-4">' + countCell(a.docTemplates, '模板库列表 - 文书交付系统.html', false) + '</td>' +
+          '<td class="px-5 py-4">' + countCell(a.cases, '案例库 - 文书交付系统.html', false) + '</td>' +
+          '<td class="px-5 py-4">' + countCell(a.applyTemplates, '网申模板库 - 留学申请管理系统.html', false) + '</td>' +
+          '<td class="px-5 py-4">' + (active
+            ? '<span class="inline-flex px-2.5 py-1 rounded-full text-xs font-medium bg-green-50 text-green-700">正常</span>'
+            : '<span class="inline-flex px-2.5 py-1 rounded-full text-xs font-medium bg-amber-50 text-amber-700">待开通</span>') + '</td>' +
+          '<td class="px-5 py-4"><button type="button" class="text-sm text-blue-600 hover:text-blue-800 font-medium" onclick="location.href=\'人员管理 - PBS留学CRM系统.html?org=' + encodeURIComponent(org.id) + '\'">查看成员</button></td>' +
+          '</tr>';
+      }).join('');
+
+      document.getElementById('opsOrgTableFoot').innerHTML =
+        '<tr class="font-medium">' +
+        '<td class="px-5 py-3.5 text-sm text-gray-700">合计（' + opsOrgs.length + ' 家机构）</td>' +
+        '<td class="px-5 py-3.5 text-sm text-gray-400">—</td>' +
+        '<td class="px-5 py-3.5 text-sm text-gray-900">' + total.members + ' 人</td>' +
+        '<td class="px-5 py-3.5 text-sm text-gray-900">' + total.docTemplates + '</td>' +
+        '<td class="px-5 py-3.5 text-sm text-gray-900">' + total.cases + '</td>' +
+        '<td class="px-5 py-3.5 text-sm text-gray-900">' + total.applyTemplates + '</td>' +
+        '<td class="px-5 py-3.5 text-sm text-gray-400">已有成员 ' + staffed + ' 家</td>' +
+        '<td class="px-5 py-3.5"></td>' +
+        '</tr>';
+      document.getElementById('opsOrgEmpty').classList.toggle('hidden', rows.length > 0);
+    }
+    document.addEventListener('DOMContentLoaded', renderOpsOrgs);
+  </script>
+  <script src="./assets/js/pbs-app.js"></script>
+</body>
+</html>

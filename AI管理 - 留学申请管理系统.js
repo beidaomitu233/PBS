@@ -482,7 +482,7 @@
   function renderPromptStatus() {
     var status = promptStatus(currentPromptStatusKey());
     byId('promptStatus').textContent = status;
-    byId('promptStatus').className = 'prompt-status' + (status === '已发布' ? '' : ' draft');
+    byId('promptStatus').className = 'prompt-status ' + ({'草稿':'draft','评测中':'testing','已驳回':'rejected','已归档':'archived'}[status] || '');
   }
 
   function renderCaseTemplatePanel() {
@@ -532,7 +532,7 @@
     if (BASE_PROMPTS[activePrompt].id === 'case') aiState.caseTemplateOverrides[aiState.selectedCaseTemplate] = saved;
     else aiState.promptOverrides[prompt.id] = saved;
     if (autoSave) {
-      aiState.promptStatus[currentPromptStatusKey()] = '已修改';
+      aiState.promptStatus[currentPromptStatusKey()] = '草稿';
       renderPromptStatus();
       renderPromptList();
       commitAutoSave('自动保存提示词', prompt.title + ' ' + prompt.version, 'prompt-' + currentPromptStatusKey());
@@ -587,7 +587,7 @@
     if (!window.validatePrompt(true)) { showToast('模板校验失败，暂不能发布'); return; }
     pendingPublishPromptKey = currentPromptStatusKey();
     pendingPublishPromptTitle = prompt.title;
-    aiState.promptStatus[pendingPublishPromptKey] = '待评测';
+    aiState.promptStatus[pendingPublishPromptKey] = '评测中';
     saveAiState();
     renderPromptStatus();
     renderPromptList();
@@ -735,7 +735,7 @@
     saveAiState();
     logAiAction('运行 AI 效果评测', baseItem.name + '，' + datasetName + ' ' + samples + ' 条，结果' + (passed ? '通过' : '未通过'));
     if (pendingPublishPromptKey) {
-      aiState.promptStatus[pendingPublishPromptKey] = passed ? '已发布' : '待优化';
+      aiState.promptStatus[pendingPublishPromptKey] = passed ? '已发布' : '已驳回';
       saveAiState();
       logAiAction(passed ? '发布提示词版本' : '阻止提示词发布', pendingPublishPromptTitle + '，评测' + (passed ? '通过' : '未通过'));
       pendingPublishPromptKey = '';

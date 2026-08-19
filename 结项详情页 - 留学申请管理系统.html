@@ -1057,6 +1057,13 @@
             </svg>
             编辑内容
           </button>
+          <button class="flex items-center gap-1.5 px-3 py-1.5 text-xs bg-indigo-600 text-white rounded-md hover:bg-indigo-700 transition-colors" onclick="triggerOfferImageUpload()" title="将Offer邮件截图插入报告正文">
+            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+            </svg>
+            插入Offer邮件图片
+          </button>
+          <input type="file" id="offerImageInput" accept="image/*" class="hidden" onchange="handleOfferImageSelect(this)">
           <button class="flex items-center gap-1.5 px-3 py-1.5 text-xs bg-green-600 text-white rounded-md hover:bg-green-700 transition-colors" onclick="saveReport()">
             <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4"></path>
@@ -1226,41 +1233,116 @@
     }
 
     // ============ 报告内容模板 ============
+    // 模板字段依据：需求文档《结项报告模板》+ 客户报告样例《本科申请录取结果 Undergraduate Admission Result》
     function buildReportHtml(type) {
       var p = projectData;
-      var isInternal = type === 'internal';
-      var rows = p.targets.map(function(t) {
-        var cls = t.result === '录取' ? 'tag-pass' : 'tag-fail';
-        return '<tr><td>' + t.code + '</td><td>' + t.school + '</td><td>' + t.major + '</td>' +
-          '<td><span class="' + cls + '">' + t.result + '</span></td><td>' + t.note + '</td></tr>';
+      return type === 'internal' ? buildInternalReportHtml(p) : buildClientReportHtml(p);
+    }
+
+    // 对内《项目管理结项报告》
+    function buildInternalReportHtml(p) {
+      var admits = p.targets.filter(function(t){ return t.result === '录取'; });
+      var now = new Date();
+      var dateStr = now.getFullYear() + '-' + String(now.getMonth() + 1).padStart(2, '0') + '-' + String(now.getDate()).padStart(2, '0');
+      var admitRows = admits.map(function(t, i) {
+        return '<tr><th>录取院校' + (i + 1) + '</th><td>' + t.school + '</td>' +
+               '<th>录取专业' + (i + 1) + '</th><td>' + t.major + '</td>' +
+               '<th>服务套餐' + (i + 1) + '</th><td>全程申请套餐</td></tr>';
       }).join('');
-      var admitCount = p.targets.filter(function(t){ return t.result === '录取'; }).length;
+      // 关键里程碑：项目启动（即分配项目给项目经理）→ 文书定稿 → 各录取院校网申提交
+      var milestones = [
+        { name: '项目启动（分配项目给项目经理）', owner: '机构管理员', ddl: '2026-07-05', done: '2026-07-05', note: '' },
+        { name: 'CV 文书定稿', owner: '文书人员 · 李华', ddl: '2026-09-10', done: '2026-09-08', note: '' },
+        { name: 'PS 文书定稿', owner: '文书人员 · 李华', ddl: '2026-09-25', done: '2026-09-24', note: '' },
+        { name: 'RL 文书定稿', owner: '文书人员 · 李华', ddl: '2026-10-10', done: '2026-10-09', note: '' },
+        { name: '推荐信文书定稿', owner: '文书人员 · 李华', ddl: '2026-10-15', done: '2026-10-12', note: '' }
+      ];
+      admits.forEach(function(t, i) {
+        milestones.push({ name: '录取院校' + (i + 1) + '网申提交（' + t.school + '）', owner: '网申人员 · 王强', ddl: '2026-12-0' + (i + 1), done: '2026-11-2' + (i + 5), note: '' });
+      });
+      var msRows = milestones.map(function(m) {
+        return '<tr><td>' + m.name + '</td><td>' + m.owner + '</td><td>' + m.ddl + '</td><td>' + m.done + '</td><td>' + m.note + '</td></tr>';
+      }).join('');
 
       var html = '';
-      html += '<h1>' + (isInternal ? '项目管理结项报告' : '客户项目结项报告') + '</h1>';
-      html += '<p class="report-sub">' + (isInternal ? '内部归档文件 · 仅限公司内部使用' : '致客户正式文件') + ' · 项目号 ' + p.id + '</p>';
+      html += '<h1>项目管理结项报告</h1>';
+      html += '<p class="report-sub">对内归档文件 · 密级：内部公开</p>';
+      html += '<table><tr><th style="width:16%">所属机构</th><td style="width:34%">上海荆意教育科技有限公司</td>' +
+              '<th style="width:16%">项目号</th><td style="width:34%">' + p.id + '</td></tr>' +
+              '<tr><th>报告日期</th><td>' + dateStr + '</td><th>密级</th><td>内部公开</td></tr></table>';
 
-      html += '<h2>一、项目基本信息</h2>';
-      html += '<table><tr><th style="width:25%">项目号</th><td style="width:25%">' + p.id + '</td>' +
-        '<th style="width:25%">申请层次</th><td style="width:25%">' + p.level + '</td></tr>' +
-        '<tr><th>客户姓名</th><td>' + p.customer + '</td><th>学生姓名</th><td>' + p.student + '</td></tr></table>';
+      html += '<h2>一、项目摘要</h2>';
+      html += '<table>' +
+              '<tr><th style="width:16%">学生姓名</th><td style="width:34%">' + p.student + '</td>' +
+              '<th style="width:16%">申请层次</th><td style="width:34%">' + p.level + '</td></tr>' +
+              admitRows +
+              '<tr><th>项目经理（PM）</th><td>王芳</td><th>项目状态</th><td><span class="tag-pass">☑ 已结项</span></td></tr></table>';
 
-      html += '<h2>二、院校目标申请结果</h2>';
-      html += '<table><tr><th>目标编号</th><th>院校</th><th>专业</th><th>申请结果</th><th>凭证</th></tr>' + rows + '</table>';
+      html += '<h2>二、服务交付总览</h2>';
+      html += '<p style="margin:4px 0;font-weight:600;">2.1 核心KPI完成情况</p>';
+      html += '<table><tr><th style="width:33%">实际申请院校目标数</th><td style="width:67%">' + p.targets.length + '</td></tr>' +
+              '<tr><th>录取数 / 拒录数</th><td>' + admits.length + ' / ' + (p.targets.length - admits.length) + '</td></tr></table>';
+      html += '<p style="margin:10px 0 4px;font-weight:600;">2.2 关键里程碑时间轴</p>';
+      html += '<table><tr><th style="width:34%">里程碑节点</th><th style="width:18%">负责人</th>' +
+              '<th style="width:15%">DDL时间</th><th style="width:16%">实际完成日期</th><th style="width:17%">备注</th></tr>' + msRows + '</table>';
 
-      html += '<h2>三、结果汇总</h2>';
-      html += '<p>本项目共申请院校目标 ' + p.targets.length + ' 个，其中录取 ' + admitCount + ' 个、拒录 ' + (p.targets.length - admitCount) + ' 个。' +
-        (isInternal ? '所有申请结果均已核实并归档。' : '恭喜学生获得心仪院校录取，详细 Offer 文件可联系顾问索取。') + '</p>';
+      html += '<h2>三、服务过程小结与复盘（PM填写）</h2>';
+      html += '<p>（PM可在线编辑补充：服务过程回顾、问题与改进、客户反馈等其余模块）</p>';
+      html += '<p class="report-footer">PBS留学申请管理系统 · 本报告为对内归档文件，保存后归入客户资产资料</p>';
+      return html;
+    }
 
-      html += '<h2>四、' + (isInternal ? '服务过程小结（内部）' : '服务说明') + '</h2>';
-      html += '<p>' + (isInternal
-        ? '项目按服务节点完成选校定位、文书创作、网申提交、结果跟进等全部环节，各环节记录详见系统过程文档。'
-        : '感谢您对 PBS 留学的信任。本项目服务已全部完成，如后续有签证、行前指导等需求，欢迎随时联系您的服务顾问。') + '</p>';
+    // 对外《客户项目结项报告》：参照《本科申请录取结果 Undergraduate Admission Result》模板
+    function buildClientReportHtml(p) {
+      var admits = p.targets.filter(function(t){ return t.result === '录取'; });
+      var primary = admits.length ? admits[0] : { school: '录取院校', major: '' };
+      var admitRows = admits.map(function(t) {
+        return '<tr><td>' + t.school + '</td><td>' + t.major + '</td><td>学士 / Bachelor</td><td>4 年（2027年9月 至 2031年7月）</td></tr>';
+      }).join('');
 
-      html += '<h2>五、备注</h2>';
-      html += '<p>（可在线编辑补充备注内容）</p>';
+      var html = '';
+      html += '<h1>申请录取结果<br><span style="font-size:14px;font-weight:500;color:#6B7280;">Admission Result</span></h1>';
+      html += '<p class="report-sub">上海荆意教育科技有限公司 · 致客户正式文件</p>';
 
-      html += '<p class="report-footer">PBS留学申请管理系统 · 本报告由系统自动生成，支持在线编辑后保存归档</p>';
+      html += '<h2>学生信息 / Student Information</h2>';
+      html += '<table><tr><th style="width:25%">学生姓名 / Student Name</th><td style="width:25%">' + p.student + '</td>' +
+              '<th style="width:25%">护照号 / Passport No.</th><td style="width:25%">E12345678</td></tr>' +
+              '<tr><th>申请编号 / Application No.</th><td>' + p.id + '</td><th>申请层次</th><td>' + p.level + '</td></tr></table>';
+
+      html += '<h2>录取结果 / Admission Result</h2>';
+      html += '<table><tr><th>录取院校 / University</th><th>录取专业 / Major</th><th>学位 / Degree</th><th>学制 / Duration</th></tr>' + admitRows + '</table>';
+
+      html += '<h2>你的下一步 / Next Step</h2>';
+      html += '<p style="font-weight:600;margin-bottom:4px;">1. 申请账号 / Application Accounts</p>';
+      html += '<table><tr><th style="width:32%">平台 / Platform</th><th style="width:34%">账号 / Account</th><th style="width:34%">密码 / Password</th></tr>' +
+              '<tr><td>申请邮箱 / Application Email</td><td>zhaoxinyi2026@163.com</td><td>Zxy2026Apply!</td></tr>' +
+              '<tr><td>' + primary.school + ' 网申系统 / Online System</td><td>zhaoxinyi2026@163.com</td><td>Zxy2026Apply!</td></tr></table>' +
+              '<p style="font-size:12px;color:#6B7280;">账号信息与【学生档案详情页】「账户管理」板块保持一致，可直接修改。</p>';
+
+      html += '<p style="font-weight:600;margin:14px 0 4px;">2. 缴纳学费 / Tuition Payment</p>';
+      html += '<table><tr><th style="width:32%">待支付学费金额 / Amount</th><td style="width:68%">（PM填写，如 42,800 RMB）</td></tr>' +
+              '<tr><th>缴费截止日 / Payment Deadline</th><td>（PM填写，如 2027-06-04）</td></tr>' +
+              '<tr><th>付款方式一 / Method 1</th><td>系统内在线支付 / Online Payment via System</td></tr>' +
+              '<tr><th>付款方式二 / Method 2</th><td>银行汇款（若无法在线支付）/ Bank Transfer</td></tr></table>';
+      html += '<p style="font-size:12px;color:#6B7280;margin:6px 0 4px;">银行汇款账户信息 / Bank Account Details（PM填写）</p>';
+      html += '<table><tr><th style="width:32%">收款人 / Beneficiary</th><td style="width:68%"></td></tr>' +
+              '<tr><th>账号 / Account No.</th><td></td></tr>' +
+              '<tr><th>银行名称 / Bank</th><td></td></tr>' +
+              '<tr><th>SWIFT 代码 / SWIFT Code</th><td></td></tr>' +
+              '<tr><th>银行地址 / Bank Address</th><td></td></tr>' +
+              '<tr><th>联行号 / CNAPS No.</th><td></td></tr></table>';
+
+      html += '<p style="font-weight:600;margin:14px 0 4px;">3. 后续准备 / Follow-up Preparation</p>';
+      html += '<table><tr><th style="width:32%">关键时间轴 / Critical Timeline</th><th style="width:68%">任务 / Task</th></tr>' +
+              '<tr><td>（PM填写，如 6月4日前）</td><td>完成学费汇款及上传凭证</td></tr>' +
+              '<tr><td>6 月末</td><td>下载《录取通知书》与签证文件</td></tr>' +
+              '<tr><td>8 月底</td><td>线上预注册</td></tr>' +
+              '<tr><td>9 月初</td><td>现场报到注册</td></tr></table>';
+
+      html += '<h2>Offer 邮件 / Offer Letter</h2>';
+      html += '<div class="offer-img-slot" style="border:1px dashed #D1D5DB;border-radius:8px;padding:24px;text-align:center;color:#9CA3AF;font-size:13px;">可点击弹窗右上角「插入Offer邮件图片」将 Offer 邮件截图插入此处</div>';
+
+      html += '<p class="report-footer">注：以上所有信息均以校方官方资料为准，请务必仔细核查。<br>Note: All information shall be subject to official school documents. Please check carefully.</p>';
       return html;
     }
 
@@ -1329,6 +1411,30 @@
 
     function printReport() {
       window.print();
+    }
+
+    // 插入Offer邮件图片到报告正文（插入到 Offer 邮件占位区，否则追加到文末）
+    function triggerOfferImageUpload() {
+      if (!currentReportId) { alert('请先生成或打开一份报告'); return; }
+      document.getElementById('offerImageInput').click();
+    }
+    function handleOfferImageSelect(input) {
+      if (!input.files || !input.files.length) return;
+      var file = input.files[0];
+      if (!/^image\//.test(file.type)) { alert('仅支持图片文件'); return; }
+      var reader = new FileReader();
+      reader.onload = function(e) { insertOfferImageIntoEditor(e.target.result); };
+      reader.readAsDataURL(file);
+      input.value = '';
+    }
+    function insertOfferImageIntoEditor(src) {
+      var editor = document.getElementById('reportEditor');
+      var imgHtml = '<img src="' + src + '" style="max-width:100%;border-radius:6px;" alt="Offer邮件截图">';
+      var slot = editor.querySelector('.offer-img-slot');
+      if (slot) { slot.outerHTML = '<div style="margin:8px 0;">' + imgHtml + '</div>'; }
+      else { editor.innerHTML += '<div style="margin:8px 0;">' + imgHtml + '</div>'; }
+      document.getElementById('reportSavedTag').classList.add('hidden');
+      alert('Offer邮件图片已插入报告，点击「保存」后生效。');
     }
 
     // ============ 已生成报告列表 ============

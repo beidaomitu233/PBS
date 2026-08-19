@@ -70,6 +70,9 @@
         <div class="flex-1 overflow-y-auto p-5 sm:p-6 bg-slate-50">
           <section class="bg-white border border-slate-200 rounded-xl overflow-hidden mb-5">
             <div class="px-5 py-4 border-b border-slate-100 flex items-center justify-between"><div><h3 class="text-sm font-semibold text-slate-900">申请官网字段</h3><p class="text-xs text-slate-400 mt-1">可直接修改、增加或删除扫描结果</p></div><button class="text-sm text-blue-600 hover:text-blue-700" onclick="addScanField()">+ 新增字段</button></div>
+            <div class="hidden md:grid grid-cols-[40px_minmax(220px,1fr)_150px_130px_36px] gap-3 px-4 py-3 bg-slate-50 border-b border-slate-100 text-xs font-medium text-slate-500">
+              <span>序号</span><span>字段名</span><span>填写类型</span><span>是否必填</span><span>操作</span>
+            </div>
             <div id="scanFieldEditor" class="divide-y divide-slate-100"></div>
           </section>
 
@@ -166,24 +169,24 @@
       ]}
     ];
     var scanFieldTemplate = [
-      { label: 'First Name / Given Name', source: '学生档案 · 英文名', value: 'Ming', status: 'matched' },
-      { label: 'Last Name / Family Name', source: '学生档案 · 英文姓', value: 'Zhang', status: 'matched' },
-      { label: 'Date of Birth', source: '学生档案 · 出生日期', value: '2003-06-18', status: 'matched' },
-      { label: 'Gender', source: '学生档案 · 性别', value: 'Male', status: 'matched' },
-      { label: 'Nationality', source: '学生档案 · 国籍', value: 'China', status: 'matched' },
-      { label: 'Passport Number', source: '护照 · 证件号码', value: 'E12345678', status: 'matched' },
-      { label: 'Email', source: '网申任务 · 注册邮箱', value: 'zhangming2027@outlook.com', status: 'matched' },
-      { label: 'Phone', source: '学生档案 · 手机号', value: '+86 138 0013 8001', status: 'matched' },
-      { label: 'Address', source: '学生档案 · 通信地址', value: 'Shanghai, China', status: 'matched' },
-      { label: 'Undergraduate Institution', source: '教育经历 · 本科院校', value: 'Shanghai Jiao Tong University', status: 'matched' },
-      { label: 'Major', source: '教育经历 · 本科专业', value: 'Computer Science', status: 'matched' },
-      { label: 'Degree', source: '教育经历 · 学位', value: 'Bachelor of Engineering', status: 'matched' },
-      { label: 'GPA', source: '教育经历 · GPA', value: '3.90 / 4.00', status: 'confirm' },
-      { label: 'TOEFL', source: '语言成绩 · TOEFL', value: '105', status: 'matched' },
-      { label: 'GRE', source: '标化成绩 · GRE', value: '327', status: 'matched' },
-      { label: 'Enrollment Term', source: '网申任务 · 入学学期', value: 'Fall 2027', status: 'matched' },
-      { label: 'Program', source: '网申任务 · 申请专业', value: 'MS in Computer Science', status: 'confirm' },
-      { label: 'Application Round', source: '网申任务 · 申请轮次', value: 'Regular Decision', status: 'matched' }
+      { label: 'First Name / Given Name', type: '文本', required: true, source: '学生档案 · 英文名', value: 'Ming', status: 'matched' },
+      { label: 'Last Name / Family Name', type: '文本', required: true, source: '学生档案 · 英文姓', value: 'Zhang', status: 'matched' },
+      { label: 'Date of Birth', type: '日期', required: true, source: '学生档案 · 出生日期', value: '2003-06-18', status: 'matched' },
+      { label: 'Gender', type: '下拉', required: true, source: '学生档案 · 性别', value: 'Male', status: 'matched' },
+      { label: 'Nationality', type: '下拉', required: true, source: '学生档案 · 国籍', value: 'China', status: 'matched' },
+      { label: 'Passport Number', type: '文本', required: true, source: '护照 · 证件号码', value: 'E12345678', status: 'matched' },
+      { label: 'Email', type: '邮箱', required: true, source: '网申任务 · 注册邮箱', value: 'zhangming2027@outlook.com', status: 'matched' },
+      { label: 'Phone', type: '电话', required: false, source: '学生档案 · 手机号', value: '+86 138 0013 8001', status: 'matched' },
+      { label: 'Address', type: '地址', required: false, source: '学生档案 · 通信地址', value: 'Shanghai, China', status: 'matched' },
+      { label: 'Undergraduate Institution', type: '文本', required: true, source: '教育经历 · 本科院校', value: 'Shanghai Jiao Tong University', status: 'matched' },
+      { label: 'Major', type: '文本', required: true, source: '教育经历 · 本科专业', value: 'Computer Science', status: 'matched' },
+      { label: 'Degree', type: '下拉', required: true, source: '教育经历 · 学位', value: 'Bachelor of Engineering', status: 'matched' },
+      { label: 'GPA', type: '数字', required: true, source: '教育经历 · GPA', value: '3.90 / 4.00', status: 'confirm' },
+      { label: 'TOEFL', type: '数字', required: false, source: '语言成绩 · TOEFL', value: '105', status: 'matched' },
+      { label: 'GRE', type: '数字', required: false, source: '标化成绩 · GRE', value: '327', status: 'matched' },
+      { label: 'Enrollment Term', type: '下拉', required: true, source: '网申任务 · 入学学期', value: 'Fall 2027', status: 'matched' },
+      { label: 'Program', type: '下拉', required: true, source: '网申任务 · 申请专业', value: 'MS in Computer Science', status: 'confirm' },
+      { label: 'Application Round', type: '下拉', required: true, source: '网申任务 · 申请轮次', value: 'Regular Decision', status: 'matched' }
     ];
     var scanMaterialTemplate = [
       { name: '本科成绩单', requirement: '学校官方开具的中英文成绩单', file: 'ZHANG_Ming_Transcript.pdf', required: true },
@@ -356,11 +359,21 @@
       editingScanRecord = null;
       renderProjectState();
     }
+    function scanFieldTypeOptions(selected) {
+      return ['文本', '日期', '下拉', '邮箱', '数字', '电话', '地址', '文件上传'].map(function (type) {
+        return '<option value="' + type + '"' + (type === selected ? ' selected' : '') + '>' + type + '</option>';
+      }).join('');
+    }
     function scanFieldRow(field, index) {
-      return '<div class="scan-field-row flex items-center gap-3 px-4 py-3" data-record-index="' + index + '">' +
-        '<span class="w-7 h-7 rounded-lg bg-blue-50 text-blue-600 text-xs flex items-center justify-center flex-shrink-0">' + (index >= 0 ? index + 1 : '+') + '</span>' +
-        '<input data-scan-label class="h-10 flex-1 px-3 border border-slate-300 rounded-lg text-sm" value="' + escapeAttr(field.label) + '" placeholder="请输入官网字段名称">' +
-        '<button class="w-8 h-8 text-slate-300 hover:text-red-500 text-lg flex-shrink-0" title="移除字段" onclick="removeScanEditorRow(this)">×</button></div>';
+      var reference = scanFieldTemplate.find(function (item) { return item.label === field.label; }) || {};
+      var fieldType = field.type || reference.type || '文本';
+      var fieldRequired = typeof field.required === 'boolean' ? field.required : (typeof reference.required === 'boolean' ? reference.required : true);
+      return '<div class="scan-field-row grid grid-cols-1 md:grid-cols-[40px_minmax(220px,1fr)_150px_130px_36px] items-end md:items-center gap-3 px-4 py-3" data-record-index="' + index + '">' +
+        '<span class="hidden md:flex w-7 h-7 rounded-lg bg-blue-50 text-blue-600 text-xs items-center justify-center">' + (index >= 0 ? index + 1 : '+') + '</span>' +
+        '<label class="block min-w-0"><span class="md:hidden block text-xs text-slate-500 mb-1.5">字段名</span><input data-scan-label class="h-10 w-full px-3 border border-slate-300 rounded-lg text-sm" value="' + escapeAttr(field.label) + '" placeholder="请输入官网字段名称"></label>' +
+        '<label class="block"><span class="md:hidden block text-xs text-slate-500 mb-1.5">填写类型</span><select data-scan-type class="h-10 w-full px-3 border border-slate-300 rounded-lg bg-white text-sm">' + scanFieldTypeOptions(fieldType) + '</select></label>' +
+        '<label class="block"><span class="md:hidden block text-xs text-slate-500 mb-1.5">是否必填</span><select data-scan-required class="h-10 w-full px-3 border border-slate-300 rounded-lg bg-white text-sm"><option value="1"' + (fieldRequired ? ' selected' : '') + '>必填</option><option value="0"' + (!fieldRequired ? ' selected' : '') + '>选填</option></select></label>' +
+        '<button class="w-9 h-10 md:h-9 text-slate-300 hover:text-red-500 text-lg" title="移除字段" aria-label="移除字段" onclick="removeScanEditorRow(this)">×</button></div>';
     }
     function scanMaterialRow(material, index) {
       return '<div class="scan-material-row flex items-center gap-3 px-4 py-3" data-record-index="' + index + '">' +
@@ -373,7 +386,7 @@
       document.getElementById('scanMaterialEditor').innerHTML = editingScanRecord.materials.map(scanMaterialRow).join('');
     }
     function addScanField() {
-      document.getElementById('scanFieldEditor').insertAdjacentHTML('beforeend', scanFieldRow({ label: '' }, -1));
+      document.getElementById('scanFieldEditor').insertAdjacentHTML('beforeend', scanFieldRow({ label: '', type: '文本', required: true }, -1));
     }
     function addScanMaterial() {
       document.getElementById('scanMaterialEditor').insertAdjacentHTML('beforeend', scanMaterialRow({ name: '' }, -1));
@@ -382,8 +395,10 @@
     function collectScanResult() {
       var fields = Array.from(document.querySelectorAll('#scanFieldEditor .scan-field-row')).map(function (row) {
         var index = parseInt(row.dataset.recordIndex, 10);
-        var field = index >= 0 && editingScanRecord.fields[index] ? cloneData(editingScanRecord.fields[index]) : { source: '', value: '', status: 'confirm' };
+        var field = index >= 0 && editingScanRecord.fields[index] ? cloneData(editingScanRecord.fields[index]) : { source: '', value: '', status: 'confirm', type: '文本', required: true };
         field.label = row.querySelector('[data-scan-label]').value.trim();
+        field.type = row.querySelector('[data-scan-type]').value;
+        field.required = row.querySelector('[data-scan-required]').value === '1';
         return field;
       });
       var materials = Array.from(document.querySelectorAll('#scanMaterialEditor .scan-material-row')).map(function (row) {

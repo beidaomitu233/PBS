@@ -1113,29 +1113,32 @@
     var GOALS = [
       { id: 'cmu', name: '卡内基梅隆大学 · 计算机科学', pkg: '尊享套餐：选校规划 + 文书 + 网申 + 面试辅导',
         docs: [
+          { key: 'CV', name: 'CV 简历', req: '2页 · 科研经历重点', ddl: '2026-10-08' },
           { key: 'PS', name: 'PS 个人陈述', req: '1000词 · 学术背景+研究方向', ddl: '2026-10-15' },
           { key: 'RL', name: 'RL 推荐信×2', req: '500词/封 · 导师推荐', ddl: '2026-10-12' },
-          { key: 'CV', name: 'CV 简历', req: '2页 · 科研经历重点', ddl: '2026-10-08' }
+          { key: 'RP', name: 'RP 研究计划', req: '2000词 · 研究方法+时间安排', ddl: '2026-10-20' }
         ],
         materialDdl: '2026-10-01', appDdl: '2026-11-01',
-        current: { PS: '刘老师', RL: '陈老师', CV: '刘老师', reviewer: '孙老师', network: '吴老师' } },
+        current: { CV: '刘老师', PS: '刘老师', RL: '陈老师', RP: '杨老师', reviewers: { CV: '孙老师', PS: '孙老师', RL: '周老师', RP: '周老师' }, network: '吴老师' } },
       { id: 'stanford', name: '斯坦福大学 · 计算机科学', pkg: '标准套餐：文书 + 网申',
         docs: [
+          { key: 'CV', name: 'CV 简历', req: '2页 · 实习经历重点', ddl: '2026-10-15' },
           { key: 'PS', name: 'PS 个人陈述', req: '800词 · 数据项目经历', ddl: '2026-10-20' },
           { key: 'RL', name: 'RL 推荐信×2', req: '500词/封 · 教授推荐', ddl: '2026-10-18' },
-          { key: 'CV', name: 'CV 简历', req: '2页 · 实习经历重点', ddl: '2026-10-15' }
+          { key: 'RP', name: 'RP 研究计划', req: '1500词 · 数据方向研究设计', ddl: '2026-10-24' }
         ],
         materialDdl: '2026-10-05', appDdl: '2026-11-05',
-        current: { PS: '刘老师', RL: '杨老师', CV: '陈老师', reviewer: '孙老师', network: '郑老师' } },
+        current: { CV: '陈老师', PS: '刘老师', RL: '杨老师', RP: '陈老师', reviewers: { CV: '孙老师', PS: '孙老师', RL: '孙老师', RP: '周老师' }, network: '郑老师' } },
       { id: 'nyu', name: '纽约大学 · 计算机科学', pkg: '标准套餐：文书 + 网申',
         docs: [
+          { key: 'CV', name: 'CV 简历', req: '2页 · 项目与实习并重', ddl: '2026-10-18' },
           { key: 'PS', name: 'PS 个人陈述', req: '1000词 · 职业目标导向', ddl: '2026-10-25' },
           { key: 'RL', name: 'RL 推荐信×2', req: '500词/封 · 实习导师推荐', ddl: '2026-10-22' }
         ],
         materialDdl: '2026-10-10', appDdl: '2026-11-10',
-        current: { PS: '陈老师', RL: '刘老师', reviewer: '周老师', network: '吴老师' } }
+        current: { CV: '陈老师', PS: '陈老师', RL: '刘老师', reviewers: { CV: '周老师', PS: '周老师', RL: '孙老师' }, network: '吴老师' } }
     ];
-    /* 各院校目标分配状态：{ docs:{PS:{person,ddl}}, reviewer, reviewerDocDdl, reviewerAppDdl, network, networkDdl, done } */
+    /* 各院校目标分配状态：{ docs:{PS:{person,ddl}}, reviewers:{PS:person,...}, network, networkMatDdl, networkDdl, done } */
     var goalAssign = {};
     var chgGoalAssign = {};
     var activeGoalId = 'cmu';
@@ -1254,7 +1257,8 @@
         if (done && st) {
           var ppl = [];
           g.docs.forEach(function(d) { if (st.docs && st.docs[d.key] && st.docs[d.key].person) { ppl.push(st.docs[d.key].person); } });
-          if (st.reviewer) { ppl.push(st.reviewer + '(审核)'); }
+          var revSeen = {};
+          g.docs.forEach(function(d) { var rn = st.reviewers && st.reviewers[d.key]; if (rn && !revSeen[rn]) { revSeen[rn] = 1; ppl.push(rn + '(审核)'); } });
           if (st.network) { ppl.push(st.network + '(网申)'); }
           sub = '<p class="text-[10px] text-gray-400 mt-0.5">人员：' + ppl.join('、') + '</p>';
         }
@@ -1300,33 +1304,43 @@
           '<p class="text-xs font-semibold text-gray-700 mb-2">' + d.name + '（' + d.req + '）</p>' +
           '<div class="flex items-center gap-2">' +
           dropdownHtml(key, selectedPersons[key], '选择交付人员') +
-          '<input type="date" value="' + (saved && saved.ddl ? saved.ddl : d.ddl) + '" id="gDdl_' + d.key + '" title="交付 DDL" class="w-[132px] flex-shrink-0 h-9 px-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500">' +
+          '<input type="date" value="' + (saved && saved.ddl ? saved.ddl : d.ddl) + '" id="gDdl_' + d.key + '" title="交付 DDL（默认来自商城，可调整）" oninput="syncReviewDdlEcho(\'g\',\'' + d.key + '\',this.value)" class="w-[132px] flex-shrink-0 h-9 px-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500">' +
           '</div></div>';
       });
       html += '<p class="text-xs text-gray-400 bg-gray-50 rounded-lg px-3 py-2">需知晓：材料准备 DDL ' + g.materialDdl + ' ｜ 网申提交 DDL ' + g.appDdl + '</p></div>';
-      /* 文书审核人员 */
-      selectedPersons['gReviewer'] = st.reviewer || null;
+      /* 文书审核人员（按文书分配：CV/PS/RL/RP 各一名；审核无需设置 DDL，跟随对应文书交付 DDL） */
       html += '<div class="border border-gray-200 rounded-xl p-4 mb-3 bg-white">' +
         '<div class="flex items-center gap-2 mb-1">' +
         '<span class="w-8 h-8 rounded-lg bg-green-100 flex items-center justify-center"><svg class="w-4 h-4 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg></span>' +
-        '<span class="text-sm font-semibold text-gray-800">文书审核人员</span></div>' +
-        '<p class="text-xs text-gray-400 mb-3 pl-10">需知晓：文书交付 · 网申提交</p>' +
-        '<div class="mb-3">' + dropdownHtml('gReviewer', st.reviewer, '点击选择审核人员') + '</div>' +
-        '<div class="grid grid-cols-2 gap-2">' +
-        '<div><label class="block text-xs text-gray-500 mb-1">文书交付</label><input type="date" value="' + (st.reviewerDocDdl || g.docs[0].ddl) + '" id="gDdlDocReview" class="w-full h-9 px-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"></div>' +
-        '<div><label class="block text-xs text-gray-500 mb-1">网申提交</label><input type="date" value="' + (st.reviewerAppDdl || g.appDdl) + '" id="gDdlAppReview" class="w-full h-9 px-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"></div>' +
-        '</div></div>';
-      /* 网申人员 */
+        '<span class="text-sm font-semibold text-gray-800">文书审核人员</span>' +
+        '<span class="text-[10px] px-1.5 py-0.5 rounded bg-green-50 text-green-600 font-medium">按文书分配</span></div>' +
+        '<p class="text-xs text-gray-400 mb-3 pl-10">每种文书单独指定审核人员；审核不单独设置 DDL，跟随对应文书交付 DDL（时间来自商城）</p>';
+      g.docs.forEach(function(d) {
+        var rKey = 'gReviewer_' + d.key;
+        var savedR = (st.reviewers || {})[d.key] || null;
+        selectedPersons[rKey] = savedR;
+        var echoDdl = (docs[d.key] && docs[d.key].ddl) || d.ddl;
+        html += '<div class="border border-gray-100 rounded-lg p-3 mb-2 bg-gray-50">' +
+          '<div class="flex items-center justify-between gap-2 mb-2">' +
+          '<p class="text-xs font-semibold text-gray-700">' + d.name + '</p>' +
+          '<span class="text-[10px] text-gray-500 flex-shrink-0">交付 DDL <span class="text-gray-800 font-medium" id="gRevDdlEcho_' + d.key + '">' + echoDdl + '</span> · 来自商城</span></div>' +
+          dropdownHtml(rKey, savedR, '选择 ' + d.key + ' 审核人员') +
+          '</div>';
+      });
+      html += '</div>';
+      /* 网申人员（材料准备 DDL + 网申提交 DDL 两个时间） */
       selectedPersons['gNetwork'] = st.network || null;
       html += '<div class="border border-gray-200 rounded-xl p-4 mb-3 bg-white">' +
         '<div class="flex items-center gap-2 mb-1">' +
         '<span class="w-8 h-8 rounded-lg bg-purple-100 flex items-center justify-center"><svg class="w-4 h-4 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9"></path></svg></span>' +
         '<span class="text-sm font-semibold text-gray-800">网申人员</span></div>' +
-        '<p class="text-xs text-gray-400 mb-3 pl-10">需知晓：网申提交</p>' +
+        '<p class="text-xs text-gray-400 mb-3 pl-10">需知晓：材料准备 · 网申提交两个时间节点</p>' +
         '<div class="mb-3">' + dropdownHtml('gNetwork', st.network, '点击选择网申人员') + '</div>' +
-        '<div class="mb-3"><label class="block text-xs text-gray-500 mb-1">网申提交 DDL</label>' +
-        '<input type="date" value="' + (st.networkDdl || g.appDdl) + '" id="gDdlAppNetwork" class="w-full h-9 px-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"></div>' +
-        '<p class="text-xs text-gray-400 bg-gray-50 rounded-lg px-3 py-2">材料准备 DDL：' + g.materialDdl + '（需在此之前齐备）</p></div>';
+        '<div class="grid grid-cols-2 gap-2 mb-3">' +
+        '<div><label class="block text-xs text-gray-500 mb-1">材料准备 DDL</label><input type="date" value="' + (st.networkMatDdl || g.materialDdl) + '" id="gDdlMatNetwork" class="w-full h-9 px-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"></div>' +
+        '<div><label class="block text-xs text-gray-500 mb-1">网申提交 DDL</label><input type="date" value="' + (st.networkDdl || g.appDdl) + '" id="gDdlAppNetwork" class="w-full h-9 px-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"></div>' +
+        '</div>' +
+        '<p class="text-xs text-gray-400 bg-gray-50 rounded-lg px-3 py-2">商城时限：材料准备 ' + g.materialDdl + ' ｜ 网申提交 ' + g.appDdl + '</p></div>';
       /* 完成按钮 */
       html += '<button class="w-full h-10 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm font-medium" onclick="completeGoal()">完成本院校目标分配</button>';
       html += '</div>';
@@ -1342,12 +1356,16 @@
         var ddl = distVal('gDdl_' + d.key);
         if (person || ddl) { docs[d.key] = { person: person || null, ddl: ddl }; }
       });
+      var reviewers = {};
+      g.docs.forEach(function(d) {
+        var rp = selectedPersons['gReviewer_' + d.key];
+        if (rp) { reviewers[d.key] = rp; }
+      });
       goalAssign[g.id] = {
         docs: docs,
-        reviewer: selectedPersons['gReviewer'] || null,
-        reviewerDocDdl: distVal('gDdlDocReview'),
-        reviewerAppDdl: distVal('gDdlAppReview'),
+        reviewers: reviewers,
         network: selectedPersons['gNetwork'] || null,
+        networkMatDdl: distVal('gDdlMatNetwork'),
         networkDdl: distVal('gDdlAppNetwork'),
         done: prev.done || false
       };
@@ -1364,7 +1382,9 @@
       for (var i = 0; i < g.docs.length; i++) {
         if (!selectedPersons['gd_' + g.docs[i].key]) { showPageToast('请选择' + g.docs[i].name + '的交付人员'); return; }
       }
-      if (!selectedPersons['gReviewer']) { showPageToast('请选择文书审核人员'); return; }
+      for (var r = 0; r < g.docs.length; r++) {
+        if (!selectedPersons['gReviewer_' + g.docs[r].key]) { showPageToast('请选择' + g.docs[r].name + '的审核人员'); return; }
+      }
       if (!selectedPersons['gNetwork']) { showPageToast('请选择网申人员'); return; }
       saveActiveGoalDraft();
       goalAssign[g.id].done = true;
@@ -1410,11 +1430,12 @@
         if (done && st) {
           var ppl = [];
           g.docs.forEach(function(d) { if (st.docs && st.docs[d.key] && st.docs[d.key].person) { ppl.push(st.docs[d.key].person); } });
-          if (st.reviewer) { ppl.push(st.reviewer + '(审核)'); }
+          var revSeen = {};
+          g.docs.forEach(function(d) { var rn = st.reviewers && st.reviewers[d.key]; if (rn && !revSeen[rn]) { revSeen[rn] = 1; ppl.push(rn + '(审核)'); } });
           if (st.network) { ppl.push(st.network + '(网申)'); }
           sub = '<p class="text-[10px] text-gray-400 mt-0.5">新人员：' + ppl.join('、') + '</p>';
         } else {
-          sub = '<p class="text-[10px] text-gray-400 mt-0.5">当前：' + ((st && st.reviewer) || g.current.reviewer) + '(审核) · ' + ((st && st.network) || g.current.network) + '(网申)</p>';
+          sub = '<p class="text-[10px] text-gray-400 mt-0.5">当前：' + currentReviewerSummary(g) + ' · ' + ((st && st.network) || g.current.network) + '(网申)</p>';
         }
         html += '<div class="rounded-lg p-2.5 cursor-pointer transition-colors ' + cardCls + '" onclick="switchChgGoal(\'' + g.id + '\')">' +
           '<div class="flex items-center justify-between gap-2"><p class="' + nameCls + '">' + (idx + 1) + '. ' + g.name + '</p>' + badge + '</div>' +
@@ -1445,23 +1466,30 @@
           '<span class="text-[10px] text-gray-400">当前：' + ((saved && saved.person) || g.current[d.key]) + '</span></div>' +
           '<div class="flex items-center gap-2">' +
           dropdownHtml(key, selectedPersons[key], '选择新交付人员') +
-          '<input type="date" value="' + (saved && saved.ddl ? saved.ddl : d.ddl) + '" id="cgDdl_' + d.key + '" title="交付 DDL" class="w-[132px] flex-shrink-0 h-9 px-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500">' +
+          '<input type="date" value="' + (saved && saved.ddl ? saved.ddl : d.ddl) + '" id="cgDdl_' + d.key + '" title="交付 DDL（默认来自商城，可调整）" oninput="syncReviewDdlEcho(\'cg\',\'' + d.key + '\',this.value)" class="w-[132px] flex-shrink-0 h-9 px-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500">' +
           '</div></div>';
       });
       html += '<p class="text-xs text-gray-400 bg-gray-50 rounded-lg px-3 py-2">需知晓：材料准备 DDL ' + g.materialDdl + ' ｜ 网申提交 DDL ' + g.appDdl + '</p></div>';
-      /* 文书审核人员 */
-      selectedPersons['cgReviewer'] = st.reviewer || null;
+      /* 文书审核人员（按文书更换） */
       html += '<div class="border border-gray-200 rounded-xl p-4 mb-3 bg-white">' +
         '<div class="flex items-center gap-2 mb-1">' +
         '<span class="w-8 h-8 rounded-lg bg-green-100 flex items-center justify-center"><svg class="w-4 h-4 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg></span>' +
         '<span class="text-sm font-semibold text-gray-800">文书审核人员</span>' +
-        '<span class="text-[10px] text-gray-400 ml-auto">当前：' + (st.reviewer || g.current.reviewer) + '</span></div>' +
-        '<p class="text-xs text-gray-400 mb-3 pl-10">需知晓：文书交付 · 网申提交</p>' +
-        '<div class="mb-3">' + dropdownHtml('cgReviewer', st.reviewer, '点击选择新审核人员') + '</div>' +
-        '<div class="grid grid-cols-2 gap-2">' +
-        '<div><label class="block text-xs text-gray-500 mb-1">文书交付</label><input type="date" value="' + (st.reviewerDocDdl || g.docs[0].ddl) + '" id="cgDdlDocReview" class="w-full h-9 px-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"></div>' +
-        '<div><label class="block text-xs text-gray-500 mb-1">网申提交</label><input type="date" value="' + (st.reviewerAppDdl || g.appDdl) + '" id="cgDdlAppReview" class="w-full h-9 px-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"></div>' +
-        '</div></div>';
+        '<span class="text-[10px] px-1.5 py-0.5 rounded bg-green-50 text-green-600 font-medium">按文书更换</span></div>' +
+        '<p class="text-xs text-gray-400 mb-3 pl-10">每种文书单独指定新审核人员；审核不单独设置 DDL，跟随对应文书交付 DDL（时间来自商城）</p>';
+      g.docs.forEach(function(d) {
+        var rKey = 'cgReviewer_' + d.key;
+        var savedR = (st.reviewers || {})[d.key] || null;
+        selectedPersons[rKey] = savedR;
+        var echoDdl = (docs[d.key] && docs[d.key].ddl) || d.ddl;
+        html += '<div class="border border-gray-100 rounded-lg p-3 mb-2 bg-gray-50">' +
+          '<div class="flex items-center justify-between gap-2 mb-1"><p class="text-xs font-semibold text-gray-700">' + d.name + '</p>' +
+          '<span class="text-[10px] text-gray-400 flex-shrink-0">当前：' + (savedR || (g.current.reviewers && g.current.reviewers[d.key]) || '未分配') + '</span></div>' +
+          '<p class="text-[10px] text-gray-500 mb-2">交付 DDL <span class="text-gray-800 font-medium" id="cgRevDdlEcho_' + d.key + '">' + echoDdl + '</span> · 来自商城</p>' +
+          dropdownHtml(rKey, savedR, '选择新 ' + d.key + ' 审核人员') +
+          '</div>';
+      });
+      html += '</div>';
       /* 网申人员 */
       selectedPersons['cgNetwork'] = st.network || null;
       html += '<div class="border border-gray-200 rounded-xl p-4 mb-3 bg-white">' +
@@ -1469,11 +1497,13 @@
         '<span class="w-8 h-8 rounded-lg bg-purple-100 flex items-center justify-center"><svg class="w-4 h-4 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9"></path></svg></span>' +
         '<span class="text-sm font-semibold text-gray-800">网申人员</span>' +
         '<span class="text-[10px] text-gray-400 ml-auto">当前：' + (st.network || g.current.network) + '</span></div>' +
-        '<p class="text-xs text-gray-400 mb-3 pl-10">需知晓：网申提交</p>' +
+        '<p class="text-xs text-gray-400 mb-3 pl-10">需知晓：材料准备 · 网申提交两个时间节点</p>' +
         '<div class="mb-3">' + dropdownHtml('cgNetwork', st.network, '点击选择新网申人员') + '</div>' +
-        '<div class="mb-3"><label class="block text-xs text-gray-500 mb-1">网申提交 DDL</label>' +
-        '<input type="date" value="' + (st.networkDdl || g.appDdl) + '" id="cgDdlAppNetwork" class="w-full h-9 px-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"></div>' +
-        '<p class="text-xs text-gray-400 bg-gray-50 rounded-lg px-3 py-2">材料准备 DDL：' + g.materialDdl + '（需在此之前齐备）</p></div>';
+        '<div class="grid grid-cols-2 gap-2 mb-3">' +
+        '<div><label class="block text-xs text-gray-500 mb-1">材料准备 DDL</label><input type="date" value="' + (st.networkMatDdl || g.materialDdl) + '" id="cgDdlMatNetwork" class="w-full h-9 px-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"></div>' +
+        '<div><label class="block text-xs text-gray-500 mb-1">网申提交 DDL</label><input type="date" value="' + (st.networkDdl || g.appDdl) + '" id="cgDdlAppNetwork" class="w-full h-9 px-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"></div>' +
+        '</div>' +
+        '<p class="text-xs text-gray-400 bg-gray-50 rounded-lg px-3 py-2">商城时限：材料准备 ' + g.materialDdl + ' ｜ 网申提交 ' + g.appDdl + '</p></div>';
       /* 完成按钮 */
       html += '<button class="w-full h-10 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm font-medium" onclick="completeChgGoal()">完成本院校目标更换</button>';
       html += '</div>';
@@ -1489,12 +1519,16 @@
         var ddl = distVal('cgDdl_' + d.key);
         if (person || ddl) { docs[d.key] = { person: person || null, ddl: ddl }; }
       });
+      var reviewers = {};
+      g.docs.forEach(function(d) {
+        var rp = selectedPersons['cgReviewer_' + d.key];
+        if (rp) { reviewers[d.key] = rp; }
+      });
       chgGoalAssign[g.id] = {
         docs: docs,
-        reviewer: selectedPersons['cgReviewer'] || null,
-        reviewerDocDdl: distVal('cgDdlDocReview'),
-        reviewerAppDdl: distVal('cgDdlAppReview'),
+        reviewers: reviewers,
         network: selectedPersons['cgNetwork'] || null,
+        networkMatDdl: distVal('cgDdlMatNetwork'),
         networkDdl: distVal('cgDdlAppNetwork'),
         done: prev.done || false
       };
@@ -1511,7 +1545,9 @@
       for (var i = 0; i < g.docs.length; i++) {
         if (!selectedPersons['cgd_' + g.docs[i].key]) { showPageToast('请选择' + g.docs[i].name + '的新交付人员'); return; }
       }
-      if (!selectedPersons['cgReviewer']) { showPageToast('请选择新审核人员'); return; }
+      for (var r = 0; r < g.docs.length; r++) {
+        if (!selectedPersons['cgReviewer_' + g.docs[r].key]) { showPageToast('请选择' + g.docs[r].name + '的新审核人员'); return; }
+      }
       if (!selectedPersons['cgNetwork']) { showPageToast('请选择新网申人员'); return; }
       saveChgActiveGoalDraft();
       chgGoalAssign[g.id].done = true;
@@ -1603,6 +1639,21 @@
       setTimeout(function(){ t.classList.add('hidden'); }, 2200);
     }
     function distVal(id) { var el = document.getElementById(id); return el ? el.value : ''; }
+    function toggleUserMenu() { var m = document.getElementById('userMenu'); if (m) m.classList.toggle('hidden'); }
+    /* 审核卡片跟随交付 DDL 回显：交付日期变更时同步刷新对应文书的“交付 DDL（来自商城）” */
+    function syncReviewDdlEcho(prefix, docKey, val) {
+      var el = document.getElementById(prefix + 'RevDdlEcho_' + docKey);
+      if (el) { el.textContent = val || '—'; }
+    }
+    /* 更换抽屉标签页摘要：当前审核人员（按文书去重） */
+    function currentReviewerSummary(g) {
+      var seen = {}; var names = [];
+      g.docs.forEach(function(d) {
+        var rn = g.current.reviewers && g.current.reviewers[d.key];
+        if (rn && !seen[rn]) { seen[rn] = 1; names.push(rn); }
+      });
+      return names.length ? names.join('、') + '(审核)' : '审核未分配';
+    }
 
     var PROJECT_ASSIGNMENT_KEY = 'pbs_project_assignment_PRJ20260701001';
     function readProjectAssignment() {
@@ -1662,10 +1713,13 @@
         var rows = '';
         g.docs.forEach(function(d) {
           var dd = st.docs[d.key];
-          rows += '<p class="text-xs text-gray-500 flex justify-between"><span>' + d.name + '</span><span class="text-gray-900 font-medium">' + dd.person + ' · ' + dd.ddl + '</span></p>';
+          rows += '<p class="text-xs text-gray-500 flex justify-between"><span>' + d.name + ' 交付</span><span class="text-gray-900 font-medium">' + dd.person + ' · ' + dd.ddl + '</span></p>';
         });
-        rows += '<p class="text-xs text-gray-500 flex justify-between"><span>文书审核</span><span class="text-gray-900 font-medium">' + st.reviewer + '</span></p>';
-        rows += '<p class="text-xs text-gray-500 flex justify-between"><span>网申提交</span><span class="text-gray-900 font-medium">' + st.network + ' · ' + st.networkDdl + '</span></p>';
+        g.docs.forEach(function(d) {
+          var rn = st.reviewers && st.reviewers[d.key];
+          if (rn) { rows += '<p class="text-xs text-gray-500 flex justify-between"><span>' + d.key + ' 审核</span><span class="text-gray-900 font-medium">' + rn + ' · 跟随交付DDL</span></p>'; }
+        });
+        rows += '<p class="text-xs text-gray-500 flex justify-between"><span>网申（材料/提交）</span><span class="text-gray-900 font-medium">' + st.network + ' · ' + (st.networkMatDdl || '—') + ' / ' + (st.networkDdl || '—') + '</span></p>';
         blocks += '<div class="border border-gray-100 rounded-lg p-3"><p class="font-medium text-gray-900 mb-1.5">' + g.name + '</p><div class="space-y-1">' + rows + '</div></div>';
       });
       return blocks;

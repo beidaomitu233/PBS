@@ -691,7 +691,6 @@
               <option>文书机构管理员</option>
               <option>销售人员管理员</option>
               <option>销售人员</option>
-              <option>平台运维人员</option>
             </select>
           </div>
           <input id="flt-org" type="hidden">
@@ -813,6 +812,35 @@
           <div class="col-span-2">
             <label class="block text-sm text-gray-600 mb-2">用户角色 <span class="text-red-500">*</span><span class="text-xs text-blue-500 font-normal ml-1">（可多选，权限并集生效）</span></label>
             <div id="add-roles" class="grid grid-cols-3 gap-2 max-h-48 overflow-y-auto p-1"></div>
+          </div>
+          <!-- 账号设置 -->
+          <div class="col-span-2 mt-2 pt-4 border-t border-gray-100">
+            <p class="text-sm font-medium text-gray-700 mb-3">账号设置</p>
+            <div class="grid grid-cols-2 gap-4">
+              <div>
+                <label class="block text-sm text-gray-600 mb-2">账号状态</label>
+                <div class="flex items-center gap-4 h-10">
+                  <label class="flex items-center gap-1.5 text-sm text-gray-700 cursor-pointer"><input type="radio" name="add-status" value="启用" checked class="w-4 h-4 text-blue-600">启用</label>
+                  <label class="flex items-center gap-1.5 text-sm text-gray-700 cursor-pointer"><input type="radio" name="add-status" value="禁用" class="w-4 h-4 text-blue-600">禁用</label>
+                </div>
+                <p class="text-xs text-gray-400 mt-1">禁用后该账号无法登录平台</p>
+              </div>
+              <div>
+                <label class="block text-sm text-gray-600 mb-2">账号有效期</label>
+                <select id="add-expiry-type" class="w-full h-10 px-3 border border-gray-300 rounded-lg text-sm bg-white focus:ring-2 focus:ring-blue-500" onchange="document.getElementById('add-expiry-date').classList.toggle('hidden', this.value !== '指定日期')">
+                  <option value="长期有效">长期有效</option>
+                  <option value="指定日期">至指定日期</option>
+                </select>
+                <input id="add-expiry-date" type="date" class="hidden w-full h-10 px-3 mt-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500">
+              </div>
+              <div class="col-span-2">
+                <label class="flex items-center gap-2 text-sm text-gray-700 cursor-pointer">
+                  <input id="add-must-change-pwd" type="checkbox" checked class="w-4 h-4 text-blue-600 rounded">
+                  首次登录强制修改初始密码
+                </label>
+                <p class="text-xs text-gray-400 mt-1 ml-6">勾选后，用户使用初始密码首次登录时必须先修改密码</p>
+              </div>
+            </div>
           </div>
         </div>
         <p id="add-user-error" class="hidden mt-4 text-sm text-red-600" role="alert"></p>
@@ -956,7 +984,7 @@
         account: 'zhangming',
         email: 'zhangming@pbs.com',
         org: 'PBS留学总部',
-        roles: ['机构管理员', '平台运维人员'],
+        roles: ['机构管理员'],
         status: '在职'
       },
       {
@@ -1037,10 +1065,10 @@
       '文书人员': 'bg-amber-100 text-amber-700',
       '网申人员': 'bg-lime-100 text-lime-700',
       '文书审核': 'bg-red-100 text-red-700',
-      '文书机构管理员': 'bg-violet-100 text-violet-700',
-      '平台运维人员': 'bg-slate-100 text-slate-700'
+      '文书机构管理员': 'bg-violet-100 text-violet-700'
     };
-    var ALL_ROLES = ['机构管理员', '项目经理', '文书人员', '网申人员', '文书审核', '文书机构管理员', '销售人员管理员', '销售人员', '平台运维人员'];
+    /* 机构成员只能分配机构级业务角色，平台运维账号由平台侧单独管理。 */
+    var ALL_ROLES = ['机构管理员', '项目经理', '文书人员', '网申人员', '文书审核', '文书机构管理员', '销售人员管理员', '销售人员'];
 
     function renderRoleOptions(containerId, selectedRoles) {
       var selected = selectedRoles || [];
@@ -1111,6 +1139,8 @@
 
     function openAddUser() {
       document.getElementById('addUserForm').reset();
+      var expDate = document.getElementById('add-expiry-date');
+      if (expDate) expDate.classList.add('hidden');
       renderRoleOptions('add-roles', []);
       showModalError('add-user-error', '');
       document.getElementById('addUserModal').classList.remove('hidden');
@@ -1129,12 +1159,18 @@
       var password = gv('add-password');
       var organization = personnelScopeOrg;
       var roles = selectedRoles('add-roles');
+      var mustChange = document.getElementById('add-must-change-pwd').checked;
+      var accStatusRadio = document.querySelector('input[name="add-status"]:checked');
+      var accStatus = accStatusRadio ? accStatusRadio.value : '启用';
+      var expiryType = gv('add-expiry-type');
+      var accountExpiry = expiryType === '指定日期' ? (gv('add-expiry-date') || '未设置日期') : '长期有效';
       if (!account || !name || !phone || !password) { showModalError('add-user-error', '请完整填写所有必填项'); return; }
       if (!organization) { showModalError('add-user-error', '当前机构信息缺失，请返回后重新进入人员管理'); return; }
       if (personnelData.some(function (person) { return person.account.toLowerCase() === account.toLowerCase(); }) || getManagedAccounts().some(function (item) { return String(item.u || '').toLowerCase() === account.toLowerCase(); })) { showModalError('add-user-error', '用户名已存在，请更换后重试'); return; }
       if (!/^1\d{10}$/.test(phone)) { showModalError('add-user-error', '请输入正确的 11 位手机号'); return; }
       if (password.length < 8 || !/[A-Za-z]/.test(password) || !/\d/.test(password)) { showModalError('add-user-error', '初始密码需为 8 位以上，并同时包含字母与数字'); return; }
       if (!roles.length) { showModalError('add-user-error', '请至少选择一个用户角色'); return; }
+      if (roles.indexOf('平台运维人员') >= 0) { showModalError('add-user-error', '机构成员不能分配平台运维人员角色'); return; }
       personnelData.unshift({
         id: personnelData.reduce(function (max, item) { return Math.max(max, item.id); }, 0) + 1,
         name: name,
@@ -1144,7 +1180,9 @@
         org: organization,
         roles: roles,
         status: '在职',
-        mustChangePassword: true
+        mustChangePassword: mustChange,
+        accountStatus: accStatus,
+        accountExpiry: accountExpiry
       });
       saveManagedAccount(account, {
         account: account,
@@ -1155,11 +1193,14 @@
         roles: roles,
         org: organization,
         status: '在职',
-        mustChangePassword: true
+        mustChangePassword: mustChange,
+        accountStatus: accStatus,
+        accountExpiry: accountExpiry
       });
       closeAddUser();
       applyFilter();
-      showPersonnelToast('用户“' + name + '”已创建，首次登录需修改密码');
+      showPersonnelToast('用户“' + name + '”已创建' + (accStatus === '禁用' ? '（账号已禁用）' : '') +
+        (mustChange ? '，首次登录需修改密码' : '') + (accountExpiry !== '长期有效' ? '，有效期至 ' + accountExpiry : ''));
     }
 
     function renderTable() {
@@ -1310,6 +1351,9 @@
       if (!checkedRoles.length) {
         showModalError('edit-user-error', '请至少为用户保留一个角色'); return;
       }
+      if (checkedRoles.indexOf('平台运维人员') >= 0) {
+        showModalError('edit-user-error', '机构成员不能分配平台运维人员角色'); return;
+      }
       var originalAccount = p.account;
       p.account = account;
       p.phone = phone;
@@ -1390,6 +1434,8 @@
       filterList();
     }
     window.addPersonnelFromModal = function (data) {
+      data.roles = (data.roles || []).filter(function (role) { return role !== '平台运维人员'; });
+      if (!data.roles.length) return;
       data.id = personnelData.reduce(function (max, item) { return Math.max(max, item.id); }, 0) + 1;
       data.org = personnelScopeOrg || data.org || 'PBS留学总部';
       data.status = '在职';

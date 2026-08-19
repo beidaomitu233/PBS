@@ -693,6 +693,14 @@
             <span class="min-w-0"><span class="block text-xs font-medium text-gray-800 truncate">李同学-AI方向-PS录取版.pdf</span><span class="block text-[11px] text-gray-400 mt-0.5">硕士 · PS</span></span>
           </label>
         </div>
+        <div class="mt-3" id="case-library-parse">
+          <button type="button" id="btn-ai-parse-library" class="w-full h-9 rounded-lg bg-blue-600 text-white text-xs font-medium hover:bg-blue-700 flex items-center justify-center gap-1.5">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09zM18.259 8.715L18 9.75l-.259-1.035a3.375 3.375 0 00-2.455-2.456L14.25 6l1.036-.259a3.375 3.375 0 002.455-2.456L18 2.25l.259 1.035a3.375 3.375 0 002.456 2.456L21.75 6l-1.035.259a3.375 3.375 0 00-2.456 2.456z"></path></svg>
+            AI解析案例包
+          </button>
+          <p class="text-[11px] text-gray-400 mt-1.5">勾选上方已上传案例后点击解析，弹窗内无需重新上传</p>
+          <p id="case-parse-status" class="text-[11px] text-emerald-600 mt-1 hidden"></p>
+        </div>
         <div id="case-source-upload" class="hidden">
           <label for="case-source-file" class="block border-2 border-dashed border-gray-300 rounded-xl p-4 text-center cursor-pointer hover:border-blue-400 hover:bg-blue-50/40">
             <svg class="w-7 h-7 mx-auto text-gray-300 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M12 12v9m0-9l-3 3m3-3l3 3"></path></svg>
@@ -766,42 +774,148 @@
     <aside class="w-72 bg-white border-l border-gray-200 flex flex-col flex-shrink-0 overflow-y-auto">
       <div class="p-4 border-b border-gray-100">
         <h3 class="text-sm font-medium text-gray-800">学生档案可引用变量</h3>
-        <p class="text-xs text-gray-400 mt-1">按档案模块展开，蓝色表示已引用</p>
+        <p class="text-xs text-gray-400 mt-1">与学生档案详情页 11 个板块一致，蓝色表示已引用</p>
       </div>
       <div class="flex-1 p-4 space-y-3">
+        <!-- 板块一：教育背景信息 -->
         <div class="variable-group rounded-xl border border-gray-200 overflow-hidden">
-          <button type="button" class="variable-group-toggle w-full flex items-center justify-between px-3 py-2.5 bg-gray-50 text-sm font-medium text-gray-700" aria-expanded="true"><span>基础信息</span><svg class="w-4 h-4 transition-transform rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg></button>
+          <button type="button" class="variable-group-toggle w-full flex items-center justify-between px-3 py-2.5 bg-gray-50 text-sm font-medium text-gray-700" aria-expanded="true"><span>教育背景信息</span><svg class="w-4 h-4 transition-transform rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg></button>
           <div class="variable-group-body p-3 flex flex-wrap gap-2">
-            <button class="variable-tag px-2.5 py-1.5 rounded-lg bg-blue-100 text-blue-700 text-xs font-medium" data-used="true">[学生姓名]</button>
-            <button class="variable-tag px-2.5 py-1.5 rounded-lg bg-blue-100 text-blue-700 text-xs font-medium" data-used="true">[申请层次]</button>
-            <button class="variable-tag px-2.5 py-1.5 rounded-lg bg-blue-100 text-blue-700 text-xs font-medium" data-used="true">[申请方向]</button>
-            <button class="variable-tag px-2.5 py-1.5 rounded-lg bg-gray-100 text-gray-500 text-xs" data-used="false">[出生日期]</button>
-          </div>
-        </div>
-        <div class="variable-group rounded-xl border border-gray-200 overflow-hidden">
-          <button type="button" class="variable-group-toggle w-full flex items-center justify-between px-3 py-2.5 bg-gray-50 text-sm font-medium text-gray-700" aria-expanded="true"><span>学术背景</span><svg class="w-4 h-4 transition-transform rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg></button>
-          <div class="variable-group-body p-3 flex flex-wrap gap-2">
-            <button class="variable-tag px-2.5 py-1.5 rounded-lg bg-blue-100 text-blue-700 text-xs font-medium" data-used="true">[本科院校]</button>
+            <button class="variable-tag px-2.5 py-1.5 rounded-lg bg-gray-100 text-gray-500 text-xs" data-used="false">[就读学校]</button>
+            <button class="variable-tag px-2.5 py-1.5 rounded-lg bg-gray-100 text-gray-500 text-xs" data-used="false">[所在院系]</button>
             <button class="variable-tag px-2.5 py-1.5 rounded-lg bg-blue-100 text-blue-700 text-xs font-medium" data-used="true">[专业名称]</button>
             <button class="variable-tag px-2.5 py-1.5 rounded-lg bg-blue-100 text-blue-700 text-xs font-medium" data-used="true">[GPA]</button>
-            <button class="variable-tag px-2.5 py-1.5 rounded-lg bg-gray-100 text-gray-500 text-xs" data-used="false">[专业排名]</button>
-            <button class="variable-tag px-2.5 py-1.5 rounded-lg bg-gray-100 text-gray-500 text-xs" data-used="false">[核心课程]</button>
+            <button class="variable-tag px-2.5 py-1.5 rounded-lg bg-gray-100 text-gray-500 text-xs" data-used="false">[学制]</button>
+            <button class="variable-tag px-2.5 py-1.5 rounded-lg bg-gray-100 text-gray-500 text-xs" data-used="false">[所获学位]</button>
+            <button class="variable-tag px-2.5 py-1.5 rounded-lg bg-gray-100 text-gray-500 text-xs" data-used="false">[起止时间]</button>
+            <button class="variable-tag px-2.5 py-1.5 rounded-lg bg-gray-100 text-gray-500 text-xs" data-used="false">[学校地址]</button>
           </div>
         </div>
+        <!-- 板块二：语言成绩 -->
         <div class="variable-group rounded-xl border border-gray-200 overflow-hidden">
-          <button type="button" class="variable-group-toggle w-full flex items-center justify-between px-3 py-2.5 bg-gray-50 text-sm font-medium text-gray-700" aria-expanded="false"><span>语言与标化</span><svg class="w-4 h-4 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg></button>
+          <button type="button" class="variable-group-toggle w-full flex items-center justify-between px-3 py-2.5 bg-gray-50 text-sm font-medium text-gray-700" aria-expanded="false"><span>语言成绩</span><svg class="w-4 h-4 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg></button>
           <div class="variable-group-body hidden p-3 flex flex-wrap gap-2">
-            <button class="variable-tag px-2.5 py-1.5 rounded-lg bg-gray-100 text-gray-500 text-xs" data-used="false">[雅思成绩]</button>
-            <button class="variable-tag px-2.5 py-1.5 rounded-lg bg-gray-100 text-gray-500 text-xs" data-used="false">[托福成绩]</button>
-            <button class="variable-tag px-2.5 py-1.5 rounded-lg bg-gray-100 text-gray-500 text-xs" data-used="false">[GRE成绩]</button>
+            <button class="variable-tag px-2.5 py-1.5 rounded-lg bg-gray-100 text-gray-500 text-xs" data-used="false">[雅思总分]</button>
+            <button class="variable-tag px-2.5 py-1.5 rounded-lg bg-gray-100 text-gray-500 text-xs" data-used="false">[雅思听力]</button>
+            <button class="variable-tag px-2.5 py-1.5 rounded-lg bg-gray-100 text-gray-500 text-xs" data-used="false">[雅思阅读]</button>
+            <button class="variable-tag px-2.5 py-1.5 rounded-lg bg-gray-100 text-gray-500 text-xs" data-used="false">[雅思写作]</button>
+            <button class="variable-tag px-2.5 py-1.5 rounded-lg bg-gray-100 text-gray-500 text-xs" data-used="false">[雅思口语]</button>
+            <button class="variable-tag px-2.5 py-1.5 rounded-lg bg-gray-100 text-gray-500 text-xs" data-used="false">[托福总分]</button>
+            <button class="variable-tag px-2.5 py-1.5 rounded-lg bg-gray-100 text-gray-500 text-xs" data-used="false">[托福听力]</button>
+            <button class="variable-tag px-2.5 py-1.5 rounded-lg bg-gray-100 text-gray-500 text-xs" data-used="false">[托福阅读]</button>
+            <button class="variable-tag px-2.5 py-1.5 rounded-lg bg-gray-100 text-gray-500 text-xs" data-used="false">[托福写作]</button>
+            <button class="variable-tag px-2.5 py-1.5 rounded-lg bg-gray-100 text-gray-500 text-xs" data-used="false">[托福口语]</button>
           </div>
         </div>
+        <!-- 板块三：学业信息 -->
         <div class="variable-group rounded-xl border border-gray-200 overflow-hidden">
-          <button type="button" class="variable-group-toggle w-full flex items-center justify-between px-3 py-2.5 bg-gray-50 text-sm font-medium text-gray-700" aria-expanded="false"><span>经历材料</span><svg class="w-4 h-4 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg></button>
+          <button type="button" class="variable-group-toggle w-full flex items-center justify-between px-3 py-2.5 bg-gray-50 text-sm font-medium text-gray-700" aria-expanded="false"><span>学业信息</span><svg class="w-4 h-4 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg></button>
           <div class="variable-group-body hidden p-3 flex flex-wrap gap-2">
-            <button class="variable-tag px-2.5 py-1.5 rounded-lg bg-blue-100 text-blue-700 text-xs font-medium" data-used="true">[科研经历]</button>
-            <button class="variable-tag px-2.5 py-1.5 rounded-lg bg-blue-100 text-blue-700 text-xs font-medium" data-used="true">[实习经历]</button>
-            <button class="variable-tag px-2.5 py-1.5 rounded-lg bg-gray-100 text-gray-500 text-xs" data-used="false">[获奖经历]</button>
+            <button class="variable-tag px-2.5 py-1.5 rounded-lg bg-gray-100 text-gray-500 text-xs" data-used="false">[SAT]</button>
+            <button class="variable-tag px-2.5 py-1.5 rounded-lg bg-gray-100 text-gray-500 text-xs" data-used="false">[AP]</button>
+            <button class="variable-tag px-2.5 py-1.5 rounded-lg bg-gray-100 text-gray-500 text-xs" data-used="false">[A-Level]</button>
+            <button class="variable-tag px-2.5 py-1.5 rounded-lg bg-gray-100 text-gray-500 text-xs" data-used="false">[IB]</button>
+            <button class="variable-tag px-2.5 py-1.5 rounded-lg bg-gray-100 text-gray-500 text-xs" data-used="false">[论文数量]</button>
+            <button class="variable-tag px-2.5 py-1.5 rounded-lg bg-gray-100 text-gray-500 text-xs" data-used="false">[论文题目]</button>
+            <button class="variable-tag px-2.5 py-1.5 rounded-lg bg-gray-100 text-gray-500 text-xs" data-used="false">[期刊]</button>
+            <button class="variable-tag px-2.5 py-1.5 rounded-lg bg-gray-100 text-gray-500 text-xs" data-used="false">[发表时间]</button>
+            <button class="variable-tag px-2.5 py-1.5 rounded-lg bg-gray-100 text-gray-500 text-xs" data-used="false">[指导教师]</button>
+            <button class="variable-tag px-2.5 py-1.5 rounded-lg bg-gray-100 text-gray-500 text-xs" data-used="false">[专利数量]</button>
+            <button class="variable-tag px-2.5 py-1.5 rounded-lg bg-gray-100 text-gray-500 text-xs" data-used="false">[专利名称]</button>
+            <button class="variable-tag px-2.5 py-1.5 rounded-lg bg-gray-100 text-gray-500 text-xs" data-used="false">[专利时间]</button>
+            <button class="variable-tag px-2.5 py-1.5 rounded-lg bg-gray-100 text-gray-500 text-xs" data-used="false">[学业备注]</button>
+          </div>
+        </div>
+        <!-- 板块四：专业资质 -->
+        <div class="variable-group rounded-xl border border-gray-200 overflow-hidden">
+          <button type="button" class="variable-group-toggle w-full flex items-center justify-between px-3 py-2.5 bg-gray-50 text-sm font-medium text-gray-700" aria-expanded="false"><span>专业资质</span><svg class="w-4 h-4 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg></button>
+          <div class="variable-group-body hidden p-3 flex flex-wrap gap-2">
+            <button class="variable-tag px-2.5 py-1.5 rounded-lg bg-gray-100 text-gray-500 text-xs" data-used="false">[资质名称]</button>
+            <button class="variable-tag px-2.5 py-1.5 rounded-lg bg-gray-100 text-gray-500 text-xs" data-used="false">[颁发机构]</button>
+            <button class="variable-tag px-2.5 py-1.5 rounded-lg bg-gray-100 text-gray-500 text-xs" data-used="false">[获得时间]</button>
+            <button class="variable-tag px-2.5 py-1.5 rounded-lg bg-gray-100 text-gray-500 text-xs" data-used="false">[证书编号]</button>
+            <button class="variable-tag px-2.5 py-1.5 rounded-lg bg-gray-100 text-gray-500 text-xs" data-used="false">[有效期至]</button>
+          </div>
+        </div>
+        <!-- 板块五：工作经历 -->
+        <div class="variable-group rounded-xl border border-gray-200 overflow-hidden">
+          <button type="button" class="variable-group-toggle w-full flex items-center justify-between px-3 py-2.5 bg-gray-50 text-sm font-medium text-gray-700" aria-expanded="false"><span>工作经历</span><svg class="w-4 h-4 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg></button>
+          <div class="variable-group-body hidden p-3 flex flex-wrap gap-2">
+            <button class="variable-tag px-2.5 py-1.5 rounded-lg bg-gray-100 text-gray-500 text-xs" data-used="false">[公司名称]</button>
+            <button class="variable-tag px-2.5 py-1.5 rounded-lg bg-gray-100 text-gray-500 text-xs" data-used="false">[职位]</button>
+            <button class="variable-tag px-2.5 py-1.5 rounded-lg bg-gray-100 text-gray-500 text-xs" data-used="false">[入职时间]</button>
+            <button class="variable-tag px-2.5 py-1.5 rounded-lg bg-gray-100 text-gray-500 text-xs" data-used="false">[离职时间]</button>
+            <button class="variable-tag px-2.5 py-1.5 rounded-lg bg-gray-100 text-gray-500 text-xs" data-used="false">[工作描述]</button>
+            <button class="variable-tag px-2.5 py-1.5 rounded-lg bg-gray-100 text-gray-500 text-xs" data-used="false">[证明人]</button>
+          </div>
+        </div>
+        <!-- 板块六：实践经历 -->
+        <div class="variable-group rounded-xl border border-gray-200 overflow-hidden">
+          <button type="button" class="variable-group-toggle w-full flex items-center justify-between px-3 py-2.5 bg-gray-50 text-sm font-medium text-gray-700" aria-expanded="false"><span>实践经历</span><svg class="w-4 h-4 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg></button>
+          <div class="variable-group-body hidden p-3 flex flex-wrap gap-2">
+            <button class="variable-tag px-2.5 py-1.5 rounded-lg bg-gray-100 text-gray-500 text-xs" data-used="false">[组织/项目]</button>
+            <button class="variable-tag px-2.5 py-1.5 rounded-lg bg-gray-100 text-gray-500 text-xs" data-used="false">[担任角色]</button>
+            <button class="variable-tag px-2.5 py-1.5 rounded-lg bg-gray-100 text-gray-500 text-xs" data-used="false">[开始时间]</button>
+            <button class="variable-tag px-2.5 py-1.5 rounded-lg bg-gray-100 text-gray-500 text-xs" data-used="false">[结束时间]</button>
+            <button class="variable-tag px-2.5 py-1.5 rounded-lg bg-gray-100 text-gray-500 text-xs" data-used="false">[活动内容]</button>
+            <button class="variable-tag px-2.5 py-1.5 rounded-lg bg-gray-100 text-gray-500 text-xs" data-used="false">[收获]</button>
+          </div>
+        </div>
+        <!-- 板块七：荣誉 -->
+        <div class="variable-group rounded-xl border border-gray-200 overflow-hidden">
+          <button type="button" class="variable-group-toggle w-full flex items-center justify-between px-3 py-2.5 bg-gray-50 text-sm font-medium text-gray-700" aria-expanded="false"><span>荣誉</span><svg class="w-4 h-4 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg></button>
+          <div class="variable-group-body hidden p-3 flex flex-wrap gap-2">
+            <button class="variable-tag px-2.5 py-1.5 rounded-lg bg-gray-100 text-gray-500 text-xs" data-used="false">[荣誉名称]</button>
+            <button class="variable-tag px-2.5 py-1.5 rounded-lg bg-gray-100 text-gray-500 text-xs" data-used="false">[颁奖机构]</button>
+            <button class="variable-tag px-2.5 py-1.5 rounded-lg bg-gray-100 text-gray-500 text-xs" data-used="false">[获奖时间]</button>
+            <button class="variable-tag px-2.5 py-1.5 rounded-lg bg-gray-100 text-gray-500 text-xs" data-used="false">[荣誉级别]</button>
+            <button class="variable-tag px-2.5 py-1.5 rounded-lg bg-gray-100 text-gray-500 text-xs" data-used="false">[荣誉备注]</button>
+          </div>
+        </div>
+        <!-- 板块八：学术发表 -->
+        <div class="variable-group rounded-xl border border-gray-200 overflow-hidden">
+          <button type="button" class="variable-group-toggle w-full flex items-center justify-between px-3 py-2.5 bg-gray-50 text-sm font-medium text-gray-700" aria-expanded="false"><span>学术发表</span><svg class="w-4 h-4 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg></button>
+          <div class="variable-group-body hidden p-3 flex flex-wrap gap-2">
+            <button class="variable-tag px-2.5 py-1.5 rounded-lg bg-gray-100 text-gray-500 text-xs" data-used="false">[论文标题]</button>
+            <button class="variable-tag px-2.5 py-1.5 rounded-lg bg-gray-100 text-gray-500 text-xs" data-used="false">[期刊/会议]</button>
+            <button class="variable-tag px-2.5 py-1.5 rounded-lg bg-gray-100 text-gray-500 text-xs" data-used="false">[发表日期]</button>
+            <button class="variable-tag px-2.5 py-1.5 rounded-lg bg-gray-100 text-gray-500 text-xs" data-used="false">[作者排序]</button>
+            <button class="variable-tag px-2.5 py-1.5 rounded-lg bg-gray-100 text-gray-500 text-xs" data-used="false">[DOI]</button>
+            <button class="variable-tag px-2.5 py-1.5 rounded-lg bg-gray-100 text-gray-500 text-xs" data-used="false">[期刊级别]</button>
+          </div>
+        </div>
+        <!-- 板块九：申请记录 -->
+        <div class="variable-group rounded-xl border border-gray-200 overflow-hidden">
+          <button type="button" class="variable-group-toggle w-full flex items-center justify-between px-3 py-2.5 bg-gray-50 text-sm font-medium text-gray-700" aria-expanded="false"><span>申请记录</span><svg class="w-4 h-4 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg></button>
+          <div class="variable-group-body hidden p-3 flex flex-wrap gap-2">
+            <button class="variable-tag px-2.5 py-1.5 rounded-lg bg-gray-100 text-gray-500 text-xs" data-used="false">[申请学校]</button>
+            <button class="variable-tag px-2.5 py-1.5 rounded-lg bg-gray-100 text-gray-500 text-xs" data-used="false">[申请专业]</button>
+            <button class="variable-tag px-2.5 py-1.5 rounded-lg bg-gray-100 text-gray-500 text-xs" data-used="false">[申请轮次]</button>
+            <button class="variable-tag px-2.5 py-1.5 rounded-lg bg-gray-100 text-gray-500 text-xs" data-used="false">[学生状态]</button>
+            <button class="variable-tag px-2.5 py-1.5 rounded-lg bg-gray-100 text-gray-500 text-xs" data-used="false">[申请时间]</button>
+            <button class="variable-tag px-2.5 py-1.5 rounded-lg bg-gray-100 text-gray-500 text-xs" data-used="false">[申请结果]</button>
+          </div>
+        </div>
+        <!-- 板块十：账号管理列表 -->
+        <div class="variable-group rounded-xl border border-gray-200 overflow-hidden">
+          <button type="button" class="variable-group-toggle w-full flex items-center justify-between px-3 py-2.5 bg-gray-50 text-sm font-medium text-gray-700" aria-expanded="false"><span>账号管理列表</span><svg class="w-4 h-4 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg></button>
+          <div class="variable-group-body hidden p-3 flex flex-wrap gap-2">
+            <button class="variable-tag px-2.5 py-1.5 rounded-lg bg-gray-100 text-gray-500 text-xs" data-used="false">[申请层次]</button>
+            <button class="variable-tag px-2.5 py-1.5 rounded-lg bg-gray-100 text-gray-500 text-xs" data-used="false">[申请官网URL]</button>
+            <button class="variable-tag px-2.5 py-1.5 rounded-lg bg-gray-100 text-gray-500 text-xs" data-used="false">[申请账号]</button>
+            <button class="variable-tag px-2.5 py-1.5 rounded-lg bg-gray-100 text-gray-500 text-xs" data-used="false">[申请密码]</button>
+            <button class="variable-tag px-2.5 py-1.5 rounded-lg bg-gray-100 text-gray-500 text-xs" data-used="false">[邮箱URL]</button>
+            <button class="variable-tag px-2.5 py-1.5 rounded-lg bg-gray-100 text-gray-500 text-xs" data-used="false">[邮箱账号]</button>
+            <button class="variable-tag px-2.5 py-1.5 rounded-lg bg-gray-100 text-gray-500 text-xs" data-used="false">[邮箱密码]</button>
+          </div>
+        </div>
+        <!-- 板块十一：资产文件 -->
+        <div class="variable-group rounded-xl border border-gray-200 overflow-hidden">
+          <button type="button" class="variable-group-toggle w-full flex items-center justify-between px-3 py-2.5 bg-gray-50 text-sm font-medium text-gray-700" aria-expanded="false"><span>资产文件</span><svg class="w-4 h-4 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg></button>
+          <div class="variable-group-body hidden p-3 flex flex-wrap gap-2">
+            <button class="variable-tag px-2.5 py-1.5 rounded-lg bg-gray-100 text-gray-500 text-xs" data-used="false">[文件名称]</button>
+            <button class="variable-tag px-2.5 py-1.5 rounded-lg bg-gray-100 text-gray-500 text-xs" data-used="false">[文件大小]</button>
+            <button class="variable-tag px-2.5 py-1.5 rounded-lg bg-gray-100 text-gray-500 text-xs" data-used="false">[上传时间]</button>
           </div>
         </div>
       </div>
@@ -828,8 +942,8 @@
     </div>
   </div>
 
-  <!-- 旧版案例解析流程已停用，仅保留历史结构且不渲染 -->
-  <div id="caseParseModal" class="fixed inset-0 z-50 hidden" style="display:none !important">
+  <!-- AI解析文书案例包弹窗：从「选择已上传案例」进入时跳过上传步骤，直接智能解析 -->
+  <div id="caseParseModal" class="fixed inset-0 z-50 hidden">
     <div class="absolute inset-0 bg-black bg-opacity-30" onclick="closeCaseParseModal()"></div>
     <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[880px] max-w-[95vw] max-h-[86vh] bg-white rounded-2xl shadow-2xl flex flex-col">
       <!-- 弹窗头部 -->
@@ -839,7 +953,7 @@
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09zM18.259 8.715L18 9.75l-.259-1.035a3.375 3.375 0 00-2.455-2.456L14.25 6l1.036-.259a3.375 3.375 0 002.455-2.456L18 2.25l.259 1.035a3.375 3.375 0 002.456 2.456L21.75 6l-1.035.259a3.375 3.375 0 00-2.456 2.456z"></path>
           </svg>
           <h3 class="text-lg font-semibold text-gray-800">解析文书案例包</h3>
-          <span class="text-xs text-gray-400">上传过往文书案例，AI 自动解析生成模板草稿</span>
+          <span class="text-xs text-gray-400" id="caseParseSubtitle">上传过往文书案例，AI 自动解析生成模板草稿</span>
         </div>
         <button class="p-1 text-gray-400 hover:text-gray-600" onclick="closeCaseParseModal()">
           <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
@@ -1227,11 +1341,28 @@
         var el = document.querySelector('[data-dom-id="' + key + '"]') || document.getElementById(key);
         if (el) {
           el.addEventListener('click', function() {
+            window.__caseParseMode = 'upload';
+            document.getElementById('caseParseSubtitle').textContent = '上传过往文书案例，AI 自动解析生成模板草稿';
             caseModal.classList.remove('hidden');
             gotoCaseStep(1);
           });
         }
       });
+
+      // 从「选择已上传案例」发起 AI 解析：无需在弹窗内上传/重新上传案例包，直接进入智能解析
+      var btnAiParseLibrary = document.getElementById('btn-ai-parse-library');
+      if (btnAiParseLibrary) {
+        btnAiParseLibrary.addEventListener('click', function() {
+          var checked = document.querySelectorAll('#case-source-library input[type="checkbox"]:checked');
+          if (!checked.length) { alert('请先勾选至少 1 份已上传案例'); return; }
+          window.__caseParseMode = 'library';
+          document.getElementById('caseParseSubtitle').textContent = '基于 ' + checked.length + ' 份已选案例，AI 自动解析生成模板草稿（无需重新上传）';
+          document.getElementById('parsing-file-count').textContent = checked.length;
+          caseModal.classList.remove('hidden');
+          gotoCaseStep(2);
+          runParseAnimation();
+        });
+      }
 
       // 上传交互
       var dropzone = document.getElementById('case-dropzone');
@@ -1288,6 +1419,10 @@
         ['btn-start-parse', 'btn-case-reupload', 'btn-apply-template'].forEach(function(id) {
           document.getElementById(id).classList.toggle('hidden', stepFooterBtns[step].indexOf(id) === -1);
         });
+        /* 已选案例解析模式：弹窗内不提供重新上传 */
+        if (window.__caseParseMode === 'library') {
+          document.getElementById('btn-case-reupload').classList.add('hidden');
+        }
       }
 
       // 解析进度模拟
@@ -1395,34 +1530,26 @@
           ta.style.height = 'auto';
           ta.style.height = ta.scrollHeight + 'px';
         });
-        // 刷新右侧变量面板
-        var varList = document.getElementById('used-variable-list');
-        varList.innerHTML = '';
+        // 刷新右侧「学生档案可引用变量」面板：解析变量命中学生档案字段的，标记为已引用（蓝色）
+        var markedVars = 0;
         PARSED_VARIABLES.forEach(function(v) {
-          var row = document.createElement('div');
-          row.className = 'flex items-center justify-between p-2 bg-blue-50 rounded-lg';
-          row.innerHTML = '<span class="text-sm text-blue-700 font-medium">[' + v[0] + ']</span><span class="text-xs text-blue-500">' + v[1] + '</span>';
-          varList.appendChild(row);
+          document.querySelectorAll('.variable-tag').forEach(function(tag) {
+            if (tag.textContent.trim() === '[' + v[0] + ']') {
+              tag.dataset.used = 'true';
+              tag.className = 'variable-tag px-2.5 py-1.5 rounded-lg text-xs bg-blue-100 text-blue-700 font-medium';
+              markedVars++;
+            }
+          });
         });
-        document.getElementById('used-variable-count').textContent = '(' + PARSED_VARIABLES.length + ')';
-        // 更新左侧案例包来源卡片
+        // 更新左侧「案例来源」卡片的解析状态
         var fileNames = Array.prototype.map.call(fileList.querySelectorAll('.case-file-item'), function(item) {
           return item.querySelector('p').textContent;
         });
-        var filesBox = document.getElementById('case-pack-files');
-        filesBox.innerHTML = '';
-        fileNames.forEach(function(name) {
-          var row = document.createElement('div');
-          row.className = 'flex items-center gap-2 p-2 bg-gray-50 rounded-lg';
-          row.innerHTML = '<svg class="w-3.5 h-3.5 text-blue-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>' +
-            '<span class="text-xs text-gray-700 truncate">' + name + '</span>';
-          filesBox.appendChild(row);
-        });
-        document.getElementById('case-pack-empty').classList.add('hidden');
-        document.getElementById('case-pack-linked').classList.remove('hidden');
-        var now = new Date();
-        var pad = function(n) { return n < 10 ? '0' + n : n; };
-        document.getElementById('case-pack-parse-time').textContent = '解析于 ' + now.getFullYear() + '-' + pad(now.getMonth() + 1) + '-' + pad(now.getDate()) + ' ' + pad(now.getHours()) + ':' + pad(now.getMinutes());
+        var parseStatus = document.getElementById('case-parse-status');
+        if (parseStatus) {
+          parseStatus.textContent = '已完成 AI 解析：' + fileNames.length + ' 份案例 → ' + checked.length + ' 个段落应用到编辑器，命中 ' + markedVars + ' 个档案变量';
+          parseStatus.classList.remove('hidden');
+        }
         closeCaseParseModal();
         showCaseToast('已从 ' + fileNames.length + ' 份文书案例生成模板草稿（' + checked.length + ' 个段落），请检查后保存');
       });

@@ -24,10 +24,29 @@
     return capabilities.some(function (capability) { return allowedRoles.indexOf(capability) >= 0; });
   }
 
+  /* 用户真实角色列表（登录写入 session.roles；超级管理员拥有全部角色视角） */
+  function getUserRoles(session) {
+    var roles = [];
+    if (session && session.roles && session.roles.length) roles = session.roles.slice();
+    else if (session && session.role) roles = [session.role];
+    if (roles.indexOf('超级管理员') >= 0) return ROLES.slice();
+    return roles;
+  }
+  /* 角色继承展开：机构管理员/项目经理可同时看到被继承角色的工作台 */
+  function expandRoles(roles) {
+    var out = [];
+    (roles || []).forEach(function (r) {
+      if (!r || out.indexOf(r) >= 0) return;
+      out.push(r);
+      (ROLE_INHERITANCE[r] || []).forEach(function (sub) { if (out.indexOf(sub) < 0) out.push(sub); });
+    });
+    return out;
+  }
+
   var ROLE_WORKBENCH = {
     '超级管理员': '管理员工作台 - 留学申请管理系统.html',
     '平台运维人员': '平台运维工作台 - PBS留学CRM系统.html',
-    '机构管理员': '管理员工作台 - 留学申请管理系统.html',
+    '机构管理员': '机构管理员工作台 - 留学申请管理系统.html',
     '销售人员管理员': '选校任务列表页 - 留学申请管理系统.html?view=workbench',
     '销售人员': '选校任务列表页 - 留学申请管理系统.html?view=workbench',
     '项目经理': '项目经理工作台 - 留学申请管理系统.html',
@@ -35,6 +54,23 @@
     '网申人员': '网申任务列表页 - 留学申请管理系统.html?view=workbench',
     '文书审核': '文书审核列表页 - 留学申请管理系统.html?view=workbench',
     '文书机构管理员': '任务列表页 - 文书交付系统.html?view=workbench'
+  };
+
+  /* 每一种工作台都是独立权限；同一角色可按需获得多个工作台视角。 */
+  var WORKBENCH_ROLE_PERMISSION = {
+    '平台运维人员': 'workbench_platform',
+    '机构管理员': 'workbench_org_admin',
+    '销售人员管理员': 'workbench_sales',
+    '销售人员': 'workbench_sales',
+    '项目经理': 'workbench_pm',
+    '文书机构管理员': 'workbench_doc_admin',
+    '文书人员': 'workbench_writer',
+    '网申人员': 'workbench_apply',
+    '文书审核': 'workbench_audit'
+  };
+  var WORKBENCH_KEY_PERMISSION = {
+    wsadmin: 'workbench_doc_admin', pm: 'workbench_pm', writer: 'workbench_writer',
+    sales: 'workbench_sales', apply: 'workbench_apply', audit: 'workbench_audit'
   };
 
   /* 组件页（弹窗/抽屉，用于iframe弹层，不做权限校验与侧边栏渲染） */
@@ -98,17 +134,19 @@
         { label: '院校列表', file: '选校工作台页 - 留学申请管理系统.html', href: '选校工作台页 - 留学申请管理系统.html?mode=catalog', roles: ['销售人员管理员', '销售人员'] }] },
     { key: 'organization', label: '机构管理', icon: 'users', roles: ['平台运维人员'], single: true, file: '机构管理 - PBS留学CRM系统.html' },
     { key: 'personnel', label: '机构成员管理', icon: 'idcard', roles: ['平台运维人员', '机构管理员'], single: true, file: '人员管理 - PBS留学CRM系统.html' },
-    { key: 'usermgmt', label: '系统管理', icon: 'users', roles: ['平台运维人员'],
+    { key: 'usermgmt', label: '系统管理', icon: 'users', roles: ['平台运维人员', '机构管理员'],
       children: [
         { label: '角色权限管理', file: '角色权限管理 - 留学申请管理系统.html', roles: ['平台运维人员'] },
-        { label: '操作日志审计', file: '操作日志审计 - 留学申请管理系统.html', roles: ['平台运维人员'] }] },
-    { key: 'aimanagement', label: 'AI管理', icon: 'ai', roles: ['平台运维人员', '机构管理员'], single: true, file: 'AI管理 - 留学申请管理系统.html' }
+        { label: '操作日志审计', file: '操作日志审计 - 留学申请管理系统.html', roles: ['平台运维人员'] },
+        { label: 'AI管理', file: 'AI管理 - 留学申请管理系统.html', roles: ['平台运维人员', '机构管理员'] },
+        { label: '视频管理', file: '视频管理 - 留学申请管理系统.html', roles: ['平台运维人员'] }] }
   ];
 
   /* ---------------- 页面级权限（RBAC） ---------------- */
   var PAGE_PERMS = {
     '管理员工作台 - 留学申请管理系统.html': ROLES.slice(),
     '平台运维工作台 - PBS留学CRM系统.html': ['平台运维人员'],
+    '机构管理员工作台 - 留学申请管理系统.html': ['机构管理员'],
     '项目经理工作台 - 留学申请管理系统.html': ['项目经理'],
     '学生档案列表页 - 留学申请管理系统.html': ['平台运维人员', '机构管理员', '销售人员管理员', '销售人员', '项目经理', '文书人员', '网申人员', '文书审核'],
     '学生档案详情页 - 留学申请管理系统.html': ['平台运维人员', '机构管理员', '销售人员管理员', '销售人员', '项目经理', '文书人员', '网申人员', '文书审核'],
@@ -136,6 +174,7 @@
     '角色权限管理 - 留学申请管理系统.html': ['平台运维人员'],
     '操作日志审计 - 留学申请管理系统.html': ['平台运维人员'],
     'AI管理 - 留学申请管理系统.html': ['平台运维人员', '机构管理员'],
+    '视频管理 - 留学申请管理系统.html': ['平台运维人员'],
     '文书审核列表页 - 留学申请管理系统.html': ['文书审核'],
     '文书审核详情页 - 留学申请管理系统.html': ['文书审核'],
     '选校订单池页 - 留学申请管理系统.html': ['机构管理员', '销售人员管理员', '销售人员'],
@@ -159,17 +198,30 @@
   }
   function withPreviewRole(session) {
     var previewRole = getPreviewRole();
+    var userRoles = getUserRoles(session);
+    /* 预览角色必须在用户拥有的角色范围内（超管不限）；越权预览回退为本人视角 */
+    if (previewRole !== 'all' && userRoles.indexOf(previewRole) < 0) previewRole = 'all';
     var effective = {};
     Object.keys(session || {}).forEach(function (key) { effective[key] = session[key]; });
     effective.previewRole = previewRole;
-    effective.previewLabel = previewRole === 'all' ? '全部角色' : previewRole;
-    effective.role = previewRole === 'all' ? '超级管理员' : previewRole;
+    effective.userRoles = userRoles;
+    if (previewRole === 'all') {
+      /* 本人视角：多角色的人保留全部角色（含继承），可在工作台间切换 */
+      effective.previewLabel = userRoles.length > 1 ? '全部角色' : (userRoles[0] || session.role);
+      effective.role = userRoles.indexOf('超级管理员') >= 0 ? '超级管理员' : (userRoles[0] || session.role);
+      effective.roles = expandRoles(userRoles);
+    } else {
+      /* 单角色预览：只看被切换到的角色（含其继承角色的工作台视角） */
+      effective.previewLabel = previewRole;
+      effective.role = previewRole;
+      effective.roles = expandRoles([previewRole]);
+    }
     return effective;
   }
   window.pbsGetSession = function () {
     var session = getSession();
     if (!session || !session.role) {
-      session = { account: 'demo_admin', name: '演示管理员', role: '超级管理员', org: 'PBS留学', email: 'demo@pbs.local' };
+      session = { account: 'demo_admin', name: '演示管理员', role: '超级管理员', roles: ['超级管理员'], org: 'PBS留学', email: 'demo@pbs.local' };
     }
     return withPreviewRole(session);
   };
@@ -185,7 +237,7 @@
     return f;
   }
 
-  var FLOW_MENU_ORDER = ['pmo', 'project', 'doc', 'review', 'apply', 'monitor', 'archive', 'school', 'organization', 'personnel', 'usermgmt', 'aimanagement'];
+  var FLOW_MENU_ORDER = ['pmo', 'project', 'doc', 'review', 'apply', 'monitor', 'archive', 'school', 'organization', 'personnel', 'usermgmt'];
   var NAV_ACTIVE_FILES = {
     '学生档案列表页 - 留学申请管理系统.html': ['学生档案列表页 - 留学申请管理系统.html', '学生档案详情页 - 留学申请管理系统.html'],
     '项目池列表页 - 留学申请管理系统.html': ['项目池列表页 - 留学申请管理系统.html', '项目详情页 - 留学申请管理系统.html'],
@@ -204,14 +256,16 @@
     return (href || '').split('?')[0];
   }
 
-  function renderRoleNavigation(role, file, workbenchHref) {
+  function renderRoleNavigation(role, file, workbenchHref, showWorkbench) {
     var menuMap = {};
     MENUS.forEach(function(menu) { menuMap[menu.key] = menu; });
     var workbenchTarget = hrefFile(workbenchHref);
     var workbenchView = new URLSearchParams(location.search).get('view') === 'workbench';
     var workbenchActive = file === workbenchTarget && (workbenchHref.indexOf('?view=workbench') < 0 || workbenchView);
-    var html = '<nav class="p-4 flex-1 pbs-pm-navigation">' +
-      '<a href="' + encodeURI(workbenchHref) + '" class="pbs-pm-primary-link ' + (workbenchActive ? 'is-active' : '') + '">' + svgIcon(ICONS.home, 'w-5 h-5') + '<span>工作台</span></a>';
+    var html = '<nav class="p-4 flex-1 pbs-pm-navigation">';
+    if (showWorkbench !== false) {
+      html += '<a href="' + encodeURI(workbenchHref) + '" class="pbs-pm-primary-link ' + (workbenchActive ? 'is-active' : '') + '">' + svgIcon(ICONS.home, 'w-5 h-5') + '<span>工作台</span></a>';
+    }
 
     var studentMenu = menuMap.student;
     if (studentMenu && roleCanAccess(role, studentMenu.roles)) {
@@ -267,7 +321,7 @@
     var role = session.role;
     var workbenchFile = ROLE_WORKBENCH[role];
 
-    var html = renderRoleNavigation(role, file, workbenchFile);
+    var html = renderRoleNavigation(role, file, workbenchFile, workbenchVisible(session));
     html += '<div class="p-4 border-t border-gray-100">' +
       '<div class="flex items-center gap-3 px-3 py-3 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl">' +
       '<div class="w-9 h-9 bg-gradient-to-br from-blue-500 to-purple-500 rounded-full flex items-center justify-center flex-shrink-0">' +
@@ -291,19 +345,28 @@
     var wrapper = document.createElement('div');
     wrapper.id = 'pbsRoleSwitcher';
     wrapper.className = 'pbs-role-switcher';
-    var options = '<option value="all">全部角色</option>';
-    ROLES.forEach(function (role) {
+    /* 只有多角色的人（或超管）才能切换多个工作台视角；单角色仅显示本人角色 */
+    var userRoles = (session.userRoles && session.userRoles.length) ? session.userRoles : [session.role];
+    var isSuper = userRoles.indexOf('超级管理员') >= 0;
+    var switchable = isSuper ? ROLES.slice() : userRoles.slice();
+    var options = '';
+    if (isSuper || userRoles.length > 1) options += '<option value="all">全部角色</option>';
+    switchable.forEach(function (role) {
       options += '<option value="' + role + '">' + role + '</option>';
     });
     wrapper.innerHTML = '<span class="pbs-role-switcher-label">角色视角</span>' +
       '<select aria-label="切换角色视角">' + options + '</select>';
     var select = wrapper.querySelector('select');
-    select.value = session.previewRole || 'all';
+    var hasAll = isSuper || userRoles.length > 1;
+    var current = session.previewRole || 'all';
+    if (current === 'all' && !hasAll) current = session.role;
+    select.value = current;
     select.addEventListener('change', function () {
       var role = select.value;
       try { localStorage.setItem(PREVIEW_ROLE_KEY, role); } catch (e) {}
       if (role === 'all') {
-        location.href = ROLE_WORKBENCH['超级管理员'];
+        var home = isSuper ? '超级管理员' : userRoles[0];
+        location.href = ROLE_WORKBENCH[home] || ROLE_WORKBENCH['超级管理员'];
       } else {
         location.href = ROLE_WORKBENCH[role] || ROLE_WORKBENCH['超级管理员'];
       }
@@ -366,6 +429,7 @@
       }
       var av = menu.querySelector('.w-10.h-10 span');
       if (av) av.textContent = session.name.charAt(0);
+      ensureSystemSettingsMenuItem(menu);
     } else {
       injectUserMenu(userArea, session);
     }
@@ -388,6 +452,8 @@
       '<div class="py-1">' +
       '<a href="#" class="flex items-center gap-3 px-5 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition-colors">' +
       '<svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>个人设置</a>' +
+      '<a href="#" data-pbs-system-settings class="flex items-center gap-3 px-5 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition-colors">' +
+      '<svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="' + ICONS.cog + '"></path></svg>系统设置</a>' +
       '<a href="#" class="flex items-center gap-3 px-5 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition-colors">' +
       '<svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path></svg>退出登录</a></div>' +
       '<div class="px-5 py-2 border-t border-gray-100"><p class="text-xs text-gray-400">PBS留学CRM v2.5</p></div>';
@@ -399,7 +465,302 @@
     document.addEventListener('click', function () { menu.classList.add('hidden'); });
   }
 
-  /* 退出登录 / 个人设置（事件委托，兼容所有页面） */
+  function ensureSystemSettingsMenuItem(menu) {
+    if (!menu || menu.querySelector('[data-pbs-system-settings]')) return;
+    var actionGroup = menu.querySelector('.py-1');
+    if (!actionGroup) return;
+    var item = document.createElement('a');
+    item.href = '#';
+    item.setAttribute('data-pbs-system-settings', 'true');
+    item.className = 'flex items-center gap-3 px-5 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition-colors';
+    item.innerHTML = '<svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="' + ICONS.cog + '"></path></svg>系统设置';
+    var links = actionGroup.querySelectorAll('a');
+    var logout = null;
+    for (var i = 0; i < links.length; i++) {
+      if (links[i].textContent.replace(/\s/g, '') === '退出登录') { logout = links[i]; break; }
+    }
+    actionGroup.insertBefore(item, logout || null);
+  }
+
+  /* ---------------- 首次进入系统介绍视频 ---------------- */
+  var INTRO_SEEN_PREFIX = 'pbs_intro_video_seen_v1_';
+  var INTRO_POLICY_KEY = 'pbs_intro_video_policy_v1';
+  var INTRO_META_KEY = 'pbs_intro_video_meta_v1';
+  var INTRO_VIDEO_DB_NAME = 'pbs_video_assets_v1';
+  var INTRO_VIDEO_STORE_NAME = 'assets';
+  var INTRO_VIDEO_ASSET_KEY = 'intro-video';
+  var INTRO_DURATION = 32;
+  var introAccount = 'guest';
+  var introTimer = null;
+  var introCurrentTime = 0;
+  var introPlaying = false;
+  var introUsingNativeVideo = false;
+  var introVideoObjectUrl = '';
+  var introLoadToken = 0;
+
+  function introSeenKey() { return INTRO_SEEN_PREFIX + introAccount; }
+  function getIntroVideoPolicy() {
+    var policy = { enabled: true, autoPlayFirstVisit: true, allowClose: true };
+    try {
+      var saved = JSON.parse(localStorage.getItem(INTRO_POLICY_KEY) || '{}');
+      Object.keys(saved || {}).forEach(function (key) { policy[key] = saved[key]; });
+    } catch (e) {}
+    return policy;
+  }
+  function getIntroVideoMeta() {
+    var meta = { kicker: 'WELCOME TO PBS', title: 'PBS 系统介绍视频', subtitle: '用 32 秒了解角色工作台与申请交付主流程', duration: 32 };
+    try {
+      var saved = JSON.parse(localStorage.getItem(INTRO_META_KEY) || '{}');
+      Object.keys(saved || {}).forEach(function (key) { meta[key] = saved[key]; });
+      if (!saved.subtitle && saved.description) meta.subtitle = saved.description;
+    } catch (e) {}
+    meta.duration = Math.max(1, Number(meta.duration) || 32);
+    return meta;
+  }
+  function formatIntroTime(seconds) {
+    var value = Math.max(0, Math.min(INTRO_DURATION, Math.floor(seconds || 0)));
+    return String(Math.floor(value / 60)).padStart(2, '0') + ':' + String(value % 60).padStart(2, '0');
+  }
+  function ensureIntroExperience() {
+    if (document.getElementById('pbsIntroLayer')) return;
+    var style = document.createElement('style');
+    style.id = 'pbs-intro-experience-style';
+    style.textContent =
+      '.pbs-intro-hidden{display:none!important}.pbs-intro-layer{position:fixed;inset:0;z-index:10020;display:flex;align-items:center;justify-content:center;padding:24px}' +
+      '.pbs-intro-mask{position:absolute;inset:0;background:rgba(15,23,42,.72);backdrop-filter:blur(7px)}' +
+      '.pbs-intro-dialog{position:relative;width:min(920px,100%);max-height:calc(100vh - 48px);overflow:auto;background:#fff;border-radius:24px;box-shadow:0 30px 90px rgba(15,23,42,.34)}' +
+      '.pbs-intro-head{display:flex;align-items:flex-start;justify-content:space-between;gap:20px;padding:20px 24px;border-bottom:1px solid #eef2f7}' +
+      '.pbs-intro-kicker{font-size:12px;font-weight:700;color:#6366f1;letter-spacing:.08em}.pbs-intro-title{font-size:20px;font-weight:700;color:#0f172a;margin-top:3px}.pbs-intro-sub{font-size:13px;color:#94a3b8;margin-top:4px}' +
+      '.pbs-intro-close{width:36px;height:36px;border:0;border-radius:999px;background:#f1f5f9;color:#64748b;font-size:22px;cursor:pointer}.pbs-intro-body{padding:22px 24px}' +
+      '.pbs-intro-player{overflow:hidden;border-radius:18px;background:#090d1a;box-shadow:inset 0 0 0 1px rgba(255,255,255,.08)}' +
+      '.pbs-intro-stage{position:relative;aspect-ratio:16/8.6;min-height:320px;overflow:hidden;color:#fff}.pbs-intro-scene{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;padding:40px;opacity:0;transform:scale(1.025);transition:opacity .5s ease,transform .7s ease;pointer-events:none}.pbs-intro-scene.is-active{opacity:1;transform:scale(1)}' +
+      '.pbs-intro-native-video{position:absolute;inset:0;z-index:5;display:none;width:100%;height:100%;object-fit:contain;background:#000}.pbs-intro-player.is-native .pbs-intro-native-video{display:block}.pbs-intro-player.is-native .pbs-intro-scene,.pbs-intro-player.is-native .pbs-intro-center-control,.pbs-intro-player.is-native .pbs-intro-controls{display:none}' +
+      '.pbs-intro-scene-one{background:radial-gradient(circle at 78% 20%,rgba(129,140,248,.45),transparent 32%),linear-gradient(135deg,#10182f,#312e81 55%,#2563eb)}' +
+      '.pbs-intro-scene-two{background:radial-gradient(circle at 18% 12%,rgba(56,189,248,.32),transparent 28%),linear-gradient(135deg,#0f172a,#172554)}' +
+      '.pbs-intro-scene-three{background:radial-gradient(circle at 85% 85%,rgba(16,185,129,.25),transparent 30%),linear-gradient(135deg,#111827,#0f3d3e)}' +
+      '.pbs-intro-scene-four{background:radial-gradient(circle at 15% 15%,rgba(168,85,247,.28),transparent 30%),linear-gradient(135deg,#18112d,#312e81)}' +
+      '.pbs-intro-logo{width:64px;height:64px;border-radius:20px;background:rgba(255,255,255,.16);display:flex;align-items:center;justify-content:center;font-size:30px;font-weight:800;border:1px solid rgba(255,255,255,.22);box-shadow:0 18px 45px rgba(15,23,42,.25)}' +
+      '.pbs-intro-copy{text-align:center;max-width:620px}.pbs-intro-copy h3{font-size:30px;line-height:1.25;font-weight:750;margin:18px 0 10px}.pbs-intro-copy p{font-size:15px;color:rgba(255,255,255,.75);line-height:1.7}' +
+      '.pbs-intro-dashboard{width:min(680px,100%)}.pbs-intro-dashboard h3,.pbs-intro-flow h3,.pbs-intro-plugin h3{font-size:25px;font-weight:700;margin:0 0 18px;text-align:center}.pbs-intro-mini-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}.pbs-intro-mini-card{padding:16px;border:1px solid rgba(255,255,255,.14);border-radius:14px;background:rgba(255,255,255,.09);backdrop-filter:blur(8px)}.pbs-intro-mini-card b{display:block;font-size:24px;margin-top:7px}.pbs-intro-mini-card span{font-size:12px;color:rgba(255,255,255,.68)}' +
+      '.pbs-intro-flow{width:min(720px,100%)}.pbs-intro-flow-row{display:flex;align-items:center;justify-content:center;gap:10px;flex-wrap:wrap}.pbs-intro-flow-step{min-width:122px;padding:14px 12px;border-radius:13px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.14);text-align:center;font-size:13px}.pbs-intro-flow-step strong{display:block;font-size:18px;margin-bottom:5px}.pbs-intro-flow-arrow{color:#5eead4;font-size:20px}' +
+      '.pbs-intro-plugin{width:min(680px,100%)}.pbs-intro-field-table{overflow:hidden;border:1px solid rgba(255,255,255,.15);border-radius:14px;background:rgba(255,255,255,.08)}.pbs-intro-field-head,.pbs-intro-field-row{display:grid;grid-template-columns:1.5fr .8fr .7fr;gap:12px;padding:11px 16px;text-align:left}.pbs-intro-field-head{font-size:11px;color:#c4b5fd;background:rgba(255,255,255,.07)}.pbs-intro-field-row{font-size:13px;border-top:1px solid rgba(255,255,255,.08)}' +
+      '.pbs-intro-center-control{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:70px;height:70px;border:1px solid rgba(255,255,255,.3);border-radius:999px;background:rgba(15,23,42,.62);color:#fff;font-size:25px;cursor:pointer;opacity:0;transition:opacity .2s}.pbs-intro-stage:hover .pbs-intro-center-control,.pbs-intro-center-control.is-paused{opacity:1}' +
+      '.pbs-intro-controls{display:grid;grid-template-columns:40px minmax(0,1fr) 86px;gap:12px;align-items:center;padding:13px 16px;background:#0f172a}.pbs-intro-control-btn{border:0;background:transparent;color:#fff;font-size:18px;cursor:pointer}.pbs-intro-seek{width:100%;accent-color:#818cf8}.pbs-intro-time{font-size:12px;color:#cbd5e1;text-align:right;font-variant-numeric:tabular-nums}' +
+      '.pbs-intro-foot{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:18px 24px;border-top:1px solid #eef2f7}.pbs-intro-foot p{font-size:13px;color:#64748b}.pbs-intro-primary{height:40px;padding:0 18px;border:0;border-radius:10px;background:#4f46e5;color:#fff;font-size:14px;font-weight:600;cursor:pointer}' +
+      '.pbs-settings-dialog{position:relative;width:min(640px,100%);background:#fff;border-radius:22px;box-shadow:0 30px 90px rgba(15,23,42,.3)}.pbs-settings-body{padding:22px 24px}.pbs-settings-card{display:flex;align-items:center;justify-content:space-between;gap:20px;padding:18px;border:1px solid #e2e8f0;border-radius:15px;background:#f8fafc}.pbs-settings-icon{width:46px;height:46px;border-radius:13px;background:#eef2ff;color:#4f46e5;display:flex;align-items:center;justify-content:center;font-size:21px;flex-shrink:0}.pbs-settings-copy{flex:1;min-width:0}.pbs-settings-copy h3{font-size:15px;font-weight:650;color:#0f172a}.pbs-settings-copy p{font-size:12px;color:#64748b;margin-top:4px;line-height:1.5}.pbs-settings-replay{height:38px;padding:0 14px;border:1px solid #c7d2fe;border-radius:10px;background:#fff;color:#4f46e5;font-size:13px;font-weight:600;cursor:pointer;white-space:nowrap}' +
+      '@media(max-width:680px){.pbs-intro-layer{padding:10px}.pbs-intro-dialog{max-height:calc(100vh - 20px);border-radius:18px}.pbs-intro-head,.pbs-intro-body,.pbs-intro-foot{padding-left:16px;padding-right:16px}.pbs-intro-stage{min-height:300px}.pbs-intro-scene{padding:24px 18px}.pbs-intro-copy h3{font-size:24px}.pbs-intro-mini-grid{grid-template-columns:1fr}.pbs-intro-mini-card:nth-child(n+3){display:none}.pbs-intro-flow-arrow{display:none}.pbs-intro-field-row:nth-child(n+4){display:none}.pbs-settings-card{align-items:flex-start;flex-wrap:wrap}.pbs-settings-replay{margin-left:58px}}';
+    document.head.appendChild(style);
+
+    var shell = document.createElement('div');
+    shell.id = 'pbsIntroExperience';
+    shell.innerHTML =
+      '<div id="pbsIntroLayer" class="pbs-intro-layer pbs-intro-hidden" role="dialog" aria-modal="true" aria-labelledby="pbsIntroTitle">' +
+      '<div id="pbsIntroMask" class="pbs-intro-mask"></div><section class="pbs-intro-dialog">' +
+      '<header class="pbs-intro-head"><div><div id="pbsIntroKicker" class="pbs-intro-kicker">WELCOME TO PBS</div><h2 id="pbsIntroTitle" class="pbs-intro-title">PBS 系统介绍视频</h2><p id="pbsIntroSubtitle" class="pbs-intro-sub">用 32 秒了解角色工作台与申请交付主流程</p></div><button id="pbsIntroClose" class="pbs-intro-close" aria-label="关闭介绍视频">×</button></header>' +
+      '<div class="pbs-intro-body"><div id="pbsIntroPlayer" class="pbs-intro-player"><div class="pbs-intro-stage"><video id="pbsIntroNativeVideo" class="pbs-intro-native-video" controls playsinline preload="metadata"></video>' +
+      '<article class="pbs-intro-scene pbs-intro-scene-one is-active"><div class="pbs-intro-copy"><div class="pbs-intro-logo" style="margin:0 auto">P</div><h3>一套平台，协同完成留学申请交付</h3><p>集中管理学生、项目、文书、网申、监控与结项，让每个角色都清楚下一步该做什么。</p></div></article>' +
+      '<article class="pbs-intro-scene pbs-intro-scene-two"><div class="pbs-intro-dashboard"><h3>每个角色拥有专属工作台</h3><div class="pbs-intro-mini-grid"><div class="pbs-intro-mini-card"><span>今日待办</span><b>7</b><span>优先处理临期与卡点</span></div><div class="pbs-intro-mini-card"><span>在管项目</span><b>42</b><span>项目进度集中追踪</span></div><div class="pbs-intro-mini-card"><span>风险提醒</span><b style="color:#fca5a5">3</b><span>及时介入异常事项</span></div></div></div></article>' +
+      '<article class="pbs-intro-scene pbs-intro-scene-three"><div class="pbs-intro-flow"><h3>围绕项目推进完整业务流程</h3><div class="pbs-intro-flow-row"><div class="pbs-intro-flow-step"><strong>01</strong>学生建档</div><span class="pbs-intro-flow-arrow">→</span><div class="pbs-intro-flow-step"><strong>02</strong>项目分配</div><span class="pbs-intro-flow-arrow">→</span><div class="pbs-intro-flow-step"><strong>03</strong>文书与网申</div><span class="pbs-intro-flow-arrow">→</span><div class="pbs-intro-flow-step"><strong>04</strong>监控与结项</div></div></div></article>' +
+      '<article class="pbs-intro-scene pbs-intro-scene-four"><div class="pbs-intro-plugin"><h3>PBS 插件识别官网字段并同步模板</h3><div class="pbs-intro-field-table"><div class="pbs-intro-field-head"><span>字段名</span><span>填写类型</span><span>是否必填</span></div><div class="pbs-intro-field-row"><span>First Name</span><span>文本</span><span>必填</span></div><div class="pbs-intro-field-row"><span>Date of Birth</span><span>日期</span><span>必填</span></div><div class="pbs-intro-field-row"><span>Phone</span><span>电话</span><span>选填</span></div></div></div></article>' +
+      '<button id="pbsIntroCenterControl" class="pbs-intro-center-control" aria-label="播放或暂停">▶</button></div>' +
+      '<div class="pbs-intro-controls"><button id="pbsIntroPlay" class="pbs-intro-control-btn" aria-label="播放或暂停">▶</button><input id="pbsIntroSeek" class="pbs-intro-seek" type="range" min="0" max="32" value="0" step="0.25" aria-label="视频进度"><span id="pbsIntroTime" class="pbs-intro-time">00:00 / 00:32</span></div></div></div>' +
+      '<footer class="pbs-intro-foot"><p>关闭后不会再次自动弹出，可在“系统设置”中再次播放。</p><button id="pbsIntroDone" class="pbs-intro-primary">开始使用</button></footer></section></div>' +
+      '<div id="pbsSettingsLayer" class="pbs-intro-layer pbs-intro-hidden" role="dialog" aria-modal="true" aria-labelledby="pbsSettingsTitle">' +
+      '<div id="pbsSettingsMask" class="pbs-intro-mask"></div><section class="pbs-settings-dialog"><header class="pbs-intro-head"><div><div class="pbs-intro-kicker">SETTINGS</div><h2 id="pbsSettingsTitle" class="pbs-intro-title">系统设置</h2><p class="pbs-intro-sub">管理系统辅助功能与使用引导</p></div><button id="pbsSettingsClose" class="pbs-intro-close" aria-label="关闭系统设置">×</button></header>' +
+      '<div class="pbs-settings-body"><div class="pbs-settings-card"><div class="pbs-settings-icon">▶</div><div class="pbs-settings-copy"><h3 id="pbsSettingsVideoTitle">PBS 系统介绍视频</h3><p id="pbsIntroViewedState">首次进入系统时自动播放一次</p></div><button id="pbsSettingsReplay" class="pbs-settings-replay">再次播放</button></div></div></section></div>';
+    document.body.appendChild(shell);
+
+    document.getElementById('pbsIntroClose').addEventListener('click', closeIntroVideo);
+    document.getElementById('pbsIntroDone').addEventListener('click', closeIntroVideo);
+    document.getElementById('pbsIntroPlay').addEventListener('click', toggleIntroPlayback);
+    document.getElementById('pbsIntroCenterControl').addEventListener('click', toggleIntroPlayback);
+    document.getElementById('pbsIntroSeek').addEventListener('input', function () {
+      introCurrentTime = Number(this.value) || 0;
+      renderIntroPlayback();
+    });
+    document.getElementById('pbsIntroNativeVideo').addEventListener('loadedmetadata', function () {
+      if (!introUsingNativeVideo || !isFinite(this.duration) || this.duration <= 0) return;
+      INTRO_DURATION = this.duration;
+      introCurrentTime = this.currentTime || 0;
+      document.getElementById('pbsIntroSeek').max = String(this.duration);
+      try {
+        var meta = getIntroVideoMeta();
+        meta.duration = Number(this.duration.toFixed(2));
+        localStorage.setItem(INTRO_META_KEY, JSON.stringify(meta));
+      } catch (e) {}
+      renderIntroPlayback();
+    });
+    document.getElementById('pbsIntroNativeVideo').addEventListener('timeupdate', function () { if (introUsingNativeVideo) { introCurrentTime = this.currentTime || 0; renderIntroPlayback(); } });
+    document.getElementById('pbsIntroNativeVideo').addEventListener('play', function () { if (introUsingNativeVideo) { introPlaying = true; renderIntroPlayback(); } });
+    document.getElementById('pbsIntroNativeVideo').addEventListener('pause', function () { if (introUsingNativeVideo) { introPlaying = false; renderIntroPlayback(); } });
+    document.getElementById('pbsIntroNativeVideo').addEventListener('ended', function () { if (introUsingNativeVideo) { introPlaying = false; introCurrentTime = INTRO_DURATION; renderIntroPlayback(); } });
+    document.getElementById('pbsIntroMask').addEventListener('click', closeIntroVideo);
+    document.getElementById('pbsSettingsClose').addEventListener('click', closeSystemSettings);
+    document.getElementById('pbsSettingsMask').addEventListener('click', closeSystemSettings);
+    document.getElementById('pbsSettingsReplay').addEventListener('click', function () {
+      closeSystemSettings();
+      openIntroVideo(true);
+    });
+    document.addEventListener('keydown', function (event) {
+      if (event.key !== 'Escape') return;
+      if (!document.getElementById('pbsIntroLayer').classList.contains('pbs-intro-hidden')) closeIntroVideo();
+      else closeSystemSettings();
+    });
+  }
+
+  function renderIntroPlayback() {
+    var sceneIndex = Math.min(3, Math.floor(introCurrentTime / (INTRO_DURATION / 4)));
+    var scenes = document.querySelectorAll('.pbs-intro-scene');
+    scenes.forEach(function (scene, index) { scene.classList.toggle('is-active', index === sceneIndex); });
+    var seek = document.getElementById('pbsIntroSeek');
+    if (seek) seek.value = String(introCurrentTime);
+    var time = document.getElementById('pbsIntroTime');
+    if (time) time.textContent = formatIntroTime(introCurrentTime) + ' / ' + formatIntroTime(INTRO_DURATION);
+    var icon = introPlaying ? '❚❚' : (introCurrentTime >= INTRO_DURATION ? '↻' : '▶');
+    var play = document.getElementById('pbsIntroPlay');
+    var center = document.getElementById('pbsIntroCenterControl');
+    if (play) play.textContent = icon;
+    if (center) {
+      center.textContent = icon;
+      center.classList.toggle('is-paused', !introPlaying);
+    }
+  }
+  function pauseIntroPlayback() {
+    introPlaying = false;
+    if (introTimer) window.clearInterval(introTimer);
+    introTimer = null;
+    if (introUsingNativeVideo) {
+      var nativeVideo = document.getElementById('pbsIntroNativeVideo');
+      if (nativeVideo && !nativeVideo.paused) nativeVideo.pause();
+    }
+    renderIntroPlayback();
+  }
+  function playIntroPlayback() {
+    if (introUsingNativeVideo) {
+      var nativeVideo = document.getElementById('pbsIntroNativeVideo');
+      if (!nativeVideo) return;
+      if (nativeVideo.ended || nativeVideo.currentTime >= nativeVideo.duration) nativeVideo.currentTime = 0;
+      var playResult = nativeVideo.play();
+      if (playResult && playResult.catch) playResult.catch(function () { introPlaying = false; renderIntroPlayback(); });
+      return;
+    }
+    if (introCurrentTime >= INTRO_DURATION) introCurrentTime = 0;
+    introPlaying = true;
+    if (introTimer) window.clearInterval(introTimer);
+    introTimer = window.setInterval(function () {
+      introCurrentTime = Math.min(INTRO_DURATION, introCurrentTime + 0.25);
+      if (introCurrentTime >= INTRO_DURATION) pauseIntroPlayback();
+      else renderIntroPlayback();
+    }, 250);
+    renderIntroPlayback();
+  }
+  function toggleIntroPlayback() { if (introPlaying) pauseIntroPlayback(); else playIntroPlayback(); }
+  function openIntroVideoDb() {
+    return new Promise(function (resolve, reject) {
+      if (!window.indexedDB) { reject(new Error('视频存储不可用')); return; }
+      var request = window.indexedDB.open(INTRO_VIDEO_DB_NAME, 1);
+      request.onupgradeneeded = function () {
+        var db = request.result;
+        if (!db.objectStoreNames.contains(INTRO_VIDEO_STORE_NAME)) db.createObjectStore(INTRO_VIDEO_STORE_NAME, { keyPath: 'id' });
+      };
+      request.onsuccess = function () { resolve(request.result); };
+      request.onerror = function () { reject(request.error || new Error('视频读取失败')); };
+    });
+  }
+  function readStoredIntroVideo() {
+    return openIntroVideoDb().then(function (db) {
+      return new Promise(function (resolve, reject) {
+        var request = db.transaction(INTRO_VIDEO_STORE_NAME, 'readonly').objectStore(INTRO_VIDEO_STORE_NAME).get(INTRO_VIDEO_ASSET_KEY);
+        request.onsuccess = function () { db.close(); resolve(request.result || null); };
+        request.onerror = function () { db.close(); reject(request.error || new Error('视频读取失败')); };
+      });
+    });
+  }
+  function useAnimatedIntro() {
+    introUsingNativeVideo = false;
+    var player = document.getElementById('pbsIntroPlayer');
+    if (player) player.classList.remove('is-native');
+  }
+  function loadUploadedIntro(meta, restart, token) {
+    var player = document.getElementById('pbsIntroPlayer');
+    var nativeVideo = document.getElementById('pbsIntroNativeVideo');
+    introUsingNativeVideo = true;
+    if (player) player.classList.add('is-native');
+    if (introTimer) window.clearInterval(introTimer);
+    introTimer = null;
+    readStoredIntroVideo().then(function (asset) {
+      if (token !== introLoadToken) return;
+      if (!asset || !asset.blob) throw new Error('未找到已上传视频');
+      if (introVideoObjectUrl) URL.revokeObjectURL(introVideoObjectUrl);
+      introVideoObjectUrl = URL.createObjectURL(asset.blob);
+      nativeVideo.src = introVideoObjectUrl;
+      nativeVideo.muted = true;
+      if (restart !== false) nativeVideo.currentTime = 0;
+      nativeVideo.load();
+      var result = nativeVideo.play();
+      if (result && result.catch) result.catch(function () { introPlaying = false; renderIntroPlayback(); });
+    }).catch(function () {
+      if (token !== introLoadToken) return;
+      useAnimatedIntro();
+      INTRO_DURATION = meta.duration;
+      document.getElementById('pbsIntroSeek').max = String(meta.duration);
+      playIntroPlayback();
+    });
+  }
+  function openIntroVideo(restart) {
+    ensureIntroExperience();
+    var meta = getIntroVideoMeta();
+    var loadToken = ++introLoadToken;
+    INTRO_DURATION = meta.duration;
+    document.getElementById('pbsIntroKicker').textContent = meta.kicker;
+    document.getElementById('pbsIntroTitle').textContent = meta.title;
+    document.getElementById('pbsIntroSubtitle').textContent = meta.subtitle;
+    document.getElementById('pbsIntroSeek').max = String(meta.duration);
+    if (restart !== false) introCurrentTime = 0;
+    document.getElementById('pbsIntroLayer').classList.remove('pbs-intro-hidden');
+    document.body.style.overflow = 'hidden';
+    try { localStorage.setItem(introSeenKey(), new Date().toLocaleString('zh-CN', { hour12: false })); } catch (e) {}
+    if (meta.hasCustomVideo) loadUploadedIntro(meta, restart, loadToken);
+    else { useAnimatedIntro(); playIntroPlayback(); }
+  }
+  function closeIntroVideo() {
+    introLoadToken++;
+    var layer = document.getElementById('pbsIntroLayer');
+    if (layer) layer.classList.add('pbs-intro-hidden');
+    document.body.style.overflow = '';
+    pauseIntroPlayback();
+  }
+  function openSystemSettings() {
+    ensureIntroExperience();
+    var lastViewed = '';
+    var policy = getIntroVideoPolicy();
+    var meta = getIntroVideoMeta();
+    try { lastViewed = localStorage.getItem(introSeenKey()) || ''; } catch (e) {}
+    document.getElementById('pbsSettingsVideoTitle').textContent = meta.title;
+    document.getElementById('pbsIntroViewedState').textContent = (policy.enabled && policy.autoPlayFirstVisit ? '首次进入自动播放一次' : '首次进入自动播放已关闭') + (lastViewed ? (' · 最近播放：' + lastViewed) : '');
+    document.getElementById('pbsSettingsLayer').classList.remove('pbs-intro-hidden');
+    document.body.style.overflow = 'hidden';
+  }
+  function closeSystemSettings() {
+    var layer = document.getElementById('pbsSettingsLayer');
+    if (layer) layer.classList.add('pbs-intro-hidden');
+    document.body.style.overflow = '';
+  }
+  function initSystemIntroduction(session) {
+    introAccount = (session && (session.account || session.email || session.name)) || 'guest';
+    ensureIntroExperience();
+    var policy = getIntroVideoPolicy();
+    if (!policy.enabled || !policy.autoPlayFirstVisit) return;
+    var seen = false;
+    try { seen = !!localStorage.getItem(introSeenKey()); } catch (e) {}
+    if (!seen) setTimeout(function () { openIntroVideo(true); }, 420);
+  }
+  window.pbsOpenIntroVideo = function () { openIntroVideo(true); };
+  window.pbsOpenSystemSettings = openSystemSettings;
+  window.pbsGetIntroVideoPolicy = getIntroVideoPolicy;
+  window.pbsGetIntroVideoMeta = getIntroVideoMeta;
+
+  /* 退出登录 / 个人设置 / 系统设置（事件委托，兼容所有页面） */
   document.addEventListener('click', function (e) {
     var t = e.target.closest('a,button');
     if (!t) return;
@@ -411,6 +772,10 @@
     } else if (txt === '个人设置') {
       e.preventDefault();
       alert('个人设置功能将在后续版本开放');
+    } else if (t.hasAttribute('data-pbs-system-settings') || txt === '系统设置') {
+      e.preventDefault();
+      e.stopPropagation();
+      openSystemSettings();
     }
   }, true);
 
@@ -635,6 +1000,110 @@
     }
   };
 
+  /* ---------------- 角色工作台（多角色视角 × 工作台可见权限） ---------------- */
+  /* 工作台宿主页：always=独立工作台页；param=列表页以 ?view=workbench 承载工作台视角 */
+  var WORKBENCH_HOSTS = {
+    '管理员工作台 - 留学申请管理系统.html': { always: true, keys: ['wsadmin', 'pm', 'writer', 'sales', 'apply', 'audit'] },
+    '平台运维工作台 - PBS留学CRM系统.html': { always: true, static: true, permission: 'workbench_platform' },
+    '机构管理员工作台 - 留学申请管理系统.html': { always: true, static: true, permission: 'workbench_org_admin' },
+    '项目经理工作台 - 留学申请管理系统.html': { always: true, keys: ['pm'] },
+    '任务列表页 - 文书交付系统.html': { param: true, keys: ['wsadmin', 'writer'] },
+    '选校任务列表页 - 留学申请管理系统.html': { param: true, keys: ['sales'] },
+    '网申任务列表页 - 留学申请管理系统.html': { param: true, keys: ['apply'] },
+    '文书审核列表页 - 留学申请管理系统.html': { param: true, keys: ['audit'] }
+  };
+
+  /* 各工作台独立权限：角色权限管理页保存到 localStorage；未配置时仅默认开放角色本人的工作台。 */
+  var ROLE_PERMS_KEY = 'pbs_role_perms_v1';
+  function savedRolePerms() {
+    try { return JSON.parse(localStorage.getItem(ROLE_PERMS_KEY) || '{}'); } catch (e) { return {}; }
+  }
+  function workbenchPermissionVisible(session, permissionId) {
+    if (!permissionId) return false;
+    var checkRoles = (session.previewRole && session.previewRole !== 'all')
+      ? [session.previewRole]
+      : (session.userRoles && session.userRoles.length ? session.userRoles : [session.role]);
+    if (checkRoles.indexOf('超级管理员') >= 0) return true;
+    var perms = savedRolePerms();
+    return checkRoles.some(function (r) {
+      var p = perms[r];
+      var configured = p && Array.isArray(p.workbench) ? p.workbench : null;
+      if (!configured) return WORKBENCH_ROLE_PERMISSION[r] === permissionId;
+      if (configured.indexOf(permissionId) >= 0) return true;
+      /* 兼容旧版通用 workbench_view：只折算为该角色自己的工作台。 */
+      return configured.indexOf('workbench_view') >= 0 && WORKBENCH_ROLE_PERMISSION[r] === permissionId;
+    });
+  }
+  function workbenchVisible(session) {
+    return session.role === '超级管理员' || workbenchPermissionVisible(session, WORKBENCH_ROLE_PERMISSION[session.role]);
+  }
+
+  /* 无「工作台可见」权限时的空态提示 */
+  function renderWorkbenchForbidden(main) {
+    var notice = document.createElement('div');
+    notice.className = 'bg-white rounded-2xl border border-gray-100 shadow-sm p-10 text-center';
+    notice.innerHTML =
+      '<div class="w-14 h-14 mx-auto mb-4 bg-amber-50 rounded-full flex items-center justify-center">' +
+      '<svg class="w-7 h-7 text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-.274.823-.72 1.596-1.307 2.294M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3l18 18"></path></svg></div>' +
+      '<h2 class="text-lg font-semibold text-gray-800">工作台暂不可见</h2>' +
+      '<p class="text-sm text-gray-500 mt-2">当前角色未被授予对应工作台的可见权限，请联系平台运维人员在「角色权限管理」中开启。</p>';
+    while (main.firstChild) main.removeChild(main.firstChild);
+    main.appendChild(notice);
+  }
+
+  /* 在当前页面挂载角色工作台：多角色的人可切换多个工作台，单角色仅显示本人工作台 */
+  function mountRoleWorkbench(session, file) {
+    var host = WORKBENCH_HOSTS[file];
+    if (!host) return;
+    var isWorkbenchView = host.always || new URLSearchParams(location.search).get('view') === 'workbench';
+    if (!isWorkbenchView) return;
+
+    /* 独立静态工作台也按各自权限校验。 */
+    if (host.permission && !workbenchPermissionVisible(session, host.permission)) {
+      if (host.always) {
+        var mainEl = document.querySelector('main');
+        if (mainEl) renderWorkbenchForbidden(mainEl);
+      }
+      return;
+    }
+    if (host.static || !window.pbsWorkbench) return;
+
+    /* 当前用户可见的工作台视角 = 用户角色（含继承）∩ 本页承载的视角 */
+    var myKeys = [];
+    (session.roles && session.roles.length ? session.roles : [session.role]).forEach(function (r) {
+      var k = window.pbsWorkbench.ROLE_KEY[r];
+      if (k && myKeys.indexOf(k) < 0) myKeys.push(k);
+    });
+    var keys = window.pbsWorkbench.KEY_ORDER.filter(function (k) {
+      return host.keys.indexOf(k) >= 0 && myKeys.indexOf(k) >= 0 &&
+        workbenchPermissionVisible(session, WORKBENCH_KEY_PERMISSION[k]);
+    });
+    if (!keys.length) {
+      /* 列表页无对应权限时保持原列表；独立工作台页显示无权限提示。 */
+      if (host.always) {
+        var mainNoView = document.querySelector('main');
+        if (mainNoView) renderWorkbenchForbidden(mainNoView);
+      }
+      return;
+    }
+
+    var main = document.querySelector('main');
+    if (!main) return;
+    var mount = document.getElementById('pbs-workbench-mount');
+    if (!mount) {
+      /* 隐藏页面原内容，插入工作台挂载点 */
+      var orig = document.createElement('div');
+      orig.id = 'pbs-page-original';
+      orig.className = 'hidden';
+      while (main.firstChild) orig.appendChild(main.firstChild);
+      mount = document.createElement('div');
+      mount.id = 'pbs-workbench-mount';
+      main.appendChild(mount);
+      main.appendChild(orig);
+    }
+    window.pbsWorkbench.mount(mount, keys, { active: keys[0] });
+  }
+
   /* 越权访问提示（非阻塞） */
   function showForbiddenToast(role) {
     var el = document.createElement('div');
@@ -664,7 +1133,7 @@
     }
 
     var session = getSession();
-    if (!session || !session.role) { session = { account: 'demo_admin', name: '演示管理员', role: '超级管理员', org: 'PBS留学', email: 'demo@pbs.local' }; }
+    if (!session || !session.role) { session = { account: 'demo_admin', name: '演示管理员', role: '超级管理员', roles: ['超级管理员'], org: 'PBS留学', email: 'demo@pbs.local' }; }
     session = withPreviewRole(session);
     if (file === '业务流程图 - 留学申请管理系统.html') {
       location.replace(ROLE_WORKBENCH[session.role] || ROLE_WORKBENCH['超级管理员']);
@@ -679,8 +1148,10 @@
     }
     renderSidebar(session, file);
     bindHeader(session);
+    mountRoleWorkbench(session, file);
     var w = PAGE_WIRING[file];
     if (w) { try { w(session); } catch (e) { console.error(e); } }
+    initSystemIntroduction(session);
   }
 
   if (document.readyState === 'loading') {

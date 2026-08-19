@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>新增角色</title>
+  <script src="./assets/vendor/tailwind-runtime.js"></script>
+  <style>body { font-family: "Microsoft YaHei", "PingFang SC", sans-serif; background: transparent; }</style>
+</head>
+<body class="min-h-screen flex items-center justify-center p-4">
+  <div class="w-full bg-white rounded-2xl shadow-2xl overflow-hidden flex flex-col max-h-[86vh]">
+    <div class="flex items-center justify-between px-6 py-4 border-b border-gray-100 flex-shrink-0">
+      <div>
+        <h1 class="text-lg font-semibold text-gray-900">新增角色</h1>
+        <p class="text-xs text-gray-400 mt-1">创建角色并配置功能权限，创建后可在右侧权限配置区继续调整</p>
+      </div>
+      <button class="text-2xl leading-none text-gray-400 hover:text-gray-700" onclick="closeModal()">×</button>
+    </div>
+    <form class="p-6 space-y-4 overflow-y-auto" onsubmit="submitRole(event)">
+      <div class="grid grid-cols-2 gap-4">
+        <div>
+          <label class="block text-sm text-gray-700 mb-1.5">角色名称 <span class="text-red-500">*</span></label>
+          <input id="roleName" class="w-full h-10 px-3 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500" placeholder="如：选校顾问">
+        </div>
+        <div>
+          <label class="block text-sm text-gray-700 mb-1.5">角色状态</label>
+          <div class="flex items-center gap-4 h-10">
+            <label class="flex items-center gap-1.5 text-sm text-gray-700 cursor-pointer"><input type="radio" name="roleStatus" value="启用" checked class="w-4 h-4 text-blue-600">启用</label>
+            <label class="flex items-center gap-1.5 text-sm text-gray-700 cursor-pointer"><input type="radio" name="roleStatus" value="禁用" class="w-4 h-4 text-blue-600">禁用</label>
+          </div>
+        </div>
+      </div>
+      <div>
+        <label class="block text-sm text-gray-700 mb-1.5">角色描述</label>
+        <textarea id="roleDesc" rows="2" class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500" placeholder="简要说明该角色的职责与使用范围"></textarea>
+      </div>
+      <div>
+        <label class="block text-sm text-gray-700 mb-1.5">复制已有角色权限</label>
+        <select id="copyFrom" class="w-full h-10 px-3 border border-gray-300 rounded-lg text-sm bg-white text-gray-700 focus:ring-2 focus:ring-blue-500" onchange="copyFromRole(this.value)">
+          <option value="">不复制，从零开始配置</option>
+        </select>
+        <p class="text-xs text-gray-400 mt-1.5">选择已有角色后，下方权限将按该角色自动勾选，可在此基础上修改</p>
+      </div>
+      <div>
+        <label class="block text-sm text-gray-700 mb-2">权限配置 <span class="text-xs text-gray-400 font-normal">（按功能模块勾选）</span></label>
+        <div id="permModules" class="space-y-3"></div>
+      </div>
+      <p id="roleFormError" class="hidden text-xs text-red-500"></p>
+      <div class="rounded-lg bg-blue-50 px-4 py-3 text-xs text-blue-700">角色创建后立即生效，可在「用户管理 / 人员管理」中分配给用户；多个角色的权限取并集。</div>
+      <div class="flex justify-end gap-3 pt-2">
+        <button type="button" class="px-5 h-10 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50" onclick="closeModal()">取消</button>
+        <button type="submit" class="px-5 h-10 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium">确认创建</button>
+      </div>
+    </form>
+  </div>
+  <script>
+    // 权限模块定义：优先读取父页面的 permissionModules，保证与权限配置区一致；读取失败时使用内置副本
+    var fallbackModules = [
+      { id: 'workbench', name: '工作台可见权限', items: [
+        { id: 'workbench_platform', label: '平台运维工作台可见' }, { id: 'workbench_org_admin', label: '机构管理员工作台可见' },
+        { id: 'workbench_sales', label: '销售人员工作台可见' }, { id: 'workbench_pm', label: '项目经理工作台可见' },
+        { id: 'workbench_doc_admin', label: '文书机构管理员工作台可见' }, { id: 'workbench_writer', label: '文书人员工作台可见' },
+        { id: 'workbench_apply', label: '网申人员工作台可见' }, { id: 'workbench_audit', label: '文书审核工作台可见' } ] },
+      { id: 'customer', name: '学生档案管理', items: [
+        { id: 'customer_view', label: '查看客户列表' }, { id: 'customer_add', label: '新增客户' },
+        { id: 'customer_edit', label: '编辑客户信息' }, { id: 'customer_delete', label: '删除客户' },
+        { id: 'customer_import', label: '导入客户数据' } ] },
+      { id: 'project', name: '项目管理', items: [
+        { id: 'project_view', label: '查看项目列表' }, { id: 'project_assign', label: '分配项目' },
+        { id: 'project_change_pm', label: '更换项目经理' }, { id: 'project_view_detail', label: '查看项目详情' } ] },
+      { id: 'document', name: '文书交付', items: [
+        { id: 'doc_view', label: '查看文书列表' }, { id: 'doc_upload', label: '上传文书材料' },
+        { id: 'doc_edit', label: '编辑文书内容' }, { id: 'doc_review', label: '审核文书' },
+        { id: 'doc_download', label: '下载文书材料' } ] },
+      { id: 'application', name: '网申管理', items: [
+        { id: 'app_view', label: '查看申请列表' }, { id: 'app_create', label: '创建申请任务' },
+        { id: 'app_submit', label: '提交申请' }, { id: 'app_fill', label: '填写网申内容' } ] },
+      { id: 'monitor', name: '监控管理', items: [
+        { id: 'monitor_view', label: '查看监控列表' }, { id: 'monitor_track', label: '跟踪项目进度' },
+        { id: 'monitor_alert', label: '处理异常告警' }, { id: 'monitor_report', label: '查看监控报告' } ] },
+      { id: 'archive', name: '结项归档', items: [
+        { id: 'archive_view', label: '查看归档列表' }, { id: 'archive_create', label: '创建归档' },
+        { id: 'archive_approve', label: '审核归档' } ] },
+      { id: 'system', name: '系统管理', items: [
+        { id: 'sys_user', label: '管理用户账号' }, { id: 'sys_role', label: '管理角色权限' },
+        { id: 'sys_personnel', label: '管理人员信息' }, { id: 'sys_log', label: '查看操作日志' },
+        { id: 'sys_config', label: '系统配置管理' } ] }
+    ];
+    var modules = fallbackModules;
+    var parentRoles = [];
+    try {
+      if (parent.permissionModules && parent.permissionModules.length) modules = parent.permissionModules;
+      if (parent.roles && parent.roles.length) parentRoles = parent.roles;
+    } catch (e) {}
+
+    function renderCopyOptions() {
+      var sel = document.getElementById('copyFrom');
+      parentRoles.forEach(function (r) {
+        sel.add(new Option(r.name, String(r.id)));
+      });
+    }
+
+    function renderPermModules() {
+      var html = '';
+      modules.forEach(function (mod) {
+        html += '<div class="border border-gray-200 rounded-lg p-3">' +
+          '<label class="flex items-center gap-2 mb-2 cursor-pointer">' +
+            '<input type="checkbox" class="w-4 h-4 text-blue-600 rounded" onchange="toggleModuleAll(\'' + mod.id + '\', this.checked)">' +
+            '<span class="text-sm font-medium text-gray-800">' + mod.name + '</span>' +
+            '<span class="text-xs text-gray-400">（全选）</span>' +
+          '</label>' +
+          '<div class="grid grid-cols-3 gap-2 ml-6">' +
+          mod.items.map(function (item) {
+            return '<label class="flex items-center gap-1.5 text-sm text-gray-600 cursor-pointer">' +
+              '<input type="checkbox" data-module="' + mod.id + '" value="' + item.id + '" class="w-3.5 h-3.5 text-blue-600 rounded">' +
+              item.label + '</label>';
+          }).join('') +
+          '</div></div>';
+      });
+      document.getElementById('permModules').innerHTML = html;
+    }
+
+    function toggleModuleAll(modId, checked) {
+      document.querySelectorAll('#permModules input[data-module="' + modId + '"]').forEach(function (cb) {
+        cb.checked = checked;
+      });
+    }
+
+    // 按已有角色的权限勾选
+    function copyFromRole(roleId) {
+      document.querySelectorAll('#permModules input[type="checkbox"]').forEach(function (cb) { cb.checked = false; });
+      if (!roleId) return;
+      var role = null;
+      parentRoles.forEach(function (r) { if (String(r.id) === String(roleId)) role = r; });
+      if (!role || !role.permissions) return;
+      modules.forEach(function (mod) {
+        var granted = role.permissions[mod.id] || [];
+        document.querySelectorAll('#permModules input[data-module="' + mod.id + '"]').forEach(function (cb) {
+          cb.checked = granted.indexOf(cb.value) >= 0;
+        });
+      });
+    }
+
+    function collectPermissions() {
+      var perms = {};
+      modules.forEach(function (mod) {
+        perms[mod.id] = Array.from(document.querySelectorAll('#permModules input[data-module="' + mod.id + '"]:checked'))
+          .map(function (cb) { return cb.value; });
+      });
+      return perms;
+    }
+
+    function closeModal() { parent.postMessage('pbs:close', '*'); }
+
+    function submitRole(event) {
+      event.preventDefault();
+      var err = document.getElementById('roleFormError');
+      var name = document.getElementById('roleName').value.trim();
+      if (!name) { err.textContent = '请输入角色名称'; err.classList.remove('hidden'); return; }
+      err.classList.add('hidden');
+      var statusRadio = document.querySelector('input[name="roleStatus"]:checked');
+      var data = {
+        name: name,
+        description: document.getElementById('roleDesc').value.trim(),
+        status: statusRadio ? statusRadio.value : '启用',
+        permissions: collectPermissions()
+      };
+      if (parent.addRoleFromModal) parent.addRoleFromModal(data);
+      closeModal();
+    }
+
+    renderCopyOptions();
+    renderPermModules();
+  </script>
+</body>
+</html>

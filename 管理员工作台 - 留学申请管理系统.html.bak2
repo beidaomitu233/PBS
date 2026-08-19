@@ -1,0 +1,1222 @@
+<!DOCTYPE html>
+<!-- saved from url=(0132)https://yiyanqiuxue-pbs.ok.kimi.link/%E7%95%99%E5%AD%A6%E6%9C%BA%E6%9E%84%E7%AE%A1%E7%90%86%E5%91%98%E5%B7%A5%E4%BD%9C%E5%8F%B0.html -->
+<html lang="zh-CN" class="light" data-theme="light"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>角色工作台 - 留学申请管理系统</title>
+  <script src="./assets/vendor/tailwind-runtime.js"></script>
+  <style data-vd-inlined-stylesheet="../colors_and_type.css">
+/* PBS留学CRM系统 - 企业级设计规范 */
+:root {
+  /* 主色调 - 专业蓝 */
+  --color-primary: #2563EB;
+  --color-primary-light: #3B82F6;
+  --color-primary-dark: #1D4ED8;
+  --color-primary-bg: #EFF6FF;
+  
+  /* 辅助色 */
+  --color-success: #10B981;
+  --color-success-light: #D1FAE5;
+  --color-warning: #F59E0B;
+  --color-warning-light: #FEF3C7;
+  --color-error: #EF4444;
+  --color-error-light: #FEE2E2;
+  --color-info: #06B6D4;
+  --color-info-light: #CFFAFE;
+  
+  /* 中性色 */
+  --color-gray-50: #F9FAFB;
+  --color-gray-100: #F3F4F6;
+  --color-gray-200: #E5E7EB;
+  --color-gray-300: #D1D5DB;
+  --color-gray-400: #9CA3AF;
+  --color-gray-500: #6B7280;
+  --color-gray-600: #4B5563;
+  --color-gray-700: #374151;
+  --color-gray-800: #1F2937;
+  --color-gray-900: #111827;
+  
+  /* 文字色 */
+  --color-text-primary: #1F2937;
+  --color-text-secondary: #6B7280;
+  --color-text-tertiary: #9CA3AF;
+  --color-text-inverse: #FFFFFF;
+  
+  /* 边框色 */
+  --color-border: #E5E7EB;
+  --color-border-light: #F3F4F6;
+  
+  /* 背景色 */
+  --color-bg-page: #F9FAFB;
+  --color-bg-card: #FFFFFF;
+  --color-bg-hover: #F3F4F6;
+  --color-bg-active: #EEF2FF;
+  
+  /* 阴影 */
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  
+  /* 圆角 */
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-xl: 16px;
+  --radius-full: 9999px;
+  
+  /* 间距 */
+  --spacing-xs: 4px;
+  --spacing-sm: 8px;
+  --spacing-md: 16px;
+  --spacing-lg: 24px;
+  --spacing-xl: 32px;
+  --spacing-2xl: 48px;
+  
+  /* 字体 */
+  --font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif;
+  --font-family-mono: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+  
+  /* 字号 */
+  --font-size-xs: 12px;
+  --font-size-sm: 14px;
+  --font-size-base: 16px;
+  --font-size-lg: 18px;
+  --font-size-xl: 20px;
+  --font-size-2xl: 24px;
+  --font-size-3xl: 30px;
+  
+  /* 行高 */
+  --line-height-tight: 1.25;
+  --line-height-normal: 1.5;
+  --line-height-relaxed: 1.75;
+  
+  /* 过渡 */
+  --transition-fast: 150ms ease;
+  --transition-normal: 200ms ease;
+  --transition-slow: 300ms ease;
+}
+
+/* 暗色主题 */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-bg-page: #111827;
+    --color-bg-card: #1F2937;
+    --color-bg-hover: #374151;
+    --color-bg-active: #312E81;
+    --color-text-primary: #F9FAFB;
+    --color-text-secondary: #D1D5DB;
+    --color-text-tertiary: #9CA3AF;
+    --color-border: #374151;
+    --color-border-light: #4B5563;
+  }
+}
+
+</style>
+  <style>
+    body { font-family: var(--font-family); background: var(--color-bg-page); }
+    /* 自定义滚动条 */
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: var(--color-gray-300); border-radius: 3px; }
+    ::-webkit-scrollbar-thumb:hover { background: var(--color-gray-400); }
+    /* 看板列卡片容器 */
+    .kanban-column { min-height: 200px; }
+    /* 任务卡片悬停效果 */
+    .task-card { transition: all var(--transition-normal); }
+    .task-card:hover { transform: translateY(-2px); box-shadow: var(--shadow-lg); }
+    /* 进度条动画 */
+    .progress-bar-fill { transition: width var(--transition-slow); }
+    /* 徽章脉冲动画 */
+    .badge-pulse { animation: pulse 2s infinite; }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.5; }
+    }
+    /* 柱状图动画 */
+    .chart-bar { transition: height var(--transition-slow); }
+    .chart-bar:hover { filter: brightness(1.1); }
+    /* 数据行悬停 */
+    .data-row { transition: background var(--transition-fast); }
+    .data-row:hover { background: var(--color-gray-50); }
+  </style>
+  <link rel="stylesheet" href="./assets/css/pbs-theme.css">
+<script src="./assets/vendor/kimi-sdk-loader.js" defer=""></script><style>*, ::before, ::after{--tw-border-spacing-x:0;--tw-border-spacing-y:0;--tw-translate-x:0;--tw-translate-y:0;--tw-rotate:0;--tw-skew-x:0;--tw-skew-y:0;--tw-scale-x:1;--tw-scale-y:1;--tw-pan-x: ;--tw-pan-y: ;--tw-pinch-zoom: ;--tw-scroll-snap-strictness:proximity;--tw-gradient-from-position: ;--tw-gradient-via-position: ;--tw-gradient-to-position: ;--tw-ordinal: ;--tw-slashed-zero: ;--tw-numeric-figure: ;--tw-numeric-spacing: ;--tw-numeric-fraction: ;--tw-ring-inset: ;--tw-ring-offset-width:0px;--tw-ring-offset-color:#fff;--tw-ring-color:rgb(59 130 246 / 0.5);--tw-ring-offset-shadow:0 0 #0000;--tw-ring-shadow:0 0 #0000;--tw-shadow:0 0 #0000;--tw-shadow-colored:0 0 #0000;--tw-blur: ;--tw-brightness: ;--tw-contrast: ;--tw-grayscale: ;--tw-hue-rotate: ;--tw-invert: ;--tw-saturate: ;--tw-sepia: ;--tw-drop-shadow: ;--tw-backdrop-blur: ;--tw-backdrop-brightness: ;--tw-backdrop-contrast: ;--tw-backdrop-grayscale: ;--tw-backdrop-hue-rotate: ;--tw-backdrop-invert: ;--tw-backdrop-opacity: ;--tw-backdrop-saturate: ;--tw-backdrop-sepia: ;--tw-contain-size: ;--tw-contain-layout: ;--tw-contain-paint: ;--tw-contain-style: }::backdrop{--tw-border-spacing-x:0;--tw-border-spacing-y:0;--tw-translate-x:0;--tw-translate-y:0;--tw-rotate:0;--tw-skew-x:0;--tw-skew-y:0;--tw-scale-x:1;--tw-scale-y:1;--tw-pan-x: ;--tw-pan-y: ;--tw-pinch-zoom: ;--tw-scroll-snap-strictness:proximity;--tw-gradient-from-position: ;--tw-gradient-via-position: ;--tw-gradient-to-position: ;--tw-ordinal: ;--tw-slashed-zero: ;--tw-numeric-figure: ;--tw-numeric-spacing: ;--tw-numeric-fraction: ;--tw-ring-inset: ;--tw-ring-offset-width:0px;--tw-ring-offset-color:#fff;--tw-ring-color:rgb(59 130 246 / 0.5);--tw-ring-offset-shadow:0 0 #0000;--tw-ring-shadow:0 0 #0000;--tw-shadow:0 0 #0000;--tw-shadow-colored:0 0 #0000;--tw-blur: ;--tw-brightness: ;--tw-contrast: ;--tw-grayscale: ;--tw-hue-rotate: ;--tw-invert: ;--tw-saturate: ;--tw-sepia: ;--tw-drop-shadow: ;--tw-backdrop-blur: ;--tw-backdrop-brightness: ;--tw-backdrop-contrast: ;--tw-backdrop-grayscale: ;--tw-backdrop-hue-rotate: ;--tw-backdrop-invert: ;--tw-backdrop-opacity: ;--tw-backdrop-saturate: ;--tw-backdrop-sepia: ;--tw-contain-size: ;--tw-contain-layout: ;--tw-contain-paint: ;--tw-contain-style: }/* ! tailwindcss v3.4.17 | MIT License | https://tailwindcss.com */*,::after,::before{box-sizing:border-box;border-width:0;border-style:solid;border-color:#e5e7eb}::after,::before{--tw-content:''}:host,html{line-height:1.5;-webkit-text-size-adjust:100%;-moz-tab-size:4;tab-size:4;font-family:ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";font-feature-settings:normal;font-variation-settings:normal;-webkit-tap-highlight-color:transparent}body{margin:0;line-height:inherit}hr{height:0;color:inherit;border-top-width:1px}abbr:where([title]){-webkit-text-decoration:underline dotted;text-decoration:underline dotted}h1,h2,h3,h4,h5,h6{font-size:inherit;font-weight:inherit}a{color:inherit;text-decoration:inherit}b,strong{font-weight:bolder}code,kbd,pre,samp{font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;font-feature-settings:normal;font-variation-settings:normal;font-size:1em}small{font-size:80%}sub,sup{font-size:75%;line-height:0;position:relative;vertical-align:baseline}sub{bottom:-.25em}sup{top:-.5em}table{text-indent:0;border-color:inherit;border-collapse:collapse}button,input,optgroup,select,textarea{font-family:inherit;font-feature-settings:inherit;font-variation-settings:inherit;font-size:100%;font-weight:inherit;line-height:inherit;letter-spacing:inherit;color:inherit;margin:0;padding:0}button,select{text-transform:none}button,input:where([type=button]),input:where([type=reset]),input:where([type=submit]){-webkit-appearance:button;background-color:transparent;background-image:none}:-moz-focusring{outline:auto}:-moz-ui-invalid{box-shadow:none}progress{vertical-align:baseline}::-webkit-inner-spin-button,::-webkit-outer-spin-button{height:auto}[type=search]{-webkit-appearance:textfield;outline-offset:-2px}::-webkit-search-decoration{-webkit-appearance:none}::-webkit-file-upload-button{-webkit-appearance:button;font:inherit}summary{display:list-item}blockquote,dd,dl,figure,h1,h2,h3,h4,h5,h6,hr,p,pre{margin:0}fieldset{margin:0;padding:0}legend{padding:0}menu,ol,ul{list-style:none;margin:0;padding:0}dialog{padding:0}textarea{resize:vertical}input::placeholder,textarea::placeholder{opacity:1;color:#9ca3af}[role=button],button{cursor:pointer}:disabled{cursor:default}audio,canvas,embed,iframe,img,object,svg,video{display:block;vertical-align:middle}img,video{max-width:100%;height:auto}[hidden]:where(:not([hidden=until-found])){display:none}.pointer-events-none{pointer-events:none}.fixed{position:fixed}.absolute{position:absolute}.relative{position:relative}.sticky{position:sticky}.inset-0{inset:0px}.left-0{left:0px}.left-1\/2{left:50%}.left-3{left:0.75rem}.right-1{right:0.25rem}.top-0{top:0px}.top-1{top:0.25rem}.top-1\/2{top:50%}.top-1\/4{top:25%}.top-2\/4{top:50%}.top-3\/4{top:75%}.right-0{right:0px}.top-12{top:3rem}.z-10{z-index:10}.z-50{z-index:50}.col-span-2{grid-column:span 2 / span 2}.col-span-3{grid-column:span 3 / span 3}.mb-1{margin-bottom:0.25rem}.mb-2{margin-bottom:0.5rem}.mb-3{margin-bottom:0.75rem}.mb-4{margin-bottom:1rem}.mb-5{margin-bottom:1.25rem}.mb-6{margin-bottom:1.5rem}.mt-0\.5{margin-top:0.125rem}.mt-1{margin-top:0.25rem}.mt-1\.5{margin-top:0.375rem}.mt-2{margin-top:0.5rem}.ml-8{margin-left:2rem}.flex{display:flex}.inline-flex{display:inline-flex}.grid{display:grid}.hidden{display:none}.h-1\.5{height:0.375rem}.h-10{height:2.5rem}.h-12{height:3rem}.h-14{height:3.5rem}.h-16{height:4rem}.h-2{height:0.5rem}.h-2\.5{height:0.625rem}.h-3{height:0.75rem}.h-3\.5{height:0.875rem}.h-32{height:8rem}.h-4{height:1rem}.h-44{height:11rem}.h-6{height:1.5rem}.h-7{height:1.75rem}.h-9{height:2.25rem}.h-\[25\%\]{height:25%}.h-full{height:100%}.h-5{height:1.25rem}.min-h-\[calc\(100vh-64px\)\]{min-height:calc(100vh - 64px)}.min-h-screen{min-height:100vh}.w-10{width:2.5rem}.w-12{width:3rem}.w-14{width:3.5rem}.w-2{width:0.5rem}.w-2\.5{width:0.625rem}.w-3{width:0.75rem}.w-3\.5{width:0.875rem}.w-4{width:1rem}.w-56{width:14rem}.w-6{width:1.5rem}.w-7{width:1.75rem}.w-72{width:18rem}.w-9{width:2.25rem}.w-\[440px\]{width:440px}.w-full{width:100%}.w-1\.5{width:0.375rem}.w-5{width:1.25rem}.w-64{width:16rem}.min-w-0{min-width:0px}.flex-1{flex:1 1 0%}.flex-shrink-0{flex-shrink:0}.-translate-x-1\/2{--tw-translate-x:-50%;transform:translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))}.-translate-y-1\/2{--tw-translate-y:-50%;transform:translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))}.cursor-pointer{cursor:pointer}.grid-cols-3{grid-template-columns:repeat(3, minmax(0, 1fr))}.grid-cols-4{grid-template-columns:repeat(4, minmax(0, 1fr))}.grid-cols-5{grid-template-columns:repeat(5, minmax(0, 1fr))}.flex-col{flex-direction:column}.flex-col-reverse{flex-direction:column-reverse}.items-start{align-items:flex-start}.items-end{align-items:flex-end}.items-center{align-items:center}.items-baseline{align-items:baseline}.justify-center{justify-content:center}.justify-between{justify-content:space-between}.gap-1{gap:0.25rem}.gap-1\.5{gap:0.375rem}.gap-2{gap:0.5rem}.gap-3{gap:0.75rem}.gap-4{gap:1rem}.gap-5{gap:1.25rem}.gap-8{gap:2rem}.space-y-3 > :not([hidden]) ~ :not([hidden]){--tw-space-y-reverse:0;margin-top:calc(0.75rem * calc(1 - var(--tw-space-y-reverse)));margin-bottom:calc(0.75rem * var(--tw-space-y-reverse))}.space-y-4 > :not([hidden]) ~ :not([hidden]){--tw-space-y-reverse:0;margin-top:calc(1rem * calc(1 - var(--tw-space-y-reverse)));margin-bottom:calc(1rem * var(--tw-space-y-reverse))}.space-y-1 > :not([hidden]) ~ :not([hidden]){--tw-space-y-reverse:0;margin-top:calc(0.25rem * calc(1 - var(--tw-space-y-reverse)));margin-bottom:calc(0.25rem * var(--tw-space-y-reverse))}.overflow-auto{overflow:auto}.overflow-hidden{overflow:hidden}.truncate{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.rounded-2xl{border-radius:1rem}.rounded-full{border-radius:9999px}.rounded-lg{border-radius:0.5rem}.rounded-sm{border-radius:0.125rem}.rounded-xl{border-radius:0.75rem}.rounded-t-md{border-top-left-radius:0.375rem;border-top-right-radius:0.375rem}.border{border-width:1px}.border-b{border-bottom-width:1px}.border-l{border-left-width:1px}.border-r{border-right-width:1px}.border-t{border-top-width:1px}.border-gray-100{--tw-border-opacity:1;border-color:rgb(243 244 246 / var(--tw-border-opacity, 1))}.border-gray-200{--tw-border-opacity:1;border-color:rgb(229 231 235 / var(--tw-border-opacity, 1))}.border-gray-300{--tw-border-opacity:1;border-color:rgb(209 213 219 / var(--tw-border-opacity, 1))}.border-green-100{--tw-border-opacity:1;border-color:rgb(220 252 231 / var(--tw-border-opacity, 1))}.border-red-100{--tw-border-opacity:1;border-color:rgb(254 226 226 / var(--tw-border-opacity, 1))}.border-yellow-100{--tw-border-opacity:1;border-color:rgb(254 249 195 / var(--tw-border-opacity, 1))}.bg-black{--tw-bg-opacity:1;background-color:rgb(0 0 0 / var(--tw-bg-opacity, 1))}.bg-blue-100{--tw-bg-opacity:1;background-color:rgb(219 234 254 / var(--tw-bg-opacity, 1))}.bg-blue-200{--tw-bg-opacity:1;background-color:rgb(191 219 254 / var(--tw-bg-opacity, 1))}.bg-blue-50{--tw-bg-opacity:1;background-color:rgb(239 246 255 / var(--tw-bg-opacity, 1))}.bg-blue-500{--tw-bg-opacity:1;background-color:rgb(59 130 246 / var(--tw-bg-opacity, 1))}.bg-blue-600{--tw-bg-opacity:1;background-color:rgb(37 99 235 / var(--tw-bg-opacity, 1))}.bg-gray-100{--tw-bg-opacity:1;background-color:rgb(243 244 246 / var(--tw-bg-opacity, 1))}.bg-gray-300{--tw-bg-opacity:1;background-color:rgb(209 213 219 / var(--tw-bg-opacity, 1))}.bg-gray-50{--tw-bg-opacity:1;background-color:rgb(249 250 251 / var(--tw-bg-opacity, 1))}.bg-green-100{--tw-bg-opacity:1;background-color:rgb(220 252 231 / var(--tw-bg-opacity, 1))}.bg-green-50{--tw-bg-opacity:1;background-color:rgb(240 253 244 / var(--tw-bg-opacity, 1))}.bg-green-500{--tw-bg-opacity:1;background-color:rgb(34 197 94 / var(--tw-bg-opacity, 1))}.bg-green-600{--tw-bg-opacity:1;background-color:rgb(22 163 74 / var(--tw-bg-opacity, 1))}.bg-orange-50{--tw-bg-opacity:1;background-color:rgb(255 247 237 / var(--tw-bg-opacity, 1))}.bg-purple-50{--tw-bg-opacity:1;background-color:rgb(250 245 255 / var(--tw-bg-opacity, 1))}.bg-purple-500{--tw-bg-opacity:1;background-color:rgb(168 85 247 / var(--tw-bg-opacity, 1))}.bg-red-100{--tw-bg-opacity:1;background-color:rgb(254 226 226 / var(--tw-bg-opacity, 1))}.bg-red-50{--tw-bg-opacity:1;background-color:rgb(254 242 242 / var(--tw-bg-opacity, 1))}.bg-red-500{--tw-bg-opacity:1;background-color:rgb(239 68 68 / var(--tw-bg-opacity, 1))}.bg-red-600{--tw-bg-opacity:1;background-color:rgb(220 38 38 / var(--tw-bg-opacity, 1))}.bg-white{--tw-bg-opacity:1;background-color:rgb(255 255 255 / var(--tw-bg-opacity, 1))}.bg-yellow-100{--tw-bg-opacity:1;background-color:rgb(254 249 195 / var(--tw-bg-opacity, 1))}.bg-yellow-50{--tw-bg-opacity:1;background-color:rgb(254 252 232 / var(--tw-bg-opacity, 1))}.bg-yellow-500{--tw-bg-opacity:1;background-color:rgb(234 179 8 / var(--tw-bg-opacity, 1))}.bg-opacity-30{--tw-bg-opacity:0.3}.bg-gradient-to-br{background-image:linear-gradient(to bottom right, var(--tw-gradient-stops))}.bg-gradient-to-r{background-image:linear-gradient(to right, var(--tw-gradient-stops))}.from-blue-500{--tw-gradient-from:#3b82f6 var(--tw-gradient-from-position);--tw-gradient-to:rgb(59 130 246 / 0) var(--tw-gradient-to-position);--tw-gradient-stops:var(--tw-gradient-from), var(--tw-gradient-to)}.from-blue-50{--tw-gradient-from:#eff6ff var(--tw-gradient-from-position);--tw-gradient-to:rgb(239 246 255 / 0) var(--tw-gradient-to-position);--tw-gradient-stops:var(--tw-gradient-from), var(--tw-gradient-to)}.to-indigo-600{--tw-gradient-to:#4f46e5 var(--tw-gradient-to-position)}.to-indigo-50{--tw-gradient-to:#eef2ff var(--tw-gradient-to-position)}.to-purple-500{--tw-gradient-to:#a855f7 var(--tw-gradient-to-position)}.p-2{padding:0.5rem}.p-3{padding:0.75rem}.p-4{padding:1rem}.p-5{padding:1.25rem}.p-6{padding:1.5rem}.px-1\.5{padding-left:0.375rem;padding-right:0.375rem}.px-2{padding-left:0.5rem;padding-right:0.5rem}.px-3{padding-left:0.75rem;padding-right:0.75rem}.px-5{padding-left:1.25rem;padding-right:1.25rem}.px-6{padding-left:1.5rem;padding-right:1.5rem}.py-0\.5{padding-top:0.125rem;padding-bottom:0.125rem}.py-1\.5{padding-top:0.375rem;padding-bottom:0.375rem}.py-2{padding-top:0.5rem;padding-bottom:0.5rem}.px-4{padding-left:1rem;padding-right:1rem}.py-1{padding-top:0.25rem;padding-bottom:0.25rem}.py-2\.5{padding-top:0.625rem;padding-bottom:0.625rem}.py-3{padding-top:0.75rem;padding-bottom:0.75rem}.pl-5{padding-left:1.25rem}.pl-9{padding-left:2.25rem}.pr-4{padding-right:1rem}.pt-3{padding-top:0.75rem}.text-left{text-align:left}.text-2xl{font-size:1.5rem;line-height:2rem}.text-3xl{font-size:1.875rem;line-height:2.25rem}.text-lg{font-size:1.125rem;line-height:1.75rem}.text-sm{font-size:0.875rem;line-height:1.25rem}.text-xl{font-size:1.25rem;line-height:1.75rem}.text-xs{font-size:0.75rem;line-height:1rem}.text-base{font-size:1rem;line-height:1.5rem}.font-bold{font-weight:700}.font-medium{font-weight:500}.font-semibold{font-weight:600}.leading-tight{line-height:1.25}.text-blue-600{--tw-text-opacity:1;color:rgb(37 99 235 / var(--tw-text-opacity, 1))}.text-blue-700{--tw-text-opacity:1;color:rgb(29 78 216 / var(--tw-text-opacity, 1))}.text-gray-300{--tw-text-opacity:1;color:rgb(209 213 219 / var(--tw-text-opacity, 1))}.text-gray-400{--tw-text-opacity:1;color:rgb(156 163 175 / var(--tw-text-opacity, 1))}.text-gray-500{--tw-text-opacity:1;color:rgb(107 114 128 / var(--tw-text-opacity, 1))}.text-gray-600{--tw-text-opacity:1;color:rgb(75 85 99 / var(--tw-text-opacity, 1))}.text-gray-700{--tw-text-opacity:1;color:rgb(55 65 81 / var(--tw-text-opacity, 1))}.text-gray-800{--tw-text-opacity:1;color:rgb(31 41 55 / var(--tw-text-opacity, 1))}.text-gray-900{--tw-text-opacity:1;color:rgb(17 24 39 / var(--tw-text-opacity, 1))}.text-green-500{--tw-text-opacity:1;color:rgb(34 197 94 / var(--tw-text-opacity, 1))}.text-green-600{--tw-text-opacity:1;color:rgb(22 163 74 / var(--tw-text-opacity, 1))}.text-green-700{--tw-text-opacity:1;color:rgb(21 128 61 / var(--tw-text-opacity, 1))}.text-orange-500{--tw-text-opacity:1;color:rgb(249 115 22 / var(--tw-text-opacity, 1))}.text-orange-600{--tw-text-opacity:1;color:rgb(234 88 12 / var(--tw-text-opacity, 1))}.text-purple-600{--tw-text-opacity:1;color:rgb(147 51 234 / var(--tw-text-opacity, 1))}.text-red-500{--tw-text-opacity:1;color:rgb(239 68 68 / var(--tw-text-opacity, 1))}.text-red-600{--tw-text-opacity:1;color:rgb(220 38 38 / var(--tw-text-opacity, 1))}.text-red-700{--tw-text-opacity:1;color:rgb(185 28 28 / var(--tw-text-opacity, 1))}.text-white{--tw-text-opacity:1;color:rgb(255 255 255 / var(--tw-text-opacity, 1))}.text-yellow-500{--tw-text-opacity:1;color:rgb(234 179 8 / var(--tw-text-opacity, 1))}.text-yellow-600{--tw-text-opacity:1;color:rgb(202 138 4 / var(--tw-text-opacity, 1))}.text-yellow-700{--tw-text-opacity:1;color:rgb(161 98 7 / var(--tw-text-opacity, 1))}.shadow-2xl{--tw-shadow:0 25px 50px -12px rgb(0 0 0 / 0.25);--tw-shadow-colored:0 25px 50px -12px var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}.shadow-sm{--tw-shadow:0 1px 2px 0 rgb(0 0 0 / 0.05);--tw-shadow-colored:0 1px 2px 0 var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}.shadow-lg{--tw-shadow:0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);--tw-shadow-colored:0 10px 15px -3px var(--tw-shadow-color), 0 4px 6px -4px var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}.transition-all{transition-property:all;transition-timing-function:cubic-bezier(0.4, 0, 0.2, 1);transition-duration:150ms}.transition-colors{transition-property:color, background-color, border-color, fill, stroke, -webkit-text-decoration-color;transition-property:color, background-color, border-color, text-decoration-color, fill, stroke;transition-property:color, background-color, border-color, text-decoration-color, fill, stroke, -webkit-text-decoration-color;transition-timing-function:cubic-bezier(0.4, 0, 0.2, 1);transition-duration:150ms}.transition-shadow{transition-property:box-shadow;transition-timing-function:cubic-bezier(0.4, 0, 0.2, 1);transition-duration:150ms}.hover\:border-blue-200:hover{--tw-border-opacity:1;border-color:rgb(191 219 254 / var(--tw-border-opacity, 1))}.hover\:border-green-200:hover{--tw-border-opacity:1;border-color:rgb(187 247 208 / var(--tw-border-opacity, 1))}.hover\:border-orange-200:hover{--tw-border-opacity:1;border-color:rgb(254 215 170 / var(--tw-border-opacity, 1))}.hover\:border-purple-200:hover{--tw-border-opacity:1;border-color:rgb(233 213 255 / var(--tw-border-opacity, 1))}.hover\:bg-blue-700:hover{--tw-bg-opacity:1;background-color:rgb(29 78 216 / var(--tw-bg-opacity, 1))}.hover\:bg-gray-50:hover{--tw-bg-opacity:1;background-color:rgb(249 250 251 / var(--tw-bg-opacity, 1))}.hover\:bg-green-700:hover{--tw-bg-opacity:1;background-color:rgb(21 128 61 / var(--tw-bg-opacity, 1))}.hover\:bg-red-700:hover{--tw-bg-opacity:1;background-color:rgb(185 28 28 / var(--tw-bg-opacity, 1))}.hover\:bg-yellow-600:hover{--tw-bg-opacity:1;background-color:rgb(202 138 4 / var(--tw-bg-opacity, 1))}.hover\:text-gray-700:hover{--tw-text-opacity:1;color:rgb(55 65 81 / var(--tw-text-opacity, 1))}.hover\:text-gray-800:hover{--tw-text-opacity:1;color:rgb(31 41 55 / var(--tw-text-opacity, 1))}.hover\:shadow-md:hover{--tw-shadow:0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);--tw-shadow-colored:0 4px 6px -1px var(--tw-shadow-color), 0 2px 4px -2px var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}.focus\:border-blue-500:focus{--tw-border-opacity:1;border-color:rgb(59 130 246 / var(--tw-border-opacity, 1))}.focus\:bg-white:focus{--tw-bg-opacity:1;background-color:rgb(255 255 255 / var(--tw-bg-opacity, 1))}.focus\:outline-none:focus{outline:2px solid transparent;outline-offset:2px}.focus\:ring-2:focus{--tw-ring-offset-shadow:var(--tw-ring-inset) 0 0 0 var(--tw-ring-offset-width) var(--tw-ring-offset-color);--tw-ring-shadow:var(--tw-ring-inset) 0 0 0 calc(2px + var(--tw-ring-offset-width)) var(--tw-ring-color);box-shadow:var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow, 0 0 #0000)}.focus\:ring-blue-500:focus{--tw-ring-opacity:1;--tw-ring-color:rgb(59 130 246 / var(--tw-ring-opacity, 1))}.group:hover .group-hover\:bg-blue-100{--tw-bg-opacity:1;background-color:rgb(219 234 254 / var(--tw-bg-opacity, 1))}.group:hover .group-hover\:bg-green-100{--tw-bg-opacity:1;background-color:rgb(220 252 231 / var(--tw-bg-opacity, 1))}.group:hover .group-hover\:bg-orange-100{--tw-bg-opacity:1;background-color:rgb(255 237 213 / var(--tw-bg-opacity, 1))}.group:hover .group-hover\:bg-purple-100{--tw-bg-opacity:1;background-color:rgb(243 232 255 / var(--tw-bg-opacity, 1))}.group:hover .group-hover\:text-blue-600{--tw-text-opacity:1;color:rgb(37 99 235 / var(--tw-text-opacity, 1))}.group:hover .group-hover\:text-green-600{--tw-text-opacity:1;color:rgb(22 163 74 / var(--tw-text-opacity, 1))}.group:hover .group-hover\:text-orange-500{--tw-text-opacity:1;color:rgb(249 115 22 / var(--tw-text-opacity, 1))}.group:hover .group-hover\:text-purple-600{--tw-text-opacity:1;color:rgb(147 51 234 / var(--tw-text-opacity, 1))}</style><script src="./assets/vendor/kimi-publish.js" async=""></script>
+    <style>
+      .kimi-brand-container {
+        position: fixed;
+        bottom: 16px;
+        right: 16px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        z-index: 99999999;
+        transition: opacity 0.3s ease;
+      }
+
+      .kimi-brand-close-icon {
+        cursor: pointer;
+        border-radius: 50%;
+        width: 26px;
+        height: 26px;
+        background: #000;
+        display: none;
+        align-items: center;
+        justify-content: center;
+        border: 0.5px solid rgba(255, 255, 255, 0.15);
+      }
+
+      .kimi-brand-container:hover .kimi-brand-close-icon {
+        display: flex;
+      }
+
+      .kimi-brand-info-wrapper {
+        position: relative;
+        display: none;
+        width: 26px;
+        height: 26px;
+        flex-shrink: 0;
+      }
+
+      .kimi-brand-container:hover .kimi-brand-info-wrapper {
+        display: block;
+      }
+
+      .kimi-brand-info-wrapper::before {
+        content: "";
+        position: absolute;
+        right: -8px;
+        bottom: 100%;
+        left: -8px;
+        display: none;
+        height: 12px;
+      }
+
+      .kimi-brand-info-wrapper:hover::before {
+        display: block;
+      }
+
+      .kimi-brand-info-button {
+        cursor: pointer;
+        border-radius: 50%;
+        width: 26px;
+        height: 26px;
+        background: #000;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border: 0.5px solid rgba(255, 255, 255, 0.15);
+        color: rgba(255, 255, 255, 0.84);
+        padding: 0;
+      }
+
+      .kimi-brand-info-button:hover {
+        background: #000;
+      }
+
+      .kimi-brand-info-tooltip {
+        position: fixed;
+        right: 16px;
+        bottom: 52px;
+        box-sizing: border-box;
+        width: 240px;
+        padding: 8px 12px;
+        border-radius: 8px;
+        background: #2b2b2b;
+        color: rgba(255, 255, 255, 0.72);
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+        font-size: 12px;
+        line-height: 18px;
+        opacity: 0;
+        pointer-events: none;
+        transform: translateY(4px);
+        transition: opacity 0.15s ease, transform 0.15s ease;
+        z-index: 99999999;
+      }
+
+      .kimi-brand-info-wrapper:hover .kimi-brand-info-tooltip {
+        opacity: 1;
+        pointer-events: auto;
+        transform: translateY(0);
+      }
+
+      .kimi-brand-info-tooltip::after {
+        content: "";
+        position: absolute;
+        right: 127px;
+        bottom: -5px;
+        width: 10px;
+        height: 10px;
+        background: #2b2b2b;
+        transform: rotate(45deg);
+      }
+
+      .kimi-brand-report-link {
+        color: #6AA6FF;
+        text-decoration: none;
+      }
+
+      .kimi-brand-report-link:hover {
+        color: #A6D0FF;
+      }
+
+      .kimi-brand-link {
+        background: #000;
+        color: white;
+        padding: 4px 6px 4px 4px;
+        border-radius: 16px;
+        font-family: Arial, sans-serif;
+        font-size: 12px;
+        line-height: 18px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        border: 0.5px solid rgba(255, 255, 255, 0.15);
+        text-decoration: none;
+      }
+
+      .kimi-brand-container:hover .kimi-brand-icon {
+        width: 16px;
+      }
+
+      .kimi-brand-icon {
+        width: 0;
+        overflow: hidden;
+        transition: width 0.3s ease;
+        pointer-events: none;
+      }
+
+      .kimi-brand-avatar {
+        width: 18px;
+        height: 18px;
+        border: 0.5px solid rgba(255, 255, 255, 0.15);
+        border-radius: 50%;
+      }
+    </style>
+  <style>
+  /* ================= 角色工作台（角色 × 指标 × 卡片 × 今日待办 × 日历 × 数据看板） ================= */
+  .wb-head{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;margin:16px 0 14px;flex-wrap:wrap}
+  .wb-title{font-size:20px;font-weight:600;color:#1f2937;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+  .wb-scope{font-size:12px;font-weight:500;padding:2px 10px;border-radius:999px}
+  .wb-sub{font-size:13px;color:#9ca3af;margin-top:4px}
+  .wb-stats{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:14px}
+  .wb-stat{flex:1;min-width:150px;background:#fff;border:1px solid #f3f4f6;border-radius:12px;padding:14px 16px;box-shadow:0 1px 2px rgba(16,24,40,.04)}
+  .wb-stat .l{font-size:13px;color:#6b7280}
+  .wb-stat .v{font-size:28px;font-weight:700;color:#111827;margin-top:6px;line-height:1}
+  .wb-stat .n{font-size:12px;color:#9ca3af;margin-top:6px}
+  .wb-stat.tone-red .v{color:#dc2626}
+  .wb-stat.tone-orange .v{color:#ea580c}
+  .wb-stat.tone-blue .v{color:#2563eb}
+  .wb-stat.tone-purple .v{color:#7c3aed}
+  .wb-cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:12px;margin-bottom:16px}
+  .wb-card{display:block;background:#fff;border:1px solid #f3f4f6;border-left:4px solid #2563eb;border-radius:12px;padding:12px 14px;text-decoration:none;transition:box-shadow .15s}
+  .wb-card:hover{box-shadow:0 6px 16px rgba(16,24,40,.08)}
+  .wb-card .m{font-size:13px;font-weight:600;color:#1f2937}
+  .wb-card .c{font-size:12px;color:#6b7280;margin-top:4px;line-height:1.5}
+  .wb-card .go{font-size:12px;margin-top:8px;font-weight:500}
+  .wb-main{display:grid;grid-template-columns:7fr 5fr;gap:16px;margin-bottom:16px}
+  @media(max-width:1100px){.wb-main{grid-template-columns:1fr}}
+  .wb-panel{background:#fff;border:1px solid #f3f4f6;border-radius:14px;padding:18px;box-shadow:0 1px 2px rgba(16,24,40,.04)}
+  .wb-panel-h{display:flex;align-items:baseline;justify-content:space-between;gap:10px;margin-bottom:12px;flex-wrap:wrap}
+  .wb-panel-t{font-size:15px;font-weight:600;color:#111827}
+  .wb-panel-n{font-size:12px;color:#9ca3af}
+  .wb-group-t{display:flex;align-items:center;gap:8px;font-size:13px;font-weight:600;color:#374151;margin:14px 0 8px}
+  .wb-group-t:first-of-type{margin-top:0}
+  .wb-group-dot{width:8px;height:8px;border-radius:999px;flex-shrink:0}
+  .wb-todo{display:flex;gap:12px;padding:12px;border:1px solid #f3f4f6;border-radius:12px;margin-bottom:8px;align-items:flex-start;transition:border-color .15s,background .15s}
+  .wb-todo:hover{border-color:#dbeafe;background:#fafbff}
+  .wb-todo-bar{width:4px;align-self:stretch;border-radius:4px;flex-shrink:0}
+  .wb-todo-b{flex:1;min-width:0}
+  .wb-todo-t{font-size:14px;font-weight:600;color:#111827;display:flex;align-items:center;gap:8px;flex-wrap:wrap;line-height:1.5}
+  .wb-tag{font-size:11px;font-weight:600;padding:1px 8px;border-radius:999px;color:#fff;flex-shrink:0}
+  .wb-todo-m{font-size:12px;color:#6b7280;margin-top:4px;line-height:1.6}
+  .wb-todo-time{font-size:12px;font-weight:600;margin-top:6px}
+  .wb-act{flex-shrink:0;font-size:12px;font-weight:500;padding:6px 12px;border-radius:8px;border:none;cursor:pointer;background:#2563eb;color:#fff}
+  .wb-act:hover{background:#1d4ed8}
+  .wb-act.ghost{background:#f5f3ff;color:#7c3aed}
+  .wb-act.ghost:hover{background:#ede9fe}
+  .wb-act.plain{background:#f3f4f6;color:#374151}
+  .wb-act.plain:hover{background:#e5e7eb}
+  /* DDL 日历 */
+  .wb-cal-h{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+  .wb-cal-t{font-size:14px;font-weight:600;color:#111827}
+  .wb-cal-nav{display:flex;gap:6px}
+  .wb-cal-nav button{width:26px;height:26px;border-radius:8px;border:1px solid #e5e7eb;background:#fff;color:#6b7280;cursor:pointer;font-size:14px;line-height:1}
+  .wb-cal-nav button:hover{background:#f3f4f6}
+  .wb-cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:4px}
+  .wb-cal-w{font-size:11px;color:#9ca3af;text-align:center;padding:4px 0}
+  .wb-day{position:relative;height:38px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:13px;color:#374151;cursor:pointer;border:1px solid transparent;background:#fff;user-select:none}
+  .wb-day:hover{background:#f3f4f6}
+  .wb-day.out{color:#d1d5db;cursor:default;background:transparent}
+  .wb-day.out:hover{background:transparent}
+  .wb-day.has{font-weight:700;color:#dc2626;background:#fef2f2}
+  .wb-day.has::after{content:'';position:absolute;bottom:4px;left:50%;transform:translateX(-50%);width:5px;height:5px;border-radius:999px;background:#dc2626}
+  .wb-day.today{border-color:#2563eb;color:#2563eb;font-weight:700}
+  .wb-day.sel{background:#2563eb;color:#fff;font-weight:700}
+  .wb-day.sel.has{background:#dc2626;color:#fff}
+  .wb-day.sel::after{background:#fff}
+  .wb-daydetail{margin-top:12px;border-top:1px dashed #e5e7eb;padding-top:12px}
+  .wb-dd{font-size:13px;font-weight:600;color:#111827;margin-bottom:8px}
+  .wb-ev{display:flex;gap:8px;align-items:flex-start;padding:8px 10px;border-radius:10px;background:#f9fafb;margin-bottom:6px}
+  .wb-ev .tg{font-size:11px;font-weight:600;padding:1px 8px;border-radius:999px;color:#fff;flex-shrink:0;margin-top:1px}
+  .wb-ev .tx{font-size:12px;color:#374151;line-height:1.6}
+  .wb-ev-empty{font-size:12px;color:#9ca3af;padding:12px;text-align:center;background:#f9fafb;border-radius:10px}
+  /* 数据看板 */
+  .wb-boards{display:grid;gap:12px}
+  .wb-board-col{background:#fff;border:1px solid #f3f4f6;border-radius:14px;padding:14px;box-shadow:0 1px 2px rgba(16,24,40,.04)}
+  .wb-board-h{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:10px}
+  .wb-board-t{font-size:13px;font-weight:600;color:#111827;display:flex;align-items:center;gap:8px}
+  .wb-board-dot{width:8px;height:8px;border-radius:999px;flex-shrink:0}
+  .wb-board-c{font-size:12px;color:#9ca3af;flex-shrink:0}
+  .wb-bitem{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;padding:9px 10px;border-radius:10px;background:#f9fafb;margin-bottom:6px}
+  .wb-bitem .nm{font-size:13px;color:#1f2937;font-weight:500;line-height:1.5}
+  .wb-bitem .mt{font-size:11px;color:#9ca3af;margin-top:2px;line-height:1.5}
+  .wb-bdg{font-size:11px;font-weight:600;padding:1px 8px;border-radius:999px;flex-shrink:0;white-space:nowrap}
+  .wb-prog{height:6px;border-radius:999px;background:#f3f4f6;overflow:hidden;margin-top:6px}
+  .wb-prog span{display:block;height:100%;border-radius:999px}
+</style>
+</head>
+<body class="min-h-screen">
+  <!-- ========== 顶部导航栏 ========== -->
+  <header class="bg-white border-b border-gray-200 sticky top-0 z-50 shadow-sm">
+    <div class="h-16 flex items-center justify-between px-6">
+      <div class="flex items-center gap-8">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0" style="background:linear-gradient(135deg,#8B7CF6,#6A5AD8)"><span class="text-white font-bold text-lg">P</span></div>
+          <span class="text-xl font-semibold text-gray-800">留学申请管理系统</span>
+        </div>
+        <!-- 全局搜索 -->
+        <div class="relative w-72">
+          <svg class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+          </svg>
+          <input type="text" placeholder="搜索项目/客户/任务/人员..." class="w-full h-9 pl-9 pr-4 bg-gray-50 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 focus:bg-white transition-all">
+        </div>
+      </div>
+      <div class="flex items-center gap-5">
+        <!-- 消息通知 -->
+        <button class="relative p-2 text-gray-500 hover:text-gray-700 transition-colors" data-dom-id="btn-notification">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path>
+          </svg>
+          <span class="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full badge-pulse"></span>
+        </button>
+        <!-- 用户中心 -->
+        <div class="flex items-center gap-3 pl-5 border-l border-gray-200" style="position: relative; cursor: pointer;">
+          <div class="w-9 h-9 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-full flex items-center justify-center shadow-sm">
+            <span class="text-white text-sm font-medium">测</span>
+          </div>
+          <div class="flex flex-col">
+            <span class="text-sm font-medium text-gray-800 leading-tight">测试账号</span>
+            <span class="text-xs text-gray-400 leading-tight">机构管理员 · 启航留学</span>
+          </div>
+          <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+          </svg>
+        <div id="userMenu" class="absolute top-12 right-0 w-64 bg-white rounded-xl shadow-lg border border-gray-100 py-3 hidden z-50"><div class="px-5 py-3 border-b border-gray-100"><div class="flex items-center gap-3"><div class="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-500 rounded-full flex items-center justify-center"><span class="text-white text-base font-medium">测</span></div><div><p class="text-sm font-semibold text-gray-900">测试账号</p><p class="text-xs text-blue-600 mt-0.5">机构管理员 · 启航留学</p><p class="text-xs text-gray-500">test@pbs.com</p></div></div></div><div class="py-1"><a href="管理员工作台 - 留学申请管理系统.html" class="flex items-center gap-3 px-5 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition-colors"><svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>个人设置</a><a href="管理员工作台 - 留学申请管理系统.html" class="flex items-center gap-3 px-5 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition-colors"><svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path></svg>退出登录</a></div><div class="px-5 py-2 border-t border-gray-100"><p class="text-xs text-gray-400">PBS留学CRM v2.5</p></div></div></div>
+      </div>
+    </div>
+  </header>
+
+  <div class="flex">
+    <!-- ========== 左侧导航栏 ========== -->
+    <aside id="pbs-sidebar" class="w-56 bg-white border-r border-gray-200 min-h-[calc(100vh-64px)] flex flex-col"><nav class="p-4 space-y-1 flex-1">
+        <a href="管理员工作台 - 留学申请管理系统.html" class="flex items-center gap-3 px-4 py-3 rounded-lg font-medium transition-colors bg-blue-50 text-blue-700"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l9-9 9 9M5 10v10a1 1 0 001 1h3a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1h3a1 1 0 001-1V10"></path></svg><span>工作台首页</span></a>
+        <div><div class="flex items-center gap-3 px-4 py-3 rounded-lg font-medium text-gray-700"><svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V8a2 2 0 00-2-2h-5m-4 0V5a2 2 0 114 0v1m-4 0a2 2 0 104 0m-5 8a2 2 0 100-4 2 2 0 000 4zm0 0c1.306 0 2.417.835 2.83 2M9 14a3.001 3.001 0 00-2.83 2"></path></svg><span>学生档案</span></div><div class="ml-8 mt-1 space-y-1"><a href="学生档案列表页 - 留学申请管理系统.html" class="flex items-center gap-2 px-4 py-2 rounded-lg text-sm transition-colors text-gray-600 hover:bg-gray-50 hover:text-gray-800"><span class="w-1.5 h-1.5 rounded-full bg-gray-300"></span>学生档案列表</a></div></div>
+        <div><div class="flex items-center gap-3 px-4 py-3 rounded-lg font-medium text-gray-700"><svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"></path></svg><span>PMO监控台</span></div><div class="ml-8 mt-1 space-y-1"><a href="项目池列表页 - 留学申请管理系统.html" class="flex items-center gap-2 px-4 py-2 rounded-lg text-sm transition-colors text-gray-600 hover:bg-gray-50 hover:text-gray-800"><span class="w-1.5 h-1.5 rounded-full bg-gray-300"></span>项目池列表</a></div></div>
+        <div><div class="flex items-center gap-3 px-4 py-3 rounded-lg font-medium text-gray-700"><svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg><span>项目管理</span></div><div class="ml-8 mt-1 space-y-1"><a href="我的项目列表页 - 留学申请管理系统.html" class="flex items-center gap-2 px-4 py-2 rounded-lg text-sm transition-colors text-gray-600 hover:bg-gray-50 hover:text-gray-800"><span class="w-1.5 h-1.5 rounded-full bg-gray-300"></span>我的项目列表</a></div></div>
+        <div><div class="flex items-center gap-3 px-4 py-3 rounded-lg font-medium text-gray-700"><svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg><span>文书交付</span></div><div class="ml-8 mt-1 space-y-1"><a href="任务列表页 - 文书交付系统.html" class="flex items-center gap-2 px-4 py-2 rounded-lg text-sm transition-colors text-gray-600 hover:bg-gray-50 hover:text-gray-800"><span class="w-1.5 h-1.5 rounded-full bg-gray-300"></span>任务列表</a><a href="模板库列表 - 文书交付系统.html" class="flex items-center gap-2 px-4 py-2 rounded-lg text-sm transition-colors text-gray-600 hover:bg-gray-50 hover:text-gray-800"><span class="w-1.5 h-1.5 rounded-full bg-gray-300"></span>模板库</a><a href="案例库 - 文书交付系统.html" class="flex items-center gap-2 px-4 py-2 rounded-lg text-sm transition-colors text-gray-600 hover:bg-gray-50 hover:text-gray-800"><span class="w-1.5 h-1.5 rounded-full bg-gray-300"></span>案例库</a></div></div>
+        <div><div class="flex items-center gap-3 px-4 py-3 rounded-lg font-medium text-gray-700"><svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg><span>网申管理</span></div><div class="ml-8 mt-1 space-y-1"><a href="网申任务列表页 - 留学申请管理系统.html" class="flex items-center gap-2 px-4 py-2 rounded-lg text-sm transition-colors text-gray-600 hover:bg-gray-50 hover:text-gray-800"><span class="w-1.5 h-1.5 rounded-full bg-gray-300"></span>网申任务列表</a></div></div>
+        <div><div class="flex items-center gap-3 px-4 py-3 rounded-lg font-medium text-gray-700"><svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg><span>监控管理</span></div><div class="ml-8 mt-1 space-y-1"><a href="监控任务列表 - PBS留学CRM.html" class="flex items-center gap-2 px-4 py-2 rounded-lg text-sm transition-colors text-gray-600 hover:bg-gray-50 hover:text-gray-800"><span class="w-1.5 h-1.5 rounded-full bg-gray-300"></span>监控任务列表</a></div></div>
+        <div><div class="flex items-center gap-3 px-4 py-3 rounded-lg font-medium text-gray-700"><svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4"></path></svg><span>结项归档</span></div><div class="ml-8 mt-1 space-y-1"><a href="结项归档列表 - PBS留学CRM系统.html" class="flex items-center gap-2 px-4 py-2 rounded-lg text-sm transition-colors text-gray-600 hover:bg-gray-50 hover:text-gray-800"><span class="w-1.5 h-1.5 rounded-full bg-gray-300"></span>结项归档列表</a></div></div>
+        <div><div class="flex items-center gap-3 px-4 py-3 rounded-lg font-medium text-gray-700"><svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"></path></svg><span>文书审核</span></div><div class="ml-8 mt-1 space-y-1"><a href="文书审核列表页 - 留学申请管理系统.html" class="flex items-center gap-2 px-4 py-2 rounded-lg text-sm transition-colors text-gray-600 hover:bg-gray-50 hover:text-gray-800"><span class="w-1.5 h-1.5 rounded-full bg-gray-300"></span>文书审核列表</a></div></div>
+        <div><div class="flex items-center gap-3 px-4 py-3 rounded-lg font-medium text-gray-700"><svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14l9-5-9-5-9 5 9 5zm0 0l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z"></path></svg><span>选校工作台</span></div><div class="ml-8 mt-1 space-y-1"><a href="选校订单池页 - 留学申请管理系统.html" class="flex items-center gap-2 px-4 py-2 rounded-lg text-sm transition-colors text-gray-600 hover:bg-gray-50 hover:text-gray-800"><span class="w-1.5 h-1.5 rounded-full bg-gray-300"></span>选校订单池</a><a href="选校任务列表页 - 留学申请管理系统.html" class="flex items-center gap-2 px-4 py-2 rounded-lg text-sm transition-colors text-gray-600 hover:bg-gray-50 hover:text-gray-800"><span class="w-1.5 h-1.5 rounded-full bg-gray-300"></span>选校任务列表</a><a href="选校工作台页 - 留学申请管理系统.html" class="flex items-center gap-2 px-4 py-2 rounded-lg text-sm transition-colors text-gray-600 hover:bg-gray-50 hover:text-gray-800"><span class="w-1.5 h-1.5 rounded-full bg-gray-300"></span>选校工作台</a></div></div>
+        <div><div class="flex items-center gap-3 px-4 py-3 rounded-lg font-medium text-gray-700"><svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path></svg><span>用户管理</span></div><div class="ml-8 mt-1 space-y-1"><a href="用户管理 - 留学申请管理系统.html" class="flex items-center gap-2 px-4 py-2 rounded-lg text-sm transition-colors text-gray-600 hover:bg-gray-50 hover:text-gray-800"><span class="w-1.5 h-1.5 rounded-full bg-gray-300"></span>用户管理</a><a href="角色权限管理 - 留学申请管理系统.html" class="flex items-center gap-2 px-4 py-2 rounded-lg text-sm transition-colors text-gray-600 hover:bg-gray-50 hover:text-gray-800"><span class="w-1.5 h-1.5 rounded-full bg-gray-300"></span>角色权限管理</a><a href="操作日志审计 - 留学申请管理系统.html" class="flex items-center gap-2 px-4 py-2 rounded-lg text-sm transition-colors text-gray-600 hover:bg-gray-50 hover:text-gray-800"><span class="w-1.5 h-1.5 rounded-full bg-gray-300"></span>操作日志审计</a></div></div>
+        <a href="人员管理 - PBS留学CRM系统.html" class="flex items-center gap-3 px-4 py-3 rounded-lg font-medium transition-colors text-gray-600 hover:text-gray-800 hover:bg-gray-50"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path></svg><span>人员管理</span></a>
+      </nav><div class="p-4 border-t border-gray-100"><div class="flex items-center gap-3 px-3 py-3 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl"><div class="w-9 h-9 bg-gradient-to-br from-blue-500 to-purple-500 rounded-full flex items-center justify-center flex-shrink-0"><span class="text-white text-sm font-medium">测</span></div><div class="min-w-0"><p class="text-sm font-semibold text-gray-800 truncate">测试账号</p><p class="text-xs text-blue-600 truncate">机构管理员</p></div></div></div></aside>
+
+    <!-- ========== 主内容区 ========== -->
+    <main class="flex-1 p-6 overflow-auto">
+      <!-- 页面标题栏 -->
+      <div class="mb-5">
+        <h1 class="text-2xl font-semibold text-gray-800">角色工作台</h1>
+        <p class="text-sm text-gray-400 mt-1">启航留学 · 每个角色一个工作台：指标 × 卡片 × 今日待办 × DDL 日历 × 数据看板 · 数据均来自系统内真实任务 · 今天 2026-08-18</p>
+      </div>
+
+      <!-- 角色切换（原型预览用） -->
+      <div class="mb-1 flex items-center gap-1.5 bg-white rounded-xl p-1.5 shadow-sm border border-gray-100 w-fit flex-wrap" id="roleTabs">
+        <button type="button" data-role="wsadmin" class="role-tab px-4 py-2 text-sm font-medium rounded-lg bg-blue-600 text-white transition-colors" onclick="switchRole('wsadmin')">文书机构管理员</button>
+        <button type="button" data-role="pm" class="role-tab px-4 py-2 text-sm font-medium rounded-lg text-gray-600 hover:bg-gray-100 transition-colors" onclick="switchRole('pm')">项目经理</button>
+        <button type="button" data-role="writer" class="role-tab px-4 py-2 text-sm font-medium rounded-lg text-gray-600 hover:bg-gray-100 transition-colors" onclick="switchRole('writer')">文书人员</button>
+        <button type="button" data-role="sales" class="role-tab px-4 py-2 text-sm font-medium rounded-lg text-gray-600 hover:bg-gray-100 transition-colors" onclick="switchRole('sales')">销售人员</button>
+        <button type="button" data-role="apply" class="role-tab px-4 py-2 text-sm font-medium rounded-lg text-gray-600 hover:bg-gray-100 transition-colors" onclick="switchRole('apply')">网申人员</button>
+        <button type="button" data-role="audit" class="role-tab px-4 py-2 text-sm font-medium rounded-lg text-gray-600 hover:bg-gray-100 transition-colors" onclick="switchRole('audit')">文书审核</button>
+      </div>
+      <p class="text-xs text-gray-400 mb-6">原型预览：点击切换角色查看各自工作台。管理者（机构管理员/项目经理）可发起催办；执行者看自己的任务与优先级。右侧日历中红色日期为有 DDL/事件的日子，点击查看当日明细。</p>
+            <!-- ================================================================ -->
+      <!-- 六角色工作台面板：内容由脚本按角色数据渲染（指标 × 卡片 × 今日待办 × DDL 日历 × 数据看板） -->
+      <!-- ================================================================ -->
+      <div id="panel-wsadmin" class="role-panel" data-role="wsadmin"></div>
+      <div id="panel-pm" class="role-panel hidden" data-role="pm"></div>
+      <div id="panel-writer" class="role-panel hidden" data-role="writer"></div>
+      <div id="panel-sales" class="role-panel hidden" data-role="sales"></div>
+      <div id="panel-apply" class="role-panel hidden" data-role="apply"></div>
+      <div id="panel-audit" class="role-panel hidden" data-role="audit"></div>
+
+    </main>
+  </div>
+
+  <!-- ========== 系统消息弹窗 ========== -->
+  <div id="notificationModal" class="fixed inset-0 z-50 hidden">
+    <div class="absolute inset-0 bg-black bg-opacity-30" onclick="closeNotificationModal()"></div>
+    <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[440px] bg-white rounded-2xl shadow-2xl p-6">
+      <div class="flex flex-col items-center mb-4">
+        <div class="w-14 h-14 bg-blue-100 rounded-full flex items-center justify-center mb-3">
+          <svg class="w-7 h-7 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path>
+          </svg>
+        </div>
+        <h3 class="text-lg font-semibold text-gray-800">系统消息</h3>
+      </div>
+      <div class="bg-blue-50 rounded-xl p-4 mb-5">
+        <p class="text-sm text-gray-700 font-medium mb-3">你有 8 条未读消息</p>
+        <div class="space-y-3">
+          <!-- 催办消息：消息中包含催办人与催办说明 -->
+          <div class="border border-red-100 bg-red-50/70 rounded-lg p-3">
+            <div class="flex items-center gap-2 mb-1.5">
+              <span class="text-[10px] px-1.5 py-0.5 rounded bg-red-100 text-red-600 font-semibold">催办</span>
+              <p class="text-xs text-gray-500">项目经理 · 王老师 · 20 分钟前</p>
+            </div>
+            <p class="text-sm text-gray-900 font-medium">催办任务：「赵阳 · 康奈尔 MBA」结项审批</p>
+            <p class="text-xs text-gray-600 mt-1 bg-white rounded px-2 py-1.5 border border-red-100">催办说明：学生已确认录取结果，结项材料已备齐，请今天内完成审批。</p>
+            <button type="button" class="mt-2 px-3 py-1 text-xs font-medium text-white bg-red-500 rounded-lg hover:bg-red-600" onclick="closeNotificationModal();location.href='结项归档列表 - PBS留学CRM系统.html'">立即处理</button>
+          </div>
+          <div class="border border-red-100 bg-red-50/70 rounded-lg p-3">
+            <div class="flex items-center gap-2 mb-1.5">
+              <span class="text-[10px] px-1.5 py-0.5 rounded bg-red-100 text-red-600 font-semibold">催办</span>
+              <p class="text-xs text-gray-500">文书机构管理员 · 周老师 · 1 小时前</p>
+            </div>
+            <p class="text-sm text-gray-900 font-medium">催办任务：「王芳 · 哥伦比亚 DS」服务合同审批（¥45,000）</p>
+            <p class="text-xs text-gray-600 mt-1 bg-white rounded px-2 py-1.5 border border-red-100">催办说明：合同已等待审批 2 天，影响后续文书排期，请尽快审批。</p>
+            <button type="button" class="mt-2 px-3 py-1 text-xs font-medium text-white bg-red-500 rounded-lg hover:bg-red-600" onclick="closeNotificationModal()">立即处理</button>
+          </div>
+          <div class="flex items-start gap-3 p-2 bg-white rounded-lg">
+            <div class="w-2 h-2 bg-red-500 rounded-full mt-1.5 flex-shrink-0"></div>
+            <div>
+              <p class="text-sm text-gray-900">交付审核超时：张明-CMU CS 文书审核已超期1天</p>
+              <p class="text-xs text-gray-400 mt-0.5">10 分钟前</p>
+            </div>
+          </div>
+          <div class="flex items-start gap-3 p-2 bg-white rounded-lg">
+            <div class="w-2 h-2 bg-red-500 rounded-full mt-1.5 flex-shrink-0"></div>
+            <div>
+              <p class="text-sm text-gray-900">项目异常：赵阳-康奈尔MBA 进度严重延迟</p>
+              <p class="text-xs text-gray-400 mt-0.5">30 分钟前</p>
+            </div>
+          </div>
+          <div class="flex items-start gap-3 p-2 bg-white rounded-lg">
+            <div class="w-2 h-2 bg-red-500 rounded-full mt-1.5 flex-shrink-0"></div>
+            <div>
+              <p class="text-sm text-gray-900">合同待审批：王芳-哥伦比亚DS 服务合同（¥45,000）</p>
+              <p class="text-xs text-gray-400 mt-0.5">1 小时前</p>
+            </div>
+          </div>
+          <div class="flex items-start gap-3 p-2 bg-white rounded-lg">
+            <div class="w-2 h-2 bg-yellow-500 rounded-full mt-1.5 flex-shrink-0"></div>
+            <div>
+              <p class="text-sm text-gray-900">月度报告催办：英国部、澳洲部、欧洲部尚未提交7月月报</p>
+              <p class="text-xs text-gray-400 mt-0.5">2 小时前</p>
+            </div>
+          </div>
+          <div class="flex items-start gap-3 p-2 bg-white rounded-lg">
+            <div class="w-2 h-2 bg-yellow-500 rounded-full mt-1.5 flex-shrink-0"></div>
+            <div>
+              <p class="text-sm text-gray-900">人员培训提醒：2026年秋季申请政策解读培训将于7月20日举行</p>
+              <p class="text-xs text-gray-400 mt-0.5">3 小时前</p>
+            </div>
+          </div>
+          <div class="flex items-start gap-3 p-2 bg-white rounded-lg">
+            <div class="w-2 h-2 bg-gray-300 rounded-full mt-1.5 flex-shrink-0"></div>
+            <div>
+              <p class="text-sm text-gray-600">新人入职提醒：王小华将于7月22日入职美国部</p>
+              <p class="text-xs text-gray-400 mt-0.5">5 小时前</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="flex gap-3">
+        <button class="flex-1 h-10 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium" onclick="closeNotificationModal()">
+          我知道了
+        </button>
+        <button class="flex-1 h-10 bg-white border border-gray-300 text-gray-600 rounded-lg hover:bg-gray-50 transition-colors" onclick="closeNotificationModal()">
+          标记已读
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========== 催办弹窗（项目经理 / 机构管理员可发起） ========== -->
+  <div id="urgeModal" class="fixed inset-0 z-[70] hidden flex items-center justify-center p-6" style="background:rgba(17,24,39,.45)">
+    <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md">
+      <div class="flex items-center justify-between px-6 py-4 border-b border-gray-100">
+        <h3 class="text-base font-semibold text-gray-900">发起催办</h3>
+        <button type="button" class="w-8 h-8 rounded-lg bg-gray-100 text-gray-500 text-xl leading-none" onclick="closeUrgeModal()" aria-label="关闭">×</button>
+      </div>
+      <div class="p-6 space-y-4">
+        <div class="bg-purple-50 rounded-xl p-4">
+          <p class="text-xs text-purple-500 mb-1">催办任务</p>
+          <p id="urgeTaskName" class="text-sm font-semibold text-gray-900">—</p>
+          <p class="text-xs text-gray-500 mt-1">催办对象：<span id="urgeTarget" class="font-medium text-gray-700">—</span></p>
+        </div>
+        <div>
+          <label class="block text-sm text-gray-600 mb-2">催办说明 <span class="text-xs text-gray-400">（将随催办消息一同发送给对方）</span></label>
+          <textarea id="urgeNote" rows="3" class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-purple-500 focus:border-purple-500 resize-none">请优先处理该任务，完成后请及时反馈进度。</textarea>
+        </div>
+        <p class="text-xs text-gray-400 flex items-start gap-1.5"><span>💡</span>发送后，对方将在「消息提醒」中收到本条催办，消息中包含任务信息与催办说明；同一任务 1 小时内不可重复催办。</p>
+      </div>
+      <div class="flex gap-3 px-6 py-4 border-t border-gray-100">
+        <button type="button" class="flex-1 h-10 bg-white border border-gray-300 text-gray-600 rounded-lg hover:bg-gray-50 text-sm" onclick="closeUrgeModal()">取消</button>
+        <button type="button" class="flex-1 h-10 bg-purple-600 text-white rounded-lg hover:bg-purple-700 text-sm font-medium" onclick="sendUrge()">发送催办</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // 页面加载完成后初始化
+    document.addEventListener('DOMContentLoaded', function() {
+      // 消息通知按钮
+      var notifBtn = document.querySelector('[data-dom-id="btn-notification"]');
+      if (notifBtn) {
+        notifBtn.addEventListener('click', function() {
+          document.getElementById('notificationModal').classList.remove('hidden');
+        });
+      }
+    });
+
+    // 关闭消息弹窗
+    function closeNotificationModal() {
+      document.getElementById('notificationModal').classList.add('hidden');
+    }
+
+    /* ---------- 角色工作台切换 ---------- */
+    function switchRole(role) {
+      document.querySelectorAll('.role-panel').forEach(function(panel) { panel.classList.add('hidden'); });
+      var target = document.getElementById('panel-' + role);
+      if (target) target.classList.remove('hidden');
+      document.querySelectorAll('#roleTabs .role-tab').forEach(function(tab) {
+        var active = tab.getAttribute('data-role') === role;
+        tab.classList.toggle('bg-blue-600', active);
+        tab.classList.toggle('text-white', active);
+        tab.classList.toggle('text-gray-600', !active);
+      });
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    /* ---------- 销售人员：申请方向层次切换 ---------- */
+    function switchSalesTab(tab) {
+      ['master', 'bachelor', 'phd'].forEach(function(key) {
+        var btn = document.getElementById('salesTab' + key.charAt(0).toUpperCase() + key.slice(1));
+        if (!btn) return;
+        var active = key === tab;
+        btn.classList.toggle('bg-white', active);
+        btn.classList.toggle('text-blue-600', active);
+        btn.classList.toggle('shadow-sm', active);
+        btn.classList.toggle('text-gray-500', !active);
+      });
+    }
+
+    /* ---------- 通用轻提示 ---------- */
+    function workbenchToast(message) {
+      var old = document.getElementById('wbToast');
+      if (old) old.remove();
+      var toast = document.createElement('div');
+      toast.id = 'wbToast';
+      toast.style.cssText = 'position:fixed;top:24px;left:50%;transform:translateX(-50%);z-index:120;padding:10px 16px;border-radius:10px;background:#242136;color:#fff;font-size:14px;box-shadow:0 10px 30px rgba(0,0,0,.18)';
+      toast.textContent = message;
+      document.body.appendChild(toast);
+      setTimeout(function(){ toast.remove(); }, 2200);
+    }
+
+    /* ---------- 催办逻辑 ---------- */
+    var urgeContext = { task: '', target: '', role: '' };
+    function openUrgeModal(task, target, role) {
+      urgeContext = { task: task, target: target, role: role };
+      document.getElementById('urgeTaskName').textContent = task;
+      document.getElementById('urgeTarget').textContent = target + '（' + role + '）';
+      document.getElementById('urgeModal').classList.remove('hidden');
+    }
+    function closeUrgeModal() {
+      document.getElementById('urgeModal').classList.add('hidden');
+    }
+    function sendUrge() {
+      closeUrgeModal();
+      workbenchToast('催办消息已发送给 ' + urgeContext.target + '，对方将在消息提醒中看到催办内容');
+    }
+
+    // PM能力覆盖 切换（申请层次 / 申请国家）
+    function switchPmTab(tab) {
+      var level = document.getElementById('pmPanelLevel');
+      var country = document.getElementById('pmPanelCountry');
+      var tabL = document.getElementById('pmTabLevel');
+      var tabC = document.getElementById('pmTabCountry');
+      var activeCls = ['bg-white', 'text-blue-600', 'shadow-sm'];
+      var idleCls = ['text-gray-500'];
+      if (tab === 'level') {
+        level.classList.remove('hidden');
+        country.classList.add('hidden');
+        tabL.classList.add.apply(tabL.classList, activeCls);
+        tabL.classList.remove.apply(tabL.classList, idleCls);
+        tabC.classList.remove.apply(tabC.classList, activeCls);
+        tabC.classList.add.apply(tabC.classList, idleCls);
+      } else {
+        country.classList.remove('hidden');
+        level.classList.add('hidden');
+        tabC.classList.add.apply(tabC.classList, activeCls);
+        tabC.classList.remove.apply(tabC.classList, idleCls);
+        tabL.classList.remove.apply(tabL.classList, activeCls);
+        tabL.classList.add.apply(tabL.classList, idleCls);
+      }
+    }
+  </script>
+  <script>
+    /* ================= 角色工作台（角色 × 指标 × 卡片 × 今日待办 × DDL 日历 × 数据看板） =================
+       数据全部取自系统内真实页面：任务列表页（文书交付）、网申任务列表页、文书审核列表页、
+       选校订单池页、选校任务列表页、我的项目列表页、项目经理工作台、项目详情页支付信息。未编造系统外数据。 */
+    var WB_TODAY = '2026-08-18';
+    var WB_TODAY_LABEL = '今天 2026-08-18 · 周二';
+    var WB_RED = '#dc2626', WB_ORANGE = '#ea580c', WB_AMBER = '#d97706', WB_BLUE = '#2563eb',
+        WB_PURPLE = '#7c3aed', WB_GREEN = '#059669', WB_CYAN = '#0891b2', WB_GRAY = '#6b7280';
+
+    /* 状态徽标配色（与系统各列表页状态徽标一致） */
+    var WB_BADGE = {
+      '撰写中':['#eff6ff','#1d4ed8'], '需修改':['#fee2e2','#b91c1c'], '审核中':['#ffedd5','#c2410c'],
+      '已完成':['#dcfce7','#15803d'], '进行中':['#eff6ff','#1d4ed8'], '待领取':['#f3f4f6','#4b5563'],
+      '已提交':['#dcfce7','#15803d'], '待接收':['#f5f3ff','#6d28d9'], '未接收':['#fef3c7','#b45309'],
+      '咨询中':['#eff6ff','#1d4ed8'], '选校中':['#dcfce7','#15803d'], '待确认':['#fef3c7','#b45309'],
+      '已结单':['#f3f4f6','#4b5563'], '已退回':['#fee2e2','#b91c1c'], '暂停':['#fef3c7','#b45309'],
+      '已结项':['#f3f4f6','#4b5563'], '已付':['#dcfce7','#15803d'], '待付':['#fef3c7','#b45309'],
+      '文书临期':['#fee2e2','#b91c1c'], '材料缺失':['#fef3c7','#b45309'], '正常':['#dcfce7','#15803d'],
+      '逾期':['#fee2e2','#b91c1c'], '新推送':['#f5f3ff','#6d28d9']
+    };
+
+    /* ---------- 数据构造小工具 ---------- */
+    function wbT(bar, tag, tagC, title, meta, time, timeC, act) {
+      return { bar: bar, tag: tag, tagColor: tagC, title: title, meta: meta, time: time, timeColor: timeC, act: act };
+    }
+    function wbB(nm, bdg, mt, prog, progC) { return { nm: nm, bdg: bdg, mt: mt, prog: prog, progC: progC }; }
+    function wbEv(tg, c, tx) { return { tg: tg, c: c, tx: tx }; }
+
+    /* ================= 六角色工作台数据 ================= */
+    var WB_ROLES = {
+
+      /* ---------- 1. 文书机构管理员 ---------- */
+      wsadmin: {
+        name: '文书机构管理员', scope: '管理视角 · 全模块', scopeBg: '#eff6ff', scopeC: '#1d4ed8',
+        tagline: '项目分配、团队卡点与全模块进度一屏掌握',
+        stats: [
+          { l: '今日待办', v: '5', n: '2 项需我处理 · 3 项团队卡点', t: '' },
+          { l: '待分配项目', v: '2', n: '项目池新增 · 等待分配项目经理', t: 'tone-orange' },
+          { l: '审核积压', v: '4', n: '文书审核中 · 最早 08-15 提交', t: 'tone-red' }
+        ],
+        cards: [
+          { m: 'PMO 项目池', c: '2 个新增项目待分配', color: WB_CYAN, href: '项目池列表页 - 留学申请管理系统.html' },
+          { m: '文书交付', c: '在办任务 5 项 · 1 项需修改', color: WB_BLUE, href: '任务列表页 - 文书交付系统.html' },
+          { m: '网申管理', c: '任务 6 项 · 1 项待领取', color: WB_PURPLE, href: '网申任务列表页 - 留学申请管理系统.html' },
+          { m: '文书审核', c: '审核中 4 份 · 已完成 2 份', color: WB_ORANGE, href: '文书审核列表页 - 留学申请管理系统.html' },
+          { m: '选校工作台', c: '订单 4 笔 · 1 笔待确认', color: WB_GREEN, href: '选校订单池页 - 留学申请管理系统.html' }
+        ],
+        todoCount: 5,
+        todoGroups: [
+          { title: '需要我处理', color: WB_RED, items: [
+            wbT(WB_RED, '待分配', WB_RED, '分配项目池 2 个新增项目', 'PMO监控台 · 项目池列表 · 新下单项目等待分配项目经理', '等待分配 · 越早就位越早启动', WB_GRAY, { l: '去分配', href: '项目池列表页 - 留学申请管理系统.html' }),
+            wbT(WB_AMBER, '订单跟进', WB_AMBER, '吴子墨博士申请订单「待确认」', '选校订单池 · 加拿大 · 数据科学 · 2026-07-18 下单 · 销售：孙鹏', '待客户确认选校方案', WB_AMBER, { l: '去查看', href: '选校订单池页 - 留学申请管理系统.html', cls: 'plain' })
+          ]},
+          { title: '团队卡点 · 可催办', color: WB_ORANGE, items: [
+            wbT(WB_RED, '逾期', WB_RED, '「审核 CMU 个人陈述终稿」尚未接收', '接收人：孙老师（审核人员）· 8月13日 04:30 分配', '已等待 1 天 6 小时', WB_RED, { l: '催办', urge: ['审核 CMU 个人陈述终稿', '孙老师', '审核人员'], cls: 'ghost' }),
+            wbT(WB_ORANGE, '卡点', WB_ORANGE, '「接收 Stanford 网申准备任务」尚未接收', '接收人：周老师（网申人员）· 8月13日 16:30 分配', '已等待 18 小时', WB_ORANGE, { l: '催办', urge: ['接收 Stanford 网申准备任务', '周老师', '网申人员'], cls: 'ghost' }),
+            wbT(WB_AMBER, '卡点', WB_AMBER, '「接收推荐信初稿撰写任务」尚未接收', '接收人：刘老师（文书交付人员）· 今天 04:30 分配', '已等待 6 小时', WB_AMBER, { l: '催办', urge: ['接收推荐信初稿撰写任务', '刘老师', '文书交付人员'], cls: 'ghost' })
+          ]}
+        ],
+        events: {
+          '2026-08-15': [wbEv('审核提交', WB_ORANGE, '赵婷 · 哥伦比亚大学 CV 提交审核（审核人员：王审核）')],
+          '2026-08-16': [wbEv('审核提交', WB_ORANGE, '王明 · 斯坦福大学 CV 提交审核（审核人员：王审核）')],
+          '2026-08-17': [wbEv('审核提交', WB_ORANGE, '李雪 · 卡内基梅隆大学 PS 提交审核（审核人员：王审核）')],
+          '2026-08-18': [wbEv('审核提交', WB_ORANGE, '刘芳 · 哈佛大学 PS 今天 08:40 提交审核（审核人员：李审核）'), wbEv('分配', WB_RED, '「推荐信初稿撰写任务」分配 6 小时未接收（刘老师）')],
+          '2026-09-15': [wbEv('文书DDL', WB_BLUE, '陈磊 · 剑桥大学 金融学 RP（已完成）')],
+          '2026-10-17': [wbEv('网申DDL', WB_PURPLE, '赵婷 · 哥伦比亚大学 经济学 Round 1 截止')],
+          '2026-10-30': [wbEv('文书DDL', WB_BLUE, '张华 · 麻省理工学院 数据科学 RL'), wbEv('网申DDL', WB_PURPLE, '张华 · 麻省理工学院 Round 1 截止')],
+          '2026-11-01': [wbEv('文书DDL', WB_BLUE, '李雪 · 卡内基梅隆大学 人工智能 PS'), wbEv('网申DDL', WB_PURPLE, '李雪 · 卡内基梅隆大学 Round 1 截止')],
+          '2026-11-20': [wbEv('文书DDL', WB_BLUE, '刘芳 · 哈佛大学 公共卫生 PS'), wbEv('网申DDL', WB_PURPLE, '刘芳 · 哈佛大学 Round 1 截止')],
+          '2026-12-01': [wbEv('网申DDL', WB_PURPLE, '孙梓涵 · 哥伦比亚大学 金融工程 Round 1 截止')],
+          '2026-12-15': [wbEv('文书DDL', WB_BLUE, '王明 · 斯坦福大学 计算机科学 CV'), wbEv('网申DDL', WB_PURPLE, '王明 · 斯坦福大学 Round 2 截止')]
+        },
+        boards: [
+          { title: '文书交付 · 任务列表', color: WB_BLUE, items: [
+            wbB('李雪 · 卡内基梅隆大学 人工智能 PS', '撰写中', 'DDL 2026-11-01'),
+            wbB('王明 · 斯坦福大学 计算机科学 CV', '撰写中', 'DDL 2026-12-15'),
+            wbB('张华 · 麻省理工学院 数据科学 RL', '审核中', 'DDL 2026-10-30'),
+            wbB('刘芳 · 哈佛大学 公共卫生 PS', '需修改', 'DDL 2026-11-20'),
+            wbB('陈磊 · 剑桥大学 金融学 RP', '已完成', 'DDL 2026-09-15')
+          ]},
+          { title: '网申管理 · 网申任务列表', color: WB_PURPLE, items: [
+            wbB('李雪 · 卡内基梅隆大学 人工智能 Round 1', '进行中', '材料 3/5 · DDL 2026-11-01 · 孙网申'),
+            wbB('张华 · 麻省理工学院 数据科学 Round 1', '进行中', '材料 4/6 · DDL 2026-10-30 · 钱网申'),
+            wbB('刘芳 · 哈佛大学 公共卫生 Round 1', '审核中', '材料 5/5 · DDL 2026-11-20 · 钱网申'),
+            wbB('赵婷 · 哥伦比亚大学 经济学 Round 1', '待领取', '材料 3/5 · DDL 2026-10-17 · 孙网申'),
+            wbB('王明 · 斯坦福大学 计算机科学 Round 2', '已提交', '材料 6/6 · DDL 2026-12-15 · 孙网申'),
+            wbB('孙梓涵 · 哥伦比亚大学 金融工程 Round 1', '新推送', 'DDL 2026-12-01 · 待接收')
+          ]},
+          { title: '文书审核 · 审核列表', color: WB_ORANGE, items: [
+            wbB('刘芳 · 哈佛大学 PS', '审核中', '今天 08:40 提交 · 李审核'),
+            wbB('李雪 · 卡内基梅隆大学 PS', '审核中', '08-17 10:30 提交 · 王审核'),
+            wbB('王明 · 斯坦福大学 CV', '审核中', '08-16 14:20 提交 · 王审核'),
+            wbB('赵婷 · 哥伦比亚大学 CV', '审核中', '08-15 11:05 提交 · 王审核'),
+            wbB('张华 · 麻省理工学院 RL', '已完成', '08-12 09:15 提交 · 李审核'),
+            wbB('陈磊 · 剑桥大学 RP', '已完成', '08-10 16:00 提交 · 王审核')
+          ]},
+          { title: '选校工作台 · 订单池', color: WB_GREEN, items: [
+            wbB('钱思睿 · 本科申请 / 美国 / 计算机科学', '咨询中', '2026-07-15 下单 · 销售：陈晨'),
+            wbB('孙浩然 · 硕士申请 / 英国 / 金融', '咨询中', '2026-07-16 下单 · 销售：刘洋'),
+            wbB('周雨薇 · 硕士申请 / 美国 / 电子工程', '选校中', '2026-07-17 下单 · 销售：赵敏'),
+            wbB('吴子墨 · 博士申请 / 加拿大 / 数据科学', '待确认', '2026-07-18 下单 · 销售：孙鹏')
+          ]}
+        ]
+      },
+
+      /* ---------- 2. 项目经理 ---------- */
+      pm: {
+        name: '项目经理', scope: '管理视角 · 我的项目', scopeBg: '#f5f3ff', scopeC: '#6d28d9',
+        tagline: '先处理临期与卡点，再推进项目进度',
+        stats: [
+          { l: '今日待办', v: '7', n: '3 项今天先处理 · 1 项近期跟进 · 3 项等待接收', t: '' },
+          { l: '等待他人', v: '3', n: '分配未接收 · 最久 1 天 6 小时', t: 'tone-red' },
+          { l: '我的项目', v: '5', n: '进行中 1 · 待接收 1 · 已退回 1', t: 'tone-blue' }
+        ],
+        cards: [
+          { m: '我的项目列表', c: '5 个项目 · 刘晓项目待接收', color: WB_CYAN, href: '我的项目列表页 - 留学申请管理系统.html' },
+          { m: '文书交付', c: '李雪 CMU PS 终稿等待确认', color: WB_BLUE, href: '任务列表页 - 文书交付系统.html' },
+          { m: '网申管理', c: 'Stanford 网申准备任务待接收', color: WB_PURPLE, href: '网申任务列表页 - 留学申请管理系统.html' },
+          { m: '文书审核', c: 'CMU 个人陈述终稿审核中', color: WB_ORANGE, href: '文书审核列表页 - 留学申请管理系统.html' }
+        ],
+        todoCount: 7,
+        todoGroups: [
+          { title: '今天先处理', color: WB_RED, items: [
+            wbT(WB_RED, '临期', WB_RED, '确认李雪的 CMU 文书终稿', '当前在刘老师 · 等待 PM 最终确认 · 李雪 · 硕士申请', '今天 18:00 前', WB_RED, { l: '立即处理', href: '我的项目详情页 - 留学申请管理系统.html' }),
+            wbT(WB_ORANGE, '材料', WB_ORANGE, '催收陈雨桐护照复印件', '学生材料缺失 · 已影响网申字段准备 · 陈雨桐 · 硕士申请', '今天', WB_ORANGE, { l: '催办', urge: ['催收陈雨桐护照复印件', '陈雨桐', '学生'], cls: 'ghost' }),
+            wbT(WB_PURPLE, '待接收', WB_PURPLE, '接收刘晓的本科申请项目', '机构已完成项目经理分配 · PRJ20260701005', '待接收', WB_GRAY, { l: '查看任务', href: '我的项目列表页 - 留学申请管理系统.html' })
+          ]},
+          { title: '近期跟进', color: WB_AMBER, items: [
+            wbT(WB_AMBER, null, null, '跟进斯坦福推荐信审核', '当前在孙老师 · 已停留 18 小时', '明天 12:00', WB_GRAY, { l: '催办', urge: ['跟进斯坦福推荐信审核', '孙老师', '审核人员'], cls: 'ghost' })
+          ]},
+          { title: '分配任务待接收 · 可催办', color: WB_ORANGE, items: [
+            wbT(WB_RED, '逾期', WB_RED, '审核 CMU 个人陈述终稿', '文书审核 · 李雪 · 卡内基梅隆大学 · 孙老师 · 8月13日 04:30 分配', '已等待 1 天 6 小时', WB_RED, { l: '催办', urge: ['审核 CMU 个人陈述终稿', '孙老师', '审核人员'], cls: 'ghost' }),
+            wbT(WB_ORANGE, null, null, '接收 Stanford 网申准备任务', '网申管理 · 李雪 · 斯坦福大学 · 周老师 · 8月13日 16:30 分配', '已等待 18 小时', WB_ORANGE, { l: '催办', urge: ['接收 Stanford 网申准备任务', '周老师', '网申人员'], cls: 'ghost' }),
+            wbT(WB_AMBER, null, null, '接收推荐信初稿撰写任务', '文书交付 · 陈雨桐 · 加州大学伯克利分校 · 刘老师 · 今天 04:30 分配', '已等待 6 小时', WB_AMBER, { l: '催办', urge: ['接收推荐信初稿撰写任务', '刘老师', '文书交付人员'], cls: 'ghost' })
+          ]}
+        ],
+        events: {
+          '2026-08-13': [wbEv('分配', WB_RED, '04:30 分配「审核 CMU 个人陈述终稿」给孙老师（已等待 1 天 6 小时）'), wbEv('分配', WB_ORANGE, '16:30 分配「Stanford 网申准备任务」给周老师（已等待 18 小时）')],
+          '2026-08-18': [wbEv('临期', WB_RED, '今天 18:00 前确认李雪的 CMU 文书终稿'), wbEv('材料', WB_ORANGE, '催收陈雨桐护照复印件'), wbEv('分配', WB_AMBER, '04:30 分配「推荐信初稿撰写任务」给刘老师（已等待 6 小时）')],
+          '2026-08-19': [wbEv('跟进', WB_CYAN, '12:00 跟进斯坦福推荐信审核（孙老师）')],
+          '2026-11-01': [wbEv('文书DDL', WB_BLUE, '李雪 · 卡内基梅隆大学 人工智能 PS'), wbEv('网申DDL', WB_PURPLE, '李雪 · 卡内基梅隆大学 Round 1 截止')]
+        },
+        boards: [
+          { title: '重点项目状态', color: WB_BLUE, items: [
+            wbB('李雪 · 硕士申请', '文书临期', '当前：CMU 文书交付 · 下一步：PM 确认', 62, WB_RED),
+            wbB('陈雨桐 · 硕士申请', '材料缺失', '当前：材料准备 · 卡在学生', 38, WB_AMBER),
+            wbB('王梓豪 · 博士申请', '正常', '当前：院校目标确认 · 进度正常', 48, WB_GREEN)
+          ]},
+          { title: '我的项目 · 项目列表', color: WB_CYAN, items: [
+            wbB('李雪 · 硕士申请（PRJ20260701002）', '进行中', '更新 2026-07-14 09:30'),
+            wbB('刘晓 · 本科申请（PRJ20260701005）', '待接收', '机构已分配 · 待接收'),
+            wbB('陈雨桐 · 硕士申请（PRJ20260701008）', '已退回', '更新 2026-07-15 14:00'),
+            wbB('王梓豪 · 博士申请（PRJ20260701012）', '暂停', '更新 2026-07-16 10:15'),
+            wbB('赵欣怡 · 本科申请（PRJ20260701018）', '已结项', '更新 2026-07-10 08:00')
+          ]},
+          { title: '分配任务待接收', color: WB_ORANGE, items: [
+            wbB('审核 CMU 个人陈述终稿 · 孙老师（审核人员）', '逾期', '8月13日 04:30 分配 · 已等待 1 天 6 小时'),
+            wbB('接收 Stanford 网申准备任务 · 周老师（网申人员）', '未接收', '8月13日 16:30 分配 · 已等待 18 小时'),
+            wbB('接收推荐信初稿撰写任务 · 刘老师（文书交付）', '未接收', '今天 04:30 分配 · 已等待 6 小时')
+          ]}
+        ]
+      },
+
+      /* ---------- 3. 文书人员 ---------- */
+      writer: {
+        name: '文书人员', scope: '执行视角 · 我的文书任务', scopeBg: '#eff6ff', scopeC: '#1d4ed8',
+        tagline: '先交被催的、先改打回的，再推进撰写中的',
+        stats: [
+          { l: '被催办', v: '1', n: '李雪 CMU PS 终稿 · 今天 18:00 前', t: 'tone-red' },
+          { l: '需修改', v: '1', n: '刘芳 哈佛 PS · DDL 11-20', t: 'tone-orange' },
+          { l: '撰写中', v: '2', n: '李雪 CMU PS · 王明斯坦福 CV', t: 'tone-blue' },
+          { l: '待接收', v: '1', n: '陈雨桐 伯克利推荐信初稿', t: 'tone-purple' }
+        ],
+        cards: [
+          { m: '任务列表', c: '我的任务 5 项 · 1 项被催办', color: WB_BLUE, href: '任务列表页 - 文书交付系统.html' },
+          { m: '模板库', c: '文书模板与范例', color: WB_CYAN, href: '模板库列表 - 文书交付系统.html' },
+          { m: '案例库', c: '优秀文书案例参考', color: WB_GREEN, href: '案例库 - 文书交付系统.html' },
+          { m: '文书编辑器', c: '继续撰写未完成文书', color: WB_PURPLE, href: '文书编辑器 - 文书交付系统.html' }
+        ],
+        todoCount: 5,
+        todoGroups: [
+          { title: '优先处理', color: WB_RED, items: [
+            wbT(WB_RED, '被催办', WB_RED, '李雪 · 卡内基梅隆大学 个人陈述（PS）终稿', '项目经理催办 · 终稿提交后等待 PM 确认 · 客户：李建国', '今天 18:00 前提交', WB_RED, { l: '立即处理', href: '任务列表页 - 文书交付系统.html' }),
+            wbT(WB_RED, '需修改', WB_RED, '刘芳 · 哈佛大学 公共卫生 PS 修改', '审核打回 · 按审核意见修改后重新提交 · 客户：刘志强', 'DDL 2026-11-20', WB_GRAY, { l: '去修改', href: '任务列表页 - 文书交付系统.html' }),
+            wbT(WB_PURPLE, '待接收', WB_PURPLE, '陈雨桐 · 加州大学伯克利分校 推荐信初稿撰写', '项目经理分配 · 今天 04:30 分配 · 已等待 6 小时', '接收后开始撰写', WB_GRAY, { l: '接收任务', toast: '已接收任务（陈雨桐 · 加州大学伯克利分校 推荐信初稿撰写），任务已加入任务列表' })
+          ]},
+          { title: '撰写中', color: WB_BLUE, items: [
+            wbT(WB_BLUE, null, null, '李雪 · 卡内基梅隆大学 人工智能 PS', '撰写中 · 客户：李建国', 'DDL 2026-11-01', WB_GRAY, { l: '继续撰写', href: '文书编辑器 - 文书交付系统.html', cls: 'plain' }),
+            wbT(WB_BLUE, null, null, '王明 · 斯坦福大学 计算机科学 CV', '撰写中 · 客户：王建华', 'DDL 2026-12-15', WB_GRAY, { l: '继续撰写', href: '文书编辑器 - 文书交付系统.html', cls: 'plain' })
+          ]}
+        ],
+        events: {
+          '2026-08-18': [wbEv('被催办', WB_RED, '李雪 · CMU 个人陈述（PS）终稿被项目经理催办 · 今天 18:00 前')],
+          '2026-09-15': [wbEv('文书DDL', WB_BLUE, '陈磊 · 剑桥大学 金融学 RP（已完成）')],
+          '2026-10-30': [wbEv('文书DDL', WB_BLUE, '张华 · 麻省理工学院 数据科学 RL（审核中）')],
+          '2026-11-01': [wbEv('文书DDL', WB_BLUE, '李雪 · 卡内基梅隆大学 人工智能 PS（撰写中）')],
+          '2026-11-20': [wbEv('文书DDL', WB_BLUE, '刘芳 · 哈佛大学 公共卫生 PS（需修改）')],
+          '2026-12-15': [wbEv('文书DDL', WB_BLUE, '王明 · 斯坦福大学 计算机科学 CV（撰写中）')]
+        },
+        boards: [
+          { title: '撰写中', color: WB_BLUE, items: [
+            wbB('李雪 · 卡内基梅隆大学 人工智能 PS', '撰写中', 'DDL 2026-11-01'),
+            wbB('王明 · 斯坦福大学 计算机科学 CV', '撰写中', 'DDL 2026-12-15')
+          ]},
+          { title: '需修改', color: WB_RED, items: [
+            wbB('刘芳 · 哈佛大学 公共卫生 PS', '需修改', '审核打回 · DDL 2026-11-20')
+          ]},
+          { title: '审核中', color: WB_ORANGE, items: [
+            wbB('张华 · 麻省理工学院 数据科学 RL', '审核中', 'DDL 2026-10-30')
+          ]},
+          { title: '已完成', color: WB_GREEN, items: [
+            wbB('陈磊 · 剑桥大学 金融学 RP', '已完成', 'DDL 2026-09-15')
+          ]}
+        ]
+      },
+
+      /* ---------- 4. 销售人员 ---------- */
+      sales: {
+        name: '销售人员', scope: '执行视角 · 订单与回款', scopeBg: '#fffbeb', scopeC: '#b45309',
+        tagline: '待确认先跟、尾款先催、咨询持续跟',
+        stats: [
+          { l: '待确认订单', v: '1', n: '吴子墨博士申请 · 07-18 下单', t: 'tone-red' },
+          { l: '咨询中订单', v: '2', n: '钱思睿 · 孙浩然', t: 'tone-blue' },
+          { l: '待回款节点', v: '1', n: '李雪项目尾款 ¥12,000', t: 'tone-orange' }
+        ],
+        cards: [
+          { m: '选校订单池', c: '订单 4 笔 · 1 笔待确认', color: WB_GREEN, href: '选校订单池页 - 留学申请管理系统.html' },
+          { m: '选校任务列表', c: '咨询任务 5 项 · 1 项已结单', color: WB_CYAN, href: '选校任务列表页 - 留学申请管理系统.html' },
+          { m: '支付节点', c: '李雪项目尾款待付 ¥12,000', color: WB_AMBER, href: '项目详情页 - 留学申请管理系统.html' }
+        ],
+        todoCount: 5,
+        todoGroups: [
+          { title: '今天先处理', color: WB_RED, items: [
+            wbT(WB_RED, '待确认', WB_RED, '跟进吴子墨博士申请订单', '选校订单池 · 加拿大 · 数据科学 · 2026-07-18 下单 · 负责人：孙鹏', '待客户确认选校方案', WB_RED, { l: '去跟进', href: '选校订单池页 - 留学申请管理系统.html' }),
+            wbT(WB_AMBER, '待回款', WB_AMBER, '催收李雪项目尾款 ¥12,000', '文书预付款 ¥24,000（07-05 已付）· 网申预付款 ¥20,000（08-10 已付）· 尾款待付', '尾款 · 待付', WB_AMBER, { l: '去催收', toast: '已提醒客户支付尾款 ¥12,000（李雪项目）' })
+          ]},
+          { title: '持续跟进', color: WB_GREEN, items: [
+            wbT(WB_GREEN, null, null, '钱思睿 · 本科申请 · 美国 计算机科学', '选校订单池 · 咨询中 · 负责人：陈晨', '下单 2026-07-15', WB_GRAY, { l: '去跟进', href: '选校订单池页 - 留学申请管理系统.html', cls: 'plain' }),
+            wbT(WB_GREEN, null, null, '孙浩然 · 硕士申请 · 英国 金融', '选校订单池 · 咨询中 · 负责人：刘洋', '下单 2026-07-16', WB_GRAY, { l: '去跟进', href: '选校订单池页 - 留学申请管理系统.html', cls: 'plain' }),
+            wbT(WB_BLUE, null, null, '孙可欣 · 本科申请 · 美国 计算机科学', '选校任务列表 · 咨询中 · 负责人：陈晨', '选校咨询 2026-07-20 09:00', WB_GRAY, { l: '查看方案', href: '选校任务列表页 - 留学申请管理系统.html', cls: 'plain' })
+          ]}
+        ],
+        events: {
+          '2026-07-15': [wbEv('订单', WB_GREEN, '钱思睿 · 本科/美国/计算机科学 下单（咨询中 · 陈晨）')],
+          '2026-07-16': [wbEv('订单', WB_GREEN, '孙浩然 · 硕士/英国/金融 下单（咨询中 · 刘洋）')],
+          '2026-07-17': [wbEv('订单', WB_GREEN, '周雨薇 · 硕士/美国/电子工程 下单（选校中 · 赵敏）')],
+          '2026-07-18': [wbEv('订单', WB_AMBER, '吴子墨 · 博士/加拿大/数据科学 下单（待确认 · 孙鹏）')],
+          '2026-07-20': [wbEv('咨询', WB_CYAN, '孙可欣 · 本科/美国/计算机科学 选校咨询 09:00（陈晨）')],
+          '2026-08-10': [wbEv('支付', WB_AMBER, '李雪项目网申预付款 ¥20,000 已付 · 尾款 ¥12,000 待付')]
+        },
+        boards: [
+          { title: '选校订单池', color: WB_GREEN, items: [
+            wbB('钱思睿 · 本科申请 / 美国 / 计算机科学', '咨询中', '2026-07-15 下单 · 负责人：陈晨'),
+            wbB('孙浩然 · 硕士申请 / 英国 / 金融', '咨询中', '2026-07-16 下单 · 负责人：刘洋'),
+            wbB('周雨薇 · 硕士申请 / 美国 / 电子工程', '选校中', '2026-07-17 下单 · 负责人：赵敏'),
+            wbB('吴子墨 · 博士申请 / 加拿大 / 数据科学', '待确认', '2026-07-18 下单 · 负责人：孙鹏')
+          ]},
+          { title: '选校任务列表', color: WB_CYAN, items: [
+            wbB('孙可欣 · 本科申请 / 美国 / 计算机科学', '咨询中', '2026-07-20 09:00 · 陈晨'),
+            wbB('周雨薇 · 硕士申请 / 美国 / 电子工程', '咨询中', '2026-07-17 10:00 · 李欣'),
+            wbB('吴子墨 · 博士申请 / 加拿大 / 数据科学', '咨询中', '2026-07-18 09:30 · 陈晨'),
+            wbB('郑晓萌 · 本科申请 / 英国 / 金融', '咨询中', '2026-07-19 14:20 · 周扬'),
+            wbB('冯天翊 · 硕士申请 / 美国 / 市场营销', '已结单', '2026-07-11 16:00 · 李欣')
+          ]},
+          { title: '支付节点 · 李雪 CMU 项目', color: WB_AMBER, items: [
+            wbB('文书预付款 ¥24,000', '已付', '2026-07-05 14:30 支付'),
+            wbB('网申预付款 ¥20,000', '已付', '2026-08-10 10:20 支付'),
+            wbB('尾款 ¥12,000', '待付', '待客户支付')
+          ]}
+        ]
+      },
+
+      /* ---------- 5. 网申人员 ---------- */
+      apply: {
+        name: '网申人员', scope: '执行视角 · 我的网申任务', scopeBg: '#f5f3ff', scopeC: '#6d28d9',
+        tagline: '先接收、再补材料，盯紧最近的网申 DDL',
+        stats: [
+          { l: '被催办', v: '1', n: 'Stanford 网申准备 · 已等待 18 小时', t: 'tone-red' },
+          { l: '待领取', v: '1', n: '赵婷 哥大经济学 · DDL 10-17 最近', t: 'tone-orange' },
+          { l: '进行中', v: '2', n: '张华 MIT · 李雪 CMU', t: 'tone-blue' },
+          { l: '待接收', v: '1', n: '孙梓涵 哥大金融工程（新推送）', t: 'tone-purple' }
+        ],
+        cards: [
+          { m: '网申任务列表', c: '任务 6 项 · 1 项被催办', color: WB_PURPLE, href: '网申任务列表页 - 留学申请管理系统.html' },
+          { m: '网申模板库', c: '模板 5 套 · 覆盖美国/英国/中国香港', color: WB_BLUE, href: '网申模板库 - 留学申请管理系统.html' }
+        ],
+        todoCount: 5,
+        todoGroups: [
+          { title: '优先处理', color: WB_RED, items: [
+            wbT(WB_RED, '被催办', WB_RED, '接收 Stanford 网申准备任务', '项目经理催办 · 8月13日 16:30 分配 · 李雪 · 斯坦福大学', '已等待 18 小时', WB_RED, { l: '立即接收', toast: '已接收 Stanford 网申准备任务，任务已加入网申任务列表' }),
+            wbT(WB_PURPLE, '新推送', WB_PURPLE, '孙梓涵 · 哥伦比亚大学 金融工程 Round 1', '系统推送新网申任务 · 客户：孙志远', 'DDL 2026-12-01', WB_GRAY, { l: '接收任务', toast: '已接收网申任务（孙梓涵 - 哥伦比亚大学/金融工程），任务已加入网申任务列表' }),
+            wbT(WB_ORANGE, '待领取', WB_ORANGE, '赵婷 · 哥伦比亚大学 经济学 Round 1', '材料 3/5 · 客户：赵文华', 'DDL 2026-10-17 · 最近网申 DDL', WB_ORANGE, { l: '领取任务', toast: '已领取网申任务（赵婷 - 哥伦比亚大学/经济学）' })
+          ]},
+          { title: '进行中', color: WB_BLUE, items: [
+            wbT(WB_BLUE, null, null, '张华 · 麻省理工学院 数据科学 Round 1', '材料 4/6 · 客户：张国庆', 'DDL 2026-10-30', WB_GRAY, { l: '进入详情', href: '网申任务详情页 - 留学申请管理系统.html', cls: 'plain' }),
+            wbT(WB_BLUE, null, null, '李雪 · 卡内基梅隆大学 人工智能 Round 1', '材料 3/5 · 客户：李建国', 'DDL 2026-11-01', WB_GRAY, { l: '进入详情', href: '网申任务详情页 - 留学申请管理系统.html', cls: 'plain' })
+          ]}
+        ],
+        events: {
+          '2026-08-18': [wbEv('被催办', WB_RED, 'Stanford 网申准备任务被项目经理催办 · 已等待 18 小时')],
+          '2026-10-17': [wbEv('网申DDL', WB_PURPLE, '赵婷 · 哥伦比亚大学 经济学 Round 1 截止（材料 3/5）')],
+          '2026-10-30': [wbEv('网申DDL', WB_PURPLE, '张华 · 麻省理工学院 数据科学 Round 1 截止（材料 4/6）')],
+          '2026-11-01': [wbEv('网申DDL', WB_PURPLE, '李雪 · 卡内基梅隆大学 人工智能 Round 1 截止（材料 3/5）')],
+          '2026-11-20': [wbEv('网申DDL', WB_PURPLE, '刘芳 · 哈佛大学 公共卫生 Round 1 截止（审核中）')],
+          '2026-12-01': [wbEv('网申DDL', WB_PURPLE, '孙梓涵 · 哥伦比亚大学 金融工程 Round 1 截止（待接收）')],
+          '2026-12-15': [wbEv('网申DDL', WB_PURPLE, '王明 · 斯坦福大学 计算机科学 Round 2 截止（已提交）')]
+        },
+        boards: [
+          { title: '待接收', color: WB_PURPLE, items: [
+            wbB('孙梓涵 · 哥伦比亚大学 金融工程 Round 1', '新推送', 'DDL 2026-12-01 · 系统推送')
+          ]},
+          { title: '待领取', color: WB_GRAY, items: [
+            wbB('赵婷 · 哥伦比亚大学 经济学 Round 1', '待领取', '材料 3/5 · DDL 2026-10-17')
+          ]},
+          { title: '进行中', color: WB_BLUE, items: [
+            wbB('张华 · 麻省理工学院 数据科学 Round 1', '进行中', '材料 4/6 · DDL 2026-10-30'),
+            wbB('李雪 · 卡内基梅隆大学 人工智能 Round 1', '进行中', '材料 3/5 · DDL 2026-11-01')
+          ]},
+          { title: '审核中', color: WB_ORANGE, items: [
+            wbB('刘芳 · 哈佛大学 公共卫生 Round 1', '审核中', '材料 5/5 · DDL 2026-11-20')
+          ]},
+          { title: '已提交', color: WB_GREEN, items: [
+            wbB('王明 · 斯坦福大学 计算机科学 Round 2', '已提交', '材料 6/6 · DDL 2026-12-15')
+          ]}
+        ]
+      },
+
+      /* ---------- 6. 文书审核 ---------- */
+      audit: {
+        name: '文书审核', scope: '执行视角 · 审核队列', scopeBg: '#fff7ed', scopeC: '#c2410c',
+        tagline: '按提交时间清零审核队列，被催办的最先审',
+        stats: [
+          { l: '审核中', v: '4', n: '最早 08-15 提交 · 赵婷 CV', t: 'tone-orange' },
+          { l: '今日新增', v: '1', n: '刘芳 哈佛 PS · 08:40 提交', t: 'tone-blue' },
+          { l: '被催办', v: '1', n: 'CMU 个人陈述终稿 · 等待 1 天 6 小时', t: 'tone-red' },
+          { l: '已完成', v: '2', n: '张华 RL · 陈磊 RP', t: '' }
+        ],
+        cards: [
+          { m: '文书审核列表', c: '队列 6 份 · 审核中 4 份', color: WB_ORANGE, href: '文书审核列表页 - 留学申请管理系统.html' }
+        ],
+        todoCount: 6,
+        todoGroups: [
+          { title: '优先审核', color: WB_RED, items: [
+            wbT(WB_RED, '被催办', WB_RED, '审核 CMU 个人陈述终稿（李雪）', '项目经理催办 · 8月13日 04:30 分配至今未接收 · 文书审核', '已等待 1 天 6 小时', WB_RED, { l: '立即审核', href: '文书审核详情页 - 留学申请管理系统.html' }),
+            wbT(WB_ORANGE, '今日提交', WB_ORANGE, '刘芳 · 哈佛大学 公共卫生 PS', '提交人：陈文书 · 审核人员：李审核', '今天 08:40 提交', WB_ORANGE, { l: '去审核', href: '文书审核详情页 - 留学申请管理系统.html' }),
+            wbT(WB_AMBER, '积压最久', WB_AMBER, '赵婷 · 哥伦比亚大学 CV', '提交人：周文书 · 审核人员：王审核', '08-15 11:05 提交', WB_AMBER, { l: '去审核', href: '文书审核详情页 - 留学申请管理系统.html' })
+          ]},
+          { title: '审核队列', color: WB_ORANGE, items: [
+            wbT(WB_ORANGE, null, null, '李雪 · 卡内基梅隆大学 PS', '提交人：陈文书 · 审核人员：王审核', '08-17 10:30 提交', WB_GRAY, { l: '去审核', href: '文书审核详情页 - 留学申请管理系统.html', cls: 'plain' }),
+            wbT(WB_ORANGE, null, null, '王明 · 斯坦福大学 CV', '提交人：周文书 · 审核人员：王审核', '08-16 14:20 提交', WB_GRAY, { l: '去审核', href: '文书审核详情页 - 留学申请管理系统.html', cls: 'plain' }),
+            wbT(WB_PURPLE, '待接收', WB_PURPLE, '《哥伦比亚大学-经济学-个人陈述》', '提交人：王雨桐 · 文书交付团队新提交审核', '待接收', WB_GRAY, { l: '接收', toast: '已接收审核任务《哥伦比亚大学-经济学-个人陈述》，已加入文书审核列表' })
+          ]}
+        ],
+        events: {
+          '2026-08-10': [wbEv('提交审核', WB_ORANGE, '陈磊 · 剑桥大学 RP 16:00 提交（已完成）')],
+          '2026-08-12': [wbEv('提交审核', WB_ORANGE, '张华 · 麻省理工学院 RL 09:15 提交（已完成）')],
+          '2026-08-15': [wbEv('提交审核', WB_ORANGE, '赵婷 · 哥伦比亚大学 CV 11:05 提交（审核中 · 积压最久）')],
+          '2026-08-16': [wbEv('提交审核', WB_ORANGE, '王明 · 斯坦福大学 CV 14:20 提交（审核中）')],
+          '2026-08-17': [wbEv('提交审核', WB_ORANGE, '李雪 · 卡内基梅隆大学 PS 10:30 提交（审核中）')],
+          '2026-08-18': [wbEv('提交审核', WB_ORANGE, '刘芳 · 哈佛大学 PS 08:40 提交（审核中）'), wbEv('被催办', WB_RED, 'CMU 个人陈述终稿审核被催办 · 已等待 1 天 6 小时')]
+        },
+        boards: [
+          { title: '审核中', color: WB_ORANGE, items: [
+            wbB('刘芳 · 哈佛大学 PS', '审核中', '今天 08:40 提交 · 李审核 · 提交人：陈文书'),
+            wbB('李雪 · 卡内基梅隆大学 PS', '审核中', '08-17 10:30 提交 · 王审核 · 提交人：陈文书'),
+            wbB('王明 · 斯坦福大学 CV', '审核中', '08-16 14:20 提交 · 王审核 · 提交人：周文书'),
+            wbB('赵婷 · 哥伦比亚大学 CV', '审核中', '08-15 11:05 提交 · 王审核 · 提交人：周文书')
+          ]},
+          { title: '已完成', color: WB_GREEN, items: [
+            wbB('张华 · 麻省理工学院 RL', '已完成', '08-12 09:15 提交 · 李审核 · 提交人：吴文书'),
+            wbB('陈磊 · 剑桥大学 RP', '已完成', '08-10 16:00 提交 · 王审核 · 提交人：郑文书')
+          ]}
+        ]
+      }
+    };
+
+    /* ================= 渲染逻辑 ================= */
+    var WB_CAL = {};
+
+    function wbPad(n) { return (n < 10 ? '0' : '') + n; }
+
+    function wbDateLabel(key) {
+      var p = key.split('-');
+      var label = p[0] + ' 年 ' + Number(p[1]) + ' 月 ' + Number(p[2]) + ' 日';
+      if (key === WB_TODAY) label += '（今天）';
+      return label;
+    }
+
+    function wbActBtn(a) {
+      if (!a) return '';
+      var cls = 'wb-act' + (a.cls ? ' ' + a.cls : '');
+      if (a.urge) return '<button type="button" class="' + cls + '" onclick="openUrgeModal(\'' + a.urge[0] + '\',\'' + a.urge[1] + '\',\'' + a.urge[2] + '\')">' + a.l + '</button>';
+      if (a.href) return '<button type="button" class="' + cls + '" onclick="location.href=\'' + a.href + '\')">' + a.l + '</button>';
+      if (a.toast) return '<button type="button" class="' + cls + '" onclick="workbenchToast(\'' + a.toast + '\')">' + a.l + '</button>';
+      return '';
+    }
+
+    function wbTodoRow(it) {
+      return '<div class="wb-todo">'
+        + '<span class="wb-todo-bar" style="background:' + it.bar + '"></span>'
+        + '<div class="wb-todo-b">'
+        + '<div class="wb-todo-t">' + (it.tag ? '<span class="wb-tag" style="background:' + it.tagColor + '">' + it.tag + '</span>' : '') + it.title + '</div>'
+        + '<div class="wb-todo-m">' + it.meta + '</div>'
+        + (it.time ? '<div class="wb-todo-time" style="color:' + (it.timeColor || WB_GRAY) + '">' + it.time + '</div>' : '')
+        + '</div>'
+        + wbActBtn(it.act)
+        + '</div>';
+    }
+
+    function wbBoardCol(b) {
+      var h = '<div class="wb-board-col"><div class="wb-board-h"><span class="wb-board-t"><span class="wb-board-dot" style="background:' + b.color + '"></span>' + b.title + '</span><span class="wb-board-c">' + b.items.length + ' 项</span></div>';
+      for (var i = 0; i < b.items.length; i++) {
+        var it = b.items[i];
+        var bg = WB_BADGE[it.bdg] || ['#f3f4f6', '#374151'];
+        h += '<div class="wb-bitem"><div style="min-width:0"><div class="nm">' + it.nm + '</div>'
+          + (it.mt ? '<div class="mt">' + it.mt + '</div>' : '')
+          + (it.prog != null ? '<div class="wb-prog"><span style="width:' + it.prog + '%;background:' + (it.progC || WB_BLUE) + '"></span></div>' : '')
+          + '</div>'
+          + (it.bdg ? '<span class="wb-bdg" style="background:' + bg[0] + ';color:' + bg[1] + '">' + it.bdg + '</span>' : '')
+          + '</div>';
+      }
+      return h + '</div>';
+    }
+
+    function wbRenderCal(role) {
+      var st = WB_CAL[role], ev = WB_ROLES[role].events || {};
+      var off = (new Date(st.y, st.m - 1, 1).getDay() + 6) % 7;
+      var dim = new Date(st.y, st.m, 0).getDate();
+      var prevDim = new Date(st.y, st.m - 1, 0).getDate();
+      var h = '<div class="wb-cal-h"><span class="wb-cal-t">' + st.y + ' 年 ' + st.m + ' 月</span>'
+        + '<span class="wb-cal-nav"><button type="button" onclick="wbCalShift(\'' + role + '\',-1)" aria-label="上一月">‹</button><button type="button" onclick="wbCalShift(\'' + role + '\',1)" aria-label="下一月">›</button></span></div>';
+      h += '<div class="wb-cal-grid">';
+      var weeks = ['一', '二', '三', '四', '五', '六', '日'];
+      for (var i = 0; i < 7; i++) h += '<div class="wb-cal-w">' + weeks[i] + '</div>';
+      for (var p = off - 1; p >= 0; p--) h += '<div class="wb-day out">' + (prevDim - p) + '</div>';
+      for (var d = 1; d <= dim; d++) {
+        var key = st.y + '-' + wbPad(st.m) + '-' + wbPad(d);
+        var cls = 'wb-day';
+        if (ev[key]) cls += ' has';
+        if (key === WB_TODAY) cls += ' today';
+        if (key === st.sel) cls += ' sel';
+        h += '<div class="' + cls + '" onclick="wbCalSelect(\'' + role + '\',\'' + key + '\')">' + d + '</div>';
+      }
+      var tail = (7 - (off + dim) % 7) % 7;
+      for (var t = 1; t <= tail; t++) h += '<div class="wb-day out">' + t + '</div>';
+      h += '</div>';
+      var list = ev[st.sel] || [];
+      h += '<div class="wb-daydetail"><div class="wb-dd">' + wbDateLabel(st.sel) + ' · ' + (list.length ? list.length + ' 项 DDL/事件' : '无 DDL/事件') + '</div>';
+      if (list.length) {
+        for (var k = 0; k < list.length; k++) {
+          h += '<div class="wb-ev"><span class="tg" style="background:' + list[k].c + '">' + list[k].tg + '</span><span class="tx">' + list[k].tx + '</span></div>';
+        }
+      } else {
+        h += '<div class="wb-ev-empty">这一天没有到期的 DDL · 点击红色日期可查看当日明细</div>';
+      }
+      h += '</div>';
+      document.getElementById('wbCal-' + role).innerHTML = h;
+    }
+
+    function wbCalShift(role, d) {
+      var st = WB_CAL[role];
+      st.m += d;
+      if (st.m < 1) { st.m = 12; st.y--; }
+      if (st.m > 12) { st.m = 1; st.y++; }
+      wbRenderCal(role);
+    }
+
+    function wbCalSelect(role, date) {
+      WB_CAL[role].sel = date;
+      wbRenderCal(role);
+    }
+
+    function wbRenderRole(role) {
+      var R = WB_ROLES[role];
+      var h = '<div class="wb-head"><div><div class="wb-title">' + R.name + '工作台<span class="wb-scope" style="background:' + R.scopeBg + ';color:' + R.scopeC + '">' + R.scope + '</span></div><p class="wb-sub">' + R.tagline + ' · ' + WB_TODAY_LABEL + '</p></div></div>';
+      h += '<div class="wb-stats">';
+      for (var i = 0; i < R.stats.length; i++) {
+        var s = R.stats[i];
+        h += '<div class="wb-stat ' + (s.t || '') + '"><div class="l">' + s.l + '</div><div class="v">' + s.v + '</div><div class="n">' + s.n + '</div></div>';
+      }
+      h += '</div>';
+      h += '<div class="wb-cards">';
+      for (var c = 0; c < R.cards.length; c++) {
+        var cd = R.cards[c];
+        h += '<a class="wb-card" style="border-left-color:' + cd.color + '" href="' + cd.href + '"><div class="m">' + cd.m + '</div><div class="c">' + cd.c + '</div><div class="go" style="color:' + cd.color + '">进入模块 →</div></a>';
+      }
+      h += '</div>';
+      h += '<div class="wb-main"><section class="wb-panel"><div class="wb-panel-h"><span class="wb-panel-t">今日待办</span><span class="wb-panel-n">共 ' + R.todoCount + ' 项 · 按优先级分组</span></div>';
+      for (var g = 0; g < R.todoGroups.length; g++) {
+        var gr = R.todoGroups[g];
+        h += '<div class="wb-group-t"><span class="wb-group-dot" style="background:' + gr.color + '"></span>' + gr.title + '<span class="wb-panel-n">' + gr.items.length + ' 项</span></div>';
+        for (var j = 0; j < gr.items.length; j++) h += wbTodoRow(gr.items[j]);
+      }
+      h += '</section><aside class="wb-panel"><div class="wb-panel-h"><span class="wb-panel-t">DDL 日历</span><span class="wb-panel-n">红色日期 = 有 DDL/事件 · 点击查看</span></div><div id="wbCal-' + role + '"></div></aside></div>';
+      h += '<div class="wb-panel-h" style="margin:2px 0 12px"><span class="wb-panel-t">数据看板</span><span class="wb-panel-n">与今日待办、日历数据一致 · 来自系统各模块列表</span></div>';
+      h += '<div class="wb-boards" style="grid-template-columns:repeat(auto-fit,minmax(250px,1fr))">';
+      for (var b = 0; b < R.boards.length; b++) h += wbBoardCol(R.boards[b]);
+      h += '</div>';
+      document.getElementById('panel-' + role).innerHTML = h;
+    }
+
+    (function initRoleWorkbenches() {
+      var roles = ['wsadmin', 'pm', 'writer', 'sales', 'apply', 'audit'];
+      for (var i = 0; i < roles.length; i++) {
+        WB_CAL[roles[i]] = { y: 2026, m: 8, sel: WB_TODAY };
+        wbRenderRole(roles[i]);
+        wbRenderCal(roles[i]);
+      }
+    })();
+</script>
+  <script src="./assets/js/pbs-app.js"></script>
+
+
+  <div class="kimi-brand-container">
+    <div class="kimi-brand-close-icon">
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M12.499 3.50216C12.7226 3.72574 12.7226 4.08825 12.499 4.31184L8.81035 8.00029L12.4972 11.6872C12.7208 11.9107 12.7208 12.2733 12.4972 12.4968C12.2736 12.7204 11.9111 12.7204 11.6875 12.4968L8.00066 8.80998L4.31221 12.4986C4.10582 12.705 3.78106 12.7209 3.55646 12.5463L3.50252 12.4986C3.27893 12.2751 3.27893 11.9126 3.50252 11.689L7.19098 8.00029L3.50107 4.31038C3.27748 4.0868 3.27748 3.72429 3.50107 3.5007C3.72465 3.27711 4.08716 3.27711 4.31075 3.5007L8.00066 7.19061L11.6893 3.50216C11.8957 3.29577 12.2205 3.27989 12.4451 3.45453L12.499 3.50216Z" fill="white" fill-opacity="0.84"></path>
+      </svg>
+    </div>
+
+    <div class="kimi-brand-info-wrapper">
+      <button type="button" class="kimi-brand-info-button" aria-label="AI 内容说明">
+        <svg width="14" height="14" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M8 6.75V12" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"></path>
+          <circle cx="8" cy="4" r="1" fill="currentColor"></circle>
+        </svg>
+      </button>
+      <div class="kimi-brand-info-tooltip">
+        该网页包含 AI 生成内容（可能经用户编辑）。请仔细核实，且不要提交任何个人信息。如认为内容侵权或违法，可<a href="https://www.kimi.com/report?from=website&amp;reportUrl=https%3A%2F%2Fyiyanqiuxue-pbs.ok.kimi.link%2F%25E7%2595%2599%25E5%25AD%25A6%25E6%259C%25BA%25E6%259E%2584%25E7%25AE%25A1%25E7%2590%2586%25E5%2591%2598%25E5%25B7%25A5%25E4%25BD%259C%25E5%258F%25B0.html" target="_blank" rel="noopener" class="kimi-brand-report-link">提交报告申请审核</a>。
+      </div>
+    </div>
+
+    <a href="https://www.kimi.com/agent" target="_blank" class="kimi-brand-link">
+      <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADgAAAA4CAYAAACohjseAAAACXBIWXMAABYlAAAWJQFJUiTwAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAsHSURBVHgB1ZpJTFRfFsYvlPNYOM8WzjPgFGfBIbIwihuXSi/c9EY6veyFQy9cddC4sHujbFyYaOLfaKKJCUQTo4kKGGOcLUdwpJxRxNfnd+RUHuUroGS+yc199d4dzne+M9x7Ic01XyJSC6RmNTxHGt6HG2pHlFhCrZBaKbVMatT9YcmVWirV6+IVGbNdiqXYOdfZgqdai10LCiZX7jpf2D+t5a4Zt+nO4PwgA0t3NMtGNS0tTasLMNfsrix4KgDT09P1uU+fPrl+gKVdWfBUANpzKBQqBVia+5XXHrluXgSc8zwv/kyR35k93K981+2LgfM/z549uyDd/UGS7IzSJ2e7G/GvGjfy354b+vdyF8qIJO3bo0cPZbGmpiYLLrHVXNeFSygcccP+2diL6mNR9+Y/mY3eSYBR9nr37u1qa2t5VQaDHbWf/OPSd37hb+8A3XN0Y+ODOcABlBIOhyP4YJcH2NLy48eP+DNA379/77otwNryEldXVdHoXa9evVzPnj0VKCYqv8OtBrhr1y4XiUTivysrK93+/ftbPD47O9vt3Lkz8NuePXtcNBp19TVRVxct03c/a2PuR1Wl+3Lp9zV+/vzpvn375r5//66/Bw0apNhalVwfPXrk+UtpaWmLxwo4TyKdF1R2796dNIm7FiR62cnYc+cAbCk43/6yEYjE99QBAwY0+j5mzJjOAZgqc7LtapKtoDp06NDOYbA5cH4GgkD5ATfFrm9cxwFsCXN2Gkisyd5bHTlypN/vFGRGRkbHAWwNc36AiUCNUfzNZ5b+edofYCo+11SVHKet7Fg0oPAMOH4DyACOGzfO69evn4FsX4C5ubltAq6pCjBADRkyxBs4cKA3Z84cP4vtB3D79u1estJW4MxsDeCoUaPi4NoVYHuC86cN80HA8dy/f//E/m0PMBVw+A8MNBcl/WxZS5UTgzdx4kQFlhigeMdetE2L+JzWZMWOMlb8J4CWFPab/hKLxdyECRPc58+fdYPdt29f9+XLFz3wCkDt06YMtqQwRjboXmvXpuJzw4cP15YoKycIZdYXVTseIIXIWlRU1GqAliZox44dqymJFrC0je2lHQrHnaAivuOKi4vdkSNHGh23UimYu4DQVvKimuXr16+dMOokqrqlS5dqv3ZjsLy8XINAQUFBk/34Nn/+/JTXxgyJnmzJRo8e7S1fvtzLysrSXc26deu88ePHtx+DFRUVLi8vT4PAyZMn9bmsrCywLwxeu3ZND8+pFNGNq6+vd3V1dRpcKDD49etXvbIQs/3Vz6WoNX84DmLGmAsaT5poqjCWAOS/hm+qEkhgjyCzYsUKb/HixZ6YprdgwQIvMzMz9SBjC9viiQD5nQycVQJBc8GJfFpYWNjohGDVoiQte05hz5PrCW/z5s3epk2bFBhAZ86c+Qtg0Ok4CJh/ASJXEMDmzoOMQ2gWLykp8ZorREPWo2WcrS0mqNX2nzCI74krqAVYRE3HTrFlz3f1nczeg55TLSR20bq7c+eO27Fjh9u7d2+T/fEtYUd9iogpgDRiMseUKVM0qQtAjaQk+3fv3qnvye7GSfBx6QjLR/8Ow/54QeG9/7cVnDvofbJi83M5i1AUhAYggj579ixw3IwZM/Q6EBCsJ/4WH/vmzRsnkVLTwocPHxTYgwcP3Nu3b52wrTd86fZXGQNiQiduqeyb1VRZZIvFnSXzohx+f/r0SZ/FzN2iRYvcvn37fsub/FYmGkjgWnDw4MEaOadPn+4kLWikJq+K2WuLEtim0S8kwu42gLRBAOy9tf4iOU5bFqEi0LFjx5KCRMswgoD++QF78eJFd/z4cffkyRMFTsgntUybNk3fISO31QDATJnn/v37CgoL4D4UMyYlXbhwwUmEdWkNR484g/6F/QK4ACYROBUmWQOAxmCyMm/ePP4ypLsRwF26dEl9lzURmnnmzp3rqqqqFBiKBSyb7UmTJql/ss7NmzddSMymSOy1DxMgLB0RwID5TTeRST/jQf6Y+I7+TSkFv0EwEjV+iv9hvgQPFM93WtmxKFtm7vQHHCbJTbmZsrSxHtIhJiDDdKIwwMzV/NBMi8qzKcD6UQgeKMnGGHjr2xJ26U8wQRZJ1Ary48eP7tWrV/H9Jetjunfv3o3vVmhhDnb5hiIaru9j6fJXUEVOJbQSkgnNLMZgOrO4P0gkBiJrTQF+VpMFq8TCuhSExcQkr6lf4mvUYcOGKQBM8unTp6oElIhSAcO6jCWNoBD6Co5YSKgtkAkjhFnsHo1TAUnLBIA0EzIhAWMMonUWie/9fOzbbyv211fP9/d0wPGeyEfLOsjz/PlzlQFzw3VIJw8fPozvPWkJOigEhkkPyGAmLYTcDkmYzbt371721KlTtSOaYREzVzRjDDLI8p/Zv7UmPM8mPGMsmJgyrNIXi8ByZAeiwgMCBkgLL168iJ/KzfQomC3j8DnkhV3G0w9gyE/qIEfKdu2vkDxEZFw+H5iQkIv2WMzOWCtXrtSJmYDCAnznG4rhPUxjIijBANguKcjX0PiIESN0PJoHAH15Zn2CBYWTBqlAbq4VBH0wUcA9fvxYE70RwpywDRZyovjv/4ii1UJ3ERpB+9xvsN0BBKaHRhnEOxawKIvD2zbJTBTlEBTMBM1UEYaWsRT6EQlv3bqlc8MYSmKsKYk1TCb8jjlZEwVMnjxZ5yTnYd74J6kEa0EWNg0EHbkb+kdINB/buHFjrvhfhIVwbAbQUY4f6g9Xr15VDQKSgQDFkclRCI3mYAsWaJmHfigA4AQM5kMogGGO1dXVqoANGza469ev69woAd9iPKwAlLUAjiJQNuwQDO0WAIW8fPnSbdmyRZnHKgAuc5fJuwMaFcRWHwuYQjRL3mEwpoMDY3oIx6RyY6yL0o9nObspCLQM4wgBaEAilMyrLGzdutUtXLhQNY8wCIDi7E/OsEJFWECzPsLCHDsYFE4yx2VQGL/xXdtsAFziiMqJ8hry7ZZz585VK0A5fUflLJUhwi9hG8RCMIZGAThr1izdgjEBi6N9FIB5wA5aJwLzDfCMx29hDMFhm28AR2DYQXj6nj17VkHDFH7HOnxDcVRAoTha1kWZzIWCbty4oYBhnDV45vv58+cPyF1PiUZpfwCQv4mXi+azERjB0DCAMYvTp087MWV1cEL1qlWr3KlTp5RZki7bKxYFHBpGOHwGJjF73sMKoOnPOK41Ll++rBqHXSzGoiXsMB/C8y4/P1/nxSIAivKZE4uDBLnT0flkXIUAzzFMIT9A6XBs27Zt+SLQKDQC9Rw58Bt8hAAEAwjJPpDdBgLAHqEcQAiG/wGYDe+yZcvi/xiAIPSnn1kESqQvfZgTk8X8+cY7TC4nJ0ef8S8YX79+vRKA2ZIrbX8q81SsXbs2T0yz1jAFHugOHTq0Xybcib+hLSZGaDQEYMwPFgGKD9CiDNhCy7CDsHKz5U6cOKE5CUERmvNaw79ZafhfvXq1O3z4sAYqi6qsixnzDoUwzvyTZ0yd78zBO1zl9u3bB0S+okQsoSCAZ86cOStns7/ELGeIhiJoh4lZzPIQQQPzNbNbs2aNAiT/4L/4AlbAOHwYYSmYFN9hk5bxgKIv1gHTzEcQwS9hmnzHeDsYMw458F0x7bKjR4/+TTYG/w3C0uyRXO5YIgcPHsyVM1a2CJAlwSUsmg+LzYdFY+ElS5ZossWXEJpDKOYM66JVBYgi8DtMij5EX7kYUs1zBuQbwiYey4wpUVBMLCiGtYibRGXeqMxTeeXKlZMyZ7Qp+f8PFfwmm2H/qgMAAAAASUVORK5CYII=" alt="Kimi" class="kimi-brand-avatar">
+      <span>Kimi Agent</span>
+      <svg width="16" height="16" class="kimi-brand-icon" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path fill-rule="evenodd" clip-rule="evenodd" d="M14.2925 8.54311C14.5253 8.30855 14.5247 7.92983 14.2909 7.69611L10.5986 4.00381C10.3643 3.76949 9.98442 3.76949 9.7501 4.00381C9.51579 4.23812 9.51579 4.61802 9.7501 4.85233L12.4181 7.52038H1.86667C1.5353 7.52038 1.26667 7.78901 1.26667 8.12038C1.26667 8.45175 1.5353 8.72038 1.86667 8.72038H12.4255L9.74857 11.4167C9.51511 11.6519 9.51648 12.0318 9.75164 12.2652C9.9868 12.4987 10.3667 12.4973 10.6002 12.2622L14.2925 8.54311Z" fill="white" fill-opacity="0.84"></path>
+      </svg>
+    </a>
+  </div>
+    </body></html>

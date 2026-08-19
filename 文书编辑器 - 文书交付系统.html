@@ -898,14 +898,17 @@ body {
       <!-- 右边缘拖拽手柄：按住可手动调整左侧边栏宽度，双击恢复默认宽度 -->
       <div id="left-sidebar-resizer" title="拖动调整宽度，双击恢复默认"></div>
       <div class="p-4 border-b border-gray-100">
-        <nav class="flex space-x-1" id="left-panel-tabs">
-          <button id="tab-student-info" class="flex-1 px-3 py-2 text-sm font-medium text-gray-600 hover:text-gray-900" data-dom-id="tab-student-info">
+        <nav class="grid grid-cols-2 gap-1" id="left-panel-tabs">
+          <button id="tab-student-info" class="px-3 py-2 text-sm font-medium text-gray-600 hover:text-gray-900" data-dom-id="tab-student-info">
             学生信息
           </button>
-          <button id="tab-materials" class="flex-1 px-3 py-2 text-sm font-medium text-gray-600 hover:text-gray-900" data-dom-id="tab-materials">
+          <button id="tab-goal-info" class="px-3 py-2 text-sm font-medium text-gray-600 hover:text-gray-900" data-dom-id="tab-goal-info">
+            院校目标
+          </button>
+          <button id="tab-materials" class="px-3 py-2 text-sm font-medium text-gray-600 hover:text-gray-900" data-dom-id="tab-materials">
             资产文件
           </button>
-          <button id="tab-version-history" class="flex-1 px-3 py-2 text-sm font-medium text-blue-700 bg-blue-50 rounded-lg" data-dom-id="tab-version-history">
+          <button id="tab-version-history" class="px-3 py-2 text-sm font-medium text-blue-700 bg-blue-50 rounded-lg" data-dom-id="tab-version-history">
             历史版本
           </button>
         </nav>
@@ -1093,6 +1096,46 @@ body {
                 <p class="text-sm font-medium text-gray-900">Kaggle竞赛</p>
                 <p class="text-xs text-gray-500">Top 5% - 多模态分类挑战赛</p>
               </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 院校目标信息面板（默认隐藏）：字段信息从EV系统（壹言求学数据库）导入 -->
+      <div id="panel-goal-info" class="flex-1 overflow-y-auto p-4 space-y-4 hidden">
+        <div class="bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden">
+          <div class="h-1.5 bg-gradient-to-r from-purple-500 to-violet-600"></div>
+          <div class="p-4">
+            <div class="flex items-center justify-between mb-1">
+              <h3 class="text-sm font-semibold text-gray-800 flex items-center gap-2">
+                <span class="w-7 h-7 bg-purple-50 rounded-lg flex items-center justify-center">
+                  <svg class="w-3.5 h-3.5 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path></svg>
+                </span>
+                院校目标信息
+              </h3>
+              <button id="evImportBtn" class="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg bg-purple-50 text-purple-700 text-xs hover:bg-purple-100 border border-purple-200 transition-colors" onclick="openEvImport()" title="从EV系统（壹言求学数据库）导入该专业已录入字段">
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path></svg>
+                导入院校目标信息
+              </button>
+            </div>
+            <p class="text-[11px] text-gray-400 mb-3">当前文书对应的院校目标 · 字段信息来自 EV 系统</p>
+            <div class="grid grid-cols-2 gap-x-4 gap-y-2.5 text-xs">
+              <div class="flex justify-between col-span-2"><span class="text-gray-400">学校</span><span class="text-gray-900 font-medium" id="goal-info-school">卡内基梅隆大学</span></div>
+              <div class="flex justify-between col-span-2"><span class="text-gray-400">专业</span><span class="text-gray-900" id="goal-info-major">人工智能</span></div>
+              <div class="flex justify-between"><span class="text-gray-400">申请层次</span><span class="text-gray-900" id="goal-info-stage">硕士申请</span></div>
+              <div class="flex justify-between"><span class="text-gray-400">申请轮次</span><span class="text-gray-900" id="goal-info-round">ED</span></div>
+            </div>
+            <!-- EV导入数据展示区 -->
+            <div id="evDataSection" class="hidden mt-4 pt-3 border-t border-dashed border-purple-200">
+              <div class="flex items-center gap-2 mb-2 flex-wrap">
+                <h4 class="text-xs font-semibold text-purple-800">EV系统数据（已填入）</h4>
+                <span class="text-[10px] px-1.5 py-0.5 rounded bg-purple-50 text-purple-600 border border-purple-100">字段集：《壹言求学数据库录入标准（硕士）》</span>
+              </div>
+              <div id="evDataBody" class="space-y-2"></div>
+            </div>
+            <div id="evEmptyHint" class="mt-4 border border-dashed border-gray-200 rounded-xl p-4 text-center">
+              <p class="text-xs text-gray-400">尚未从EV系统导入</p>
+              <p class="text-[11px] text-gray-400 mt-1">点击「导入院校目标信息」，勾选需要的字段填入</p>
             </div>
           </div>
         </div>
@@ -1393,30 +1436,9 @@ body {
           </nav>
         </div>
 
-        <!-- 子面板1：AI建议（基于学生档案与实际材料生成） -->
+        <!-- 子面板1：AI建议（按当前文书类型 CV/PS/RL/RP 动态生成，生成规则见《文书编辑 AI建议》提示词） -->
         <div id="panel-ai-suggest" class="p-4 space-y-4">
-          <div class="p-3 bg-gradient-to-br from-indigo-50 to-blue-50 rounded-xl border border-indigo-100">
-            <div class="flex items-center gap-2 mb-2">
-              <span class="w-7 h-7 rounded-lg bg-white text-blue-600 flex items-center justify-center shadow-sm">✦</span>
-              <div><h4 class="text-sm font-semibold text-gray-800">已完成资料分析</h4><p class="text-xs text-gray-500">参考学生档案与实际上传文件生成</p></div>
-            </div>
-            <p class="text-xs text-gray-600 leading-relaxed">已读取：成绩单、CV、科研项目证明、实习证明。建议仅用于辅助老师判断每一段应写什么，不直接改写正文。</p>
-          </div>
-          <div class="ai-detail-card border-l-4 border-blue-500">
-            <div class="flex items-center justify-between mb-2"><span class="text-xs font-semibold text-gray-800">研究背景与问题</span><span class="text-xs text-blue-600">建议重点</span></div>
-            <p class="ai-copy-source text-xs text-gray-700 leading-relaxed">从学生主持的医疗影像创新项目切入，说明在多模态数据对齐中遇到的具体问题，再将问题收束为拟研究的“低样本场景下鲁棒表征学习”。避免只介绍行业背景，应突出问题由真实项目经历产生。</p>
-            <div class="flex justify-end pt-3"><button class="text-xs text-blue-600 hover:text-blue-800 font-medium" onclick="copyAiSuggestion(this)">复制建议</button></div>
-          </div>
-          <div class="ai-detail-card border-l-4 border-purple-500">
-            <div class="flex items-center justify-between mb-2"><span class="text-xs font-semibold text-gray-800">研究方法与技术路线</span><span class="text-xs text-purple-600">建议重点</span></div>
-            <p class="ai-copy-source text-xs text-gray-700 leading-relaxed">结合成绩单中的机器学习、深度学习课程与CV中的PyTorch项目经验，按“数据准备—对比学习对齐—注意力融合—基准评测”展开。每一步补充输入、输出和评估指标，体现方案可执行。</p>
-            <div class="flex justify-end pt-3"><button class="text-xs text-blue-600 hover:text-blue-800 font-medium" onclick="copyAiSuggestion(this)">复制建议</button></div>
-          </div>
-          <div class="ai-detail-card border-l-4 border-emerald-500">
-            <div class="flex items-center justify-between mb-2"><span class="text-xs font-semibold text-gray-800">预期成果与计划安排</span><span class="text-xs text-emerald-600">建议重点</span></div>
-            <p class="ai-copy-source text-xs text-gray-700 leading-relaxed">成果建议分为性能指标、论文产出和可复现代码三类；计划按文献复现、方法设计、实验验证、论文撰写四阶段描述。不要承诺无法验证的“行业领先”，使用可衡量目标。</p>
-            <div class="flex justify-end pt-3"><button class="text-xs text-blue-600 hover:text-blue-800 font-medium" onclick="copyAiSuggestion(this)">复制建议</button></div>
-          </div>
+          <div id="aiSuggestContainer" class="space-y-4"></div>
         </div>
 
         <!-- 子面板2：AI写作助手（默认隐藏） -->
@@ -1512,31 +1534,39 @@ body {
             </div>
           </div>
 
-          <!-- 文书要求 -->
+          <!-- 文书要求（通用标准 + 院校官方要求数据接口预留） -->
           <div class="card p-4">
             <h4 class="text-sm font-medium text-gray-700 mb-3 flex items-center gap-2">
               <svg class="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
               </svg>
               文书要求
+              <span class="ml-auto text-[10px] px-1.5 py-0.5 rounded bg-slate-100 text-slate-500 border border-slate-200">院校官方要求接口 · 待接入</span>
             </h4>
             <div class="space-y-2">
-              <div class="flex items-center justify-between p-2.5 bg-blue-50 rounded-lg border border-blue-100 cursor-pointer hover:bg-blue-100 transition-colors" data-tooltip-type="doc" data-tooltip-key="CMU-PS">
-                <span class="text-sm text-blue-700 font-medium">PS(1000词)</span>
-                <svg class="w-4 h-4 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+              <div class="p-2.5 bg-blue-50 rounded-lg border border-blue-100">
+                <div class="flex items-center justify-between"><span class="text-sm text-blue-700 font-medium">PS 个人陈述</span><span class="text-[10px] text-blue-400">通用标准</span></div>
+                <p class="text-[11px] text-blue-600 mt-1 leading-relaxed">一般 1000 字以内 · 硕士 500-1000 字</p>
               </div>
-              <div class="flex items-center justify-between p-2.5 bg-blue-50 rounded-lg border border-blue-100 cursor-pointer hover:bg-blue-100 transition-colors" data-tooltip-type="doc" data-tooltip-key="CMU-RL">
-                <span class="text-sm text-blue-700 font-medium">RL×2(500词/封)</span>
-                <svg class="w-4 h-4 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+              <div class="p-2.5 bg-blue-50 rounded-lg border border-blue-100">
+                <div class="flex items-center justify-between"><span class="text-sm text-blue-700 font-medium">RL 推荐信</span><span class="text-[10px] text-blue-400">通用标准</span></div>
+                <p class="text-[11px] text-blue-600 mt-1 leading-relaxed">600-1000 字/封 · 本硕连读约 500 字</p>
               </div>
-              <div class="flex items-center justify-between p-2.5 bg-blue-50 rounded-lg border border-blue-100 cursor-pointer hover:bg-blue-100 transition-colors" data-tooltip-type="doc" data-tooltip-key="CMU-CV">
-                <span class="text-sm text-blue-700 font-medium">CV(2页)</span>
-                <svg class="w-4 h-4 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+              <div class="p-2.5 bg-blue-50 rounded-lg border border-blue-100">
+                <div class="flex items-center justify-between"><span class="text-sm text-blue-700 font-medium">RP 研究计划</span><span class="text-[10px] text-blue-400">通用标准</span></div>
+                <p class="text-[11px] text-blue-600 mt-1 leading-relaxed">本科/本硕连读 500-1000 字 · 研究型硕士 1000-2000 字<br>博士：文科 3000-5000 字 / 理工科 1000-2000 字 / 应用型约 1000 字</p>
               </div>
+              <div class="p-2.5 bg-blue-50 rounded-lg border border-blue-100">
+                <div class="flex items-center justify-between"><span class="text-sm text-blue-700 font-medium">CV 简历</span><span class="text-[10px] text-blue-400">通用标准</span></div>
+                <p class="text-[11px] text-blue-600 mt-1 leading-relaxed">2 页以内 · 默认不放照片、性别、出生日期、婚姻状况</p>
+              </div>
+            </div>
+            <div class="mt-3 p-2.5 bg-amber-50 border border-amber-100 rounded-lg">
+              <p class="text-[11px] text-amber-700 leading-relaxed">如院校有官方字数或格式规定，<span class="font-semibold">以院校规定为准</span>并在 AI 建议中提醒。美系院校的文书要求因校而异，此处已预留院校官方要求数据接口，未来接入院校数据库后将自动同步并覆盖通用标准。</p>
             </div>
           </div>
 
-          <!-- 院系链接 -->
+          <!-- 院系链接与推荐人邮箱 -->
           <div class="card p-4">
             <div class="flex items-center justify-between mb-3">
               <h4 class="text-sm font-medium text-gray-700 flex items-center gap-2">
@@ -1544,6 +1574,17 @@ body {
                 院系链接
               </h4>
               <button class="px-2.5 py-1 text-xs font-medium text-blue-600 bg-blue-50 rounded-lg hover:bg-blue-100" onclick="openDepartmentLinkEditor()">新增链接</button>
+            </div>
+            <div class="space-y-2.5 mb-3">
+              <div>
+                <label class="block text-xs text-gray-500 mb-1">教授邮箱地址</label>
+                <input id="professorEmailInput" type="email" placeholder="professor@university.edu" class="w-full h-9 px-3 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500">
+              </div>
+              <div>
+                <label class="block text-xs text-gray-500 mb-1">企业家邮箱地址</label>
+                <input id="entrepreneurEmailInput" type="email" placeholder="mentor@company.com" class="w-full h-9 px-3 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500">
+              </div>
+              <p class="text-[10px] text-gray-400 leading-relaxed">用于推荐信（RL）邀约与网申推荐人信息填写</p>
             </div>
             <div id="departmentLinkList" class="space-y-2"></div>
           </div>
@@ -1615,6 +1656,43 @@ body {
     </div>
   </div>
 
+  <!-- EV数据导入确认弹窗：从EV系统（壹言求学数据库）勾选填入院校目标字段 -->
+  <div id="evImportModal" class="fixed inset-0 z-[100] hidden">
+    <div class="absolute inset-0 bg-black bg-opacity-40" onclick="closeEvImport()"></div>
+    <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[920px] max-w-[94vw] max-h-[86vh] bg-white rounded-2xl shadow-2xl flex flex-col overflow-hidden">
+      <div class="flex items-center justify-between px-6 py-4 border-b border-gray-200 flex-shrink-0">
+        <div class="flex items-center gap-3">
+          <span class="w-9 h-9 rounded-lg bg-purple-100 text-purple-600 flex items-center justify-center flex-shrink-0">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path></svg>
+          </span>
+          <div>
+            <h3 class="text-lg font-semibold text-gray-800">从EV系统导入院校目标信息</h3>
+            <p class="text-xs text-gray-400 mt-0.5" id="evModalSubtitle">数据来源：EV系统 · 壹言求学数据库</p>
+          </div>
+        </div>
+        <button class="p-1 text-gray-400 hover:text-gray-600" onclick="closeEvImport()">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+        </button>
+      </div>
+      <div class="px-6 py-3 bg-blue-50 border-b border-blue-100 flex-shrink-0">
+        <p class="text-xs text-blue-700 leading-relaxed">以下为 EV 系统返回的该专业<span class="font-semibold">已录入的非空字段</span>（未录入字段不在列表中）。请勾选需要填入本页的字段：<span class="inline-flex px-1.5 py-0 rounded-full text-[11px] font-medium bg-blue-100 text-blue-700">新增</span> 页面当前为空；<span class="inline-flex px-1.5 py-0 rounded-full text-[11px] font-medium bg-orange-100 text-orange-700">覆盖</span> 将以 EV 数据替换页面已有数据；<span class="inline-flex px-1.5 py-0 rounded-full text-[11px] font-medium bg-gray-100 text-gray-500">一致</span> 数值相同默认不勾选。未勾选的字段不会填入。</p>
+      </div>
+      <div class="px-6 py-3 flex items-center justify-between border-b border-gray-100 flex-shrink-0">
+        <div class="flex items-center gap-4 text-sm">
+          <label class="flex items-center gap-2 cursor-pointer text-gray-700"><input type="checkbox" id="evCheckAll" class="accent-purple-600 w-4 h-4" onchange="evToggleAll(this.checked)"> 全选</label>
+          <button class="text-purple-600 hover:text-purple-800 text-sm" onclick="evSelectNew()">仅选新增</button>
+          <button class="text-gray-500 hover:text-gray-700 text-sm" onclick="evToggleAll(false)">清空</button>
+        </div>
+        <span class="text-xs text-gray-500">已选 <span id="evSelectedCount" class="font-semibold text-purple-600">0</span> / <span id="evTotalCount">0</span> 个字段</span>
+      </div>
+      <div id="evFieldGroups" class="flex-1 overflow-y-auto px-6 py-4"></div>
+      <div class="px-6 py-4 border-t border-gray-200 flex items-center gap-3 flex-shrink-0 bg-white">
+        <button class="flex-1 h-10 bg-white border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors font-medium" onclick="closeEvImport()">取消，不填入</button>
+        <button class="flex-1 h-10 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors font-medium" onclick="confirmEvImport()">确认填入所选字段</button>
+      </div>
+    </div>
+  </div>
+
   <!-- 院系链接新增/编辑弹窗 -->
   <div id="departmentLinkModal" class="fixed inset-0 z-[100] hidden">
     <div class="absolute inset-0 bg-black bg-opacity-30" onclick="closeDepartmentLinkEditor()"></div>
@@ -1633,6 +1711,9 @@ body {
       // 左侧面板切换
       document.getElementById('tab-student-info').addEventListener('click', function() {
         showLeftPanel('student-info');
+      });
+      document.getElementById('tab-goal-info').addEventListener('click', function() {
+        showLeftPanel('goal-info');
       });
       document.getElementById('tab-materials').addEventListener('click', function() {
         showLeftPanel('materials');
@@ -1897,6 +1978,7 @@ body {
               : 'doc-type-btn px-3 py-1 text-xs font-medium text-gray-600 hover:bg-gray-100 rounded-full cursor-pointer';
           });
           renderSections(type);
+          if (typeof renderAiSuggestions === 'function') { renderAiSuggestions(type); }
         }
 
         document.querySelectorAll('.doc-type-btn').forEach(function (btn) {
@@ -1970,15 +2052,15 @@ body {
     document.addEventListener('DOMContentLoaded', renderDepartmentLinks);
 
     function showLeftPanel(panel) {
-      ['student-info', 'materials', 'version-history'].forEach(function(p) {
+      ['student-info', 'goal-info', 'materials', 'version-history'].forEach(function(p) {
         document.getElementById('panel-' + p).classList.toggle('hidden', p !== panel);
       });
-      ['tab-student-info', 'tab-materials', 'tab-version-history'].forEach(function(id) {
+      ['tab-student-info', 'tab-goal-info', 'tab-materials', 'tab-version-history'].forEach(function(id) {
         var el = document.getElementById(id);
         if (el.id === 'tab-' + panel) {
-          el.className = 'flex-1 px-3 py-2 text-sm font-medium text-blue-700 bg-blue-50 rounded-lg';
+          el.className = 'px-3 py-2 text-sm font-medium text-blue-700 bg-blue-50 rounded-lg';
         } else {
-          el.className = 'flex-1 px-3 py-2 text-sm font-medium text-gray-600 hover:text-gray-900';
+          el.className = 'px-3 py-2 text-sm font-medium text-gray-600 hover:text-gray-900';
         }
       });
     }
@@ -2061,6 +2143,278 @@ body {
   </div>
     
 <script>
+/* ==================== 院校目标信息：EV系统导入（与院校目标详情页同源的弹窗样式与逻辑） ==================== */
+var EV_FIELD_GROUPS = [
+  { group: '基础信息', fields: ['学校', '官网课程编号', '专业', '学院', '系', '学位', '学制', '授课类型', '校区', '授课语言'] },
+  { group: '课程与就业', fields: ['课程特色', '就业领域', '主要雇主', '预估薪资', '专业资质', 'STEM', '申请工签相关帮助'] },
+  { group: '申请要求', fields: ['雅思', '托福', 'GPA', 'GRE/GMAT', '本科背景要求', '工作年限要求', '面试要求', '其他要求'] },
+  { group: '时间节点', fields: ['申请开始', '申请截止', '节点名称', '节点时间', '录取开始', '录取截止', '入学时间'] },
+  { group: '费用信息', fields: ['学费货币', '首年学费金额', '申请费', '奖学金'] },
+  { group: '参考链接', fields: ['学院官网（链接）', '课程页面（链接）'] }
+];
+/* 模拟 EV 接口：仅返回该专业已录入的非空字段；cur 为本页当前值（用于 新增/覆盖/一致 判断） */
+var EV_IMPORT_DATA = {
+  '学校': { ev: 'Carnegie Mellon University', cur: '卡内基梅隆大学' },
+  '官网课程编号': { ev: 'MSAII-26F', cur: '' },
+  '专业': { ev: 'MS in Artificial Intelligence and Innovation', cur: '人工智能' },
+  '学院': { ev: 'School of Computer Science', cur: '' },
+  '系': { ev: 'Machine Learning Department', cur: '' },
+  '学位': { ev: 'Master of Science', cur: '' },
+  '学制': { ev: '2', cur: '' },
+  '授课类型': { ev: 'Taught', cur: '' },
+  '校区': { ev: 'Pittsburgh Campus', cur: '' },
+  '授课语言': { ev: '英语', cur: '' },
+  '课程特色': { ev: 'CSRankings人工智能方向全球第1（2026）；与Google、NVIDIA共建联合实验室；提供16/21个月双学制选项', cur: '' },
+  '就业领域': { ev: 'Machine Learning Engineer、Data Scientist、AI Research Scientist、Software Engineer', cur: '' },
+  '主要雇主': { ev: 'Google、Meta、Amazon、NVIDIA、Apple、Microsoft', cur: '' },
+  '预估薪资': { ev: 'USD 120,000/year', cur: '' },
+  '专业资质': { ev: '部分课程可抵考 AWS Machine Learning Specialty 认证科目', cur: '' },
+  'STEM': { ev: 'TRUE', cur: '' },
+  '申请工签相关帮助': { ev: 'STEM专业可申请OPT延长，最长36个月', cur: '' },
+  '雅思': { ev: '7.5', cur: '7.5' },
+  '托福': { ev: '102', cur: '105' },
+  'GPA': { ev: '3.5', cur: '3.5+' },
+  'GRE/GMAT': { ev: 'OPTIONAL', cur: 'OPTIONAL' },
+  '本科背景要求': { ev: '理（计算机、数学、统计学等相关背景）', cur: '' },
+  '工作年限要求': { ev: 'FALSE', cur: '' },
+  '面试要求': { ev: 'TRUE', cur: '' },
+  '其他要求': { ev: '雅思小分不低于6.5；建议提交GitHub/项目作品集', cur: '' },
+  '申请开始': { ev: '2025-09-01', cur: '' },
+  '申请截止': { ev: '2026-01-15', cur: '' },
+  '节点名称': { ev: '第一轮申请；第二轮申请', cur: '' },
+  '节点时间': { ev: '2025-12-01；2026-01-15', cur: '' },
+  '录取开始': { ev: '2026-02-01', cur: '' },
+  '录取截止': { ev: '2026-03-31', cur: '' },
+  '入学时间': { ev: '2026-08-31', cur: '' },
+  '学费货币': { ev: 'USD', cur: '' },
+  '首年学费金额': { ev: '54,000', cur: '' },
+  '申请费': { ev: '75', cur: '' },
+  '奖学金': { ev: '无需额外申请，择优发放', cur: '' },
+  '学院官网（链接）': { ev: 'https://www.cs.cmu.edu/', cur: '' },
+  '课程页面（链接）': { ev: 'https://www.cs.cmu.edu/ms-artificial-intelligence', cur: '' }
+};
+var EV_STORAGE_KEY = 'pbs_ev_import_editor_cmu_ai';
+function evEscape(s) {
+  return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+}
+function evStatusOf(entry) {
+  if (!entry.cur) return 'new';
+  if (entry.ev === entry.cur) return 'same';
+  return 'overwrite';
+}
+function openEvImport() {
+  renderEvModal();
+  document.getElementById('evImportModal').classList.remove('hidden');
+}
+function closeEvImport() { document.getElementById('evImportModal').classList.add('hidden'); }
+function renderEvModal() {
+  document.getElementById('evModalSubtitle').textContent = '数据来源：EV系统 · 壹言求学数据库 ｜ 目标：卡内基梅隆大学 · 人工智能 ｜ 字段集：《壹言求学数据库录入标准（硕士）》';
+  var container = document.getElementById('evFieldGroups');
+  container.innerHTML = '';
+  var total = 0;
+  EV_FIELD_GROUPS.forEach(function(grp) {
+    var rows = '';
+    var count = 0;
+    grp.fields.forEach(function(fname) {
+      var entry = EV_IMPORT_DATA[fname];
+      if (!entry || !entry.ev) return;
+      count++; total++;
+      var st = evStatusOf(entry);
+      var tag, checked;
+      if (st === 'new') {
+        tag = '<span class="inline-flex px-2 py-0.5 rounded-full text-[11px] font-medium bg-blue-50 text-blue-600">新增</span>'; checked = true;
+      } else if (st === 'overwrite') {
+        tag = '<span class="inline-flex px-2 py-0.5 rounded-full text-[11px] font-medium bg-orange-50 text-orange-600">覆盖</span>'; checked = true;
+      } else {
+        tag = '<span class="inline-flex px-2 py-0.5 rounded-full text-[11px] font-medium bg-gray-100 text-gray-500">一致</span>'; checked = false;
+      }
+      rows += '<tr class="border-t border-gray-50 hover:bg-gray-50">' +
+        '<td class="px-3 py-2 w-10 align-top"><input type="checkbox" class="ev-field-check accent-purple-600 w-4 h-4 mt-0.5" data-ev-key="' + evEscape(fname) + '"' + (checked ? ' checked' : '') + '></td>' +
+        '<td class="px-3 py-2 text-sm text-gray-700 whitespace-nowrap align-top">' + evEscape(fname) + '</td>' +
+        '<td class="px-3 py-2 text-sm text-purple-900 font-medium align-top"><span class="block max-w-[320px] truncate" title="' + evEscape(entry.ev) + '">' + evEscape(entry.ev) + '</span></td>' +
+        '<td class="px-3 py-2 text-sm text-gray-400 align-top"><span class="block max-w-[160px] truncate" title="' + evEscape(entry.cur || '') + '">' + (entry.cur ? evEscape(entry.cur) : '—') + '</span></td>' +
+        '<td class="px-3 py-2 align-top">' + tag + '</td></tr>';
+    });
+    if (!count) return;
+    container.insertAdjacentHTML('beforeend',
+      '<div class="mb-5">' +
+      '<div class="flex items-center gap-2 mb-2"><p class="text-xs font-semibold text-gray-500 tracking-wider">' + grp.group + '</p><span class="text-[10px] text-gray-400">' + count + ' 项</span></div>' +
+      '<div class="border border-gray-100 rounded-xl overflow-hidden"><table class="w-full">' +
+      '<thead><tr class="bg-gray-50">' +
+      '<th class="px-3 py-2 w-10"></th>' +
+      '<th class="px-3 py-2 text-left text-xs font-medium text-gray-500">字段</th>' +
+      '<th class="px-3 py-2 text-left text-xs font-medium text-purple-600">EV导入值</th>' +
+      '<th class="px-3 py-2 text-left text-xs font-medium text-gray-500">当前值</th>' +
+      '<th class="px-3 py-2 text-left text-xs font-medium text-gray-500 w-20">状态</th>' +
+      '</tr></thead><tbody>' + rows + '</tbody></table></div></div>');
+  });
+  document.getElementById('evTotalCount').textContent = total;
+  document.getElementById('evCheckAll').checked = false;
+  updateEvCount();
+}
+function updateEvCount() {
+  document.getElementById('evSelectedCount').textContent = document.querySelectorAll('#evFieldGroups .ev-field-check:checked').length;
+}
+document.addEventListener('change', function(e) {
+  if (e.target && e.target.classList && e.target.classList.contains('ev-field-check')) updateEvCount();
+});
+function evToggleAll(checked) {
+  document.querySelectorAll('#evFieldGroups .ev-field-check').forEach(function(c) { c.checked = checked; });
+  updateEvCount();
+}
+function evSelectNew() {
+  document.querySelectorAll('#evFieldGroups .ev-field-check').forEach(function(c) {
+    var entry = EV_IMPORT_DATA[c.getAttribute('data-ev-key')];
+    c.checked = entry ? (evStatusOf(entry) === 'new') : false;
+  });
+  updateEvCount();
+}
+function confirmEvImport() {
+  var checks = document.querySelectorAll('#evFieldGroups .ev-field-check:checked');
+  if (!checks.length) { showEditorToast('请至少选择 1 个字段'); return; }
+  var values = {};
+  checks.forEach(function(c) {
+    var k = c.getAttribute('data-ev-key');
+    if (EV_IMPORT_DATA[k]) values[k] = EV_IMPORT_DATA[k].ev;
+  });
+  try { localStorage.setItem(EV_STORAGE_KEY, JSON.stringify({ values: values, updatedAt: new Date().toISOString() })); } catch (e) {}
+  applyEvToGoalPanel(values);
+  closeEvImport();
+  showEditorToast('已从EV系统填入 ' + Object.keys(values).length + ' 个字段', true);
+}
+function applyEvToGoalPanel(values) {
+  if (values['学校']) document.getElementById('goal-info-school').textContent = values['学校'];
+  if (values['专业']) document.getElementById('goal-info-major').textContent = values['专业'];
+  var body = document.getElementById('evDataBody');
+  body.innerHTML = '';
+  EV_FIELD_GROUPS.forEach(function(grp) {
+    var rows = '';
+    grp.fields.forEach(function(fname) {
+      if (values[fname]) {
+        rows += '<div class="flex gap-2 py-0.5"><span class="text-gray-400 w-24 flex-shrink-0 text-[11px] leading-5">' + evEscape(fname) + '</span><span class="text-gray-800 font-medium text-xs break-all">' + evEscape(values[fname]) + '</span></div>';
+      }
+    });
+    if (rows) {
+      body.insertAdjacentHTML('beforeend', '<div class="border border-purple-100 rounded-xl p-2.5 bg-purple-50/40"><p class="text-[11px] font-semibold text-purple-700 mb-1">' + grp.group + '</p>' + rows + '</div>');
+    }
+  });
+  document.getElementById('evDataSection').classList.remove('hidden');
+  var hint = document.getElementById('evEmptyHint');
+  if (hint) hint.classList.add('hidden');
+}
+function showEditorToast(msg, ok) {
+  var t = document.createElement('div');
+  t.style.cssText = 'position:fixed;top:24px;left:50%;transform:translateX(-50%);z-index:200;padding:10px 16px;border-radius:10px;color:#fff;font-size:14px;box-shadow:0 10px 30px rgba(0,0,0,.18);background:' + (ok ? '#10B981' : '#242136');
+  t.textContent = msg;
+  document.body.appendChild(t);
+  setTimeout(function() { t.remove(); }, 2000);
+}
+/* 页面加载时恢复已导入的 EV 字段 */
+document.addEventListener('DOMContentLoaded', function() {
+  try {
+    var saved = JSON.parse(localStorage.getItem(EV_STORAGE_KEY) || 'null');
+    if (saved && saved.values) applyEvToGoalPanel(saved.values);
+  } catch (e) {}
+});
+
+/* ==================== AI建议：按当前文书类型动态生成（规则见《文书编辑 AI建议》提示词） ==================== */
+var DOC_AI_GUIDE = {
+  cv: {
+    label: 'CV 简历', level: '硕士申请',
+    structure: ['个人信息', '教育背景', '经历', '荣誉奖项', '技能与语言'],
+    principles: ['只基于学生真实资料给建议，不得编造经历、成绩、奖项', '不直接代写完整文书，只说明每一部分写什么', '资料不足时明确提示「建议补充」'],
+    suggestions: [
+      { section: '教育背景', suggestion: '使用档案中的北京大学计算机科学、GPA 3.8/4.0；按院校、学位、院系、就读年份、GPA 或排名顺序呈现，教育背景置于个人信息之后。', missing: [] },
+      { section: '经历', suggestion: '所有经历按时间倒序；硕士申请重点写科研/课程项目或实习工作经历，每段按「角色 + 方法/职责 + 成果」展开，优先使用与人工智能方向相关度最高的经历。', missing: ['医疗影像项目的起止时间与个人职责', '实习单位、岗位职责与量化成果'] },
+      { section: '荣誉奖项', suggestion: 'Kaggle 多模态分类挑战赛等竞赛奖项尽量体现排名或获奖比例（如 Top 5%）。', missing: ['各奖项的获奖比例/排名数据'] },
+      { section: '技能与语言', suggestion: '列出 Python、PyTorch 等技能与托福 105 / 雅思 7.5；默认不建议写照片、性别、出生日期、婚姻状况，除非院校明确要求。', missing: [] }
+    ]
+  },
+  ps: {
+    label: 'PS 个人陈述', level: '硕士申请',
+    structure: ['个人经历', '研究兴趣', '学术背景', '为什么选择学校和专业', '未来规划', '结语'],
+    principles: ['用具体经历解释申请动机和成长过程', '研究兴趣应体现「经历 → 问题 → 兴趣方向」', '避免空泛表达「学校很好、专业排名高」'],
+    suggestions: [
+      { section: '个人经历', suggestion: '用学生主持的医疗影像创新项目等具体经历解释申请动机与成长过程；硕士层次保持中立客观，不提过于私人的细节。', missing: [] },
+      { section: '研究兴趣', suggestion: '从项目经历出发提出感兴趣的研究问题：由多模态数据对齐中遇到的问题，收束为「低样本场景下鲁棒表征学习」方向，并展示对目标方向前沿动态的了解。', missing: ['目标方向近 3 年前沿动态（可引用 1-2 篇工作）'] },
+      { section: '学术背景', suggestion: '硕士层次写核心课程与本科培养对硕士阶段学习目标的支撑，说明机器学习、深度学习等课程与申请方向的关系。', missing: ['核心课程清单与成绩'] },
+      { section: '为什么选择学校和专业', suggestion: '展示对 CMU 人工智能专业的深入了解（课程、实验室、校企合作项目可在左侧「院校目标」面板从 EV 系统导入参考），说明个人学术追求与院校的契合关系。', missing: ['目标课程/实验室名称', '心仪导师及其研究方向'] },
+      { section: '未来规划', suggestion: '短期学业目标清晰可执行，长期职业规划与学业展示相关性；结语表达感谢并期望回复。', missing: ['职业方向偏好'] }
+    ]
+  },
+  rl: {
+    label: 'RL 推荐信', level: '硕士申请',
+    structure: ['推荐人介绍', '学生情况', '结语', '落款'],
+    principles: ['始终从推荐人视角提出建议', '所有评价尽量用真实具体事件支撑', '推荐人信息缺失时明确提示补充'],
+    suggestions: [
+      { section: '推荐人介绍', suggestion: '写清推荐人信息（学校、职级、荣誉）、与学生的关系及写信目的，确立推荐人权威性与了解程度。', missing: ['推荐人姓名、职级、与学生的关系（建议补充）'] },
+      { section: '学生情况', suggestion: '硕士层次突出知识基础、学习能力、科研能力和个人素质：用课堂表现、科研项目中的具体事例（如医疗影像项目中的分工与贡献）支撑评价。', missing: ['可引用的具体事例 2-3 个'] },
+      { section: '结语与落款', suggestion: '结语再次肯定学生综合情况，表达将来合作与提供帮助的意愿；落款包含推荐人姓名、职称/职位、工作单位、联系电话、电子邮箱、签字位。', missing: ['推荐人联系电话与电子邮箱'] }
+    ]
+  },
+  rp: {
+    label: 'RP 研究计划', level: '硕士申请',
+    structure: ['题目', '摘要', '研究背景', '研究问题', '文献综述', '研究方法', '预期成果', '时间安排', '参考文献'],
+    principles: ['研究问题必须明确、具体、可研究', '研究方法说明数据、对象、方法、技术路线和验证方式', '时间安排拆解为可执行研究阶段，并预留风险调整空间'],
+    suggestions: [
+      { section: '研究问题', suggestion: '从学生主持的医疗影像创新项目切入，说明在多模态数据对齐中遇到的具体问题，再将问题收束为「低样本场景下鲁棒表征学习」；避免只介绍行业背景，突出问题来自真实经历。', missing: ['拟研究问题的边界定义'] },
+      { section: '研究方法', suggestion: '结合成绩单中的机器学习、深度学习课程与 CV 中的 PyTorch 项目经验，按「数据准备—对比学习对齐—注意力融合—基准评测」展开；每一步补充输入、输出和评估指标，体现方案可执行。', missing: ['实验数据集与规模', '评估指标基线'] },
+      { section: '预期成果', suggestion: '区分学术贡献和实际产出：成果建议分为性能指标、论文产出和可复现代码三类；不承诺无法验证的「行业领先」，使用可衡量目标。', missing: ['是否伴随实体产品/系统产出'] },
+      { section: '时间安排', suggestion: '将研究拆解为文献复现、方法设计、实验验证、论文撰写四个可执行阶段，并为风险和预料之外的发现预留调整空间。', missing: [] },
+      { section: '文献综述', suggestion: '围绕研究问题选择近 3 年目标方向核心文献，比较其方法与局限，引出本研究的位置。', missing: ['参考文献清单（建议 8-12 篇）'] }
+    ]
+  }
+};
+var AI_SUGGEST_COLORS = ['border-blue-500', 'border-purple-500', 'border-emerald-500', 'border-amber-500', 'border-pink-500', 'border-cyan-500'];
+function renderAiSuggestions(type) {
+  var guide = DOC_AI_GUIDE[type] || DOC_AI_GUIDE.rp;
+  var container = document.getElementById('aiSuggestContainer');
+  if (!container) return;
+  var html =
+    '<div class="p-3 bg-gradient-to-br from-indigo-50 to-blue-50 rounded-xl border border-indigo-100">' +
+      '<div class="flex items-center gap-2 mb-2">' +
+        '<span class="w-7 h-7 rounded-lg bg-white text-blue-600 flex items-center justify-center shadow-sm">✦</span>' +
+        '<div class="flex-1"><div class="flex items-center gap-2"><h4 class="text-sm font-semibold text-gray-800">AI填写建议</h4>' +
+        '<span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold bg-blue-600 text-white">当前文书：' + guide.label + '</span>' +
+        '<span class="text-[10px] text-gray-400">' + guide.level + '</span></div>' +
+        '<p class="text-xs text-gray-500 mt-0.5">基于学生资料、申请信息、资产文件解析结果与当前文书内容生成</p></div>' +
+      '</div>' +
+      '<div class="space-y-1 mt-2">' +
+        guide.principles.map(function(p) {
+          return '<p class="text-[11px] text-gray-600 flex items-start gap-1.5"><svg class="w-3 h-3 text-emerald-500 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"></path></svg>' + p + '</p>';
+        }).join('') +
+      '</div>' +
+    '</div>' +
+    '<div class="p-3 border border-gray-100 bg-white rounded-xl">' +
+      '<p class="text-xs font-semibold text-gray-700 mb-2">推荐结构（' + guide.label + '）</p>' +
+      '<div class="flex flex-wrap items-center gap-1">' +
+        guide.structure.map(function(step, i) {
+          return '<span class="inline-flex items-center gap-1 px-2 py-1 rounded-lg bg-indigo-50 text-indigo-700 text-[11px] font-medium"><span class="w-3.5 h-3.5 rounded-full bg-indigo-600 text-white text-[9px] flex items-center justify-center">' + (i + 1) + '</span>' + step + '</span>' + (i < guide.structure.length - 1 ? '<span class="text-gray-300 text-[10px]">→</span>' : '');
+        }).join('') +
+      '</div>' +
+    '</div>';
+  guide.suggestions.forEach(function(sg, i) {
+    var color = AI_SUGGEST_COLORS[i % AI_SUGGEST_COLORS.length];
+    var missing = (sg.missing && sg.missing.length)
+      ? '<div class="mt-2 flex flex-wrap items-center gap-1.5"><span class="text-[10px] text-amber-600 font-medium">建议补充：</span>' + sg.missing.map(function(m) {
+          return '<span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-medium bg-amber-50 text-amber-700 border border-amber-200">' + m + '</span>';
+        }).join('') + '</div>'
+      : '';
+    html += '<div class="ai-detail-card border-l-4 ' + color + '">' +
+      '<div class="flex items-center justify-between mb-2"><span class="text-xs font-semibold text-gray-800">' + sg.section + '</span><span class="text-[10px] text-gray-400">建议 ' + (i + 1) + ' / ' + guide.suggestions.length + '</span></div>' +
+      '<p class="ai-copy-source text-xs text-gray-700 leading-relaxed">' + sg.suggestion + '</p>' +
+      missing +
+      '<div class="flex justify-end pt-3"><button class="text-xs text-blue-600 hover:text-blue-800 font-medium" onclick="copyAiSuggestion(this)">复制建议</button></div>' +
+      '</div>';
+  });
+  html += '<p class="text-[10px] text-gray-400 leading-relaxed px-1">建议输出遵循 {section, suggestion, missing_information} 结构；切换顶部文书类型（CV/PS/RL/RP）可查看对应类型的填写建议。</p>';
+  container.innerHTML = html;
+}
+document.addEventListener('DOMContentLoaded', function() {
+  var active = document.querySelector('.doc-type-btn.bg-blue-100');
+  renderAiSuggestions(active ? active.getAttribute('data-doc-type') : 'rp');
+});
+
 // 移动端菜单切换
 document.getElementById('mobile-menu-btn')?.addEventListener('click', function() {
   document.getElementById('sidebar-tabs').classList.add('open');

@@ -387,7 +387,11 @@
             <span class="text-sm font-medium text-gray-900">常规（RD）</span>
           </div>
           <div>
-            <span class="text-xs text-gray-500 block mb-1">申请DDL</span>
+            <span class="text-xs text-gray-500 block mb-1">材料准备DDL</span>
+            <span class="text-sm font-medium text-orange-600">2026-12-20</span>
+          </div>
+          <div>
+            <span class="text-xs text-gray-500 block mb-1">网申提交DDL</span>
             <span class="text-sm font-medium text-red-600">2027-01-15</span>
           </div>
           <div>
@@ -426,6 +430,19 @@
               <span id="linkedEmailText" class="text-sm text-gray-900">zhangming@cmu.edu</span>
               <span class="text-xs text-blue-600 group-hover:underline">注册 / 绑定 ›</span>
             </button>
+          </div>
+          <div>
+            <span class="text-xs text-gray-500 block mb-1">关联邮箱密码</span>
+            <div class="flex items-center gap-1">
+              <span class="text-sm text-gray-900" data-field="email-pwd">********</span>
+              <button class="p-1 text-gray-400 hover:text-blue-600" onclick="toggleEmailPwd(this)" title="显示/隐藏邮箱密码">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
+                </svg>
+              </button>
+            </div>
+            <span class="hidden text-sm text-gray-900" data-field="email-pwd-plain">Zm@0831Mail</span>
           </div>
         </div>
       </div>
@@ -1177,7 +1194,7 @@
   <!-- EV系统导入进度线弹窗 -->
   <div id="evImportModal" class="fixed inset-0 z-50 hidden">
     <div class="absolute inset-0 bg-black bg-opacity-30" onclick="closeEvImportModal()"></div>
-    <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[520px] bg-white rounded-2xl shadow-2xl p-6">
+    <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[680px] max-w-[94vw] max-h-[90vh] bg-white rounded-2xl shadow-2xl p-6 flex flex-col">
       <div class="flex items-center justify-between mb-1">
         <h3 class="text-lg font-semibold text-gray-800">从EV系统导入进度线</h3>
         <button class="p-1 text-gray-400 hover:text-gray-600" onclick="closeEvImportModal()">
@@ -1186,76 +1203,38 @@
           </svg>
         </button>
       </div>
-      <p class="text-xs text-gray-400 mb-5">数据来源：EV系统 · 申请管理模块（学生：张明 / 项目：卡内基梅隆大学 · 计算机科学）。勾选要导入的进度节点，导入后将覆盖当前进度线。</p>
-      <div class="space-y-2 max-h-[320px] overflow-y-auto pr-1">
-        <label class="flex items-start gap-3 p-3 bg-gray-50 rounded-lg hover:bg-gray-100 cursor-pointer">
-          <input type="checkbox" class="mt-1 w-4 h-4 text-blue-600 rounded" checked="">
-          <div class="flex-1">
-            <div class="flex items-center justify-between">
-              <span class="text-sm font-medium text-gray-900">早轮申请（ED）</span>
-              <span class="text-xs text-gray-400">2026-11-01 截止</span>
-            </div>
-            <p class="text-xs text-gray-500 mt-0.5">开始：2026-10-01 / 结束：2026-11-01</p>
-          </div>
-        </label>
-        <label class="flex items-start gap-3 p-3 bg-gray-50 rounded-lg hover:bg-gray-100 cursor-pointer">
-          <input type="checkbox" class="mt-1 w-4 h-4 text-blue-600 rounded" checked="">
-          <div class="flex-1">
-            <div class="flex items-center justify-between">
-              <span class="text-sm font-medium text-gray-900">常规申请（RD）</span>
-              <span class="text-xs text-gray-400">2027-01-15 截止</span>
-            </div>
-            <p class="text-xs text-gray-500 mt-0.5">开始：2026-11-02 / 结束：2027-01-15</p>
-          </div>
-        </label>
-        <label class="flex items-start gap-3 p-3 bg-gray-50 rounded-lg hover:bg-gray-100 cursor-pointer">
-          <input type="checkbox" class="mt-1 w-4 h-4 text-blue-600 rounded" checked="">
-          <div class="flex-1">
-            <div class="flex items-center justify-between">
-              <span class="text-sm font-medium text-gray-900">面试</span>
-              <span class="text-xs text-gray-400">预计 2027-02 至 2027-03</span>
-            </div>
-            <p class="text-xs text-gray-500 mt-0.5">等待RD申请审核结果后安排</p>
-          </div>
-        </label>
-        <label class="flex items-start gap-3 p-3 bg-gray-50 rounded-lg hover:bg-gray-100 cursor-pointer">
-          <input type="checkbox" class="mt-1 w-4 h-4 text-blue-600 rounded" checked="">
-          <div class="flex-1">
-            <div class="flex items-center justify-between">
-              <span class="text-sm font-medium text-gray-900">录取 / 入学</span>
-              <span class="text-xs text-gray-400">2027-04 放榜</span>
-            </div>
-            <p class="text-xs text-gray-500 mt-0.5">录取开始：2027-03 / 入学：2027-09</p>
-          </div>
-        </label>
-        <label class="flex items-start gap-3 p-3 bg-gray-50 rounded-lg hover:bg-gray-100 cursor-pointer">
-          <input type="checkbox" class="mt-1 w-4 h-4 text-blue-600 rounded">
-          <div class="flex-1">
-            <div class="flex items-center justify-between">
-              <span class="text-sm font-medium text-gray-900">签证办理</span>
-              <span class="text-xs text-gray-400">预计 2027-05 至 2027-07</span>
-            </div>
-            <p class="text-xs text-gray-500 mt-0.5">EV系统扩展节点，可按需导入</p>
-          </div>
-        </label>
-        <label class="flex items-start gap-3 p-3 bg-gray-50 rounded-lg hover:bg-gray-100 cursor-pointer">
-          <input type="checkbox" class="mt-1 w-4 h-4 text-blue-600 rounded">
-          <div class="flex-1">
-            <div class="flex items-center justify-between">
-              <span class="text-sm font-medium text-gray-900">行前准备</span>
-              <span class="text-xs text-gray-400">预计 2027-08</span>
-            </div>
-            <p class="text-xs text-gray-500 mt-0.5">EV系统扩展节点，可按需导入</p>
-          </div>
+      <p class="text-xs text-gray-400 mb-4">数据来源：EV系统 · 院校项目库（卡内基梅隆大学 · 计算机科学 · 2026 Fall）。先勾选需要导入的时间字段，下方节点预览将实时联动；确认后按预览顺序生成网申进度线。</p>
+
+      <!-- ① 导入字段选择（对应EV数据库录入标准字段） -->
+      <div class="mb-4">
+        <p class="text-sm font-medium text-gray-700 mb-2">① 选择导入字段<span class="text-xs text-gray-400 font-normal ml-2">字段与EV数据库录入标准一致，取消勾选则对应节点不导入</span></p>
+        <div class="grid grid-cols-3 gap-2">
+          <label class="flex items-center gap-2 px-3 py-2 bg-gray-50 rounded-lg text-sm text-gray-700 cursor-pointer hover:bg-gray-100"><input type="checkbox" id="evf-f_open" checked class="w-4 h-4 text-blue-600 rounded" onchange="toggleEvField('f_open')">申请开始</label>
+          <label class="flex items-center gap-2 px-3 py-2 bg-gray-50 rounded-lg text-sm text-gray-700 cursor-pointer hover:bg-gray-100"><input type="checkbox" id="evf-f_deadline" checked class="w-4 h-4 text-blue-600 rounded" onchange="toggleEvField('f_deadline')">申请截止</label>
+          <label class="flex items-center gap-2 px-3 py-2 bg-gray-50 rounded-lg text-sm text-gray-700 cursor-pointer hover:bg-gray-100"><input type="checkbox" id="evf-f_milestone" checked class="w-4 h-4 text-blue-600 rounded" onchange="toggleEvField('f_milestone')">节点名称 + 节点时间</label>
+          <label class="flex items-center gap-2 px-3 py-2 bg-gray-50 rounded-lg text-sm text-gray-700 cursor-pointer hover:bg-gray-100"><input type="checkbox" id="evf-f_admit" checked class="w-4 h-4 text-blue-600 rounded" onchange="toggleEvField('f_admit')">录取开始</label>
+          <label class="flex items-center gap-2 px-3 py-2 bg-gray-50 rounded-lg text-sm text-gray-700 cursor-pointer hover:bg-gray-100"><input type="checkbox" id="evf-f_admitEnd" class="w-4 h-4 text-blue-600 rounded" onchange="toggleEvField('f_admitEnd')">录取截止</label>
+          <label class="flex items-center gap-2 px-3 py-2 bg-gray-50 rounded-lg text-sm text-gray-700 cursor-pointer hover:bg-gray-100"><input type="checkbox" id="evf-f_enroll" checked class="w-4 h-4 text-blue-600 rounded" onchange="toggleEvField('f_enroll')">入学时间</label>
+        </div>
+      </div>
+
+      <!-- ② 节点预览与导入顺序 -->
+      <div class="flex items-center justify-between mb-1.5">
+        <p class="text-sm font-medium text-gray-700">② 节点预览与导入顺序<span class="text-xs text-gray-400 font-normal ml-2">导入后覆盖当前进度线</span></p>
+        <label class="flex items-center gap-2 text-xs text-gray-600 cursor-pointer select-none">
+          <input type="checkbox" id="evAutoSortToggle" checked class="w-3.5 h-3.5 text-blue-600 rounded" onchange="toggleEvAutoSort(this.checked)">
+          自动按时间顺序排列
         </label>
       </div>
-      <div class="flex items-center gap-3 mt-6">
+      <p class="text-xs text-gray-400 mb-2" id="evSortHint">已按节点时间从早到晚自动排列；取消勾选「自动按时间顺序排列」后，可使用每行右侧的 ↑ ↓ 手动调整顺序。</p>
+      <div id="evNodeList" class="space-y-2 max-h-[240px] overflow-y-auto pr-1"></div>
+
+      <div class="flex items-center gap-3 mt-5">
         <button class="flex-1 h-10 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium" onclick="confirmEvImport()">确认导入</button>
         <button class="flex-1 h-10 bg-white border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors font-medium" onclick="closeEvImportModal()">取消</button>
       </div>
     </div>
   </div>
-
   <!-- 配置进度线弹窗 -->
   <div id="timelineConfigModal" class="fixed inset-0 z-50 hidden">
     <div class="absolute inset-0 bg-black bg-opacity-30" onclick="closeTimelineConfigModal()"></div>
@@ -1353,6 +1332,21 @@
     function toggleAppPwd(btn) {
       var pwdSpan = btn.parentElement.querySelector('[data-field="app-pwd"]');
       var plainSpan = btn.parentElement.querySelector('[data-field="app-pwd-plain"]');
+      if (pwdSpan.style.display !== 'none') {
+        pwdSpan.style.display = 'none';
+        plainSpan.classList.remove('hidden');
+        btn.innerHTML = '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.542-7a9.956 9.956 0 012.293-4.413M6.343 6.343A9.956 9.956 0 0112 5c4.478 0 8.268 2.943 9.542 7a9.956 9.956 0 01-4.293 5.587M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3l18 18"/></svg>';
+      } else {
+        pwdSpan.style.display = '';
+        plainSpan.classList.add('hidden');
+        btn.innerHTML = '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>';
+      }
+    }
+
+    // 邮箱密码显示/隐藏
+    function toggleEmailPwd(btn) {
+      var pwdSpan = btn.parentElement.querySelector('[data-field="email-pwd"]');
+      var plainSpan = btn.parentElement.parentElement.querySelector('[data-field="email-pwd-plain"]');
       if (pwdSpan.style.display !== 'none') {
         pwdSpan.style.display = 'none';
         plainSpan.classList.remove('hidden');
@@ -1507,19 +1501,98 @@
     }
 
     // ===== 网申进度线：从EV系统导入 =====
+    // 字段命名与EV数据库录入标准一致：申请开始 / 申请截止 / 节点名称 / 节点时间 / 录取开始 / 录取截止 / 入学时间
+    var evFieldLabels = {
+      f_open: '申请开始',
+      f_deadline: '申请截止',
+      f_milestone: '节点名称+节点时间',
+      f_admit: '录取开始',
+      f_admitEnd: '录取截止',
+      f_enroll: '入学时间'
+    };
+    var evNodes = [
+      { field: 'f_open',      name: '申请开放',          date: '2026-09-01', note: '申请通道开放，可开始填写网申', checked: true },
+      { field: 'f_milestone', name: '早轮申请（ED/EA）',  date: '2026-11-01', note: '早轮申请提交截止', checked: true },
+      { field: 'f_deadline',  name: '常规申请截止（RD）', date: '2027-01-15', note: '网申提交DDL，逾期无法提交', checked: true },
+      { field: 'f_milestone', name: '面试',              date: '2027-02-15', note: '校友面试 / 视频面试', checked: true },
+      { field: 'f_admit',     name: '录取结果公布',       date: '2027-03-15', note: '录取开始发放', checked: true },
+      { field: 'f_enroll',    name: '入学报到',          date: '2027-08-28', note: '入学时间，办理注册手续', checked: true }
+    ];
+    var evAutoSort = true;
+
     function openEvImport() {
       document.getElementById('evImportModal').classList.remove('hidden');
+      renderEvNodes();
     }
     function closeEvImportModal() {
       document.getElementById('evImportModal').classList.add('hidden');
     }
+    function evFieldChecked(fieldId) {
+      var cb = document.getElementById('evf-' + fieldId);
+      return cb ? cb.checked : true;
+    }
+    function toggleEvField(fieldId) {
+      // 字段取消勾选后，其对应节点不参与导入（置灰并取消勾选）
+      evNodes.forEach(function(n) { if (n.field === fieldId) n.checked = evFieldChecked(fieldId); });
+      renderEvNodes();
+    }
+    function toggleEvAutoSort(on) {
+      evAutoSort = on;
+      if (on) {
+        evNodes.sort(function(a, b) { return a.date < b.date ? -1 : (a.date > b.date ? 1 : 0); });
+      }
+      document.getElementById('evSortHint').textContent = on
+        ? '已按节点时间从早到晚自动排列；取消勾选「自动按时间顺序排列」后，可使用每行右侧的 ↑ ↓ 手动调整顺序。'
+        : '手动排序模式：使用每行右侧的 ↑ ↓ 调整节点顺序，确认导入时按当前顺序生成进度线。';
+      renderEvNodes();
+    }
+    function moveEvNode(idx, dir) {
+      if (evAutoSort) return; // 自动排序模式下禁用手动调整
+      var target = idx + dir;
+      if (target < 0 || target >= evNodes.length) return;
+      var t = evNodes[idx]; evNodes[idx] = evNodes[target]; evNodes[target] = t;
+      renderEvNodes();
+    }
+    function toggleEvNodeCheck(idx, checked) { evNodes[idx].checked = checked; }
+    function renderEvNodes() {
+      var list = document.getElementById('evNodeList');
+      if (!list) return;
+      var html = '';
+      evNodes.forEach(function(n, i) {
+        var fieldOn = evFieldChecked(n.field);
+        var rowCls = fieldOn ? 'bg-gray-50' : 'bg-gray-50 opacity-45';
+        var arrowCls = evAutoSort ? 'opacity-30 cursor-not-allowed' : 'hover:text-blue-600 hover:bg-blue-50';
+        html += '<div class="flex items-center gap-3 p-3 rounded-lg ' + rowCls + '">'
+          + '<input type="checkbox" class="w-4 h-4 text-blue-600 rounded flex-shrink-0" ' + ((n.checked && fieldOn) ? 'checked' : '') + (fieldOn ? '' : ' disabled') + ' onchange="toggleEvNodeCheck(' + i + ', this.checked)">'
+          + '<div class="flex-1 min-w-0">'
+          +   '<div class="flex items-center justify-between gap-2">'
+          +     '<span class="text-sm font-medium text-gray-900">' + (i + 1) + '. ' + n.name + '</span>'
+          +     '<span class="text-xs text-gray-500 flex-shrink-0">' + n.date + '</span>'
+          +   '</div>'
+          +   '<div class="flex items-center gap-2 mt-0.5">'
+          +     '<span class="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-medium bg-blue-50 text-blue-600 flex-shrink-0">EV字段：' + evFieldLabels[n.field] + '</span>'
+          +     '<span class="text-xs text-gray-400 truncate">' + n.note + '</span>'
+          +   '</div>'
+          + '</div>'
+          + '<div class="flex flex-col gap-0.5 flex-shrink-0">'
+          +   '<button class="p-0.5 text-gray-400 rounded ' + arrowCls + '" ' + (evAutoSort ? 'disabled' : '') + ' onclick="moveEvNode(' + i + ', -1)" title="上移">'
+          +     '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7"/></svg>'
+          +   '</button>'
+          +   '<button class="p-0.5 text-gray-400 rounded ' + arrowCls + '" ' + (evAutoSort ? 'disabled' : '') + ' onclick="moveEvNode(' + i + ', 1)" title="下移">'
+          +     '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>'
+          +   '</button>'
+          + '</div>'
+          + '</div>';
+      });
+      list.innerHTML = html;
+    }
     function confirmEvImport() {
-      var checked = document.querySelectorAll('#evImportModal input[type="checkbox"]:checked').length;
-      if (!checked) { alert('请至少勾选一个进度节点'); return; }
-      alert('已从EV系统导入网申进度线！\n导入节点：' + checked + ' 个\n当前进度线已按EV系统数据更新。');
+      var selected = evNodes.filter(function(n) { return n.checked && evFieldChecked(n.field); });
+      if (!selected.length) { alert('请至少勾选一个导入节点'); return; }
+      var names = selected.map(function(n, i) { return (i + 1) + '. ' + n.name + '（' + n.date + '）'; }).join('\n');
+      alert('已从EV系统导入网申进度线！\n导入节点：' + selected.length + ' 个（' + (evAutoSort ? '按时间顺序自动排列' : '按手动调整顺序') + '）\n\n' + names + '\n\n当前进度线已按EV系统数据更新。');
       closeEvImportModal();
     }
-
     // ===== 网申进度线：配置 =====
     function openTimelineConfig() {
       document.getElementById('timelineConfigModal').classList.remove('hidden');

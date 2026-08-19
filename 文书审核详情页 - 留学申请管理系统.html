@@ -763,7 +763,7 @@
             </h3>
             <!-- 初始状态 -->
             <div id="aiEvalEmpty">
-              <p class="text-sm text-gray-500 mb-4 leading-6">AI 将从内容深度、结构逻辑、语言表达、项目匹配度四个维度对文书进行整体评价，辅助审核人员快速把握文书质量。</p>
+              <p class="text-sm text-gray-500 mb-4 leading-6">AI 将从内容与针对性（30%）、结构与逻辑（25%）、语言与表达（20%）、个性化与亮点（15%）、合规与事实准确性（10%）五个维度按 1-5 分（0.5 步进）加权评价，输出维度评分、亮点、待改进点与总体评语，供人工审核参考。</p>
               <button class="w-full h-9 text-white rounded-lg text-sm font-medium flex items-center justify-center gap-2 pbs-ai-btn" onclick="generateAiEval()">
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"></path></svg>
                 生成 AI 评价
@@ -776,7 +776,7 @@
             </div>
             <!-- 评价结果 -->
             <div id="aiEvalResult" class="hidden">
-              <!-- 综合评分 -->
+              <!-- 加权总分与判定 -->
               <div class="flex items-center gap-4 p-4 rounded-xl border mb-4" style="background:linear-gradient(90deg,#F5F3FF,#EFF6FF);border-color:#DDD6FE;">
                 <div class="relative w-16 h-16 flex-shrink-0">
                   <svg class="w-16 h-16" viewBox="0 0 64 64" style="transform:rotate(-90deg);">
@@ -784,35 +784,48 @@
                     <circle cx="32" cy="32" r="26" fill="none" stroke="#7C3AED" stroke-width="6" stroke-linecap="round" stroke-dasharray="163.4" stroke-dashoffset="22.9"></circle>
                   </svg>
                   <div class="absolute inset-0 flex flex-col items-center justify-center">
-                    <span class="text-xl font-bold leading-none" style="color:#6D28D9;">86</span>
-                    <span class="text-gray-400" style="font-size:10px;">/100</span>
+                    <span class="text-xl font-bold leading-none" style="color:#6D28D9;">4.3</span>
+                    <span class="text-gray-400" style="font-size:10px;">/5.0</span>
                   </div>
                 </div>
-                <div>
-                  <p class="text-sm font-semibold text-gray-800">综合评分：良好</p>
-                  <p class="text-xs text-gray-500 mt-1 leading-5">已达到目标项目申请的基本要求，针对性修改后可提升至优秀水平</p>
+                <div class="flex-1">
+                  <div class="flex items-center gap-2 flex-wrap">
+                    <p class="text-sm font-semibold text-gray-800">加权总分：4.3</p>
+                    <span class="inline-flex items-center px-2 py-0.5 rounded-full font-semibold bg-green-100 text-green-700" style="font-size:11px;">可提交（≥3.5）</span>
+                  </div>
+                  <p class="text-gray-500 mt-1 leading-5" style="font-size:11px;">判定规则：≥3.5 可提交 ｜ 3.0-3.5 需修改 ｜ &lt;3.0 重写 ｜ 事实性错误一票否决，直接判定打回</p>
                   <p class="text-xs text-gray-400 mt-1" id="aiEvalTime">生成时间：--</p>
                 </div>
               </div>
-              <!-- 维度评分 -->
-              <div class="space-y-3 mb-4">
+              <!-- 维度评分（1-5 分，0.5 步进，按权重加总） -->
+              <div class="space-y-3 mb-2">
                 <div>
-                  <div class="flex justify-between text-xs mb-1"><span class="text-gray-600">内容深度</span><span class="font-medium text-gray-800">88</span></div>
-                  <div class="h-1.5 bg-gray-100 rounded-full overflow-hidden"><div class="h-full rounded-full" style="width:88%;background:#8B5CF6;"></div></div>
+                  <div class="flex justify-between text-xs mb-1"><span class="text-gray-600">内容与针对性 <span class="text-gray-400">权重 30%</span></span><span class="font-medium text-gray-800">4.5</span></div>
+                  <div class="h-1.5 bg-gray-100 rounded-full overflow-hidden"><div class="h-full rounded-full" style="width:90%;background:#8B5CF6;"></div></div>
+                  <p class="text-gray-400 mt-0.5" style="font-size:10px;">回应院校题目要求，内容贴合文书类型的结构标准</p>
                 </div>
                 <div>
-                  <div class="flex justify-between text-xs mb-1"><span class="text-gray-600">结构逻辑</span><span class="font-medium text-gray-800">84</span></div>
-                  <div class="h-1.5 bg-gray-100 rounded-full overflow-hidden"><div class="h-full rounded-full" style="width:84%;background:#6366F1;"></div></div>
+                  <div class="flex justify-between text-xs mb-1"><span class="text-gray-600">结构与逻辑 <span class="text-gray-400">权重 25%</span></span><span class="font-medium text-gray-800">4.0</span></div>
+                  <div class="h-1.5 bg-gray-100 rounded-full overflow-hidden"><div class="h-full rounded-full" style="width:80%;background:#6366F1;"></div></div>
+                  <p class="text-gray-400 mt-0.5" style="font-size:10px;">段落组织符合该文书类型与硕士层次的标准结构，论证连贯</p>
                 </div>
                 <div>
-                  <div class="flex justify-between text-xs mb-1"><span class="text-gray-600">语言表达</span><span class="font-medium text-gray-800">90</span></div>
+                  <div class="flex justify-between text-xs mb-1"><span class="text-gray-600">语言与表达 <span class="text-gray-400">权重 20%</span></span><span class="font-medium text-gray-800">4.5</span></div>
                   <div class="h-1.5 bg-gray-100 rounded-full overflow-hidden"><div class="h-full rounded-full" style="width:90%;background:#3B82F6;"></div></div>
+                  <p class="text-gray-400 mt-0.5" style="font-size:10px;">语法、用词、句式质量达标，原创度可通过 plagiarism-detection 审查</p>
                 </div>
                 <div>
-                  <div class="flex justify-between text-xs mb-1"><span class="text-gray-600">项目匹配度</span><span class="font-medium text-gray-800">80</span></div>
+                  <div class="flex justify-between text-xs mb-1"><span class="text-gray-600">个性化与亮点 <span class="text-gray-400">权重 15%</span></span><span class="font-medium text-gray-800">4.0</span></div>
                   <div class="h-1.5 bg-gray-100 rounded-full overflow-hidden"><div class="h-full rounded-full" style="width:80%;background:#F59E0B;"></div></div>
+                  <p class="text-gray-400 mt-0.5" style="font-size:10px;">体现学生独特经历与特质，避免模板化</p>
+                </div>
+                <div>
+                  <div class="flex justify-between text-xs mb-1"><span class="text-gray-600">合规与事实准确性 <span class="text-gray-400">权重 10%</span></span><span class="font-medium text-gray-800">4.0</span></div>
+                  <div class="h-1.5 bg-gray-100 rounded-full overflow-hidden"><div class="h-full rounded-full" style="width:80%;background:#10B981;"></div></div>
+                  <p class="text-gray-400 mt-0.5" style="font-size:10px;">字数合规、格式符合院校要求；未发现事实性错误（事实性错误一票否决）</p>
                 </div>
               </div>
+              <p class="text-gray-400 mb-4 leading-5" style="font-size:11px;">结构标准参照：按文书类型（CV/PS/RP/RL）与申请层次（本科/硕士/博士/本硕连读）套用对应结构标准，检查必备段落是否缺失、顺序是否正确、层次适配要点是否满足；总分 = 各维度得分 × 权重加总。</p>
               <!-- 文书亮点 -->
               <div class="mb-4">
                 <p class="text-xs font-semibold mb-2 flex items-center gap-1.5" style="color:#047857;">
@@ -820,8 +833,8 @@
                   文书亮点
                 </p>
                 <ul class="space-y-1.5 text-xs text-gray-600 leading-5 pl-4" style="list-style:disc;">
-                  <li>以"十二岁拆解电脑"的童年经历切入，叙事有记忆点，个人特质鲜明。</li>
-                  <li>科研经历包含具体量化成果（30,000+ 样本质检），可信度高。</li>
+                  <li>以"十二岁拆解电脑"的童年经历切入（原文第 1 段），叙事有记忆点，个人特质鲜明。</li>
+                  <li>科研经历包含具体量化成果（原文第 3 段"30,000+ 样本质检"），可信度高。</li>
                   <li>职业方向明确（人工智能），与申请专业方向一致。</li>
                 </ul>
               </div>
@@ -841,6 +854,25 @@
               <div class="p-3 bg-gray-50 rounded-lg mb-4">
                 <p class="text-xs font-semibold text-gray-700 mb-1.5">总体评语</p>
                 <p class="text-xs text-gray-600 leading-5">该文书叙事主线清晰、经历具体、语言成熟，整体质量良好。主要提升空间在于与目标项目的深度结合——当前对 CMU 的提及较为泛化，建议补充具体课程、实验室或教授研究方向，把"为什么选择 CMU"落到实处。</p>
+              </div>
+              <!-- 评价约束 -->
+              <div class="p-3 bg-blue-50 border border-blue-100 rounded-lg mb-3">
+                <p class="text-blue-700 leading-5" style="font-size:11px;">评价约束：评价均引用文书原文作为依据，不泛泛而谈；AI 只做评价、不修改文书；学生隐私信息已脱敏，评语中保留占位符。</p>
+              </div>
+              <!-- 复核机制 -->
+              <div class="p-3 rounded-lg mb-4" style="background:#FAF5FF;border:1px solid #E9D5FF;">
+                <p class="text-xs font-semibold mb-1.5" style="color:#7E22CE;">复核机制</p>
+                <ul class="leading-5" style="font-size:11px;color:#7E22CE;list-style:disc;padding-left:14px;">
+                  <li>复核周期：每月抽样 20 篇（或当月审核量的 10%，取大者）进行人工复评</li>
+                  <li>校准触发：AI 分与人工分偏差 &gt; 0.5 分即触发提示词校准，校准记录留档于 AI 管理页评测区</li>
+                  <li>复核负责人：文书审核主管</li>
+                  <li>数据闭环：审核人可采纳或修改 AI 评分，改分差值自动汇入校准数据源</li>
+                </ul>
+              </div>
+              <!-- 采纳 / 修改 AI 评分（改分差值汇入校准数据源） -->
+              <div class="flex items-center gap-2 mb-3">
+                <button class="flex-1 h-8 text-xs font-medium text-white rounded-lg" style="background:#7C3AED;" onclick="adoptAiScore()">采纳 AI 评分</button>
+                <button class="flex-1 h-8 text-xs font-medium border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50" onclick="modifyAiScore()">修改评分</button>
               </div>
               <div class="flex items-center justify-between">
                 <p class="text-gray-400" style="font-size:11px;">AI 评价仅供参考，最终结论以审核人员为准</p>
@@ -986,6 +1018,24 @@
         var pad = function (n) { return (n < 10 ? '0' : '') + n; };
         document.getElementById('aiEvalTime').textContent = '生成时间：' + now.getFullYear() + '-' + pad(now.getMonth() + 1) + '-' + pad(now.getDate()) + ' ' + pad(now.getHours()) + ':' + pad(now.getMinutes());
       }, 1600);
+    }
+
+    /* 数据闭环：采纳或修改 AI 评分；改分差值汇入校准数据源（AI 管理页评测区留档） */
+    var AI_EVAL_SCORE = 4.3;
+    function adoptAiScore() {
+      alert('已采纳 AI 评分（4.3 / 5.0 · 可提交）。\n采纳记录将留档，供每月人工复评抽样使用。');
+    }
+    function modifyAiScore() {
+      var input = prompt('请输入人工评分（1-5 分，0.5 步进）：', AI_EVAL_SCORE);
+      if (input === null) { return; }
+      var score = parseFloat(input);
+      if (isNaN(score) || score < 1 || score > 5) { alert('请输入 1-5 之间的分数（0.5 步进）'); return; }
+      var diff = Math.abs(score - AI_EVAL_SCORE).toFixed(2);
+      var msg = '已记录人工评分 ' + score.toFixed(1) + ' / 5.0，与 AI 分差值 ' + diff + ' 分已自动汇入校准数据源。';
+      if (parseFloat(diff) > 0.5) {
+        msg += '\n偏差 > 0.5 分，已触发提示词校准，校准记录将留档于 AI 管理页评测区。';
+      }
+      alert(msg);
     }
 
     function addAnnotation() {

@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>视频管理 - 留学申请管理系统</title>
+  <script src="./assets/vendor/tailwind-runtime.js"></script>
+  <link rel="stylesheet" href="./assets/css/pbs-theme.css">
+  <script src="./assets/js/pbs-app.js" defer></script>
+  <style>
+    body{font-family:"Microsoft YaHei","PingFang SC",sans-serif}.video-panel{background:#fff;border:1px solid #eef0f4;border-radius:16px;box-shadow:0 2px 8px rgba(15,23,42,.04)}
+    .video-cover{position:relative;aspect-ratio:16/8.5;overflow:hidden;border-radius:15px;background:radial-gradient(circle at 78% 20%,rgba(129,140,248,.45),transparent 32%),linear-gradient(135deg,#10182f,#312e81 55%,#2563eb);color:#fff}
+    .video-cover:before{content:"";position:absolute;inset:0;background:linear-gradient(115deg,transparent 25%,rgba(255,255,255,.08) 48%,transparent 68%);transform:translateX(-100%);animation:coverSweep 5s ease-in-out infinite}
+    @keyframes coverSweep{0%,35%{transform:translateX(-100%)}70%,100%{transform:translateX(100%)}}
+    .play-button{width:64px;height:64px;border-radius:999px;background:rgba(15,23,42,.56);border:1px solid rgba(255,255,255,.34);display:flex;align-items:center;justify-content:center;font-size:24px;transition:.18s}.play-button:hover{transform:scale(1.06);background:rgba(79,70,229,.8)}
+    .video-upload{display:flex;align-items:center;justify-content:space-between;gap:18px;margin-top:16px;padding:15px 16px;border:1px dashed #c7d2fe;border-radius:13px;background:#f8faff;cursor:pointer;transition:.18s}.video-upload:hover{border-color:#818cf8;background:#f3f4ff}.video-upload-icon{width:42px;height:42px;border-radius:12px;background:#eef2ff;color:#4f46e5;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0}.video-upload-action{height:34px;padding:0 13px;border-radius:9px;background:#4f46e5;color:#fff;display:flex;align-items:center;font-size:13px;font-weight:600;white-space:nowrap}
+    .switch{position:relative;width:44px;height:24px;display:inline-block}.switch input{opacity:0;width:0;height:0}.slider{position:absolute;inset:0;border-radius:999px;background:#cbd5e1;transition:.2s;cursor:pointer}.slider:before{content:"";position:absolute;width:18px;height:18px;left:3px;top:3px;border-radius:50%;background:#fff;box-shadow:0 1px 4px rgba(15,23,42,.25);transition:.2s}.switch input:checked+.slider{background:#4f46e5}.switch input:checked+.slider:before{transform:translateX(20px)}
+    .setting-row{display:flex;align-items:center;justify-content:space-between;gap:20px;padding:16px 0;border-bottom:1px solid #f1f5f9}.setting-row:last-child{border-bottom:0}.modal-layer{position:fixed;inset:0;z-index:10010;display:none;align-items:center;justify-content:center;padding:20px;background:rgba(15,23,42,.55);backdrop-filter:blur(5px)}.modal-layer.show{display:flex}.modal-card{width:min(620px,100%);max-height:90vh;overflow:auto;background:#fff;border-radius:18px;box-shadow:0 28px 80px rgba(15,23,42,.3)}
+    .toast{position:fixed;left:50%;bottom:26px;z-index:10100;transform:translate(-50%,18px);opacity:0;padding:11px 18px;border-radius:10px;background:#111827;color:#fff;font-size:13px;transition:.2s;pointer-events:none}.toast.show{opacity:1;transform:translate(-50%,0)}
+  </style>
+</head>
+<body class="bg-gray-50 text-gray-800 min-h-screen">
+  <header class="h-16 bg-white border-b border-gray-200 sticky top-0 z-40">
+    <div class="h-full px-6 flex items-center justify-between">
+      <div class="flex items-center gap-3"><div class="w-9 h-9 rounded-xl bg-indigo-600 text-white flex items-center justify-center font-bold">P</div><div><p class="text-sm font-semibold text-gray-900">PBS 留学申请管理平台</p><p class="text-xs text-gray-400">系统内容管理</p></div></div>
+      <div class="flex items-center gap-4"><button data-dom-id="btn-notification" class="relative w-9 h-9 rounded-lg text-gray-500 hover:bg-gray-100" aria-label="系统消息">🔔</button><span class="pbs-role-badge text-xs px-2.5 py-1 bg-blue-50 text-blue-700 rounded-full font-medium">平台运维人员</span><div class="flex items-center gap-2"><div class="w-8 h-8 rounded-full bg-gradient-to-br from-blue-500 to-purple-500 text-white flex items-center justify-center"><span class="text-sm">运</span></div><span class="text-sm text-gray-700">平台运维</span></div></div>
+    </div>
+  </header>
+
+  <div class="flex">
+    <aside id="pbs-sidebar" class="w-56 bg-white border-r border-gray-200 min-h-[calc(100vh-64px)] flex flex-col flex-shrink-0"></aside>
+    <main class="flex-1 min-w-0 p-6">
+      <div class="flex items-start justify-between gap-4 mb-6">
+        <div><h1 class="text-2xl font-semibold text-gray-900">视频管理</h1><p class="text-sm text-gray-400 mt-1">直接替换当前系统介绍视频内容，并管理首次进入播放策略</p></div>
+        <button onclick="previewIntroVideo()" class="h-10 px-5 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 text-sm font-medium">预览当前视频</button>
+      </div>
+
+      <section class="grid grid-cols-1 xl:grid-cols-[minmax(0,1.25fr)_minmax(360px,.75fr)] gap-5 mb-5">
+        <div class="video-panel p-5">
+          <div class="flex items-center justify-between gap-4 mb-4"><div><h2 class="text-base font-semibold text-gray-900">当前播放内容</h2><p class="text-xs text-gray-400 mt-1">以下内容与用户首次进入时看到的播放卡片完全一致</p></div><button onclick="openVideoEditor()" class="h-9 px-4 border border-indigo-200 bg-indigo-50 text-indigo-700 rounded-lg hover:bg-indigo-100 text-sm font-medium">管理视频</button></div>
+          <button class="video-cover w-full text-left" onclick="previewIntroVideo()" aria-label="预览系统介绍视频">
+            <div class="absolute inset-0 flex flex-col items-center justify-center px-6 text-center"><p id="coverKicker" class="text-xs font-semibold tracking-[.2em] text-indigo-200">WELCOME TO PBS</p><div class="play-button mt-4">▶</div><h3 id="coverTitle" class="text-2xl font-semibold mt-5">PBS 系统介绍视频</h3><p id="coverSubtitle" class="text-sm text-white/70 mt-2">用 32 秒了解角色工作台与申请交付主流程</p></div>
+            <div id="coverFileName" class="absolute left-4 bottom-4 max-w-[70%] truncate px-2.5 py-1 rounded-full bg-black/30 text-xs">内置动态图文视频</div><div id="coverDuration" class="absolute right-4 bottom-4 px-2.5 py-1 rounded-full bg-black/30 text-xs">32 秒</div>
+          </button>
+          <label class="video-upload" for="videoFileInput"><input id="videoFileInput" type="file" accept="video/mp4,video/webm,video/ogg" class="hidden" onchange="handleVideoUpload(this)"><span class="flex items-center gap-3 min-w-0"><span class="video-upload-icon">↑</span><span class="min-w-0"><strong id="uploadTitle" class="block text-sm text-gray-800">上传视频并替换当前视频</strong><small id="uploadHint" class="block text-xs text-gray-400 mt-1 truncate">支持 MP4、WebM、OGG，系统自动读取实际时长</small></span></span><span class="video-upload-action">选择视频</span></label>
+          <div class="flex items-center justify-between gap-4 mt-4 text-xs text-gray-400"><span>当前视频内容将被直接替换，不保留历史版本</span><span id="contentUpdated">更新于 2026-08-19 18:30</span></div>
+        </div>
+
+        <div class="video-panel p-5">
+          <div class="mb-2"><h2 class="text-base font-semibold text-gray-900">播放策略</h2><p class="text-xs text-gray-400 mt-1">修改后点击保存，策略将在所有业务页面生效</p></div>
+          <div class="setting-row"><div><p class="text-sm font-medium text-gray-800">启用系统介绍视频</p><p class="text-xs text-gray-400 mt-1">关闭后不再自动弹出，系统设置中仍可预览</p></div><label class="switch"><input id="videoEnabled" type="checkbox" checked><span class="slider"></span></label></div>
+          <div class="setting-row"><div><p class="text-sm font-medium text-gray-800">首次进入自动播放</p><p class="text-xs text-gray-400 mt-1">每个用户账号仅自动播放一次</p></div><label class="switch"><input id="autoPlayFirstVisit" type="checkbox" checked><span class="slider"></span></label></div>
+          <div class="setting-row"><div><p class="text-sm font-medium text-gray-800">允许用户关闭</p><p class="text-xs text-gray-400 mt-1">播放过程中可通过关闭按钮或遮罩退出</p></div><label class="switch"><input type="checkbox" checked disabled><span class="slider"></span></label></div>
+          <button onclick="saveVideoPolicy()" class="w-full h-10 mt-5 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 text-sm font-medium">保存播放策略</button>
+        </div>
+      </section>
+
+      <section class="video-panel p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4 sm:gap-6">
+        <div><h2 class="text-base font-semibold text-gray-900">首次播放状态</h2><p class="text-xs text-gray-400 mt-1">清除本系统记录的全部账号观看状态，使所有账号下次进入时重新自动播放介绍视频</p></div>
+        <button onclick="resetAllViewers()" class="h-9 px-4 border border-amber-200 bg-amber-50 text-amber-700 rounded-lg hover:bg-amber-100 text-sm whitespace-nowrap">重置所有账号首次播放</button>
+      </section>
+    </main>
+  </div>
+
+  <div id="videoEditorModal" class="modal-layer" role="dialog" aria-modal="true" aria-labelledby="videoEditorTitle" onclick="if(event.target===this)closeVideoEditor()">
+    <div class="modal-card"><div class="flex items-start justify-between gap-4 px-6 py-5 border-b border-gray-100"><div><h2 id="videoEditorTitle" class="text-lg font-semibold text-gray-900">管理视频</h2><p class="text-xs text-gray-400 mt-1">上传视频请使用播放卡片内的上传入口；此处管理播放器展示文案</p></div><button onclick="closeVideoEditor()" class="w-8 h-8 rounded-full bg-gray-100 text-gray-500 text-xl">×</button></div>
+      <div class="p-6 space-y-4"><div><label class="block text-sm text-gray-600 mb-2">顶部眉题</label><input id="editVideoKicker" maxlength="40" class="w-full h-10 px-3 border border-gray-300 rounded-lg text-sm" placeholder="如 WELCOME TO PBS"><p class="text-xs text-gray-400 mt-1.5">对应播放卡片顶部的小标题</p></div><div><label class="block text-sm text-gray-600 mb-2">视频标题</label><input id="editVideoTitle" maxlength="60" class="w-full h-10 px-3 border border-gray-300 rounded-lg text-sm" placeholder="如 PBS 系统介绍视频"></div><div><label class="block text-sm text-gray-600 mb-2">视频说明</label><textarea id="editVideoSubtitle" maxlength="120" rows="3" class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm resize-none" placeholder="如 用 32 秒了解角色工作台与申请交付主流程"></textarea></div></div>
+      <div class="flex justify-end gap-3 px-6 py-4 border-t border-gray-100"><button onclick="closeVideoEditor()" class="h-10 px-5 border border-gray-300 text-gray-700 rounded-lg text-sm">取消</button><button onclick="saveVideoMeta()" class="h-10 px-5 bg-indigo-600 text-white rounded-lg text-sm font-medium">保存展示内容</button></div>
+    </div>
+  </div>
+  <div id="videoToast" class="toast"></div>
+
+  <script>
+    var POLICY_KEY = 'pbs_intro_video_policy_v1';
+    var META_KEY = 'pbs_intro_video_meta_v1';
+    var VIDEO_DB_NAME = 'pbs_video_assets_v1';
+    var VIDEO_STORE_NAME = 'assets';
+    var VIDEO_ASSET_KEY = 'intro-video';
+    var defaultMeta = { kicker: 'WELCOME TO PBS', title: 'PBS 系统介绍视频', subtitle: '用 32 秒了解角色工作台与申请交付主流程', duration: 32, updated: '2026-08-19 18:30' };
+    var currentMeta = {};
+    function readJson(key, fallback) { try { return Object.assign({}, fallback, JSON.parse(localStorage.getItem(key) || '{}')); } catch (e) { return Object.assign({}, fallback); } }
+    function renderVideoPage() {
+      currentMeta = readJson(META_KEY, defaultMeta);
+      var policy = readJson(POLICY_KEY, { enabled: true, autoPlayFirstVisit: true, allowClose: true });
+      document.getElementById('videoEnabled').checked = policy.enabled !== false;
+      document.getElementById('autoPlayFirstVisit').checked = policy.autoPlayFirstVisit !== false;
+      if (!currentMeta.subtitle && currentMeta.description) currentMeta.subtitle = currentMeta.description;
+      document.getElementById('coverKicker').textContent = currentMeta.kicker || defaultMeta.kicker;
+      document.getElementById('coverTitle').textContent = currentMeta.title;
+      document.getElementById('coverSubtitle').textContent = currentMeta.subtitle || defaultMeta.subtitle;
+      document.getElementById('coverDuration').textContent = currentMeta.duration + ' 秒';
+      document.getElementById('coverFileName').textContent = currentMeta.fileName || '内置动态图文视频';
+      document.getElementById('uploadTitle').textContent = currentMeta.hasCustomVideo ? '重新上传并替换当前视频' : '上传视频并替换当前视频';
+      document.getElementById('uploadHint').textContent = currentMeta.hasCustomVideo ? ((currentMeta.fileName || '当前视频') + ' · ' + currentMeta.duration + ' 秒') : '支持 MP4、WebM、OGG，系统自动读取实际时长';
+      document.getElementById('contentUpdated').textContent = '更新于 ' + currentMeta.updated;
+    }
+    function previewIntroVideo() { if (window.pbsOpenIntroVideo) window.pbsOpenIntroVideo(); else showVideoToast('播放器正在初始化，请稍后重试'); }
+    function saveVideoPolicy() {
+      var policy = { enabled: document.getElementById('videoEnabled').checked, autoPlayFirstVisit: document.getElementById('autoPlayFirstVisit').checked, allowClose: true };
+      localStorage.setItem(POLICY_KEY, JSON.stringify(policy)); renderVideoPage(); showVideoToast('播放策略已保存并全站生效');
+    }
+    function resetAllViewers() { var keys = []; for (var i = 0; i < localStorage.length; i++) { var key = localStorage.key(i); if (key && key.indexOf('pbs_intro_video_seen_v1_') === 0) keys.push(key); } keys.forEach(function (key) { localStorage.removeItem(key); }); showVideoToast('已重置所有账号的首次播放状态'); }
+    function openVideoDb() { return new Promise(function (resolve, reject) { if (!window.indexedDB) { reject(new Error('当前浏览器不支持本地视频存储')); return; } var request = indexedDB.open(VIDEO_DB_NAME, 1); request.onupgradeneeded = function () { var db = request.result; if (!db.objectStoreNames.contains(VIDEO_STORE_NAME)) db.createObjectStore(VIDEO_STORE_NAME, { keyPath: 'id' }); }; request.onsuccess = function () { resolve(request.result); }; request.onerror = function () { reject(request.error || new Error('视频存储初始化失败')); }; }); }
+    function storeVideoFile(file) { return openVideoDb().then(function (db) { return new Promise(function (resolve, reject) { var tx = db.transaction(VIDEO_STORE_NAME, 'readwrite'); tx.objectStore(VIDEO_STORE_NAME).put({ id: VIDEO_ASSET_KEY, blob: file, name: file.name, type: file.type, size: file.size, savedAt: Date.now() }); tx.oncomplete = function () { db.close(); resolve(); }; tx.onerror = function () { db.close(); reject(tx.error || new Error('视频保存失败')); }; }); }); }
+    function readVideoDuration(file) { return new Promise(function (resolve, reject) { var probe = document.createElement('video'); var url = URL.createObjectURL(file); probe.preload = 'metadata'; probe.onloadedmetadata = function () { var duration = Number(probe.duration); URL.revokeObjectURL(url); if (isFinite(duration) && duration > 0) resolve(duration); else reject(new Error('无法读取视频时长')); }; probe.onerror = function () { URL.revokeObjectURL(url); reject(new Error('无法读取该视频文件')); }; probe.src = url; }); }
+    function handleVideoUpload(input) { var file = input.files && input.files[0]; if (!file) return; if (!file.type || file.type.indexOf('video/') !== 0) { showVideoToast('请选择 MP4、WebM 或 OGG 视频文件'); input.value = ''; return; } document.getElementById('uploadTitle').textContent = '正在读取并保存视频…'; Promise.all([readVideoDuration(file), storeVideoFile(file)]).then(function (values) { currentMeta.duration = Number(values[0].toFixed(2)); currentMeta.fileName = file.name; currentMeta.fileSize = file.size; currentMeta.mimeType = file.type; currentMeta.hasCustomVideo = true; currentMeta.updated = new Date().toLocaleString('zh-CN', { hour12: false }); localStorage.setItem(META_KEY, JSON.stringify(currentMeta)); renderVideoPage(); showVideoToast('视频已上传并替换，时长已自动识别'); }).catch(function (error) { renderVideoPage(); showVideoToast(error && error.message ? error.message : '视频上传失败，请重试'); }).finally(function () { input.value = ''; }); }
+    function openVideoEditor() { document.getElementById('editVideoKicker').value = currentMeta.kicker || defaultMeta.kicker; document.getElementById('editVideoTitle').value = currentMeta.title; document.getElementById('editVideoSubtitle').value = currentMeta.subtitle || currentMeta.description || defaultMeta.subtitle; document.getElementById('videoEditorModal').classList.add('show'); }
+    function closeVideoEditor() { document.getElementById('videoEditorModal').classList.remove('show'); }
+    function saveVideoMeta() {
+      var kicker = document.getElementById('editVideoKicker').value.trim(), title = document.getElementById('editVideoTitle').value.trim(), subtitle = document.getElementById('editVideoSubtitle').value.trim();
+      if (!kicker || !title || !subtitle) { showVideoToast('请完整填写播放卡片内容'); return; }
+      currentMeta = Object.assign({}, currentMeta, { kicker: kicker, title: title, subtitle: subtitle, duration: Number(currentMeta.duration) || defaultMeta.duration, updated: new Date().toLocaleString('zh-CN', { hour12: false }) });
+      localStorage.setItem(META_KEY, JSON.stringify(currentMeta)); closeVideoEditor(); renderVideoPage(); showVideoToast('当前视频内容已直接替换');
+    }
+    function showVideoToast(message) { var toast = document.getElementById('videoToast'); toast.textContent = message; toast.classList.add('show'); clearTimeout(showVideoToast.timer); showVideoToast.timer = setTimeout(function () { toast.classList.remove('show'); }, 2200); }
+    document.addEventListener('DOMContentLoaded', renderVideoPage);
+  </script>
+</body>
+</html>

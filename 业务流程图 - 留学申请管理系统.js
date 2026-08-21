@@ -78,16 +78,6 @@
       ]}]
     },
     {
-      id: 'sales-admin', label: '销售人员管理员', description: '选校订单分配与销售进度监控',
-      lanes: [{ title: '', note: '', steps: [
-        { title: '查看订单池', note: '筛选待跟进订单', page: '选校订单池页 - 留学申请管理系统.html' },
-        { title: '分配销售', note: '指定选校顾问', page: '选校订单池页 - 留学申请管理系统.html' },
-        { title: '跟踪任务', note: '查看方案进度', page: '选校任务列表页 - 留学申请管理系统.html' },
-        { title: '处理异常', note: '调整人员或 DDL', page: '选校任务列表页 - 留学申请管理系统.html', type: 'decision' },
-        { title: '确认结单', note: '核对客户确认结果', page: '选校方案详情页 - 留学申请管理系统.html', type: 'done' }
-      ]}]
-    },
-    {
       id: 'sales', label: '销售人员', description: '选校任务接收、方案制作与客户确认',
       lanes: [{ title: '', note: '', steps: [
         { title: '接收任务', note: '确认学生与订单', page: '选校任务列表页 - 留学申请管理系统.html' },
@@ -141,16 +131,6 @@
         { title: '官网提交', note: '确认提交结果', page: '网申任务详情页 - 留学申请管理系统.html', type: 'decision' },
         { title: '更新状态', note: '回写 PBS 并留痕', page: '网申任务列表页 - 留学申请管理系统.html', type: 'done' }
       ]}]
-    },
-    {
-      id: 'writing-admin', label: '文书机构管理员', description: '外包文书任务分配、进度跟踪与交付',
-      lanes: [{ title: '', note: '', steps: [
-        { title: '接收外包任务', note: '确认任务范围', page: '任务列表页 - 文书交付系统.html' },
-        { title: '分配文书人员', note: '匹配人员与 DDL', page: '任务列表页 - 文书交付系统.html' },
-        { title: '跟踪进度', note: '查看撰写与审核状态', page: '任务列表页 - 文书交付系统.html' },
-        { title: '处理异常', note: '调整人员或计划', page: '任务列表页 - 文书交付系统.html', type: 'decision' },
-        { title: '汇总交付', note: '确认全部文书完成', page: '任务列表页 - 文书交付系统.html', type: 'done' }
-      ]}]
     }
   ];
 
@@ -170,14 +150,12 @@
   try { session = JSON.parse(localStorage.getItem('pbs_session_v1')); } catch (e) { session = null; }
   var canEdit = !session || ['超级管理员', '平台运维人员', '平台运营人员'].indexOf(session.role) >= 0;
   var roleViews = {
-    '机构管理员': ['main', 'org-admin', 'sales-admin', 'sales', 'pm', 'writer', 'reviewer', 'application', 'writing-admin'],
-    '销售人员管理员': ['main', 'sales-admin', 'sales'],
+    '机构管理员': ['main', 'org-admin', 'sales', 'pm', 'writer', 'reviewer', 'application'],
     '销售人员': ['main', 'sales'],
     '项目经理': ['main', 'pm'],
     '文书人员': ['main', 'writer'],
     '文书审核': ['main', 'reviewer'],
-    '网申人员': ['main', 'application'],
-    '文书机构管理员': ['main', 'writing-admin', 'writer', 'reviewer']
+    '网申人员': ['main', 'application']
   };
   var allowedIds = session && roleViews[session.role] ? roleViews[session.role] : null;
   var activeId = 'main';

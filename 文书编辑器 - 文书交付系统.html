@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <!-- saved from url=(0204)file:///C:/Users/yushe/Documents/kimi/workspace/%E6%96%87%E4%B9%A6%E7%BC%96%E8%BE%91%E5%99%A8%20-%20%E6%96%87%E4%B9%A6%E4%BA%A4%E4%BB%98%E7%B3%BB%E7%BB%9F%EF%BC%88%E7%BE%8E%E5%8C%96%E7%89%88%EF%BC%89.html -->
 <html lang="zh-CN" class="light" data-theme="light"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
   
@@ -10,18 +10,18 @@
 /* ===== PBS留学CRM系统 - 企业级设计规范（增强版） ===== */
 :root {
   /* 主色调 - 专业蓝 */
-  --color-primary: #2563EB;
-  --color-primary-light: #3B82F6;
-  --color-primary-dark: #1D4ED8;
-  --color-primary-bg: #EFF6FF;
+  --color-primary: #6B829A;
+  --color-primary-light: #7D94A6;
+  --color-primary-dark: #556B7D;
+  --color-primary-bg: #E8EDF1;
   
   /* 辅助色 */
-  --color-success: #10B981;
-  --color-success-light: #D1FAE5;
-  --color-warning: #F59E0B;
-  --color-warning-light: #FEF3C7;
-  --color-error: #EF4444;
-  --color-error-light: #FEE2E2;
+  --color-success: #6D9A7E;
+  --color-success-light: #DDECE2;
+  --color-warning: #C9A87C;
+  --color-warning-light: #F5EBDA;
+  --color-error: #B36B64;
+  --color-error-light: #F3DDD9;
   --color-info: #06B6D4;
   --color-info-light: #CFFAFE;
   
@@ -160,7 +160,7 @@
   outline: none;
 }
 .editor-textarea:focus {
-  border-color: #3b82f6;
+  border-color: #7D94A6;
   background: white;
   box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
 }
@@ -184,12 +184,12 @@
   outline: none;
 }
 .btn-primary {
-  background: linear-gradient(135deg, #2563eb, #1d4ed8);
+  background: linear-gradient(135deg, #6B829A, #556B7D);
   color: white;
   box-shadow: 0 1px 3px rgba(37, 99, 235, 0.3);
 }
 .btn-primary:hover {
-  background: linear-gradient(135deg, #1d4ed8, #1e40af);
+  background: linear-gradient(135deg, #556B7D, #445563);
   box-shadow: 0 4px 12px rgba(37, 99, 235, 0.4);
   transform: translateY(-1px);
 }
@@ -216,7 +216,7 @@
   background: #fafbfc;
 }
 .smart-input:focus {
-  border-color: #3b82f6;
+  border-color: #7D94A6;
   background: white;
   box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
 }
@@ -296,7 +296,7 @@
   cursor: pointer;
 }
 .ai-suggestion-card:hover {
-  border-color: #93c5fd;
+  border-color: #B4C5D2;
   box-shadow: 0 4px 12px rgba(59, 130, 246, 0.08);
 }
 
@@ -341,7 +341,7 @@
 }
 #right-sidebar-resizer:hover::after,
 body.sidebar-resizing #right-sidebar-resizer::after {
-  background: #3b82f6;
+  background: #7D94A6;
 }
 /* 手柄中点提示条 */
 #right-sidebar-resizer::before {
@@ -360,7 +360,7 @@ body.sidebar-resizing #right-sidebar-resizer::after {
 #right-sidebar-resizer:hover::before,
 body.sidebar-resizing #right-sidebar-resizer::before {
   opacity: 1;
-  background: #3b82f6;
+  background: #7D94A6;
 }
 body.sidebar-resizing {
   cursor: col-resize;
@@ -397,7 +397,7 @@ body.sidebar-resizing * {
 }
 #left-sidebar-resizer:hover::after,
 body.sidebar-resizing #left-sidebar-resizer::after {
-  background: #3b82f6;
+  background: #7D94A6;
 }
 #left-sidebar-resizer::before {
   content: '';
@@ -415,7 +415,7 @@ body.sidebar-resizing #left-sidebar-resizer::after {
 #left-sidebar-resizer:hover::before,
 body.sidebar-resizing #left-sidebar-resizer::before {
   opacity: 1;
-  background: #3b82f6;
+  background: #7D94A6;
 }
 
 /* ===== AI建议：资料分析卡片排版 ===== */
@@ -468,14 +468,14 @@ body.sidebar-resizing #left-sidebar-resizer::before {
   width: 5px;
   height: 5px;
   border-radius: 50%;
-  background: #93c5fd;
+  background: #B4C5D2;
 }
 .ai-list.ai-list-problem li::before {
   background: #fca5a5;
 }
 .ai-sample {
   background: #f0f7ff;
-  border: 1px solid #dbeafe;
+  border: 1px solid #CDDAE4;
   border-radius: 8px;
   padding: 8px 10px;
 }
@@ -491,9 +491,9 @@ body.sidebar-resizing #left-sidebar-resizer::before {
   color: #94a3b8;
   line-height: 1.5;
 }
-.badge-priority-high { background: #fee2e2; color: #dc2626; }
-.badge-priority-mid { background: #fef3c7; color: #b45309; }
-.badge-priority-low { background: #d1fae5; color: #059669; }
+.badge-priority-high { background: #F3DDD9; color: #9A5A54; }
+.badge-priority-mid { background: #F5EBDA; color: #8C6F4E; }
+.badge-priority-low { background: #DDECE2; color: #4F7A62; }
 
 /* ===== 顶部导航栏美化 ===== */
 .topbar {
@@ -513,7 +513,7 @@ body.sidebar-resizing #left-sidebar-resizer::before {
   left: 0;
   right: 0;
   height: 2px;
-  background: linear-gradient(90deg, #2563eb 0%, #7c3aed 50%, #2563eb 100%);
+  background: linear-gradient(90deg, #6B829A 0%, #7D869A 50%, #6B829A 100%);
   background-size: 200% 100%;
   opacity: 0.85;
 }
@@ -548,8 +548,8 @@ body.sidebar-resizing #left-sidebar-resizer::before {
   width: 38px;
   height: 38px;
   border-radius: 12px;
-  background: linear-gradient(135deg, #eff6ff, #eef2ff);
-  border: 1px solid #dbeafe;
+  background: linear-gradient(135deg, #E8EDF1, #eef2ff);
+  border: 1px solid #CDDAE4;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -598,15 +598,15 @@ body.sidebar-resizing #left-sidebar-resizer::before {
   border-radius: 999px;
   font-size: 12px;
   font-weight: 500;
-  color: #b45309;
-  background: linear-gradient(135deg, #fffbeb, #fef3c7);
-  border: 1px solid #fde68a;
+  color: #8C6F4E;
+  background: linear-gradient(135deg, #fffbeb, #F5EBDA);
+  border: 1px solid #EDE0C5;
 }
 .topbar-status-dot {
   width: 6px;
   height: 6px;
   border-radius: 50%;
-  background: #f59e0b;
+  background: #C9A87C;
   animation: pulse-dot 1.6s ease-in-out infinite;
 }
 @keyframes pulse-dot {
@@ -627,7 +627,7 @@ body {
   transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
 .editor-block:hover {
-  border-color: #bfdbfe;
+  border-color: #CDDAE4;
   box-shadow: 0 2px 10px rgba(59, 130, 246, 0.06);
 }
 .doc-type-btn {
@@ -653,10 +653,10 @@ body {
 }
 
 /* AI徽章 */
-.ai-badge-grammar { background: #fee2e2; color: #dc2626; }
-.ai-badge-style { background: #dbeafe; color: #1d4ed8; }
-.ai-badge-structure { background: #fef3c7; color: #b45309; }
-.ai-badge-vocabulary { background: #d1fae5; color: #059669; }
+.ai-badge-grammar { background: #F3DDD9; color: #9A5A54; }
+.ai-badge-style { background: #CDDAE4; color: #556B7D; }
+.ai-badge-structure { background: #F5EBDA; color: #8C6F4E; }
+.ai-badge-vocabulary { background: #DDECE2; color: #4F7A62; }
 
 /* 加载动画 */
 @keyframes bounce {
@@ -666,7 +666,7 @@ body {
 .ai-loading-dot {
   width: 8px;
   height: 8px;
-  background: #3b82f6;
+  background: #7D94A6;
   border-radius: 50%;
   animation: bounce 1.4s ease-in-out infinite both;
   display: inline-block;
@@ -679,11 +679,11 @@ body {
   <style>
     body { font-family: var(--font-family); background: var(--color-bg-page); }
     .editor-area { min-height: 400px; outline: none; }
-    .editor-area:focus { border-color: #3B82F6; }
+    .editor-area:focus { border-color: #7D94A6; }
     .sidebar-item:hover { background: #F3F4F6; }
   </style>
   <link rel="stylesheet" href="./assets/css/pbs-theme.css">
-<script src="./assets/vendor/kimi-sdk-loader.js" defer=""></script><style>*, ::before, ::after{--tw-border-spacing-x:0;--tw-border-spacing-y:0;--tw-translate-x:0;--tw-translate-y:0;--tw-rotate:0;--tw-skew-x:0;--tw-skew-y:0;--tw-scale-x:1;--tw-scale-y:1;--tw-pan-x: ;--tw-pan-y: ;--tw-pinch-zoom: ;--tw-scroll-snap-strictness:proximity;--tw-gradient-from-position: ;--tw-gradient-via-position: ;--tw-gradient-to-position: ;--tw-ordinal: ;--tw-slashed-zero: ;--tw-numeric-figure: ;--tw-numeric-spacing: ;--tw-numeric-fraction: ;--tw-ring-inset: ;--tw-ring-offset-width:0px;--tw-ring-offset-color:#fff;--tw-ring-color:rgb(59 130 246 / 0.5);--tw-ring-offset-shadow:0 0 #0000;--tw-ring-shadow:0 0 #0000;--tw-shadow:0 0 #0000;--tw-shadow-colored:0 0 #0000;--tw-blur: ;--tw-brightness: ;--tw-contrast: ;--tw-grayscale: ;--tw-hue-rotate: ;--tw-invert: ;--tw-saturate: ;--tw-sepia: ;--tw-drop-shadow: ;--tw-backdrop-blur: ;--tw-backdrop-brightness: ;--tw-backdrop-contrast: ;--tw-backdrop-grayscale: ;--tw-backdrop-hue-rotate: ;--tw-backdrop-invert: ;--tw-backdrop-opacity: ;--tw-backdrop-saturate: ;--tw-backdrop-sepia: ;--tw-contain-size: ;--tw-contain-layout: ;--tw-contain-paint: ;--tw-contain-style: }::backdrop{--tw-border-spacing-x:0;--tw-border-spacing-y:0;--tw-translate-x:0;--tw-translate-y:0;--tw-rotate:0;--tw-skew-x:0;--tw-skew-y:0;--tw-scale-x:1;--tw-scale-y:1;--tw-pan-x: ;--tw-pan-y: ;--tw-pinch-zoom: ;--tw-scroll-snap-strictness:proximity;--tw-gradient-from-position: ;--tw-gradient-via-position: ;--tw-gradient-to-position: ;--tw-ordinal: ;--tw-slashed-zero: ;--tw-numeric-figure: ;--tw-numeric-spacing: ;--tw-numeric-fraction: ;--tw-ring-inset: ;--tw-ring-offset-width:0px;--tw-ring-offset-color:#fff;--tw-ring-color:rgb(59 130 246 / 0.5);--tw-ring-offset-shadow:0 0 #0000;--tw-ring-shadow:0 0 #0000;--tw-shadow:0 0 #0000;--tw-shadow-colored:0 0 #0000;--tw-blur: ;--tw-brightness: ;--tw-contrast: ;--tw-grayscale: ;--tw-hue-rotate: ;--tw-invert: ;--tw-saturate: ;--tw-sepia: ;--tw-drop-shadow: ;--tw-backdrop-blur: ;--tw-backdrop-brightness: ;--tw-backdrop-contrast: ;--tw-backdrop-grayscale: ;--tw-backdrop-hue-rotate: ;--tw-backdrop-invert: ;--tw-backdrop-opacity: ;--tw-backdrop-saturate: ;--tw-backdrop-sepia: ;--tw-contain-size: ;--tw-contain-layout: ;--tw-contain-paint: ;--tw-contain-style: }/* ! tailwindcss v3.4.17 | MIT License | https://tailwindcss.com */*,::after,::before{box-sizing:border-box;border-width:0;border-style:solid;border-color:#e5e7eb}::after,::before{--tw-content:''}:host,html{line-height:1.5;-webkit-text-size-adjust:100%;-moz-tab-size:4;tab-size:4;font-family:ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";font-feature-settings:normal;font-variation-settings:normal;-webkit-tap-highlight-color:transparent}body{margin:0;line-height:inherit}hr{height:0;color:inherit;border-top-width:1px}abbr:where([title]){-webkit-text-decoration:underline dotted;text-decoration:underline dotted}h1,h2,h3,h4,h5,h6{font-size:inherit;font-weight:inherit}a{color:inherit;text-decoration:inherit}b,strong{font-weight:bolder}code,kbd,pre,samp{font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;font-feature-settings:normal;font-variation-settings:normal;font-size:1em}small{font-size:80%}sub,sup{font-size:75%;line-height:0;position:relative;vertical-align:baseline}sub{bottom:-.25em}sup{top:-.5em}table{text-indent:0;border-color:inherit;border-collapse:collapse}button,input,optgroup,select,textarea{font-family:inherit;font-feature-settings:inherit;font-variation-settings:inherit;font-size:100%;font-weight:inherit;line-height:inherit;letter-spacing:inherit;color:inherit;margin:0;padding:0}button,select{text-transform:none}button,input:where([type=button]),input:where([type=reset]),input:where([type=submit]){-webkit-appearance:button;background-color:transparent;background-image:none}:-moz-focusring{outline:auto}:-moz-ui-invalid{box-shadow:none}progress{vertical-align:baseline}::-webkit-inner-spin-button,::-webkit-outer-spin-button{height:auto}[type=search]{-webkit-appearance:textfield;outline-offset:-2px}::-webkit-search-decoration{-webkit-appearance:none}::-webkit-file-upload-button{-webkit-appearance:button;font:inherit}summary{display:list-item}blockquote,dd,dl,figure,h1,h2,h3,h4,h5,h6,hr,p,pre{margin:0}fieldset{margin:0;padding:0}legend{padding:0}menu,ol,ul{list-style:none;margin:0;padding:0}dialog{padding:0}textarea{resize:vertical}input::placeholder,textarea::placeholder{opacity:1;color:#9ca3af}[role=button],button{cursor:pointer}:disabled{cursor:default}audio,canvas,embed,iframe,img,object,svg,video{display:block;vertical-align:middle}img,video{max-width:100%;height:auto}[hidden]:where(:not([hidden=until-found])){display:none}.absolute{position:absolute}.sticky{position:sticky}.top-0{top:0px}.right-0{right:0px}.top-12{top:3rem}.z-50{z-index:50}.mx-1{margin-left:0.25rem;margin-right:0.25rem}.mx-auto{margin-left:auto;margin-right:auto}.mb-1{margin-bottom:0.25rem}.mb-1\.5{margin-bottom:0.375rem}.mb-2{margin-bottom:0.5rem}.mb-3{margin-bottom:0.75rem}.mb-4{margin-bottom:1rem}.mb-6{margin-bottom:1.5rem}.mr-1{margin-right:0.25rem}.mt-0\.5{margin-top:0.125rem}.mt-1\.5{margin-top:0.375rem}.mt-2{margin-top:0.5rem}.mt-6{margin-top:1.5rem}.block{display:block}.inline-block{display:inline-block}.flex{display:flex}.inline-flex{display:inline-flex}.grid{display:grid}.hidden{display:none}.h-1\.5{height:0.375rem}.h-14{height:3.5rem}.h-3\.5{height:0.875rem}.h-4{height:1rem}.h-5{height:1.25rem}.h-6{height:1.5rem}.h-7{height:1.75rem}.h-8{height:2rem}.h-9{height:2.25rem}.h-\[calc\(100vh-56px\)\]{height:calc(100vh - 56px)}.h-10{height:2.5rem}.min-h-screen{min-height:100vh}.w-1{width:0.25rem}.w-1\.5{width:0.375rem}.w-3\.5{width:0.875rem}.w-4{width:1rem}.w-5{width:1.25rem}.w-64{width:16rem}.w-7{width:1.75rem}.w-72{width:18rem}.w-8{width:2rem}.w-full{width:100%}.w-px{width:1px}.w-10{width:2.5rem}.min-w-0{min-width:0px}.max-w-3xl{max-width:48rem}.flex-1{flex:1 1 0%}.flex-shrink-0{flex-shrink:0}.cursor-grab{cursor:grab}.cursor-pointer{cursor:pointer}.resize-none{resize:none}.grid-cols-4{grid-template-columns:repeat(4, minmax(0, 1fr))}.flex-col{flex-direction:column}.items-start{align-items:flex-start}.items-center{align-items:center}.justify-center{justify-content:center}.justify-between{justify-content:space-between}.gap-1{gap:0.25rem}.gap-1\.5{gap:0.375rem}.gap-2{gap:0.5rem}.gap-3{gap:0.75rem}.gap-4{gap:1rem}.space-x-1 > :not([hidden]) ~ :not([hidden]){--tw-space-x-reverse:0;margin-right:calc(0.25rem * var(--tw-space-x-reverse));margin-left:calc(0.25rem * calc(1 - var(--tw-space-x-reverse)))}.space-y-2 > :not([hidden]) ~ :not([hidden]){--tw-space-y-reverse:0;margin-top:calc(0.5rem * calc(1 - var(--tw-space-y-reverse)));margin-bottom:calc(0.5rem * var(--tw-space-y-reverse))}.space-y-2\.5 > :not([hidden]) ~ :not([hidden]){--tw-space-y-reverse:0;margin-top:calc(0.625rem * calc(1 - var(--tw-space-y-reverse)));margin-bottom:calc(0.625rem * var(--tw-space-y-reverse))}.space-y-3 > :not([hidden]) ~ :not([hidden]){--tw-space-y-reverse:0;margin-top:calc(0.75rem * calc(1 - var(--tw-space-y-reverse)));margin-bottom:calc(0.75rem * var(--tw-space-y-reverse))}.space-y-4 > :not([hidden]) ~ :not([hidden]){--tw-space-y-reverse:0;margin-top:calc(1rem * calc(1 - var(--tw-space-y-reverse)));margin-bottom:calc(1rem * var(--tw-space-y-reverse))}.overflow-hidden{overflow:hidden}.overflow-y-auto{overflow-y:auto}.truncate{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.rounded{border-radius:0.25rem}.rounded-2xl{border-radius:1rem}.rounded-full{border-radius:9999px}.rounded-lg{border-radius:0.5rem}.rounded-xl{border-radius:0.75rem}.border{border-width:1px}.border-b{border-bottom-width:1px}.border-l{border-left-width:1px}.border-r{border-right-width:1px}.border-t{border-top-width:1px}.border-amber-200{--tw-border-opacity:1;border-color:rgb(253 230 138 / var(--tw-border-opacity, 1))}.border-blue-100{--tw-border-opacity:1;border-color:rgb(219 234 254 / var(--tw-border-opacity, 1))}.border-emerald-100{--tw-border-opacity:1;border-color:rgb(209 250 229 / var(--tw-border-opacity, 1))}.border-gray-100{--tw-border-opacity:1;border-color:rgb(243 244 246 / var(--tw-border-opacity, 1))}.border-gray-200{--tw-border-opacity:1;border-color:rgb(229 231 235 / var(--tw-border-opacity, 1))}.border-gray-300{--tw-border-opacity:1;border-color:rgb(209 213 219 / var(--tw-border-opacity, 1))}.border-gray-50{--tw-border-opacity:1;border-color:rgb(249 250 251 / var(--tw-border-opacity, 1))}.border-purple-100{--tw-border-opacity:1;border-color:rgb(243 232 255 / var(--tw-border-opacity, 1))}.bg-amber-50{--tw-bg-opacity:1;background-color:rgb(255 251 235 / var(--tw-bg-opacity, 1))}.bg-blue-100{--tw-bg-opacity:1;background-color:rgb(219 234 254 / var(--tw-bg-opacity, 1))}.bg-blue-50{--tw-bg-opacity:1;background-color:rgb(239 246 255 / var(--tw-bg-opacity, 1))}.bg-blue-500{--tw-bg-opacity:1;background-color:rgb(59 130 246 / var(--tw-bg-opacity, 1))}.bg-blue-600{--tw-bg-opacity:1;background-color:rgb(37 99 235 / var(--tw-bg-opacity, 1))}.bg-emerald-100{--tw-bg-opacity:1;background-color:rgb(209 250 229 / var(--tw-bg-opacity, 1))}.bg-emerald-50{--tw-bg-opacity:1;background-color:rgb(236 253 245 / var(--tw-bg-opacity, 1))}.bg-gray-200{--tw-bg-opacity:1;background-color:rgb(229 231 235 / var(--tw-bg-opacity, 1))}.bg-gray-50{--tw-bg-opacity:1;background-color:rgb(249 250 251 / var(--tw-bg-opacity, 1))}.bg-green-500{--tw-bg-opacity:1;background-color:rgb(34 197 94 / var(--tw-bg-opacity, 1))}.bg-orange-400{--tw-bg-opacity:1;background-color:rgb(251 146 60 / var(--tw-bg-opacity, 1))}.bg-purple-50{--tw-bg-opacity:1;background-color:rgb(250 245 255 / var(--tw-bg-opacity, 1))}.bg-purple-500{--tw-bg-opacity:1;background-color:rgb(168 85 247 / var(--tw-bg-opacity, 1))}.bg-white{--tw-bg-opacity:1;background-color:rgb(255 255 255 / var(--tw-bg-opacity, 1))}.bg-yellow-100{--tw-bg-opacity:1;background-color:rgb(254 249 195 / var(--tw-bg-opacity, 1))}.bg-gradient-to-br{background-image:linear-gradient(to bottom right, var(--tw-gradient-stops))}.bg-gradient-to-r{background-image:linear-gradient(to right, var(--tw-gradient-stops))}.from-blue-50{--tw-gradient-from:#eff6ff var(--tw-gradient-from-position);--tw-gradient-to:rgb(239 246 255 / 0) var(--tw-gradient-to-position);--tw-gradient-stops:var(--tw-gradient-from), var(--tw-gradient-to)}.from-blue-500{--tw-gradient-from:#3b82f6 var(--tw-gradient-from-position);--tw-gradient-to:rgb(59 130 246 / 0) var(--tw-gradient-to-position);--tw-gradient-stops:var(--tw-gradient-from), var(--tw-gradient-to)}.from-emerald-50{--tw-gradient-from:#ecfdf5 var(--tw-gradient-from-position);--tw-gradient-to:rgb(236 253 245 / 0) var(--tw-gradient-to-position);--tw-gradient-stops:var(--tw-gradient-from), var(--tw-gradient-to)}.from-emerald-500{--tw-gradient-from:#10b981 var(--tw-gradient-from-position);--tw-gradient-to:rgb(16 185 129 / 0) var(--tw-gradient-to-position);--tw-gradient-stops:var(--tw-gradient-from), var(--tw-gradient-to)}.from-purple-500{--tw-gradient-from:#a855f7 var(--tw-gradient-from-position);--tw-gradient-to:rgb(168 85 247 / 0) var(--tw-gradient-to-position);--tw-gradient-stops:var(--tw-gradient-from), var(--tw-gradient-to)}.to-green-50{--tw-gradient-to:#f0fdf4 var(--tw-gradient-to-position)}.to-indigo-50{--tw-gradient-to:#eef2ff var(--tw-gradient-to-position)}.to-indigo-600{--tw-gradient-to:#4f46e5 var(--tw-gradient-to-position)}.to-purple-50{--tw-gradient-to:#faf5ff var(--tw-gradient-to-position)}.to-purple-500{--tw-gradient-to:#a855f7 var(--tw-gradient-to-position)}.to-teal-600{--tw-gradient-to:#0d9488 var(--tw-gradient-to-position)}.to-violet-600{--tw-gradient-to:#7c3aed var(--tw-gradient-to-position)}.object-contain{object-fit:contain}.p-1{padding:0.25rem}.p-1\.5{padding:0.375rem}.p-2\.5{padding:0.625rem}.p-3{padding:0.75rem}.p-4{padding:1rem}.p-6{padding:1.5rem}.p-8{padding:2rem}.px-1\.5{padding-left:0.375rem;padding-right:0.375rem}.px-2{padding-left:0.5rem;padding-right:0.5rem}.px-2\.5{padding-left:0.625rem;padding-right:0.625rem}.px-3{padding-left:0.75rem;padding-right:0.75rem}.px-4{padding-left:1rem;padding-right:1rem}.px-6{padding-left:1.5rem;padding-right:1.5rem}.py-0\.5{padding-top:0.125rem;padding-bottom:0.125rem}.py-1{padding-top:0.25rem;padding-bottom:0.25rem}.py-1\.5{padding-top:0.375rem;padding-bottom:0.375rem}.py-2{padding-top:0.5rem;padding-bottom:0.5rem}.py-2\.5{padding-top:0.625rem;padding-bottom:0.625rem}.px-5{padding-left:1.25rem;padding-right:1.25rem}.py-3{padding-top:0.75rem;padding-bottom:0.75rem}.pl-4{padding-left:1rem}.pt-2{padding-top:0.5rem}.pt-3{padding-top:0.75rem}.pt-4{padding-top:1rem}.text-left{text-align:left}.text-center{text-align:center}.text-base{font-size:1rem;line-height:1.5rem}.text-sm{font-size:0.875rem;line-height:1.25rem}.text-xl{font-size:1.25rem;line-height:1.75rem}.text-xs{font-size:0.75rem;line-height:1rem}.font-bold{font-weight:700}.font-medium{font-weight:500}.font-normal{font-weight:400}.font-semibold{font-weight:600}.uppercase{text-transform:uppercase}.leading-relaxed{line-height:1.625}.tracking-wider{letter-spacing:0.05em}.text-amber-500{--tw-text-opacity:1;color:rgb(245 158 11 / var(--tw-text-opacity, 1))}.text-amber-700{--tw-text-opacity:1;color:rgb(180 83 9 / var(--tw-text-opacity, 1))}.text-amber-800{--tw-text-opacity:1;color:rgb(146 64 14 / var(--tw-text-opacity, 1))}.text-blue-400{--tw-text-opacity:1;color:rgb(96 165 250 / var(--tw-text-opacity, 1))}.text-blue-500{--tw-text-opacity:1;color:rgb(59 130 246 / var(--tw-text-opacity, 1))}.text-blue-600{--tw-text-opacity:1;color:rgb(37 99 235 / var(--tw-text-opacity, 1))}.text-blue-700{--tw-text-opacity:1;color:rgb(29 78 216 / var(--tw-text-opacity, 1))}.text-blue-800{--tw-text-opacity:1;color:rgb(30 64 175 / var(--tw-text-opacity, 1))}.text-emerald-600{--tw-text-opacity:1;color:rgb(5 150 105 / var(--tw-text-opacity, 1))}.text-emerald-700{--tw-text-opacity:1;color:rgb(4 120 87 / var(--tw-text-opacity, 1))}.text-gray-400{--tw-text-opacity:1;color:rgb(156 163 175 / var(--tw-text-opacity, 1))}.text-gray-500{--tw-text-opacity:1;color:rgb(107 114 128 / var(--tw-text-opacity, 1))}.text-gray-600{--tw-text-opacity:1;color:rgb(75 85 99 / var(--tw-text-opacity, 1))}.text-gray-700{--tw-text-opacity:1;color:rgb(55 65 81 / var(--tw-text-opacity, 1))}.text-gray-800{--tw-text-opacity:1;color:rgb(31 41 55 / var(--tw-text-opacity, 1))}.text-gray-900{--tw-text-opacity:1;color:rgb(17 24 39 / var(--tw-text-opacity, 1))}.text-green-500{--tw-text-opacity:1;color:rgb(34 197 94 / var(--tw-text-opacity, 1))}.text-green-600{--tw-text-opacity:1;color:rgb(22 163 74 / var(--tw-text-opacity, 1))}.text-orange-500{--tw-text-opacity:1;color:rgb(249 115 22 / var(--tw-text-opacity, 1))}.text-orange-600{--tw-text-opacity:1;color:rgb(234 88 12 / var(--tw-text-opacity, 1))}.text-purple-500{--tw-text-opacity:1;color:rgb(168 85 247 / var(--tw-text-opacity, 1))}.text-purple-600{--tw-text-opacity:1;color:rgb(147 51 234 / var(--tw-text-opacity, 1))}.text-red-500{--tw-text-opacity:1;color:rgb(239 68 68 / var(--tw-text-opacity, 1))}.text-white{--tw-text-opacity:1;color:rgb(255 255 255 / var(--tw-text-opacity, 1))}.text-yellow-800{--tw-text-opacity:1;color:rgb(133 77 14 / var(--tw-text-opacity, 1))}.shadow-lg{--tw-shadow:0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);--tw-shadow-colored:0 10px 15px -3px var(--tw-shadow-color), 0 4px 6px -4px var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}.shadow-sm{--tw-shadow:0 1px 2px 0 rgb(0 0 0 / 0.05);--tw-shadow-colored:0 1px 2px 0 var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}.transition-colors{transition-property:color, background-color, border-color, fill, stroke, -webkit-text-decoration-color;transition-property:color, background-color, border-color, text-decoration-color, fill, stroke;transition-property:color, background-color, border-color, text-decoration-color, fill, stroke, -webkit-text-decoration-color;transition-timing-function:cubic-bezier(0.4, 0, 0.2, 1);transition-duration:150ms}.hover\:border-blue-300:hover{--tw-border-opacity:1;border-color:rgb(147 197 253 / var(--tw-border-opacity, 1))}.hover\:border-green-300:hover{--tw-border-opacity:1;border-color:rgb(134 239 172 / var(--tw-border-opacity, 1))}.hover\:bg-blue-50:hover{--tw-bg-opacity:1;background-color:rgb(239 246 255 / var(--tw-bg-opacity, 1))}.hover\:bg-blue-700:hover{--tw-bg-opacity:1;background-color:rgb(29 78 216 / var(--tw-bg-opacity, 1))}.hover\:bg-gray-100:hover{--tw-bg-opacity:1;background-color:rgb(243 244 246 / var(--tw-bg-opacity, 1))}.hover\:bg-gray-50:hover{--tw-bg-opacity:1;background-color:rgb(249 250 251 / var(--tw-bg-opacity, 1))}.hover\:text-blue-600:hover{--tw-text-opacity:1;color:rgb(37 99 235 / var(--tw-text-opacity, 1))}.hover\:text-blue-800:hover{--tw-text-opacity:1;color:rgb(30 64 175 / var(--tw-text-opacity, 1))}.hover\:text-gray-700:hover{--tw-text-opacity:1;color:rgb(55 65 81 / var(--tw-text-opacity, 1))}.hover\:text-gray-900:hover{--tw-text-opacity:1;color:rgb(17 24 39 / var(--tw-text-opacity, 1))}.hover\:text-green-600:hover{--tw-text-opacity:1;color:rgb(22 163 74 / var(--tw-text-opacity, 1))}.focus\:border-blue-500:focus{--tw-border-opacity:1;border-color:rgb(59 130 246 / var(--tw-border-opacity, 1))}.focus\:outline-none:focus{outline:2px solid transparent;outline-offset:2px}.focus\:ring-2:focus{--tw-ring-offset-shadow:var(--tw-ring-inset) 0 0 0 var(--tw-ring-offset-width) var(--tw-ring-offset-color);--tw-ring-shadow:var(--tw-ring-inset) 0 0 0 calc(2px + var(--tw-ring-offset-width)) var(--tw-ring-color);box-shadow:var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow, 0 0 #0000)}.focus\:ring-blue-500:focus{--tw-ring-opacity:1;--tw-ring-color:rgb(59 130 246 / var(--tw-ring-opacity, 1))}.active\:cursor-grabbing:active{cursor:grabbing}</style><script src="./assets/vendor/kimi-publish.js" async=""></script>
+<script src="./assets/vendor/kimi-sdk-loader.js" defer=""></script><style>*, ::before, ::after{--tw-border-spacing-x:0;--tw-border-spacing-y:0;--tw-translate-x:0;--tw-translate-y:0;--tw-rotate:0;--tw-skew-x:0;--tw-skew-y:0;--tw-scale-x:1;--tw-scale-y:1;--tw-pan-x: ;--tw-pan-y: ;--tw-pinch-zoom: ;--tw-scroll-snap-strictness:proximity;--tw-gradient-from-position: ;--tw-gradient-via-position: ;--tw-gradient-to-position: ;--tw-ordinal: ;--tw-slashed-zero: ;--tw-numeric-figure: ;--tw-numeric-spacing: ;--tw-numeric-fraction: ;--tw-ring-inset: ;--tw-ring-offset-width:0px;--tw-ring-offset-color:#fff;--tw-ring-color:rgb(59 130 246 / 0.5);--tw-ring-offset-shadow:0 0 #0000;--tw-ring-shadow:0 0 #0000;--tw-shadow:0 0 #0000;--tw-shadow-colored:0 0 #0000;--tw-blur: ;--tw-brightness: ;--tw-contrast: ;--tw-grayscale: ;--tw-hue-rotate: ;--tw-invert: ;--tw-saturate: ;--tw-sepia: ;--tw-drop-shadow: ;--tw-backdrop-blur: ;--tw-backdrop-brightness: ;--tw-backdrop-contrast: ;--tw-backdrop-grayscale: ;--tw-backdrop-hue-rotate: ;--tw-backdrop-invert: ;--tw-backdrop-opacity: ;--tw-backdrop-saturate: ;--tw-backdrop-sepia: ;--tw-contain-size: ;--tw-contain-layout: ;--tw-contain-paint: ;--tw-contain-style: }::backdrop{--tw-border-spacing-x:0;--tw-border-spacing-y:0;--tw-translate-x:0;--tw-translate-y:0;--tw-rotate:0;--tw-skew-x:0;--tw-skew-y:0;--tw-scale-x:1;--tw-scale-y:1;--tw-pan-x: ;--tw-pan-y: ;--tw-pinch-zoom: ;--tw-scroll-snap-strictness:proximity;--tw-gradient-from-position: ;--tw-gradient-via-position: ;--tw-gradient-to-position: ;--tw-ordinal: ;--tw-slashed-zero: ;--tw-numeric-figure: ;--tw-numeric-spacing: ;--tw-numeric-fraction: ;--tw-ring-inset: ;--tw-ring-offset-width:0px;--tw-ring-offset-color:#fff;--tw-ring-color:rgb(59 130 246 / 0.5);--tw-ring-offset-shadow:0 0 #0000;--tw-ring-shadow:0 0 #0000;--tw-shadow:0 0 #0000;--tw-shadow-colored:0 0 #0000;--tw-blur: ;--tw-brightness: ;--tw-contrast: ;--tw-grayscale: ;--tw-hue-rotate: ;--tw-invert: ;--tw-saturate: ;--tw-sepia: ;--tw-drop-shadow: ;--tw-backdrop-blur: ;--tw-backdrop-brightness: ;--tw-backdrop-contrast: ;--tw-backdrop-grayscale: ;--tw-backdrop-hue-rotate: ;--tw-backdrop-invert: ;--tw-backdrop-opacity: ;--tw-backdrop-saturate: ;--tw-backdrop-sepia: ;--tw-contain-size: ;--tw-contain-layout: ;--tw-contain-paint: ;--tw-contain-style: }/* ! tailwindcss v3.4.17 | MIT License | https://tailwindcss.com */*,::after,::before{box-sizing:border-box;border-width:0;border-style:solid;border-color:#e5e7eb}::after,::before{--tw-content:''}:host,html{line-height:1.5;-webkit-text-size-adjust:100%;-moz-tab-size:4;tab-size:4;font-family:ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";font-feature-settings:normal;font-variation-settings:normal;-webkit-tap-highlight-color:transparent}body{margin:0;line-height:inherit}hr{height:0;color:inherit;border-top-width:1px}abbr:where([title]){-webkit-text-decoration:underline dotted;text-decoration:underline dotted}h1,h2,h3,h4,h5,h6{font-size:inherit;font-weight:inherit}a{color:inherit;text-decoration:inherit}b,strong{font-weight:bolder}code,kbd,pre,samp{font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;font-feature-settings:normal;font-variation-settings:normal;font-size:1em}small{font-size:80%}sub,sup{font-size:75%;line-height:0;position:relative;vertical-align:baseline}sub{bottom:-.25em}sup{top:-.5em}table{text-indent:0;border-color:inherit;border-collapse:collapse}button,input,optgroup,select,textarea{font-family:inherit;font-feature-settings:inherit;font-variation-settings:inherit;font-size:100%;font-weight:inherit;line-height:inherit;letter-spacing:inherit;color:inherit;margin:0;padding:0}button,select{text-transform:none}button,input:where([type=button]),input:where([type=reset]),input:where([type=submit]){-webkit-appearance:button;background-color:transparent;background-image:none}:-moz-focusring{outline:auto}:-moz-ui-invalid{box-shadow:none}progress{vertical-align:baseline}::-webkit-inner-spin-button,::-webkit-outer-spin-button{height:auto}[type=search]{-webkit-appearance:textfield;outline-offset:-2px}::-webkit-search-decoration{-webkit-appearance:none}::-webkit-file-upload-button{-webkit-appearance:button;font:inherit}summary{display:list-item}blockquote,dd,dl,figure,h1,h2,h3,h4,h5,h6,hr,p,pre{margin:0}fieldset{margin:0;padding:0}legend{padding:0}menu,ol,ul{list-style:none;margin:0;padding:0}dialog{padding:0}textarea{resize:vertical}input::placeholder,textarea::placeholder{opacity:1;color:#9ca3af}[role=button],button{cursor:pointer}:disabled{cursor:default}audio,canvas,embed,iframe,img,object,svg,video{display:block;vertical-align:middle}img,video{max-width:100%;height:auto}[hidden]:where(:not([hidden=until-found])){display:none}.absolute{position:absolute}.sticky{position:sticky}.top-0{top:0px}.right-0{right:0px}.top-12{top:3rem}.z-50{z-index:50}.mx-1{margin-left:0.25rem;margin-right:0.25rem}.mx-auto{margin-left:auto;margin-right:auto}.mb-1{margin-bottom:0.25rem}.mb-1\.5{margin-bottom:0.375rem}.mb-2{margin-bottom:0.5rem}.mb-3{margin-bottom:0.75rem}.mb-4{margin-bottom:1rem}.mb-6{margin-bottom:1.5rem}.mr-1{margin-right:0.25rem}.mt-0\.5{margin-top:0.125rem}.mt-1\.5{margin-top:0.375rem}.mt-2{margin-top:0.5rem}.mt-6{margin-top:1.5rem}.block{display:block}.inline-block{display:inline-block}.flex{display:flex}.inline-flex{display:inline-flex}.grid{display:grid}.hidden{display:none}.h-1\.5{height:0.375rem}.h-14{height:3.5rem}.h-3\.5{height:0.875rem}.h-4{height:1rem}.h-5{height:1.25rem}.h-6{height:1.5rem}.h-7{height:1.75rem}.h-8{height:2rem}.h-9{height:2.25rem}.h-\[calc\(100vh-56px\)\]{height:calc(100vh - 56px)}.h-10{height:2.5rem}.min-h-screen{min-height:100vh}.w-1{width:0.25rem}.w-1\.5{width:0.375rem}.w-3\.5{width:0.875rem}.w-4{width:1rem}.w-5{width:1.25rem}.w-64{width:16rem}.w-7{width:1.75rem}.w-72{width:18rem}.w-8{width:2rem}.w-full{width:100%}.w-px{width:1px}.w-10{width:2.5rem}.min-w-0{min-width:0px}.max-w-3xl{max-width:48rem}.flex-1{flex:1 1 0%}.flex-shrink-0{flex-shrink:0}.cursor-grab{cursor:grab}.cursor-pointer{cursor:pointer}.resize-none{resize:none}.grid-cols-4{grid-template-columns:repeat(4, minmax(0, 1fr))}.flex-col{flex-direction:column}.items-start{align-items:flex-start}.items-center{align-items:center}.justify-center{justify-content:center}.justify-between{justify-content:space-between}.gap-1{gap:0.25rem}.gap-1\.5{gap:0.375rem}.gap-2{gap:0.5rem}.gap-3{gap:0.75rem}.gap-4{gap:1rem}.space-x-1 > :not([hidden]) ~ :not([hidden]){--tw-space-x-reverse:0;margin-right:calc(0.25rem * var(--tw-space-x-reverse));margin-left:calc(0.25rem * calc(1 - var(--tw-space-x-reverse)))}.space-y-2 > :not([hidden]) ~ :not([hidden]){--tw-space-y-reverse:0;margin-top:calc(0.5rem * calc(1 - var(--tw-space-y-reverse)));margin-bottom:calc(0.5rem * var(--tw-space-y-reverse))}.space-y-2\.5 > :not([hidden]) ~ :not([hidden]){--tw-space-y-reverse:0;margin-top:calc(0.625rem * calc(1 - var(--tw-space-y-reverse)));margin-bottom:calc(0.625rem * var(--tw-space-y-reverse))}.space-y-3 > :not([hidden]) ~ :not([hidden]){--tw-space-y-reverse:0;margin-top:calc(0.75rem * calc(1 - var(--tw-space-y-reverse)));margin-bottom:calc(0.75rem * var(--tw-space-y-reverse))}.space-y-4 > :not([hidden]) ~ :not([hidden]){--tw-space-y-reverse:0;margin-top:calc(1rem * calc(1 - var(--tw-space-y-reverse)));margin-bottom:calc(1rem * var(--tw-space-y-reverse))}.overflow-hidden{overflow:hidden}.overflow-y-auto{overflow-y:auto}.truncate{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.rounded{border-radius:0.25rem}.rounded-2xl{border-radius:1rem}.rounded-full{border-radius:9999px}.rounded-lg{border-radius:0.5rem}.rounded-xl{border-radius:0.75rem}.border{border-width:1px}.border-b{border-bottom-width:1px}.border-l{border-left-width:1px}.border-r{border-right-width:1px}.border-t{border-top-width:1px}.border-amber-200{--tw-border-opacity:1;border-color:rgb(253 230 138 / var(--tw-border-opacity, 1))}.border-blue-100{--tw-border-opacity:1;border-color:rgb(219 234 254 / var(--tw-border-opacity, 1))}.border-emerald-100{--tw-border-opacity:1;border-color:rgb(209 250 229 / var(--tw-border-opacity, 1))}.border-gray-100{--tw-border-opacity:1;border-color:rgb(243 244 246 / var(--tw-border-opacity, 1))}.border-gray-200{--tw-border-opacity:1;border-color:rgb(229 231 235 / var(--tw-border-opacity, 1))}.border-gray-300{--tw-border-opacity:1;border-color:rgb(209 213 219 / var(--tw-border-opacity, 1))}.border-gray-50{--tw-border-opacity:1;border-color:rgb(249 250 251 / var(--tw-border-opacity, 1))}.border-purple-100{--tw-border-opacity:1;border-color:rgb(243 232 255 / var(--tw-border-opacity, 1))}.bg-amber-50{--tw-bg-opacity:1;background-color:rgb(255 251 235 / var(--tw-bg-opacity, 1))}.bg-blue-100{--tw-bg-opacity:1;background-color:rgb(219 234 254 / var(--tw-bg-opacity, 1))}.bg-blue-50{--tw-bg-opacity:1;background-color:rgb(239 246 255 / var(--tw-bg-opacity, 1))}.bg-blue-500{--tw-bg-opacity:1;background-color:rgb(59 130 246 / var(--tw-bg-opacity, 1))}.bg-blue-600{--tw-bg-opacity:1;background-color:rgb(37 99 235 / var(--tw-bg-opacity, 1))}.bg-emerald-100{--tw-bg-opacity:1;background-color:rgb(209 250 229 / var(--tw-bg-opacity, 1))}.bg-emerald-50{--tw-bg-opacity:1;background-color:rgb(236 253 245 / var(--tw-bg-opacity, 1))}.bg-gray-200{--tw-bg-opacity:1;background-color:rgb(229 231 235 / var(--tw-bg-opacity, 1))}.bg-gray-50{--tw-bg-opacity:1;background-color:rgb(249 250 251 / var(--tw-bg-opacity, 1))}.bg-green-500{--tw-bg-opacity:1;background-color:rgb(34 197 94 / var(--tw-bg-opacity, 1))}.bg-orange-400{--tw-bg-opacity:1;background-color:rgb(251 146 60 / var(--tw-bg-opacity, 1))}.bg-purple-50{--tw-bg-opacity:1;background-color:rgb(250 245 255 / var(--tw-bg-opacity, 1))}.bg-purple-500{--tw-bg-opacity:1;background-color:rgb(168 85 247 / var(--tw-bg-opacity, 1))}.bg-white{--tw-bg-opacity:1;background-color:rgb(255 255 255 / var(--tw-bg-opacity, 1))}.bg-yellow-100{--tw-bg-opacity:1;background-color:rgb(254 249 195 / var(--tw-bg-opacity, 1))}.bg-gradient-to-br{background-image:linear-gradient(to bottom right, var(--tw-gradient-stops))}.bg-gradient-to-r{background-image:linear-gradient(to right, var(--tw-gradient-stops))}.from-blue-50{--tw-gradient-from:#E8EDF1 var(--tw-gradient-from-position);--tw-gradient-to:rgb(239 246 255 / 0) var(--tw-gradient-to-position);--tw-gradient-stops:var(--tw-gradient-from), var(--tw-gradient-to)}.from-blue-500{--tw-gradient-from:#7D94A6 var(--tw-gradient-from-position);--tw-gradient-to:rgb(59 130 246 / 0) var(--tw-gradient-to-position);--tw-gradient-stops:var(--tw-gradient-from), var(--tw-gradient-to)}.from-emerald-50{--tw-gradient-from:#EAF2ED var(--tw-gradient-from-position);--tw-gradient-to:rgb(236 253 245 / 0) var(--tw-gradient-to-position);--tw-gradient-stops:var(--tw-gradient-from), var(--tw-gradient-to)}.from-emerald-500{--tw-gradient-from:#6D9A7E var(--tw-gradient-from-position);--tw-gradient-to:rgb(16 185 129 / 0) var(--tw-gradient-to-position);--tw-gradient-stops:var(--tw-gradient-from), var(--tw-gradient-to)}.from-purple-500{--tw-gradient-from:#a855f7 var(--tw-gradient-from-position);--tw-gradient-to:rgb(168 85 247 / 0) var(--tw-gradient-to-position);--tw-gradient-stops:var(--tw-gradient-from), var(--tw-gradient-to)}.to-green-50{--tw-gradient-to:#f0fdf4 var(--tw-gradient-to-position)}.to-indigo-50{--tw-gradient-to:#eef2ff var(--tw-gradient-to-position)}.to-indigo-600{--tw-gradient-to:#4f46e5 var(--tw-gradient-to-position)}.to-purple-50{--tw-gradient-to:#faf5ff var(--tw-gradient-to-position)}.to-purple-500{--tw-gradient-to:#a855f7 var(--tw-gradient-to-position)}.to-teal-600{--tw-gradient-to:#0d9488 var(--tw-gradient-to-position)}.to-violet-600{--tw-gradient-to:#7D869A var(--tw-gradient-to-position)}.object-contain{object-fit:contain}.p-1{padding:0.25rem}.p-1\.5{padding:0.375rem}.p-2\.5{padding:0.625rem}.p-3{padding:0.75rem}.p-4{padding:1rem}.p-6{padding:1.5rem}.p-8{padding:2rem}.px-1\.5{padding-left:0.375rem;padding-right:0.375rem}.px-2{padding-left:0.5rem;padding-right:0.5rem}.px-2\.5{padding-left:0.625rem;padding-right:0.625rem}.px-3{padding-left:0.75rem;padding-right:0.75rem}.px-4{padding-left:1rem;padding-right:1rem}.px-6{padding-left:1.5rem;padding-right:1.5rem}.py-0\.5{padding-top:0.125rem;padding-bottom:0.125rem}.py-1{padding-top:0.25rem;padding-bottom:0.25rem}.py-1\.5{padding-top:0.375rem;padding-bottom:0.375rem}.py-2{padding-top:0.5rem;padding-bottom:0.5rem}.py-2\.5{padding-top:0.625rem;padding-bottom:0.625rem}.px-5{padding-left:1.25rem;padding-right:1.25rem}.py-3{padding-top:0.75rem;padding-bottom:0.75rem}.pl-4{padding-left:1rem}.pt-2{padding-top:0.5rem}.pt-3{padding-top:0.75rem}.pt-4{padding-top:1rem}.text-left{text-align:left}.text-center{text-align:center}.text-base{font-size:1rem;line-height:1.5rem}.text-sm{font-size:0.875rem;line-height:1.25rem}.text-xl{font-size:1.25rem;line-height:1.75rem}.text-xs{font-size:0.75rem;line-height:1rem}.font-bold{font-weight:700}.font-medium{font-weight:500}.font-normal{font-weight:400}.font-semibold{font-weight:600}.uppercase{text-transform:uppercase}.leading-relaxed{line-height:1.625}.tracking-wider{letter-spacing:0.05em}.text-amber-500{--tw-text-opacity:1;color:rgb(245 158 11 / var(--tw-text-opacity, 1))}.text-amber-700{--tw-text-opacity:1;color:rgb(180 83 9 / var(--tw-text-opacity, 1))}.text-amber-800{--tw-text-opacity:1;color:rgb(146 64 14 / var(--tw-text-opacity, 1))}.text-blue-400{--tw-text-opacity:1;color:rgb(96 165 250 / var(--tw-text-opacity, 1))}.text-blue-500{--tw-text-opacity:1;color:rgb(59 130 246 / var(--tw-text-opacity, 1))}.text-blue-600{--tw-text-opacity:1;color:rgb(37 99 235 / var(--tw-text-opacity, 1))}.text-blue-700{--tw-text-opacity:1;color:rgb(29 78 216 / var(--tw-text-opacity, 1))}.text-blue-800{--tw-text-opacity:1;color:rgb(30 64 175 / var(--tw-text-opacity, 1))}.text-emerald-600{--tw-text-opacity:1;color:rgb(5 150 105 / var(--tw-text-opacity, 1))}.text-emerald-700{--tw-text-opacity:1;color:rgb(4 120 87 / var(--tw-text-opacity, 1))}.text-gray-400{--tw-text-opacity:1;color:rgb(156 163 175 / var(--tw-text-opacity, 1))}.text-gray-500{--tw-text-opacity:1;color:rgb(107 114 128 / var(--tw-text-opacity, 1))}.text-gray-600{--tw-text-opacity:1;color:rgb(75 85 99 / var(--tw-text-opacity, 1))}.text-gray-700{--tw-text-opacity:1;color:rgb(55 65 81 / var(--tw-text-opacity, 1))}.text-gray-800{--tw-text-opacity:1;color:rgb(31 41 55 / var(--tw-text-opacity, 1))}.text-gray-900{--tw-text-opacity:1;color:rgb(17 24 39 / var(--tw-text-opacity, 1))}.text-green-500{--tw-text-opacity:1;color:rgb(34 197 94 / var(--tw-text-opacity, 1))}.text-green-600{--tw-text-opacity:1;color:rgb(22 163 74 / var(--tw-text-opacity, 1))}.text-orange-500{--tw-text-opacity:1;color:rgb(249 115 22 / var(--tw-text-opacity, 1))}.text-orange-600{--tw-text-opacity:1;color:rgb(234 88 12 / var(--tw-text-opacity, 1))}.text-purple-500{--tw-text-opacity:1;color:rgb(168 85 247 / var(--tw-text-opacity, 1))}.text-purple-600{--tw-text-opacity:1;color:rgb(147 51 234 / var(--tw-text-opacity, 1))}.text-red-500{--tw-text-opacity:1;color:rgb(239 68 68 / var(--tw-text-opacity, 1))}.text-white{--tw-text-opacity:1;color:rgb(255 255 255 / var(--tw-text-opacity, 1))}.text-yellow-800{--tw-text-opacity:1;color:rgb(133 77 14 / var(--tw-text-opacity, 1))}.shadow-lg{--tw-shadow:0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);--tw-shadow-colored:0 10px 15px -3px var(--tw-shadow-color), 0 4px 6px -4px var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}.shadow-sm{--tw-shadow:0 1px 2px 0 rgb(0 0 0 / 0.05);--tw-shadow-colored:0 1px 2px 0 var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}.transition-colors{transition-property:color, background-color, border-color, fill, stroke, -webkit-text-decoration-color;transition-property:color, background-color, border-color, text-decoration-color, fill, stroke;transition-property:color, background-color, border-color, text-decoration-color, fill, stroke, -webkit-text-decoration-color;transition-timing-function:cubic-bezier(0.4, 0, 0.2, 1);transition-duration:150ms}.hover\:border-blue-300:hover{--tw-border-opacity:1;border-color:rgb(147 197 253 / var(--tw-border-opacity, 1))}.hover\:border-green-300:hover{--tw-border-opacity:1;border-color:rgb(134 239 172 / var(--tw-border-opacity, 1))}.hover\:bg-blue-50:hover{--tw-bg-opacity:1;background-color:rgb(239 246 255 / var(--tw-bg-opacity, 1))}.hover\:bg-blue-700:hover{--tw-bg-opacity:1;background-color:rgb(29 78 216 / var(--tw-bg-opacity, 1))}.hover\:bg-gray-100:hover{--tw-bg-opacity:1;background-color:rgb(243 244 246 / var(--tw-bg-opacity, 1))}.hover\:bg-gray-50:hover{--tw-bg-opacity:1;background-color:rgb(249 250 251 / var(--tw-bg-opacity, 1))}.hover\:text-blue-600:hover{--tw-text-opacity:1;color:rgb(37 99 235 / var(--tw-text-opacity, 1))}.hover\:text-blue-800:hover{--tw-text-opacity:1;color:rgb(30 64 175 / var(--tw-text-opacity, 1))}.hover\:text-gray-700:hover{--tw-text-opacity:1;color:rgb(55 65 81 / var(--tw-text-opacity, 1))}.hover\:text-gray-900:hover{--tw-text-opacity:1;color:rgb(17 24 39 / var(--tw-text-opacity, 1))}.hover\:text-green-600:hover{--tw-text-opacity:1;color:rgb(22 163 74 / var(--tw-text-opacity, 1))}.focus\:border-blue-500:focus{--tw-border-opacity:1;border-color:rgb(59 130 246 / var(--tw-border-opacity, 1))}.focus\:outline-none:focus{outline:2px solid transparent;outline-offset:2px}.focus\:ring-2:focus{--tw-ring-offset-shadow:var(--tw-ring-inset) 0 0 0 var(--tw-ring-offset-width) var(--tw-ring-offset-color);--tw-ring-shadow:var(--tw-ring-inset) 0 0 0 calc(2px + var(--tw-ring-offset-width)) var(--tw-ring-color);box-shadow:var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow, 0 0 #0000)}.focus\:ring-blue-500:focus{--tw-ring-opacity:1;--tw-ring-color:rgb(59 130 246 / var(--tw-ring-opacity, 1))}.active\:cursor-grabbing:active{cursor:grabbing}</style><script src="./assets/vendor/kimi-publish.js" async=""></script>
     <style>
       .kimi-brand-container {
         position: fixed;
@@ -856,7 +856,7 @@ body {
         <div class="topbar-divider"></div>
         <div class="topbar-brand">
           <div class="topbar-logo">
-            <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-blue-600 to-blue-400 flex items-center justify-center flex-shrink-0"><span class="text-white text-sm font-bold">P</span></div>
+            <div class="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 bg-white overflow-hidden"><img src="./PRD参考文件/导航栏图标参考.jpg" alt="PBS" class="w-full h-full object-contain"></div>
           </div>
           <div class="topbar-brand-text">
             <span class="topbar-brand-name">留学申请管理系统</span>
@@ -1101,41 +1101,33 @@ body {
         </div>
       </div>
 
-      <!-- 院校目标信息面板（默认隐藏）：字段信息从EV系统（壹言求学数据库）导入 -->
+      <!-- 院校目标信息面板（默认隐藏）：字段信息进入页面后自动从 EV 系统同步 -->
       <div id="panel-goal-info" class="flex-1 overflow-y-auto p-4 space-y-4 hidden">
         <div class="bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden">
           <div class="h-1.5 bg-gradient-to-r from-purple-500 to-violet-600"></div>
           <div class="p-4">
-            <div class="flex items-center justify-between mb-1">
+            <div class="flex items-center mb-1">
               <h3 class="text-sm font-semibold text-gray-800 flex items-center gap-2">
                 <span class="w-7 h-7 bg-purple-50 rounded-lg flex items-center justify-center">
                   <svg class="w-3.5 h-3.5 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path></svg>
                 </span>
                 院校目标信息
               </h3>
-              <button id="evImportBtn" class="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg bg-purple-50 text-purple-700 text-xs hover:bg-purple-100 border border-purple-200 transition-colors" onclick="openEvImport()" title="从EV系统（壹言求学数据库）导入该专业已录入字段">
-                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path></svg>
-                导入院校目标信息
-              </button>
             </div>
-            <p class="text-[11px] text-gray-400 mb-3">当前文书对应的院校目标 · 字段信息来自 EV 系统</p>
+            <p class="text-[11px] text-gray-400 mb-3">当前文书对应的院校目标 · 字段信息已自动同步自 EV 系统</p>
             <div class="grid grid-cols-2 gap-x-4 gap-y-2.5 text-xs">
               <div class="flex justify-between col-span-2"><span class="text-gray-400">学校</span><span class="text-gray-900 font-medium" id="goal-info-school">卡内基梅隆大学</span></div>
               <div class="flex justify-between col-span-2"><span class="text-gray-400">专业</span><span class="text-gray-900" id="goal-info-major">人工智能</span></div>
               <div class="flex justify-between"><span class="text-gray-400">申请层次</span><span class="text-gray-900" id="goal-info-stage">硕士申请</span></div>
               <div class="flex justify-between"><span class="text-gray-400">申请轮次</span><span class="text-gray-900" id="goal-info-round">ED</span></div>
             </div>
-            <!-- EV导入数据展示区 -->
+            <!-- EV 自动同步数据展示区 -->
             <div id="evDataSection" class="hidden mt-4 pt-3 border-t border-dashed border-purple-200">
               <div class="flex items-center gap-2 mb-2 flex-wrap">
-                <h4 class="text-xs font-semibold text-purple-800">EV系统数据（已填入）</h4>
+                <h4 class="text-xs font-semibold text-purple-800">EV系统数据（自动同步）</h4>
                 <span class="text-[10px] px-1.5 py-0.5 rounded bg-purple-50 text-purple-600 border border-purple-100">字段集：《壹言求学数据库录入标准（硕士）》</span>
               </div>
               <div id="evDataBody" class="space-y-2"></div>
-            </div>
-            <div id="evEmptyHint" class="mt-4 border border-dashed border-gray-200 rounded-xl p-4 text-center">
-              <p class="text-xs text-gray-400">尚未从EV系统导入</p>
-              <p class="text-[11px] text-gray-400 mt-1">点击「导入院校目标信息」，勾选需要的字段填入</p>
             </div>
           </div>
         </div>
@@ -1309,6 +1301,7 @@ body {
           <button id="btn-doc-type-cv" class="doc-type-btn px-3 py-1 text-xs font-medium text-gray-600 hover:bg-gray-100 rounded-full cursor-pointer" data-doc-type="cv">CV</button>
           <button id="btn-doc-type-rl" class="doc-type-btn px-3 py-1 text-xs font-medium text-gray-600 hover:bg-gray-100 rounded-full cursor-pointer" data-doc-type="rl">RL</button>
           <button id="btn-doc-type-rp" class="doc-type-btn px-3 py-1 text-xs font-medium bg-blue-100 text-blue-700 rounded-full cursor-pointer" data-doc-type="rp">RP</button>
+          <button id="btn-doc-type-cl" class="doc-type-btn px-3 py-1 text-xs font-medium text-gray-600 hover:bg-gray-100 rounded-full cursor-pointer" data-doc-type="cl">套磁信</button>
         </div>
       </div>
 
@@ -1436,7 +1429,7 @@ body {
           </nav>
         </div>
 
-        <!-- 子面板1：AI建议（按当前文书类型 CV/PS/RL/RP 动态生成，生成规则见《文书编辑 AI建议》提示词） -->
+        <!-- 子面板1：AI建议（按当前文书类型 CV/PS/RL/RP/CL 动态生成，生成规则见《文书编辑 AI建议》与《套磁信AI提示词》提示词） -->
         <div id="panel-ai-suggest" class="p-4 space-y-4">
           <div id="aiSuggestContainer" class="space-y-4"></div>
         </div>
@@ -1560,33 +1553,27 @@ body {
                 <div class="flex items-center justify-between"><span class="text-sm text-blue-700 font-medium">CV 简历</span><span class="text-[10px] text-blue-400">通用标准</span></div>
                 <p class="text-[11px] text-blue-600 mt-1 leading-relaxed">2 页以内 · 默认不放照片、性别、出生日期、婚姻状况</p>
               </div>
+              <div class="p-2.5 bg-blue-50 rounded-lg border border-blue-100">
+                <div class="flex items-center justify-between"><span class="text-sm text-blue-700 font-medium">CL 套磁信</span><span class="text-[10px] text-blue-400">通用标准</span></div>
+                <p class="text-[11px] text-blue-600 mt-1 leading-relaxed">150-200 英文词 · 必须写教授姓氏 · 禁用 AI 腔词汇 · 四段结构 · 以争取 15-30 分钟会议为目标</p>
+              </div>
             </div>
             <div class="mt-3 p-2.5 bg-amber-50 border border-amber-100 rounded-lg">
               <p class="text-[11px] text-amber-700 leading-relaxed">如院校有官方字数或格式规定，<span class="font-semibold">以院校规定为准</span>并在 AI 建议中提醒。美系院校的文书要求因校而异，此处已预留院校官方要求数据接口，未来接入院校数据库后将自动同步并覆盖通用标准。</p>
             </div>
           </div>
 
-          <!-- 院系链接与推荐人邮箱 -->
+          <!-- 推荐人邮箱地址 -->
           <div class="card p-4">
             <div class="flex items-center justify-between mb-3">
               <h4 class="text-sm font-medium text-gray-700 flex items-center gap-2">
                 <svg class="w-4 h-4 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"></path></svg>
-                院系链接
+                推荐人邮箱地址
               </h4>
-              <button class="px-2.5 py-1 text-xs font-medium text-blue-600 bg-blue-50 rounded-lg hover:bg-blue-100" onclick="openDepartmentLinkEditor()">新增链接</button>
+              <button class="px-2.5 py-1 text-xs font-medium text-blue-600 bg-blue-50 rounded-lg hover:bg-blue-100" onclick="openReferrerEmailEditor()">新增邮箱</button>
             </div>
-            <div class="space-y-2.5 mb-3">
-              <div>
-                <label class="block text-xs text-gray-500 mb-1">教授邮箱地址</label>
-                <input id="professorEmailInput" type="email" placeholder="professor@university.edu" class="w-full h-9 px-3 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500">
-              </div>
-              <div>
-                <label class="block text-xs text-gray-500 mb-1">企业家邮箱地址</label>
-                <input id="entrepreneurEmailInput" type="email" placeholder="mentor@company.com" class="w-full h-9 px-3 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500">
-              </div>
-              <p class="text-[10px] text-gray-400 leading-relaxed">用于推荐信（RL）邀约与网申推荐人信息填写</p>
-            </div>
-            <div id="departmentLinkList" class="space-y-2"></div>
+            <p class="text-[10px] text-gray-400 leading-relaxed mb-3">用于推荐信（RL）邀约与网申推荐人信息填写；可维护多位推荐人。</p>
+            <div id="referrerEmailList" class="space-y-2"></div>
           </div>
         </div>
       </div>
@@ -1656,53 +1643,16 @@ body {
     </div>
   </div>
 
-  <!-- EV数据导入确认弹窗：从EV系统（壹言求学数据库）勾选填入院校目标字段 -->
-  <div id="evImportModal" class="fixed inset-0 z-[100] hidden">
-    <div class="absolute inset-0 bg-black bg-opacity-40" onclick="closeEvImport()"></div>
-    <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[920px] max-w-[94vw] max-h-[86vh] bg-white rounded-2xl shadow-2xl flex flex-col overflow-hidden">
-      <div class="flex items-center justify-between px-6 py-4 border-b border-gray-200 flex-shrink-0">
-        <div class="flex items-center gap-3">
-          <span class="w-9 h-9 rounded-lg bg-purple-100 text-purple-600 flex items-center justify-center flex-shrink-0">
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path></svg>
-          </span>
-          <div>
-            <h3 class="text-lg font-semibold text-gray-800">从EV系统导入院校目标信息</h3>
-            <p class="text-xs text-gray-400 mt-0.5" id="evModalSubtitle">数据来源：EV系统 · 壹言求学数据库</p>
-          </div>
-        </div>
-        <button class="p-1 text-gray-400 hover:text-gray-600" onclick="closeEvImport()">
-          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
-        </button>
-      </div>
-      <div class="px-6 py-3 bg-blue-50 border-b border-blue-100 flex-shrink-0">
-        <p class="text-xs text-blue-700 leading-relaxed">以下为 EV 系统返回的该专业<span class="font-semibold">已录入的非空字段</span>（未录入字段不在列表中）。请勾选需要填入本页的字段：<span class="inline-flex px-1.5 py-0 rounded-full text-[11px] font-medium bg-blue-100 text-blue-700">新增</span> 页面当前为空；<span class="inline-flex px-1.5 py-0 rounded-full text-[11px] font-medium bg-orange-100 text-orange-700">覆盖</span> 将以 EV 数据替换页面已有数据；<span class="inline-flex px-1.5 py-0 rounded-full text-[11px] font-medium bg-gray-100 text-gray-500">一致</span> 数值相同默认不勾选。未勾选的字段不会填入。</p>
-      </div>
-      <div class="px-6 py-3 flex items-center justify-between border-b border-gray-100 flex-shrink-0">
-        <div class="flex items-center gap-4 text-sm">
-          <label class="flex items-center gap-2 cursor-pointer text-gray-700"><input type="checkbox" id="evCheckAll" class="accent-purple-600 w-4 h-4" onchange="evToggleAll(this.checked)"> 全选</label>
-          <button class="text-purple-600 hover:text-purple-800 text-sm" onclick="evSelectNew()">仅选新增</button>
-          <button class="text-gray-500 hover:text-gray-700 text-sm" onclick="evToggleAll(false)">清空</button>
-        </div>
-        <span class="text-xs text-gray-500">已选 <span id="evSelectedCount" class="font-semibold text-purple-600">0</span> / <span id="evTotalCount">0</span> 个字段</span>
-      </div>
-      <div id="evFieldGroups" class="flex-1 overflow-y-auto px-6 py-4"></div>
-      <div class="px-6 py-4 border-t border-gray-200 flex items-center gap-3 flex-shrink-0 bg-white">
-        <button class="flex-1 h-10 bg-white border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors font-medium" onclick="closeEvImport()">取消，不填入</button>
-        <button class="flex-1 h-10 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors font-medium" onclick="confirmEvImport()">确认填入所选字段</button>
-      </div>
-    </div>
-  </div>
-
-  <!-- 院系链接新增/编辑弹窗 -->
-  <div id="departmentLinkModal" class="fixed inset-0 z-[100] hidden">
-    <div class="absolute inset-0 bg-black bg-opacity-30" onclick="closeDepartmentLinkEditor()"></div>
+  <!-- 推荐人邮箱新增/编辑弹窗 -->
+  <div id="referrerEmailModal" class="fixed inset-0 z-[100] hidden">
+    <div class="absolute inset-0 bg-black bg-opacity-30" onclick="closeReferrerEmailEditor()"></div>
     <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[440px] bg-white rounded-2xl shadow-2xl p-6">
-      <div class="flex items-center justify-between mb-5"><h3 id="departmentLinkModalTitle" class="text-lg font-semibold text-gray-800">新增院系链接</h3><button class="text-gray-400 hover:text-gray-600 text-xl" onclick="closeDepartmentLinkEditor()">×</button></div>
+      <div class="flex items-center justify-between mb-5"><h3 id="referrerEmailModalTitle" class="text-lg font-semibold text-gray-800">新增推荐人邮箱</h3><button class="text-gray-400 hover:text-gray-600 text-xl" onclick="closeReferrerEmailEditor()">×</button></div>
       <div class="space-y-4">
-        <div><label class="block text-sm font-medium text-gray-700 mb-1.5">链接名称 <span class="text-red-500">*</span></label><input id="departmentLinkName" type="text" class="w-full h-10 px-3 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500" placeholder="如：人工智能专业详情页"></div>
-        <div><label class="block text-sm font-medium text-gray-700 mb-1.5">链接地址 <span class="text-red-500">*</span></label><input id="departmentLinkUrl" type="url" class="w-full h-10 px-3 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500" placeholder="https://"></div>
+        <div><label class="block text-sm font-medium text-gray-700 mb-1.5">推荐人姓名 <span class="text-red-500">*</span></label><input id="referrerEmailName" type="text" class="w-full h-10 px-3 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500" placeholder="如：张明教授"></div>
+        <div><label class="block text-sm font-medium text-gray-700 mb-1.5">邮箱地址 <span class="text-red-500">*</span></label><input id="referrerEmailAddress" type="email" class="w-full h-10 px-3 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500" placeholder="name@domain.edu"></div>
       </div>
-      <div class="flex gap-3 mt-6"><button class="flex-1 h-10 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium" onclick="saveDepartmentLink()">保存</button><button class="flex-1 h-10 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 font-medium" onclick="closeDepartmentLinkEditor()">取消</button></div>
+      <div class="flex gap-3 mt-6"><button class="flex-1 h-10 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium" onclick="saveReferrerEmail()">保存</button><button class="flex-1 h-10 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 font-medium" onclick="closeReferrerEmailEditor()">取消</button></div>
     </div>
   </div>
 
@@ -1882,13 +1832,14 @@ body {
         });
       })();
 
-      // ===== 文书类型切换：PS / CV / RL / RP =====
+      // ===== 文书类型切换：PS / CV / RL / RP / CL =====
       (function () {
         var meta = {
           ps: { title: '个人陈述（Personal Statement）', short: '个人陈述（PS）', subtitle: '卡内基梅隆大学 · 人工智能 · 硕士申请' },
           cv: { title: '学术简历（Curriculum Vitae）', short: '学术简历（CV）', subtitle: '卡内基梅隆大学 · 人工智能 · 硕士申请' },
           rl: { title: '推荐信（Recommendation Letter）', short: '推荐信（RL）', subtitle: '卡内基梅隆大学 · 人工智能 · 硕士申请' },
-          rp: { title: '研究计划（Research Proposal）', short: '研究计划（RP）', subtitle: '卡内基梅隆大学 · 人工智能 · 硕士申请' }
+          rp: { title: '研究计划（Research Proposal）', short: '研究计划（RP）', subtitle: '卡内基梅隆大学 · 人工智能 · 硕士申请' },
+          cl: { title: '套磁信（Cold Email）', short: '套磁信（CL）', subtitle: '卡内基梅隆大学 · 人工智能 · 硕士申请' }
         };
         var defaults = {
           ps: null,
@@ -1907,6 +1858,13 @@ body {
             { label: '段落 1 · 研究背景与问题', content: '多模态学习在医疗影像分析中展现出巨大潜力，但现有方法在模态对齐与小样本场景下仍存在明显性能瓶颈。本研究计划聚焦于鲁棒的多模态表征对齐方法。' },
             { label: '段落 2 · 研究方法与技术路线', content: '拟采用对比学习框架对齐影像与文本表征，结合注意力机制挖掘跨模态关联，并在公开数据集与真实临床数据上验证有效性；计划使用 PyTorch 实现，依托实验室 GPU 集群完成训练。' },
             { label: '段落 3 · 预期成果与计划安排', content: '预期在基准数据集上超越现有最优方法 2–3 个百分点，产出 1–2 篇高水平论文。时间安排：第一学期完成文献综述与基线复现，第二学期完成方法设计与实验，第三学期撰写论文并投稿。' }
+          ],
+          cl: [
+            { label: '段落 1 · 邮件主题', content: 'Subject: Ph.D. Applicant Interested in Your Recent Work on Multimodal Reasoning – CMU MSAI' },
+            { label: '段落 2 · 首段 Hook', content: 'Dear Prof. Smith,\n\nI am writing to express my strong interest in joining your research group. I am currently a second-year graduate student at Tsinghua University, and your recent paper on robust multimodal alignment has deeply resonated with my own research trajectory.' },
+            { label: '段落 3 · Value Proposition', content: 'In your 2024 NeurIPS work, you highlighted the limitation of existing contrastive methods in low-sample settings. My current project addresses exactly this gap by combining prototype-based regularization with cross-modal attention, which improved alignment stability by 18% on a medical imaging benchmark.' },
+            { label: '段落 4 · Proof of Competence', content: 'Academically, I maintain a GPA of 3.9/4.0 (top 5%) and have a first-author paper under review at CVPR on semi-supervised multimodal learning. I am proficient in PyTorch and have experience training models with up to 10B parameters on our lab cluster.' },
+            { label: '段落 5 · Call to Action', content: 'I have attached my CV and transcript for your reference. Would you be available for a 15-30 minute Zoom call in the week of September 8-12? I would greatly value your feedback on whether my background aligns with your group\'s upcoming projects.\n\nBest regards,\nLi Xue' }
           ]
         };
         var store = {};
@@ -1989,67 +1947,67 @@ body {
       })();
     });
 
-    var departmentLinks = [
-      { name: '人工智能专业详情页', url: 'https://www.cmu.edu/graduate/programs/artificial-intelligence' },
-      { name: '计算机科学学院官网', url: 'https://www.cmu.edu' }
+    var referrerEmails = [
+      { name: '张明教授', email: 'prof.zhang@cmu.edu' },
+      { name: '李华导师', email: 'lihua.mentor@company.com' }
     ];
-    var editingDepartmentLinkIndex = null;
+    var editingReferrerEmailIndex = null;
 
-    function escapeDepartmentLinkText(value) {
+    function escapeReferrerEmailText(value) {
       return String(value).replace(/[&<>"']/g, function (char) {
         return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[char];
       });
     }
-    function renderDepartmentLinks() {
-      var list = document.getElementById('departmentLinkList');
+    function renderReferrerEmails() {
+      var list = document.getElementById('referrerEmailList');
       if (!list) return;
-      if (!departmentLinks.length) {
-        list.innerHTML = '<div class="py-5 text-center text-xs text-gray-400 border border-dashed border-gray-200 rounded-lg">暂无院系链接</div>';
+      if (!referrerEmails.length) {
+        list.innerHTML = '<div class="py-5 text-center text-xs text-gray-400 border border-dashed border-gray-200 rounded-lg">暂无推荐人邮箱</div>';
         return;
       }
-      list.innerHTML = departmentLinks.map(function (item, index) {
+      list.innerHTML = referrerEmails.map(function (item, index) {
         return '<div class="p-3 border border-gray-200 rounded-lg bg-gray-50">' +
-          '<div class="flex items-start justify-between gap-2"><div class="min-w-0"><p class="text-xs font-medium text-gray-800">' + escapeDepartmentLinkText(item.name) + '</p>' +
-          '<a href="' + escapeDepartmentLinkText(item.url) + '" target="_blank" class="block text-xs text-blue-600 hover:underline truncate mt-1">' + escapeDepartmentLinkText(item.url) + '</a></div>' +
-          '<div class="flex items-center gap-2 flex-shrink-0"><button class="text-xs text-blue-600 hover:text-blue-800" onclick="copyDepartmentLink(' + index + ')">复制</button><button class="text-xs text-gray-600 hover:text-blue-700" onclick="openDepartmentLinkEditor(' + index + ')">编辑</button><button class="text-xs text-red-500 hover:text-red-700" onclick="deleteDepartmentLink(' + index + ')">删除</button></div></div></div>';
+          '<div class="flex items-start justify-between gap-2"><div class="min-w-0"><p class="text-xs font-medium text-gray-800">' + escapeReferrerEmailText(item.name) + '</p>' +
+          '<a href="mailto:' + escapeReferrerEmailText(item.email) + '" class="block text-xs text-blue-600 hover:underline truncate mt-1">' + escapeReferrerEmailText(item.email) + '</a></div>' +
+          '<div class="flex items-center gap-2 flex-shrink-0"><button class="text-xs text-blue-600 hover:text-blue-800" onclick="copyReferrerEmail(' + index + ')">复制</button><button class="text-xs text-gray-600 hover:text-blue-700" onclick="openReferrerEmailEditor(' + index + ')">编辑</button><button class="text-xs text-red-500 hover:text-red-700" onclick="deleteReferrerEmail(' + index + ')">删除</button></div></div></div>';
       }).join('');
     }
-    function openDepartmentLinkEditor(index) {
-      editingDepartmentLinkIndex = typeof index === 'number' ? index : null;
-      var item = editingDepartmentLinkIndex === null ? { name: '', url: '' } : departmentLinks[editingDepartmentLinkIndex];
-      document.getElementById('departmentLinkModalTitle').textContent = editingDepartmentLinkIndex === null ? '新增院系链接' : '编辑院系链接';
-      document.getElementById('departmentLinkName').value = item.name;
-      document.getElementById('departmentLinkUrl').value = item.url;
-      document.getElementById('departmentLinkModal').classList.remove('hidden');
-      document.getElementById('departmentLinkName').focus();
+    function openReferrerEmailEditor(index) {
+      editingReferrerEmailIndex = typeof index === 'number' ? index : null;
+      var item = editingReferrerEmailIndex === null ? { name: '', email: '' } : referrerEmails[editingReferrerEmailIndex];
+      document.getElementById('referrerEmailModalTitle').textContent = editingReferrerEmailIndex === null ? '新增推荐人邮箱' : '编辑推荐人邮箱';
+      document.getElementById('referrerEmailName').value = item.name;
+      document.getElementById('referrerEmailAddress').value = item.email;
+      document.getElementById('referrerEmailModal').classList.remove('hidden');
+      document.getElementById('referrerEmailName').focus();
     }
-    function closeDepartmentLinkEditor() {
-      document.getElementById('departmentLinkModal').classList.add('hidden');
-      editingDepartmentLinkIndex = null;
+    function closeReferrerEmailEditor() {
+      document.getElementById('referrerEmailModal').classList.add('hidden');
+      editingReferrerEmailIndex = null;
     }
-    function saveDepartmentLink() {
-      var name = document.getElementById('departmentLinkName').value.trim();
-      var url = document.getElementById('departmentLinkUrl').value.trim();
-      if (!name) { alert('请输入链接名称'); return; }
-      if (!/^https?:\/\//i.test(url)) { alert('请输入以 http:// 或 https:// 开头的链接地址'); return; }
-      var item = { name: name, url: url };
-      if (editingDepartmentLinkIndex === null) departmentLinks.push(item);
-      else departmentLinks[editingDepartmentLinkIndex] = item;
-      renderDepartmentLinks();
-      closeDepartmentLinkEditor();
+    function saveReferrerEmail() {
+      var name = document.getElementById('referrerEmailName').value.trim();
+      var email = document.getElementById('referrerEmailAddress').value.trim();
+      if (!name) { alert('请输入推荐人姓名'); return; }
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { alert('请输入正确的邮箱地址'); return; }
+      var item = { name: name, email: email };
+      if (editingReferrerEmailIndex === null) referrerEmails.push(item);
+      else referrerEmails[editingReferrerEmailIndex] = item;
+      renderReferrerEmails();
+      closeReferrerEmailEditor();
     }
-    function deleteDepartmentLink(index) {
-      if (!departmentLinks[index] || !confirm('确认删除“' + departmentLinks[index].name + '”？')) return;
-      departmentLinks.splice(index, 1);
-      renderDepartmentLinks();
+    function deleteReferrerEmail(index) {
+      if (!referrerEmails[index] || !confirm('确认删除“' + referrerEmails[index].name + '”？')) return;
+      referrerEmails.splice(index, 1);
+      renderReferrerEmails();
     }
-    function copyDepartmentLink(index) {
-      var value = departmentLinks[index] && departmentLinks[index].url;
+    function copyReferrerEmail(index) {
+      var value = referrerEmails[index] && referrerEmails[index].email;
       if (!value) return;
       if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(value);
-      alert('链接已复制');
+      alert('邮箱地址已复制');
     }
-    document.addEventListener('DOMContentLoaded', renderDepartmentLinks);
+    document.addEventListener('DOMContentLoaded', renderReferrerEmails);
 
     function showLeftPanel(panel) {
       ['student-info', 'goal-info', 'materials', 'version-history'].forEach(function(p) {
@@ -2193,94 +2151,8 @@ var EV_IMPORT_DATA = {
   '学院官网（链接）': { ev: 'https://www.cs.cmu.edu/', cur: '' },
   '课程页面（链接）': { ev: 'https://www.cs.cmu.edu/ms-artificial-intelligence', cur: '' }
 };
-var EV_STORAGE_KEY = 'pbs_ev_import_editor_cmu_ai';
 function evEscape(s) {
   return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
-}
-function evStatusOf(entry) {
-  if (!entry.cur) return 'new';
-  if (entry.ev === entry.cur) return 'same';
-  return 'overwrite';
-}
-function openEvImport() {
-  renderEvModal();
-  document.getElementById('evImportModal').classList.remove('hidden');
-}
-function closeEvImport() { document.getElementById('evImportModal').classList.add('hidden'); }
-function renderEvModal() {
-  document.getElementById('evModalSubtitle').textContent = '数据来源：EV系统 · 壹言求学数据库 ｜ 目标：卡内基梅隆大学 · 人工智能 ｜ 字段集：《壹言求学数据库录入标准（硕士）》';
-  var container = document.getElementById('evFieldGroups');
-  container.innerHTML = '';
-  var total = 0;
-  EV_FIELD_GROUPS.forEach(function(grp) {
-    var rows = '';
-    var count = 0;
-    grp.fields.forEach(function(fname) {
-      var entry = EV_IMPORT_DATA[fname];
-      if (!entry || !entry.ev) return;
-      count++; total++;
-      var st = evStatusOf(entry);
-      var tag, checked;
-      if (st === 'new') {
-        tag = '<span class="inline-flex px-2 py-0.5 rounded-full text-[11px] font-medium bg-blue-50 text-blue-600">新增</span>'; checked = true;
-      } else if (st === 'overwrite') {
-        tag = '<span class="inline-flex px-2 py-0.5 rounded-full text-[11px] font-medium bg-orange-50 text-orange-600">覆盖</span>'; checked = true;
-      } else {
-        tag = '<span class="inline-flex px-2 py-0.5 rounded-full text-[11px] font-medium bg-gray-100 text-gray-500">一致</span>'; checked = false;
-      }
-      rows += '<tr class="border-t border-gray-50 hover:bg-gray-50">' +
-        '<td class="px-3 py-2 w-10 align-top"><input type="checkbox" class="ev-field-check accent-purple-600 w-4 h-4 mt-0.5" data-ev-key="' + evEscape(fname) + '"' + (checked ? ' checked' : '') + '></td>' +
-        '<td class="px-3 py-2 text-sm text-gray-700 whitespace-nowrap align-top">' + evEscape(fname) + '</td>' +
-        '<td class="px-3 py-2 text-sm text-purple-900 font-medium align-top"><span class="block max-w-[320px] truncate" title="' + evEscape(entry.ev) + '">' + evEscape(entry.ev) + '</span></td>' +
-        '<td class="px-3 py-2 text-sm text-gray-400 align-top"><span class="block max-w-[160px] truncate" title="' + evEscape(entry.cur || '') + '">' + (entry.cur ? evEscape(entry.cur) : '—') + '</span></td>' +
-        '<td class="px-3 py-2 align-top">' + tag + '</td></tr>';
-    });
-    if (!count) return;
-    container.insertAdjacentHTML('beforeend',
-      '<div class="mb-5">' +
-      '<div class="flex items-center gap-2 mb-2"><p class="text-xs font-semibold text-gray-500 tracking-wider">' + grp.group + '</p><span class="text-[10px] text-gray-400">' + count + ' 项</span></div>' +
-      '<div class="border border-gray-100 rounded-xl overflow-hidden"><table class="w-full">' +
-      '<thead><tr class="bg-gray-50">' +
-      '<th class="px-3 py-2 w-10"></th>' +
-      '<th class="px-3 py-2 text-left text-xs font-medium text-gray-500">字段</th>' +
-      '<th class="px-3 py-2 text-left text-xs font-medium text-purple-600">EV导入值</th>' +
-      '<th class="px-3 py-2 text-left text-xs font-medium text-gray-500">当前值</th>' +
-      '<th class="px-3 py-2 text-left text-xs font-medium text-gray-500 w-20">状态</th>' +
-      '</tr></thead><tbody>' + rows + '</tbody></table></div></div>');
-  });
-  document.getElementById('evTotalCount').textContent = total;
-  document.getElementById('evCheckAll').checked = false;
-  updateEvCount();
-}
-function updateEvCount() {
-  document.getElementById('evSelectedCount').textContent = document.querySelectorAll('#evFieldGroups .ev-field-check:checked').length;
-}
-document.addEventListener('change', function(e) {
-  if (e.target && e.target.classList && e.target.classList.contains('ev-field-check')) updateEvCount();
-});
-function evToggleAll(checked) {
-  document.querySelectorAll('#evFieldGroups .ev-field-check').forEach(function(c) { c.checked = checked; });
-  updateEvCount();
-}
-function evSelectNew() {
-  document.querySelectorAll('#evFieldGroups .ev-field-check').forEach(function(c) {
-    var entry = EV_IMPORT_DATA[c.getAttribute('data-ev-key')];
-    c.checked = entry ? (evStatusOf(entry) === 'new') : false;
-  });
-  updateEvCount();
-}
-function confirmEvImport() {
-  var checks = document.querySelectorAll('#evFieldGroups .ev-field-check:checked');
-  if (!checks.length) { showEditorToast('请至少选择 1 个字段'); return; }
-  var values = {};
-  checks.forEach(function(c) {
-    var k = c.getAttribute('data-ev-key');
-    if (EV_IMPORT_DATA[k]) values[k] = EV_IMPORT_DATA[k].ev;
-  });
-  try { localStorage.setItem(EV_STORAGE_KEY, JSON.stringify({ values: values, updatedAt: new Date().toISOString() })); } catch (e) {}
-  applyEvToGoalPanel(values);
-  closeEvImport();
-  showEditorToast('已从EV系统填入 ' + Object.keys(values).length + ' 个字段', true);
 }
 function applyEvToGoalPanel(values) {
   if (values['学校']) document.getElementById('goal-info-school').textContent = values['学校'];
@@ -2299,25 +2171,24 @@ function applyEvToGoalPanel(values) {
     }
   });
   document.getElementById('evDataSection').classList.remove('hidden');
-  var hint = document.getElementById('evEmptyHint');
-  if (hint) hint.classList.add('hidden');
 }
 function showEditorToast(msg, ok) {
   var t = document.createElement('div');
-  t.style.cssText = 'position:fixed;top:24px;left:50%;transform:translateX(-50%);z-index:200;padding:10px 16px;border-radius:10px;color:#fff;font-size:14px;box-shadow:0 10px 30px rgba(0,0,0,.18);background:' + (ok ? '#10B981' : '#242136');
+  t.style.cssText = 'position:fixed;top:24px;left:50%;transform:translateX(-50%);z-index:200;padding:10px 16px;border-radius:10px;color:#fff;font-size:14px;box-shadow:0 10px 30px rgba(0,0,0,.18);background:' + (ok ? '#6D9A7E' : '#242136');
   t.textContent = msg;
   document.body.appendChild(t);
   setTimeout(function() { t.remove(); }, 2000);
 }
-/* 页面加载时恢复已导入的 EV 字段 */
+/* 页面加载时自动同步当前院校目标的全部 EV 非空字段，无需用户二次确认。 */
 document.addEventListener('DOMContentLoaded', function() {
-  try {
-    var saved = JSON.parse(localStorage.getItem(EV_STORAGE_KEY) || 'null');
-    if (saved && saved.values) applyEvToGoalPanel(saved.values);
-  } catch (e) {}
+  var values = {};
+  Object.keys(EV_IMPORT_DATA).forEach(function(key) {
+    if (EV_IMPORT_DATA[key] && EV_IMPORT_DATA[key].ev) values[key] = EV_IMPORT_DATA[key].ev;
+  });
+  applyEvToGoalPanel(values);
 });
 
-/* ==================== AI建议：按当前文书类型动态生成（规则见《文书编辑 AI建议》提示词） ==================== */
+/* ==================== AI建议：按当前文书类型动态生成（规则见《文书编辑 AI建议》与《套磁信AI提示词》提示词） ==================== */
 var DOC_AI_GUIDE = {
   cv: {
     label: 'CV 简历', level: '硕士申请',
@@ -2338,7 +2209,7 @@ var DOC_AI_GUIDE = {
       { section: '个人经历', suggestion: '用学生主持的医疗影像创新项目等具体经历解释申请动机与成长过程；硕士层次保持中立客观，不提过于私人的细节。', missing: [] },
       { section: '研究兴趣', suggestion: '从项目经历出发提出感兴趣的研究问题：由多模态数据对齐中遇到的问题，收束为「低样本场景下鲁棒表征学习」方向，并展示对目标方向前沿动态的了解。', missing: ['目标方向近 3 年前沿动态（可引用 1-2 篇工作）'] },
       { section: '学术背景', suggestion: '硕士层次写核心课程与本科培养对硕士阶段学习目标的支撑，说明机器学习、深度学习等课程与申请方向的关系。', missing: ['核心课程清单与成绩'] },
-      { section: '为什么选择学校和专业', suggestion: '展示对 CMU 人工智能专业的深入了解（课程、实验室、校企合作项目可在左侧「院校目标」面板从 EV 系统导入参考），说明个人学术追求与院校的契合关系。', missing: ['目标课程/实验室名称', '心仪导师及其研究方向'] },
+      { section: '为什么选择学校和专业', suggestion: '展示对 CMU 人工智能专业的深入了解（课程、实验室、校企合作项目已自动同步至左侧「院校目标」面板，可直接参考），说明个人学术追求与院校的契合关系。', missing: ['目标课程/实验室名称', '心仪导师及其研究方向'] },
       { section: '未来规划', suggestion: '短期学业目标清晰可执行，长期职业规划与学业展示相关性；结语表达感谢并期望回复。', missing: ['职业方向偏好'] }
     ]
   },
@@ -2362,6 +2233,23 @@ var DOC_AI_GUIDE = {
       { section: '预期成果', suggestion: '区分学术贡献和实际产出：成果建议分为性能指标、论文产出和可复现代码三类；不承诺无法验证的「行业领先」，使用可衡量目标。', missing: ['是否伴随实体产品/系统产出'] },
       { section: '时间安排', suggestion: '将研究拆解为文献复现、方法设计、实验验证、论文撰写四个可执行阶段，并为风险和预料之外的发现预留调整空间。', missing: [] },
       { section: '文献综述', suggestion: '围绕研究问题选择近 3 年目标方向核心文献，比较其方法与局限，引出本研究的位置。', missing: ['参考文献清单（建议 8-12 篇）'] }
+    ]
+  },
+  cl: {
+    label: 'CL 套磁信', level: '硕士/博士申请',
+    structure: ['邮件主题', '首段 Hook', 'Value Proposition', 'Proof of Competence', 'Call to Action'],
+    principles: [
+      '必须写明教授姓氏，避免被判定为群发邮件',
+      '禁用 delve into / fascinated by 等典型 AI 腔词汇',
+      '总字数严格控制在 150-200 个英文单词以内',
+      '以最少字数传递最大信息密度'
+    ],
+    suggestions: [
+      { section: '邮件主题', suggestion: '提供 3 个不同角度供选择：① 包含核心亮点与申请意向，如 "Ph.D. Applicant_CVPR 1st Author_Interested in [Prof\'s topic]"；② 点明学校/项目与匹配方向；③ 以具体问题切入教授最新论文。', missing: ['目标教授姓氏', '教授最新论文/方向关键词'] },
+      { section: '首段 Hook', suggestion: '必须写明教授姓氏并礼貌问候（如 Dear Prof. Smith, 您好）。一句话说明来意（申请 2026 Fall 岗位），再自报家门：清华大学计算机系研二学生李雪，研究方向为低样本场景下的多模态表征学习。', missing: ['目标教授完整姓名', '申请入学学期'] },
+      { section: 'Value Proposition', suggestion: '结合教授具体研究（如 2024 NeurIPS 关于鲁棒多模态对齐的论文），说明自身项目如何与之契合。必须说明教授研究的是什么，而不是空泛表达 "对您的方向感兴趣"。', missing: ['教授近期论文标题与核心结论', '自身项目与教授工作的具体契合点'] },
+      { section: 'Proof of Competence', suggestion: '用数据和事实证明能力：GPA 3.9/4.0（Top 5%）、以第一作者投稿 CVPR 的论文、熟练掌握 PyTorch 与百亿参数模型训练经验。避免形容词堆砌。', missing: ['最新成绩单/GPA', '论文/技能量化证据'] },
+      { section: 'Call to Action', suggestion: '附上简历/成绩单说明，并用低姿态且明确的方式请求 15-30 分钟 Zoom Meeting，给出具体可选时间范围（如 9 月 8-12 日）。', missing: ['可选会议时间段', '已准备好的附件清单'] }
     ]
   }
 };
@@ -2407,7 +2295,7 @@ function renderAiSuggestions(type) {
       '<div class="flex justify-end pt-3"><button class="text-xs text-blue-600 hover:text-blue-800 font-medium" onclick="copyAiSuggestion(this)">复制建议</button></div>' +
       '</div>';
   });
-  html += '<p class="text-[10px] text-gray-400 leading-relaxed px-1">建议输出遵循 {section, suggestion, missing_information} 结构；切换顶部文书类型（CV/PS/RL/RP）可查看对应类型的填写建议。</p>';
+  html += '<p class="text-[10px] text-gray-400 leading-relaxed px-1">建议输出遵循 {section, suggestion, missing_information} 结构；切换顶部文书类型（CV/PS/RL/RP/CL）可查看对应类型的填写建议。</p>';
   container.innerHTML = html;
 }
 document.addEventListener('DOMContentLoaded', function() {

@@ -1,13 +1,14 @@
 /* ============================================================
    PBS留学CRM系统 - 角色工作台共享模块
-   六角色工作台（指标 × 卡片 × 今日待办 × DDL 日历 × 数据看板）
+   角色工作台（指标 × 卡片 × 今日待办 × DDL 日历 × 数据看板）
    数据与「管理员工作台（全部角色视角）」页一致，供各角色自己的工作台页面复用：
-   - 文书机构管理员 → 任务列表页 - 文书交付系统.html?view=workbench
    - 项目经理       → 项目经理工作台 - 留学申请管理系统.html
    - 文书人员       → 任务列表页 - 文书交付系统.html?view=workbench
-   - 销售人员(管理员) → 选校任务列表页 - 留学申请管理系统.html?view=workbench
+   - 销售人员       → 选校任务列表页 - 留学申请管理系统.html?view=workbench
    - 网申人员       → 网申任务列表页 - 留学申请管理系统.html?view=workbench
    - 文书审核       → 文书审核列表页 - 留学申请管理系统.html?view=workbench
+   - 平台运维人员   → 平台运维工作台 - PBS留学CRM系统.html
+   - 机构管理员     → 机构管理员工作台 - 留学申请管理系统.html
    ============================================================ */
 (function () {
   'use strict';
@@ -23,12 +24,12 @@
     + '.wb-stat .l{font-size:13px;color:#6b7280}'
     + '.wb-stat .v{font-size:28px;font-weight:700;color:#111827;margin-top:6px;line-height:1}'
     + '.wb-stat .n{font-size:12px;color:#9ca3af;margin-top:6px}'
-    + '.wb-stat.tone-red .v{color:#dc2626}'
-    + '.wb-stat.tone-orange .v{color:#ea580c}'
-    + '.wb-stat.tone-blue .v{color:#2563eb}'
-    + '.wb-stat.tone-purple .v{color:#7c3aed}'
+    + '.wb-stat.tone-red .v{color:#b36b64}'
+    + '.wb-stat.tone-orange .v{color:#c9a87c}'
+    + '.wb-stat.tone-blue .v{color:#6b829a}'
+    + '.wb-stat.tone-purple .v{color:#7d869a}'
     + '.wb-cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:12px;margin-bottom:16px}'
-    + '.wb-card{display:block;background:#fff;border:1px solid #f3f4f6;border-left:4px solid #2563eb;border-radius:12px;padding:12px 14px;text-decoration:none;transition:box-shadow .15s}'
+    + '.wb-card{display:block;background:#fff;border:1px solid #f3f4f6;border-left:4px solid #6b829a;border-radius:12px;padding:12px 14px;text-decoration:none;transition:box-shadow .15s}'
     + '.wb-card:hover{box-shadow:0 6px 16px rgba(16,24,40,.08)}'
     + '.wb-card .m{font-size:13px;font-weight:600;color:#1f2937}'
     + '.wb-card .c{font-size:12px;color:#6b7280;margin-top:4px;line-height:1.5}'
@@ -43,17 +44,17 @@
     + '.wb-group-t:first-of-type{margin-top:0}'
     + '.wb-group-dot{width:8px;height:8px;border-radius:999px;flex-shrink:0}'
     + '.wb-todo{display:flex;gap:12px;padding:12px;border:1px solid #f3f4f6;border-radius:12px;margin-bottom:8px;align-items:flex-start;transition:border-color .15s,background .15s}'
-    + '.wb-todo:hover{border-color:#dbeafe;background:#fafbff}'
+    + '.wb-todo:hover{border-color:#cddae4;background:#fafbfc}'
     + '.wb-todo-bar{width:4px;align-self:stretch;border-radius:4px;flex-shrink:0}'
     + '.wb-todo-b{flex:1;min-width:0}'
     + '.wb-todo-t{font-size:14px;font-weight:600;color:#111827;display:flex;align-items:center;gap:8px;flex-wrap:wrap;line-height:1.5}'
     + '.wb-tag{font-size:11px;font-weight:600;padding:1px 8px;border-radius:999px;color:#fff;flex-shrink:0}'
     + '.wb-todo-m{font-size:12px;color:#6b7280;margin-top:4px;line-height:1.6}'
     + '.wb-todo-time{font-size:12px;font-weight:600;margin-top:6px}'
-    + '.wb-act{flex-shrink:0;font-size:12px;font-weight:500;padding:6px 12px;border-radius:8px;border:none;cursor:pointer;background:#2563eb;color:#fff}'
-    + '.wb-act:hover{background:#1d4ed8}'
-    + '.wb-act.ghost{background:#f5f3ff;color:#7c3aed}'
-    + '.wb-act.ghost:hover{background:#ede9fe}'
+    + '.wb-act{flex-shrink:0;font-size:12px;font-weight:500;padding:6px 12px;border-radius:8px;border:none;cursor:pointer;background:#6b829a;color:#fff}'
+    + '.wb-act:hover{background:#556b7d}'
+    + '.wb-act.ghost{background:#f2f5f7;color:#7d869a}'
+    + '.wb-act.ghost:hover{background:#e3e9ee}'
     + '.wb-act.plain{background:#f3f4f6;color:#374151}'
     + '.wb-act.plain:hover{background:#e5e7eb}'
     + '.wb-cal-h{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}'
@@ -67,11 +68,11 @@
     + '.wb-day:hover{background:#f3f4f6}'
     + '.wb-day.out{color:#d1d5db;cursor:default;background:transparent}'
     + '.wb-day.out:hover{background:transparent}'
-    + '.wb-day.has{font-weight:700;color:#dc2626;background:#fef2f2}'
-    + '.wb-day.has::after{content:"";position:absolute;bottom:4px;left:50%;transform:translateX(-50%);width:5px;height:5px;border-radius:999px;background:#dc2626}'
-    + '.wb-day.today{border-color:#2563eb;color:#2563eb;font-weight:700}'
-    + '.wb-day.sel{background:#2563eb;color:#fff;font-weight:700}'
-    + '.wb-day.sel.has{background:#dc2626;color:#fff}'
+    + '.wb-day.has{font-weight:700;color:#b36b64;background:#f5e9e7}'
+    + '.wb-day.has::after{content:"";position:absolute;bottom:4px;left:50%;transform:translateX(-50%);width:5px;height:5px;border-radius:999px;background:#b36b64}'
+    + '.wb-day.today{border-color:#6b829a;color:#6b829a;font-weight:700}'
+    + '.wb-day.sel{background:#6b829a;color:#fff;font-weight:700}'
+    + '.wb-day.sel.has{background:#b36b64;color:#fff}'
     + '.wb-day.sel::after{background:#fff}'
     + '.wb-daydetail{margin-top:12px;border-top:1px dashed #e5e7eb;padding-top:12px}'
     + '.wb-dd{font-size:13px;font-weight:600;color:#111827;margin-bottom:8px}'
@@ -105,19 +106,22 @@
      选校订单池页、选校任务列表页、我的项目列表页、项目经理工作台、项目详情页支付信息。 */
   var WB_TODAY = '2026-08-18';
   var WB_TODAY_LABEL = '今天 2026-08-18 · 周二';
-  var WB_RED = '#dc2626', WB_ORANGE = '#ea580c', WB_AMBER = '#d97706', WB_BLUE = '#2563eb',
-      WB_PURPLE = '#7c3aed', WB_GREEN = '#059669', WB_CYAN = '#0891b2', WB_GRAY = '#6b7280';
+  var WB_RED = '#b36b64', WB_ORANGE = '#c9a87c', WB_AMBER = '#bfa07a', WB_BLUE = '#6b829a',
+      WB_PURPLE = '#7d869a', WB_GREEN = '#4f7a62', WB_CYAN = '#6a9299', WB_GRAY = '#6b7280';
 
   /* 状态徽标配色（与系统各列表页状态徽标一致） */
   var WB_BADGE = {
-    '撰写中':['#eff6ff','#1d4ed8'], '需修改':['#fee2e2','#b91c1c'], '审核中':['#ffedd5','#c2410c'],
-    '已完成':['#dcfce7','#15803d'], '进行中':['#eff6ff','#1d4ed8'], '待领取':['#f3f4f6','#4b5563'],
-    '已提交':['#dcfce7','#15803d'], '待接收':['#f5f3ff','#6d28d9'], '未接收':['#fef3c7','#b45309'],
-    '咨询中':['#eff6ff','#1d4ed8'], '选校中':['#dcfce7','#15803d'], '待确认':['#fef3c7','#b45309'],
-    '已结单':['#f3f4f6','#4b5563'], '已退回':['#fee2e2','#b91c1c'], '暂停':['#fef3c7','#b45309'],
-    '已结项':['#f3f4f6','#4b5563'], '已付':['#dcfce7','#15803d'], '待付':['#fef3c7','#b45309'],
-    '文书临期':['#fee2e2','#b91c1c'], '材料缺失':['#fef3c7','#b45309'], '正常':['#dcfce7','#15803d'],
-    '逾期':['#fee2e2','#b91c1c'], '新推送':['#f5f3ff','#6d28d9']
+    '撰写中':['#e8edf1','#556b7d'], '需修改':['#f3ddd9','#9a5a54'], '审核中':['#f5ebda','#8c6f4e'],
+    '已完成':['#eaf2ed','#3d5f4c'], '进行中':['#e8edf1','#556b7d'], '待领取':['#f3f4f6','#4b5563'],
+    '已提交':['#eaf2ed','#3d5f4c'], '待接收':['#f2f5f7','#6b829a'], '未接收':['#f5ebda','#8c6f4e'],
+    '咨询中':['#e8edf1','#556b7d'], '选校中':['#eaf2ed','#3d5f4c'], '待确认':['#f5ebda','#8c6f4e'],
+    '已结单':['#f3f4f6','#4b5563'], '已退回':['#f3ddd9','#9a5a54'], '暂停':['#f5ebda','#8c6f4e'],
+    '已结项':['#f3f4f6','#4b5563'], '已付':['#eaf2ed','#3d5f4c'], '待付':['#f5ebda','#8c6f4e'],
+    '文书临期':['#f3ddd9','#9a5a54'], '材料缺失':['#f5ebda','#8c6f4e'], '正常':['#eaf2ed','#3d5f4c'],
+    '逾期':['#f3ddd9','#9a5a54'], '新推送':['#f2f5f7','#6b829a'],
+    '已有成员':['#eaf2ed','#3d5f4c'], '暂无成员':['#f3ddd9','#9a5a54'],
+    '在职':['#eaf2ed','#3d5f4c'], '离职/停职':['#f3ddd9','#9a5a54'],
+    '已解析':['#eaf2ed','#3d5f4c'], '解析中':['#f5ebda','#8c6f4e'], '未解析':['#f3f4f6','#4b5563'], '解析失败':['#f3ddd9','#9a5a54'], '已归档':['#f3f4f6','#4b5563']
   };
 
   /* ---------- 数据构造小工具 ---------- */
@@ -127,86 +131,12 @@
   function wbB(nm, bdg, mt, prog, progC) { return { nm: nm, bdg: bdg, mt: mt, prog: prog, progC: progC }; }
   function wbEv(tg, c, tx) { return { tg: tg, c: c, tx: tx }; }
 
-  /* ================= 六角色工作台数据 ================= */
+  /* ================= 角色工作台数据 ================= */
   var WB_ROLES = {
 
-    /* ---------- 1. 文书机构管理员 ---------- */
-    wsadmin: {
-      name: '文书机构管理员', scope: '管理视角 · 全模块', scopeBg: '#eff6ff', scopeC: '#1d4ed8',
-      tagline: '项目分配、团队卡点与全模块进度一屏掌握',
-      stats: [
-        { l: '今日待办', v: '5', n: '2 项需我处理 · 3 项团队卡点', t: '' },
-        { l: '待分配项目', v: '2', n: '项目池新增 · 等待分配项目经理', t: 'tone-orange' },
-        { l: '审核积压', v: '4', n: '文书审核中 · 最早 08-15 提交', t: 'tone-red' }
-      ],
-      cards: [
-        { m: 'PMO 项目池', c: '2 个新增项目待分配', color: WB_CYAN, href: '项目池列表页 - 留学申请管理系统.html' },
-        { m: '文书交付', c: '在办任务 5 项 · 1 项需修改', color: WB_BLUE, href: '任务列表页 - 文书交付系统.html' },
-        { m: '网申管理', c: '任务 6 项 · 1 项待领取', color: WB_PURPLE, href: '网申任务列表页 - 留学申请管理系统.html' },
-        { m: '文书审核', c: '审核中 4 份 · 已完成 2 份', color: WB_ORANGE, href: '文书审核列表页 - 留学申请管理系统.html' },
-        { m: '选校工作台', c: '订单 4 笔 · 1 笔待确认', color: WB_GREEN, href: '选校订单池页 - 留学申请管理系统.html' }
-      ],
-      todoCount: 5,
-      todoGroups: [
-        { title: '需要我处理', color: WB_RED, items: [
-          wbT(WB_RED, '待分配', WB_RED, '分配项目池 2 个新增项目', 'PMO监控台 · 项目池列表 · 新下单项目等待分配项目经理', '等待分配 · 越早就位越早启动', WB_GRAY, { l: '去分配', href: '项目池列表页 - 留学申请管理系统.html' }),
-          wbT(WB_AMBER, '订单跟进', WB_AMBER, '吴子墨博士申请订单「待确认」', '选校订单池 · 加拿大 · 数据科学 · 2026-07-18 下单 · 销售：孙鹏', '待客户确认选校方案', WB_AMBER, { l: '去查看', href: '选校订单池页 - 留学申请管理系统.html', cls: 'plain' })
-        ]},
-        { title: '团队卡点 · 可催办', color: WB_ORANGE, items: [
-          wbT(WB_RED, '逾期', WB_RED, '「审核 CMU 个人陈述终稿」尚未接收', '接收人：孙老师（审核人员）· 8月13日 04:30 分配', '已等待 1 天 6 小时', WB_RED, { l: '催办', urge: ['审核 CMU 个人陈述终稿', '孙老师', '审核人员'], cls: 'ghost' }),
-          wbT(WB_ORANGE, '卡点', WB_ORANGE, '「接收 Stanford 网申准备任务」尚未接收', '接收人：周老师（网申人员）· 8月13日 16:30 分配', '已等待 18 小时', WB_ORANGE, { l: '催办', urge: ['接收 Stanford 网申准备任务', '周老师', '网申人员'], cls: 'ghost' }),
-          wbT(WB_AMBER, '卡点', WB_AMBER, '「接收推荐信初稿撰写任务」尚未接收', '接收人：刘老师（文书交付人员）· 今天 04:30 分配', '已等待 6 小时', WB_AMBER, { l: '催办', urge: ['接收推荐信初稿撰写任务', '刘老师', '文书交付人员'], cls: 'ghost' })
-        ]}
-      ],
-      events: {
-        '2026-08-15': [wbEv('审核提交', WB_ORANGE, '赵婷 · 哥伦比亚大学 CV 提交审核（审核人员：王审核）')],
-        '2026-08-16': [wbEv('审核提交', WB_ORANGE, '王明 · 斯坦福大学 CV 提交审核（审核人员：王审核）')],
-        '2026-08-17': [wbEv('审核提交', WB_ORANGE, '李雪 · 卡内基梅隆大学 PS 提交审核（审核人员：王审核）')],
-        '2026-08-18': [wbEv('审核提交', WB_ORANGE, '刘芳 · 哈佛大学 PS 今天 08:40 提交审核（审核人员：李审核）'), wbEv('分配', WB_RED, '「推荐信初稿撰写任务」分配 6 小时未接收（刘老师）')],
-        '2026-09-15': [wbEv('文书DDL', WB_BLUE, '陈磊 · 剑桥大学 金融学 RP（已完成）')],
-        '2026-10-17': [wbEv('网申DDL', WB_PURPLE, '赵婷 · 哥伦比亚大学 经济学 Round 1 截止')],
-        '2026-10-30': [wbEv('文书DDL', WB_BLUE, '张华 · 麻省理工学院 数据科学 RL'), wbEv('网申DDL', WB_PURPLE, '张华 · 麻省理工学院 Round 1 截止')],
-        '2026-11-01': [wbEv('文书DDL', WB_BLUE, '李雪 · 卡内基梅隆大学 人工智能 PS'), wbEv('网申DDL', WB_PURPLE, '李雪 · 卡内基梅隆大学 Round 1 截止')],
-        '2026-11-20': [wbEv('文书DDL', WB_BLUE, '刘芳 · 哈佛大学 公共卫生 PS'), wbEv('网申DDL', WB_PURPLE, '刘芳 · 哈佛大学 Round 1 截止')],
-        '2026-12-01': [wbEv('网申DDL', WB_PURPLE, '孙梓涵 · 哥伦比亚大学 金融工程 Round 1 截止')],
-        '2026-12-15': [wbEv('文书DDL', WB_BLUE, '王明 · 斯坦福大学 计算机科学 CV'), wbEv('网申DDL', WB_PURPLE, '王明 · 斯坦福大学 Round 2 截止')]
-      },
-      boards: [
-        { title: '文书交付 · 任务列表', color: WB_BLUE, items: [
-          wbB('李雪 · 卡内基梅隆大学 人工智能 PS', '撰写中', 'DDL 2026-11-01'),
-          wbB('王明 · 斯坦福大学 计算机科学 CV', '撰写中', 'DDL 2026-12-15'),
-          wbB('张华 · 麻省理工学院 数据科学 RL', '审核中', 'DDL 2026-10-30'),
-          wbB('刘芳 · 哈佛大学 公共卫生 PS', '需修改', 'DDL 2026-11-20'),
-          wbB('陈磊 · 剑桥大学 金融学 RP', '已完成', 'DDL 2026-09-15')
-        ]},
-        { title: '网申管理 · 网申任务列表', color: WB_PURPLE, items: [
-          wbB('李雪 · 卡内基梅隆大学 人工智能 Round 1', '进行中', '材料 3/5 · DDL 2026-11-01 · 孙网申'),
-          wbB('张华 · 麻省理工学院 数据科学 Round 1', '进行中', '材料 4/6 · DDL 2026-10-30 · 钱网申'),
-          wbB('刘芳 · 哈佛大学 公共卫生 Round 1', '审核中', '材料 5/5 · DDL 2026-11-20 · 钱网申'),
-          wbB('赵婷 · 哥伦比亚大学 经济学 Round 1', '待领取', '材料 3/5 · DDL 2026-10-17 · 孙网申'),
-          wbB('王明 · 斯坦福大学 计算机科学 Round 2', '已提交', '材料 6/6 · DDL 2026-12-15 · 孙网申'),
-          wbB('孙梓涵 · 哥伦比亚大学 金融工程 Round 1', '新推送', 'DDL 2026-12-01 · 待接收')
-        ]},
-        { title: '文书审核 · 审核列表', color: WB_ORANGE, items: [
-          wbB('刘芳 · 哈佛大学 PS', '审核中', '今天 08:40 提交 · 李审核'),
-          wbB('李雪 · 卡内基梅隆大学 PS', '审核中', '08-17 10:30 提交 · 王审核'),
-          wbB('王明 · 斯坦福大学 CV', '审核中', '08-16 14:20 提交 · 王审核'),
-          wbB('赵婷 · 哥伦比亚大学 CV', '审核中', '08-15 11:05 提交 · 王审核'),
-          wbB('张华 · 麻省理工学院 RL', '已完成', '08-12 09:15 提交 · 李审核'),
-          wbB('陈磊 · 剑桥大学 RP', '已完成', '08-10 16:00 提交 · 王审核')
-        ]},
-        { title: '选校工作台 · 订单池', color: WB_GREEN, items: [
-          wbB('钱思睿 · 本科申请 / 美国 / 计算机科学', '咨询中', '2026-07-15 下单 · 销售：陈晨'),
-          wbB('孙浩然 · 硕士申请 / 英国 / 金融', '咨询中', '2026-07-16 下单 · 销售：刘洋'),
-          wbB('周雨薇 · 硕士申请 / 美国 / 电子工程', '选校中', '2026-07-17 下单 · 销售：赵敏'),
-          wbB('吴子墨 · 博士申请 / 加拿大 / 数据科学', '待确认', '2026-07-18 下单 · 销售：孙鹏')
-        ]}
-      ]
-    },
-
-    /* ---------- 2. 项目经理 ---------- */
+    /* ---------- 1. 项目经理 ---------- */
     pm: {
-      name: '项目经理', scope: '管理视角 · 我的项目', scopeBg: '#f5f3ff', scopeC: '#6d28d9',
+      name: '项目经理', scope: '管理视角 · 我的项目', scopeBg: '#f2f5f7', scopeC: '#6b829a',
       tagline: '先处理临期与卡点，再推进项目进度',
       stats: [
         { l: '今日待办', v: '7', n: '3 项今天先处理 · 1 项近期跟进 · 3 项等待接收', t: '' },
@@ -264,7 +194,7 @@
 
     /* ---------- 3. 文书人员 ---------- */
     writer: {
-      name: '文书人员', scope: '执行视角 · 我的文书任务', scopeBg: '#eff6ff', scopeC: '#1d4ed8',
+      name: '文书人员', scope: '执行视角 · 我的文书任务', scopeBg: '#e8edf1', scopeC: '#556b7d',
       tagline: '先交被催的、先改打回的，再推进撰写中的',
       stats: [
         { l: '被催办', v: '1', n: '李雪 CMU PS 终稿 · 今天 18:00 前', t: 'tone-red' },
@@ -317,28 +247,28 @@
 
     /* ---------- 4. 销售人员 ---------- */
     sales: {
-      name: '销售人员', scope: '执行视角 · 订单与回款', scopeBg: '#fffbeb', scopeC: '#b45309',
-      tagline: '待确认先跟、尾款先催、咨询持续跟',
+      name: '销售人员', scope: '执行视角 · 订单与方案', scopeBg: '#f5ebda', scopeC: '#8c6f4e',
+      tagline: '待确认先跟、方案先交、咨询持续跟',
       stats: [
         { l: '待确认订单', v: '1', n: '吴子墨博士申请 · 07-18 下单', t: 'tone-red' },
         { l: '咨询中订单', v: '2', n: '钱思睿 · 孙浩然', t: 'tone-blue' },
-        { l: '待回款节点', v: '1', n: '李雪项目尾款 ¥12,000', t: 'tone-orange' }
+        { l: '选校任务待处理', v: '4', n: '孙可欣 · 周雨薇 · 吴子墨 · 郑晓萌', t: 'tone-orange' }
       ],
       cards: [
         { m: '选校订单池', c: '订单 4 笔 · 1 笔待确认', color: WB_GREEN, href: '选校订单池页 - 留学申请管理系统.html' },
-        { m: '选校任务列表', c: '咨询任务 5 项 · 1 项已结单', color: WB_CYAN, href: '选校任务列表页 - 留学申请管理系统.html' },
-        { m: '支付节点', c: '李雪项目尾款待付 ¥12,000', color: WB_AMBER, href: '项目详情页 - 留学申请管理系统.html' }
+        { m: '选校任务列表', c: '咨询任务 4 项待处理 · 1 项已结单', color: WB_CYAN, href: '选校任务列表页 - 留学申请管理系统.html' }
       ],
-      todoCount: 5,
+      todoCount: 6,
       todoGroups: [
         { title: '今天先处理', color: WB_RED, items: [
           wbT(WB_RED, '待确认', WB_RED, '跟进吴子墨博士申请订单', '选校订单池 · 加拿大 · 数据科学 · 2026-07-18 下单 · 负责人：孙鹏', '待客户确认选校方案', WB_RED, { l: '去跟进', href: '选校订单池页 - 留学申请管理系统.html' }),
-          wbT(WB_AMBER, '待回款', WB_AMBER, '催收李雪项目尾款 ¥12,000', '文书预付款 ¥24,000（07-05 已付）· 网申预付款 ¥20,000（08-10 已付）· 尾款待付', '尾款 · 待付', WB_AMBER, { l: '去催收', toast: '已提醒客户支付尾款 ¥12,000（李雪项目）' })
+          wbT(WB_ORANGE, '方案交付', WB_ORANGE, '提醒周雨薇提交选校方案所需素材', '选校订单池 · 硕士/美国/电子工程 · 负责人：赵敏 · 2026-07-17 下单', '当前状态：选校中', WB_ORANGE, { l: '去提醒', toast: '已提醒周雨薇补充选校方案素材' })
         ]},
         { title: '持续跟进', color: WB_GREEN, items: [
           wbT(WB_GREEN, null, null, '钱思睿 · 本科申请 · 美国 计算机科学', '选校订单池 · 咨询中 · 负责人：陈晨', '下单 2026-07-15', WB_GRAY, { l: '去跟进', href: '选校订单池页 - 留学申请管理系统.html', cls: 'plain' }),
           wbT(WB_GREEN, null, null, '孙浩然 · 硕士申请 · 英国 金融', '选校订单池 · 咨询中 · 负责人：刘洋', '下单 2026-07-16', WB_GRAY, { l: '去跟进', href: '选校订单池页 - 留学申请管理系统.html', cls: 'plain' }),
-          wbT(WB_BLUE, null, null, '孙可欣 · 本科申请 · 美国 计算机科学', '选校任务列表 · 咨询中 · 负责人：陈晨', '选校咨询 2026-07-20 09:00', WB_GRAY, { l: '查看方案', href: '选校任务列表页 - 留学申请管理系统.html', cls: 'plain' })
+          wbT(WB_BLUE, null, null, '孙可欣 · 本科申请 · 美国 计算机科学', '选校任务列表 · 咨询中 · 负责人：陈晨', '选校咨询 2026-07-20 09:00', WB_GRAY, { l: '查看方案', href: '选校任务列表页 - 留学申请管理系统.html', cls: 'plain' }),
+          wbT(WB_BLUE, null, null, '郑晓萌 · 本科申请 · 英国 金融', '选校任务列表 · 咨询中 · 负责人：周扬', '选校咨询 2026-07-19 14:20', WB_GRAY, { l: '查看方案', href: '选校任务列表页 - 留学申请管理系统.html', cls: 'plain' })
         ]}
       ],
       events: {
@@ -346,8 +276,8 @@
         '2026-07-16': [wbEv('订单', WB_GREEN, '孙浩然 · 硕士/英国/金融 下单（咨询中 · 刘洋）')],
         '2026-07-17': [wbEv('订单', WB_GREEN, '周雨薇 · 硕士/美国/电子工程 下单（选校中 · 赵敏）')],
         '2026-07-18': [wbEv('订单', WB_AMBER, '吴子墨 · 博士/加拿大/数据科学 下单（待确认 · 孙鹏）')],
-        '2026-07-20': [wbEv('咨询', WB_CYAN, '孙可欣 · 本科/美国/计算机科学 选校咨询 09:00（陈晨）')],
-        '2026-08-10': [wbEv('支付', WB_AMBER, '李雪项目网申预付款 ¥20,000 已付 · 尾款 ¥12,000 待付')]
+        '2026-07-19': [wbEv('咨询', WB_CYAN, '郑晓萌 · 本科/英国/金融 选校咨询 14:20（周扬）')],
+        '2026-07-20': [wbEv('咨询', WB_CYAN, '孙可欣 · 本科/美国/计算机科学 选校咨询 09:00（陈晨）')]
       },
       boards: [
         { title: '选校订单池', color: WB_GREEN, items: [
@@ -362,18 +292,13 @@
           wbB('吴子墨 · 博士申请 / 加拿大 / 数据科学', '咨询中', '2026-07-18 09:30 · 陈晨'),
           wbB('郑晓萌 · 本科申请 / 英国 / 金融', '咨询中', '2026-07-19 14:20 · 周扬'),
           wbB('冯天翊 · 硕士申请 / 美国 / 市场营销', '已结单', '2026-07-11 16:00 · 李欣')
-        ]},
-        { title: '支付节点 · 李雪 CMU 项目', color: WB_AMBER, items: [
-          wbB('文书预付款 ¥24,000', '已付', '2026-07-05 14:30 支付'),
-          wbB('网申预付款 ¥20,000', '已付', '2026-08-10 10:20 支付'),
-          wbB('尾款 ¥12,000', '待付', '待客户支付')
         ]}
       ]
     },
 
     /* ---------- 5. 网申人员 ---------- */
     apply: {
-      name: '网申人员', scope: '执行视角 · 我的网申任务', scopeBg: '#f5f3ff', scopeC: '#6d28d9',
+      name: '网申人员', scope: '执行视角 · 我的网申任务', scopeBg: '#f2f5f7', scopeC: '#6b829a',
       tagline: '先接收、再补材料，盯紧最近的网申 DDL',
       stats: [
         { l: '被催办', v: '1', n: 'Stanford 网申准备 · 已等待 18 小时', t: 'tone-red' },
@@ -428,7 +353,7 @@
 
     /* ---------- 6. 文书审核 ---------- */
     audit: {
-      name: '文书审核', scope: '执行视角 · 审核队列', scopeBg: '#fff7ed', scopeC: '#c2410c',
+      name: '文书审核', scope: '执行视角 · 审核队列', scopeBg: '#f5ebda', scopeC: '#8c6f4e',
       tagline: '按提交时间清零审核队列，被催办的最先审',
       stats: [
         { l: '审核中', v: '4', n: '最早 08-15 提交 · 赵婷 CV', t: 'tone-orange' },
@@ -470,6 +395,272 @@
         { title: '已完成', color: WB_GREEN, items: [
           wbB('张华 · 麻省理工学院 RL', '已完成', '08-12 09:15 提交 · 李审核 · 提交人：吴文书'),
           wbB('陈磊 · 剑桥大学 RP', '已完成', '08-10 16:00 提交 · 王审核 · 提交人：郑文书')
+        ]}
+      ]
+    },
+
+    /* ---------- 7. 平台运维人员 ---------- */
+    platform: {
+      name: '平台运维人员', scope: '平台视角 · 跨机构运营', scopeBg: '#eaf0f3', scopeC: '#5a7a85',
+      tagline: '监控机构、成员、模板与内容资产，处理异常与复核事项',
+      stats: [
+        { l: '机构总数', v: '5', n: '3 家已有成员 · 2 家暂无成员', t: '' },
+        { l: '平台成员', v: '5', n: '4 人在职 · 1 人离职/停职', t: 'tone-orange' },
+        { l: '文书模板', v: '6', n: '覆盖 3 家机构', t: 'tone-blue' },
+        { l: '网申模板', v: '5', n: '覆盖 4 个国家/地区', t: 'tone-purple' }
+      ],
+      cards: [
+        { m: '机构管理', c: '5 家机构 · 2 家暂无成员', color: WB_CYAN, href: '机构管理 - PBS留学CRM系统.html' },
+        { m: '人员管理', c: '5 位成员 · 1 人离职/停职', color: WB_GREEN, href: '人员管理 - PBS留学CRM系统.html' },
+        { m: '文书模板库', c: '6 个模板 · 覆盖 3 家机构', color: WB_BLUE, href: '模板库列表 - 文书交付系统.html' },
+        { m: '文书案例库', c: '8 个案例 · 已解析 4 · 待处理 4', color: WB_ORANGE, href: '案例库 - 文书交付系统.html' },
+        { m: '网申模板库', c: '5 个模板 · 覆盖 4 个国家/地区', color: WB_PURPLE, href: '网申模板库 - 留学申请管理系统.html' },
+        { m: '结项归档', c: '6 条记录 · 3 条已结项', color: WB_AMBER, href: '结项归档列表 - PBS留学CRM系统.html' }
+      ],
+      todoCount: 6,
+      todoGroups: [
+        { title: '需要我处理', color: WB_RED, items: [
+          wbT(WB_RED, '账号异常', WB_RED, '处理王伟（wangwei）离职/停职账号', '人员管理 · 上海启明留学 · 角色：文书人员、文书审核', '状态：离职/停职 · 需复核', WB_RED, { l: '去处理', href: '人员管理 - PBS留学CRM系统.html' }),
+          wbT(WB_ORANGE, '解析失败', WB_ORANGE, '复核刘同学-电子工程-RP研究计划解析失败', '案例库 · 博士申请 · 斯坦福大学 · 解析失败', '上传时间 2026-07-29 11:05', WB_ORANGE, { l: '去复核', href: '案例库 - 文书交付系统.html' }),
+          wbT(WB_AMBER, '模板复核', WB_AMBER, '复核剑桥大学/金融学网申模板字段差异', '网申模板库 · 北京知行教育 · v1.8 · 需项目经理复核', '更新时间 2026-07-28', WB_AMBER, { l: '去复核', href: '网申模板库 - 留学申请管理系统.html' })
+        ]},
+        { title: '机构运营 · 可跟进', color: WB_CYAN, items: [
+          wbT(WB_CYAN, null, null, '广州远航教育暂无成员', '机构管理 · 创建时间 2026-02-12 16:40 · 成员数 0', '需引导机构入驻', WB_GRAY, { l: '去查看', href: '机构管理 - PBS留学CRM系统.html', cls: 'plain' }),
+          wbT(WB_CYAN, null, null, '深圳新途教育暂无成员', '机构管理 · 创建时间 2026-06-25 11:05 · 成员数 0', '需引导机构入驻', WB_GRAY, { l: '去查看', href: '机构管理 - PBS留学CRM系统.html', cls: 'plain' })
+        ]},
+        { title: '系统审计', color: WB_GRAY, items: [
+          wbT(WB_GRAY, '失败', WB_GRAY, '操作日志：删除无效学生档案 PRJ20260701005 失败', '操作日志审计 · 王五 · 北京总部 · 2026-07-17 10:05', '需排查失败原因', WB_GRAY, { l: '去查看', href: '操作日志审计 - 留学申请管理系统.html', cls: 'plain' })
+        ]}
+      ],
+      events: {
+        '2026-07-20': [wbEv('案例上传', WB_GREEN, '吴同学-计算机科学-CV 已归档上传')],
+        '2026-07-25': [wbEv('网申模板', WB_PURPLE, '香港大学/数据科学 网申模板 v1.6 更新')],
+        '2026-07-26': [wbEv('案例上传', WB_ORANGE, '周同学-机械工程-PS 上传（未解析）')],
+        '2026-07-27': [wbEv('案例上传', WB_BLUE, '赵同学-市场营销-推荐信 上传（已解析）')],
+        '2026-07-28': [wbEv('案例上传', WB_BLUE, '张同学-CS方向-PS终稿 / 李同学-AI方向-PS录取版 已解析'), wbEv('网申模板', WB_PURPLE, '剑桥大学/金融学 网申模板 v1.8 更新 · 需复核')],
+        '2026-07-29': [wbEv('案例上传', WB_RED, '刘同学-电子工程-RP研究计划 解析失败')],
+        '2026-07-30': [wbEv('案例上传', WB_ORANGE, '王同学-数据科学-PS 解析中 / 陈同学-金融方向-CV 未解析')],
+        '2026-08-05': [wbEv('网申模板', WB_PURPLE, '斯坦福大学/计算机科学 网申模板 v2.4 更新')],
+        '2026-08-08': [wbEv('网申模板', WB_PURPLE, '卡内基梅隆大学/计算机科学 网申模板 v3.2 更新')],
+        '2026-08-12': [wbEv('系统审计', WB_GRAY, '平台运营人员更新 Kimi 厂商 API Key / 发布金标集 120 条')],
+        '2026-08-18': [wbEv('运营待办', WB_RED, '王伟账号离职/停职待复核 · 2 家机构暂无成员')]
+      },
+      boards: [
+        { title: '机构管理', color: WB_CYAN, items: [
+          wbB('PBS留学总部', '已有成员', '2025-01-08 创建 · 成员 2 人'),
+          wbB('上海启明留学', '已有成员', '2025-03-18 创建 · 成员 2 人'),
+          wbB('北京知行教育', '已有成员', '2025-05-06 创建 · 成员 1 人'),
+          wbB('广州远航教育', '暂无成员', '2026-02-12 创建 · 成员 0 人'),
+          wbB('深圳新途教育', '暂无成员', '2026-06-25 创建 · 成员 0 人')
+        ]},
+        { title: '人员管理', color: WB_GREEN, items: [
+          wbB('张明 · 机构管理员', '在职', 'PBS留学总部 · zhangming@pbs.com'),
+          wbB('李雪 · 销售人员', '在职', '上海启明留学 · lixue@pbs.com'),
+          wbB('王伟 · 文书人员、文书审核', '离职/停职', '上海启明留学 · wangwei@pbs.com'),
+          wbB('陈晨 · 项目经理、网申人员', '在职', '北京知行教育 · chenchen@pbs.com'),
+          wbB('刘洋 · 机构管理员', '在职', 'PBS留学总部 · liuyang@pbs.com')
+        ]},
+        { title: '文书模板库', color: WB_BLUE, items: [
+          wbB('AI方向PS标准模板', 'PS', '硕士 · PBS留学总部'),
+          wbB('学术CV标准模板', 'CV', '硕士 · PBS留学总部'),
+          wbB('学术推荐信模板', 'RL', '博士 · 上海启明留学'),
+          wbB('转专业PS框架', 'PS', '硕士 · 北京知行教育'),
+          wbB('研究计划模板', 'RP', '博士 · 上海启明留学'),
+          wbB('科研型PS模板', 'PS', '硕士 · PBS留学总部')
+        ]},
+        { title: '文书案例库', color: WB_ORANGE, items: [
+          wbB('张同学-CS方向-PS终稿', '已解析', 'CS/人工智能 · 硕士 · 卡内基梅隆大学'),
+          wbB('李同学-AI方向-PS录取版', '已解析', 'CS/人工智能 · 硕士 · 帝国理工学院'),
+          wbB('王同学-数据科学-PS终稿', '解析中', '数据科学 · 硕士 · 麻省理工学院'),
+          wbB('陈同学-金融方向-CV终版', '未解析', '商科/金融 · 硕士 · 伦敦政治经济学院'),
+          wbB('刘同学-电子工程-RP研究计划', '解析失败', '电子工程 · 博士 · 斯坦福大学'),
+          wbB('赵同学-市场营销-推荐信', '已解析', '商科/市场营销 · 硕士 · 西北大学'),
+          wbB('周同学-机械工程-PS', '未解析', '机械工程 · 本科 · 密歇根大学安娜堡分校'),
+          wbB('吴同学-计算机科学-CV', '已归档', 'CS/人工智能 · 本科 · 伊利诺伊大学香槟分校')
+        ]},
+        { title: '网申模板库', color: WB_PURPLE, items: [
+          wbB('卡内基梅隆大学 / 计算机科学 / 美国', 'v3.2', '42 字段 · 6 材料 · 2026-08-08 更新'),
+          wbB('斯坦福大学 / 计算机科学 / 美国', 'v2.4', '38 字段 · 7 材料 · 2026-08-05 更新'),
+          wbB('哥伦比亚大学 / 金融工程 / 美国', 'v2.1', '35 字段 · 8 材料 · 2026-08-01 更新 · 需复核 GRE'),
+          wbB('剑桥大学 / 金融学 / 英国', 'v1.8', '31 字段 · 7 材料 · 2026-07-28 更新 · 需复核'),
+          wbB('香港大学 / 数据科学 / 中国香港', 'v1.6', '29 字段 · 6 材料 · 2026-07-25 更新')
+        ]},
+        { title: '结项归档', color: WB_AMBER, items: [
+          wbB('赵敏 · 赵欣怡 · 本科申请', '待结项', 'PRJ20260701018'),
+          wbB('李慧敏 · 李雪 · 硕士申请', '待结项', 'PRJ20260701002'),
+          wbB('王建军 · 王伟 · 博士申请', '待结项', 'PRJ-M-2607-0003'),
+          wbB('孙丽 · 孙浩然 · 硕士申请', '已结项', '2026-07-12 结项'),
+          wbB('周杰 · 周子墨 · 本科申请', '已结项', '2026-06-28 结项'),
+          wbB('吴芳 · 吴思远 · 博士申请', '已结项', '2026-07-05 结项')
+        ]}
+      ]
+    },
+
+    /* ---------- 8. 机构管理员 ---------- */
+    orgadmin: {
+      name: '机构管理员', scope: '管理视角 · 本机构', scopeBg: '#eceff3', scopeC: '#5a6278',
+      tagline: '分配项目、盯团队进度与卡点，推进本机构交付',
+      stats: [
+        { l: '在管项目', v: '5', n: '1 待接收 · 1 进行中 · 1 暂停 · 1 已退回 · 1 已结项', t: '' },
+        { l: '团队任务', v: '11', n: '文书 5 · 网申 6', t: 'tone-blue' },
+        { l: '审核积压', v: '4', n: '文书审核中 · 最早 08-15 提交', t: 'tone-orange' },
+        { l: '选校订单', v: '4', n: '1 笔待确认', t: 'tone-purple' }
+      ],
+      cards: [
+        { m: 'PMO 项目池', c: '5 个项目 · 1 个待接收', color: WB_CYAN, href: '项目池列表页 - 留学申请管理系统.html' },
+        { m: '文书交付', c: '5 项任务 · 1 项需修改', color: WB_BLUE, href: '任务列表页 - 文书交付系统.html' },
+        { m: '网申管理', c: '6 项任务 · 1 项待领取', color: WB_PURPLE, href: '网申任务列表页 - 留学申请管理系统.html' },
+        { m: '文书审核', c: '6 份审核 · 4 份审核中', color: WB_ORANGE, href: '文书审核列表页 - 留学申请管理系统.html' },
+        { m: '选校工作台', c: '4 笔订单 · 1 笔待确认', color: WB_GREEN, href: '选校订单池页 - 留学申请管理系统.html' },
+        { m: '人员管理', c: '5 位成员', color: WB_AMBER, href: '人员管理 - PBS留学CRM系统.html' },
+        { m: '结项归档', c: '6 条记录 · 3 条已结项', color: WB_GRAY, href: '结项归档列表 - PBS留学CRM系统.html' }
+      ],
+      todoCount: 8,
+      todoGroups: [
+        { title: '需要我处理', color: WB_RED, items: [
+          wbT(WB_RED, '待分配', WB_RED, '分配项目池 1 个待接收项目（张明 · PRJ-M-2607-0001）', '客户：张建国 · 本科申请 · 美国 · 计算机科学', '待分配项目经理', WB_RED, { l: '去分配', href: '项目池列表页 - 留学申请管理系统.html' }),
+          wbT(WB_PURPLE, '待确认', WB_PURPLE, '跟进吴子墨博士申请选校订单', '选校订单池 · 加拿大 · 数据科学 · 销售：孙鹏 · 2026-07-18 下单', '待客户确认选校方案', WB_PURPLE, { l: '去跟进', href: '选校订单池页 - 留学申请管理系统.html' })
+        ]},
+        { title: '团队卡点 · 可催办', color: WB_ORANGE, items: [
+          wbT(WB_ORANGE, '待领取', WB_ORANGE, '赵婷 · 哥伦比亚大学 经济学 网申任务待领取', '网申任务列表 · 材料 3/5 · 负责人：孙网申', 'DDL 2026-10-17 · 最近网申 DDL', WB_ORANGE, { l: '催办', urge: ['赵婷 · 哥伦比亚大学经济学网申任务待领取', '孙网申', '网申人员'], cls: 'ghost' }),
+          wbT(WB_RED, '需修改', WB_RED, '刘芳 · 哈佛大学 公共卫生 PS 需修改', '文书交付 · 审核打回 · 负责人：陈文书 · DDL 2026-11-20', '需按审核意见修改', WB_RED, { l: '催办', urge: ['刘芳 · 哈佛大学公共卫生PS修改', '陈文书', '文书人员'], cls: 'ghost' })
+        ]},
+        { title: '审核队列', color: WB_ORANGE, items: [
+          wbT(WB_ORANGE, null, null, '刘芳 · 哈佛大学 PS', '提交人：陈文书 · 审核人员：李审核', '今天 08:40 提交', WB_GRAY, { l: '去审核', href: '文书审核详情页 - 留学申请管理系统.html', cls: 'plain' }),
+          wbT(WB_ORANGE, null, null, '李雪 · 卡内基梅隆大学 PS', '提交人：陈文书 · 审核人员：王审核', '08-17 10:30 提交', WB_GRAY, { l: '去审核', href: '文书审核详情页 - 留学申请管理系统.html', cls: 'plain' }),
+          wbT(WB_ORANGE, null, null, '王明 · 斯坦福大学 CV', '提交人：周文书 · 审核人员：王审核', '08-16 14:20 提交', WB_GRAY, { l: '去审核', href: '文书审核详情页 - 留学申请管理系统.html', cls: 'plain' }),
+          wbT(WB_ORANGE, null, null, '赵婷 · 哥伦比亚大学 CV', '提交人：周文书 · 审核人员：王审核', '08-15 11:05 提交', WB_GRAY, { l: '去审核', href: '文书审核详情页 - 留学申请管理系统.html', cls: 'plain' })
+        ]}
+      ],
+      events: {
+        '2026-08-15': [wbEv('审核提交', WB_ORANGE, '赵婷 · 哥伦比亚大学 CV 提交审核（审核人员：王审核）')],
+        '2026-08-16': [wbEv('审核提交', WB_ORANGE, '王明 · 斯坦福大学 CV 提交审核（审核人员：王审核）')],
+        '2026-08-17': [wbEv('审核提交', WB_ORANGE, '李雪 · 卡内基梅隆大学 PS 提交审核（审核人员：王审核）')],
+        '2026-08-18': [wbEv('审核提交', WB_ORANGE, '刘芳 · 哈佛大学 PS 今天 08:40 提交审核（审核人员：李审核）'), wbEv('项目待分配', WB_RED, '张明 PRJ-M-2607-0001 待接收 · 吴子墨选校订单待确认')],
+        '2026-09-15': [wbEv('文书DDL', WB_BLUE, '陈磊 · 剑桥大学 金融学 RP（已完成）')],
+        '2026-10-17': [wbEv('网申DDL', WB_PURPLE, '赵婷 · 哥伦比亚大学 经济学 Round 1 截止')],
+        '2026-10-30': [wbEv('文书DDL', WB_BLUE, '张华 · 麻省理工学院 数据科学 RL'), wbEv('网申DDL', WB_PURPLE, '张华 · 麻省理工学院 Round 1 截止')],
+        '2026-11-01': [wbEv('文书DDL', WB_BLUE, '李雪 · 卡内基梅隆大学 人工智能 PS'), wbEv('网申DDL', WB_PURPLE, '李雪 · 卡内基梅隆大学 Round 1 截止')],
+        '2026-11-20': [wbEv('文书DDL', WB_BLUE, '刘芳 · 哈佛大学 公共卫生 PS'), wbEv('网申DDL', WB_PURPLE, '刘芳 · 哈佛大学 Round 1 截止')],
+        '2026-12-01': [wbEv('网申DDL', WB_PURPLE, '孙梓涵 · 哥伦比亚大学 金融工程 Round 1 截止')],
+        '2026-12-15': [wbEv('文书DDL', WB_BLUE, '王明 · 斯坦福大学 计算机科学 CV'), wbEv('网申DDL', WB_PURPLE, '王明 · 斯坦福大学 Round 2 截止')]
+      },
+      boards: [
+        { title: 'PMO 项目池', color: WB_CYAN, items: [
+          wbB('张建国 · 张明 · 本科申请', '待接收', 'PRJ-M-2607-0001 · 2026-07-01 10:24'),
+          wbB('李慧敏 · 李雪 · 硕士申请', '进行中', 'PRJ-M-2607-0002 · 2026-07-02 14:05 · 张老师'),
+          wbB('王建军 · 王伟 · 博士申请', '已结项', 'PRJ-O-2607-0003 · 2026-06-18 09:40 · 李老师'),
+          wbB('赵文华 · 赵婷 · 硕士申请', '暂停', 'PRJ-M-2607-0004 · 2026-07-05 16:30 · 王老师'),
+          wbB('陈国平 · 陈晓 · 本科申请', '已退回', 'PRJ-O-2607-0005 · 2026-07-08 11:12')
+        ]},
+        { title: '文书交付 · 任务列表', color: WB_BLUE, items: [
+          wbB('李雪 · 卡内基梅隆大学 人工智能 PS', '撰写中', 'DDL 2026-11-01 · 陈文书'),
+          wbB('王明 · 斯坦福大学 计算机科学 CV', '撰写中', 'DDL 2026-12-15 · 周文书'),
+          wbB('张华 · 麻省理工学院 数据科学 RL', '审核中', 'DDL 2026-10-30 · 吴文书'),
+          wbB('刘芳 · 哈佛大学 公共卫生 PS', '需修改', 'DDL 2026-11-20 · 陈文书'),
+          wbB('陈磊 · 剑桥大学 金融学 RP', '已完成', 'DDL 2026-09-15 · 郑文书')
+        ]},
+        { title: '网申管理 · 网申任务列表', color: WB_PURPLE, items: [
+          wbB('李雪 · 卡内基梅隆大学 人工智能 Round 1', '进行中', '材料 3/5 · DDL 2026-11-01 · 孙网申'),
+          wbB('张华 · 麻省理工学院 数据科学 Round 1', '进行中', '材料 4/6 · DDL 2026-10-30 · 钱网申'),
+          wbB('刘芳 · 哈佛大学 公共卫生 Round 1', '审核中', '材料 5/5 · DDL 2026-11-20 · 钱网申'),
+          wbB('赵婷 · 哥伦比亚大学 经济学 Round 1', '待领取', '材料 3/5 · DDL 2026-10-17 · 孙网申'),
+          wbB('王明 · 斯坦福大学 计算机科学 Round 2', '已提交', '材料 6/6 · DDL 2026-12-15 · 孙网申'),
+          wbB('孙梓涵 · 哥伦比亚大学 金融工程 Round 1', '未开始', '材料 2/5 · DDL 2026-12-01')
+        ]},
+        { title: '文书审核 · 审核列表', color: WB_ORANGE, items: [
+          wbB('刘芳 · 哈佛大学 PS', '审核中', '今天 08:40 提交 · 李审核 · 陈文书'),
+          wbB('李雪 · 卡内基梅隆大学 PS', '审核中', '08-17 10:30 提交 · 王审核 · 陈文书'),
+          wbB('王明 · 斯坦福大学 CV', '审核中', '08-16 14:20 提交 · 王审核 · 周文书'),
+          wbB('赵婷 · 哥伦比亚大学 CV', '审核中', '08-15 11:05 提交 · 王审核 · 周文书'),
+          wbB('张华 · 麻省理工学院 RL', '已完成', '08-12 09:15 提交 · 李审核 · 吴文书'),
+          wbB('陈磊 · 剑桥大学 RP', '已完成', '08-10 16:00 提交 · 王审核 · 郑文书')
+        ]},
+        { title: '选校工作台 · 订单池', color: WB_GREEN, items: [
+          wbB('钱文博 · 钱思睿 · 本科申请 / 美国 / 计算机科学', '咨询中', '2026-07-15 下单 · 陈晨'),
+          wbB('孙雅婷 · 孙浩然 · 硕士申请 / 英国 / 金融', '咨询中', '2026-07-16 下单 · 刘洋'),
+          wbB('周立群 · 周雨薇 · 硕士申请 / 美国 / 电子工程', '选校中', '2026-07-17 下单 · 赵敏'),
+          wbB('吴国强 · 吴子墨 · 博士申请 / 加拿大 / 数据科学', '待确认', '2026-07-18 下单 · 孙鹏')
+        ]},
+        { title: '结项归档', color: WB_GRAY, items: [
+          wbB('赵敏 · 赵欣怡 · 本科申请', '待结项', 'PRJ20260701018'),
+          wbB('李慧敏 · 李雪 · 硕士申请', '待结项', 'PRJ20260701002'),
+          wbB('王建军 · 王伟 · 博士申请', '待结项', 'PRJ-M-2607-0003'),
+          wbB('孙丽 · 孙浩然 · 硕士申请', '已结项', '2026-07-12 结项'),
+          wbB('周杰 · 周子墨 · 本科申请', '已结项', '2026-06-28 结项'),
+          wbB('吴芳 · 吴思远 · 博士申请', '已结项', '2026-07-05 结项')
+        ]}
+      ]
+    },
+
+    /* ---------- 8. 文书机构管理员 ---------- */
+    docadmin: {
+      name: '文书机构管理员', scope: '文书管理视角 · 本机构', scopeBg: '#f2f5f7', scopeC: '#6b829a',
+      tagline: '统筹文书交付与审核质量，管理机构成员',
+      stats: [
+        { l: '今日待办', v: '6', n: '2 项待分配 · 2 项审核积压 · 2 项待跟进', t: '' },
+        { l: '文书任务', v: '5', n: '撰写中 2 · 审核中 2 · 需修改 1', t: 'tone-blue' },
+        { l: '审核积压', v: '4', n: '最早 08-15 提交', t: 'tone-orange' },
+        { l: '团队成员', v: '5', n: '文书 3 · 审核 2', t: 'tone-purple' }
+      ],
+      cards: [
+        { m: '文书交付', c: '5 项任务 · 1 项需修改', color: WB_BLUE, href: '任务列表页 - 文书交付系统.html' },
+        { m: '文书审核', c: '6 份审核 · 4 份审核中', color: WB_ORANGE, href: '文书审核列表页 - 留学申请管理系统.html' },
+        { m: '模板库', c: '6 个标准模板', color: WB_CYAN, href: '模板库列表 - 文书交付系统.html' },
+        { m: '案例库', c: '12 份已解析案例', color: WB_PURPLE, href: '案例库 - 文书交付系统.html' },
+        { m: '人员管理', c: '5 位成员', color: WB_AMBER, href: '人员管理 - PBS留学CRM系统.html' },
+        { m: 'AI 管理', c: '文书类提示词配置', color: WB_GREEN, href: 'AI管理 - 留学申请管理系统.html' }
+      ],
+      todoCount: 6,
+      todoGroups: [
+        { title: '需要我处理', color: WB_RED, items: [
+          wbT(WB_RED, '需修改', WB_RED, '刘芳 · 哈佛大学 公共卫生 PS 需修改', '文书交付 · 审核打回 · 负责人：陈文书 · DDL 2026-11-20', '需按审核意见修改', WB_RED, { l: '催办', urge: ['刘芳 · 哈佛大学公共卫生PS修改', '陈文书', '文书人员'], cls: 'ghost' }),
+          wbT(WB_PURPLE, '待分配', WB_PURPLE, '新到李雪 CMU 套磁信任务待分配', '文书交付 · 类型 CL · 客户：李建国', '待分配文书人员', WB_PURPLE, { l: '去分配', href: '任务列表页 - 文书交付系统.html' })
+        ]},
+        { title: '审核队列', color: WB_ORANGE, items: [
+          wbT(WB_ORANGE, null, null, '刘芳 · 哈佛大学 PS', '提交人：陈文书 · 审核人员：李审核', '今天 08:40 提交', WB_GRAY, { l: '去审核', href: '文书审核详情页 - 留学申请管理系统.html', cls: 'plain' }),
+          wbT(WB_ORANGE, null, null, '李雪 · 卡内基梅隆大学 PS', '提交人：陈文书 · 审核人员：王审核', '08-17 10:30 提交', WB_GRAY, { l: '去审核', href: '文书审核详情页 - 留学申请管理系统.html', cls: 'plain' }),
+          wbT(WB_ORANGE, null, null, '王明 · 斯坦福大学 CV', '提交人：周文书 · 审核人员：王审核', '08-16 14:20 提交', WB_GRAY, { l: '去审核', href: '文书审核详情页 - 留学申请管理系统.html', cls: 'plain' }),
+          wbT(WB_ORANGE, null, null, '赵婷 · 哥伦比亚大学 CV', '提交人：周文书 · 审核人员：王审核', '08-15 11:05 提交', WB_GRAY, { l: '去审核', href: '文书审核详情页 - 留学申请管理系统.html', cls: 'plain' })
+        ]},
+        { title: '团队跟进', color: WB_BLUE, items: [
+          wbT(WB_BLUE, '撰写中', WB_BLUE, '李雪 · 卡内基梅隆大学 人工智能 PS', '负责人：陈文书 · DDL 2026-11-01', '进度正常', WB_BLUE, { l: '查看', href: '文书编辑器 - 文书交付系统.html', cls: 'plain' }),
+          wbT(WB_BLUE, '撰写中', WB_BLUE, '王明 · 斯坦福大学 计算机科学 CV', '负责人：周文书 · DDL 2026-12-15', '进度正常', WB_BLUE, { l: '查看', href: '文书编辑器 - 文书交付系统.html', cls: 'plain' })
+        ]}
+      ],
+      events: {
+        '2026-08-15': [wbEv('审核提交', WB_ORANGE, '赵婷 · 哥伦比亚大学 CV 提交审核（审核人员：王审核）')],
+        '2026-08-16': [wbEv('审核提交', WB_ORANGE, '王明 · 斯坦福大学 CV 提交审核（审核人员：王审核）')],
+        '2026-08-17': [wbEv('审核提交', WB_ORANGE, '李雪 · 卡内基梅隆大学 PS 提交审核（审核人员：王审核）')],
+        '2026-08-18': [wbEv('审核提交', WB_ORANGE, '刘芳 · 哈佛大学 PS 今天 08:40 提交审核（审核人员：李审核）'), wbEv('任务待分配', WB_RED, '李雪 CMU 套磁信任务待分配')],
+        '2026-09-15': [wbEv('文书DDL', WB_BLUE, '陈磊 · 剑桥大学 金融学 RP（已完成）')],
+        '2026-10-30': [wbEv('文书DDL', WB_BLUE, '张华 · 麻省理工学院 数据科学 RL')],
+        '2026-11-01': [wbEv('文书DDL', WB_BLUE, '李雪 · 卡内基梅隆大学 人工智能 PS')],
+        '2026-11-20': [wbEv('文书DDL', WB_BLUE, '刘芳 · 哈佛大学 公共卫生 PS')],
+        '2026-12-15': [wbEv('文书DDL', WB_BLUE, '王明 · 斯坦福大学 计算机科学 CV')]
+      },
+      boards: [
+        { title: '文书交付 · 任务列表', color: WB_BLUE, items: [
+          wbB('李雪 · 卡内基梅隆大学 人工智能 PS', '撰写中', 'DDL 2026-11-01 · 陈文书'),
+          wbB('王明 · 斯坦福大学 计算机科学 CV', '撰写中', 'DDL 2026-12-15 · 周文书'),
+          wbB('张华 · 麻省理工学院 数据科学 RL', '审核中', 'DDL 2026-10-30 · 吴文书'),
+          wbB('刘芳 · 哈佛大学 公共卫生 PS', '需修改', 'DDL 2026-11-20 · 陈文书'),
+          wbB('陈磊 · 剑桥大学 金融学 RP', '已完成', 'DDL 2026-09-15 · 郑文书')
+        ]},
+        { title: '文书审核 · 审核列表', color: WB_ORANGE, items: [
+          wbB('刘芳 · 哈佛大学 PS', '审核中', '今天 08:40 提交 · 李审核 · 陈文书'),
+          wbB('李雪 · 卡内基梅隆大学 PS', '审核中', '08-17 10:30 提交 · 王审核 · 陈文书'),
+          wbB('王明 · 斯坦福大学 CV', '审核中', '08-16 14:20 提交 · 王审核 · 周文书'),
+          wbB('赵婷 · 哥伦比亚大学 CV', '审核中', '08-15 11:05 提交 · 王审核 · 周文书'),
+          wbB('张华 · 麻省理工学院 RL', '已完成', '08-12 09:15 提交 · 李审核 · 吴文书'),
+          wbB('陈磊 · 剑桥大学 RP', '已完成', '08-10 16:00 提交 · 王审核 · 郑文书')
+        ]},
+        { title: '团队成员', color: WB_PURPLE, items: [
+          wbB('陈文书', '文书人员', '负责 PS/CL'),
+          wbB('周文书', '文书人员', '负责 CV/RP'),
+          wbB('吴文书', '文书人员', '负责 RL'),
+          wbB('王审核', '文书审核', '一审'),
+          wbB('李审核', '文书审核', '二审')
         ]}
       ]
     }
@@ -610,7 +801,7 @@
     if (old) old.remove();
     var toast = document.createElement('div');
     toast.id = 'wbToast';
-    toast.style.cssText = 'position:fixed;top:24px;left:50%;transform:translateX(-50%);z-index:120;padding:10px 16px;border-radius:10px;background:#242136;color:#fff;font-size:14px;box-shadow:0 10px 30px rgba(0,0,0,.18)';
+    toast.style.cssText = 'position:fixed;top:24px;left:50%;transform:translateX(-50%);z-index:120;padding:10px 16px;border-radius:10px;background:#2a2a30;color:#fff;font-size:14px;box-shadow:0 10px 30px rgba(0,0,0,.18)';
     toast.textContent = message;
     document.body.appendChild(toast);
     setTimeout(function(){ toast.remove(); }, 2200);
@@ -670,19 +861,21 @@
   }
 
   /* ================= 角色 ↔ 工作台视角映射 ================= */
-  var WB_KEY_ORDER = ['wsadmin', 'pm', 'writer', 'sales', 'apply', 'audit'];
+  var WB_KEY_ORDER = ['pm', 'writer', 'sales', 'apply', 'audit', 'platform', 'orgadmin', 'docadmin'];
   var WB_ROLE_KEY = {
-    '文书机构管理员': 'wsadmin',
     '项目经理': 'pm',
     '文书人员': 'writer',
-    '销售人员管理员': 'sales',
     '销售人员': 'sales',
     '网申人员': 'apply',
-    '文书审核': 'audit'
+    '文书审核': 'audit',
+    '平台运维人员': 'platform',
+    '机构管理员': 'orgadmin',
+    '文书机构管理员': 'docadmin'
   };
   var WB_KEY_LABEL = {
-    wsadmin: '文书机构管理员', pm: '项目经理', writer: '文书人员',
-    sales: '销售人员', apply: '网申人员', audit: '文书审核'
+    pm: '项目经理', writer: '文书人员',
+    sales: '销售人员', apply: '网申人员', audit: '文书审核',
+    platform: '平台运维人员', orgadmin: '机构管理员', docadmin: '文书机构管理员'
   };
 
   /* ---------- 多角色 tab 切换 ---------- */
@@ -718,7 +911,7 @@
           + '" onclick="pbsWbSwitch(\'' + key + '\')">' + WB_KEY_LABEL[key] + '</button>';
       });
       html += '</div>';
-      html += '<p class="text-xs text-gray-400 mb-6">你拥有 ' + keys.length + ' 个角色视角，点击切换查看对应工作台；单角色账号仅显示本人工作台。管理者（机构管理员/项目经理/文书机构管理员）可发起催办；右侧日历中红色日期为有 DDL/事件的日子，点击查看当日明细。</p>';
+      html += '<p class="text-xs text-gray-400 mb-6">你拥有 ' + keys.length + ' 个角色视角，点击切换查看对应工作台；单角色账号仅显示本人工作台。管理者（机构管理员/项目经理）可发起催办；右侧日历中红色日期为有 DDL/事件的日子，点击查看当日明细。</p>';
     }
     keys.forEach(function (key) {
       html += '<div id="panel-' + key + '" class="role-panel' + (key === active ? '' : ' hidden') + '" data-role="' + key + '"></div>';

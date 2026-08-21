@@ -9,13 +9,14 @@
   var PREVIEW_ROLE_KEY = 'pbs_role_preview_v51';
 
   /* ---------------- 角色定义 ---------------- */
-  var ROLES = ['超级管理员', '平台运维人员', '机构管理员', '销售人员管理员', '销售人员', '项目经理',
+  var ROLES = ['超级管理员', '平台运维人员', '机构管理员', '销售人员', '项目经理',
     '文书人员', '网申人员', '文书审核', '文书机构管理员'];
 
-  /* 权限继承：PM覆盖项目交付团队；机构管理员在自身权限外继承PM全部权限 */
+  /* 权限继承：PM覆盖项目交付团队；机构管理员在自身权限外继承PM全部权限；文书机构管理员继承文书交付与审核团队 */
   var ROLE_INHERITANCE = {
-    '项目经理': ['文书人员', '网申人员', '文书审核', '文书机构管理员'],
-    '机构管理员': ['项目经理', '文书人员', '网申人员', '文书审核', '文书机构管理员']
+    '项目经理': ['文书人员', '网申人员', '文书审核'],
+    '机构管理员': ['项目经理', '文书人员', '网申人员', '文书审核'],
+    '文书机构管理员': ['文书人员', '文书审核']
   };
   function roleCanAccess(role, allowedRoles) {
     if (role === '超级管理员') return true;
@@ -47,7 +48,6 @@
     '超级管理员': '管理员工作台 - 留学申请管理系统.html',
     '平台运维人员': '平台运维工作台 - PBS留学CRM系统.html',
     '机构管理员': '机构管理员工作台 - 留学申请管理系统.html',
-    '销售人员管理员': '选校任务列表页 - 留学申请管理系统.html?view=workbench',
     '销售人员': '选校任务列表页 - 留学申请管理系统.html?view=workbench',
     '项目经理': '项目经理工作台 - 留学申请管理系统.html',
     '文书人员': '任务列表页 - 文书交付系统.html?view=workbench',
@@ -60,17 +60,18 @@
   var WORKBENCH_ROLE_PERMISSION = {
     '平台运维人员': 'workbench_platform',
     '机构管理员': 'workbench_org_admin',
-    '销售人员管理员': 'workbench_sales',
     '销售人员': 'workbench_sales',
     '项目经理': 'workbench_pm',
-    '文书机构管理员': 'workbench_doc_admin',
     '文书人员': 'workbench_writer',
     '网申人员': 'workbench_apply',
-    '文书审核': 'workbench_audit'
+    '文书审核': 'workbench_audit',
+    '文书机构管理员': 'workbench_docadmin'
   };
   var WORKBENCH_KEY_PERMISSION = {
-    wsadmin: 'workbench_doc_admin', pm: 'workbench_pm', writer: 'workbench_writer',
-    sales: 'workbench_sales', apply: 'workbench_apply', audit: 'workbench_audit'
+    pm: 'workbench_pm', writer: 'workbench_writer',
+    sales: 'workbench_sales', apply: 'workbench_apply', audit: 'workbench_audit',
+    platform: 'workbench_platform', orgadmin: 'workbench_org_admin',
+    docadmin: 'workbench_docadmin'
   };
 
   /* 组件页（弹窗/抽屉，用于iframe弹层，不做权限校验与侧边栏渲染） */
@@ -103,7 +104,7 @@
   var MENUS = [
     { key: 'workbench', label: '工作台首页', icon: 'home', roles: ROLES.slice(), single: true },
     { key: 'student', label: '学生档案', icon: 'idcard',
-      roles: ['平台运维人员', '机构管理员', '销售人员管理员', '销售人员', '项目经理', '文书人员', '网申人员', '文书审核'],
+      roles: ['平台运维人员', '机构管理员', '销售人员', '项目经理', '文书人员', '网申人员', '文书审核'],
       children: [{ label: '学生档案列表', file: '学生档案列表页 - 留学申请管理系统.html' }] },
     { key: 'pmo', label: 'PMO监控台', icon: 'folder', roles: ['机构管理员'],
       children: [
@@ -112,11 +113,11 @@
       children: [
         { label: '项目池列表', file: '项目池列表页 - 留学申请管理系统.html', roles: ['机构管理员'] },
         { label: '我的项目列表', file: '我的项目列表页 - 留学申请管理系统.html' }] },
-    { key: 'doc', label: '文书交付', icon: 'doc', roles: ['文书人员', '文书机构管理员', '平台运维人员'],
+    { key: 'doc', label: '文书交付', icon: 'doc', roles: ['文书人员', '平台运维人员'],
       children: [
-        { label: '任务列表', file: '任务列表页 - 文书交付系统.html', roles: ['文书人员', '文书机构管理员'] },
-        { label: '模板库', file: '模板库列表 - 文书交付系统.html', roles: ['文书人员', '文书机构管理员', '平台运维人员'] },
-        { label: '案例库', file: '案例库 - 文书交付系统.html', roles: ['文书人员', '文书机构管理员', '平台运维人员'] }] },
+        { label: '任务列表', file: '任务列表页 - 文书交付系统.html', roles: ['文书人员'] },
+        { label: '模板库', file: '模板库列表 - 文书交付系统.html', roles: ['文书人员', '平台运维人员'] },
+        { label: '案例库', file: '案例库 - 文书交付系统.html', roles: ['文书人员', '平台运维人员'] }] },
     { key: 'apply', label: '网申管理', icon: 'globe', roles: ['网申人员', '项目经理', '平台运维人员'],
       children: [
         { label: '网申任务列表', file: '网申任务列表页 - 留学申请管理系统.html', roles: ['网申人员', '项目经理'] },
@@ -128,18 +129,18 @@
       children: [{ label: '结项归档列表', file: '结项归档列表 - PBS留学CRM系统.html' }] },
     { key: 'review', label: '文书审核', icon: 'shield', roles: ['文书审核'],
       children: [{ label: '文书审核列表', file: '文书审核列表页 - 留学申请管理系统.html' }] },
-    { key: 'school', label: '选校管理', icon: 'map', roles: ['机构管理员', '销售人员管理员', '销售人员'],
+    { key: 'school', label: '选校管理', icon: 'map', roles: ['机构管理员', '销售人员'],
       children: [
-        { label: '选校任务列表', file: '选校任务列表页 - 留学申请管理系统.html', roles: ['机构管理员', '销售人员管理员', '销售人员'] },
-        { label: '院校列表', file: '选校工作台页 - 留学申请管理系统.html', href: '选校工作台页 - 留学申请管理系统.html?mode=catalog', roles: ['销售人员管理员', '销售人员'] }] },
+        { label: '选校任务列表', file: '选校任务列表页 - 留学申请管理系统.html', roles: ['机构管理员', '销售人员'] },
+        { label: '院校列表', file: '选校工作台页 - 留学申请管理系统.html', href: '选校工作台页 - 留学申请管理系统.html?mode=catalog', roles: ['销售人员'] }] },
     { key: 'organization', label: '机构管理', icon: 'users', roles: ['平台运维人员'], single: true, file: '机构管理 - PBS留学CRM系统.html' },
-    { key: 'personnel', label: '机构成员管理', icon: 'idcard', roles: ['平台运维人员', '机构管理员'], single: true, file: '人员管理 - PBS留学CRM系统.html' },
-    { key: 'usermgmt', label: '系统管理', icon: 'users', roles: ['平台运维人员', '机构管理员'],
+    { key: 'personnel', label: '机构成员管理', icon: 'idcard', roles: ['平台运维人员', '机构管理员', '文书机构管理员'], single: true, file: '人员管理 - PBS留学CRM系统.html' },
+    { key: 'usermgmt', label: '系统管理', icon: 'users', roles: ['平台运维人员', '机构管理员', '文书机构管理员'],
       children: [
-        { label: '角色权限管理', file: '角色权限管理 - 留学申请管理系统.html', roles: ['平台运维人员'] },
-        { label: '操作日志审计', file: '操作日志审计 - 留学申请管理系统.html', roles: ['平台运维人员'] },
-        { label: 'AI管理', file: 'AI管理 - 留学申请管理系统.html', roles: ['平台运维人员', '机构管理员'] },
-        { label: '视频管理', file: '视频管理 - 留学申请管理系统.html', roles: ['平台运维人员'] }] }
+        { label: '角色权限管理', file: '角色权限管理 - 留学申请管理系统.html', roles: ['平台运维人员', '机构管理员', '文书机构管理员'] },
+        { label: '操作日志审计', file: '操作日志审计 - 留学申请管理系统.html', roles: ['平台运维人员', '机构管理员', '文书机构管理员'] },
+        { label: 'AI管理', file: 'AI管理 - 留学申请管理系统.html', roles: ['平台运维人员', '机构管理员', '文书机构管理员'] },
+        { label: '视频管理', file: '视频管理 - 留学申请管理系统.html', roles: ['平台运维人员', '机构管理员', '文书机构管理员'] }] }
   ];
 
   /* ---------------- 页面级权限（RBAC） ---------------- */
@@ -148,8 +149,8 @@
     '平台运维工作台 - PBS留学CRM系统.html': ['平台运维人员'],
     '机构管理员工作台 - 留学申请管理系统.html': ['机构管理员'],
     '项目经理工作台 - 留学申请管理系统.html': ['项目经理'],
-    '学生档案列表页 - 留学申请管理系统.html': ['平台运维人员', '机构管理员', '销售人员管理员', '销售人员', '项目经理', '文书人员', '网申人员', '文书审核'],
-    '学生档案详情页 - 留学申请管理系统.html': ['平台运维人员', '机构管理员', '销售人员管理员', '销售人员', '项目经理', '文书人员', '网申人员', '文书审核'],
+    '学生档案列表页 - 留学申请管理系统.html': ['平台运维人员', '机构管理员', '销售人员', '项目经理', '文书人员', '网申人员', '文书审核', '文书机构管理员'],
+    '学生档案详情页 - 留学申请管理系统.html': ['平台运维人员', '机构管理员', '销售人员', '项目经理', '文书人员', '网申人员', '文书审核', '文书机构管理员'],
     '项目池列表页 - 留学申请管理系统.html': ['机构管理员'],
     '项目详情页 - 留学申请管理系统.html': ['机构管理员'],
     'PMO看板 - 留学申请管理系统.html': ['机构管理员'],
@@ -157,9 +158,9 @@
     '我的项目详情页 - 留学申请管理系统.html': ['项目经理'],
     '任务列表页 - 文书交付系统.html': ['文书人员', '文书机构管理员'],
     '文书编辑器 - 文书交付系统.html': ['文书人员', '文书机构管理员'],
-    '模板库列表 - 文书交付系统.html': ['文书人员', '文书机构管理员', '平台运维人员'],
-    '模板库编辑 - 文书交付系统.html': ['文书人员', '文书机构管理员', '平台运维人员'],
-    '案例库 - 文书交付系统.html': ['文书人员', '文书机构管理员', '平台运维人员'],
+    '模板库列表 - 文书交付系统.html': ['文书人员', '平台运维人员', '文书机构管理员'],
+    '模板库编辑 - 文书交付系统.html': ['文书人员', '平台运维人员', '文书机构管理员'],
+    '案例库 - 文书交付系统.html': ['文书人员', '平台运维人员', '文书机构管理员'],
     '网申任务列表页 - 留学申请管理系统.html': ['网申人员', '项目经理'],
     '网申任务详情页 - 留学申请管理系统.html': ['网申人员', '项目经理'],
     '网申模板库 - 留学申请管理系统.html': ['网申人员', '项目经理', '平台运维人员'],
@@ -170,17 +171,17 @@
     '结项详情页 - 留学申请管理系统.html': ['项目经理', '文书人员', '网申人员'],
     '用户管理 - 留学申请管理系统.html': ['平台运维人员'],
     '机构管理 - PBS留学CRM系统.html': ['平台运维人员'],
-    '人员管理 - PBS留学CRM系统.html': ['平台运维人员', '机构管理员'],
-    '角色权限管理 - 留学申请管理系统.html': ['平台运维人员'],
-    '操作日志审计 - 留学申请管理系统.html': ['平台运维人员'],
-    'AI管理 - 留学申请管理系统.html': ['平台运维人员', '机构管理员'],
-    '视频管理 - 留学申请管理系统.html': ['平台运维人员'],
-    '文书审核列表页 - 留学申请管理系统.html': ['文书审核'],
-    '文书审核详情页 - 留学申请管理系统.html': ['文书审核'],
-    '选校订单池页 - 留学申请管理系统.html': ['机构管理员', '销售人员管理员', '销售人员'],
-    '选校任务列表页 - 留学申请管理系统.html': ['机构管理员', '销售人员管理员', '销售人员'],
-    '选校工作台页 - 留学申请管理系统.html': ['销售人员管理员', '销售人员'],
-    '选校方案详情页 - 留学申请管理系统.html': ['销售人员', '销售人员管理员', '机构管理员']
+    '人员管理 - PBS留学CRM系统.html': ['平台运维人员', '机构管理员', '文书机构管理员'],
+    '角色权限管理 - 留学申请管理系统.html': ['平台运维人员', '机构管理员', '文书机构管理员'],
+    '操作日志审计 - 留学申请管理系统.html': ['平台运维人员', '机构管理员', '文书机构管理员'],
+    'AI管理 - 留学申请管理系统.html': ['平台运维人员', '机构管理员', '文书机构管理员'],
+    '视频管理 - 留学申请管理系统.html': ['平台运维人员', '机构管理员', '文书机构管理员'],
+    '文书审核列表页 - 留学申请管理系统.html': ['文书审核', '文书机构管理员'],
+    '文书审核详情页 - 留学申请管理系统.html': ['文书审核', '文书机构管理员'],
+    '选校订单池页 - 留学申请管理系统.html': ['机构管理员', '销售人员'],
+    '选校任务列表页 - 留学申请管理系统.html': ['机构管理员', '销售人员'],
+    '选校工作台页 - 留学申请管理系统.html': ['销售人员'],
+    '选校方案详情页 - 留学申请管理系统.html': ['销售人员', '机构管理员']
   };
 
   /* ---------------- 会话 ---------------- */
@@ -224,6 +225,24 @@
       session = { account: 'demo_admin', name: '演示管理员', role: '超级管理员', roles: ['超级管理员'], org: 'PBS留学', email: 'demo@pbs.local' };
     }
     return withPreviewRole(session);
+  };
+  window.pbsRecordOperation = function (module, type, content, result) {
+    try {
+      var session = window.pbsGetSession();
+      var logs = JSON.parse(localStorage.getItem('pbs_operation_logs_v1') || '[]');
+      if (!Array.isArray(logs)) logs = [];
+      logs.unshift({
+        time: new Date().toLocaleString('zh-CN', { hour12: false }).replace(/\//g, '-'),
+        user: session.name || session.account || '当前用户',
+        organization: session.org || '当前机构',
+        module: module || '系统管理',
+        type: type || '修改',
+        content: content || '系统操作',
+        ip: '当前会话',
+        result: result || '成功'
+      });
+      localStorage.setItem('pbs_operation_logs_v1', JSON.stringify(logs.slice(0, 500)));
+    } catch (e) {}
   };
   window.pbsLogout = function () {
     localStorage.removeItem(SESSION_KEY);
@@ -333,6 +352,17 @@
   }
 
   /* ---------------- 顶栏用户区 ---------------- */
+  var ROLE_BADGE_STYLES = {
+    '超级管理员': 'bg-amber-50 text-amber-700',
+    '平台运维人员': 'bg-slate-100 text-slate-700',
+    '机构管理员': 'bg-blue-50 text-blue-700',
+    '销售人员': 'bg-pink-50 text-pink-700',
+    '项目经理': 'bg-emerald-50 text-emerald-700',
+    '文书人员': 'bg-orange-50 text-orange-700',
+    '网申人员': 'bg-lime-50 text-lime-700',
+    '文书审核': 'bg-red-50 text-red-700',
+    '文书机构管理员': 'bg-violet-50 text-violet-700'
+  };
   function renderRoleSwitcher(header, session) {
     if (document.getElementById('pbsRoleSwitcher')) return;
     var headerRow = header.querySelector('.h-16.flex.items-center.justify-between') ||
@@ -348,7 +378,7 @@
     /* 只有多角色的人（或超管）才能切换多个工作台视角；单角色仅显示本人角色 */
     var userRoles = (session.userRoles && session.userRoles.length) ? session.userRoles : [session.role];
     var isSuper = userRoles.indexOf('超级管理员') >= 0;
-    var switchable = isSuper ? ROLES.slice() : userRoles.slice();
+    var switchable = (isSuper ? ROLES.slice() : userRoles.slice()).filter(function (r) { return r !== '超级管理员'; });
     var options = '';
     if (isSuper || userRoles.length > 1) options += '<option value="all">全部角色</option>';
     switchable.forEach(function (role) {
@@ -404,15 +434,22 @@
     });
     /* 第一行显示姓名，第二行显示 角色 · 机构 */
     if (texts[0]) texts[0].textContent = session.name;
+    var roleLabel = session.previewLabel || session.role;
+    var subTitle = roleLabel + (session.org ? ' · ' + session.org : '');
     if (texts[1]) {
-      texts[1].textContent = (session.previewLabel || session.role) + (session.org ? ' · ' + session.org : '');
-    } else if (texts[0] && !userArea.querySelector('.pbs-role-badge')) {
-      /* 无副标题时补角色徽章 */
-      var badge = document.createElement('span');
-      badge.className = 'pbs-role-badge hidden sm:inline-block text-xs px-2.5 py-1 bg-blue-50 text-blue-700 rounded-full font-medium';
-      badge.textContent = session.previewLabel || session.role;
+      texts[1].textContent = subTitle;
+    }
+
+    /* 始终渲染/更新角色徽标 */
+    var badge = userArea.querySelector('.pbs-role-badge');
+    var badgeStyle = ROLE_BADGE_STYLES[roleLabel] || 'bg-blue-50 text-blue-700';
+    if (!badge) {
+      badge = document.createElement('span');
       userArea.insertBefore(badge, avatarSpan.parentElement);
     }
+
+    badge.className = 'pbs-role-badge hidden sm:inline-block text-xs px-2.5 py-1 rounded-full font-medium ' + badgeStyle;
+    badge.textContent = roleLabel;
 
     /* 用户菜单：已有则更新内容，没有则注入标准菜单 */
     var menu = userArea.querySelector('#userMenu') || document.getElementById('userMenu');
@@ -421,11 +458,16 @@
       if (nameP) nameP.textContent = session.name;
       var mailP = menu.querySelector('p.text-xs.text-gray-500');
       if (mailP) mailP.textContent = session.email || '';
-      if (nameP && !menu.querySelector('.pbs-menu-role')) {
-        var roleLine = document.createElement('p');
-        roleLine.className = 'pbs-menu-role text-xs text-blue-600 mt-0.5';
-        roleLine.textContent = (session.previewLabel || session.role) + (session.org ? ' · ' + session.org : '');
+      var roleLine = menu.querySelector('.pbs-menu-role');
+      if (!roleLine && nameP) {
+        roleLine = document.createElement('p');
+        roleLine.className = 'pbs-menu-role text-xs mt-0.5';
+        roleLine.textContent = subTitle;
         nameP.parentNode.appendChild(roleLine);
+      }
+      if (roleLine) {
+        roleLine.className = 'pbs-menu-role text-xs mt-0.5 ' + (ROLE_BADGE_STYLES[roleLabel] || 'bg-blue-50 text-blue-700').replace(/bg-(\w+)-50/, 'text-$1');
+        roleLine.textContent = subTitle;
       }
       var av = menu.querySelector('.w-10.h-10 span');
       if (av) av.textContent = session.name.charAt(0);
@@ -530,7 +572,7 @@
       '.pbs-intro-mask{position:absolute;inset:0;background:rgba(15,23,42,.72);backdrop-filter:blur(7px)}' +
       '.pbs-intro-dialog{position:relative;width:min(920px,100%);max-height:calc(100vh - 48px);overflow:auto;background:#fff;border-radius:24px;box-shadow:0 30px 90px rgba(15,23,42,.34)}' +
       '.pbs-intro-head{display:flex;align-items:flex-start;justify-content:space-between;gap:20px;padding:20px 24px;border-bottom:1px solid #eef2f7}' +
-      '.pbs-intro-kicker{font-size:12px;font-weight:700;color:#6366f1;letter-spacing:.08em}.pbs-intro-title{font-size:20px;font-weight:700;color:#0f172a;margin-top:3px}.pbs-intro-sub{font-size:13px;color:#94a3b8;margin-top:4px}' +
+      '.pbs-intro-kicker{font-size:12px;font-weight:700;color:#6B829A;letter-spacing:.08em}.pbs-intro-title{font-size:20px;font-weight:700;color:#0f172a;margin-top:3px}.pbs-intro-sub{font-size:13px;color:#94a3b8;margin-top:4px}' +
       '.pbs-intro-close{width:36px;height:36px;border:0;border-radius:999px;background:#f1f5f9;color:#64748b;font-size:22px;cursor:pointer}.pbs-intro-body{padding:22px 24px}' +
       '.pbs-intro-player{overflow:hidden;border-radius:18px;background:#090d1a;box-shadow:inset 0 0 0 1px rgba(255,255,255,.08)}' +
       '.pbs-intro-stage{position:relative;aspect-ratio:16/8.6;min-height:320px;overflow:hidden;color:#fff}.pbs-intro-scene{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;padding:40px;opacity:0;transform:scale(1.025);transition:opacity .5s ease,transform .7s ease;pointer-events:none}.pbs-intro-scene.is-active{opacity:1;transform:scale(1)}' +
@@ -543,11 +585,11 @@
       '.pbs-intro-copy{text-align:center;max-width:620px}.pbs-intro-copy h3{font-size:30px;line-height:1.25;font-weight:750;margin:18px 0 10px}.pbs-intro-copy p{font-size:15px;color:rgba(255,255,255,.75);line-height:1.7}' +
       '.pbs-intro-dashboard{width:min(680px,100%)}.pbs-intro-dashboard h3,.pbs-intro-flow h3,.pbs-intro-plugin h3{font-size:25px;font-weight:700;margin:0 0 18px;text-align:center}.pbs-intro-mini-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}.pbs-intro-mini-card{padding:16px;border:1px solid rgba(255,255,255,.14);border-radius:14px;background:rgba(255,255,255,.09);backdrop-filter:blur(8px)}.pbs-intro-mini-card b{display:block;font-size:24px;margin-top:7px}.pbs-intro-mini-card span{font-size:12px;color:rgba(255,255,255,.68)}' +
       '.pbs-intro-flow{width:min(720px,100%)}.pbs-intro-flow-row{display:flex;align-items:center;justify-content:center;gap:10px;flex-wrap:wrap}.pbs-intro-flow-step{min-width:122px;padding:14px 12px;border-radius:13px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.14);text-align:center;font-size:13px}.pbs-intro-flow-step strong{display:block;font-size:18px;margin-bottom:5px}.pbs-intro-flow-arrow{color:#5eead4;font-size:20px}' +
-      '.pbs-intro-plugin{width:min(680px,100%)}.pbs-intro-field-table{overflow:hidden;border:1px solid rgba(255,255,255,.15);border-radius:14px;background:rgba(255,255,255,.08)}.pbs-intro-field-head,.pbs-intro-field-row{display:grid;grid-template-columns:1.5fr .8fr .7fr;gap:12px;padding:11px 16px;text-align:left}.pbs-intro-field-head{font-size:11px;color:#c4b5fd;background:rgba(255,255,255,.07)}.pbs-intro-field-row{font-size:13px;border-top:1px solid rgba(255,255,255,.08)}' +
+      '.pbs-intro-plugin{width:min(680px,100%)}.pbs-intro-field-table{overflow:hidden;border:1px solid rgba(255,255,255,.15);border-radius:14px;background:rgba(255,255,255,.08)}.pbs-intro-field-head,.pbs-intro-field-row{display:grid;grid-template-columns:1.5fr .8fr .7fr;gap:12px;padding:11px 16px;text-align:left}.pbs-intro-field-head{font-size:11px;color:#C8D3DC;background:rgba(255,255,255,.07)}.pbs-intro-field-row{font-size:13px;border-top:1px solid rgba(255,255,255,.08)}' +
       '.pbs-intro-center-control{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:70px;height:70px;border:1px solid rgba(255,255,255,.3);border-radius:999px;background:rgba(15,23,42,.62);color:#fff;font-size:25px;cursor:pointer;opacity:0;transition:opacity .2s}.pbs-intro-stage:hover .pbs-intro-center-control,.pbs-intro-center-control.is-paused{opacity:1}' +
-      '.pbs-intro-controls{display:grid;grid-template-columns:40px minmax(0,1fr) 86px;gap:12px;align-items:center;padding:13px 16px;background:#0f172a}.pbs-intro-control-btn{border:0;background:transparent;color:#fff;font-size:18px;cursor:pointer}.pbs-intro-seek{width:100%;accent-color:#818cf8}.pbs-intro-time{font-size:12px;color:#cbd5e1;text-align:right;font-variant-numeric:tabular-nums}' +
-      '.pbs-intro-foot{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:18px 24px;border-top:1px solid #eef2f7}.pbs-intro-foot p{font-size:13px;color:#64748b}.pbs-intro-primary{height:40px;padding:0 18px;border:0;border-radius:10px;background:#4f46e5;color:#fff;font-size:14px;font-weight:600;cursor:pointer}' +
-      '.pbs-settings-dialog{position:relative;width:min(640px,100%);background:#fff;border-radius:22px;box-shadow:0 30px 90px rgba(15,23,42,.3)}.pbs-settings-body{padding:22px 24px}.pbs-settings-card{display:flex;align-items:center;justify-content:space-between;gap:20px;padding:18px;border:1px solid #e2e8f0;border-radius:15px;background:#f8fafc}.pbs-settings-icon{width:46px;height:46px;border-radius:13px;background:#eef2ff;color:#4f46e5;display:flex;align-items:center;justify-content:center;font-size:21px;flex-shrink:0}.pbs-settings-copy{flex:1;min-width:0}.pbs-settings-copy h3{font-size:15px;font-weight:650;color:#0f172a}.pbs-settings-copy p{font-size:12px;color:#64748b;margin-top:4px;line-height:1.5}.pbs-settings-replay{height:38px;padding:0 14px;border:1px solid #c7d2fe;border-radius:10px;background:#fff;color:#4f46e5;font-size:13px;font-weight:600;cursor:pointer;white-space:nowrap}' +
+      '.pbs-intro-controls{display:grid;grid-template-columns:40px minmax(0,1fr) 86px;gap:12px;align-items:center;padding:13px 16px;background:#0f172a}.pbs-intro-control-btn{border:0;background:transparent;color:#fff;font-size:18px;cursor:pointer}.pbs-intro-seek{width:100%;accent-color:#8DA4B2}.pbs-intro-time{font-size:12px;color:#cbd5e1;text-align:right;font-variant-numeric:tabular-nums}' +
+      '.pbs-intro-foot{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:18px 24px;border-top:1px solid #eef2f7}.pbs-intro-foot p{font-size:13px;color:#64748b}.pbs-intro-primary{height:40px;padding:0 18px;border:0;border-radius:10px;background:#6B829A;color:#fff;font-size:14px;font-weight:600;cursor:pointer}' +
+      '.pbs-settings-dialog{position:relative;width:min(640px,100%);background:#fff;border-radius:22px;box-shadow:0 30px 90px rgba(15,23,42,.3)}.pbs-settings-body{padding:22px 24px}.pbs-settings-card{display:flex;align-items:center;justify-content:space-between;gap:20px;padding:18px;border:1px solid #e2e8f0;border-radius:15px;background:#f8fafc}.pbs-settings-icon{width:46px;height:46px;border-radius:13px;background:#ECEFF3;color:#6B829A;display:flex;align-items:center;justify-content:center;font-size:21px;flex-shrink:0}.pbs-settings-copy{flex:1;min-width:0}.pbs-settings-copy h3{font-size:15px;font-weight:650;color:#0f172a}.pbs-settings-copy p{font-size:12px;color:#64748b;margin-top:4px;line-height:1.5}.pbs-settings-replay{height:38px;padding:0 14px;border:1px solid #CDDAE4;border-radius:10px;background:#fff;color:#6B829A;font-size:13px;font-weight:600;cursor:pointer;white-space:nowrap}' +
       '@media(max-width:680px){.pbs-intro-layer{padding:10px}.pbs-intro-dialog{max-height:calc(100vh - 20px);border-radius:18px}.pbs-intro-head,.pbs-intro-body,.pbs-intro-foot{padding-left:16px;padding-right:16px}.pbs-intro-stage{min-height:300px}.pbs-intro-scene{padding:24px 18px}.pbs-intro-copy h3{font-size:24px}.pbs-intro-mini-grid{grid-template-columns:1fr}.pbs-intro-mini-card:nth-child(n+3){display:none}.pbs-intro-flow-arrow{display:none}.pbs-intro-field-row:nth-child(n+4){display:none}.pbs-settings-card{align-items:flex-start;flex-wrap:wrap}.pbs-settings-replay{margin-left:58px}}';
     document.head.appendChild(style);
 
@@ -559,7 +601,7 @@
       '<header class="pbs-intro-head"><div><div id="pbsIntroKicker" class="pbs-intro-kicker">WELCOME TO PBS</div><h2 id="pbsIntroTitle" class="pbs-intro-title">PBS 系统介绍视频</h2><p id="pbsIntroSubtitle" class="pbs-intro-sub">用 32 秒了解角色工作台与申请交付主流程</p></div><button id="pbsIntroClose" class="pbs-intro-close" aria-label="关闭介绍视频">×</button></header>' +
       '<div class="pbs-intro-body"><div id="pbsIntroPlayer" class="pbs-intro-player"><div class="pbs-intro-stage"><video id="pbsIntroNativeVideo" class="pbs-intro-native-video" controls playsinline preload="metadata"></video>' +
       '<article class="pbs-intro-scene pbs-intro-scene-one is-active"><div class="pbs-intro-copy"><div class="pbs-intro-logo" style="margin:0 auto">P</div><h3>一套平台，协同完成留学申请交付</h3><p>集中管理学生、项目、文书、网申、监控与结项，让每个角色都清楚下一步该做什么。</p></div></article>' +
-      '<article class="pbs-intro-scene pbs-intro-scene-two"><div class="pbs-intro-dashboard"><h3>每个角色拥有专属工作台</h3><div class="pbs-intro-mini-grid"><div class="pbs-intro-mini-card"><span>今日待办</span><b>7</b><span>优先处理临期与卡点</span></div><div class="pbs-intro-mini-card"><span>在管项目</span><b>42</b><span>项目进度集中追踪</span></div><div class="pbs-intro-mini-card"><span>风险提醒</span><b style="color:#fca5a5">3</b><span>及时介入异常事项</span></div></div></div></article>' +
+      '<article class="pbs-intro-scene pbs-intro-scene-two"><div class="pbs-intro-dashboard"><h3>每个角色拥有专属工作台</h3><div class="pbs-intro-mini-grid"><div class="pbs-intro-mini-card"><span>今日待办</span><b>7</b><span>优先处理临期与卡点</span></div><div class="pbs-intro-mini-card"><span>在管项目</span><b>42</b><span>项目进度集中追踪</span></div><div class="pbs-intro-mini-card"><span>风险提醒</span><b style="color:#DDB7B3">3</b><span>及时介入异常事项</span></div></div></div></article>' +
       '<article class="pbs-intro-scene pbs-intro-scene-three"><div class="pbs-intro-flow"><h3>围绕项目推进完整业务流程</h3><div class="pbs-intro-flow-row"><div class="pbs-intro-flow-step"><strong>01</strong>学生建档</div><span class="pbs-intro-flow-arrow">→</span><div class="pbs-intro-flow-step"><strong>02</strong>项目分配</div><span class="pbs-intro-flow-arrow">→</span><div class="pbs-intro-flow-step"><strong>03</strong>文书与网申</div><span class="pbs-intro-flow-arrow">→</span><div class="pbs-intro-flow-step"><strong>04</strong>监控与结项</div></div></div></article>' +
       '<article class="pbs-intro-scene pbs-intro-scene-four"><div class="pbs-intro-plugin"><h3>PBS 插件识别官网字段并同步模板</h3><div class="pbs-intro-field-table"><div class="pbs-intro-field-head"><span>字段名</span><span>填写类型</span><span>是否必填</span></div><div class="pbs-intro-field-row"><span>First Name</span><span>文本</span><span>必填</span></div><div class="pbs-intro-field-row"><span>Date of Birth</span><span>日期</span><span>必填</span></div><div class="pbs-intro-field-row"><span>Phone</span><span>电话</span><span>选填</span></div></div></div></article>' +
       '<button id="pbsIntroCenterControl" class="pbs-intro-center-control" aria-label="播放或暂停">▶</button></div>' +
@@ -779,70 +821,110 @@
     }
   }, true);
 
-  /* ---------------- 全角色消息提醒 ---------------- */
-  var ROLE_NOTIFICATIONS = {
-    all: [
-      { type: '项目管理', title: '2 个项目待分配项目经理', detail: '线上项目进入项目池，等待机构管理员处理', time: '10 分钟前', level: 'warning' },
-      { type: '任务接收', title: '孙老师尚未接收 CMU 文书审核任务', detail: '李雪 · 卡内基梅隆大学，已等待 1 天 6 小时', time: '30 分钟前', level: 'danger' },
-      { type: '文书审核', title: '3 份文书终稿等待审核', detail: '最近截止时间为今天 18:00', time: '1 小时前', level: 'primary' }
-    ],
-    '超级管理员': [
-      { type: '平台概况', title: '3 项跨机构业务需要关注', detail: '包含项目分配、任务接收与文书审核事项', time: '10 分钟前', level: 'warning' },
-      { type: '机构同步', title: '新机构主体数据已完成同步', detail: '机构信息已进入机构管理列表', time: '35 分钟前', level: 'primary' },
-      { type: '系统审计', title: '今日新增 18 条操作日志', detail: '未发现失败操作', time: '1 小时前', level: 'success' }
-    ],
-    '平台运维人员': [
-      { type: '机构同步', title: '2 个机构主体完成数据同步', detail: '可在机构管理中查看最新成员状态', time: '20 分钟前', level: 'success' },
-      { type: '权限管理', title: '1 项角色权限配置待复核', detail: '机构管理员权限范围发生调整', time: '45 分钟前', level: 'warning' },
-      { type: '操作审计', title: '今日新增 18 条操作日志', detail: '全部操作执行成功', time: '1 小时前', level: 'primary' }
-    ],
-    '机构管理员': [
-      { type: '项目分配', title: '2 个项目待分配项目经理', detail: '项目池中有新的线上项目', time: '10 分钟前', level: 'danger' },
-      { type: '任务接收', title: '3 项团队任务尚未接收', detail: '其中 1 项已等待超过 24 小时', time: '30 分钟前', level: 'warning' },
-      { type: '支付节点', title: '1 个付款节点状态待确认', detail: '李雪 · 文书交付阶段', time: '2 小时前', level: 'primary' }
-    ],
-    '销售人员管理员': [
-      { type: '选校任务', title: '2 个选校任务等待分配', detail: '新订单已进入选校任务列表', time: '15 分钟前', level: 'warning' },
-      { type: '方案确认', title: '周雨薇的选校方案 V3 待确认', detail: '客户已打开分享页面', time: '40 分钟前', level: 'primary' },
-      { type: '团队进度', title: '1 项选校任务临近截止时间', detail: '请在今天 18:00 前完成方案提交', time: '1 小时前', level: 'danger' }
-    ],
-    '销售人员': [
-      { type: '选校任务', title: '新的选校任务已分配给你', detail: '孙可欣 · 美国计算机科学方向', time: '12 分钟前', level: 'primary' },
-      { type: '客户反馈', title: '客户已查看选校方案 V2', detail: '可继续补充沟通记录', time: '50 分钟前', level: 'success' },
-      { type: '方案截止', title: '周雨薇的方案今天需要更新', detail: '距离内部截止时间还有 6 小时', time: '1 小时前', level: 'warning' }
-    ],
-    '项目经理': [
-      { type: '任务接收', title: '孙老师尚未接收文书审核任务', detail: '李雪 · CMU 个人陈述终稿，已等待 1 天 6 小时', time: '30 分钟前', level: 'danger' },
-      { type: '材料准备', title: '陈雨桐仍缺少护照复印件', detail: '材料缺失已影响网申字段准备', time: '45 分钟前', level: 'warning' },
-      { type: '文书确认', title: 'CMU 个人陈述终稿等待你确认', detail: '截止时间：今天 18:00', time: '1 小时前', level: 'primary' }
-    ],
-    '文书人员': [
-      { type: '任务分配', title: '新的个人陈述任务已分配给你', detail: '李雪 · 卡内基梅隆大学', time: '8 分钟前', level: 'primary' },
-      { type: '修改意见', title: '陈雨桐的推荐信收到修改意见', detail: '项目经理补充了 2 条修改要求', time: '35 分钟前', level: 'warning' },
-      { type: '交付截止', title: '1 项文书任务今天到期', detail: '请在今天 18:00 前提交终稿', time: '1 小时前', level: 'danger' }
-    ],
-    '网申人员': [
-      { type: '任务分配', title: 'Stanford 网申任务已分配给你', detail: '李雪 · 计算机科学硕士', time: '15 分钟前', level: 'primary' },
-      { type: '材料更新', title: '申请材料清单已更新', detail: '新增 1 份语言成绩单', time: '42 分钟前', level: 'success' },
-      { type: '字段检查', title: '4 个官网字段需要人工核对', detail: 'AI 未能稳定匹配对应内容', time: '1 小时前', level: 'warning' }
-    ],
-    '文书审核': [
-      { type: '待审核', title: 'CMU 个人陈述终稿等待审核', detail: '李雪 · 截止时间今天 18:00', time: '10 分钟前', level: 'danger' },
-      { type: '待审核', title: 'Stanford 推荐信初稿等待审核', detail: '李雪 · 刘老师提交', time: '35 分钟前', level: 'primary' },
-      { type: '修改完成', title: '陈雨桐的简历已重新提交', detail: '已根据上一轮意见完成修改', time: '1 小时前', level: 'success' }
-    ],
-    '文书机构管理员': [
-      { type: '任务分发', title: '2 项文书任务等待分发', detail: '请指定文书交付人员', time: '12 分钟前', level: 'warning' },
-      { type: '任务接收', title: '1 项已分配任务超过 12 小时未接收', detail: '陈雨桐 · 推荐信初稿', time: '40 分钟前', level: 'danger' },
-      { type: '交付进度', title: '今日已有 4 份文书完成交付', detail: '全部进入审核流程', time: '1 小时前', level: 'success' }
-    ]
-  };
+  /* ---------------- 通知消息：按当前角色、所属机构和接收人过滤 ---------------- */
+  var NOTIFICATION_STORE_KEY = 'pbs_notifications_v2';
+  var NOTIFICATION_READ_KEY = 'pbs_notification_read_v3';
+  var NOTIFICATION_SEEDS = [
+    { id: 'order-created-prj-m-2607-0000', kind: 'order_created', type: '新项目待分配', title: '新项目进入项目池，等待分配', business: 'PRJ-M-2607-0000 · 周海宁 / 周妍', detail: '线上订单创建成功，请为项目分配项目经理。', time: '10 分钟前', triggeredAt: '2026-08-21 10:30:00', level: 'warning', recipientRoles: ['机构管理员'], organization: 'PBS留学总部', href: '项目池列表页 - 留学申请管理系统.html' },
+    { id: 'task-assigned-writer-cmu-ps', kind: 'task_assigned', type: '任务派发提醒', title: '新的 PS 文书任务已分配给你', business: '李雪 · 卡内基梅隆大学 · PS 个人陈述', detail: '项目经理王强已完成任务派发，请查看任务要求与交付 DDL。', time: '18 分钟前', triggeredAt: '2026-08-21 10:22:00', level: 'primary', recipientRoles: ['文书人员'], organization: 'PBS留学总部', href: '任务列表页 - 文书交付系统.html' },
+    { id: 'task-assigned-review-cmu-ps', kind: 'task_assigned', type: '任务派发提醒', title: '新的文书审核任务已分配给你', business: '李雪 · 卡内基梅隆大学 · PS 个人陈述', detail: '请在文书交付人员提交后完成审核。', time: '22 分钟前', triggeredAt: '2026-08-21 10:18:00', level: 'primary', recipientRoles: ['文书审核'], organization: 'PBS留学总部', href: '文书审核列表页 - 留学申请管理系统.html' },
+    { id: 'task-assigned-apply-cmu', kind: 'task_assigned', type: '任务派发提醒', title: '新的网申任务已分配给你', business: '李雪 · 卡内基梅隆大学 · 网申提交', detail: '请预扫描申请官网，并核对字段与申请材料。', time: '25 分钟前', triggeredAt: '2026-08-21 10:15:00', level: 'primary', recipientRoles: ['网申人员'], organization: 'PBS留学总部', href: '网申任务列表页 - 留学申请管理系统.html' },
+    { id: 'task-urge-apply-cmu-material', kind: 'task_urge', type: '任务催办提醒', title: 'CMU 官网预扫描任务收到催办', business: '李雪 · 卡内基梅隆大学 · 申请材料准备', detail: '项目经理王强发起催办，请尽快完成官网字段与材料清单预扫描。', reminderBy: '王强（项目经理）', reminderNote: '材料清单尚未生成，已影响后续网申准备。', time: '30 分钟前', triggeredAt: '2026-08-21 10:10:00', level: 'danger', recipientRoles: ['网申人员'], organization: 'PBS留学总部', href: '网申任务详情页 - 留学申请管理系统.html' },
+    { id: 'task-urge-writer-stanford-cv', kind: 'task_urge', type: '任务催办提醒', title: 'Stanford CV 文书任务收到催办', business: '李雪 · 斯坦福大学 · CV 简历', detail: '项目经理王强发起催办，请确认任务并按 DDL 推进。', reminderBy: '王强（项目经理）', reminderNote: '请今天完成任务接收并反馈预计交付时间。', time: '45 分钟前', triggeredAt: '2026-08-21 09:55:00', level: 'danger', recipientRoles: ['文书人员'], organization: 'PBS留学总部', href: '任务列表页 - 文书交付系统.html' }
+  ];
 
   var lastNotificationTrigger = null;
-  function notificationItemsFor(session) {
-    var key = session.previewRole === 'all' ? 'all' : session.role;
-    return ROLE_NOTIFICATIONS[key] || ROLE_NOTIFICATIONS.all;
+  function notificationEscape(value) {
+    return String(value == null ? '' : value).replace(/[&<>"']/g, function (char) {
+      return ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[char];
+    });
   }
+  function notificationCustomItems() {
+    try {
+      var items = JSON.parse(localStorage.getItem(NOTIFICATION_STORE_KEY) || '[]');
+      return Array.isArray(items) ? items : [];
+    } catch (e) { return []; }
+  }
+  function notificationRolesFor(session) {
+    if (session.previewRole && session.previewRole !== 'all') return [session.role];
+    if ((session.userRoles || []).indexOf('超级管理员') >= 0) return ROLES.slice();
+    return session.userRoles && session.userRoles.length ? session.userRoles.slice() : [session.role];
+  }
+  function notificationScope(session) {
+    var role = session.previewRole && session.previewRole !== 'all' ? session.role : 'all';
+    return [session.account || session.email || session.name || 'guest', role, session.org || ''].join('::');
+  }
+  function notificationReadIds(session) {
+    try {
+      var state = JSON.parse(localStorage.getItem(NOTIFICATION_READ_KEY) || '{}');
+      return Array.isArray(state[notificationScope(session)]) ? state[notificationScope(session)] : [];
+    } catch (e) { return []; }
+  }
+  function saveNotificationReadIds(session, ids) {
+    var state = {};
+    try { state = JSON.parse(localStorage.getItem(NOTIFICATION_READ_KEY) || '{}') || {}; } catch (e) { state = {}; }
+    state[notificationScope(session)] = ids;
+    localStorage.setItem(NOTIFICATION_READ_KEY, JSON.stringify(state));
+  }
+  function notificationItemsFor(session) {
+    var roles = notificationRolesFor(session);
+    var isSuperAll = session.previewRole === 'all' && roles.indexOf('超级管理员') >= 0;
+    return NOTIFICATION_SEEDS.concat(notificationCustomItems()).filter(function (item) {
+      if (item.result && item.result !== '成功') return false;
+      if (!isSuperAll && item.organization && item.organization !== session.org) return false;
+      if (item.recipientAccount && item.recipientAccount !== session.account && item.recipientAccount !== session.email) return false;
+      if (item.recipientName && item.recipientName !== session.name) return false;
+      var receivers = item.recipientRoles || [];
+      return receivers.some(function (role) { return roles.indexOf(role) >= 0; });
+    }).sort(function (a, b) { return String(b.triggeredAt || '').localeCompare(String(a.triggeredAt || '')); });
+  }
+  function unreadNotificationItems(session) {
+    var read = notificationReadIds(session);
+    return notificationItemsFor(session).filter(function (item) { return read.indexOf(item.id) < 0; });
+  }
+  function markNotificationRead(session, id) {
+    var read = notificationReadIds(session);
+    if (read.indexOf(id) < 0) { read.push(id); saveNotificationReadIds(session, read); }
+  }
+  function updateNotificationBell() {
+    var session = window.pbsGetSession();
+    var unread = unreadNotificationItems(session).length;
+    document.querySelectorAll('[data-dom-id="btn-notification"]').forEach(function (button) {
+      var badge = button.querySelector('[data-pbs-notification-badge]') || button.querySelector('span.absolute.bg-red-500');
+      if (!badge) { badge = document.createElement('span'); button.appendChild(badge); }
+      badge.setAttribute('data-pbs-notification-badge', '');
+      badge.className = 'pbs-notification-badge' + (unread ? '' : ' is-empty');
+      badge.hidden = !unread;
+      badge.style.display = unread ? 'inline-flex' : 'none';
+      badge.textContent = unread ? (unread > 99 ? '99+' : String(unread)) : '';
+      button.setAttribute('aria-label', unread ? '消息提醒，' + unread + ' 条未读' : '消息提醒，无未读消息');
+      if (!button.hasAttribute('data-pbs-notification-bound')) {
+        button.setAttribute('data-pbs-notification-bound', '');
+        button.addEventListener('click', function (event) {
+          event.preventDefault();
+          event.stopImmediatePropagation();
+          window.pbsOpenNotifications(button);
+        });
+      }
+    });
+  }
+  window.pbsCreateNotification = function (item) {
+    if (!item || item.result === '失败' || item.successful === false) return null;
+    var custom = notificationCustomItems();
+    var created = Object.assign({
+      id: 'notification-' + Date.now(),
+      triggeredAt: new Date().toISOString(),
+      time: '刚刚',
+      level: 'primary',
+      result: '成功'
+    }, item);
+    custom.unshift(created);
+    localStorage.setItem(NOTIFICATION_STORE_KEY, JSON.stringify(custom.slice(0, 200)));
+    updateNotificationBell();
+    if (document.getElementById('pbsNotificationCenter') && document.getElementById('pbsNotificationCenter').classList.contains('is-open')) window.pbsOpenNotifications(lastNotificationTrigger);
+    return created.id;
+  };
+  window.pbsRefreshNotifications = updateNotificationBell;
   function ensureNotificationCenter() {
     var layer = document.getElementById('pbsNotificationCenter');
     if (layer) return layer;
@@ -859,7 +941,21 @@
       '<footer class="pbs-notification-footer"><span id="pbsNotificationCount"></span><div><button type="button" class="pbs-notification-confirm" data-pbs-notification-close>关闭</button></div></footer>' +
       '</section>';
     layer.addEventListener('click', function (e) {
-      if (e.target.closest('[data-pbs-notification-close]')) window.pbsCloseNotifications();
+      if (e.target.closest('[data-pbs-notification-close]')) { window.pbsCloseNotifications(); return; }
+      var card = e.target.closest('[data-pbs-notification-id]');
+      if (!card) return;
+      var session = window.pbsGetSession();
+      var id = card.getAttribute('data-pbs-notification-id');
+      var item = notificationItemsFor(session).filter(function (notification) { return notification.id === id; })[0];
+      markNotificationRead(session, id);
+      updateNotificationBell();
+      if (item && item.href) location.href = item.href;
+      else window.pbsOpenNotifications(lastNotificationTrigger);
+    });
+    layer.addEventListener('keydown', function (e) {
+      if (e.key !== 'Enter' && e.key !== ' ') return;
+      var card = e.target.closest('[data-pbs-notification-id]');
+      if (card) { e.preventDefault(); card.click(); }
     });
     document.body.appendChild(layer);
     return layer;
@@ -871,12 +967,17 @@
     var role = layer.querySelector('#pbsNotificationRole');
     var list = layer.querySelector('#pbsNotificationList');
     var count = layer.querySelector('#pbsNotificationCount');
+    var read = notificationReadIds(session);
+    var unread = items.filter(function (item) { return read.indexOf(item.id) < 0; }).length;
     lastNotificationTrigger = trigger || document.activeElement;
     role.textContent = session.previewLabel || session.role;
-    list.innerHTML = items.map(function (item) {
-      return '<article class="pbs-notification-item is-' + item.level + '"><span class="pbs-notification-dot"></span><div><div class="pbs-notification-meta"><span>' + item.type + '</span><time>' + item.time + '</time></div><h3>' + item.title + '</h3><p>' + item.detail + '</p></div></article>';
-    }).join('');
-    count.textContent = items.length + ' 条消息';
+    list.innerHTML = items.length ? items.map(function (item) {
+      var isUnread = read.indexOf(item.id) < 0;
+      var reminder = item.kind === 'task_urge'
+        ? '<div class="pbs-notification-reminder"><span>催办人：' + notificationEscape(item.reminderBy || '—') + '</span><span>催办说明：' + notificationEscape(item.reminderNote || '—') + '</span></div>' : '';
+      return '<article tabindex="0" class="pbs-notification-item is-' + notificationEscape(item.level || 'primary') + (isUnread ? ' is-unread' : '') + '" data-pbs-notification-id="' + notificationEscape(item.id) + '"><span class="pbs-notification-dot"></span><div><div class="pbs-notification-meta"><span>' + notificationEscape(item.type) + '</span><div><em>' + (isUnread ? '未读' : '已读') + '</em><time>' + notificationEscape(item.time) + '</time></div></div><h3>' + notificationEscape(item.title) + '</h3><p class="pbs-notification-business">' + notificationEscape(item.business || '') + '</p><p>' + notificationEscape(item.detail) + '</p>' + reminder + '<button type="button" class="pbs-notification-action">立即处理</button></div></article>';
+    }).join('') : '<div class="pbs-notification-empty"><span>✓</span><h3>暂无通知消息</h3><p>当前角色暂无需要处理的新项目、任务派发或催办消息。</p></div>';
+    count.textContent = items.length + ' 条消息 · ' + unread + ' 条未读';
     layer.classList.add('is-open');
     layer.setAttribute('aria-hidden', 'false');
     document.body.style.overflow = 'hidden';
@@ -901,6 +1002,11 @@
   document.addEventListener('keydown', function (e) {
     if (e.key === 'Escape' && document.getElementById('pbsNotificationCenter')) window.pbsCloseNotifications();
   });
+  window.addEventListener('storage', function (e) {
+    if (e.key === NOTIFICATION_STORE_KEY || e.key === NOTIFICATION_READ_KEY || e.key === PREVIEW_ROLE_KEY) updateNotificationBell();
+  });
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', updateNotificationBell);
+  else setTimeout(updateNotificationBell, 0);
 
   /* ---------------- 弹层（iframe方式加载组件页） ---------------- */
   var overlayEl = null;
@@ -1003,11 +1109,11 @@
   /* ---------------- 角色工作台（多角色视角 × 工作台可见权限） ---------------- */
   /* 工作台宿主页：always=独立工作台页；param=列表页以 ?view=workbench 承载工作台视角 */
   var WORKBENCH_HOSTS = {
-    '管理员工作台 - 留学申请管理系统.html': { always: true, keys: ['wsadmin', 'pm', 'writer', 'sales', 'apply', 'audit'] },
-    '平台运维工作台 - PBS留学CRM系统.html': { always: true, static: true, permission: 'workbench_platform' },
-    '机构管理员工作台 - 留学申请管理系统.html': { always: true, static: true, permission: 'workbench_org_admin' },
+    '管理员工作台 - 留学申请管理系统.html': { always: true, keys: ['pm', 'writer', 'sales', 'apply', 'audit', 'platform', 'orgadmin'] },
+    '平台运维工作台 - PBS留学CRM系统.html': { always: true, keys: ['platform'], permission: 'workbench_platform' },
+    '机构管理员工作台 - 留学申请管理系统.html': { always: true, keys: ['orgadmin'], permission: 'workbench_org_admin' },
     '项目经理工作台 - 留学申请管理系统.html': { always: true, keys: ['pm'] },
-    '任务列表页 - 文书交付系统.html': { param: true, keys: ['wsadmin', 'writer'] },
+    '任务列表页 - 文书交付系统.html': { param: true, keys: ['writer', 'docadmin'] },
     '选校任务列表页 - 留学申请管理系统.html': { param: true, keys: ['sales'] },
     '网申任务列表页 - 留学申请管理系统.html': { param: true, keys: ['apply'] },
     '文书审核列表页 - 留学申请管理系统.html': { param: true, keys: ['audit'] }
@@ -1110,8 +1216,8 @@
     el.style.cssText = 'position:fixed;inset:0;z-index:9999;display:flex;align-items:center;justify-content:center;background:rgba(17,24,39,.45);';
     el.innerHTML =
       '<div style="background:#fff;border-radius:16px;box-shadow:0 20px 50px rgba(0,0,0,.25);padding:36px 44px;text-align:center;max-width:380px;">' +
-      '<div style="width:56px;height:56px;margin:0 auto 16px;background:#FEE2E2;border-radius:50%;display:flex;align-items:center;justify-content:center;">' +
-      '<svg style="width:28px;height:28px;color:#EF4444;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg></div>' +
+      '<div style="width:56px;height:56px;margin:0 auto 16px;background:#F3DDD9;border-radius:50%;display:flex;align-items:center;justify-content:center;">' +
+      '<svg style="width:28px;height:28px;color:#B36B64;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg></div>' +
       '<h3 style="font-size:17px;font-weight:600;color:#1F2937;margin:0 0 8px;">无权访问该页面</h3>' +
       '<p style="font-size:14px;color:#6B7280;margin:0 0 6px;">当前角色【' + role + '】没有该模块的访问权限</p>' +
       '<p style="font-size:13px;color:#9CA3AF;margin:0;">正在返回您的工作台…</p></div>';

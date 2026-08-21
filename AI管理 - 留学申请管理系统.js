@@ -23,18 +23,18 @@
     openai_compatible: { name: 'OpenAI 兼容服务', short: 'OA', color: '#475569' }
   };
 
-  var DEFAULT_MODEL_PARAMS = { temperature: 0.2, topP: 0.9, maxTokens: 8192, timeout: 60, retry: 1, concurrency: 20, stream: true };
+  var DEFAULT_MODEL_PARAMS = { temperature: 0.2, timeout: 60, retry: 1, stream: true };
 
-  function defaultModel(id, name, providerType, modelId, maxTokens) {
-    return { id: id, name: name, providerType: providerType, modelId: modelId, hasKey: false, keyLast4: '', context: 131072, params: Object.assign({}, DEFAULT_MODEL_PARAMS, { maxTokens: maxTokens }) };
+  function defaultModel(id, name, providerType, modelId) {
+    return { id: id, name: name, providerType: providerType, modelId: modelId, hasKey: false, keyLast4: '', context: 131072, params: Object.assign({}, DEFAULT_MODEL_PARAMS) };
   }
 
   var DEFAULT_MODELS = [
-    defaultModel('m-qwen', 'Qwen 主模型', 'qwen', 'qwen-plus', 8192),
-    defaultModel('m-deepseek', 'DeepSeek 次模型', 'deepseek', 'deepseek-v4-flash', 65536),
-    defaultModel('m-kimi', 'Kimi 长文本模型', 'kimi', 'kimi-k2.6', 32768),
-    defaultModel('m-seed', 'Seed 通用模型', 'seed', 'doubao-seed-2-0-lite-260215', 32768),
-    defaultModel('m-glm', 'GLM 通用模型', 'glm', 'glm-5.2', 32768)
+    defaultModel('m-qwen', 'Qwen 主模型', 'qwen', 'qwen-plus'),
+    defaultModel('m-deepseek', 'DeepSeek 次模型', 'deepseek', 'deepseek-v4-flash'),
+    defaultModel('m-kimi', 'Kimi 长文本模型', 'kimi', 'kimi-k2.6'),
+    defaultModel('m-seed', 'Seed 通用模型', 'seed', 'doubao-seed-2-0-lite-260215'),
+    defaultModel('m-glm', 'GLM 通用模型', 'glm', 'glm-5.2')
   ];
 
   var BASE_PROMPTS = [
@@ -120,7 +120,13 @@
       model.hasKey = model.hasKey !== undefined ? !!model.hasKey : !!(legacyProvider && legacyProvider.hasKey);
       model.keyLast4 = model.keyLast4 || (legacyProvider && legacyProvider.keyLast4) || '';
       model.context = 131072;
-      model.params = Object.assign({}, DEFAULT_MODEL_PARAMS, saved && saved.paramsGlobal ? saved.paramsGlobal : {}, model.params || {}, { maxTokens: Number((model.params && model.params.maxTokens) || model.maxOutput || (saved && saved.paramsGlobal && saved.paramsGlobal.maxTokens) || DEFAULT_MODEL_PARAMS.maxTokens), stream: true });
+      var savedParams = Object.assign({}, saved && saved.paramsGlobal ? saved.paramsGlobal : {}, model.params || {});
+      model.params = {
+        temperature: Number(savedParams.temperature == null ? DEFAULT_MODEL_PARAMS.temperature : savedParams.temperature),
+        timeout: Number(savedParams.timeout == null ? DEFAULT_MODEL_PARAMS.timeout : savedParams.timeout),
+        retry: Number(savedParams.retry == null ? DEFAULT_MODEL_PARAMS.retry : savedParams.retry),
+        stream: true
+      };
       delete model.params.thinking;
       delete model.providerId;
       delete model.maxOutput;
@@ -150,9 +156,30 @@
   function sessionInfo() {
     try {
       var session = JSON.parse(localStorage.getItem('pbs_session_v1') || 'null');
-      if (session) return { user: session.name || session.account || '演示管理员', org: session.org || 'PBS留学总部' };
+      if (session) return { user: session.name || session.account || '演示管理员', org: session.org || 'PBS留学总部', role: session.role || '' };
     } catch (e) { /* 使用演示身份 */ }
-    return { user: '演示管理员', org: 'PBS留学总部' };
+    return { user: '演示管理员', org: 'PBS留学总部', role: '' };
+  }
+
+  function currentRole() {
+    var preview = '';
+    try { preview = localStorage.getItem('pbs_role_preview_v51') || ''; } catch (e) {}
+    if (preview && preview !== 'all') return preview;
+    return sessionInfo().role || '演示管理员';
+  }
+
+  function visiblePrompts() {
+    var role = currentRole();
+    if (role === '文书机构管理员') {
+      return BASE_PROMPTS.filter(function (p) { return p.module === '文书交付' || p.module === '文书审核'; });
+    }
+    return BASE_PROMPTS.slice();
+  }
+
+  function currentBasePrompt() {
+    var list = visiblePrompts();
+    if (activePrompt >= list.length) activePrompt = 0;
+    return list[activePrompt];
   }
 
   function logAiAction(action, detail) {
@@ -245,10 +272,13 @@
 
   function updateSummary() {
     var routeCount = [aiState.globalRoute.primary, aiState.globalRoute.backup].filter(Boolean).length;
-    byId('modelTotalCount').textContent = String(aiState.models.length);
-    byId('routeModelCount').textContent = String(routeCount);
-    byId('routeModelSummary').textContent = routeCount === 2 ? '主模型与次模型已选择' : '请选择主模型与次模型';
-    byId('routeModelSummary').className = 'metric-sub ' + (routeCount === 2 ? 'good' : 'warn');
+    var modelTotal = byId('modelTotalCount'), routeTotal = byId('routeModelCount'), routeSummary = byId('routeModelSummary');
+    if (modelTotal) modelTotal.textContent = String(aiState.models.length);
+    if (routeTotal) routeTotal.textContent = String(routeCount);
+    if (routeSummary) {
+      routeSummary.textContent = routeCount === 2 ? '主模型与次模型已选择' : '请选择主模型与次模型';
+      routeSummary.className = 'metric-sub ' + (routeCount === 2 ? 'good' : 'warn');
+    }
   }
 
   function modelRouteRole(modelId) {
@@ -264,7 +294,7 @@
       var params = Object.assign({}, DEFAULT_MODEL_PARAMS, model.params || {});
       return '<tr><td><b>' + escapeHtml(model.name) + '</b><div class="subtle">' + escapeHtml(model.modelId) + '</div></td>' +
         '<td><div class="provider"><div class="provider-logo" style="background:' + preset.color + '">' + escapeHtml(preset.short) + '</div><b>' + escapeHtml(preset.name) + '</b></div></td>' +
-        '<td><div class="model-param-summary">Temperature ' + params.temperature + ' · Top P ' + params.topP + '<br>最大输出 ' + Number(params.maxTokens).toLocaleString() + ' · 超时 ' + params.timeout + ' 秒</div></td>' +
+        '<td><div class="model-param-summary">Temperature ' + params.temperature + '<br>超时 ' + params.timeout + ' 秒 · 重试 ' + params.retry + ' 次</div></td>' +
         '<td>' + escapeHtml(modelRouteRole(model.id)) + '</td>' +
         '<td><button class="btn ghost sm" onclick="openModelEditor(\'' + model.id + '\')">编辑</button></td></tr>';
     }).join('');
@@ -283,11 +313,8 @@
     byId('modelApiKey').placeholder = model && model.hasKey ? '留空保留已保存密钥（末四位 ' + model.keyLast4 + '）' : '请输入 API Key';
     var params = Object.assign({}, DEFAULT_MODEL_PARAMS, model ? model.params : {});
     byId('modelTemperature').value = params.temperature;
-    byId('modelTopP').value = params.topP;
-    byId('modelMaxOutput').value = params.maxTokens;
     byId('modelTimeout').value = params.timeout;
     byId('modelRetry').value = params.retry;
-    byId('modelConcurrency').value = params.concurrency;
     byId('modelFormError').textContent = '';
     openModal('modelModal');
   };
@@ -305,11 +332,8 @@
       rawKey: byId('modelApiKey').value.trim(),
       params: {
         temperature: Number(byId('modelTemperature').value),
-        topP: Number(byId('modelTopP').value),
-        maxTokens: Number(byId('modelMaxOutput').value),
         timeout: Number(byId('modelTimeout').value),
         retry: Number(byId('modelRetry').value),
-        concurrency: Number(byId('modelConcurrency').value),
         stream: true
       }
     };
@@ -319,8 +343,7 @@
     if (!values.name) return '请填写模型名称';
     if (!values.modelId) return '请填写 Model ID';
     if (values.params.temperature < 0 || values.params.temperature > 2) return 'Temperature 需要在 0 到 2 之间';
-    if (values.params.topP < 0 || values.params.topP > 1) return 'Top P 需要在 0 到 1 之间';
-    if (values.params.maxTokens <= 0 || values.params.timeout <= 0 || values.params.retry < 0 || values.params.retry > 3 || values.params.concurrency <= 0) return '请检查模型参数';
+    if (values.params.timeout <= 0 || values.params.retry < 0 || values.params.retry > 3) return '请检查模型参数';
     return '';
   }
 
@@ -339,7 +362,7 @@
     model.params = values.params;
     delete model.capabilities;
     delete model.thinking;
-    commitAutoSave('修改模型', model.name + ' / ' + model.modelId + '，Temperature ' + model.params.temperature + '，Top P ' + model.params.topP + '，最大输出 ' + model.params.maxTokens + ' Token', 'model-' + model.id, true);
+    commitAutoSave('修改模型', model.name + ' / ' + model.modelId + '，Temperature ' + model.params.temperature + '，超时 ' + model.params.timeout + ' 秒，重试 ' + model.params.retry + ' 次', 'model-' + model.id, true);
     closeModal('modelModal');
     renderModels();
     populateModelSelectors();
@@ -459,20 +482,22 @@
   }
 
   function currentPrompt() {
-    var base = BASE_PROMPTS[activePrompt];
+    var base = currentBasePrompt();
     if (base.id !== 'case') return basePromptWithOverride(base);
     return selectedCasePrompt();
   }
 
   function currentPromptStatusKey() {
-    var base = BASE_PROMPTS[activePrompt];
+    var base = currentBasePrompt();
     return base.id === 'case' ? 'case:' + aiState.selectedCaseTemplate : base.id;
   }
 
   function promptStatus(key) { return aiState.promptStatus[key] || '已发布'; }
 
   function renderPromptList() {
-    byId('promptList').innerHTML = BASE_PROMPTS.map(function (base, index) {
+    var list = visiblePrompts();
+    if (activePrompt >= list.length) activePrompt = 0;
+    byId('promptList').innerHTML = list.map(function (base, index) {
       var key = base.id === 'case' ? 'case:' + aiState.selectedCaseTemplate : base.id;
       var version = base.id === 'case' ? selectedCasePrompt().version : basePromptWithOverride(base).version;
       return '<div class="prompt-item ' + (index === activePrompt ? 'active' : '') + '" onclick="selectPrompt(' + index + ')"><div class="prompt-name">' + (index + 1) + '. ' + escapeHtml(base.title) + '</div><div class="prompt-meta"><span>' + escapeHtml(base.module) + ' · ' + escapeHtml(promptStatus(key)) + '</span><span>' + escapeHtml(version) + '</span></div></div>';
@@ -486,7 +511,7 @@
   }
 
   function renderCaseTemplatePanel() {
-    var isCase = BASE_PROMPTS[activePrompt].id === 'case';
+    var isCase = currentBasePrompt().id === 'case';
     byId('caseTemplatePanel').classList.toggle('hidden', !isCase);
     if (!isCase) return;
     var template = selectedCaseTemplate();
@@ -529,7 +554,7 @@
       threshold: byId('promptThreshold').value,
       version: prompt.version
     };
-    if (BASE_PROMPTS[activePrompt].id === 'case') aiState.caseTemplateOverrides[aiState.selectedCaseTemplate] = saved;
+    if (currentBasePrompt().id === 'case') aiState.caseTemplateOverrides[aiState.selectedCaseTemplate] = saved;
     else aiState.promptOverrides[prompt.id] = saved;
     if (autoSave) {
       aiState.promptStatus[currentPromptStatusKey()] = '草稿';
@@ -561,7 +586,7 @@
     while (parts.length < 3) parts.push('0');
     parts[2] = String(Number(parts[2]) + 1);
     var version = 'v' + parts.join('.');
-    if (BASE_PROMPTS[activePrompt].id === 'case') aiState.caseTemplateOverrides[aiState.selectedCaseTemplate].version = version;
+    if (currentBasePrompt().id === 'case') aiState.caseTemplateOverrides[aiState.selectedCaseTemplate].version = version;
     else aiState.promptOverrides[prompt.id].version = version;
     aiState.promptStatus[currentPromptStatusKey()] = '草稿';
     commitAutoSave('复制提示词版本', prompt.title + ' → ' + version, 'prompt-clone-' + currentPromptStatusKey(), true);
@@ -633,9 +658,12 @@
     byId('passedCount').textContent = passed + ' / ' + items.length;
     byId('reviewPendingCount').textContent = String(pending);
     byId('lastEvalTime').textContent = latest.updated || '尚未运行';
-    byId('latestEvalValue').textContent = passed + ' / ' + items.length;
-    byId('latestEvalSummary').textContent = pending ? pending + ' 个场景待复核' : '全部场景已通过';
-    byId('latestEvalSummary').className = 'metric-sub ' + (pending ? 'warn' : 'good');
+    var latestValue = byId('latestEvalValue'), latestSummary = byId('latestEvalSummary');
+    if (latestValue) latestValue.textContent = passed + ' / ' + items.length;
+    if (latestSummary) {
+      latestSummary.textContent = pending ? pending + ' 个场景待复核' : '全部场景已通过';
+      latestSummary.className = 'metric-sub ' + (pending ? 'warn' : 'good');
+    }
   }
 
   function evalStatusText(item) {
@@ -741,7 +769,7 @@
       pendingPublishPromptKey = '';
       pendingPublishPromptTitle = '';
       renderPromptList();
-      if (BASE_PROMPTS[activePrompt].id === baseItem.id) renderPromptStatus();
+      if (currentBasePrompt().id === baseItem.id) renderPromptStatus();
     }
     renderEval();
     setTimeout(function () { byId('evalTaskPanel').classList.add('hidden'); }, 900);

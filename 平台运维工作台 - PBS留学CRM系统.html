@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
   <meta charset="UTF-8">
@@ -10,7 +10,7 @@
     body { font-family: "Microsoft YaHei", "PingFang SC", sans-serif; }
     #pbs-sidebar { min-height: calc(100vh - 56px); }
     .kpi-card { transition: all .15s ease; }
-    .kpi-card:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(37,99,235,.10); border-color: #BFDBFE; }
+    .kpi-card:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(37,99,235,.10); border-color: #CDDAE4; }
     .bar-track { background: #F3F4F6; border-radius: 999px; height: 8px; overflow: hidden; }
     .bar-fill { height: 100%; border-radius: 999px; }
   </style>
@@ -19,7 +19,7 @@
   <header class="h-14 bg-white border-b border-gray-200 sticky top-0 z-40">
     <div class="h-full px-6 flex items-center justify-between">
       <div class="flex items-center gap-3">
-        <div class="w-8 h-8 rounded-lg bg-blue-600 text-white flex items-center justify-center font-semibold">P</div>
+        <div class="w-8 h-8 rounded-lg overflow-hidden bg-white flex items-center justify-center flex-shrink-0"><img src="./PRD参考文件/导航栏图标参考.jpg" alt="PBS" class="w-full h-full object-contain"></div>
         <div><p class="text-sm font-semibold text-gray-900">PBS 留学申请管理平台</p><p class="text-xs text-gray-400">平台运维工作台</p></div>
       </div>
       <div class="flex items-center gap-4">
@@ -56,7 +56,7 @@
 
       <!-- 第一层：平台概览 KPI -->
       <div class="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-6 gap-4 mb-6">
-        <div class="kpi-card bg-white rounded-xl border border-gray-100 shadow-sm p-5 cursor-pointer border-l-4" style="border-left-color:#3B82F6" onclick="location.href='机构管理 - PBS留学CRM系统.html'" title="机构主体总数（去重）">
+        <div class="kpi-card bg-white rounded-xl border border-gray-100 shadow-sm p-5 cursor-pointer border-l-4" style="border-left-color:#7D94A6" onclick="location.href='机构管理 - PBS留学CRM系统.html'" title="机构主体总数（去重）">
           <p class="text-sm text-gray-500">机构总数</p>
           <p id="kpiOrgTotal" class="text-3xl font-semibold text-gray-900 mt-2">-</p>
           <p class="text-xs text-green-600 mt-2">近6个月新增 +2</p>
@@ -66,22 +66,22 @@
           <p id="kpiMemberTotal" class="text-3xl font-semibold text-gray-900 mt-2">-</p>
           <p id="kpiStaffedHint" class="text-xs text-gray-400 mt-2">已有成员机构 -</p>
         </div>
-        <div class="kpi-card bg-white rounded-xl border border-gray-100 shadow-sm p-5 cursor-pointer border-l-4" style="border-left-color:#10B981" onclick="location.href='模板库列表 - 文书交付系统.html'" title="文书模板库模板总数（全机构合计）">
+        <div class="kpi-card bg-white rounded-xl border border-gray-100 shadow-sm p-5 cursor-pointer border-l-4" style="border-left-color:#6D9A7E" onclick="location.href='模板库列表 - 文书交付系统.html'" title="文书模板库模板总数（全机构合计）">
           <p class="text-sm text-gray-500">文书模板库</p>
           <p id="kpiDocTemplate" class="text-3xl font-semibold text-gray-900 mt-2">-</p>
           <p class="text-xs text-gray-400 mt-2">覆盖 3 家机构 · 本月新增 +1</p>
         </div>
-        <div class="kpi-card bg-white rounded-xl border border-gray-100 shadow-sm p-5 cursor-pointer border-l-4" style="border-left-color:#F59E0B" onclick="location.href='案例库 - 文书交付系统.html'" title="案例库案例总数（全机构合计）">
+        <div class="kpi-card bg-white rounded-xl border border-gray-100 shadow-sm p-5 cursor-pointer border-l-4" style="border-left-color:#C9A87C" onclick="location.href='案例库 - 文书交付系统.html'" title="案例库案例总数（全机构合计）">
           <p class="text-sm text-gray-500">文书案例库</p>
           <p id="kpiCaseTotal" class="text-3xl font-semibold text-gray-900 mt-2">-</p>
           <p class="text-xs text-gray-400 mt-2">已解析 92 · 覆盖率 71.9%</p>
         </div>
-        <div class="kpi-card bg-white rounded-xl border border-gray-100 shadow-sm p-5 cursor-pointer border-l-4" style="border-left-color:#8B5CF6" onclick="location.href='案例库 - 文书交付系统.html'" title="案例库中「录取院校」字段去重计数">
+        <div class="kpi-card bg-white rounded-xl border border-gray-100 shadow-sm p-5 cursor-pointer border-l-4" style="border-left-color:#7D869A" onclick="location.href='案例库 - 文书交付系统.html'" title="案例库中「录取院校」字段去重计数">
           <p class="text-sm text-gray-500">案例覆盖院校</p>
           <p class="text-3xl font-semibold text-gray-900 mt-2">46<span class="text-base font-normal text-gray-400 ml-1">所</span></p>
           <p class="text-xs text-gray-400 mt-2">美国 24 · 英国 9 · 港新 10</p>
         </div>
-        <div class="kpi-card bg-white rounded-xl border border-gray-100 shadow-sm p-5 cursor-pointer border-l-4" style="border-left-color:#EC4899" onclick="location.href='网申模板库 - 留学申请管理系统.html'" title="网申模板总数及覆盖院校数（院校去重）">
+        <div class="kpi-card bg-white rounded-xl border border-gray-100 shadow-sm p-5 cursor-pointer border-l-4" style="border-left-color:#A67A87" onclick="location.href='网申模板库 - 留学申请管理系统.html'" title="网申模板总数及覆盖院校数（院校去重）">
           <p class="text-sm text-gray-500">网申模板库</p>
           <p id="kpiApplyTemplate" class="text-3xl font-semibold text-gray-900 mt-2">-<span class="text-base font-normal text-gray-400 ml-1">个</span></p>
           <p class="text-xs text-amber-600 mt-2">覆盖院校 5 所 · 3 项待复核</p>
@@ -332,6 +332,7 @@
     }
     document.addEventListener('DOMContentLoaded', renderOpsOrgs);
   </script>
+  <script src="./assets/js/pbs-workbench.js"></script>
   <script src="./assets/js/pbs-app.js"></script>
 </body>
 </html>

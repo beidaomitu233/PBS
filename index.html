@@ -20,21 +20,22 @@
   }
   .logo {
     width: 34px; height: 34px; border-radius: 9px; flex-shrink: 0;
-    background: linear-gradient(135deg, #2563EB, #60A5FA);
-    color: #fff; font-weight: 700; font-size: 15px;
+    background: #fff; border: 1px solid #E5E7EB;
     display: flex; align-items: center; justify-content: center;
+    overflow: hidden;
   }
+  .logo img { width: 100%; height: 100%; object-fit: contain; }
   .header-title { font-size: 16px; font-weight: 600; }
   .header-sub { font-size: 12px; color: #9CA3AF; margin-left: 4px; }
   .badge-ver {
-    margin-left: auto; font-size: 12px; color: #2563EB;
-    background: #EFF6FF; border: 1px solid #BFDBFE;
+    margin-left: auto; font-size: 12px; color: #6B829A;
+    background: #E8EDF1; border: 1px solid #CDDAE4;
     padding: 4px 10px; border-radius: 999px;
   }
   .wrap { max-width: 1200px; margin: 0 auto; padding: 28px 24px 60px; }
 
   .entry {
-    background: linear-gradient(135deg, #2563EB, #3B82F6 60%, #60A5FA);
+    background: linear-gradient(135deg, #6B829A, #7D94A6 60%, #9AB0BF);
     border-radius: 16px; padding: 28px 32px; color: #fff;
     display: flex; align-items: center; justify-content: space-between;
     gap: 24px; flex-wrap: wrap; margin-bottom: 32px;
@@ -43,7 +44,7 @@
   .entry h1 { font-size: 20px; font-weight: 700; margin-bottom: 8px; }
   .entry p { font-size: 13px; opacity: .92; line-height: 1.7; }
   .entry-btn {
-    background: #fff; color: #1D4ED8; text-decoration: none;
+    background: #fff; color: #556B7D; text-decoration: none;
     font-size: 14px; font-weight: 600; padding: 12px 26px;
     border-radius: 10px; white-space: nowrap;
     box-shadow: 0 4px 12px rgba(0,0,0,.12); transition: transform .15s ease;
@@ -51,7 +52,7 @@
   .entry-btn:hover { transform: translateY(-1px); }
 
   .notice {
-    background: #FFFBEB; border: 1px solid #FDE68A; color: #92400E;
+    background: #F5EBDA; border: 1px solid #EDE0C5; color: #8C6F4E;
     font-size: 12.5px; line-height: 1.8; border-radius: 12px;
     padding: 12px 16px; margin-bottom: 32px;
   }
@@ -61,10 +62,10 @@
     display: flex; align-items: center; gap: 10px; margin-bottom: 14px;
   }
   .section-icon {
-    width: 28px; height: 28px; border-radius: 8px; background: #EFF6FF;
+    width: 28px; height: 28px; border-radius: 8px; background: #E8EDF1;
     display: flex; align-items: center; justify-content: center; flex-shrink: 0;
   }
-  .section-icon svg { width: 15px; height: 15px; stroke: #2563EB; }
+  .section-icon svg { width: 15px; height: 15px; stroke: #6B829A; }
   .section-title { font-size: 15px; font-weight: 600; color: #374151; }
   .section-count { font-size: 12px; color: #9CA3AF; }
 
@@ -78,7 +79,7 @@
     display: block; transition: all .15s ease; position: relative;
   }
   .card:hover {
-    border-color: #93C5FD; box-shadow: 0 6px 16px rgba(37,99,235,.10);
+    border-color: #B4C5D2; box-shadow: 0 6px 16px rgba(107,130,154,.10);
     transform: translateY(-2px);
   }
   .card-name { font-size: 14px; font-weight: 600; color: #1F2937; display: flex; align-items: center; gap: 8px; }
@@ -87,10 +88,10 @@
     font-size: 10px; padding: 1.5px 7px; border-radius: 999px; flex-shrink: 0;
     font-weight: 500;
   }
-  .tag-list { background: #EFF6FF; color: #2563EB; }
-  .tag-detail { background: #ECFDF5; color: #059669; }
-  .tag-editor { background: #F5F3FF; color: #7C3AED; }
-  .tag-entry { background: #FEF3C7; color: #B45309; }
+  .tag-list { background: #E8EDF1; color: #6B829A; }
+  .tag-detail { background: #EAF2ED; color: #4F7A62; }
+  .tag-editor { background: #F2F5F7; color: #7D869A; }
+  .tag-entry { background: #F5EBDA; color: #8C6F4E; }
   .card::after {
     content: "›"; position: absolute; right: 16px; top: 14px;
     color: #D1D5DB; font-size: 18px; font-weight: 600;
@@ -104,7 +105,7 @@
 
 <header>
   <div class="header-inner">
-    <div class="logo">P</div>
+    <div class="logo"><img src="./PRD参考文件/导航栏图标参考.jpg" alt="PBS"></div>
     <span class="header-title">留学申请管理系统</span>
     <span class="header-sub">原型图导航</span>
     <span class="badge-ver">原型图 5.1 · 共 43 页</span>

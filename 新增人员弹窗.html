@@ -31,10 +31,26 @@
     </form>
   </div>
   <script>
-    var roles = ['机构管理员', '销售人员管理员', '销售人员', '项目经理', '文书人员', '网申人员', '文书审核'];
-    document.getElementById('roleOptions').innerHTML = roles.map(function (role) { return '<label class="flex items-center gap-2 px-3 py-2 border border-gray-200 rounded-lg text-sm text-gray-700 cursor-pointer hover:border-blue-400"><input type="checkbox" value="' + role + '" class="accent-blue-600">' + role + '</label>'; }).join('');
+    var ALL_ASSIGNABLE_ROLES = ['机构管理员', '销售人员', '项目经理', '文书人员', '网申人员', '文书审核', '文书机构管理员'];
+    function getAssignableRoles(currentRole) {
+      try {
+        var saved = JSON.parse(localStorage.getItem('pbs_role_assignment_perms_v1') || '{}');
+        if (saved[currentRole] && Array.isArray(saved[currentRole])) return saved[currentRole];
+      } catch (e) {}
+      // 默认配置：与需求描述一致
+      var defaults = {
+        '平台运维人员': ALL_ASSIGNABLE_ROLES.slice(),
+        '机构管理员': ['销售人员', '项目经理', '文书人员', '网申人员', '文书审核', '文书机构管理员'],
+        '文书机构管理员': ['文书人员'],
+        '项目经理': ['文书人员', '网申人员', '文书审核']
+      };
+      return defaults[currentRole] || ALL_ASSIGNABLE_ROLES.slice();
+    }
     try {
       var session = parent.pbsGetSession ? parent.pbsGetSession() : null;
+      var currentRole = (session && session.role) || '机构管理员';
+      var roles = getAssignableRoles(currentRole);
+      document.getElementById('roleOptions').innerHTML = roles.map(function (role) { return '<label class="flex items-center gap-2 px-3 py-2 border border-gray-200 rounded-lg text-sm text-gray-700 cursor-pointer hover:border-blue-400"><input type="checkbox" value="' + role + '" class="accent-blue-600">' + role + '</label>'; }).join('');
       var currentOrganization = parent.pbsCurrentPersonnelOrganization || (session && session.org) || '';
       if (currentOrganization) {
         var orgSelect = document.getElementById('personOrg');

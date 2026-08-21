@@ -523,8 +523,48 @@
         });
       }
     }
+    /* 静态演示行与共享存储联动：分配/接收后状态、项目经理、操作按钮实时刷新 */
+    var POOL_STATUS_STYLES = {
+      '待分配': 'bg-amber-100 text-amber-700',
+      '待接收': 'bg-blue-100 text-blue-800',
+      '进行中': 'bg-green-100 text-green-800',
+      '暂停': 'bg-orange-100 text-orange-700',
+      '已退回': 'bg-red-100 text-red-700',
+      '已结项': 'bg-gray-100 text-gray-500'
+    };
+    function syncStaticRowsFromStore() {
+      if (!window.pbsProjects) return;
+      document.querySelectorAll('#poolTbody tr[data-project]').forEach(function(row) {
+        var project = window.pbsProjects.find(row.getAttribute('data-project'));
+        if (!project) return;
+        var status = project.status || window.pbsProjects.statusOf(project);
+        row.setAttribute('data-status', status);
+        row.setAttribute('data-pm', project.projectManager || '—');
+        row.setAttribute('data-kw', [project.projectNo, project.customer, project.student, project.level, status].join(''));
+        var cells = row.querySelectorAll('td');
+        if (cells[5]) {
+          var style = POOL_STATUS_STYLES[status] || POOL_STATUS_STYLES['待分配'];
+          cells[5].innerHTML = '<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ' + style + '">' + status + '</span>';
+        }
+        if (cells[6]) {
+          cells[6].textContent = project.projectManager || '—';
+          cells[6].className = 'px-5 py-4 text-sm ' + (project.projectManager ? 'text-gray-900' : 'text-gray-400');
+        }
+        if (cells[8]) {
+          var actions = '';
+          if (status === '待分配') {
+            actions = '<div class="flex items-center gap-3"><button class="text-blue-600 hover:text-blue-800 text-sm font-medium" data-dom-id="' + (row.getAttribute('data-dom-id') || '') + '">查看详情</button><button class="text-blue-600 hover:text-blue-800 text-sm font-medium" onclick="event.stopPropagation(); openPoolProjectDetail(&#39;' + project.projectNo + '&#39;)">分配</button></div>';
+          } else {
+            actions = '<div class="flex items-center gap-3"><button class="text-blue-600 hover:text-blue-800 text-sm font-medium" onclick="event.stopPropagation(); openPoolProjectDetail(&#39;' + project.projectNo + '&#39;)">查看详情</button><button class="text-orange-600 hover:text-orange-800 text-sm font-medium" onclick="event.stopPropagation(); showToast(&#39;已催办该项目&#39;)">催办</button></div>';
+          }
+          cells[8].innerHTML = actions;
+        }
+      });
+    }
+
     document.addEventListener('DOMContentLoaded', function() {
       renderOfflineProjects();
+      syncStaticRowsFromStore();
       configurePoolRoleView();
       var notifBtn = document.querySelector('[data-dom-id="btn-notification"]');
       if (notifBtn) {

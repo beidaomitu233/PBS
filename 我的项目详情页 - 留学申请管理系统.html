@@ -541,7 +541,26 @@
     };
     var MY_PROJECT_PARAMS = new URLSearchParams(window.location.search);
     var requestedMyProjectNo = MY_PROJECT_PARAMS.get('project') || 'PRJ20260701002';
-    var MY_PROJECT_CONTEXT = MY_PROJECT_CONTEXTS[requestedMyProjectNo] || Object.assign({}, MY_PROJECT_CONTEXTS.PRJ20260701002, { projectNo: requestedMyProjectNo });
+    var MY_PROJECT_CONTEXT = MY_PROJECT_CONTEXTS[requestedMyProjectNo];
+    if (!MY_PROJECT_CONTEXT) {
+      /* 新建/新分配项目：从共享项目存储回读真实客户、学生、层次与项目经理 */
+      var sharedMyProject = window.pbsProjects ? window.pbsProjects.find(requestedMyProjectNo) : null;
+      if (sharedMyProject) {
+        var statusText = sharedMyProject.status || '进行中';
+        MY_PROJECT_CONTEXT = {
+          projectNo: sharedMyProject.projectNo,
+          customer: sharedMyProject.customer || '—',
+          student: sharedMyProject.student || '—',
+          level: sharedMyProject.level || '硕士申请',
+          manager: sharedMyProject.projectManager || '—',
+          direction: (sharedMyProject.packages && sharedMyProject.packages[0] && sharedMyProject.packages[0].school) || '待定方向',
+          state: statusText === '待接收' ? '待接收' : (statusText === '已结项' ? '已结项' : (sharedMyProject.allStaffAssigned ? '交付中' : '人员待分配')),
+          allStaffAssigned: !!sharedMyProject.allStaffAssigned
+        };
+      } else {
+        MY_PROJECT_CONTEXT = Object.assign({}, MY_PROJECT_CONTEXTS.PRJ20260701002, { projectNo: requestedMyProjectNo });
+      }
+    }
     var PM_STAFF_ASSIGNMENT_KEY = 'pbs_pm_staff_assignment_v3_' + MY_PROJECT_CONTEXT.projectNo;
     function applyMyProjectContext() {
       var values = {

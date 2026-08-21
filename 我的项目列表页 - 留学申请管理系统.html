@@ -666,11 +666,14 @@
       projects.forEach(function(project, index) {
         var rowIndex = baseCount + index + 1;
         var createdAt = project.createdAt || '—';
+        /* 状态以共享存储为准（分配/接收后自动变化），不再硬编码「待分配」 */
+        var shared = window.pbsProjects ? window.pbsProjects.find(project.projectNo) : null;
+        var statusText = shared ? (shared.status || window.pbsProjects.statusOf(shared)) : (project.status || '进行中');
         var tr = document.createElement('tr');
         tr.className = 'hover:bg-gray-50 transition-colors cursor-pointer';
         tr.setAttribute('data-offline', 'true');
         tr.setAttribute('data-dom-id', 'btn-my-project-detail-offline-' + index);
-        tr.setAttribute('data-kw', [rowIndex, project.projectNo, project.customer, project.student, project.level, '待分配', createdAt, '线下'].join(''));
+        tr.setAttribute('data-kw', [rowIndex, project.projectNo, project.customer, project.student, project.level, statusText, createdAt, '线下'].join(''));
         tr.setAttribute('data-project', project.projectNo || '');
         tr.setAttribute('data-name', project.customer || '');
         tr.setAttribute('data-student', project.student || '');
@@ -718,7 +721,50 @@
       document.getElementById('notificationModal').classList.add('hidden');
     }
 
+    /* 抽屉打开时按共享存储渲染当前项目经理真实「待接收」任务 */
+    function renderPendingTasks() {
+      var session = getMyProjectSession();
+      var pmName = session ? session.name : '';
+      var pending = [];
+      if (window.pbsProjects) {
+        pending = window.pbsProjects.all().filter(function (p) { return p.projectManager === pmName && p.status === '待接收'; });
+      }
+      var list = document.getElementById('pendingTaskList');
+      var empty = document.getElementById('pendingTaskEmpty');
+      var cnt = document.getElementById('pendingDrawerCount');
+      var badge = document.getElementById('pendingTaskBadge');
+      if (cnt) cnt.textContent = pending.length;
+      if (badge) badge.classList.toggle('hidden', pending.length === 0);
+      if (badge) badge.textContent = pending.length;
+      if (!pending.length) {
+        if (list) list.classList.add('hidden');
+        if (empty) empty.classList.remove('hidden');
+        return;
+      }
+      if (empty) empty.classList.add('hidden');
+      if (list) list.classList.remove('hidden');
+      var html = '';
+      pending.forEach(function (p) {
+        var assignedAt = p.assignedAt ? String(p.assignedAt).replace('T', ' ').slice(0, 16) : '—';
+        html += '<div class="bg-blue-50 border border-blue-200 rounded-xl p-4">' +
+          '<div class="flex items-center gap-3 mb-3">' +
+          '<div class="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0">' +
+          '<svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path></svg></div>' +
+          '<p class="text-sm font-medium text-gray-800">收到 1 条新任务推送</p></div>' +
+          '<div class="space-y-2 text-sm mb-4">' +
+          '<div class="flex justify-between"><span class="text-gray-500">客户姓名</span><span class="text-gray-900 font-medium">' + (p.customer || '—') + '</span></div>' +
+          '<div class="flex justify-between"><span class="text-gray-500">项目号</span><span class="text-gray-900">' + p.projectNo + '</span></div>' +
+          '<div class="flex justify-between"><span class="text-gray-500">学生姓名</span><span class="text-gray-900">' + (p.student || '—') + '</span></div>' +
+          '<div class="flex justify-between"><span class="text-gray-500">申请层次</span><span class="text-gray-900">' + (p.level || '—') + '</span></div>' +
+          '<div class="flex justify-between"><span class="text-gray-500">分配时间</span><span class="text-gray-900">' + assignedAt + '</span></div></div>' +
+          '<div class="flex gap-3">' +
+          '<button class="flex-1 h-9 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors text-sm font-medium" onclick="acceptTask()">接收</button>' +
+          '<button class="flex-1 h-9 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors text-sm font-medium" onclick="rejectTask()">退回</button></div></div>';
+      });
+      if (list) list.innerHTML = html;
+    }
     function openPendingDrawer() {
+      renderPendingTasks();
       document.getElementById('pendingDrawerMask').classList.remove('hidden');
       document.getElementById('pendingDrawer').classList.remove('translate-x-full');
     }
@@ -734,13 +780,28 @@
     function updatePendingBadge(n) {
       var badge = document.getElementById('pendingTaskBadge');
       var cnt = document.getElementById('pendingDrawerCount');
+      if (!badge || !cnt) return;
       if (n <= 0) {
         badge.classList.add('hidden');
-        document.getElementById('pendingTaskList').classList.add('hidden');
-        document.getElementById('pendingTaskEmpty').classList.remove('hidden');
+      } else {
+        badge.classList.remove('hidden');
+        badge.textContent = n;
       }
       cnt.textContent = n;
     }
+    /* 页面加载：角标 = 当前项目经理名下「待接收」项目数 */
+    (function initPendingBadge() {
+      var count = 0;
+      try {
+        var session = getMyProjectSession();
+        var pmName = session ? session.name : '';
+        if (window.pbsProjects) {
+          count = window.pbsProjects.all().filter(function (p) { return p.projectManager === pmName && p.status === '待接收'; }).length;
+        }
+      } catch (e) {}
+      if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', function () { updatePendingBadge(count); });
+      else updatePendingBadge(count);
+    })();
     function showTaskToast(msg, type) {
       var toast = document.createElement('div');
       var bg = type === 'success' ? 'bg-green-600' : 'bg-red-600';
@@ -749,50 +810,40 @@
       document.body.appendChild(toast);
       setTimeout(function() { toast.remove(); }, 2500);
     }
-    function acceptTask() {
-      // 从抽屉移除卡片、角标减1
-      var card = document.getElementById('pendingTaskCard1');
-      if (card) card.remove();
-      updatePendingBadge(0);
-      showTaskToast('已接收项目 PRJ20260701001（张明），项目已加入我的项目列表', 'success');
+        function acceptTask() {
+      /* 接收当前登录项目经理名下「待接收」的项目（共享存储持久化，刷新不丢） */
+      var session = getMyProjectSession();
+      var pmName = session ? session.name : '';
+      var target = null;
+      if (window.pbsProjects) {
+        window.pbsProjects.all().forEach(function (p) {
+          if (!target && p.projectManager === pmName && p.status === '待接收') target = p;
+        });
+      }
+      if (!target) { showTaskToast('当前没有待接收的项目', 'success'); closePendingDrawer(); return; }
+      window.pbsProjects.acceptPM(target.projectNo);
+      if (window.pbsRecordOperation) window.pbsRecordOperation('项目管理', '接收', '接收项目 ' + target.projectNo + '（' + target.student + '）');
+      showTaskToast('已接收项目 ' + target.projectNo + '（' + target.student + '），项目已进入进行中', 'success');
       closePendingDrawer();
-
-      // 接收的项目追加到下方我的项目列表
-      var tbody = document.getElementById('myProjTbody');
-      var newIndex = tbody.querySelectorAll('tr[data-kw]').length + 1;
-      var now = new Date();
-      var timeStr = now.getFullYear() + '-' + String(now.getMonth() + 1).padStart(2, '0') + '-' + String(now.getDate()).padStart(2, '0') + ' ' + String(now.getHours()).padStart(2, '0') + ':' + String(now.getMinutes()).padStart(2, '0');
-      var kw = newIndex + 'PRJ20260701001张建国张明本科申请待分配' + timeStr + '详情';
-      var tr = document.createElement('tr');
-      tr.className = 'hover:bg-gray-50 transition-colors cursor-pointer';
-      tr.setAttribute('data-dom-id', 'btn-my-project-detail-' + newIndex);
-      tr.setAttribute('data-kw', kw);
-      tr.setAttribute('data-project', 'PRJ20260701001');
-      tr.setAttribute('data-name', '张建国');
-      tr.setAttribute('data-student', '张明');
-      tr.setAttribute('data-level', '本科申请');
-      tr.setAttribute('data-status', '待分配');
-      tr.setAttribute('data-time', timeStr);
-      tr.setAttribute('data-school-target', 'stanford');
-      tr.onclick = function() { openMyProjectDetail('PRJ20260701001', 'stanford'); };
-      tr.innerHTML = '<td class="px-5 py-4 text-sm text-gray-900">' + newIndex + '</td>' +
-        '<td class="px-5 py-4 text-sm text-gray-900">PRJ20260701001</td>' +
-        '<td class="px-5 py-4 text-sm font-medium text-gray-900">张建国</td>' +
-        '<td class="px-5 py-4 text-sm text-gray-900">张明</td>' +
-        '<td class="px-5 py-4 text-sm text-gray-600">本科申请</td>' +
-        '<td class="px-5 py-4"><span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-amber-100 text-amber-700">待分配</span></td>' +
-        '<td class="px-5 py-4 text-sm text-gray-900">张老师</td>' +
-        '<td class="px-5 py-4 text-sm text-gray-500">' + timeStr + '</td>' +
-        '<td class="px-5 py-4"><div class="flex items-center gap-3"><button class="text-blue-600 hover:text-blue-800 text-sm font-medium" onclick="event.stopPropagation(); openMyProjectDetail(\'PRJ20260701001\',\'stanford\')">查看详情</button><button class="text-orange-600 hover:text-orange-800 text-sm font-medium" onclick="event.stopPropagation(); showTaskToast(\'已催办该项目\', \'success\')">催办</button></div></td>';
-      tbody.insertBefore(tr, document.getElementById('flt-empty'));
-      applyFilter();
+      setTimeout(function () { location.reload(); }, 600);
     }
     function rejectTask() {
-      var card = document.getElementById('pendingTaskCard1');
-      if (card) card.remove();
-      updatePendingBadge(0);
-      showTaskToast('已退回项目 PRJ20260701001（张明），该任务已退回至PMO重新分配', 'reject');
+      var session = getMyProjectSession();
+      var pmName = session ? session.name : '';
+      var target = null;
+      if (window.pbsProjects) {
+        window.pbsProjects.all().forEach(function (p) {
+          if (!target && p.projectManager === pmName && p.status === '待接收') target = p;
+        });
+      }
+      if (!target) { showTaskToast('当前没有待接收的项目', 'reject'); closePendingDrawer(); return; }
+      var reason = prompt('请输入退回原因（必填）：');
+      if (!reason || !reason.trim()) { showTaskToast('已取消退回：退回必填原因', 'reject'); return; }
+      window.pbsProjects.rejectPM(target.projectNo, reason.trim());
+      if (window.pbsRecordOperation) window.pbsRecordOperation('项目管理', '退回', '退回项目 ' + target.projectNo + '（' + target.student + '）：' + reason.trim());
+      showTaskToast('已退回项目 ' + target.projectNo + '（' + target.student + '），该任务已退回至PMO重新分配', 'reject');
       closePendingDrawer();
+      setTimeout(function () { location.reload(); }, 600);
     }
 
     /* ---------- 高级筛选 ---------- */

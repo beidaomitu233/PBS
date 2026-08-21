@@ -1237,7 +1237,24 @@
       'PRJ-O-2607-0005': { projectNo: 'PRJ-O-2607-0005', customer: '陈国平', student: '陈晓', level: '本科申请', defaultManager: '' }
     };
     var requestedProjectNo = new URLSearchParams(window.location.search).get('project') || 'PRJ-M-2607-0002';
-    var PROJECT_CONTEXT = PROJECT_CONTEXTS[requestedProjectNo] || PROJECT_CONTEXTS['PRJ-M-2607-0002'];
+    var PROJECT_CONTEXT = PROJECT_CONTEXTS[requestedProjectNo];
+    if (!PROJECT_CONTEXT) {
+      /* 新建项目（线下档案/线上订单）不在演示字典中：从共享项目存储回读真实数据 */
+      var sharedProject = window.pbsProjects ? window.pbsProjects.find(requestedProjectNo) : null;
+      if (sharedProject) {
+        PROJECT_CONTEXT = {
+          projectNo: sharedProject.projectNo,
+          customer: sharedProject.customer || '—',
+          student: sharedProject.student || '—',
+          level: sharedProject.level || '硕士申请',
+          defaultManager: sharedProject.projectManager || '',
+          packages: sharedProject.packages || [],
+          serviceStages: sharedProject.serviceStages || []
+        };
+      } else {
+        PROJECT_CONTEXT = PROJECT_CONTEXTS['PRJ-M-2607-0002'];
+      }
+    }
     var PROJECT_ASSIGNMENT_KEY = 'pbs_project_assignment_v3_' + PROJECT_CONTEXT.projectNo;
     function setProjectContextText(id, value) {
       var element = document.getElementById(id);
@@ -1275,6 +1292,13 @@
         assignedAt: new Date().toISOString(),
         goalAssignments: existing.goalAssignments || {}
       }));
+      syncSharedProject(projectManager);
+    }
+    /* 分配结果写入共享项目存储：项目池列表、我的项目列表据此联动 */
+    function syncSharedProject(projectManager) {
+      if (!window.pbsProjects) return;
+      var session = window.pbsGetSession ? window.pbsGetSession() : {};
+      window.pbsProjects.assignPM(PROJECT_CONTEXT.projectNo, projectManager, session.org);
     }
     function persistProjectAssignment(store, projectManager, replaceGoalAssignments) {
       var existing = readProjectAssignment();
@@ -1292,24 +1316,33 @@
         assignedAt: new Date().toISOString(),
         goalAssignments: completed
       }));
+      syncSharedProject(projectManager);
     }
     function syncProjectAssignmentState() {
       var assignment = readProjectAssignment();
+      var shared = window.pbsProjects ? window.pbsProjects.find(PROJECT_CONTEXT.projectNo) : null;
       var assigned = !!assignment.projectManager;
+      var accepted = !!(shared && shared.pmAccepted);
       var assignButton = document.querySelector('[data-dom-id="btn-assign"]');
       var changeButton = document.querySelector('[data-dom-id="btn-change-pm"]');
       if (assignButton) { assignButton.classList.toggle('hidden', assigned); }
       if (changeButton) { changeButton.classList.toggle('hidden', !assigned); }
+      /* 状态与项目池/我的项目保持同一状态机：待分配 → 待接收 → 进行中 */
+      var statusText = !assigned ? '待分配' : (accepted ? '进行中' : '待接收');
       document.querySelectorAll('[data-project-status]').forEach(function(statusBadge) {
-        statusBadge.textContent = assigned ? '已分配' : '待分配';
+        statusBadge.textContent = statusText;
         statusBadge.classList.toggle('bg-yellow-100', !assigned);
         statusBadge.classList.toggle('text-yellow-800', !assigned);
-        statusBadge.classList.toggle('bg-green-100', assigned);
-        statusBadge.classList.toggle('text-green-800', assigned);
+        statusBadge.classList.toggle('bg-blue-100', assigned && !accepted);
+        statusBadge.classList.toggle('text-blue-800', assigned && !accepted);
+        statusBadge.classList.toggle('bg-green-100', accepted);
+        statusBadge.classList.toggle('text-green-800', accepted);
       });
       if (assigned) {
-        document.getElementById('currentProjectManager').textContent = assignment.projectManager;
-        document.getElementById('currentManagerSummary').textContent = '当前：' + assignment.projectManager + ' ｜ 更换后新经理将接管整个项目';
+        var pmEl = document.getElementById('currentProjectManager');
+        if (pmEl) pmEl.textContent = assignment.projectManager;
+        var summaryEl = document.getElementById('currentManagerSummary');
+        if (summaryEl) summaryEl.textContent = '当前：' + assignment.projectManager + (accepted ? ' ｜ 已接收项目' : ' ｜ 等待项目经理接收') ;
       }
     }
     function buildCompletedGoalBlocks(store) {
@@ -1333,8 +1366,17 @@
     }
 
     /* ---------------- 确认分配（一个项目仅一名项目经理） ---------------- */
+    function pmOverLimit(name) {
+      var load = PM_LOAD[name];
+      return !!(load && typeof load.students === 'number' && typeof load.limit === 'number' && load.students >= load.limit);
+    }
     function confirmAssign() {
       if (!selectedPersons.pm) { showPageToast('请选择项目经理'); return; }
+      if (pmOverLimit(selectedPersons.pm)) {
+        var info = PM_LOAD[selectedPersons.pm];
+        showPageToast('「' + selectedPersons.pm + '」在管学生已达上限（' + info.students + '人/上限' + info.limit + '人），请先更换或提升负荷上限');
+        return;
+      }
       saveActiveGoalDraft();
       var assignedCount = goalDoneCount(goalAssign);
       var blocks = buildCompletedGoalBlocks(goalAssign);
@@ -1346,7 +1388,7 @@
       persistProjectAssignment(goalAssign, selectedPersons.pm, true);
       if (window.pbsRecordOperation) window.pbsRecordOperation('项目管理', '分配', '为项目 ' + PROJECT_CONTEXT.projectNo + ' 分配项目经理：' + selectedPersons.pm);
       var html =
-        '<div class="bg-gray-50 rounded-lg p-3"><p class="text-xs text-gray-400 mb-1">项目</p><p class="font-medium text-gray-900">' + PROJECT_CONTEXT.projectNo + ' — ' + PROJECT_CONTEXT.student + '（' + PROJECT_CONTEXT.level + ' · 3个院校目标）</p></div>' +
+        '<div class="bg-gray-50 rounded-lg p-3"><p class="text-xs text-gray-400 mb-1">项目</p><p class="font-medium text-gray-900">' + PROJECT_CONTEXT.projectNo + ' — ' + PROJECT_CONTEXT.student + '（' + PROJECT_CONTEXT.level + ' · ' + GOALS.length + '个院校目标）</p></div>' +
         '<div class="border border-blue-100 bg-blue-50 rounded-lg p-3"><p class="font-medium text-blue-900 mb-1.5">项目经理：' + selectedPersons.pm + '</p><p class="text-xs text-blue-700">该经理负责整个项目，等待其接收项目。</p></div>' +
         blocks;
       document.getElementById('assignSummary').innerHTML = html;
@@ -1362,6 +1404,11 @@
     function confirmChangePM() {
       var originalManager = readProjectAssignment().projectManager;
       var nextManager = selectedPersons.chgPm || originalManager;
+      if (nextManager !== originalManager && pmOverLimit(nextManager)) {
+        var info = PM_LOAD[nextManager];
+        showPageToast('「' + nextManager + '」在管学生已达上限（' + info.students + '人/上限' + info.limit + '人），无法接收更多项目');
+        return;
+      }
       saveChgActiveGoalDraft();
       var changedCount = goalDoneCount(chgGoalAssign);
       if (!selectedPersons.chgPm && !changedCount) { showPageToast('请选择新项目经理或完成至少一个院校目标成员调整'); return; }
@@ -1375,7 +1422,7 @@
         ? '<div class="border border-blue-100 bg-blue-50 rounded-lg p-3"><p class="font-medium text-blue-900 mb-1.5">新项目经理：' + nextManager + '</p><p class="text-xs text-blue-700">原项目经理：' + originalManager + ' ｜ 新经理接管整个项目</p></div>'
         : '<div class="border border-gray-100 bg-gray-50 rounded-lg p-3"><p class="font-medium text-gray-900 mb-1.5">项目经理：' + originalManager + '</p><p class="text-xs text-gray-500">项目经理保持不变，仅调整院校目标成员。</p></div>';
       var html =
-        '<div class="bg-gray-50 rounded-lg p-3"><p class="text-xs text-gray-400 mb-1">项目</p><p class="font-medium text-gray-900">' + PROJECT_CONTEXT.projectNo + ' — ' + PROJECT_CONTEXT.student + '（' + PROJECT_CONTEXT.level + ' · 3个院校目标）</p></div>' +
+        '<div class="bg-gray-50 rounded-lg p-3"><p class="text-xs text-gray-400 mb-1">项目</p><p class="font-medium text-gray-900">' + PROJECT_CONTEXT.projectNo + ' — ' + PROJECT_CONTEXT.student + '（' + PROJECT_CONTEXT.level + ' · ' + GOALS.length + '个院校目标）</p></div>' +
         managerSummary +
         blocks;
       document.getElementById('chgSummary').innerHTML = html;

@@ -414,6 +414,20 @@
   };
 
   /* ---------- 账号共享存储（登录页与人员管理页共用同一份） ---------- */
+  /* 首次运行时把项目池的 6 个演示项目写入共享存储（幂等） */
+  (function seedSharedProjects() {
+    var existing = readStore(PROJECT_STORE_KEY, null);
+    if (existing && existing.length) return;
+    writeStore(PROJECT_STORE_KEY, [
+      { projectNo: 'PRJ-M-2607-0000', customer: '周海宁', student: '周妍', level: '硕士申请', source: '线上', projectManager: '', pmAccepted: false, status: '待分配', org: 'PBS留学总部', createdAt: '2026-07-01 10:00' },
+      { projectNo: 'PRJ-M-2607-0001', customer: '张建国', student: '张明', level: '本科申请', source: '线上', projectManager: '', pmAccepted: false, status: '待接收', org: 'PBS留学总部', createdAt: '2026-07-03 14:30' },
+      { projectNo: 'PRJ-M-2607-0002', customer: '李慧敏', student: '李雪', level: '硕士申请', source: '线上', projectManager: '张老师', pmAccepted: true, status: '进行中', org: 'PBS留学总部', createdAt: '2026-07-05 09:20' },
+      { projectNo: 'PRJ-O-2607-0003', customer: '王建军', student: '王伟', level: '博士申请', source: '线下', projectManager: '李老师', pmAccepted: true, status: '已结项', org: 'PBS留学总部', createdAt: '2026-06-12 16:40' },
+      { projectNo: 'PRJ-M-2607-0004', customer: '赵文华', student: '赵婷', level: '硕士申请', source: '线上', projectManager: '王老师', pmAccepted: true, status: '暂停', org: 'PBS留学总部', createdAt: '2026-06-28 11:15' },
+      { projectNo: 'PRJ-O-2607-0005', customer: '陈国平', student: '陈晓', level: '本科申请', source: '线下', projectManager: '', pmAccepted: false, status: '已退回', org: 'PBS留学总部', createdAt: '2026-07-08 15:05' }
+    ]);
+  })();
+
   window.pbsAccounts = {
     key: ACCOUNT_STORE_KEY,
     all: function () { return readStore(ACCOUNT_STORE_KEY, []); },

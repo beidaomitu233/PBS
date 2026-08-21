@@ -75,9 +75,7 @@
   };
 
   /* 组件页（弹窗/抽屉，用于iframe弹层，不做权限校验与侧边栏渲染） */
-  var COMPONENT_PAGES = ['新增用户弹窗.html', '新增人员弹窗.html', '新增角色弹窗.html',
-    '系统消息弹窗.html', '用户菜单弹窗.html', '分发台抽屉.html', '更换台抽屉.html',
-    '分配PM抽屉.html', '更换PM抽屉.html'];
+  var COMPONENT_PAGES = ['新增用户弹窗.html', '新增人员弹窗.html', '新增角色弹窗.html', '系统消息弹窗.html'];
 
   /* ---------------- 图标库 ---------------- */
   var ICONS = {
@@ -167,6 +165,8 @@
     '网申模板编辑 - 留学申请管理系统.html': ['网申人员', '项目经理', '平台运维人员'],
     '监控任务列表 - PBS留学CRM.html': ['项目经理'],
     '监控详情页 - 留学申请管理系统.html': ['项目经理'],
+    '监控详情页（官网） - 留学申请管理系统.html': ['项目经理'],
+    '监控详情页（邮件） - 留学申请管理系统.html': ['项目经理'],
     '结项归档列表 - PBS留学CRM系统.html': ['项目经理', '文书人员', '网申人员'],
     '结项详情页 - 留学申请管理系统.html': ['项目经理', '文书人员', '网申人员'],
     '用户管理 - 留学申请管理系统.html': ['平台运维人员'],
@@ -181,7 +181,42 @@
     '选校订单池页 - 留学申请管理系统.html': ['机构管理员', '销售人员'],
     '选校任务列表页 - 留学申请管理系统.html': ['机构管理员', '销售人员'],
     '选校工作台页 - 留学申请管理系统.html': ['销售人员'],
-    '选校方案详情页 - 留学申请管理系统.html': ['销售人员', '机构管理员']
+    '选校方案详情页 - 留学申请管理系统.html': ['销售人员', '机构管理员'],
+    '院校目标详情页 - 留学申请管理系统.html': ['项目经理', '机构管理员']
+  };
+
+  /* 页面 → 权限点映射：角色权限管理页保存的配置通过此表驱动页面访问。
+     未配置权限的角色按 PAGE_PERMS 默认角色放行；一旦在角色权限页保存过该角色的配置，
+     则以「权限点」为准（project_view 等真正控制页面可达）。 */
+  var PAGE_PERM_KEYS = {
+    '学生档案列表页 - 留学申请管理系统.html': ['customer_view'],
+    '学生档案详情页 - 留学申请管理系统.html': ['customer_view'],
+    '项目池列表页 - 留学申请管理系统.html': ['project_view'],
+    '项目详情页 - 留学申请管理系统.html': ['project_view_detail'],
+    'PMO看板 - 留学申请管理系统.html': ['project_view'],
+    '我的项目列表页 - 留学申请管理系统.html': ['project_view'],
+    '我的项目详情页 - 留学申请管理系统.html': ['project_view_detail'],
+    '任务列表页 - 文书交付系统.html': ['doc_view'],
+    '文书编辑器 - 文书交付系统.html': ['doc_view', 'doc_edit'],
+    '模板库列表 - 文书交付系统.html': ['doc_view'],
+    '模板库编辑 - 文书交付系统.html': ['doc_edit'],
+    '案例库 - 文书交付系统.html': ['doc_view'],
+    '网申任务列表页 - 留学申请管理系统.html': ['app_view'],
+    '网申任务详情页 - 留学申请管理系统.html': ['app_view'],
+    '网申模板库 - 留学申请管理系统.html': ['app_view'],
+    '网申模板编辑 - 留学申请管理系统.html': ['app_fill'],
+    '监控任务列表 - PBS留学CRM.html': ['monitor_view'],
+    '监控详情页 - 留学申请管理系统.html': ['monitor_view'],
+    '监控详情页（官网） - 留学申请管理系统.html': ['monitor_view'],
+    '监控详情页（邮件） - 留学申请管理系统.html': ['monitor_view'],
+    '结项归档列表 - PBS留学CRM系统.html': ['archive_view'],
+    '结项详情页 - 留学申请管理系统.html': ['archive_view'],
+    '用户管理 - 留学申请管理系统.html': ['sys_user'],
+    '人员管理 - PBS留学CRM系统.html': ['sys_personnel'],
+    '角色权限管理 - 留学申请管理系统.html': ['sys_role'],
+    '操作日志审计 - 留学申请管理系统.html': ['sys_log'],
+    'AI管理 - 留学申请管理系统.html': ['sys_config'],
+    '视频管理 - 留学申请管理系统.html': ['sys_config']
   };
 
   /* ---------------- 会话 ---------------- */
@@ -242,12 +277,206 @@
         result: result || '成功'
       });
       localStorage.setItem('pbs_operation_logs_v1', JSON.stringify(logs.slice(0, 500)));
+      try { localStorage.setItem('pbs_operation_logs_stamp_v1', String(Date.now())); } catch (e) {}
     } catch (e) {}
   };
   window.pbsLogout = function () {
     localStorage.removeItem(SESSION_KEY);
     localStorage.removeItem(PREVIEW_ROLE_KEY);
     location.href = '登录 - PBS留学申请管理平台.html';
+  };
+
+  /* 顶栏头像菜单开关：页面内联 onclick="toggleUserMenu()" 的统一实现。
+     无论页面是否自带 #userMenu，都保证可展开/收起（修复 21 个页面菜单点不开的问题）。 */
+  window.toggleUserMenu = function () {
+    var menu = document.getElementById('userMenu');
+    if (!menu) {
+      /* 页面没有标准菜单时，找顶栏最后一个用户区容器注入标准菜单 */
+      var header = document.querySelector('header');
+      if (header) bindHeader(window.pbsGetSession());
+      menu = document.getElementById('userMenu');
+    }
+    if (menu) menu.classList.toggle('hidden');
+  };
+
+  /* ============================================================
+     共享数据层：项目 / 账号 / 角色权限 / 通知 / 日志
+     原型阶段以 localStorage 模拟后端；所有页面统一经此读写，
+     保证「分配 → 接收 → 执行」状态跨页面闭环。
+     ============================================================ */
+  var PROJECT_STORE_KEY = 'pbs_projects_v1';
+  var ACCOUNT_STORE_KEY = 'pbs_managed_accounts_v2';
+  var ROLE_PERMS_KEY = 'pbs_role_perms_v1';
+
+  /* 系统内置角色：不可删除/改名，权限可配置但保留默认兜底 */
+  var SYSTEM_ROLES = ['超级管理员', '平台运维人员', '机构管理员', '文书机构管理员'];
+
+  /* 项目状态机（与 PRD 7.2.2 对齐）：
+     待分配(未分配PM) → 待接收(PM已分配) → 进行中(PM已接收) → 暂停/已退回 → 已结项 */
+  function normalizeProjectStatus(project) {
+    if (!project) return '待分配';
+    var explicit = project.status;
+    if (explicit === '已结项' || explicit === '暂停' || explicit === '已退回') return explicit;
+    if (!project.projectManager) return '待分配';
+    if (project.pmAccepted) return '进行中';
+    return '待接收';
+  }
+
+  function readStore(key, fallback) {
+    try {
+      var raw = JSON.parse(localStorage.getItem(key) || 'null');
+      return raw == null ? fallback : raw;
+    } catch (e) { return fallback; }
+  }
+  function writeStore(key, value) {
+    localStorage.setItem(key, JSON.stringify(value));
+  }
+
+  /* ---------- 项目共享存储 ----------
+     项目记录：{ projectNo, customer, student, level, source, sourceChannel,
+                 packages[], serviceStages[], projectManager, pmAccepted,
+                 status, createdAt, assignedAt, acceptedAt, org } */
+  window.pbsProjects = {
+    all: function () { return readStore(PROJECT_STORE_KEY, []); },
+    save: function (list) { writeStore(PROJECT_STORE_KEY, list); },
+    find: function (projectNo) {
+      return this.all().filter(function (p) { return p.projectNo === projectNo; })[0] || null;
+    },
+    upsert: function (record) {
+      var list = this.all();
+      var idx = -1;
+      for (var i = 0; i < list.length; i++) { if (list[i].projectNo === record.projectNo) { idx = i; break; } }
+      if (idx >= 0) list[idx] = Object.assign({}, list[idx], record);
+      else list.unshift(record);
+      this.save(list);
+      return record;
+    },
+    update: function (projectNo, patch) {
+      var p = this.find(projectNo);
+      if (!p) return null;
+      return this.upsert(Object.assign({}, p, patch));
+    },
+    /* 分配项目经理：状态 待分配 → 待接收，并通知项目经理 */
+    assignPM: function (projectNo, pmName, operatorOrg) {
+      var p = this.find(projectNo);
+      if (!p) return null;
+      p.projectManager = pmName;
+      p.pmAccepted = false;
+      p.status = normalizeProjectStatus(p);
+      p.assignedAt = new Date().toISOString();
+      this.save(this.all());
+      window.pbsCreateNotification({
+        kind: 'task_assigned', type: '新项目待接收',
+        title: '项目 ' + projectNo + ' 已分配给你，等待接收',
+        business: projectNo + ' · ' + (p.customer || '') + ' / ' + (p.student || ''),
+        detail: '机构管理员已完成项目经理分配，请及时接收项目并开始任务分发。',
+        level: 'primary',
+        recipientName: pmName,
+        recipientRoles: ['项目经理'],
+        organization: p.org || operatorOrg || '',
+        href: '我的项目列表页 - 留学申请管理系统.html'
+      });
+      return p;
+    },
+    /* 项目经理接收：待接收 → 进行中 */
+    acceptPM: function (projectNo) {
+      var p = this.find(projectNo);
+      if (!p) return null;
+      p.pmAccepted = true;
+      p.status = normalizeProjectStatus(p);
+      p.acceptedAt = new Date().toISOString();
+      this.save(this.all());
+      return p;
+    },
+    /* 项目经理退回：→ 已退回，并通知机构管理员 */
+    rejectPM: function (projectNo, reason) {
+      var p = this.find(projectNo);
+      if (!p) return null;
+      p.pmAccepted = false;
+      p.projectManager = '';
+      p.status = '已退回';
+      p.rejectedAt = new Date().toISOString();
+      p.rejectReason = reason || '';
+      this.save(this.all());
+      window.pbsCreateNotification({
+        kind: 'task_assigned', type: '项目退回提醒',
+        title: '项目 ' + projectNo + ' 被项目经理退回',
+        business: projectNo + ' · ' + (p.customer || '') + ' / ' + (p.student || ''),
+        detail: reason ? ('退回原因：' + reason) : '请重新为项目分配项目经理。',
+        level: 'danger',
+        recipientRoles: ['机构管理员'],
+        organization: p.org || '',
+        href: '项目池列表页 - 留学申请管理系统.html'
+      });
+      return p;
+    },
+    statusOf: normalizeProjectStatus
+  };
+
+  /* ---------- 账号共享存储（登录页与人员管理页共用同一份） ---------- */
+  window.pbsAccounts = {
+    key: ACCOUNT_STORE_KEY,
+    all: function () { return readStore(ACCOUNT_STORE_KEY, []); },
+    save: function (list) { writeStore(ACCOUNT_STORE_KEY, list); },
+    find: function (account) {
+      var lower = String(account || '').toLowerCase();
+      return this.all().filter(function (a) { return String(a.u || '').toLowerCase() === lower; })[0] || null;
+    },
+    upsert: function (record) {
+      var list = this.all();
+      var lower = String(record.u || '').toLowerCase();
+      var idx = -1;
+      for (var i = 0; i < list.length; i++) { if (String(list[i].u || '').toLowerCase() === lower) { idx = i; break; } }
+      if (idx >= 0) list[idx] = Object.assign({}, list[idx], record);
+      else list.push(record);
+      this.save(list);
+      return record;
+    },
+    remove: function (account) {
+      var lower = String(account || '').toLowerCase();
+      this.save(this.all().filter(function (a) { return String(a.u || '').toLowerCase() !== lower; }));
+    },
+    /* 密码散列：原型用确定性摘要模拟后端不可逆存储，登录只比较散列 */
+    hashPassword: function (password) {
+      var input = 'pbs::' + String(password == null ? '' : password);
+      var h1 = 0x811c9dc5, h2 = 0x01000193;
+      for (var i = 0; i < input.length; i++) {
+        h1 = ((h1 ^ input.charCodeAt(i)) * 16777619) >>> 0;
+        h2 = ((h2 * 31) + input.charCodeAt(i) * (i + 7)) >>> 0;
+      }
+      var h3 = 0;
+      for (var j = input.length - 1; j >= 0; j--) { h3 = ((h3 << 5) - h3 + input.charCodeAt(j)) >>> 0; }
+      return 'pbs1$' + h1.toString(36) + h2.toString(36) + h3.toString(36);
+    },
+    /* 兼容历史明文记录：首次校验时自动升级为散列 */
+    verifyPassword: function (account, password) {
+      var rec = this.find(account);
+      if (!rec) return false;
+      if (rec.phash) return rec.phash === this.hashPassword(password);
+      if (rec.p === password) {
+        rec.phash = this.hashPassword(rec.p);
+        delete rec.p;
+        this.save(this.all());
+        return true;
+      }
+      return false;
+    },
+    setPassword: function (account, newPassword) {
+      var rec = this.find(account);
+      if (!rec) return false;
+      delete rec.p;
+      rec.phash = this.hashPassword(newPassword);
+      this.save(this.all());
+      return true;
+    },
+    /* 账号有效期校验：过期返回 false */
+    isExpired: function (rec) {
+      var expiry = rec && rec.accountExpiry;
+      if (!expiry || expiry === '长期有效') return false;
+      var dateValue = Date.parse(expiry);
+      if (isNaN(dateValue)) return false;
+      return dateValue < Date.now();
+    }
   };
 
   function currentFile() {
@@ -494,6 +723,8 @@
       '<div class="py-1">' +
       '<a href="#" class="flex items-center gap-3 px-5 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition-colors">' +
       '<svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>个人设置</a>' +
+      '<a href="#" data-pbs-change-password class="flex items-center gap-3 px-5 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition-colors">' +
+      '<svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 7a2 2 0 012 2m4 2a8 8 0 11-16 0 8 8 0 0116 0zm-4 0a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>修改密码</a>' +
       '<a href="#" data-pbs-system-settings class="flex items-center gap-3 px-5 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition-colors">' +
       '<svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="' + ICONS.cog + '"></path></svg>系统设置</a>' +
       '<a href="#" class="flex items-center gap-3 px-5 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition-colors">' +
@@ -802,7 +1033,7 @@
   window.pbsGetIntroVideoPolicy = getIntroVideoPolicy;
   window.pbsGetIntroVideoMeta = getIntroVideoMeta;
 
-  /* 退出登录 / 个人设置 / 系统设置（事件委托，兼容所有页面） */
+  /* 退出登录 / 个人设置 / 系统设置 / 修改密码（事件委托，兼容所有页面） */
   document.addEventListener('click', function (e) {
     var t = e.target.closest('a,button');
     if (!t) return;
@@ -814,12 +1045,65 @@
     } else if (txt === '个人设置') {
       e.preventDefault();
       alert('个人设置功能将在后续版本开放');
+    } else if (t.hasAttribute('data-pbs-change-password') || txt === '修改密码') {
+      e.preventDefault();
+      e.stopPropagation();
+      openChangePasswordDialog();
     } else if (t.hasAttribute('data-pbs-system-settings') || txt === '系统设置') {
       e.preventDefault();
       e.stopPropagation();
       openSystemSettings();
     }
   }, true);
+
+  /* ---------------- 首次登录/主动修改密码 ---------------- */
+  function openChangePasswordDialog(force) {
+    var session = window.pbsGetSession();
+    var oldLayer = document.getElementById('pbsChangePwdLayer');
+    if (oldLayer) oldLayer.remove();
+    var layer = document.createElement('div');
+    layer.id = 'pbsChangePwdLayer';
+    layer.style.cssText = 'position:fixed;inset:0;z-index:10050;display:flex;align-items:center;justify-content:center;background:rgba(17,24,39,.5);backdrop-filter:blur(2px);';
+    layer.innerHTML =
+      '<div style="background:#fff;border-radius:16px;box-shadow:0 24px 60px rgba(0,0,0,.25);width:min(420px,92vw);overflow:hidden;">' +
+      '<div style="padding:20px 24px;border-bottom:1px solid #EDEFF2;"><h3 style="margin:0;font-size:17px;font-weight:700;color:#1F2937;">' + (force ? '首次登录，请修改初始密码' : '修改密码') + '</h3>' +
+      '<p style="margin:6px 0 0;font-size:12px;color:#9CA3AF;">密码需 8 位以上，同时包含字母与数字；修改后请使用新密码重新登录。</p></div>' +
+      '<div style="padding:20px 24px;display:grid;gap:12px;">' +
+      '<label style="display:grid;gap:6px;font-size:13px;color:#4B5563;">当前密码<input id="pbsPwdOld" type="password" autocomplete="current-password" style="height:38px;padding:0 10px;border:1px solid #D1D5DB;border-radius:8px;font-size:14px;"></label>' +
+      '<label style="display:grid;gap:6px;font-size:13px;color:#4B5563;">新密码<input id="pbsPwdNew" type="password" autocomplete="new-password" style="height:38px;padding:0 10px;border:1px solid #D1D5DB;border-radius:8px;font-size:14px;"></label>' +
+      '<label style="display:grid;gap:6px;font-size:13px;color:#4B5563;">确认新密码<input id="pbsPwdNew2" type="password" autocomplete="new-password" style="height:38px;padding:0 10px;border:1px solid #D1D5DB;border-radius:8px;font-size:14px;"></label>' +
+      '<p id="pbsPwdError" style="margin:0;font-size:12px;color:#DC2626;min-height:16px;"></p></div>' +
+      '<div style="padding:14px 24px;border-top:1px solid #EDEFF2;display:flex;justify-content:flex-end;gap:10px;">' +
+      (force ? '' : '<button id="pbsPwdCancel" style="height:36px;padding:0 14px;border:1px solid #D1D5DB;border-radius:8px;background:#fff;color:#4B5563;font-size:13px;cursor:pointer;">取消</button>') +
+      '<button id="pbsPwdSubmit" style="height:36px;padding:0 18px;border:0;border-radius:8px;background:#2563EB;color:#fff;font-size:13px;font-weight:600;cursor:pointer;">确认修改</button></div></div>';
+    document.body.appendChild(layer);
+    document.body.style.overflow = 'hidden';
+    function close() { layer.remove(); document.body.style.overflow = ''; }
+    var cancelBtn = layer.querySelector('#pbsPwdCancel');
+    if (cancelBtn) cancelBtn.addEventListener('click', close);
+    layer.querySelector('#pbsPwdSubmit').addEventListener('click', function () {
+      var oldPwd = layer.querySelector('#pbsPwdOld').value;
+      var newPwd = layer.querySelector('#pbsPwdNew').value;
+      var newPwd2 = layer.querySelector('#pbsPwdNew2').value;
+      var err = layer.querySelector('#pbsPwdError');
+      err.textContent = '';
+      if (!window.pbsAccounts.verifyPassword(session.account || session.email, oldPwd)) { err.textContent = '当前密码不正确'; return; }
+      if (newPwd.length < 8 || !/[A-Za-z]/.test(newPwd) || !/\d/.test(newPwd)) { err.textContent = '密码需为 8 位以上，并同时包含字母与数字'; return; }
+      if (newPwd !== newPwd2) { err.textContent = '两次输入的新密码不一致'; return; }
+      window.pbsAccounts.setPassword(session.account || session.email, newPwd);
+      try {
+        var accounts = window.pbsAccounts.all();
+        var rec = window.pbsAccounts.find(session.account || session.email);
+        if (rec) rec.mustChangePassword = false;
+        localStorage.setItem(window.pbsAccounts.key, JSON.stringify(accounts));
+      } catch (e) {}
+      window.pbsRecordOperation('账号与权限', '修改', '用户 ' + session.name + ' 修改了登录密码');
+      close();
+      alert('密码修改成功，请使用新密码重新登录');
+      window.pbsLogout();
+    });
+  }
+  window.pbsOpenChangePassword = function () { openChangePasswordDialog(false); };
 
   /* ---------------- 通知消息：按当前角色、所属机构和接收人过滤 ---------------- */
   var NOTIFICATION_STORE_KEY = 'pbs_notifications_v2';
@@ -1120,9 +1404,27 @@
   };
 
   /* 各工作台独立权限：角色权限管理页保存到 localStorage；未配置时仅默认开放角色本人的工作台。 */
-  var ROLE_PERMS_KEY = 'pbs_role_perms_v1';
   function savedRolePerms() {
     try { return JSON.parse(localStorage.getItem(ROLE_PERMS_KEY) || '{}'); } catch (e) { return {}; }
+  }
+  /* 角色是否拥有指定权限点（读取角色权限管理页保存的配置） */
+  function roleHasPermission(role, permIds) {
+    if (!permIds || !permIds.length) return true;
+    if (role === '超级管理员') return true;
+    var perms = savedRolePerms();
+    var checkRoles = [role].concat(ROLE_INHERITANCE[role] || []);
+    return checkRoles.some(function (r) {
+      var p = perms[r];
+      if (!p) return null; /* 未配置：交给调用方按默认角色表兜底 */
+      return permIds.some(function (id) {
+        return Object.keys(p).some(function (mod) { return (p[mod] || []).indexOf(id) >= 0; });
+      });
+    });
+  }
+  function roleIsConfigured(role) {
+    if (role === '超级管理员') return true;
+    var perms = savedRolePerms();
+    return !!(perms && perms[role]);
   }
   function workbenchPermissionVisible(session, permissionId) {
     if (!permissionId) return false;
@@ -1245,9 +1547,19 @@
       location.replace(ROLE_WORKBENCH[session.role] || ROLE_WORKBENCH['超级管理员']);
       return;
     }
-    /* 页面级RBAC（超级管理员放行所有页面） */
+    /* 页面级RBAC（超级管理员放行所有页面）：
+       1) 角色权限页保存过该角色配置 → 以权限点（PAGE_PERM_KEYS）为准；
+       2) 未保存过配置 → 按 PAGE_PERMS 默认角色表放行。 */
     var perms = PAGE_PERMS[file];
-    if (perms && !roleCanAccess(session.role, perms)) {
+    var permKeys = PAGE_PERM_KEYS[file];
+    var denied = false;
+    if (session.role !== '超级管理员' && perms && !roleCanAccess(session.role, perms)) {
+      denied = true;
+    } else if (session.role !== '超级管理员' && permKeys && roleIsConfigured(session.role)) {
+      var granted = [session.role].concat(ROLE_INHERITANCE[session.role] || []).some(function (r) { return roleHasPermission(r, permKeys); });
+      if (!granted) denied = true;
+    }
+    if (denied) {
       showForbiddenToast(session.role);
       setTimeout(function () { location.replace(ROLE_WORKBENCH[session.role]); }, 1200);
       return;

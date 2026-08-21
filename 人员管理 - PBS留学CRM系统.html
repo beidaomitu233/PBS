@@ -469,7 +469,7 @@
         id: 1,
         name: '张明',
         account: 'zhangming',
-        password: 'Pbs123456',
+        passwordHash: true, /* 初始密码 Pbs123456，仅存散列 */
         org: 'PBS留学总部',
         roles: ['机构管理员'],
         status: '在职'
@@ -478,7 +478,7 @@
         id: 2,
         name: '李雪',
         account: 'lixue',
-        password: 'Pbs123456',
+        passwordHash: true, /* 初始密码 Pbs123456，仅存散列 */
         org: '上海启明留学',
         roles: ['销售人员'],
         status: '在职'
@@ -487,7 +487,7 @@
         id: 3,
         name: '王伟',
         account: 'wangwei',
-        password: 'Pbs123456',
+        passwordHash: true, /* 初始密码 Pbs123456，仅存散列 */
         org: '上海启明留学',
         roles: ['文书人员', '文书审核'],
         status: '离职/停职'
@@ -496,7 +496,7 @@
         id: 4,
         name: '陈晨',
         account: 'chenchen',
-        password: 'Pbs123456',
+        passwordHash: true, /* 初始密码 Pbs123456，仅存散列 */
         org: '北京知行教育',
         roles: ['项目经理', '网申人员'],
         status: '在职'
@@ -505,12 +505,25 @@
         id: 5,
         name: '刘洋',
         account: 'liuyang',
-        password: 'Pbs123456',
+        passwordHash: true, /* 初始密码 Pbs123456，仅存散列 */
         org: 'PBS留学总部',
         roles: ['机构管理员'],
         status: '在职'
       }
-    ];
+    ]
+    /* 初始密码只存散列（Pbs123456）：页面加载时把种子数据中的 passwordHash 标记转换为真实散列 */
+    (function seedPasswordHashes() {
+      if (!window.pbsAccounts) return;
+      var changed = false;
+      personnelData.forEach(function (p) {
+        if (p.passwordHash === true) {
+          p.passwordHash = window.pbsAccounts.hashPassword('Pbs123456');
+          changed = true;
+        }
+        if (p.password) { p.passwordHash = window.pbsAccounts.hashPassword(p.password); delete p.password; changed = true; }
+      });
+    })();
+;
 
     let currentPage = 1;
     let pageSize = 10;
@@ -603,12 +616,15 @@
       });
       var loginAccount = {
         u: data.account,
-        p: data.password,
+        /* 密码不可逆存储：只保存散列，编辑时只能「设置新密码」，不能回显 */
+        phash: window.pbsAccounts ? window.pbsAccounts.hashPassword(data.password) : '',
         name: data.name,
         role: data.roles[0],
         roles: data.roles.slice(),
         org: data.org,
         status: data.status || '在职',
+        accountStatus: data.accountStatus || '启用',
+        accountExpiry: data.accountExpiry || '长期有效',
         mustChangePassword: !!data.mustChangePassword
       };
       if (index >= 0) { accounts[index] = loginAccount; }
@@ -652,7 +668,8 @@
         id: personnelData.reduce(function (max, item) { return Math.max(max, item.id); }, 0) + 1,
         name: name,
         account: account,
-        password: password,
+        /* 密码不可逆存储：列表与编辑均不回显明文 */
+        passwordHash: window.pbsAccounts ? window.pbsAccounts.hashPassword(password) : '',
         org: organization,
         roles: roles,
         status: '在职',
@@ -671,7 +688,8 @@
         accountStatus: accStatus,
         accountExpiry: accountExpiry
       });
-      closeAddUser();
+            if (window.pbsRecordOperation) window.pbsRecordOperation('账号与权限', '新增', '新增机构成员「' + name + '」（' + roles.join('、') + ' · ' + organization + '）');
+closeAddUser();
       applyFilter();
       showPersonnelToast('成员“' + name + '”已创建' + (accStatus === '禁用' ? '（账号已禁用）' : '') +
         (mustChange ? '，首次登录需修改密码' : '') + (accountExpiry !== '长期有效' ? '，有效期至 ' + accountExpiry : ''));
@@ -778,7 +796,11 @@
       if (!p) return;
       editingPersonId = id;
       document.getElementById('edit-account').value = p.account;
-      document.getElementById('edit-password').value = p.password;
+      /* 安全规则：当前密码不回显，留空表示不修改密码 */
+      var editPwd = document.getElementById('edit-password');
+      editPwd.value = '';
+      editPwd.type = 'password';
+      editPwd.placeholder = '留空则不修改密码；填写则设置新密码';
       document.getElementById('edit-name').value = p.name;
       renderRoleOptions('edit-roles', p.roles);
       showModalError('edit-user-error', '');
@@ -801,9 +823,9 @@
       var password = gv('edit-password');
       var name = gv('edit-name');
       var checkedRoles = selectedRoles('edit-roles');
-      if (!account || !password || !name) { showModalError('edit-user-error', '请完整填写账号、密码和姓名'); return; }
+      if (!account || !name) { showModalError('edit-user-error', '请完整填写账号和姓名'); return; }
       if (personnelData.some(function (person) { return person.id !== editingPersonId && person.account.toLowerCase() === account.toLowerCase(); }) || getManagedAccounts().some(function (item) { return String(item.u || '').toLowerCase() === account.toLowerCase() && String(item.u || '').toLowerCase() !== p.account.toLowerCase(); })) { showModalError('edit-user-error', '账号已存在，请更换后重试'); return; }
-      if (password.length < 8 || !/[A-Za-z]/.test(password) || !/\d/.test(password)) { showModalError('edit-user-error', '密码需为 8 位以上，并同时包含字母与数字'); return; }
+      if (password && (password.length < 8 || !/[A-Za-z]/.test(password) || !/\d/.test(password))) { showModalError('edit-user-error', '新密码需为 8 位以上，并同时包含字母与数字'); return; }
       if (!checkedRoles.length) {
         showModalError('edit-user-error', '请至少为成员保留一个角色'); return;
       }
@@ -811,24 +833,26 @@
         showModalError('edit-user-error', '机构成员不能分配平台运维人员角色'); return;
       }
       var originalAccount = p.account;
+      var passwordChanged = !!password;
       p.account = account;
-      p.password = password;
+      if (passwordChanged) p.passwordHash = window.pbsAccounts ? window.pbsAccounts.hashPassword(password) : p.passwordHash;
       p.name = name;
       p.roles = checkedRoles;
       var accounts = getManagedAccounts();
       var managed = accounts.find(function (item) { return String(item.u || '').toLowerCase() === originalAccount.toLowerCase(); });
       if (managed) {
         managed.u = account;
-        managed.p = password;
+        if (passwordChanged) { delete managed.p; managed.phash = window.pbsAccounts ? window.pbsAccounts.hashPassword(password) : managed.phash; }
         managed.name = name;
         managed.role = checkedRoles[0];
         managed.roles = checkedRoles.slice();
         localStorage.setItem(MANAGED_ACCOUNT_KEY, JSON.stringify(accounts));
       }
+      if (window.pbsRecordOperation) window.pbsRecordOperation('账号与权限', '修改', '编辑机构成员「' + name + '」的账号信息' + (passwordChanged ? '并设置新密码' : ''));
       var updatedName = p.name;
       closeEditPerson();
       filterList();
-      showPersonnelToast('成员“' + updatedName + '”的信息已保存');
+      showPersonnelToast('成员“' + updatedName + '”的信息已保存' + (passwordChanged ? '，密码已更新' : ''));
     }
     function togglePersonStatus(id) {
       var changedPerson = null;
@@ -845,6 +869,7 @@
           if (String(account.u || '').toLowerCase() === changedPerson.account.toLowerCase()) account.status = changedPerson.status === '在职' ? '正常' : '停用';
         });
         localStorage.setItem(MANAGED_ACCOUNT_KEY, JSON.stringify(accounts));
+        if (window.pbsRecordOperation) window.pbsRecordOperation('账号与权限', changedPerson.status === '在职' ? '修改' : '停用', (changedPerson.status === '在职' ? '复职' : '停职') + '成员「' + changedPerson.name + '」');
       }
       filterList();
     }
@@ -854,7 +879,8 @@
       data.id = personnelData.reduce(function (max, item) { return Math.max(max, item.id); }, 0) + 1;
       data.org = personnelScopeOrg || data.org || 'PBS留学总部';
       data.status = '在职';
-      data.password = data.password || 'Pbs123456';
+      data.passwordHash = window.pbsAccounts ? window.pbsAccounts.hashPassword(data.password || 'Pbs123456') : '';
+      delete data.password;
       personnelData.unshift(data);
       applyFilter();
     };

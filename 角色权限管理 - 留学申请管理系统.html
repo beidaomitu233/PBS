@@ -417,16 +417,34 @@
       '文书人员': 'workbench_writer', '网申人员': 'workbench_apply', '文书审核': 'workbench_audit',
       '文书机构管理员': 'workbench_docadmin'
     };
-    // 保存全部角色的权限配置，供 pbs-app.js 在各页面校验（如「工作台可见」）
+    // 保存全部角色的权限配置，供 pbs-app.js 在各页面校验（工作台可见、页面权限点等）
+    // 机构隔离：机构管理员只能保存本机构的权限副本；平台运维人员保存平台默认配置。
+    function currentPermsScope() {
+      var session = window.pbsGetSession ? window.pbsGetSession() : null;
+      var isPlatform = !session || session.role === '超级管理员' || session.role === '平台运维人员';
+      return isPlatform ? 'default' : ('org::' + (session.org || '当前机构'));
+    }
     function persistRolePerms() {
       var map = {};
       roles.forEach(function (r) { map[r.name] = r.permissions; });
-      try { localStorage.setItem(ROLE_PERMS_KEY, JSON.stringify(map)); } catch (e) {}
+      try {
+        localStorage.setItem(ROLE_PERMS_KEY, JSON.stringify(map));
+        var scoped = {};
+        try { scoped = JSON.parse(localStorage.getItem('pbs_role_perms_scoped_v1') || '{}'); } catch (e) { scoped = {}; }
+        scoped[currentPermsScope()] = map;
+        localStorage.setItem('pbs_role_perms_scoped_v1', JSON.stringify(scoped));
+      } catch (e) {}
     }
-    // 页面加载时回读已保存的权限配置
+    // 页面加载时回读已保存的权限配置（优先本机构副本，其次平台默认）
     function loadPersistedRolePerms() {
       var map = {};
-      try { map = JSON.parse(localStorage.getItem(ROLE_PERMS_KEY) || '{}'); } catch (e) { map = {}; }
+      try {
+        var scoped = JSON.parse(localStorage.getItem('pbs_role_perms_scoped_v1') || '{}');
+        if (scoped && scoped[currentPermsScope()]) map = scoped[currentPermsScope()];
+      } catch (e) { map = {}; }
+      if (!Object.keys(map).length) {
+        try { map = JSON.parse(localStorage.getItem(ROLE_PERMS_KEY) || '{}'); } catch (e) { map = {}; }
+      }
       roles.forEach(function (r) {
         if (!map[r.name]) return;
         var persisted = map[r.name];
@@ -620,7 +638,8 @@
       // 更新备份
       permissionBackup = JSON.parse(JSON.stringify(role.permissions));
       persistRolePerms();
-      alert('角色"' + role.name + '"的权限配置已保存成功！');
+      if (window.pbsRecordOperation) window.pbsRecordOperation('账号与权限', '修改', '保存角色「' + role.name + '」的权限配置');
+      alert('角色"' + role.name + '"的权限配置已保存成功，已全站生效。');
     }
 
     // 重置权限配置
@@ -635,11 +654,24 @@
       renderPermissionConfig();
     }
 
-    // 删除角色
+    // 删除角色（系统初始角色受保护）
+    var SYSTEM_PROTECTED_ROLES = ['超级管理员', '平台运维人员', '机构管理员', '文书机构管理员'];
     function deleteRole(roleId) {
       var role = findRoleById(roleId);
       if (!role) return;
+      if (SYSTEM_PROTECTED_ROLES.indexOf(role.name) >= 0) {
+        alert('「' + role.name + '」是系统初始角色，受保护不可删除；如需调整请联系平台运维人员。');
+        return;
+      }
+      if (window.pbsGetSession) {
+        var session = window.pbsGetSession();
+        if (session.role === '机构管理员' && role.creator !== '管理员') {
+          alert('机构管理员只能删除本机构自建角色（创建人为“管理员”），系统预置角色请联系平台运维人员调整。');
+          return;
+        }
+      }
       if (confirm('确定要删除角色"' + role.name + '"吗？删除后不可恢复。')) {
+        if (window.pbsRecordOperation) window.pbsRecordOperation('账号与权限', '删除', '删除角色「' + role.name + '」');
         var idx = roles.indexOf(role);
         if (idx !== -1) {
           roles.splice(idx, 1);

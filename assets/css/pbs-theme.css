@@ -21,7 +21,7 @@
   --pbs-danger-dark: #B91C1C;
   --pbs-danger-light: #FEF2F2;
   --pbs-info: #0EA5E9;
-  /* 深色侧边栏 */
+  /* 侧边栏（当前浅色方案；变量保留供兼容） */
   --pbs-sidebar-bg: #001529;
   --pbs-sidebar-hover: #112A45;
   --pbs-sidebar-active: #1677FF;
@@ -58,10 +58,11 @@ h1 { letter-spacing: -0.01em; color: var(--pbs-ink); }
 h2, h3 { color: var(--pbs-ink); }
 h1.text-2xl { font-size: 22px !important; font-weight: 700 !important; }
 
-/* ---------- 侧边栏：深色导航（Ant Design Pro 风格） ---------- */
+/* ---------- 侧边栏：浅色导航（白底 + 蓝色选中态，Element/AntD 浅色款） ---------- */
 #pbs-sidebar {
-  background: var(--pbs-sidebar-bg) !important;
+  background: #FFFFFF !important;
   border: none !important;
+  border-right: 1px solid var(--pbs-border) !important;
   border-radius: 0 !important;
   margin: 0 !important;
   min-height: calc(100vh - 64px) !important;
@@ -70,39 +71,48 @@ h1.text-2xl { font-size: 22px !important; font-weight: 700 !important; }
   top: 64px;
 }
 #pbs-sidebar nav a, #pbs-sidebar nav .rounded-lg { border-radius: 6px !important; }
-#pbs-sidebar nav a span, #pbs-sidebar nav div > div > span { color: #A6ADB4; }
-#pbs-sidebar nav svg { color: #8C949C; }
-/* 选中菜单：品牌蓝底白字 */
+#pbs-sidebar nav a span, #pbs-sidebar nav div > div > span { color: #4B5563; }
+#pbs-sidebar nav svg { color: #9CA3AF; }
+/* 选中菜单：浅蓝底 + 品牌蓝字（右侧指示条） */
 #pbs-sidebar a.bg-blue-50 {
-  background-color: var(--pbs-sidebar-active) !important;
+  background-color: var(--pbs-primary-light) !important;
   box-shadow: none !important;
   font-weight: 600 !important;
+  position: relative;
 }
 #pbs-sidebar a.bg-blue-50 span,
-#pbs-sidebar a.bg-blue-50 svg { color: #FFFFFF !important; }
-#pbs-sidebar a:hover { background: var(--pbs-sidebar-hover) !important; }
-#pbs-sidebar a:hover span { color: #FFFFFF !important; }
-/* 流程式导航（5.1 全角色流程菜单）适配深底 */
-.pbs-pm-primary-link { color: #A6ADB4 !important; }
-.pbs-pm-primary-link:hover, .pbs-pm-primary-link.is-active { color: #FFFFFF !important; background: var(--pbs-sidebar-hover) !important; }
-.pbs-pm-flow-caption { color: #5F6B78 !important; }
-.pbs-pm-flow-heading { color: #C6CCD2 !important; }
-.pbs-pm-flow-number { background: transparent !important; border-color: #33475E !important; color: #9FB3C8 !important; box-shadow: none !important; }
-.pbs-pm-flow-step.is-active .pbs-pm-flow-heading { color: #FFFFFF !important; }
-.pbs-pm-flow-step.is-active .pbs-pm-flow-number { border-color: var(--pbs-sidebar-active); background: var(--pbs-sidebar-active) !important; color: #FFFFFF !important; }
-.pbs-pm-flow-link { color: #8C949C !important; }
-.pbs-pm-flow-link:hover, .pbs-pm-flow-link.is-active { color: #FFFFFF !important; background: var(--pbs-sidebar-hover) !important; font-weight: 600; }
-.pbs-pm-flow-step:not(:last-child)::after { background: #1E3448 !important; }
-/* 侧边栏底部用户卡：融入深底 */
-#pbs-sidebar .border-t.border-gray-100 { border-color: #13294A !important; background: transparent; }
+#pbs-sidebar a.bg-blue-50 svg { color: var(--pbs-primary) !important; }
+#pbs-sidebar a.bg-blue-50::before {
+  content: '';
+  position: absolute;
+  left: -12px;
+  top: 20%;
+  bottom: 20%;
+  width: 3px;
+  border-radius: 0 2px 2px 0;
+  background: var(--pbs-primary);
+}
+/* 流程式导航（5.1 全角色流程菜单）浅色适配 */
+.pbs-pm-primary-link { color: #374151 !important; }
+.pbs-pm-primary-link:hover, .pbs-pm-primary-link.is-active { color: var(--pbs-primary) !important; background: var(--pbs-primary-light) !important; }
+.pbs-pm-flow-caption { color: #9CA3AF !important; }
+.pbs-pm-flow-heading { color: #4B5563 !important; }
+.pbs-pm-flow-number { background: #FFFFFF !important; border-color: #D1D5DB !important; color: #6B7280 !important; box-shadow: none !important; }
+.pbs-pm-flow-step.is-active .pbs-pm-flow-heading { color: var(--pbs-primary-deeper) !important; font-weight: 700; }
+.pbs-pm-flow-step.is-active .pbs-pm-flow-number { border-color: var(--pbs-primary); background: var(--pbs-primary) !important; color: #FFFFFF !important; }
+.pbs-pm-flow-link { color: #6B7280 !important; }
+.pbs-pm-flow-link:hover, .pbs-pm-flow-link.is-active { color: var(--pbs-primary-dark) !important; background: var(--pbs-primary-light) !important; font-weight: 600; }
+.pbs-pm-flow-step:not(:last-child)::after { background: #E5E7EB !important; }
+/* 侧边栏底部用户卡：浅蓝渐变 */
+#pbs-sidebar .border-t.border-gray-100 { border-color: #EEF0F3 !important; background: transparent; }
 #pbs-sidebar .bg-gradient-to-r.from-blue-50.to-indigo-50 {
-  background: linear-gradient(90deg, #0B2240, #0E2A50) !important;
-  border: 1px solid #1B3556;
+  background: linear-gradient(90deg, #F0F6FF, #E8F0FF) !important;
+  border: 1px solid #DBEAFE;
   border-radius: 8px !important;
 }
-#pbs-sidebar .bg-gradient-to-r.from-blue-50.to-indigo-50 p.text-gray-800 { color: #E8ECF1 !important; }
-#pbs-sidebar .bg-gradient-to-r.from-blue-50.to-indigo-50 p.text-blue-600 { color: #6EA8FE !important; }
-#pbs-sidebar .w-9.h-9.bg-gradient-to-br { background: var(--pbs-sidebar-active) !important; }
+#pbs-sidebar .bg-gradient-to-r.from-blue-50.to-indigo-50 p.text-gray-800 { color: #1F2937 !important; }
+#pbs-sidebar .bg-gradient-to-r.from-blue-50.to-indigo-50 p.text-blue-600 { color: var(--pbs-primary) !important; }
+#pbs-sidebar .w-9.h-9.bg-gradient-to-br { background: var(--pbs-primary) !important; }
 
 /* ---------- 顶栏：白底细分割线（后台标准） ---------- */
 header.sticky, header.bg-white {

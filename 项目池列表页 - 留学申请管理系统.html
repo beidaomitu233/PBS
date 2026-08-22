@@ -561,6 +561,7 @@
         }
       });
     }
+    window.syncStaticRowsFromStore = syncStaticRowsFromStore;
 
     document.addEventListener('DOMContentLoaded', function() {
       renderOfflineProjects();
@@ -920,6 +921,14 @@
     }
   </script>
   <script src="./assets/js/pbs-app.js"></script>
+  <script>
+    /* pbs-app.js 加载完成后补跑共享存储同步（inline 脚本先于共享库执行，首次调用时 pbsProjects 尚未就绪） */
+    (function () {
+      function run() { if (window.syncStaticRowsFromStore) window.syncStaticRowsFromStore(); }
+      if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', run);
+      else run();
+    })();
+  </script>
 
 
 

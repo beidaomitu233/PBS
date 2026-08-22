@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>系统消息</title>
+  <script src="./assets/vendor/tailwind-runtime.js"></script>
+  <style>body { font-family: "Microsoft YaHei", "PingFang SC", sans-serif; background: transparent; }</style>
+</head>
+<body class="min-h-screen flex items-center justify-center p-4">
+  <div class="w-full bg-white rounded-2xl shadow-2xl overflow-hidden">
+    <div class="flex items-center justify-between px-6 py-4 border-b border-gray-100">
+      <div><h1 class="text-lg font-semibold text-gray-900">系统消息</h1><p class="text-xs text-gray-400 mt-1">面向全机构的公告与系统通知</p></div>
+      <button class="text-2xl leading-none text-gray-400 hover:text-gray-700" onclick="closeModal()">×</button>
+    </div>
+    <form class="p-6 space-y-4" onsubmit="submitMessage(event)">
+      <div>
+        <label class="block text-sm text-gray-700 mb-1.5">消息类型 <span class="text-red-500">*</span></label>
+        <select id="msgType" class="w-full h-10 px-3 border border-gray-300 rounded-lg text-sm bg-white text-gray-700 focus:ring-2 focus:ring-blue-500">
+          <option>系统公告</option>
+          <option>业务提醒</option>
+          <option>版本更新</option>
+        </select>
+      </div>
+      <div>
+        <label class="block text-sm text-gray-700 mb-1.5">消息标题 <span class="text-red-500">*</span></label>
+        <input id="msgTitle" required maxlength="50" class="w-full h-10 px-3 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500" placeholder="请输入消息标题（50 字以内）">
+      </div>
+      <div>
+        <label class="block text-sm text-gray-700 mb-1.5">消息内容 <span class="text-red-500">*</span></label>
+        <textarea id="msgBody" required rows="4" class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500" placeholder="请输入消息内容"></textarea>
+      </div>
+      <div>
+        <label class="block text-sm text-gray-700 mb-2">接收范围 <span class="text-red-500">*</span></label>
+        <div id="audienceOptions" class="grid grid-cols-3 gap-2"></div>
+        <p id="audienceError" class="hidden text-xs text-red-500 mt-2">请至少选择一个接收角色</p>
+      </div>
+      <div class="rounded-lg bg-blue-50 px-4 py-3 text-xs text-blue-700">消息按角色推送到对应人员的「消息提醒」中心；仅本机构可见。</div>
+      <div class="flex justify-end gap-3 pt-2"><button type="button" class="px-5 h-10 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50" onclick="closeModal()">取消</button><button type="submit" class="px-5 h-10 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium">发送消息</button></div>
+    </form>
+  </div>
+  <script src="./assets/js/pbs-app.js"></script>
+  <script>
+    var ALL_ROLES = ['机构管理员', '销售人员', '项目经理', '文书人员', '网申人员', '文书审核', '文书机构管理员', '平台运维人员'];
+    document.getElementById('audienceOptions').innerHTML = ALL_ROLES.map(function (role) {
+      return '<label class="flex items-center gap-2 px-3 py-2 border border-gray-200 rounded-lg text-sm text-gray-700 cursor-pointer hover:border-blue-400"><input type="checkbox" value="' + role + '" class="accent-blue-600">' + role + '</label>';
+    }).join('');
+    function closeModal() { parent.postMessage('pbs:close', '*'); }
+    function submitMessage(event) {
+      event.preventDefault();
+      var type = document.getElementById('msgType').value;
+      var title = document.getElementById('msgTitle').value.trim();
+      var body = document.getElementById('msgBody').value.trim();
+      var audience = Array.from(document.querySelectorAll('#audienceOptions input:checked')).map(function (item) { return item.value; });
+      if (!title || !body) return;
+      if (!audience.length) { document.getElementById('audienceError').classList.remove('hidden'); return; }
+      var session = null;
+      try { session = parent.pbsGetSession ? parent.pbsGetSession() : null; } catch (e) {}
+      if (window.pbsCreateNotification) {
+        window.pbsCreateNotification({
+          kind: 'system_broadcast',
+          type: type,
+          title: title,
+          business: (session && session.org) || 'PBS留学总部',
+          detail: body,
+          level: 'primary',
+          recipientRoles: audience,
+          organization: (session && session.org) || 'PBS留学总部'
+        });
+      }
+      if (parent.pbsRecordOperation) parent.pbsRecordOperation('系统管理', '新增', '发送系统消息「' + title + '」（接收：' + audience.join('、') + '）');
+      alert('系统消息已发送至所选角色');
+      closeModal();
+    }
+  </script>
+</body>
+</html>

@@ -476,6 +476,24 @@
     var currentPage = 1;
     var pageSize = 10;
 
+    /* 新增用户弹窗回调：把新账号加入表格 */
+    window.addUserFromModal = function (data) {
+      if (!data || !data.account) return;
+      var now = new Date();
+      var timeStr = now.getFullYear() + '-' + String(now.getMonth() + 1).padStart(2, '0') + '-' + String(now.getDate()).padStart(2, '0') + ' ' + String(now.getHours()).padStart(2, '0') + ':' + String(now.getMinutes()).padStart(2, '0');
+      mockUsers.unshift({
+        id: mockUsers.reduce(function (max, u) { return Math.max(max, u.id); }, 0) + 1,
+        username: data.username,
+        phone: (data.phone || '').replace(/^(\d{3})\d{4}(\d{4})$/, '$1****$2') || '—',
+        account: data.account,
+        roles: data.roles || [],
+        org: data.org || 'PBS留学总部',
+        registerTime: timeStr,
+        status: 'normal'
+      });
+      renderTable();
+    };
+
     // ===================== 工具函数 =====================
     function formatDate(dateStr) {
       return dateStr;

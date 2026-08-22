@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>新增用户</title>
+  <script src="./assets/vendor/tailwind-runtime.js"></script>
+  <style>body { font-family: "Microsoft YaHei", "PingFang SC", sans-serif; background: transparent; }</style>
+</head>
+<body class="min-h-screen flex items-center justify-center p-4">
+  <div class="w-full bg-white rounded-2xl shadow-2xl overflow-hidden">
+    <div class="flex items-center justify-between px-6 py-4 border-b border-gray-100">
+      <div><h1 class="text-lg font-semibold text-gray-900">新增用户</h1><p class="text-xs text-gray-400 mt-1">创建系统账号并分配角色（初始密码通过邀请发送，不在此回显）</p></div>
+      <button class="text-2xl leading-none text-gray-400 hover:text-gray-700" onclick="closeModal()">×</button>
+    </div>
+    <form class="p-6 space-y-4" onsubmit="submitUser(event)">
+      <div class="grid grid-cols-2 gap-4">
+        <div><label class="block text-sm text-gray-700 mb-1.5">用户名 <span class="text-red-500">*</span></label><input id="userName" required class="w-full h-10 px-3 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500" placeholder="请输入用户名"></div>
+        <div><label class="block text-sm text-gray-700 mb-1.5">手机号 <span class="text-red-500">*</span></label><input id="userPhone" required class="w-full h-10 px-3 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500" placeholder="请输入手机号"></div>
+        <div><label class="block text-sm text-gray-700 mb-1.5">登录账号 <span class="text-red-500">*</span></label><input id="userAccount" required class="w-full h-10 px-3 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500" placeholder="英文或数字"></div>
+        <div><label class="block text-sm text-gray-700 mb-1.5">所属机构 <span class="text-red-500">*</span></label>
+          <select id="userOrg" required class="w-full h-10 px-3 border border-gray-300 rounded-lg text-sm bg-white text-gray-700 focus:ring-2 focus:ring-blue-500">
+            <option value="">请选择机构</option>
+            <option>PBS留学总部</option>
+            <option>上海启明留学</option>
+            <option>北京知行教育</option>
+            <option>广州远航教育</option>
+            <option>深圳新途教育</option>
+          </select>
+        </div>
+      </div>
+      <div>
+        <label class="block text-sm text-gray-700 mb-2">用户角色 <span class="text-red-500">*</span></label>
+        <div id="roleOptions" class="grid grid-cols-3 gap-2"></div>
+        <p id="roleError" class="hidden text-xs text-red-500 mt-2">请至少选择一个角色</p>
+      </div>
+      <div class="rounded-lg bg-blue-50 px-4 py-3 text-xs text-blue-700">初始密码为 <b>Pbs123456</b>（仅存散列），并要求该账号首次登录时修改密码；账号有效期默认「长期有效」，可在人员管理中调整。</div>
+      <p id="formError" class="hidden text-xs text-red-500"></p>
+      <div class="flex justify-end gap-3 pt-2"><button type="button" class="px-5 h-10 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50" onclick="closeModal()">取消</button><button type="submit" class="px-5 h-10 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium">确认创建</button></div>
+    </form>
+  </div>
+  <script src="./assets/js/pbs-app.js"></script>
+  <script>
+    var ASSIGNABLE_ROLES = ['机构管理员', '销售人员', '项目经理', '文书人员', '网申人员', '文书审核', '文书机构管理员'];
+    (function initRoles() {
+      var roles = ASSIGNABLE_ROLES.slice();
+      try {
+        var session = parent.pbsGetSession ? parent.pbsGetSession() : null;
+        var saved = JSON.parse(localStorage.getItem('pbs_role_assignment_perms_v1') || '{}');
+        var currentRole = (session && session.role) || '平台运维人员';
+        if (saved[currentRole] && Array.isArray(saved[currentRole])) roles = saved[currentRole];
+      } catch (e) {}
+      document.getElementById('roleOptions').innerHTML = roles.map(function (role) {
+        return '<label class="flex items-center gap-2 px-3 py-2 border border-gray-200 rounded-lg text-sm text-gray-700 cursor-pointer hover:border-blue-400"><input type="checkbox" value="' + role + '" class="accent-blue-600">' + role + '</label>';
+      }).join('');
+      try {
+        var session2 = parent.pbsGetSession ? parent.pbsGetSession() : null;
+        var org = (session2 && session2.org) || '';
+        if (org) {
+          var orgSelect = document.getElementById('userOrg');
+          if (!Array.from(orgSelect.options).some(function (option) { return option.value === org; })) orgSelect.add(new Option(org, org));
+          orgSelect.value = org;
+        }
+      } catch (e) {}
+    })();
+    function closeModal() { parent.postMessage('pbs:close', '*'); }
+    function showError(msg) {
+      var el = document.getElementById('formError');
+      el.textContent = msg;
+      el.classList.remove('hidden');
+    }
+    function submitUser(event) {
+      event.preventDefault();
+      var name = document.getElementById('userName').value.trim();
+      var phone = document.getElementById('userPhone').value.trim();
+      var account = document.getElementById('userAccount').value.trim();
+      var org = document.getElementById('userOrg').value;
+      var roles = Array.from(document.querySelectorAll('#roleOptions input:checked')).map(function (item) { return item.value; });
+      if (!name || !phone || !account || !org) { showError('请完整填写用户信息'); return; }
+      if (!roles.length) { document.getElementById('roleError').classList.remove('hidden'); return; }
+      /* 写入共享账号库（散列存储 + 首次改密标记），登录页与人员管理页共用 */
+      try {
+        if (!window.pbsAccounts) throw new Error('共享账号库未加载');
+        if (window.pbsAccounts.find(account)) { showError('账号已存在，请更换登录账号'); return; }
+        window.pbsAccounts.upsert({
+          u: account,
+          phash: window.pbsAccounts.hashPassword('Pbs123456'),
+          name: name,
+          role: roles[0],
+          roles: roles.slice(),
+          org: org,
+          status: '正常',
+          accountStatus: '启用',
+          accountExpiry: '长期有效',
+          mustChangePassword: true
+        });
+      } catch (e) { showError(e.message || '创建失败，请重试'); return; }
+      /* 同步刷新用户管理页表格 */
+      var data = { username: name, phone: phone, account: account, roles: roles, org: org };
+      if (parent.addUserFromModal) parent.addUserFromModal(data);
+      if (parent.pbsRecordOperation) parent.pbsRecordOperation('账号与权限', '新增', '新增用户「' + name + '」（' + roles.join('、') + ' · ' + org + '）');
+      alert('用户创建成功：初始密码 Pbs123456 已生成（仅存散列），首次登录需修改');
+      closeModal();
+    }
+  </script>
+</body>
+</html>

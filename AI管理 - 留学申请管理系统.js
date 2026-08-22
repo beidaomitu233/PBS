@@ -5,7 +5,7 @@
   var AI_STORAGE_KEY = 'pbs_ai_management_v5';
   var LEGACY_AI_STORAGE_KEYS = ['pbs_ai_management_v4', 'pbs_ai_management_v3', 'pbs_ai_management_v2'];
   var OPERATION_LOG_KEY = 'pbs_operation_logs_v1';
-  var AI_TABS = ['models', 'prompts', 'evaluation'];
+  var AI_TABS = ['models', 'routing', 'monitor', 'prompts'];
   var activePrompt = 0;
   var currentReportId = '';
   var pendingPublishPromptKey = '';
@@ -13,6 +13,7 @@
   var customDatasetCount = 0;
   var autoSaveTimers = {};
   var evalTimer = null;
+  var activeKeyPoolModelId = '';
 
   var PROVIDER_PRESETS = {
     qwen: { name: 'Qwen', short: 'QW', color: '#7c6aed' },
@@ -23,7 +24,7 @@
     openai_compatible: { name: 'OpenAI 兼容服务', short: 'OA', color: '#475569' }
   };
 
-  var DEFAULT_MODEL_PARAMS = { temperature: 0.2, timeout: 60, retry: 1, stream: true };
+  var DEFAULT_MODEL_PARAMS = { temperature: 0.5, timeout: 60, retry: 1, stream: true };
 
   function defaultModel(id, name, providerType, modelId) {
     return { id: id, name: name, providerType: providerType, modelId: modelId, hasKey: false, keyLast4: '', context: 131072, params: Object.assign({}, DEFAULT_MODEL_PARAMS) };
@@ -31,10 +32,37 @@
 
   var DEFAULT_MODELS = [
     defaultModel('m-qwen', 'Qwen 主模型', 'qwen', 'qwen-plus'),
-    defaultModel('m-deepseek', 'DeepSeek 次模型', 'deepseek', 'deepseek-v4-flash'),
+    defaultModel('m-qwen-long', 'Qwen 长文本模型', 'qwen', 'qwen-long'),
+    defaultModel('m-deepseek', 'DeepSeek 备用模型', 'deepseek', 'deepseek-v4-flash'),
     defaultModel('m-kimi', 'Kimi 长文本模型', 'kimi', 'kimi-k2.6'),
     defaultModel('m-seed', 'Seed 通用模型', 'seed', 'doubao-seed-2-0-lite-260215'),
     defaultModel('m-glm', 'GLM 通用模型', 'glm', 'glm-5.2')
+  ];
+
+  var DEFAULT_KEYS = [
+    { id: 'key-qwen-01', alias: 'qwen-prod-01', providerType: 'qwen', modelIds: ['m-qwen', 'm-qwen-long'], quotaGroup: '阿里云生产账号 A', last4: '8H2K', enabled: true, health: 'healthy', load: 36, quotaRemaining: 68, latency: 642, priority: 1, weight: 70, checkedAt: '2026-08-22 09:58:12' },
+    { id: 'key-qwen-02', alias: 'qwen-prod-02', providerType: 'qwen', modelIds: ['m-qwen'], quotaGroup: '阿里云生产账号 A', last4: 'P7M4', enabled: true, health: 'cooling', load: 92, quotaRemaining: 68, latency: 1280, priority: 2, weight: 30, checkedAt: '2026-08-22 09:57:46' },
+    { id: 'key-deepseek-01', alias: 'deepseek-prod-01', providerType: 'deepseek', modelIds: ['m-deepseek'], quotaGroup: 'DeepSeek 企业账号', last4: 'D4S9', enabled: true, health: 'healthy', load: 28, quotaRemaining: 81, latency: 718, priority: 1, weight: 100, checkedAt: '2026-08-22 09:58:05' },
+    { id: 'key-kimi-01', alias: 'kimi-longtext-01', providerType: 'kimi', modelIds: ['m-kimi'], quotaGroup: '月之暗面生产账号', last4: 'K2L6', enabled: true, health: 'warning', load: 78, quotaRemaining: 42, latency: 906, priority: 2, weight: 100, checkedAt: '2026-08-22 09:57:32' },
+    { id: 'key-seed-01', alias: 'seed-backup-01', providerType: 'seed', modelIds: ['m-seed'], quotaGroup: '火山引擎备用账号', last4: 'S5E1', enabled: false, health: 'disabled', load: 0, quotaRemaining: 100, latency: 0, priority: 3, weight: 100, checkedAt: '2026-08-21 18:20:00' },
+    { id: 'key-glm-01', alias: 'glm-prod-01', providerType: 'glm', modelIds: ['m-glm'], quotaGroup: '智谱生产账号', last4: 'G8M3', enabled: true, health: 'healthy', load: 41, quotaRemaining: 73, latency: 754, priority: 2, weight: 100, checkedAt: '2026-08-22 09:57:58' }
+  ];
+
+  var DEFAULT_ROUTING_POLICY = {
+    strategy: 'least_load',
+    orgConcurrency: 4,
+    queueTimeout: 30,
+    retry: 1,
+    cooldownSeconds: 60,
+    priorityScenes: ['任务催办', '文书审核', '网申提交']
+  };
+
+  var DEFAULT_CALL_LOGS = [
+    { id: 'call-01', time: '2026-08-22 09:58:12', org: '北岛留学', scene: '文书编辑', modelId: 'm-qwen', keyId: 'key-qwen-01', latency: 642, result: 'success', detail: '主模型命中' },
+    { id: 'call-02', time: '2026-08-22 09:57:46', org: '远航教育', scene: '材料解析', modelId: 'm-qwen', keyId: 'key-qwen-02', latency: 1280, result: 'failed', detail: '429 限流，Key 已进入冷却' },
+    { id: 'call-03', time: '2026-08-22 09:57:31', org: '新知留学', scene: '选校推荐', modelId: 'm-deepseek', keyId: 'key-deepseek-01', latency: 718, result: 'success', detail: '备用模型命中' },
+    { id: 'call-04', time: '2026-08-22 09:56:58', org: '青藤国际', scene: '网申提交', modelId: 'm-kimi', keyId: 'key-kimi-01', latency: 0, result: 'queued', detail: '机构并发已满，队列位置 3' },
+    { id: 'call-05', time: '2026-08-22 09:56:21', org: '北岛留学', scene: '文书审核', modelId: 'm-glm', keyId: 'key-glm-01', latency: 754, result: 'success', detail: '按低负载策略命中' }
   ];
 
   var BASE_PROMPTS = [
@@ -88,6 +116,10 @@
     return {
       models: cloneJson(DEFAULT_MODELS),
       globalRoute: { primary: 'm-qwen', backup: 'm-deepseek' },
+      keys: cloneJson(DEFAULT_KEYS),
+      routingPolicy: cloneJson(DEFAULT_ROUTING_POLICY),
+      callLogs: cloneJson(DEFAULT_CALL_LOGS),
+      monitorQueuedRequests: 12,
       promptOverrides: {},
       promptStatus: {},
       caseTemplateOverrides: {},
@@ -107,11 +139,16 @@
       });
     }
     if (saved && typeof saved === 'object') {
-      ['models', 'globalRoute', 'promptOverrides', 'promptStatus', 'caseTemplateOverrides', 'selectedCaseTemplate', 'evalResults'].forEach(function (key) {
+      ['models', 'globalRoute', 'keys', 'routingPolicy', 'callLogs', 'monitorQueuedRequests', 'promptOverrides', 'promptStatus', 'caseTemplateOverrides', 'selectedCaseTemplate', 'evalResults'].forEach(function (key) {
         if (saved[key] !== undefined) state[key] = saved[key];
       });
     }
     if (!Array.isArray(state.models) || !state.models.length) state.models = cloneJson(DEFAULT_MODELS);
+    if (!state.models.some(function (model) { return model.id === 'm-qwen-long'; }) && state.models.some(function (model) { return model.id === 'm-qwen'; })) {
+      state.models.splice(1, 0, cloneJson(DEFAULT_MODELS[1]));
+    }
+    var legacyBackupModel = state.models.find(function (model) { return model.id === 'm-deepseek' && model.name === 'DeepSeek 次模型'; });
+    if (legacyBackupModel) legacyBackupModel.name = 'DeepSeek 备用模型';
     state.models.forEach(function (model) {
       var legacyProvider = saved && Array.isArray(saved.providers) ? saved.providers.find(function (provider) { return provider.id === model.providerId; }) : null;
       var providerType = model.providerType || (legacyProvider && legacyProvider.type) || model.providerId || 'openai_compatible';
@@ -127,6 +164,7 @@
         retry: Number(savedParams.retry == null ? DEFAULT_MODEL_PARAMS.retry : savedParams.retry),
         stream: true
       };
+      if (/^m-(qwen|qwen-long|deepseek|kimi|seed|glm)$/.test(model.id) && model.params.temperature === 0.2) model.params.temperature = 0.5;
       delete model.params.thinking;
       delete model.providerId;
       delete model.maxOutput;
@@ -141,6 +179,42 @@
       delete model.capabilities;
       delete model.thinking;
     });
+    if (!Array.isArray(state.keys)) state.keys = cloneJson(DEFAULT_KEYS);
+    state.keys = state.keys.map(function (key, index) {
+      var enabled = key.enabled !== false;
+      var modelIds = Array.isArray(key.modelIds) ? key.modelIds.slice() : key.modelId ? [key.modelId] : [];
+      modelIds = modelIds.filter(function (id, modelIndex, ids) { return ids.indexOf(id) === modelIndex && state.models.some(function (model) { return model.id === id; }); });
+      var firstModel = state.models.find(function (model) { return model.id === modelIds[0]; });
+      var providerType = key.providerType || (firstModel && firstModel.providerType) || 'openai_compatible';
+      if (key.id === 'key-qwen-01' && modelIds.indexOf('m-qwen') >= 0 && modelIds.indexOf('m-qwen-long') < 0) modelIds.push('m-qwen-long');
+      return {
+        id: key.id || 'key_' + Date.now() + '_' + index,
+        alias: plainText(key.alias) || '未命名 Key',
+        providerType: PROVIDER_PRESETS[providerType] ? providerType : 'openai_compatible',
+        modelIds: modelIds,
+        quotaGroup: plainText(key.quotaGroup) || '未设置配额组',
+        last4: plainText(key.last4 || key.keyLast4).slice(-4) || '****',
+        enabled: enabled,
+        health: enabled ? (['healthy', 'warning', 'cooling'].indexOf(key.health) >= 0 ? key.health : 'healthy') : 'disabled',
+        load: Math.max(0, Math.min(100, Number(key.load == null ? 0 : key.load))),
+        quotaRemaining: Math.max(0, Math.min(100, Number(key.quotaRemaining == null ? 100 : key.quotaRemaining))),
+        latency: Math.max(0, Number(key.latency || 0)),
+        priority: Math.max(1, Math.min(3, Number(key.priority || 2))),
+        weight: Math.max(1, Math.min(100, Number(key.weight || 100))),
+        checkedAt: key.checkedAt || nowText()
+      };
+    });
+    if (!state.keys.length) state.keys = cloneJson(DEFAULT_KEYS);
+    if (saved && !Array.isArray(saved.keys)) {
+      state.models.forEach(function (model) {
+        if (!model.hasKey || state.keys.some(function (key) { return key.modelIds.indexOf(model.id) >= 0; })) return;
+        state.keys.push({ id: 'key-legacy-' + model.id, alias: model.name + '-legacy', providerType: model.providerType, modelIds: [model.id], quotaGroup: modelProviderPreset(model).name + ' 默认账号', last4: model.keyLast4 || '****', enabled: true, health: 'healthy', load: 0, quotaRemaining: 100, latency: 0, priority: 2, weight: 100, checkedAt: nowText() });
+      });
+    }
+    state.routingPolicy = Object.assign({}, DEFAULT_ROUTING_POLICY, state.routingPolicy || {});
+    if (!Array.isArray(state.routingPolicy.priorityScenes)) state.routingPolicy.priorityScenes = DEFAULT_ROUTING_POLICY.priorityScenes.slice();
+    if (!Array.isArray(state.callLogs)) state.callLogs = cloneJson(DEFAULT_CALL_LOGS);
+    state.monitorQueuedRequests = Math.max(0, Number(state.monitorQueuedRequests == null ? 12 : state.monitorQueuedRequests));
     if (!state.promptOverrides || typeof state.promptOverrides !== 'object') state.promptOverrides = {};
     if (!state.promptStatus || typeof state.promptStatus !== 'object') state.promptStatus = {};
     if (!state.caseTemplateOverrides || typeof state.caseTemplateOverrides !== 'object') state.caseTemplateOverrides = {};
@@ -284,7 +358,7 @@
   function modelRouteRole(modelId) {
     var roles = [];
     if (aiState.globalRoute.primary === modelId) roles.push('主模型');
-    if (aiState.globalRoute.backup === modelId) roles.push('次模型');
+    if (aiState.globalRoute.backup === modelId) roles.push('备用模型');
     return roles.join(' / ') || '—';
   }
 
@@ -292,11 +366,15 @@
     byId('modelRows').innerHTML = aiState.models.map(function (model) {
       var preset = modelProviderPreset(model);
       var params = Object.assign({}, DEFAULT_MODEL_PARAMS, model.params || {});
+      var keys = modelKeys(model.id);
+      var availableKeys = keys.filter(function (key) { return key.enabled && (key.health === 'healthy' || key.health === 'warning'); }).length;
+      var keyAliases = keys.slice(0, 2).map(function (key) { return key.alias; }).join('、');
       return '<tr><td><b>' + escapeHtml(model.name) + '</b><div class="subtle">' + escapeHtml(model.modelId) + '</div></td>' +
         '<td><div class="provider"><div class="provider-logo" style="background:' + preset.color + '">' + escapeHtml(preset.short) + '</div><b>' + escapeHtml(preset.name) + '</b></div></td>' +
         '<td><div class="model-param-summary">Temperature ' + params.temperature + '<br>超时 ' + params.timeout + ' 秒 · 重试 ' + params.retry + ' 次</div></td>' +
+        '<td><b>' + availableKeys + ' 个可用 Key</b><div class="subtle">' + escapeHtml(keyAliases || '尚未添加 Key') + (keys.length > 2 ? ' 等' : '') + '</div></td>' +
         '<td>' + escapeHtml(modelRouteRole(model.id)) + '</td>' +
-        '<td><button class="btn ghost sm" onclick="openModelEditor(\'' + model.id + '\')">编辑</button></td></tr>';
+        '<td><div class="table-actions"><button class="btn ghost sm" onclick="openModelKeyPool(\'' + model.id + '\')">配置 Key</button><button class="btn ghost sm" onclick="openModelEditor(\'' + model.id + '\')">编辑模型</button></div></td></tr>';
     }).join('');
     updateSummary();
   }
@@ -304,13 +382,10 @@
   window.openModelEditor = function (id) {
     var model = id ? modelById(id) : null;
     byId('modelEditId').value = model ? model.id : '';
-    byId('modelModalTitle').textContent = model ? '编辑模型' : '新增模型';
+    byId('modelModalTitle').textContent = model ? '编辑目标模型' : '新增目标模型';
     byId('newModelName').value = model ? model.name : '';
     byId('modelProviderType').value = model ? model.providerType : 'qwen';
     byId('newModelId').value = model ? model.modelId : '';
-    byId('modelApiKey').value = '';
-    byId('modelApiKey').type = 'password';
-    byId('modelApiKey').placeholder = model && model.hasKey ? '留空保留已保存密钥（末四位 ' + model.keyLast4 + '）' : '请输入 API Key';
     var params = Object.assign({}, DEFAULT_MODEL_PARAMS, model ? model.params : {});
     byId('modelTemperature').value = params.temperature;
     byId('modelTimeout').value = params.timeout;
@@ -319,17 +394,11 @@
     openModal('modelModal');
   };
 
-  window.toggleModelApiKey = function () {
-    var input = byId('modelApiKey');
-    input.type = input.type === 'password' ? 'text' : 'password';
-  };
-
   function modelFormValues() {
     return {
       name: byId('newModelName').value.trim(),
       providerType: byId('modelProviderType').value,
       modelId: byId('newModelId').value.trim(),
-      rawKey: byId('modelApiKey').value.trim(),
       params: {
         temperature: Number(byId('modelTemperature').value),
         timeout: Number(byId('modelTimeout').value),
@@ -353,20 +422,37 @@
     byId('modelFormError').textContent = error;
     if (error) return;
     var model = modelById(byId('modelEditId').value);
-    if (!model) { model = { id: 'model_' + Date.now(), hasKey: false, keyLast4: '' }; aiState.models.push(model); }
+    var isNewModel = !model;
+    var previousProvider = model ? model.providerType : '';
+    if (!model) { model = { id: 'model_' + Date.now() }; aiState.models.push(model); }
     model.name = values.name;
     model.providerType = values.providerType;
     model.modelId = values.modelId;
-    if (values.rawKey) { model.hasKey = true; model.keyLast4 = values.rawKey.slice(-4); }
     model.context = 131072;
     model.params = values.params;
     delete model.capabilities;
     delete model.thinking;
+    var removedBindings = 0;
+    if (previousProvider && previousProvider !== model.providerType) {
+      aiState.keys.forEach(function (key) {
+        if (key.providerType !== model.providerType && key.modelIds.indexOf(model.id) >= 0) {
+          key.modelIds = key.modelIds.filter(function (id) { return id !== model.id; });
+          removedBindings += 1;
+        }
+      });
+    }
     commitAutoSave('修改模型', model.name + ' / ' + model.modelId + '，Temperature ' + model.params.temperature + '，超时 ' + model.params.timeout + ' 秒，重试 ' + model.params.retry + ' 次', 'model-' + model.id, true);
     closeModal('modelModal');
     renderModels();
     populateModelSelectors();
-    showToast(model.name + ' 已自动保存');
+    if (isNewModel) {
+      window.openModelKeyPool(model.id);
+      var hasReusableKey = aiState.keys.some(function (key) { return key.providerType === model.providerType && key.modelIds.indexOf(model.id) < 0; });
+      if (!hasReusableKey) window.openInlineKeyForm();
+      showToast(hasReusableKey ? '目标模型已保存，可直接复用已有 Key' : '目标模型已保存，请继续添加 Key');
+    } else {
+      showToast(model.name + ' 已自动保存' + (removedBindings ? '，已解除 ' + removedBindings + ' 个跨厂商 Key 关联' : ''));
+    }
   };
 
   function modelOptions(selected) {
@@ -393,12 +479,295 @@
       return;
     }
     aiState.globalRoute = { primary: primary, backup: backup };
-    byId('routeHint').textContent = '主模型不可用时切换至次模型，两者不能相同。';
+    byId('routeHint').textContent = '主模型池无健康 Key 时自动切换备用模型池。';
     byId('routeHint').className = 'help';
     var primaryName = (modelById(primary) || {}).name || '未配置';
     var backupName = (modelById(backup) || {}).name || '未配置';
-    commitAutoSave('修改主次模型', primaryName + ' → ' + backupName, 'global-route');
+    commitAutoSave('修改模型路由', primaryName + ' → ' + backupName, 'global-route');
     renderModels();
+  };
+
+  function keyById(id) { return aiState.keys.find(function (key) { return key.id === id; }); }
+  function modelKeys(modelId) { return aiState.keys.filter(function (key) { return key.modelIds.indexOf(modelId) >= 0; }); }
+  function uniqueValues(items, field) {
+    return items.map(function (item) { return item[field]; }).filter(Boolean).filter(function (value, index, values) { return values.indexOf(value) === index; }).sort();
+  }
+  function healthMeta(key) {
+    if (!key.enabled || key.health === 'disabled') return { value: 'disabled', label: '已停用' };
+    if (key.health === 'cooling') return { value: 'cooling', label: '冷却中' };
+    if (key.health === 'warning') return { value: 'warning', label: '高负载' };
+    return { value: 'healthy', label: '健康' };
+  }
+  function keyModelNames(key) {
+    return key.modelIds.map(function (id) { return (modelById(id) || {}).name; }).filter(Boolean);
+  }
+  function renderModelKeyPool() {
+    var model = modelById(activeKeyPoolModelId);
+    if (!model) return;
+    var preset = modelProviderPreset(model);
+    byId('modelKeyPoolTitle').textContent = model.name + ' · 配置 Key';
+    byId('modelKeyPoolInfo').innerHTML = '<b>' + escapeHtml(model.name) + '</b><span>' + escapeHtml(preset.name) + ' · ' + escapeHtml(model.modelId) + ' · 系统会自动从健康 Key 中选择调用</span>';
+    var keys = modelKeys(model.id);
+    byId('modelKeyPoolRows').innerHTML = keys.length ? keys.map(function (key) {
+      var health = healthMeta(key);
+      var otherNames = key.modelIds.filter(function (id) { return id !== model.id; }).map(function (id) { return (modelById(id) || {}).name; }).filter(Boolean);
+      return '<tr><td><b>' + escapeHtml(key.alias) + '</b><div class="masked-key mono">•••••••• ' + escapeHtml(key.last4) + '</div></td>' +
+        '<td>' + escapeHtml(key.quotaGroup) + '</td>' +
+        '<td><span class="pill ' + health.value + '">' + health.label + '</span></td>' +
+        '<td>' + (otherNames.length ? '<div class="tags">' + otherNames.map(function (name) { return '<span class="tag">' + escapeHtml(name) + '</span>'; }).join('') + '</div>' : '<span class="subtle">仅当前模型</span>') + '</td>' +
+        '<td><div class="table-actions"><button class="switch' + (key.enabled ? ' on' : '') + '" type="button" aria-label="' + (key.enabled ? '停用' : '启用') + ' ' + escapeHtml(key.alias) + '" onclick="toggleKey(\'' + key.id + '\')"></button><button class="btn ghost sm" onclick="testKey(\'' + key.id + '\')">检测</button><button class="btn ghost sm" onclick="openInlineKeyForm(\'' + key.id + '\')">编辑</button><button class="btn ghost sm danger-text" onclick="unlinkKeyFromModel(\'' + key.id + '\')">' + (key.modelIds.length > 1 ? '移出' : '删除') + '</button></div></td></tr>';
+    }).join('') : '<tr><td colspan="5" class="subtle" style="text-align:center;padding:28px">当前模型还没有 Key，请点击“添加 Key”</td></tr>';
+    var reusable = aiState.keys.filter(function (key) { return key.providerType === model.providerType && key.modelIds.indexOf(model.id) < 0; });
+    byId('modelReusableSection').classList.toggle('hidden', !reusable.length);
+    byId('modelReusableKeys').innerHTML = reusable.map(function (key) {
+      var usedBy = keyModelNames(key).join('、') || '尚未用于其他模型';
+      return '<div class="reuse-item"><div><b>' + escapeHtml(key.alias) + ' · ' + escapeHtml(key.quotaGroup) + '</b><span>当前用于：' + escapeHtml(usedBy) + '</span></div><button class="btn sm" onclick="linkExistingKey(\'' + key.id + '\')">加入当前模型</button></div>';
+    }).join('');
+  }
+
+  window.openModelKeyPool = function (modelId) {
+    if (!modelById(modelId)) return;
+    activeKeyPoolModelId = modelId;
+    byId('keyInlineForm').classList.add('hidden');
+    byId('keyRawValue').value = '';
+    renderModelKeyPool();
+    openModal('modelKeyPoolModal');
+  };
+
+  window.linkExistingKey = function (keyId) {
+    var key = keyById(keyId);
+    var model = modelById(activeKeyPoolModelId);
+    if (!key || !model || key.providerType !== model.providerType) return;
+    if (key.modelIds.indexOf(model.id) < 0) key.modelIds.push(model.id);
+    commitAutoSave('关联模型 Key', model.name + ' ← ' + key.alias, 'key-link-' + key.id + '-' + model.id, true);
+    renderModelKeyPool();
+    renderModels();
+    showToast(key.alias + ' 已加入当前模型');
+  };
+
+  window.unlinkKeyFromModel = function (keyId) {
+    var key = keyById(keyId);
+    var model = modelById(activeKeyPoolModelId);
+    if (!key || !model) return;
+    var removeKey = key.modelIds.length === 1;
+    if (removeKey && !window.confirm('确认删除“' + key.alias + '”吗？删除后该 Key 不再参与调用。')) return;
+    if (removeKey) aiState.keys = aiState.keys.filter(function (item) { return item.id !== key.id; });
+    else key.modelIds = key.modelIds.filter(function (id) { return id !== model.id; });
+    commitAutoSave(removeKey ? '删除 AI Key' : '解除模型 Key 关联', model.name + ' × ' + key.alias, 'key-unlink-' + key.id + '-' + model.id, true);
+    renderModelKeyPool();
+    renderModels();
+    renderMonitoring();
+    showToast(removeKey ? 'Key 已删除' : '已从当前模型移出，其他模型不受影响');
+  };
+
+  window.openInlineKeyForm = function (id) {
+    var model = modelById(activeKeyPoolModelId);
+    var key = id ? keyById(id) : null;
+    if (!model || (key && key.providerType !== model.providerType)) return;
+    byId('keyEditId').value = key ? key.id : '';
+    byId('keyInlineTitle').textContent = key ? '编辑 Key' : '添加 Key';
+    byId('keyAlias').value = key ? key.alias : model.name + ' Key';
+    byId('keyQuotaGroup').value = key ? key.quotaGroup : '';
+    byId('keyRawValue').value = '';
+    byId('keyRawValue').placeholder = key ? '留空保留当前密钥（末四位 ' + key.last4 + '）' : '请输入完整 Key';
+    byId('keyRawRequired').classList.toggle('hidden', !!key);
+    byId('keyRawHelp').textContent = key ? '留空表示不替换当前 Key。' : '保存后只显示末四位，原始 Key 不再回显。';
+    byId('keyCurrentModelFixed').textContent = model.name + ' · ' + model.modelId;
+    var otherModels = aiState.models.filter(function (item) { return item.providerType === model.providerType && item.id !== model.id; });
+    byId('keyOtherModelsField').classList.toggle('hidden', !otherModels.length);
+    byId('keyOtherModelScope').innerHTML = otherModels.map(function (item) {
+      var checked = key && key.modelIds.indexOf(item.id) >= 0;
+      return '<label class="scope-option"><input type="checkbox" value="' + escapeHtml(item.id) + '"' + (checked ? ' checked' : '') + '><span><b>' + escapeHtml(item.name) + '</b><span>' + escapeHtml(item.modelId) + '</span></span></label>';
+    }).join('');
+    byId('keyEnabled').checked = key ? key.enabled : true;
+    byId('keyFormError').textContent = '';
+    byId('keyInlineForm').classList.remove('hidden');
+    byId('keyInlineForm').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  };
+
+  window.cancelInlineKeyForm = function () {
+    byId('keyRawValue').value = '';
+    byId('keyInlineForm').classList.add('hidden');
+  };
+
+  window.saveInlineKey = function () {
+    var model = modelById(activeKeyPoolModelId);
+    if (!model) return;
+    var id = byId('keyEditId').value;
+    var key = id ? keyById(id) : null;
+    var alias = plainText(byId('keyAlias').value);
+    var modelIds = [model.id].concat(Array.prototype.slice.call(document.querySelectorAll('#keyOtherModelScope input:checked')).map(function (input) { return input.value; }));
+    var quotaGroup = plainText(byId('keyQuotaGroup').value);
+    var rawKey = byId('keyRawValue').value.trim();
+    var enabled = byId('keyEnabled').checked;
+    var error = !alias ? '请填写 Key 名称' : !quotaGroup ? '请填写厂商账号或配额组' : !key && !rawKey ? '请输入完整 API Key' : '';
+    if (!error && aiState.keys.some(function (item) { return item.alias === alias && item.id !== id; })) error = 'Key 别名不能重复';
+    byId('keyFormError').textContent = error;
+    if (error) return;
+    if (!key) {
+      key = { id: 'key_' + Date.now(), health: enabled ? 'healthy' : 'disabled', load: 0, quotaRemaining: 100, latency: 0, priority: 2, weight: 100, checkedAt: '尚未检测' };
+      aiState.keys.push(key);
+    }
+    key.alias = alias;
+    key.providerType = model.providerType;
+    key.modelIds = modelIds;
+    key.quotaGroup = quotaGroup;
+    if (rawKey) key.last4 = rawKey.slice(-4);
+    key.enabled = enabled;
+    if (!enabled) key.health = 'disabled';
+    if (enabled && key.health === 'disabled') key.health = 'healthy';
+    byId('keyRawValue').value = '';
+    commitAutoSave('维护共享 AI Key', key.alias + '，可调用 ' + keyModelNames(key).join('、') + '，配额组 ' + key.quotaGroup, 'key-' + key.id, true);
+    byId('keyInlineForm').classList.add('hidden');
+    renderModels();
+    renderMonitoring();
+    renderModelKeyPool();
+    showToast(key.alias + ' 已保存并关联 ' + modelIds.length + ' 个目标模型');
+  };
+
+  window.toggleKey = function (id) {
+    var key = keyById(id);
+    if (!key) return;
+    key.enabled = !key.enabled;
+    key.health = key.enabled ? 'healthy' : 'disabled';
+    key.checkedAt = nowText();
+    commitAutoSave(key.enabled ? '启用 AI Key' : '停用 AI Key', key.alias + ' / ' + key.quotaGroup, 'key-toggle-' + key.id, true);
+    renderModels();
+    if (activeKeyPoolModelId && byId('modelKeyPoolModal').classList.contains('show')) renderModelKeyPool();
+    renderMonitoring();
+    showToast(key.alias + (key.enabled ? ' 已启用' : ' 已停用'));
+  };
+
+  window.testKey = function (id) {
+    var key = keyById(id);
+    if (!key) return;
+    if (!key.enabled) { showToast('请先启用该 Key'); return; }
+    key.health = 'healthy';
+    key.latency = 520 + Math.floor(Math.random() * 360);
+    key.load = Math.max(8, Math.min(68, key.load - 12));
+    key.checkedAt = nowText();
+    commitAutoSave('检测 AI Key', key.alias + '，连接正常，' + key.latency + ' ms', 'key-test-' + key.id, true);
+    renderModels();
+    if (activeKeyPoolModelId && byId('modelKeyPoolModal').classList.contains('show')) renderModelKeyPool();
+    renderMonitoring();
+    showToast(key.alias + ' 检测通过');
+  };
+
+  function renderRoutingPolicy() {
+    var policy = aiState.routingPolicy;
+    byId('routeStrategy').value = policy.strategy;
+    byId('orgConcurrency').value = policy.orgConcurrency;
+    byId('queueTimeout').value = policy.queueTimeout;
+    byId('routeRetry').value = policy.retry;
+    byId('cooldownSeconds').value = policy.cooldownSeconds;
+    document.querySelectorAll('[name="priorityScene"]').forEach(function (input) { input.checked = policy.priorityScenes.indexOf(input.value) >= 0; });
+  }
+
+  window.saveRoutingPolicy = function (explicit) {
+    var policy = {
+      strategy: byId('routeStrategy').value,
+      orgConcurrency: Math.max(1, Math.min(50, Number(byId('orgConcurrency').value || DEFAULT_ROUTING_POLICY.orgConcurrency))),
+      queueTimeout: Math.max(5, Math.min(300, Number(byId('queueTimeout').value || DEFAULT_ROUTING_POLICY.queueTimeout))),
+      retry: Math.max(0, Math.min(3, Number(byId('routeRetry').value || 0))),
+      cooldownSeconds: Math.max(10, Math.min(600, Number(byId('cooldownSeconds').value || DEFAULT_ROUTING_POLICY.cooldownSeconds))),
+      priorityScenes: Array.prototype.slice.call(document.querySelectorAll('[name="priorityScene"]:checked')).map(function (input) { return input.value; })
+    };
+    aiState.routingPolicy = policy;
+    commitAutoSave('修改 AI 调度策略', '单机构并发 ' + policy.orgConcurrency + '，排队超时 ' + policy.queueTimeout + ' 秒，冷却 ' + policy.cooldownSeconds + ' 秒', 'routing-policy', !!explicit);
+    renderRoutingPolicy();
+    if (explicit) showToast('调度策略已保存');
+  };
+
+  function eligibleRoutingKeys(modelId) {
+    return modelKeys(modelId).filter(function (key) { return key.enabled && (key.health === 'healthy' || key.health === 'warning'); });
+  }
+
+  window.simulateRouting = function () {
+    var primaryKeys = eligibleRoutingKeys(aiState.globalRoute.primary);
+    var usingBackup = !primaryKeys.length;
+    var candidates = usingBackup ? eligibleRoutingKeys(aiState.globalRoute.backup) : primaryKeys;
+    var result = byId('routeSimulationResult');
+    if (!candidates.length) {
+      result.innerHTML = '<b class="bad">调度失败</b><br>主模型与备用模型均无可用健康 Key，请检查 Key 状态或配额。';
+      showToast('没有可用的健康 Key');
+      return;
+    }
+    var policy = aiState.routingPolicy;
+    candidates.sort(function (a, b) {
+      if (policy.strategy === 'quota_first') return b.quotaRemaining - a.quotaRemaining;
+      if (policy.strategy === 'weighted') return b.weight - a.weight || a.load - b.load;
+      return a.load - b.load;
+    });
+    var key = candidates[0];
+    var model = modelById(usingBackup ? aiState.globalRoute.backup : aiState.globalRoute.primary);
+    var latency = 560 + Math.floor(Math.random() * 260);
+    result.innerHTML = '<b class="good">模拟调度成功</b><br>北岛留学 · 文书审核 → ' + escapeHtml(usingBackup ? '备用模型' : '主模型') + '「' + escapeHtml(model.name) + '」→ 配额组「' + escapeHtml(key.quotaGroup) + '」→ Key「' + escapeHtml(key.alias) + '」<br>选择依据：' + escapeHtml(byId('routeStrategy').options[byId('routeStrategy').selectedIndex].text) + '；本次模拟未调用厂商接口。';
+    key.load = Math.min(100, key.load + 3);
+    aiState.callLogs.unshift({ id: 'call_' + Date.now(), time: nowText(), org: '北岛留学', scene: '文书审核', modelId: model.id, keyId: key.id, latency: latency, result: 'success', detail: '调度演示 · ' + (usingBackup ? '备用模型命中' : '主模型命中') });
+    aiState.callLogs = aiState.callLogs.slice(0, 30);
+    commitAutoSave('运行 AI 调度演示', model.name + ' / ' + key.alias + ' / ' + key.quotaGroup, 'routing-simulation-' + Date.now(), true);
+    renderModels();
+    renderMonitoring();
+    showToast('模拟请求已完成调度');
+  };
+
+  function populateMonitoringFilters() {
+    var orgFilter = byId('monitorOrgFilter');
+    var sceneFilter = byId('monitorSceneFilter');
+    if (!orgFilter || !sceneFilter) return;
+    var orgValue = orgFilter.value;
+    var sceneValue = sceneFilter.value;
+    orgFilter.innerHTML = '<option value="">全部机构</option>' + uniqueValues(aiState.callLogs, 'org').map(function (value) { return '<option value="' + escapeHtml(value) + '">' + escapeHtml(value) + '</option>'; }).join('');
+    sceneFilter.innerHTML = '<option value="">全部场景</option>' + uniqueValues(aiState.callLogs, 'scene').map(function (value) { return '<option value="' + escapeHtml(value) + '">' + escapeHtml(value) + '</option>'; }).join('');
+    orgFilter.value = orgValue;
+    sceneFilter.value = sceneValue;
+  }
+
+  function renderMonitorAlerts() {
+    var alerts = [];
+    aiState.keys.forEach(function (key) {
+      if (key.enabled && key.health === 'cooling') alerts.push({ level: 'failed', title: key.alias + ' 已进入冷却', detail: key.quotaGroup + ' 检测到 429 限流，冷却结束后自动复检。' });
+    });
+    var groups = uniqueValues(aiState.keys, 'quotaGroup');
+    groups.forEach(function (group) {
+      var groupKeys = aiState.keys.filter(function (key) { return key.quotaGroup === group && key.enabled; });
+      if (groupKeys.length > 1) alerts.push({ level: 'warning', title: group + ' 为共享配额组', detail: groupKeys.length + ' 个启用 Key 共享厂商配额，监控容量时不会重复累计。' });
+    });
+    aiState.keys.forEach(function (key) {
+      if (key.enabled && (key.health === 'warning' || key.load >= 80)) alerts.push({ level: 'warning', title: key.alias + ' 负载偏高', detail: '当前负载 ' + key.load + '%，建议检查配额组容量或增加独立厂商账号。' });
+    });
+    if (!alerts.length) alerts.push({ level: 'success', title: '当前未发现调度风险', detail: '全部启用 Key 健康，配额组负载处于正常范围。' });
+    byId('monitorAlerts').innerHTML = alerts.slice(0, 3).map(function (alert) {
+      return '<div class="alert-row"><div><strong>' + escapeHtml(alert.title) + '</strong><p>' + escapeHtml(alert.detail) + '</p></div><span class="pill ' + alert.level + '">' + (alert.level === 'success' ? '正常' : alert.level === 'failed' ? '需处理' : '关注') + '</span></div>';
+    }).join('');
+  }
+
+  window.renderMonitoring = function () {
+    if (!byId('callLogRows')) return;
+    populateMonitoringFilters();
+    var enabled = aiState.keys.filter(function (key) { return key.enabled; });
+    byId('monitorEnabledKeys').textContent = String(enabled.length);
+    byId('monitorHealthyKeys').textContent = String(enabled.filter(function (key) { return key.health === 'healthy'; }).length);
+    byId('monitorCoolingKeys').textContent = String(enabled.filter(function (key) { return key.health === 'cooling'; }).length);
+    byId('monitorQueuedRequests').textContent = String(aiState.monitorQueuedRequests);
+    byId('monitorUpdatedAt').textContent = nowText().slice(11);
+    renderMonitorAlerts();
+    var org = byId('monitorOrgFilter').value;
+    var scene = byId('monitorSceneFilter').value;
+    var resultFilter = byId('monitorResultFilter').value;
+    var logs = aiState.callLogs.filter(function (log) { return (!org || log.org === org) && (!scene || log.scene === scene) && (!resultFilter || log.result === resultFilter); });
+    var resultMeta = { success: ['success', '成功'], failed: ['failed', '失败'], queued: ['warning', '排队中'] };
+    byId('callLogRows').innerHTML = logs.length ? logs.map(function (log) {
+      var model = modelById(log.modelId);
+      var key = keyById(log.keyId);
+      var meta = resultMeta[log.result] || ['disabled', log.result];
+      return '<tr><td class="mono">' + escapeHtml(log.time) + '</td><td>' + escapeHtml(log.org) + '</td><td>' + escapeHtml(log.scene) + '</td><td>' + escapeHtml(model ? model.name : '未知模型') + '</td><td>' + escapeHtml(key ? key.alias : '已移除') + '</td><td>' + (log.latency ? log.latency + ' ms' : '—') + '</td><td><span class="pill ' + meta[0] + '">' + meta[1] + '</span></td><td>' + escapeHtml(log.detail) + '</td></tr>';
+    }).join('') : '<tr><td colspan="8" class="subtle" style="text-align:center;padding:28px">暂无符合条件的调用记录</td></tr>';
+  };
+
+  window.refreshMonitoring = function () {
+    renderMonitoring();
+    showToast('监控数据已刷新');
   };
 
   function caseTemplateById(id) { return CASE_TEMPLATES.find(function (item) { return item.id === id; }) || CASE_TEMPLATES[0]; }
@@ -824,6 +1193,8 @@
     initializeEvalActions();
     renderModels();
     populateModelSelectors();
+    renderRoutingPolicy();
+    renderMonitoring();
     renderPrompts();
     renderEval();
     initializeAutoSaveInputs();

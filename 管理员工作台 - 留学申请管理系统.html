@@ -3,7 +3,7 @@
 <html lang="zh-CN" class="light" data-theme="light"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>角色工作台 - 留学申请管理系统</title>
+  <title>管理员工作台 - 留学申请管理系统</title>
   <script src="./assets/vendor/tailwind-runtime.js"></script>
   <style data-vd-inlined-stylesheet="../colors_and_type.css">
 /* PBS留学CRM系统 - 企业级设计规范 */
@@ -206,7 +206,7 @@
       <!-- 页面标题栏 -->
       <div class="mb-5">
         <h1 class="text-2xl font-semibold text-gray-800">角色工作台</h1>
-        <p class="text-sm text-gray-400 mt-1">启航留学 · 每个角色一个工作台：指标 × 卡片 × 今日待办 × DDL 日历 × 数据看板 · 数据均来自系统内真实任务 · 今天 2026-08-18</p>
+        <p class="text-sm text-gray-400 mt-1">启航留学 · 每个角色一个工作台：指标 × 卡片 × 今日待办 × DDL 日历 × 数据看板 · 数据均来自系统内真实任务 · <span id="pbsTodayDate">今天</span></p>
       </div>
 
       <!-- 角色工作台挂载点：由 pbs-workbench.js 按当前登录用户的角色渲染（多角色可切换多个工作台视角，单角色仅显示本人工作台） -->
@@ -314,6 +314,18 @@
 
   </script>
   <script src="./assets/js/pbs-workbench.js"></script>
+  <script>
+    (function () {
+      function fill() {
+        var el = document.getElementById('pbsTodayDate');
+        if (!el) return;
+        var now = new Date();
+        var y = now.getFullYear(), m = String(now.getMonth() + 1).padStart(2, '0'), d = String(now.getDate()).padStart(2, '0');
+        el.textContent = '今天 ' + y + '-' + m + '-' + d;
+      }
+      if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', fill); else fill();
+    })();
+  </script>
   <script src="./assets/js/pbs-app.js"></script>
 
 

@@ -668,7 +668,7 @@
         var createdAt = project.createdAt || '—';
         /* 状态以共享存储为准（分配/接收后自动变化），不再硬编码「待分配」 */
         var shared = window.pbsProjects ? window.pbsProjects.find(project.projectNo) : null;
-        var statusText = shared ? (shared.status || window.pbsProjects.statusOf(shared)) : (project.status || '进行中');
+        var statusText = shared ? (window.pbsProjects.statusOf(shared) || shared.status) : (project.status || '进行中');
         var tr = document.createElement('tr');
         tr.className = 'hover:bg-gray-50 transition-colors cursor-pointer';
         tr.setAttribute('data-offline', 'true');

@@ -537,7 +537,8 @@
       document.querySelectorAll('#poolTbody tr[data-project]').forEach(function(row) {
         var project = window.pbsProjects.find(row.getAttribute('data-project'));
         if (!project) return;
-        var status = project.status || window.pbsProjects.statusOf(project);
+        /* 状态机唯一事实来源：始终按 projectManager/pmAccepted 重新计算，存储 status 仅兜底 */
+        var status = window.pbsProjects.statusOf(project) || project.status;
         row.setAttribute('data-status', status);
         row.setAttribute('data-pm', project.projectManager || '—');
         row.setAttribute('data-kw', [project.projectNo, project.customer, project.student, project.level, status].join(''));

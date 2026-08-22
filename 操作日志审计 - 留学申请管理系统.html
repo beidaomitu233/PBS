@@ -761,12 +761,35 @@
     }
 
     // 筛选日志
+    /* ---------- 机构数据隔离 ----------
+       平台运维人员/超级管理员：可见全部机构日志；
+       机构管理员/文书机构管理员：仅可见本机构日志（机构筛选下拉同时锁定）。 */
+    function auditScopeOrg() {
+      var session = window.pbsGetSession ? window.pbsGetSession() : null;
+      if (!session) return null;
+      if (session.role === '平台运维人员' || session.role === '超级管理员') return null;
+      return session.org || null;
+    }
+    var scopedOrg = null;
+    try { scopedOrg = auditScopeOrg(); } catch (e) { scopedOrg = null; }
+    (function applyAuditScope() {
+      if (!scopedOrg) return;
+      var orgSelect = document.getElementById('flt-org');
+      if (orgSelect) {
+        Array.prototype.forEach.call(orgSelect.options, function (opt) {
+          if (opt.value && opt.textContent !== scopedOrg) opt.remove();
+        });
+        orgSelect.value = scopedOrg;
+      }
+    })();
     /* ---------- 高级筛选 ---------- */
     function gv(id) { var el = document.getElementById(id); return el ? (el.value || '').trim() : ''; }
     function applyFilter() {
       var kw = gv('flt-kw').toLowerCase(), type = gv('flt-type'), module = gv('flt-module'), user = gv('flt-user'), org = gv('flt-org'),
           content = gv('flt-content'), time = gv('flt-time'), result = gv('flt-result');
       filteredLogs = allLogs.filter(function(log) {
+        /* 机构隔离优先于任何筛选条件 */
+        if (scopedOrg && log.organization !== scopedOrg) return false;
         if (kw && (log.time + log.user + log.organization + log.module + log.type + log.content + log.ip + log.result).toLowerCase().indexOf(kw) < 0) return false;
         if (type && log.type !== type) return false;
         if (module && log.module !== module) return false;

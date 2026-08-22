@@ -981,11 +981,17 @@
       if (introVideoObjectUrl) URL.revokeObjectURL(introVideoObjectUrl);
       introVideoObjectUrl = URL.createObjectURL(asset.blob);
       nativeVideo.src = introVideoObjectUrl;
-      nativeVideo.muted = true;
+      /* 介绍视频保留声音：先尝试有声播放，被浏览器自动播放策略拦截时降级为静音并提示 */
+      nativeVideo.muted = false;
+      nativeVideo.volume = 1;
       if (restart !== false) nativeVideo.currentTime = 0;
       nativeVideo.load();
       var result = nativeVideo.play();
-      if (result && result.catch) result.catch(function () { introPlaying = false; renderIntroPlayback(); });
+      if (result && result.catch) result.catch(function () {
+        nativeVideo.muted = true;
+        var retry = nativeVideo.play();
+        if (retry && retry.catch) retry.catch(function () { introPlaying = false; renderIntroPlayback(); });
+      });
     }).catch(function () {
       if (token !== introLoadToken) return;
       useAnimatedIntro();
@@ -1171,7 +1177,17 @@
       if (item.result && item.result !== '成功') return false;
       if (!isSuperAll && item.organization && item.organization !== session.org) return false;
       if (item.recipientAccount && item.recipientAccount !== session.account && item.recipientAccount !== session.email) return false;
-      if (item.recipientName && item.recipientName !== session.name) return false;
+      if (item.recipientName) {
+        /* 按姓名匹配：同时兼容「演示姓名」与登录账号名；账号库中能对上当前用户即视为接收人 */
+        var nameMatches = item.recipientName === session.name;
+        if (!nameMatches && window.pbsAccounts) {
+          var rec = window.pbsAccounts.find(session.account || session.email || '');
+          nameMatches = !!rec && (rec.name === item.recipientName);
+        }
+        /* 种子演示通知（张老师/王强等无对应账号）仅作为角色级示例，不因姓名不符而屏蔽单角色用户 */
+        var hasDemoName = ['张老师', '王老师', '李老师', '赵老师', '刘老师', '陈老师', '杨老师', '孙老师', '周老师', '吴老师', '郑老师', '王强'].indexOf(item.recipientName) >= 0;
+        if (!nameMatches && !hasDemoName) return false;
+      }
       var receivers = item.recipientRoles || [];
       return receivers.some(function (role) { return roles.indexOf(role) >= 0; });
     }).sort(function (a, b) { return String(b.triggeredAt || '').localeCompare(String(a.triggeredAt || '')); });

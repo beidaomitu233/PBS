@@ -1854,7 +1854,8 @@
             '<button class="p-1 text-gray-400 hover:text-blue-600 flex-shrink-0" onclick="togglePwd(this)" title="显示/隐藏密码">' + eyeSvg() + '</button></div>' +
             '<span class="hidden text-sm text-gray-900" data-pwd-plain>' + v + '</span></td>';
         } else if (k === 'url') {
-          html += '<td class="px-3 py-4 text-sm text-blue-600 whitespace-nowrap" data-f="' + k + '" data-v="' + k + '"><a href="#" class="hover:underline" onclick="event.preventDefault()">' + v + '</a></td>';
+          /* 官网/申请系统URL：可点击新窗口打开 */
+          html += '<td class="px-3 py-4 text-sm text-blue-600 whitespace-nowrap" data-f="' + k + '" data-v="' + k + '"><a href="' + v + '" target="_blank" rel="noopener noreferrer" class="hover:underline" title="在新窗口打开">' + v + '</a></td>';
         } else {
           html += '<td class="px-3 py-4 text-sm text-gray-900 whitespace-nowrap" data-f="' + k + '" data-v="' + k + '">' + v + '</td>';
         }

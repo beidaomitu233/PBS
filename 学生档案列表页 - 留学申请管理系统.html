@@ -213,17 +213,9 @@
       <!-- 全量筛选栏（筛选区与搜索区合并） -->
       <div class="bg-white rounded-xl p-5 mb-6 shadow-sm border border-gray-100">
         <div class="flex items-end gap-4 flex-wrap">
-          <div class="flex-1 min-w-[200px]">
+          <div class="flex-1 min-w-[320px]">
             <label class="block text-sm text-gray-600 mb-2">关键词搜索</label>
-            <input id="flt-kw" type="text" placeholder="搜索客户/学生/项目号..." class="w-full h-10 px-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-          </div>
-          <div>
-            <label class="block text-sm text-gray-600 mb-2">客户姓名</label>
-            <input id="flt-name" type="text" placeholder="下单人姓名" class="w-36 h-10 px-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-          </div>
-          <div>
-            <label class="block text-sm text-gray-600 mb-2">学生姓名</label>
-            <input id="flt-applicant" type="text" placeholder="学生姓名" class="w-36 h-10 px-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+            <input id="flt-kw" type="text" placeholder="搜索客户姓名、学生姓名或项目号..." class="w-full h-10 px-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
           </div>
           <div>
             <label class="block text-sm text-gray-600 mb-2">申请层次</label>
@@ -233,13 +225,6 @@
               <option>硕士申请</option>
               <option>博士申请</option>
             </select>
-          </div>
-        </div>
-        <!-- 展开更多筛选项 -->
-        <div id="flt-more" class="hidden flex items-end gap-4 flex-wrap mt-4 pt-4 border-t border-gray-100">
-          <div>
-            <label class="block text-sm text-gray-600 mb-2">项目号</label>
-            <input id="flt-project" type="text" placeholder="PRJ-..." class="w-44 h-10 px-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
           </div>
           <div>
             <label class="block text-sm text-gray-600 mb-2">院校目标数</label>
@@ -254,10 +239,6 @@
         <div class="flex items-center gap-3 mt-4">
           <button onclick="applyFilter()" class="px-6 h-10 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">搜索</button>
           <button onclick="resetFilter()" class="px-6 h-10 bg-white border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors">重置</button>
-          <button id="flt-toggle" onclick="toggleMore()" class="px-4 h-10 text-blue-600 hover:text-blue-800 text-sm font-medium flex items-center gap-1">
-            展开更多
-            <svg id="flt-toggle-icon" class="w-4 h-4 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
-          </button>
         </div>
       </div>
 
@@ -438,34 +419,15 @@
     }
 
     /* ===== 全量筛选栏 ===== */
-    function toggleMore() {
-      var more = document.getElementById('flt-more');
-      var btn = document.getElementById('flt-toggle');
-      var icon = document.getElementById('flt-toggle-icon');
-      var expanded = !more.classList.contains('hidden');
-      if (expanded) {
-        more.classList.add('hidden'); more.classList.remove('flex');
-        btn.childNodes[0].textContent = '展开更多';
-        icon.style.transform = '';
-      } else {
-        more.classList.remove('hidden'); more.classList.add('flex');
-        btn.childNodes[0].textContent = '收起筛选';
-        icon.style.transform = 'rotate(180deg)';
-      }
-    }
     function gv(id) { return (document.getElementById(id).value || '').trim(); }
     function applyFilter() {
-      var kw = gv('flt-kw'), name = gv('flt-name'), applicant = gv('flt-applicant'),
-          level = gv('flt-level'), project = gv('flt-project'), targets = gv('flt-targets');
+      var kw = gv('flt-kw').toLowerCase(), level = gv('flt-level'), targets = gv('flt-targets');
       var rows = document.querySelectorAll('#customerTbody tr[data-kw]');
       var visible = 0;
       rows.forEach(function (tr) {
         var d = tr.dataset, ok = true;
-        if (kw && d.kw.indexOf(kw) < 0) ok = false;
-        if (ok && name && d.name.indexOf(name) < 0) ok = false;
-        if (ok && applicant && d.applicant.indexOf(applicant) < 0) ok = false;
+        if (kw && d.kw.toLowerCase().indexOf(kw) < 0) ok = false;
         if (ok && level && d.level !== level) ok = false;
-        if (ok && project && d.project.indexOf(project) < 0) ok = false;
         if (ok && targets) {
           var t = parseInt(d.targets || '0', 10);
           if (targets === '1-2' && !(t >= 1 && t <= 2)) ok = false;
@@ -478,15 +440,13 @@
       document.getElementById('flt-empty').classList.toggle('hidden', visible > 0);
     }
     function resetFilter() {
-      ['flt-kw','flt-name','flt-applicant','flt-level','flt-project','flt-targets'].forEach(function (id) {
+      ['flt-kw','flt-level','flt-targets'].forEach(function (id) {
         document.getElementById(id).value = '';
       });
       applyFilter();
     }
     /* 回车快捷搜索 */
-    document.querySelectorAll('#flt-kw,#flt-name,#flt-applicant,#flt-project').forEach(function (inp) {
-      inp.addEventListener('keydown', function (e) { if (e.key === 'Enter') applyFilter(); });
-    });
+    document.getElementById('flt-kw').addEventListener('keydown', function (e) { if (e.key === 'Enter') applyFilter(); });
   </script>
   <script src="./assets/js/pbs-app.js?v=6.0"></script>
 

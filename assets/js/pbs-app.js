@@ -339,6 +339,14 @@
   window.pbsProjects = {
     all: function () { return readStore(PROJECT_STORE_KEY, []); },
     save: function (list) { writeStore(PROJECT_STORE_KEY, list); },
+    /* 把已修改的单条记录合并回存储（避免 save(this.all()) 重读旧数据把改动冲掉） */
+    saveOne: function (record) {
+      var list = this.all();
+      for (var i = 0; i < list.length; i++) {
+        if (list[i].projectNo === record.projectNo) { list[i] = record; break; }
+      }
+      this.save(list);
+    },
     find: function (projectNo) {
       return this.all().filter(function (p) { return p.projectNo === projectNo; })[0] || null;
     },
@@ -364,7 +372,7 @@
       p.pmAccepted = false;
       p.status = normalizeProjectStatus(p);
       p.assignedAt = new Date().toISOString();
-      this.save(this.all());
+      this.saveOne(p);
       window.pbsCreateNotification({
         kind: 'task_assigned', type: '新项目待接收',
         title: '项目 ' + projectNo + ' 已分配给你，等待接收',
@@ -385,7 +393,7 @@
       p.pmAccepted = true;
       p.status = normalizeProjectStatus(p);
       p.acceptedAt = new Date().toISOString();
-      this.save(this.all());
+      this.saveOne(p);
       return p;
     },
     /* 项目经理退回：→ 已退回，并通知机构管理员 */
@@ -397,7 +405,7 @@
       p.status = '已退回';
       p.rejectedAt = new Date().toISOString();
       p.rejectReason = reason || '';
-      this.save(this.all());
+      this.saveOne(p);
       window.pbsCreateNotification({
         kind: 'task_assigned', type: '项目退回提醒',
         title: '项目 ' + projectNo + ' 被项目经理退回',
@@ -470,7 +478,7 @@
       if (rec.p === password) {
         rec.phash = this.hashPassword(rec.p);
         delete rec.p;
-        this.save(this.all());
+        this.saveOne(p);
         return true;
       }
       return false;
@@ -480,7 +488,7 @@
       if (!rec) return false;
       delete rec.p;
       rec.phash = this.hashPassword(newPassword);
-      this.save(this.all());
+      this.saveOne(p);
       return true;
     },
     /* 账号有效期校验：过期返回 false */

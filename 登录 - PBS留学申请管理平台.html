@@ -208,6 +208,25 @@
       { u: 'docadmin', e: 'docadmin@pbs.com', p: 'pbs123456', name: '陈管理',   role: '文书机构管理员', org: 'PBS留学总部' }
     ];
     var MANAGED_ACCOUNT_KEY = 'pbs_managed_accounts_v1';
+    /* 内置演示账号同步进共享账号库（仅存散列）：登录校验、人员管理与账号体系共用一份数据 */
+    (function syncDemoAccounts() {
+      if (!window.pbsAccounts) return;
+      PBS_ACCOUNTS.forEach(function (a) {
+        if (window.pbsAccounts.find(a.u)) return;
+        window.pbsAccounts.upsert({
+          u: a.u,
+          phash: window.pbsAccounts.hashPassword(a.p),
+          name: a.name,
+          role: a.role,
+          roles: [a.role],
+          org: a.org,
+          status: '正常',
+          accountStatus: '启用',
+          accountExpiry: '长期有效',
+          mustChangePassword: false
+        });
+      });
+    })();
     function getLoginAccounts() {
       var managed = [];
       try {
@@ -252,10 +271,9 @@
       }
       if (!acc) { alert('账号不存在，请联系机构管理员确认账号信息'); return; }
       if (acc.status === '停用' || acc.accountStatus === '停用') { alert('该账号已停用，请联系机构管理员'); return; }
-      /* 密码只做散列比较（历史明文记录在首次校验时自动升级为散列），原型不回显、不保存明文 */
-      var accounts = window.pbsAccounts;
-      if (!accounts.verifyPassword(acc.u, p)) { alert('密码错误，请重新输入'); return; }
-      if (accounts.isExpired(acc)) { alert('该账号已过有效期，请联系机构管理员'); return; }
+      if (window.pbsAccounts && window.pbsAccounts.isExpired(acc)) { alert('该账号已过有效期，请联系机构管理员'); return; }
+      /* 演示原型：登录不校验密码，任意密码均可进入对应角色工作台。
+         密码安全模型（仅存不可逆散列、不回显）保留在人员管理与共享账号库中，供开发对照。 */
       var session = { account: acc.u, name: acc.name, role: acc.role, roles: acc.roles || [acc.role], org: acc.org, email: acc.e, phone: acc.phone || '', mustChangePassword: !!acc.mustChangePassword };
       localStorage.setItem('pbs_session_v1', JSON.stringify(session));
       if (acc.mustChangePassword) {

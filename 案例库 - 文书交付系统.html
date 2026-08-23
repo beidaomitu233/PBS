@@ -130,9 +130,9 @@
       <!-- 高级筛选区 -->
       <div class="bg-white rounded-xl p-5 mb-6 shadow-sm border border-gray-100">
         <div class="flex items-end gap-4 flex-wrap">
-          <div class="flex-1 min-w-[200px]">
+          <div class="flex-1 min-w-[320px]">
             <label class="block text-sm text-gray-600 mb-2">关键词搜索</label>
-            <input id="flt-kw" type="text" placeholder="搜索案例名称/来源学生/录取院校..." class="w-full h-10 px-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm">
+            <input id="flt-kw" type="text" placeholder="搜索案例名称、来源学生、录取院校或上传人..." class="w-full h-10 px-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm">
           </div>
           <div>
             <label class="block text-sm text-gray-600 mb-2">文书类型</label>
@@ -188,14 +188,6 @@
               <option>商科/金融</option>
               <option>商科/市场营销</option>
             </select>
-          </div>
-          <div>
-            <label class="block text-sm text-gray-600 mb-2">录取院校</label>
-            <input id="flt-school" type="text" placeholder="录取院校" class="w-44 h-10 px-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm">
-          </div>
-          <div>
-            <label class="block text-sm text-gray-600 mb-2">上传人</label>
-            <input id="flt-uploader" type="text" placeholder="上传人" class="w-36 h-10 px-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm">
           </div>
           <div>
             <label class="block text-sm text-gray-600 mb-2">上传时间</label>
@@ -834,8 +826,6 @@
       var status = document.getElementById('flt-status').value;
       var org = document.getElementById('flt-org').value;
       var direction = document.getElementById('flt-direction').value;
-      var school = document.getElementById('flt-school').value.trim().toLowerCase();
-      var uploader = document.getElementById('flt-uploader').value.trim().toLowerCase();
       var time = document.getElementById('flt-time').value.trim();
       var rows = document.querySelectorAll('#caseTbody tr:not(#flt-empty)');
       var visible = 0;
@@ -847,8 +837,6 @@
         if (status && r.dataset.status !== status) ok = false;
         if (org && r.dataset.org !== org) ok = false;
         if (direction && r.dataset.direction !== direction) ok = false;
-        if (school && (r.dataset.school || '').toLowerCase().indexOf(school) === -1) ok = false;
-        if (uploader && (r.dataset.uploader || '').toLowerCase().indexOf(uploader) === -1) ok = false;
         if (time && (r.dataset.time || '').indexOf(time) === -1) ok = false;
         r.style.display = ok ? '' : 'none';
         if (ok) visible++;
@@ -858,7 +846,7 @@
     }
 
     function resetFilter() {
-      ['flt-kw','flt-school','flt-uploader','flt-time'].forEach(function(id){ document.getElementById(id).value = ''; });
+      ['flt-kw','flt-time'].forEach(function(id){ document.getElementById(id).value = ''; });
       ['flt-type','flt-level','flt-status','flt-direction'].forEach(function(id){ document.getElementById(id).value = ''; });
       var orgFilter = document.getElementById('flt-org');
       if (!orgFilter.disabled) orgFilter.value = '';

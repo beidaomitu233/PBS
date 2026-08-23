@@ -207,17 +207,9 @@
       <!-- 高级筛选区（筛选区与搜索区合并） -->
       <div class="bg-white rounded-xl p-5 mb-6 shadow-sm border border-gray-100">
         <div class="flex items-end gap-4 flex-wrap">
-          <div class="flex-1 min-w-[200px]">
+          <div class="flex-1 min-w-[320px]">
             <label class="block text-sm text-gray-600 mb-2">关键词搜索</label>
-            <input id="flt-kw" type="text" placeholder="搜索关联客户/院校目标/邮箱/网址..." class="w-full h-10 px-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-          </div>
-<div>
-            <label class="block text-sm text-gray-600 mb-2">客户姓名</label>
-            <input id="flt-customer" type="text" placeholder="客户姓名" class="w-32 h-10 px-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-          </div>
-          <div>
-            <label class="block text-sm text-gray-600 mb-2">学生姓名</label>
-            <input id="flt-student" type="text" placeholder="学生姓名" class="w-32 h-10 px-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+            <input id="flt-kw" type="text" placeholder="搜索客户、学生、院校目标、邮箱或网址..." class="w-full h-10 px-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
           </div>
           <div>
             <label class="block text-sm text-gray-600 mb-2">监控类型</label>
@@ -226,10 +218,6 @@
               <option>邮箱</option>
               <option>官网</option>
             </select>
-          </div>
-          <div>
-            <label class="block text-sm text-gray-600 mb-2">学校/专业</label>
-            <input id="flt-sub" type="text" placeholder="学校或专业" class="w-44 h-10 px-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
           </div>
           <div>
             <label class="block text-sm text-gray-600 mb-2">监控状态</label>
@@ -446,13 +434,10 @@
     function gv(id) { var el = document.getElementById(id); return el ? (el.value || '').trim() : ''; }
     function applyFilter() {
       var kw = gv('flt-kw').toLowerCase();
-      var type = gv('flt-type'), sub = gv('flt-sub'), freq = gv('flt-freq'), run = gv('flt-run'), status = gv('flt-status'), customer = gv('flt-customer'), student = gv('flt-student');
+      var type = gv('flt-type'), freq = gv('flt-freq'), run = gv('flt-run'), status = gv('flt-status');
       filteredData = monitorData.filter(function(item) {
         if (kw && (item.type + item.customer + item.student + item.school + item.major + item.target + item.frequency + item.lastRun + item.status).toLowerCase().indexOf(kw) < 0) return false;
-        if (customer && item.customer.indexOf(customer) < 0) return false;
-        if (student && item.student.indexOf(student) < 0) return false;
         if (type && item.type !== type) return false;
-        if (sub && item.school.indexOf(sub) < 0 && item.major.indexOf(sub) < 0) return false;
         if (freq && item.frequency !== freq) return false;
         if (run && item.lastRun.indexOf(run) < 0) return false;
         if (status && item.status !== status) return false;
@@ -466,7 +451,7 @@
 
     function searchMonitorList() { applyFilter(); }
     function resetFilter() {
-      ['flt-kw','flt-customer','flt-student','flt-type','flt-sub','flt-freq','flt-run','flt-status'].forEach(function (id) { var el = document.getElementById(id); if (el) el.value = ''; });
+      ['flt-kw','flt-type','flt-freq','flt-run','flt-status'].forEach(function (id) { var el = document.getElementById(id); if (el) el.value = ''; });
       applyFilter();
     }
     function toggleMore() {

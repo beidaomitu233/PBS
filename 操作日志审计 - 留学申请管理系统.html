@@ -212,9 +212,9 @@
       <!-- 高级筛选区（筛选区与搜索区合并） -->
       <div class="bg-white rounded-xl p-5 mb-6 shadow-sm border border-gray-100">
         <div class="flex items-end gap-4 flex-wrap">
-          <div class="flex-1 min-w-[200px]">
+          <div class="flex-1 min-w-[320px]">
             <label class="block text-sm text-gray-600 mb-2">关键词搜索</label>
-            <input id="flt-kw" type="text" placeholder="搜索操作人/操作内容/IP..." class="w-full h-10 px-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+            <input id="flt-kw" type="text" placeholder="搜索操作人、操作内容或 IP..." class="w-full h-10 px-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
           </div>
 <div>
             <label class="block text-sm text-gray-600 mb-2">操作类型</label>
@@ -233,10 +233,6 @@
               <option>查询</option>
               <option>导出</option>
             </select>
-          </div>
-          <div>
-            <label class="block text-sm text-gray-600 mb-2">操作人</label>
-            <input id="flt-user" type="text" placeholder="操作人" class="w-36 h-10 px-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
           </div>
           <div>
             <label class="block text-sm text-gray-600 mb-2">操作结果</label>
@@ -263,10 +259,6 @@
               <option>上海分部</option>
               <option>广州分部</option>
             </select>
-          </div>
-          <div>
-            <label class="block text-sm text-gray-600 mb-2">操作内容</label>
-            <input id="flt-content" type="text" placeholder="操作内容" class="w-44 h-10 px-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
           </div>
           <div>
             <label class="block text-sm text-gray-600 mb-2">操作时间</label>
@@ -785,17 +777,15 @@
     /* ---------- 高级筛选 ---------- */
     function gv(id) { var el = document.getElementById(id); return el ? (el.value || '').trim() : ''; }
     function applyFilter() {
-      var kw = gv('flt-kw').toLowerCase(), type = gv('flt-type'), module = gv('flt-module'), user = gv('flt-user'), org = gv('flt-org'),
-          content = gv('flt-content'), time = gv('flt-time'), result = gv('flt-result');
+      var kw = gv('flt-kw').toLowerCase(), type = gv('flt-type'), module = gv('flt-module'), org = gv('flt-org'),
+          time = gv('flt-time'), result = gv('flt-result');
       filteredLogs = allLogs.filter(function(log) {
         /* 机构隔离优先于任何筛选条件 */
         if (scopedOrg && log.organization !== scopedOrg) return false;
         if (kw && (log.time + log.user + log.organization + log.module + log.type + log.content + log.ip + log.result).toLowerCase().indexOf(kw) < 0) return false;
         if (type && log.type !== type) return false;
         if (module && log.module !== module) return false;
-        if (user && log.user.indexOf(user) < 0) return false;
         if (org && log.organization !== org) return false;
-        if (content && log.content.indexOf(content) < 0) return false;
         if (time && log.time.indexOf(time) < 0) return false;
         if (result && log.result !== result) return false;
         return true;
@@ -806,7 +796,7 @@
     function filterLogs() { applyFilter(); }
     function searchLogs() { applyFilter(); }
     function resetFilter() {
-      ['flt-kw','flt-type','flt-module','flt-user','flt-org','flt-content','flt-time','flt-result'].forEach(function (id) { var el = document.getElementById(id); if (el) el.value = ''; });
+      ['flt-kw','flt-type','flt-module','flt-org','flt-time','flt-result'].forEach(function (id) { var el = document.getElementById(id); if (el) el.value = ''; });
       applyFilter();
     }
     function toggleMore() {

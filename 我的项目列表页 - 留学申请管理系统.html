@@ -286,22 +286,14 @@
       <!-- 高级筛选区（筛选区与搜索区合并） -->
       <details class="pm-archive mb-4">
         <summary class="flex items-center justify-between bg-white rounded-xl px-5 py-4 shadow-sm border border-gray-100">
-          <div><h2 class="text-base font-semibold text-gray-900">筛选项目</h2><p class="text-xs text-gray-400 mt-1">按项目、学生、状态或 DDL 查询</p></div>
+          <div><h2 class="text-base font-semibold text-gray-900">筛选项目</h2><p class="text-xs text-gray-400 mt-1">按项目、学生、状态或分配时间查询</p></div>
           <span class="pm-archive-arrow text-gray-400">⌄</span>
         </summary>
       <div class="bg-white rounded-xl p-5 mt-2 shadow-sm border border-gray-100">
         <div class="flex items-end gap-4 flex-wrap">
-          <div class="flex-1 min-w-[200px]">
+          <div class="flex-1 min-w-[320px]">
             <label class="block text-sm text-gray-600 mb-2">关键词搜索</label>
-            <input id="flt-kw" type="text" placeholder="搜索项目号/客户/学生/申请层次..." class="w-full h-10 px-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-          </div>
-<div>
-            <label class="block text-sm text-gray-600 mb-2">客户姓名</label>
-            <input id="flt-name" type="text" placeholder="客户姓名" class="w-36 h-10 px-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-          </div>
-          <div>
-            <label class="block text-sm text-gray-600 mb-2">学生姓名</label>
-            <input id="flt-student" type="text" placeholder="学生姓名" class="w-36 h-10 px-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+            <input id="flt-kw" type="text" placeholder="搜索项目号、客户或学生..." class="w-full h-10 px-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
           </div>
           <div>
             <label class="block text-sm text-gray-600 mb-2">申请层次</label>
@@ -324,13 +316,6 @@
               <option>已结项</option>
             </select>
           </div>
-        </div>
-        <!-- 展开更多筛选项 -->
-        <div id="flt-more" class="hidden flex items-end gap-4 flex-wrap mt-4 pt-4 border-t border-gray-100">
-<div>
-            <label class="block text-sm text-gray-600 mb-2">项目号</label>
-            <input id="flt-project" type="text" placeholder="PRJ-..." class="w-40 h-10 px-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-          </div>
           <div>
             <label class="block text-sm text-gray-600 mb-2">分配时间</label>
             <input id="flt-time" type="text" placeholder="如 2026-07-14" class="w-40 h-10 px-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
@@ -339,10 +324,6 @@
         <div class="flex items-center gap-3 mt-4">
           <button onclick="applyFilter()" class="px-6 h-10 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">搜索</button>
           <button onclick="resetFilter()" class="px-6 h-10 bg-white border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors">重置</button>
-          <button id="flt-toggle" onclick="toggleMore()" class="px-4 h-10 text-blue-600 hover:text-blue-800 text-sm font-medium flex items-center gap-1">
-            展开更多
-            <svg id="flt-toggle-icon" class="w-4 h-4 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
-          </button>
         </div>
       </div>
       </details>
@@ -853,10 +834,7 @@
       var visible = 0;
       rows.forEach(function (tr) {
         var d = tr.dataset, ok = true;
-        var v_kw = gv('flt-kw'); if (ok && v_kw && d.kw.indexOf(v_kw) < 0) ok = false;
-        var v_project = gv('flt-project'); if (ok && v_project && (d.project||'').indexOf(v_project) < 0) ok = false;
-        var v_name = gv('flt-name'); if (ok && v_name && (d.name||'').indexOf(v_name) < 0) ok = false;
-        var v_student = gv('flt-student'); if (ok && v_student && (d.student||'').indexOf(v_student) < 0) ok = false;
+        var v_kw = gv('flt-kw').toLowerCase(); if (ok && v_kw && d.kw.toLowerCase().indexOf(v_kw) < 0) ok = false;
         var v_level = gv('flt-level'); if (ok && v_level && d.level !== v_level) ok = false;
         var v_status = gv('flt-status'); if (ok && v_status && d.status !== v_status) ok = false;
         var v_time = gv('flt-time'); if (ok && v_time && (d.time||'').indexOf(v_time) < 0) ok = false;
@@ -867,24 +845,8 @@
       if (empty) empty.classList.toggle('hidden', visible > 0);
     }
     function resetFilter() {
-      ['flt-kw','flt-project','flt-name','flt-student','flt-level','flt-status','flt-time'].forEach(function (id) { var el = document.getElementById(id); if (el) el.value = ''; });
+      ['flt-kw','flt-level','flt-status','flt-time'].forEach(function (id) { var el = document.getElementById(id); if (el) el.value = ''; });
       applyFilter();
-    }
-    function toggleMore() {
-      var more = document.getElementById('flt-more');
-      if (!more) return;
-      var btn = document.getElementById('flt-toggle');
-      var icon = document.getElementById('flt-toggle-icon');
-      var expanded = !more.classList.contains('hidden');
-      if (expanded) {
-        more.classList.add('hidden'); more.classList.remove('flex');
-        btn.childNodes[0].textContent = '展开更多';
-        icon.style.transform = '';
-      } else {
-        more.classList.remove('hidden'); more.classList.add('flex');
-        btn.childNodes[0].textContent = '收起筛选';
-        icon.style.transform = 'rotate(180deg)';
-      }
     }
     /* 回车快捷搜索 */
     document.addEventListener('DOMContentLoaded', function() {

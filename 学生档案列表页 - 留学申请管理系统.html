@@ -228,12 +228,7 @@
           </div>
           <div>
             <label class="block text-sm text-gray-600 mb-2">院校目标数</label>
-            <select id="flt-targets" class="w-32 h-10 px-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-              <option value="">全部</option>
-              <option value="1-2">1-2 所</option>
-              <option value="3-5">3-5 所</option>
-              <option value="6+">6 所以上</option>
-            </select>
+            <input id="flt-targets" type="number" min="0" step="1" placeholder="填写数量" class="w-32 h-10 px-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
           </div>
         </div>
         <div class="flex items-center gap-3 mt-4">
@@ -428,12 +423,7 @@
         var d = tr.dataset, ok = true;
         if (kw && d.kw.toLowerCase().indexOf(kw) < 0) ok = false;
         if (ok && level && d.level !== level) ok = false;
-        if (ok && targets) {
-          var t = parseInt(d.targets || '0', 10);
-          if (targets === '1-2' && !(t >= 1 && t <= 2)) ok = false;
-          if (targets === '3-5' && !(t >= 3 && t <= 5)) ok = false;
-          if (targets === '6+' && !(t >= 6)) ok = false;
-        }
+        if (ok && targets && parseInt(d.targets || '0', 10) !== parseInt(targets, 10)) ok = false;
         tr.classList.toggle('hidden', !ok);
         if (ok) visible++;
       });
@@ -446,7 +436,9 @@
       applyFilter();
     }
     /* 回车快捷搜索 */
-    document.getElementById('flt-kw').addEventListener('keydown', function (e) { if (e.key === 'Enter') applyFilter(); });
+    document.querySelectorAll('#flt-kw,#flt-targets').forEach(function (inp) {
+      inp.addEventListener('keydown', function (e) { if (e.key === 'Enter') applyFilter(); });
+    });
   </script>
   <script src="./assets/js/pbs-app.js?v=6.0"></script>
 

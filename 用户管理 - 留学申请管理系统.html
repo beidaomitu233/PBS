@@ -271,13 +271,9 @@
       <!-- 高级筛选区（筛选区与搜索区合并） -->
       <div class="card p-5 mb-5">
         <div class="flex items-end gap-4 flex-wrap">
-          <div class="flex-1 min-w-[200px]">
+          <div class="flex-1 min-w-[320px]">
             <label class="block text-sm text-gray-600 mb-1.5">关键词搜索</label>
-            <input type="text" class="text-input w-full px-4" placeholder="搜索用户名/手机号/账号/机构..." id="flt-kw">
-          </div>
-<div>
-            <label class="block text-sm text-gray-600 mb-1.5">用户名</label>
-            <input type="text" class="text-input w-32 px-3" placeholder="用户名" id="flt-name">
+            <input type="text" class="text-input w-full px-4" placeholder="搜索姓名、手机号、账号或机构..." id="flt-kw">
           </div>
           <div>
             <label class="block text-sm text-gray-600 mb-1.5">用户角色</label>
@@ -300,21 +296,6 @@
               <option value="disabled">停用</option>
             </select>
           </div>
-        </div>
-        <!-- 展开更多筛选项 -->
-        <div id="flt-more" class="hidden flex items-end gap-4 flex-wrap mt-4 pt-4 border-t border-gray-100">
-<div>
-            <label class="block text-sm text-gray-600 mb-1.5">手机号</label>
-            <input type="text" class="text-input w-32 px-3" placeholder="手机号" id="flt-phone">
-          </div>
-          <div>
-            <label class="block text-sm text-gray-600 mb-1.5">账号</label>
-            <input type="text" class="text-input w-32 px-3" placeholder="账号" id="flt-account">
-          </div>
-          <div>
-            <label class="block text-sm text-gray-600 mb-1.5">所属机构</label>
-            <input type="text" class="text-input w-36 px-3" placeholder="所属机构" id="flt-org">
-          </div>
           <div>
             <label class="block text-sm text-gray-600 mb-1.5">注册时间</label>
             <input type="text" class="text-input w-40 px-3" placeholder="如 2026-01" id="flt-time">
@@ -323,10 +304,6 @@
         <div class="flex items-center gap-3 mt-4">
           <button class="btn-primary px-6 h-10 text-sm font-medium" onclick="applyFilter()">搜索</button>
           <button class="btn-secondary px-4 h-10 text-sm" onclick="resetFilter()">重置</button>
-          <button id="flt-toggle" class="px-4 h-10 text-sm font-medium flex items-center gap-1" style="color: var(--color-primary);" onclick="toggleMore()">
-            展开更多
-            <svg id="flt-toggle-icon" class="w-4 h-4 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
-          </button>
         </div>
       </div>
 
@@ -630,16 +607,11 @@
     /* ---------- 高级筛选 ---------- */
     function gv(id) { var el = document.getElementById(id); return el ? (el.value || '').trim() : ''; }
     function applyFilter() {
-      var kw = gv('flt-kw').toLowerCase(), name = gv('flt-name'), role = gv('flt-role'), status = gv('flt-status'),
-          phone = gv('flt-phone'), account = gv('flt-account'), org = gv('flt-org'), time = gv('flt-time');
+      var kw = gv('flt-kw').toLowerCase(), role = gv('flt-role'), status = gv('flt-status'), time = gv('flt-time');
       filteredUsers = mockUsers.filter(function(user) {
         if (kw && (user.username + user.phone + user.account + user.org + user.registerTime + user.roles.join('')).toLowerCase().indexOf(kw) < 0) return false;
-        if (name && user.username.indexOf(name) < 0) return false;
         if (role && user.roles.indexOf(role) < 0) return false;
         if (status && user.status !== status) return false;
-        if (phone && user.phone.indexOf(phone) < 0) return false;
-        if (account && user.account.toLowerCase().indexOf(account.toLowerCase()) < 0) return false;
-        if (org && user.org.indexOf(org) < 0) return false;
         if (time && user.registerTime.indexOf(time) < 0) return false;
         return true;
       });
@@ -650,24 +622,8 @@
     function searchUsers() { applyFilter(); }
     function resetSearch() { resetFilter(); }
     function resetFilter() {
-      ['flt-kw','flt-name','flt-role','flt-status','flt-phone','flt-account','flt-org','flt-time'].forEach(function (id) { var el = document.getElementById(id); if (el) el.value = ''; });
+      ['flt-kw','flt-role','flt-status','flt-time'].forEach(function (id) { var el = document.getElementById(id); if (el) el.value = ''; });
       applyFilter();
-    }
-    function toggleMore() {
-      var more = document.getElementById('flt-more');
-      if (!more) return;
-      var btn = document.getElementById('flt-toggle');
-      var icon = document.getElementById('flt-toggle-icon');
-      var expanded = !more.classList.contains('hidden');
-      if (expanded) {
-        more.classList.add('hidden'); more.classList.remove('flex');
-        btn.childNodes[0].textContent = '展开更多';
-        icon.style.transform = '';
-      } else {
-        more.classList.remove('hidden'); more.classList.add('flex');
-        btn.childNodes[0].textContent = '收起筛选';
-        icon.style.transform = 'rotate(180deg)';
-      }
     }
     /* 回车快捷搜索 */
     document.addEventListener('DOMContentLoaded', function() {

@@ -1697,6 +1697,17 @@
     field.appendChild(input);
     input.classList.add('pbs-filter-date-native');
     input.setAttribute('aria-label', placeholder);
+    input.addEventListener('click', function () {
+      if (typeof input.showPicker === 'function') {
+        try { input.showPicker(); } catch (error) { /* 旧版浏览器继续使用原生点击行为 */ }
+      }
+    });
+    input.addEventListener('keydown', function (event) {
+      if ((event.key === 'Enter' || event.key === ' ') && typeof input.showPicker === 'function') {
+        event.preventDefault();
+        try { input.showPicker(); } catch (error) { /* 旧版浏览器继续使用原生键盘行为 */ }
+      }
+    });
     input.addEventListener('input', function () { updateDateField(input); });
     input.addEventListener('change', function () { updateDateField(input); });
     updateDateField(input);

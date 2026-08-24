@@ -43,7 +43,6 @@
       <section class="tabs">
         <div class="tabbar" role="tablist" aria-label="AI 管理配置分类">
           <button class="tab active" type="button" role="tab" aria-selected="true" data-tab="models">目标模型</button>
-          <button class="tab" type="button" role="tab" aria-selected="false" data-tab="routing">调度策略</button>
           <button class="tab" type="button" role="tab" aria-selected="false" data-tab="monitor">调用监控</button>
           <button class="tab" type="button" role="tab" aria-selected="false" data-tab="prompts">提示词配置</button>
           <button class="tab hidden" id="evaluationTab" type="button" role="tab" aria-selected="false" aria-hidden="true" data-tab="evaluation">效果评测</button>
@@ -51,23 +50,18 @@
 
         <div class="pane active" id="pane-models">
           <div class="section-head"><div><h2>目标模型</h2><p>定义业务期望调用的模型，并在每个模型下配置其可用 Key 池</p></div><button class="btn primary" onclick="openModelEditor()">＋ 新增目标模型</button></div>
-          <div class="table-wrap"><table><thead><tr><th>目标模型</th><th>模型厂商</th><th>AI 参数</th><th>Key 配置</th><th>路由角色</th><th>操作</th></tr></thead><tbody id="modelRows"></tbody></table></div>
+          <div class="table-wrap"><table><thead><tr><th>目标模型</th><th>模型厂商</th><th>Key 配置</th><th>路由角色</th><th>操作</th></tr></thead><tbody id="modelRows"></tbody></table></div>
           <div class="compact-note"><b>关联方式</b><span>一个目标模型可关联多个 Key；同一厂商凭证也可同时授权给多个目标模型。Key 的共享配额只按厂商账号计算一次。</span></div>
-        </div>
-
-        <div class="pane" id="pane-routing">
-          <div class="section-head"><div><h2>调度策略</h2><p>配置模型降级、机构公平排队和异常 Key 冷却规则</p></div><button class="btn primary" onclick="saveRoutingPolicy(true)">保存策略</button></div>
+          <div class="section-head" style="margin-top:24px;padding-top:20px;border-top:1px solid var(--line)"><div><h2>调度策略</h2><p>直接配置目标模型的主备调用、机构公平排队和异常 Key 冷却规则</p></div><button class="btn primary" onclick="saveRoutingPolicy(true)">保存策略</button></div>
           <div class="policy-grid">
             <div class="card"><h3>模型路由</h3><div class="grid2"><div class="field"><label>主模型</label><select class="select" id="globalPrimary" onchange="autoSaveGlobalRoute()"></select></div><div class="field"><label>备用模型</label><select class="select" id="globalBackup" onchange="autoSaveGlobalRoute()"></select></div></div><div class="field"><label>Key 选择方式</label><select class="select" id="routeStrategy" onchange="saveRoutingPolicy()"><option value="least_load">健康优先 · 最低负载</option><option value="weighted">健康优先 · 按权重轮询</option><option value="quota_first">剩余配额优先</option></select></div><div class="help" id="routeHint">主模型池无健康 Key 时自动切换备用模型池。</div></div>
             <div class="card"><h3>并发与熔断保护</h3><div class="grid2"><div class="field"><label>单机构并发上限</label><input class="input" id="orgConcurrency" type="number" min="1" max="50" onchange="saveRoutingPolicy()"></div><div class="field"><label>排队超时（秒）</label><input class="input" id="queueTimeout" type="number" min="5" max="300" onchange="saveRoutingPolicy()"></div><div class="field"><label>失败重试次数</label><input class="input" id="routeRetry" type="number" min="0" max="3" onchange="saveRoutingPolicy()"></div><div class="field"><label>异常冷却（秒）</label><input class="input" id="cooldownSeconds" type="number" min="10" max="600" onchange="saveRoutingPolicy()"></div></div><div class="help">命中 429、鉴权失败或连续超时后暂停对应 Key，冷却结束再进行健康检查。</div></div>
           </div>
-          <div class="card route-card"><div class="section-head" style="margin-bottom:8px"><div><h3 style="margin:0">队列优先级与调度演示</h3><p>发布首日按机构公平排队，紧急业务只在机构内部获得优先级</p></div><button class="btn" onclick="simulateRouting()">运行调度演示</button></div><div class="field"><label>优先业务场景</label><div class="checkboxes"><label class="checkbox-line"><input type="checkbox" name="priorityScene" value="任务催办" onchange="saveRoutingPolicy()">任务催办</label><label class="checkbox-line"><input type="checkbox" name="priorityScene" value="文书审核" onchange="saveRoutingPolicy()">文书审核</label><label class="checkbox-line"><input type="checkbox" name="priorityScene" value="网申提交" onchange="saveRoutingPolicy()">网申提交</label><label class="checkbox-line"><input type="checkbox" name="priorityScene" value="材料解析" onchange="saveRoutingPolicy()">材料解析</label></div></div><div class="flow-line"><span class="flow-node">机构请求队列</span><span class="flow-arrow">→</span><span class="flow-node">机构并发限流</span><span class="flow-arrow">→</span><span class="flow-node">主模型健康 Key</span><span class="flow-arrow">→</span><span class="flow-node">异常冷却 / 备用模型</span></div><div class="simulation" id="routeSimulationResult"><b>演示等待运行</b><br>运行后展示一次模拟请求如何选择模型、配额组和 Key，不会发起真实 AI 调用。</div></div>
         </div>
 
         <div class="pane" id="pane-monitor">
-          <div class="section-head"><div><h2>调用监控</h2><p>查看 Key 健康、共享配额风险与各机构调用结果</p></div><button class="btn" onclick="refreshMonitoring()">刷新数据</button></div>
-          <div class="status-strip"><div class="status-item"><span>启用 Key</span><b id="monitorEnabledKeys">—</b></div><div class="status-item"><span>健康 Key</span><b class="good" id="monitorHealthyKeys">—</b></div><div class="status-item"><span>冷却中</span><b class="bad" id="monitorCoolingKeys">—</b></div><div class="status-item"><span>排队请求</span><b id="monitorQueuedRequests">—</b></div><div class="status-item"><span>数据更新时间</span><b style="font-size:12px" id="monitorUpdatedAt">—</b></div></div>
-          <div class="alert-list" id="monitorAlerts"></div>
+          <div class="section-head"><div><h2>调用监控</h2><p>查看 Key 健康状态与各机构调用结果</p></div><button class="btn" onclick="refreshMonitoring()">刷新数据</button></div>
+          <div class="status-strip"><div class="status-item"><span>启用 Key</span><b id="monitorEnabledKeys">—</b></div><div class="status-item"><span>健康 Key</span><b class="good" id="monitorHealthyKeys">—</b></div></div>
           <div class="toolbar"><div class="filters"><div class="field"><label>机构</label><select class="select" id="monitorOrgFilter" onchange="renderMonitoring()"><option value="">全部机构</option></select></div><div class="field"><label>业务场景</label><select class="select" id="monitorSceneFilter" onchange="renderMonitoring()"><option value="">全部场景</option></select></div><div class="field"><label>调用结果</label><select class="select" id="monitorResultFilter" onchange="renderMonitoring()"><option value="">全部结果</option><option value="success">成功</option><option value="failed">失败</option><option value="queued">排队中</option></select></div></div></div>
           <div class="table-wrap"><table><thead><tr><th>调用时间</th><th>机构</th><th>业务场景</th><th>模型</th><th>Key 别名</th><th>耗时</th><th>结果</th><th>说明</th></tr></thead><tbody id="callLogRows"></tbody></table></div>
         </div>
@@ -124,6 +118,6 @@
 <div class="modal hidden" id="evaluationReportModal" aria-hidden="true"><div class="dialog wide"><div class="dialog-head"><h3>评测报告</h3><button class="close" onclick="closeModal('evaluationReportModal')">×</button></div><div class="dialog-body"><div class="editor-head"><div><div class="kicker" id="reportScenarioModule">AI 场景</div><h3 id="reportScenarioTitle"></h3><div class="help" id="reportMeta"></div></div><span class="prompt-status" id="reportStatus"></span></div><div class="report-grid"><div class="report-cell"><span class="metric-label">最新结果</span><b id="reportResult"></b></div><div class="report-cell"><span class="metric-label">上线门槛</span><b id="reportThreshold"></b></div><div class="report-cell"><span class="metric-label">样本量</span><b id="reportSamples"></b></div><div class="report-cell"><span class="metric-label">人工复核</span><b id="reportReview"></b></div></div><div class="table-wrap"><table><thead><tr><th>样本</th><th>自动判断</th><th>问题</th><th>建议动作</th></tr></thead><tbody id="reportIssueRows"></tbody></table></div><div class="field" style="margin-top:16px"><label>复核结论</label><textarea class="textarea" id="reportReviewNote" style="min-height:80px" placeholder="记录失败原因或是否允许发布"></textarea></div></div><div class="dialog-foot"><button class="btn" onclick="closeModal('evaluationReportModal')">关闭</button><button class="btn primary" onclick="markEvaluationReviewed()">确认复核</button></div></div></div>
 
 <div class="toast" id="toast"></div>
-<script src="./AI管理 - 留学申请管理系统.js?v=10"></script>
+<script src="./AI管理 - 留学申请管理系统.js?v=11"></script>
 </body>
 </html>

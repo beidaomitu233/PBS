@@ -5,7 +5,7 @@
   var AI_STORAGE_KEY = 'pbs_ai_management_v5';
   var LEGACY_AI_STORAGE_KEYS = ['pbs_ai_management_v4', 'pbs_ai_management_v3', 'pbs_ai_management_v2'];
   var OPERATION_LOG_KEY = 'pbs_operation_logs_v1';
-  var AI_TABS = ['models', 'routing', 'monitor', 'prompts'];
+  var AI_TABS = ['models', 'monitor', 'prompts'];
   var activePrompt = 0;
   var currentReportId = '';
   var pendingPublishPromptKey = '';
@@ -53,8 +53,7 @@
     orgConcurrency: 4,
     queueTimeout: 30,
     retry: 1,
-    cooldownSeconds: 60,
-    priorityScenes: ['任务催办', '文书审核', '网申提交']
+    cooldownSeconds: 60
   };
 
   var DEFAULT_CALL_LOGS = [
@@ -119,7 +118,6 @@
       keys: cloneJson(DEFAULT_KEYS),
       routingPolicy: cloneJson(DEFAULT_ROUTING_POLICY),
       callLogs: cloneJson(DEFAULT_CALL_LOGS),
-      monitorQueuedRequests: 12,
       promptOverrides: {},
       promptStatus: {},
       caseTemplateOverrides: {},
@@ -139,7 +137,7 @@
       });
     }
     if (saved && typeof saved === 'object') {
-      ['models', 'globalRoute', 'keys', 'routingPolicy', 'callLogs', 'monitorQueuedRequests', 'promptOverrides', 'promptStatus', 'caseTemplateOverrides', 'selectedCaseTemplate', 'evalResults'].forEach(function (key) {
+      ['models', 'globalRoute', 'keys', 'routingPolicy', 'callLogs', 'promptOverrides', 'promptStatus', 'caseTemplateOverrides', 'selectedCaseTemplate', 'evalResults'].forEach(function (key) {
         if (saved[key] !== undefined) state[key] = saved[key];
       });
     }
@@ -212,9 +210,7 @@
       });
     }
     state.routingPolicy = Object.assign({}, DEFAULT_ROUTING_POLICY, state.routingPolicy || {});
-    if (!Array.isArray(state.routingPolicy.priorityScenes)) state.routingPolicy.priorityScenes = DEFAULT_ROUTING_POLICY.priorityScenes.slice();
     if (!Array.isArray(state.callLogs)) state.callLogs = cloneJson(DEFAULT_CALL_LOGS);
-    state.monitorQueuedRequests = Math.max(0, Number(state.monitorQueuedRequests == null ? 12 : state.monitorQueuedRequests));
     if (!state.promptOverrides || typeof state.promptOverrides !== 'object') state.promptOverrides = {};
     if (!state.promptStatus || typeof state.promptStatus !== 'object') state.promptStatus = {};
     if (!state.caseTemplateOverrides || typeof state.caseTemplateOverrides !== 'object') state.caseTemplateOverrides = {};
@@ -365,13 +361,11 @@
   function renderModels() {
     byId('modelRows').innerHTML = aiState.models.map(function (model) {
       var preset = modelProviderPreset(model);
-      var params = Object.assign({}, DEFAULT_MODEL_PARAMS, model.params || {});
       var keys = modelKeys(model.id);
       var availableKeys = keys.filter(function (key) { return key.enabled && (key.health === 'healthy' || key.health === 'warning'); }).length;
       var keyAliases = keys.slice(0, 2).map(function (key) { return key.alias; }).join('、');
       return '<tr><td><b>' + escapeHtml(model.name) + '</b><div class="subtle">' + escapeHtml(model.modelId) + '</div></td>' +
         '<td><div class="provider"><div class="provider-logo" style="background:' + preset.color + '">' + escapeHtml(preset.short) + '</div><b>' + escapeHtml(preset.name) + '</b></div></td>' +
-        '<td><div class="model-param-summary">Temperature ' + params.temperature + '<br>超时 ' + params.timeout + ' 秒 · 重试 ' + params.retry + ' 次</div></td>' +
         '<td><b>' + availableKeys + ' 个可用 Key</b><div class="subtle">' + escapeHtml(keyAliases || '尚未添加 Key') + (keys.length > 2 ? ' 等' : '') + '</div></td>' +
         '<td>' + escapeHtml(modelRouteRole(model.id)) + '</td>' +
         '<td><div class="table-actions"><button class="btn ghost sm" onclick="openModelKeyPool(\'' + model.id + '\')">配置 Key</button><button class="btn ghost sm" onclick="openModelEditor(\'' + model.id + '\')">编辑模型</button></div></td></tr>';
@@ -660,7 +654,6 @@
     byId('queueTimeout').value = policy.queueTimeout;
     byId('routeRetry').value = policy.retry;
     byId('cooldownSeconds').value = policy.cooldownSeconds;
-    document.querySelectorAll('[name="priorityScene"]').forEach(function (input) { input.checked = policy.priorityScenes.indexOf(input.value) >= 0; });
   }
 
   window.saveRoutingPolicy = function (explicit) {
@@ -669,46 +662,12 @@
       orgConcurrency: Math.max(1, Math.min(50, Number(byId('orgConcurrency').value || DEFAULT_ROUTING_POLICY.orgConcurrency))),
       queueTimeout: Math.max(5, Math.min(300, Number(byId('queueTimeout').value || DEFAULT_ROUTING_POLICY.queueTimeout))),
       retry: Math.max(0, Math.min(3, Number(byId('routeRetry').value || 0))),
-      cooldownSeconds: Math.max(10, Math.min(600, Number(byId('cooldownSeconds').value || DEFAULT_ROUTING_POLICY.cooldownSeconds))),
-      priorityScenes: Array.prototype.slice.call(document.querySelectorAll('[name="priorityScene"]:checked')).map(function (input) { return input.value; })
+      cooldownSeconds: Math.max(10, Math.min(600, Number(byId('cooldownSeconds').value || DEFAULT_ROUTING_POLICY.cooldownSeconds)))
     };
     aiState.routingPolicy = policy;
     commitAutoSave('修改 AI 调度策略', '单机构并发 ' + policy.orgConcurrency + '，排队超时 ' + policy.queueTimeout + ' 秒，冷却 ' + policy.cooldownSeconds + ' 秒', 'routing-policy', !!explicit);
     renderRoutingPolicy();
     if (explicit) showToast('调度策略已保存');
-  };
-
-  function eligibleRoutingKeys(modelId) {
-    return modelKeys(modelId).filter(function (key) { return key.enabled && (key.health === 'healthy' || key.health === 'warning'); });
-  }
-
-  window.simulateRouting = function () {
-    var primaryKeys = eligibleRoutingKeys(aiState.globalRoute.primary);
-    var usingBackup = !primaryKeys.length;
-    var candidates = usingBackup ? eligibleRoutingKeys(aiState.globalRoute.backup) : primaryKeys;
-    var result = byId('routeSimulationResult');
-    if (!candidates.length) {
-      result.innerHTML = '<b class="bad">调度失败</b><br>主模型与备用模型均无可用健康 Key，请检查 Key 状态或配额。';
-      showToast('没有可用的健康 Key');
-      return;
-    }
-    var policy = aiState.routingPolicy;
-    candidates.sort(function (a, b) {
-      if (policy.strategy === 'quota_first') return b.quotaRemaining - a.quotaRemaining;
-      if (policy.strategy === 'weighted') return b.weight - a.weight || a.load - b.load;
-      return a.load - b.load;
-    });
-    var key = candidates[0];
-    var model = modelById(usingBackup ? aiState.globalRoute.backup : aiState.globalRoute.primary);
-    var latency = 560 + Math.floor(Math.random() * 260);
-    result.innerHTML = '<b class="good">模拟调度成功</b><br>北岛留学 · 文书审核 → ' + escapeHtml(usingBackup ? '备用模型' : '主模型') + '「' + escapeHtml(model.name) + '」→ 配额组「' + escapeHtml(key.quotaGroup) + '」→ Key「' + escapeHtml(key.alias) + '」<br>选择依据：' + escapeHtml(byId('routeStrategy').options[byId('routeStrategy').selectedIndex].text) + '；本次模拟未调用厂商接口。';
-    key.load = Math.min(100, key.load + 3);
-    aiState.callLogs.unshift({ id: 'call_' + Date.now(), time: nowText(), org: '北岛留学', scene: '文书审核', modelId: model.id, keyId: key.id, latency: latency, result: 'success', detail: '调度演示 · ' + (usingBackup ? '备用模型命中' : '主模型命中') });
-    aiState.callLogs = aiState.callLogs.slice(0, 30);
-    commitAutoSave('运行 AI 调度演示', model.name + ' / ' + key.alias + ' / ' + key.quotaGroup, 'routing-simulation-' + Date.now(), true);
-    renderModels();
-    renderMonitoring();
-    showToast('模拟请求已完成调度');
   };
 
   function populateMonitoringFilters() {
@@ -723,35 +682,12 @@
     sceneFilter.value = sceneValue;
   }
 
-  function renderMonitorAlerts() {
-    var alerts = [];
-    aiState.keys.forEach(function (key) {
-      if (key.enabled && key.health === 'cooling') alerts.push({ level: 'failed', title: key.alias + ' 已进入冷却', detail: key.quotaGroup + ' 检测到 429 限流，冷却结束后自动复检。' });
-    });
-    var groups = uniqueValues(aiState.keys, 'quotaGroup');
-    groups.forEach(function (group) {
-      var groupKeys = aiState.keys.filter(function (key) { return key.quotaGroup === group && key.enabled; });
-      if (groupKeys.length > 1) alerts.push({ level: 'warning', title: group + ' 为共享配额组', detail: groupKeys.length + ' 个启用 Key 共享厂商配额，监控容量时不会重复累计。' });
-    });
-    aiState.keys.forEach(function (key) {
-      if (key.enabled && (key.health === 'warning' || key.load >= 80)) alerts.push({ level: 'warning', title: key.alias + ' 负载偏高', detail: '当前负载 ' + key.load + '%，建议检查配额组容量或增加独立厂商账号。' });
-    });
-    if (!alerts.length) alerts.push({ level: 'success', title: '当前未发现调度风险', detail: '全部启用 Key 健康，配额组负载处于正常范围。' });
-    byId('monitorAlerts').innerHTML = alerts.slice(0, 3).map(function (alert) {
-      return '<div class="alert-row"><div><strong>' + escapeHtml(alert.title) + '</strong><p>' + escapeHtml(alert.detail) + '</p></div><span class="pill ' + alert.level + '">' + (alert.level === 'success' ? '正常' : alert.level === 'failed' ? '需处理' : '关注') + '</span></div>';
-    }).join('');
-  }
-
   window.renderMonitoring = function () {
     if (!byId('callLogRows')) return;
     populateMonitoringFilters();
     var enabled = aiState.keys.filter(function (key) { return key.enabled; });
     byId('monitorEnabledKeys').textContent = String(enabled.length);
     byId('monitorHealthyKeys').textContent = String(enabled.filter(function (key) { return key.health === 'healthy'; }).length);
-    byId('monitorCoolingKeys').textContent = String(enabled.filter(function (key) { return key.health === 'cooling'; }).length);
-    byId('monitorQueuedRequests').textContent = String(aiState.monitorQueuedRequests);
-    byId('monitorUpdatedAt').textContent = nowText().slice(11);
-    renderMonitorAlerts();
     var org = byId('monitorOrgFilter').value;
     var scene = byId('monitorSceneFilter').value;
     var resultFilter = byId('monitorResultFilter').value;

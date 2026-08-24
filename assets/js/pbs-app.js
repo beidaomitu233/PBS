@@ -212,11 +212,16 @@
     '结项归档列表 - PBS留学CRM系统.html': ['archive_view'],
     '结项详情页 - 留学申请管理系统.html': ['archive_view'],
     '用户管理 - 留学申请管理系统.html': ['sys_user'],
+    '机构管理 - PBS留学CRM系统.html': ['sys_org'],
     '人员管理 - PBS留学CRM系统.html': ['sys_personnel'],
     '角色权限管理 - 留学申请管理系统.html': ['sys_role'],
     '操作日志审计 - 留学申请管理系统.html': ['sys_log'],
-    'AI管理 - 留学申请管理系统.html': ['sys_config'],
-    '视频管理 - 留学申请管理系统.html': ['sys_config']
+    'AI管理 - 留学申请管理系统.html': ['sys_ai'],
+    '视频管理 - 留学申请管理系统.html': ['sys_video'],
+    '选校订单池页 - 留学申请管理系统.html': ['school_task'],
+    '选校任务列表页 - 留学申请管理系统.html': ['school_task'],
+    '选校工作台页 - 留学申请管理系统.html': ['school_plan', 'school_catalog'],
+    '选校方案详情页 - 留学申请管理系统.html': ['school_plan']
   };
 
   /* ---------------- 会话 ---------------- */
@@ -1445,7 +1450,15 @@
 
   /* 各工作台独立权限：角色权限管理页保存到 localStorage；未配置时仅默认开放角色本人的工作台。 */
   function savedRolePerms() {
-    try { return JSON.parse(localStorage.getItem(ROLE_PERMS_KEY) || '{}'); } catch (e) { return {}; }
+    try {
+      var saved = JSON.parse(localStorage.getItem(ROLE_PERMS_KEY) || '{}');
+      Object.keys(saved || {}).forEach(function (role) {
+        var system = saved[role] && saved[role].system;
+        if (!Array.isArray(system) || system.indexOf('sys_config') < 0) return;
+        ['sys_ai', 'sys_video'].forEach(function (id) { if (system.indexOf(id) < 0) system.push(id); });
+      });
+      return saved;
+    } catch (e) { return {}; }
   }
   /* 角色是否拥有指定权限点（读取角色权限管理页保存的配置） */
   function roleHasPermission(role, permIds) {

@@ -380,28 +380,39 @@
         ]
       },
       {
+        id: 'school',
+        name: '选校管理',
+        items: [
+          { id: 'school_task', label: '查看选校任务' },
+          { id: 'school_plan', label: '制作与维护选校方案' },
+          { id: 'school_catalog', label: '查看院校库' }
+        ]
+      },
+      {
         id: 'system',
         name: '系统管理',
         items: [
           { id: 'sys_user', label: '管理用户账号' },
+          { id: 'sys_org', label: '管理机构信息' },
           { id: 'sys_role', label: '管理角色权限' },
           { id: 'sys_personnel', label: '管理人员信息' },
           { id: 'sys_log', label: '查看操作日志' },
-          { id: 'sys_config', label: '系统配置管理' }
+          { id: 'sys_ai', label: '管理 AI 配置' },
+          { id: 'sys_video', label: '管理介绍视频' }
         ]
       }
     ];
 
     // 角色数据
     var roles = [
-      { id: 1, name: '平台运维人员', description: '平台级超级管理员，负责系统配置和运维', creator: '系统初始', createTime: '2025-01-01', permissions: { workbench: ['workbench_platform'], customer: ['customer_view'], project: [], document: [], application: [], monitor: ['monitor_view'], archive: [], system: ['sys_user','sys_role','sys_personnel','sys_log','sys_config'] } },
-      { id: 2, name: '机构管理员', description: '机构管理员，负责项目分配、人员管理与全局监控', creator: '系统初始', createTime: '2025-01-01', permissions: { workbench: ['workbench_org_admin'], customer: ['customer_view'], project: ['project_view','project_assign','project_change_pm','project_view_detail'], document: [], application: [], monitor: ['monitor_view','monitor_track','monitor_alert','monitor_report'], archive: [], system: ['sys_personnel'] } },
-      { id: 3, name: '销售人员', description: '负责客户开发和跟进，执行选校方案制作', creator: '管理员', createTime: '2025-03-01', permissions: { workbench: ['workbench_sales'], customer: ['customer_view','customer_add','customer_edit'], project: [], document: [], application: [], monitor: [], archive: [], system: [] } },
-      { id: 5, name: '项目经理', description: '负责项目全流程管理和任务分发', creator: '管理员', createTime: '2025-01-15', permissions: { workbench: ['workbench_pm'], customer: ['customer_view','customer_add','customer_edit'], project: ['project_view','project_assign','project_change_pm','project_view_detail'], document: ['doc_view','doc_download'], application: ['app_view'], monitor: ['monitor_view','monitor_track','monitor_report'], archive: ['archive_view','archive_create','archive_approve'], system: [] } },
-      { id: 6, name: '文书人员', description: '负责执行文书撰写工作', creator: '管理员', createTime: '2025-02-01', permissions: { workbench: ['workbench_writer'], customer: ['customer_view'], project: [], document: ['doc_view','doc_upload','doc_edit','doc_download'], application: [], monitor: [], archive: ['archive_view'], system: [] } },
-      { id: 7, name: '网申人员', description: '负责执行网申填写与提交工作', creator: '管理员', createTime: '2025-02-01', permissions: { workbench: ['workbench_apply'], customer: ['customer_view'], project: [], document: [], application: ['app_view','app_create','app_submit','app_fill'], monitor: [], archive: ['archive_view'], system: [] } },
-      { id: 8, name: '文书审核', description: '负责文书内容的审核，通过或打回', creator: '管理员', createTime: '2025-02-10', permissions: { workbench: ['workbench_audit'], customer: ['customer_view'], project: [], document: ['doc_view','doc_review','doc_download'], application: [], monitor: [], archive: [], system: [] } },
-      { id: 9, name: '文书机构管理员', description: '统筹文书交付与审核，管理机构内文书团队成员', creator: '系统初始', createTime: '2025-01-01', permissions: { workbench: ['workbench_docadmin'], customer: ['customer_view'], project: [], document: ['doc_view','doc_upload','doc_edit','doc_review','doc_download'], application: [], monitor: [], archive: [], system: ['sys_role','sys_personnel'] } }
+      { id: 1, name: '平台运维人员', description: '平台级超级管理员，负责系统配置和运维', creator: '系统初始', createTime: '2025-01-01', permissions: { workbench: ['workbench_platform'], customer: ['customer_view'], project: [], document: [], application: [], monitor: ['monitor_view'], archive: [], school: [], system: ['sys_user','sys_org','sys_role','sys_personnel','sys_log','sys_ai','sys_video'] } },
+      { id: 2, name: '机构管理员', description: '机构管理员，负责项目分配、人员管理与全局监控', creator: '系统初始', createTime: '2025-01-01', permissions: { workbench: ['workbench_org_admin'], customer: ['customer_view'], project: ['project_view','project_assign','project_change_pm','project_view_detail'], document: [], application: [], monitor: ['monitor_view','monitor_track','monitor_alert','monitor_report'], archive: [], school: ['school_task','school_plan'], system: ['sys_role','sys_personnel','sys_log','sys_ai','sys_video'] } },
+      { id: 3, name: '销售人员', description: '负责客户开发和跟进，执行选校方案制作', creator: '管理员', createTime: '2025-03-01', permissions: { workbench: ['workbench_sales'], customer: ['customer_view','customer_add','customer_edit'], project: [], document: [], application: [], monitor: [], archive: [], school: ['school_task','school_plan','school_catalog'], system: [] } },
+      { id: 5, name: '项目经理', description: '负责项目全流程管理和任务分发', creator: '管理员', createTime: '2025-01-15', permissions: { workbench: ['workbench_pm'], customer: ['customer_view','customer_add','customer_edit'], project: ['project_view','project_assign','project_change_pm','project_view_detail'], document: ['doc_view','doc_download'], application: ['app_view'], monitor: ['monitor_view','monitor_track','monitor_report'], archive: ['archive_view','archive_create','archive_approve'], school: [], system: [] } },
+      { id: 6, name: '文书人员', description: '负责执行文书撰写工作', creator: '管理员', createTime: '2025-02-01', permissions: { workbench: ['workbench_writer'], customer: ['customer_view'], project: [], document: ['doc_view','doc_upload','doc_edit','doc_download'], application: [], monitor: [], archive: ['archive_view'], school: [], system: [] } },
+      { id: 7, name: '网申人员', description: '负责执行网申填写与提交工作', creator: '管理员', createTime: '2025-02-01', permissions: { workbench: ['workbench_apply'], customer: ['customer_view'], project: [], document: [], application: ['app_view','app_create','app_submit','app_fill'], monitor: [], archive: ['archive_view'], school: [], system: [] } },
+      { id: 8, name: '文书审核', description: '负责文书内容的审核，通过或打回', creator: '管理员', createTime: '2025-02-10', permissions: { workbench: ['workbench_audit'], customer: ['customer_view'], project: [], document: ['doc_view','doc_review','doc_download'], application: [], monitor: [], archive: [], school: [], system: [] } },
+      { id: 9, name: '文书机构管理员', description: '统筹文书交付与审核，管理机构内文书团队成员', creator: '系统初始', createTime: '2025-01-01', permissions: { workbench: ['workbench_docadmin'], customer: ['customer_view'], project: [], document: ['doc_view','doc_upload','doc_edit','doc_review','doc_download'], application: [], monitor: [], archive: [], school: [], system: ['sys_role','sys_personnel','sys_ai','sys_video'] } }
     ];
 
     // 当前选中的角色和权限备份
@@ -448,6 +459,13 @@
       roles.forEach(function (r) {
         if (!map[r.name]) return;
         var persisted = map[r.name];
+        permissionModules.forEach(function (module) {
+          if (!Array.isArray(persisted[module.id])) persisted[module.id] = (r.permissions[module.id] || []).slice();
+        });
+        if (persisted.system.indexOf('sys_config') >= 0) {
+          ['sys_ai', 'sys_video'].forEach(function (id) { if (persisted.system.indexOf(id) < 0) persisted.system.push(id); });
+          persisted.system = persisted.system.filter(function (id) { return id !== 'sys_config'; });
+        }
         if (!Array.isArray(persisted.workbench)) {
           persisted.workbench = (r.permissions.workbench || []).slice();
         } else if (persisted.workbench.indexOf('workbench_view') >= 0) {
@@ -458,27 +476,6 @@
         }
         r.permissions = persisted;
       });
-    }
-
-    // ==================== 添加用户角色权限（新增成员时可分配哪些角色） ====================
-    var ROLE_ASSIGNMENT_PERMS_KEY = 'pbs_role_assignment_perms_v1';
-    var ASSIGNABLE_ROLES = ['机构管理员', '销售人员', '项目经理', '文书人员', '网申人员', '文书审核', '文书机构管理员'];
-    var MANAGER_ROLES = ['平台运维人员', '机构管理员', '项目经理', '文书机构管理员'];
-    var DEFAULT_ASSIGNMENT_PERMS = {
-      '平台运维人员': ['机构管理员', '销售人员', '项目经理', '文书人员', '网申人员', '文书审核', '文书机构管理员'],
-      '机构管理员': ['销售人员', '项目经理', '文书人员', '网申人员', '文书审核', '文书机构管理员'],
-      '项目经理': ['文书人员', '网申人员', '文书审核'],
-      '文书机构管理员': ['文书人员']
-    };
-    function getAssignmentPerms() {
-      try {
-        var saved = JSON.parse(localStorage.getItem(ROLE_ASSIGNMENT_PERMS_KEY) || '{}');
-        if (typeof saved === 'object' && saved !== null) return saved;
-      } catch (e) {}
-      return Object.assign({}, DEFAULT_ASSIGNMENT_PERMS);
-    }
-    function persistAssignmentPerms(config) {
-      try { localStorage.setItem(ROLE_ASSIGNMENT_PERMS_KEY, JSON.stringify(config)); } catch (e) {}
     }
 
     // ==================== 渲染函数 ====================
@@ -540,28 +537,6 @@
         html += '</div>';
       });
 
-      // 添加用户角色权限配置（仅对管理类角色显示）
-      if (MANAGER_ROLES.indexOf(role.name) !== -1) {
-        var assignConfig = getAssignmentPerms();
-        var currentAssigned = assignConfig[role.name] || [];
-        html += '<div class="perm-group bg-gray-50 rounded-lg p-4 mb-4">';
-        html += '  <h3 class="text-sm font-semibold text-gray-700 mb-3 flex items-center gap-2">';
-        html += '    <span class="w-1.5 h-5 bg-purple-600 rounded-full inline-block"></span>';
-        html += '    添加用户角色权限';
-        html += '  </h3>';
-        html += '  <p class="text-xs text-gray-500 mb-3">配置该角色在「新增人员」时可分配的角色范围</p>';
-        html += '  <div class="grid grid-cols-2 gap-3">';
-        ASSIGNABLE_ROLES.forEach(function(targetRole) {
-          var checked = currentAssigned.indexOf(targetRole) !== -1 ? 'checked' : '';
-          html += '    <label class="flex items-center gap-2 px-3 py-2 bg-white rounded-lg border border-gray-100 cursor-pointer hover:border-purple-200 transition-colors">';
-          html += '      <input type="checkbox" class="checkbox-custom w-4 h-4 rounded" ' + checked + ' data-assignment-role="' + targetRole + '" onchange="onAssignmentChange()">';
-          html += '      <span class="text-sm text-gray-700">' + targetRole + '</span>';
-          html += '    </label>';
-        });
-        html += '  </div>';
-        html += '</div>';
-      }
-
       html += '<div class="flex items-center gap-3 pt-4 border-t border-gray-100">';
       html += '  <button class="px-6 h-10 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium" onclick="savePermission()">保存权限配置</button>';
       html += '  <button class="px-6 h-10 bg-white border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors" onclick="resetPermission()">重置</button>';
@@ -596,7 +571,7 @@
       var role = findRoleById(currentRoleId);
       if (!role) return;
 
-      var checkboxes = document.querySelectorAll('#permissionConfigArea input[type="checkbox"]:not([data-assignment-role])');
+      var checkboxes = document.querySelectorAll('#permissionConfigArea input[type="checkbox"]');
       // 重新构建 permissions
       var newPerms = {};
       permissionModules.forEach(function(module) {
@@ -613,19 +588,6 @@
       });
 
       role.permissions = newPerms;
-    }
-
-    // 添加用户角色权限变更
-    function onAssignmentChange() {
-      var role = findRoleById(currentRoleId);
-      if (!role) return;
-      var config = getAssignmentPerms();
-      var selected = [];
-      document.querySelectorAll('#permissionConfigArea input[data-assignment-role]').forEach(function(cb) {
-        if (cb.checked) selected.push(cb.getAttribute('data-assignment-role'));
-      });
-      config[role.name] = selected;
-      persistAssignmentPerms(config);
     }
 
     // 保存权限配置
@@ -754,14 +716,14 @@
     function refreshPage() {
       // 重置所有数据到初始状态
       roles = [
-        { id: 1, name: '平台运维人员', description: '平台级超级管理员，负责系统配置和运维', creator: '系统初始', createTime: '2025-01-01', permissions: { workbench: ['workbench_platform'], customer: ['customer_view'], project: [], document: [], application: [], monitor: ['monitor_view'], archive: [], system: ['sys_user','sys_role','sys_personnel','sys_log','sys_config'] } },
-        { id: 2, name: '机构管理员', description: '机构管理员，负责项目分配、人员管理与全局监控', creator: '系统初始', createTime: '2025-01-01', permissions: { workbench: ['workbench_org_admin'], customer: ['customer_view'], project: ['project_view','project_assign','project_change_pm','project_view_detail'], document: [], application: [], monitor: ['monitor_view','monitor_track','monitor_alert','monitor_report'], archive: [], system: ['sys_personnel'] } },
-        { id: 3, name: '销售人员', description: '负责客户开发和跟进，执行选校方案制作', creator: '管理员', createTime: '2025-03-01', permissions: { workbench: ['workbench_sales'], customer: ['customer_view','customer_add','customer_edit'], project: [], document: [], application: [], monitor: [], archive: [], system: [] } },
-        { id: 5, name: '项目经理', description: '负责项目全流程管理和任务分发', creator: '管理员', createTime: '2025-01-15', permissions: { workbench: ['workbench_pm'], customer: ['customer_view','customer_add','customer_edit'], project: ['project_view','project_assign','project_change_pm','project_view_detail'], document: ['doc_view','doc_download'], application: ['app_view'], monitor: ['monitor_view','monitor_track','monitor_report'], archive: ['archive_view','archive_create','archive_approve'], system: [] } },
-        { id: 6, name: '文书人员', description: '负责执行文书撰写工作', creator: '管理员', createTime: '2025-02-01', permissions: { workbench: ['workbench_writer'], customer: ['customer_view'], project: [], document: ['doc_view','doc_upload','doc_edit','doc_download'], application: [], monitor: [], archive: ['archive_view'], system: [] } },
-        { id: 7, name: '网申人员', description: '负责执行网申填写与提交工作', creator: '管理员', createTime: '2025-02-01', permissions: { workbench: ['workbench_apply'], customer: ['customer_view'], project: [], document: [], application: ['app_view','app_create','app_submit','app_fill'], monitor: [], archive: ['archive_view'], system: [] } },
-        { id: 8, name: '文书审核', description: '负责文书内容的审核，通过或打回', creator: '管理员', createTime: '2025-02-10', permissions: { workbench: ['workbench_audit'], customer: ['customer_view'], project: [], document: ['doc_view','doc_review','doc_download'], application: [], monitor: [], archive: [], system: [] } },
-      { id: 9, name: '文书机构管理员', description: '统筹文书交付与审核，管理机构内文书团队成员', creator: '系统初始', createTime: '2025-01-01', permissions: { workbench: ['workbench_docadmin'], customer: ['customer_view'], project: [], document: ['doc_view','doc_upload','doc_edit','doc_review','doc_download'], application: [], monitor: [], archive: [], system: ['sys_role','sys_personnel'] } }
+        { id: 1, name: '平台运维人员', description: '平台级超级管理员，负责系统配置和运维', creator: '系统初始', createTime: '2025-01-01', permissions: { workbench: ['workbench_platform'], customer: ['customer_view'], project: [], document: [], application: [], monitor: ['monitor_view'], archive: [], school: [], system: ['sys_user','sys_org','sys_role','sys_personnel','sys_log','sys_ai','sys_video'] } },
+        { id: 2, name: '机构管理员', description: '机构管理员，负责项目分配、人员管理与全局监控', creator: '系统初始', createTime: '2025-01-01', permissions: { workbench: ['workbench_org_admin'], customer: ['customer_view'], project: ['project_view','project_assign','project_change_pm','project_view_detail'], document: [], application: [], monitor: ['monitor_view','monitor_track','monitor_alert','monitor_report'], archive: [], school: ['school_task','school_plan'], system: ['sys_role','sys_personnel','sys_log','sys_ai','sys_video'] } },
+        { id: 3, name: '销售人员', description: '负责客户开发和跟进，执行选校方案制作', creator: '管理员', createTime: '2025-03-01', permissions: { workbench: ['workbench_sales'], customer: ['customer_view','customer_add','customer_edit'], project: [], document: [], application: [], monitor: [], archive: [], school: ['school_task','school_plan','school_catalog'], system: [] } },
+        { id: 5, name: '项目经理', description: '负责项目全流程管理和任务分发', creator: '管理员', createTime: '2025-01-15', permissions: { workbench: ['workbench_pm'], customer: ['customer_view','customer_add','customer_edit'], project: ['project_view','project_assign','project_change_pm','project_view_detail'], document: ['doc_view','doc_download'], application: ['app_view'], monitor: ['monitor_view','monitor_track','monitor_report'], archive: ['archive_view','archive_create','archive_approve'], school: [], system: [] } },
+        { id: 6, name: '文书人员', description: '负责执行文书撰写工作', creator: '管理员', createTime: '2025-02-01', permissions: { workbench: ['workbench_writer'], customer: ['customer_view'], project: [], document: ['doc_view','doc_upload','doc_edit','doc_download'], application: [], monitor: [], archive: ['archive_view'], school: [], system: [] } },
+        { id: 7, name: '网申人员', description: '负责执行网申填写与提交工作', creator: '管理员', createTime: '2025-02-01', permissions: { workbench: ['workbench_apply'], customer: ['customer_view'], project: [], document: [], application: ['app_view','app_create','app_submit','app_fill'], monitor: [], archive: ['archive_view'], school: [], system: [] } },
+        { id: 8, name: '文书审核', description: '负责文书内容的审核，通过或打回', creator: '管理员', createTime: '2025-02-10', permissions: { workbench: ['workbench_audit'], customer: ['customer_view'], project: [], document: ['doc_view','doc_review','doc_download'], application: [], monitor: [], archive: [], school: [], system: [] } },
+        { id: 9, name: '文书机构管理员', description: '统筹文书交付与审核，管理机构内文书团队成员', creator: '系统初始', createTime: '2025-01-01', permissions: { workbench: ['workbench_docadmin'], customer: ['customer_view'], project: [], document: ['doc_view','doc_upload','doc_edit','doc_review','doc_download'], application: [], monitor: [], archive: [], school: [], system: ['sys_role','sys_personnel','sys_ai','sys_video'] } }
     ];
       currentRoleId = null;
       permissionBackup = {};

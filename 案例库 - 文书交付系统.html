@@ -129,8 +129,8 @@
 
       <!-- 高级筛选区 -->
       <div class="bg-white rounded-xl p-5 mb-6 shadow-sm border border-gray-100">
-        <div class="flex items-end gap-4 flex-wrap">
-          <div class="flex-1 min-w-[320px]">
+        <div class="flex items-end gap-2 flex-wrap">
+          <div class="w-48 flex-none">
             <label class="block text-sm text-gray-600 mb-2">关键词搜索</label>
             <input id="flt-kw" type="text" placeholder="搜索案例名称、来源学生、录取院校或上传人..." class="w-full h-10 px-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm">
           </div>
@@ -147,7 +147,7 @@
           </div>
           <div>
             <label class="block text-sm text-gray-600 mb-2">申请层次</label>
-            <select id="flt-level" class="w-32 h-10 px-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm">
+            <select id="flt-level" class="w-28 h-10 px-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm">
               <option value="">全部</option>
               <option>本科申请</option>
               <option>硕士申请</option>
@@ -156,7 +156,7 @@
           </div>
           <div>
             <label class="block text-sm text-gray-600 mb-2">解析状态</label>
-            <select id="flt-status" class="w-32 h-10 px-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm">
+            <select id="flt-status" class="w-28 h-10 px-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm">
               <option value="">全部</option>
               <option>已解析</option>
               <option>未解析</option>
@@ -167,19 +167,16 @@
           </div>
           <div>
             <label class="block text-sm text-gray-600 mb-2">所属机构</label>
-            <select id="flt-org" class="min-w-40 h-10 px-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm">
+            <select id="flt-org" class="w-32 h-10 px-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm">
               <option value="">全部机构</option>
               <option>PBS留学总部</option>
               <option>上海启明留学</option>
               <option>北京知行教育</option>
             </select>
           </div>
-        </div>
-        <!-- 展开更多筛选项 -->
-        <div id="flt-more" class="hidden flex items-end gap-4 flex-wrap mt-4 pt-4 border-t border-gray-100">
           <div>
             <label class="block text-sm text-gray-600 mb-2">申请方向</label>
-            <select id="flt-direction" class="w-40 h-10 px-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm">
+            <select id="flt-direction" class="w-32 h-10 px-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm">
               <option value="">全部</option>
               <option>CS/人工智能</option>
               <option>数据科学</option>
@@ -191,14 +188,12 @@
           </div>
           <div>
             <label class="block text-sm text-gray-600 mb-2">上传时间</label>
-            <input id="flt-time" type="text" placeholder="如 2026-07-28" class="w-40 h-10 px-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm">
+            <input id="flt-time" type="text" placeholder="如 2026-07-28" class="w-28 h-10 px-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm">
           </div>
         </div>
         <div class="flex items-center gap-3 mt-4">
           <button onclick="applyFilter()" class="px-6 h-10 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm">搜索</button>
           <button onclick="resetFilter()" class="px-6 h-10 bg-white border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors text-sm">重置</button>
-          <button id="flt-toggle" onclick="toggleMore()" class="px-4 h-10 text-blue-600 hover:text-blue-800 text-sm font-medium flex items-center gap-1">展开更多<svg id="flt-toggle-icon" class="w-4 h-4 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
-          </button>
         </div>
       </div>
 
@@ -809,16 +804,6 @@
 
   <script>
     // ================= 筛选 =================
-    function toggleMore() {
-      var more = document.getElementById('flt-more');
-      var btn = document.getElementById('flt-toggle');
-      var icon = document.getElementById('flt-toggle-icon');
-      var hidden = more.classList.toggle('hidden');
-      more.classList.toggle('flex', !hidden);
-      btn.childNodes[0].textContent = hidden ? '展开更多' : '收起筛选';
-      icon.style.transform = hidden ? '' : 'rotate(180deg)';
-    }
-
     function applyFilter(silent) {
       var kw = document.getElementById('flt-kw').value.trim().toLowerCase();
       var type = document.getElementById('flt-type').value;

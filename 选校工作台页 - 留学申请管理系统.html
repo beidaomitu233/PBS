@@ -216,7 +216,7 @@
       <div id="schoolWorkspace" class="flex gap-5 items-start" style="height: calc(100vh - 290px); min-height: 560px;">
         <!-- 左栏：筛选+院校列表 -->
         <div class="w-[30%] bg-white rounded-xl shadow-sm border border-gray-100 flex flex-col h-full">
-          <div class="p-4 border-b border-gray-100">
+          <div class="p-4 border-b border-gray-100 max-h-[58%] overflow-y-auto">
             <h2 class="text-sm font-semibold text-gray-800 mb-3">院校库筛选</h2>
             <div class="space-y-2.5">
               <input id="flt-kw" type="text" placeholder="学校/专业关键词，如：计算机" class="w-full h-9 px-3 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500">
@@ -236,7 +236,7 @@
               </div>
             </div>
             <!-- 高级筛选（综合硕士/本科录入标准字段） -->
-            <div id="flt-adv" class="hidden space-y-2.5 mt-2.5 pt-2.5 border-t border-gray-100">
+            <div id="flt-adv" class="space-y-2.5 mt-2.5 pt-2.5 border-t border-gray-100">
               <p class="text-xs font-semibold text-gray-500">录取要求</p>
               <div class="grid grid-cols-2 gap-2">
                 <select id="flt-ielts" class="w-full h-9 px-2 border border-gray-300 rounded-lg text-xs focus:ring-2 focus:ring-blue-500">
@@ -283,7 +283,6 @@
             <div class="flex items-center gap-2 mt-3">
               <button onclick="applySchoolFilter()" class="flex-1 h-9 bg-blue-600 text-white rounded-lg hover:bg-blue-700 text-sm">筛选</button>
               <button onclick="resetSchoolFilter()" class="flex-1 h-9 bg-white border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 text-sm">重置</button>
-              <button id="flt-adv-toggle" onclick="toggleAdvFilter()" class="h-9 px-2 text-blue-600 hover:text-blue-800 text-xs font-medium">高级筛选</button>
             </div>
           </div>
           <div class="flex-1 overflow-y-auto p-4 space-y-3" id="schoolList">
@@ -607,14 +606,6 @@
       });
       applySchoolFilter();
     }
-    function toggleAdvFilter() {
-      var adv = document.getElementById('flt-adv');
-      var btn = document.getElementById('flt-adv-toggle');
-      var show = adv.classList.contains('hidden');
-      adv.classList.toggle('hidden', !show);
-      btn.textContent = show ? '收起筛选' : '高级筛选';
-    }
-
     /* ---------- 分层清单：拖拽+按钮 ---------- */
     function zoneCard(sid) {
       var d = SCHOOL_INFO[sid];

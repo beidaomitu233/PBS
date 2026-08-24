@@ -23,16 +23,15 @@
     <div class="relative max-w-4xl mx-auto px-5 sm:px-8 pt-7 pb-16">
       <div class="flex items-center justify-between mb-10">
         <div class="flex items-center gap-3"><img src="./PRD参考文件/导航栏图标参考.jpg" alt="PBS" class="w-10 h-10 rounded-xl bg-white shadow-lg object-contain p-1"><div><p class="font-semibold leading-5">PBS留学</p><p class="text-xs text-blue-200">专业留学申请服务</p></div></div>
-        <span class="inline-flex items-center px-3 py-1.5 rounded-full bg-white/10 border border-white/20 text-xs text-blue-50">方案 V3 · 2026-07-19</span>
       </div>
       <div class="md:flex md:items-end md:justify-between md:gap-8">
         <div>
-          <p class="text-sm text-blue-200 mb-2">周雨薇同学的专属方案</p>
-          <h1 class="text-2xl sm:text-3xl font-semibold tracking-tight">美国计算机科学硕士选校方案</h1>
+          <p class="text-sm text-blue-200 mb-2">PBS 定制选校建议</p>
+          <h1 class="text-2xl sm:text-3xl font-semibold tracking-tight">周雨薇同学的专属方案</h1>
           <p class="text-sm text-blue-100 mt-4 max-w-2xl leading-6">基于学生背景、申请目标与院校录取要求形成的分层选校建议。</p>
         </div>
         <div class="flex items-center gap-2 mt-6 md:mt-0 text-xs text-blue-100">
-          <span class="px-3 py-2 rounded-lg bg-white/10">硕士申请</span><span class="px-3 py-2 rounded-lg bg-white/10">2026 秋</span><span class="px-3 py-2 rounded-lg bg-white/10">美国</span>
+          <span class="px-3 py-2 rounded-lg bg-white/10">美国</span><span class="px-3 py-2 rounded-lg bg-white/10">硕士申请</span><span class="px-3 py-2 rounded-lg bg-white/10">计算机科学</span>
         </div>
       </div>
     </div>
@@ -70,23 +69,10 @@
 
   <div id="schoolModal" class="fixed inset-0 z-50 hidden">
     <div class="absolute inset-0 bg-black/40" onclick="closeSchoolDetail()"></div>
-    <div class="absolute inset-x-0 bottom-0 max-h-[86vh] overflow-y-auto bg-white rounded-t-3xl shadow-2xl">
+    <div class="absolute inset-x-0 bottom-0 max-h-[90vh] overflow-y-auto bg-white rounded-t-3xl shadow-2xl">
       <div class="max-w-3xl mx-auto p-5 safe-bottom">
-        <div class="flex items-start justify-between gap-4 mb-5">
-          <div><p id="detailZone" class="text-xs font-medium text-blue-600 mb-1"></p><h3 id="detailName" class="text-xl font-semibold text-slate-900"></h3><p id="detailProgram" class="text-sm text-slate-500 mt-1"></p></div>
-          <button class="w-9 h-9 rounded-full bg-slate-100 text-slate-500 text-xl" onclick="closeSchoolDetail()">×</button>
-        </div>
-        <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-5">
-          <div class="bg-slate-50 rounded-xl p-3"><p class="text-xs text-slate-400">世界排名</p><p id="detailRank" class="text-sm font-medium mt-1"></p></div>
-          <div class="bg-slate-50 rounded-xl p-3"><p class="text-xs text-slate-400">学制</p><p id="detailDuration" class="text-sm font-medium mt-1"></p></div>
-          <div class="bg-slate-50 rounded-xl p-3"><p class="text-xs text-slate-400">申请截止</p><p id="detailDeadline" class="text-sm font-medium mt-1"></p></div>
-          <div class="bg-slate-50 rounded-xl p-3"><p class="text-xs text-slate-400">学费参考</p><p id="detailTuition" class="text-sm font-medium mt-1"></p></div>
-        </div>
-        <div class="space-y-5">
-          <div><h4 class="text-sm font-semibold text-slate-900 mb-2">推荐理由</h4><p id="detailReason" class="text-sm text-slate-600 leading-7"></p></div>
-          <div><h4 class="text-sm font-semibold text-slate-900 mb-2">项目特点</h4><p id="detailFeature" class="text-sm text-slate-600 leading-7"></p></div>
-          <div><h4 class="text-sm font-semibold text-slate-900 mb-2">录取要求参考</h4><p id="detailRequirement" class="text-sm text-slate-600 leading-7"></p></div>
-        </div>
+        <div class="flex justify-end mb-1"><button class="w-9 h-9 rounded-full bg-slate-100 text-slate-500 text-xl" onclick="closeSchoolDetail()">×</button></div>
+        <div id="schoolDetailBody"></div>
       </div>
     </div>
   </div>
@@ -98,6 +84,26 @@
       { id: 'gatech', zone: '匹配区', target: 'zoneMatch', name: '佐治亚理工学院', program: '计算机科学（MSCS）', rank: 'QS #97', duration: '2 年', deadline: '2026-03-01', tuition: 'USD 32,000/年', reason: '工业界认可度高，Co-op 与实习体系符合学生毕业后留美就业目标。', feature: '工程与计算机交叉优势明显，亚特兰大科技产业资源丰富。', requirement: '建议 GPA 3.5+、托福 100+；GRE 建议提交，重视技术项目及实习成果。' },
       { id: 'bu', zone: '保底区', target: 'zoneSafe', name: '波士顿大学', program: '计算机科学（MSCS）', rank: 'QS #108', duration: '1.5–2 年', deadline: '2026-03-15', tuition: 'USD 54,000/年', reason: '录取梯度稳妥，波士顿高校与企业资源丰富，可保障方案下限。', feature: '课程注重实践与职业发展，可利用波士顿地区的科研、创业及实习资源。', requirement: '建议 GPA 3.3+、托福 95+；GRE 可选，项目与实习经历可强化申请。' }
     ];
+    var SCHOOL_DETAILS = {
+      cmu: { location:'美国宾夕法尼亚州匹兹堡', college:'计算机科学学院（SCS）', dept:'计算机科学系', degree:'MS（理学硕士）', teachType:'Taught 授课型', campus:'匹兹堡主校区', language:'英语', stem:'是', visaHelp:'STEM OPT 可延期3年，学院提供 CPT/OPT 申请指导', appStart:'2025-09-01', appDeadline:'2025-12-15', nodes:'提前批 2025-11-01；常规轮 2025-12-15', admitPeriod:'2026-02-01 ~ 2026-04-15', enroll:'2026年秋季', ielts:'7.5', toefl:'105', gpa:'3.8+', gre:'建议 325+', bgReq:'CS/数学相关背景', workYears:'无要求', interview:'部分申请者需视频面试', otherReq:'雅思小分不低于7.0', tuitionValue:'USD 58,000/年', appFee:'USD 75', scholarship:'择优发放，无需额外申请', career:'软件工程、人工智能、系统架构', employers:'Google、Meta、OpenAI、Amazon', salary:'USD 140,000/year（平均起薪）', qualification:'可抵考部分 AWS/谷歌云认证科目', intro:'MSCS 项目课程覆盖系统、理论、AI 三大方向；SCS 学院与多家科技企业设有联合实验室。', profs:'推荐关注：Prof. Graham Neubig（NLP）、Prof. David Garlan（软件工程）', linkCollege:'https://www.cs.cmu.edu/', linkCourse:'https://ms.cs.cmu.edu/' },
+      uiuc: { location:'美国伊利诺伊州香槟市', college:'格兰杰工程学院', dept:'计算机科学系', degree:'MS（理学硕士）', teachType:'Taught 授课型', campus:'香槟主校区', language:'英语', stem:'是', visaHelp:'STEM OPT 可延期3年，ISSS 提供工签申请工作坊', appStart:'2025-09-01', appDeadline:'2026-01-15', nodes:'优先轮 2025-12-01；常规轮 2026-01-15', admitPeriod:'2026-03-01 ~ 2026-05-01', enroll:'2026年秋季', ielts:'7.0', toefl:'103', gpa:'3.6+', gre:'可选（Optional）', bgReq:'接受非 CS 背景转专业', workYears:'无要求', interview:'无面试', otherReq:'托福口语小分不低于24', tuitionValue:'USD 42,000/年', appFee:'USD 90', scholarship:'无需额外申请，择优发放', career:'软件工程、数据工程、嵌入式系统', employers:'Microsoft、Amazon、State Farm、Caterpillar', salary:'USD 115,000/year（平均起薪）', qualification:'可抵考部分微软 Azure 认证科目', intro:'MCS 项目支持非 CS 背景转专业申请，课程灵活度高，工程学院科研资源丰富。', profs:'推荐关注：Prof. Jiawei Han（数据挖掘）、Prof. Tarek Abdelzaher（物联网）', linkCollege:'https://grainger.illinois.edu/', linkCourse:'https://cs.illinois.edu/academics/graduate/professional-mcs-program' },
+      gatech: { location:'美国佐治亚州亚特兰大市', college:'计算学院（College of Computing）', dept:'计算机科学与工程学院', degree:'MS（理学硕士）', teachType:'Taught/Research 兼有', campus:'亚特兰大主校区', language:'英语', stem:'是', visaHelp:'STEM OPT 可延期3年；Co-op 可累计全职工作时长', appStart:'2025-08-15', appDeadline:'2026-03-01', nodes:'常规轮 2026-03-01', admitPeriod:'2026-04-01 ~ 2026-06-01', enroll:'2026年秋季', ielts:'7.0', toefl:'100', gpa:'3.5+', gre:'建议 320+', bgReq:'CS/工程相关背景', workYears:'无要求', interview:'无面试', otherReq:'需修读数据结构与算法先修课', tuitionValue:'USD 32,000/年', appFee:'USD 85', scholarship:'TA/RA 岗位可覆盖部分学费', career:'分布式系统、机器人、高性能计算', employers:'Google、Microsoft、NCR及亚特兰大科技企业', salary:'USD 120,000/year（平均起薪）', qualification:'—', intro:'Co-op 实习体系成熟，与亚特兰大科技走廊企业深度合作。', profs:'推荐关注：Prof. Zsolt Kira（机器人）、Prof. Ling Liu（分布式系统）', linkCollege:'https://www.cc.gatech.edu/', linkCourse:'https://www.cc.gatech.edu/degree-programs/master-science-computer-science' },
+      bu: { location:'美国马萨诸塞州波士顿市', college:'文理学院（CAS）与大都会学院（MET）', dept:'计算机科学系', degree:'MS（理学硕士）', teachType:'Taught 授课型', campus:'查尔斯河校区', language:'英语', stem:'是', visaHelp:'STEM OPT 可延期3年，ISSO 提供签证辅导', appStart:'2025-09-01', appDeadline:'2026-03-15', nodes:'优先轮 2026-01-15；常规轮 2026-03-15', admitPeriod:'2026-03-01 ~ 2026-06-15', enroll:'2026年秋季', ielts:'6.5', toefl:'95', gpa:'3.3+', gre:'可选（Optional）', bgReq:'文理兼收，MET 接受转专业', workYears:'无要求', interview:'无面试', otherReq:'—', tuitionValue:'USD 54,000/年', appFee:'USD 85', scholarship:'Metropolitan College 提供部分学费减免', career:'云计算、软件工程、数据分析', employers:'Amazon、Wayfair及波士顿本地科技企业', salary:'USD 105,000/year（平均起薪）', qualification:'—', intro:'文理学院与大都会学院双通道，可利用波士顿高校生态圈的科研与实习资源。', profs:'推荐关注：Prof. Azer Bestavros（云计算）', linkCollege:'https://www.bu.edu/cs/', linkCourse:'https://www.bu.edu/cs/masters/program/' }
+    };
+    schools.forEach(function (school) { Object.assign(school, SCHOOL_DETAILS[school.id]); });
+
+    function detailKv(label, value) { return '<div><p class="text-xs text-slate-400 mb-0.5">' + label + '</p><p class="text-sm text-slate-800">' + value + '</p></div>'; }
+    function detailSection(color, title) { return '<h4 class="text-sm font-semibold text-slate-900 mb-3 flex items-center gap-2"><span class="w-1 h-4 ' + color + ' rounded"></span>' + title + '</h4>'; }
+    function fullSchoolDetail(school) {
+      return '<div class="flex items-start justify-between gap-4 mb-5"><div><p class="text-xs font-medium text-blue-600 mb-1">' + school.zone + '</p><h3 class="text-xl font-semibold text-slate-900">' + school.name + '</h3><p class="text-sm text-slate-500 mt-1">' + school.rank + ' · ' + school.location + '</p></div><span class="text-xs font-medium text-blue-700 bg-blue-50 px-2.5 py-1 rounded-full">' + school.program + '</span></div>' +
+        '<div class="grid grid-cols-2 gap-3 mb-6"><div class="bg-slate-50 rounded-xl p-3"><p class="text-xs text-slate-400">学制 / 学位</p><p class="text-sm font-medium mt-1">' + school.duration + ' · ' + school.degree + '</p><p class="text-xs text-slate-500 mt-1">' + school.teachType + ' · ' + school.language + '授课</p></div><div class="bg-slate-50 rounded-xl p-3"><p class="text-xs text-slate-400">申请截止</p><p class="text-sm font-medium mt-1">' + school.appDeadline + '</p><p class="text-xs text-slate-500 mt-1">入学：' + school.enroll + '</p></div><div class="bg-slate-50 rounded-xl p-3"><p class="text-xs text-slate-400">学费参考</p><p class="text-sm font-medium mt-1">' + school.tuitionValue + '</p><p class="text-xs text-slate-500 mt-1">申请费 ' + school.appFee + '</p></div><div class="bg-slate-50 rounded-xl p-3"><p class="text-xs text-slate-400">STEM / 工签</p><p class="text-sm font-medium mt-1">STEM：' + school.stem + '</p><p class="text-xs text-slate-500 mt-1">' + school.visaHelp + '</p></div></div>' +
+        '<div class="mb-6">' + detailSection('bg-blue-600','申请时间') + '<div class="grid grid-cols-2 gap-x-5 gap-y-3 pl-3">' + detailKv('学院 / 系',school.college + ' · ' + school.dept) + detailKv('校区',school.campus) + detailKv('申请开始',school.appStart) + detailKv('申请截止',school.appDeadline) + detailKv('申请节点',school.nodes) + detailKv('录取发放',school.admitPeriod) + '</div></div>' +
+        '<div class="mb-6">' + detailSection('bg-purple-600','录取要求') + '<div class="grid grid-cols-2 gap-x-5 gap-y-3 pl-3">' + detailKv('雅思',school.ielts) + detailKv('托福',school.toefl) + detailKv('GPA',school.gpa) + detailKv('GRE/GMAT',school.gre) + detailKv('本科背景要求',school.bgReq) + detailKv('工作年限要求',school.workYears) + detailKv('面试要求',school.interview) + detailKv('其他要求',school.otherReq) + '</div></div>' +
+        '<div class="mb-6">' + detailSection('bg-orange-500','费用与奖学金') + '<div class="grid grid-cols-2 gap-x-5 gap-y-3 pl-3">' + detailKv('首年学费',school.tuitionValue) + detailKv('申请费',school.appFee) + detailKv('奖学金',school.scholarship) + '</div></div>' +
+        '<div class="mb-6">' + detailSection('bg-green-600','就业与薪资') + '<div class="grid grid-cols-2 gap-x-5 gap-y-3 pl-3">' + detailKv('就业领域',school.career) + detailKv('主要雇主',school.employers) + detailKv('预估薪资',school.salary) + detailKv('专业资质',school.qualification) + '</div></div>' +
+        '<div class="mb-6">' + detailSection('bg-cyan-600','课程特色') + '<p class="text-sm text-slate-600 leading-7 pl-3">' + school.intro + '</p></div><div class="mb-6">' + detailSection('bg-indigo-600','教授推荐') + '<p class="text-sm text-slate-600 leading-7 pl-3">' + school.profs + '</p></div>' +
+        '<div class="flex flex-wrap items-center gap-5 pl-1"><a href="' + school.linkCollege + '" target="_blank" class="text-sm text-blue-600">学院官网 ↗</a><a href="' + school.linkCourse + '" target="_blank" class="text-sm text-blue-600">课程页面 ↗</a></div>';
+    }
     function renderSchools() {
       schools.forEach(function (school) {
         var card = document.createElement('button');
@@ -110,9 +116,7 @@
     function openSchoolDetail(id) {
       var school = schools.find(function (item) { return item.id === id; });
       if (!school) return;
-      ['Zone','Name','Program','Rank','Duration','Deadline','Tuition','Reason','Feature','Requirement'].forEach(function (key) {
-        document.getElementById('detail' + key).textContent = school[key.toLowerCase()];
-      });
+      document.getElementById('schoolDetailBody').innerHTML = fullSchoolDetail(school);
       document.getElementById('schoolModal').classList.remove('hidden');
       document.body.classList.add('overflow-hidden');
     }

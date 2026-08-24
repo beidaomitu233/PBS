@@ -1631,3 +1631,89 @@
     boot();
   }
 })();
+/* 列表筛选：关键词统一覆盖当前行全部可见文本字段。 */
+(function () {
+  function enrichFilterKeywords() {
+    document.querySelectorAll('tbody tr[data-kw]').forEach(function (row) {
+      var visibleText = (row.innerText || row.textContent || '').replace(/\s+/g, '').toLowerCase();
+      var current = (row.getAttribute('data-kw') || '').replace(/\s+/g, '').toLowerCase();
+      if (visibleText && current.indexOf(visibleText) < 0) row.setAttribute('data-kw', current + visibleText);
+    });
+  }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', enrichFilterKeywords);
+  else enrichFilterKeywords();
+  document.addEventListener('click', function (event) {
+    var button = event.target.closest('button');
+    var action = button && (button.getAttribute('onclick') || '');
+    if (action && /(applyFilter|search|filter)/i.test(action)) enrichFilterKeywords();
+  }, true);
+  document.addEventListener('keydown', function (event) {
+    if (event.key === 'Enter' && event.target && /^flt-/.test(event.target.id || '')) enrichFilterKeywords();
+  }, true);
+})();
+
+/* 筛选日期：统一显示“开始日期 / 结束日期”，保留浏览器原生日历选择能力。 */
+(function () {
+  function datePlaceholder(input) {
+    if (input.getAttribute('data-date-placeholder')) return input.getAttribute('data-date-placeholder');
+    if (input.id && /-end$/i.test(input.id)) return '结束日期';
+    return '开始日期';
+  }
+
+  function updateDateField(input) {
+    var field = input.closest('.pbs-filter-date-field');
+    if (!field) return;
+    var label = field.querySelector('.pbs-filter-date-label');
+    var hasValue = Boolean(input.value);
+    label.textContent = hasValue ? input.value : datePlaceholder(input);
+    field.classList.toggle('has-value', hasValue);
+  }
+
+  function enhanceDateField(input) {
+    if (input.dataset.pbsDateEnhanced === '1') return;
+    input.dataset.pbsDateEnhanced = '1';
+
+    var placeholder = datePlaceholder(input);
+    var field = document.createElement('label');
+    field.className = 'pbs-filter-date-field';
+    field.setAttribute('title', placeholder);
+    input.parentNode.insertBefore(field, input);
+
+    var label = document.createElement('span');
+    label.className = 'pbs-filter-date-label';
+    field.appendChild(label);
+
+    var icon = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+    icon.setAttribute('class', 'pbs-filter-date-icon');
+    icon.setAttribute('viewBox', '0 0 24 24');
+    icon.setAttribute('fill', 'none');
+    icon.setAttribute('stroke', 'currentColor');
+    icon.setAttribute('stroke-width', '1.8');
+    icon.setAttribute('stroke-linecap', 'round');
+    icon.setAttribute('stroke-linejoin', 'round');
+    icon.innerHTML = '<rect x="3" y="5" width="18" height="16" rx="2"></rect><path d="M16 3v4M8 3v4M3 10h18"></path><path d="M8 14h.01M12 14h.01M16 14h.01M8 18h.01M12 18h.01"></path>';
+    field.appendChild(icon);
+
+    field.appendChild(input);
+    input.classList.add('pbs-filter-date-native');
+    input.setAttribute('aria-label', placeholder);
+    input.addEventListener('input', function () { updateDateField(input); });
+    input.addEventListener('change', function () { updateDateField(input); });
+    updateDateField(input);
+  }
+
+  function enhanceAllDateFields() {
+    document.querySelectorAll('input[id^="flt-"][type="date"]').forEach(enhanceDateField);
+  }
+
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', enhanceAllDateFields);
+  else enhanceAllDateFields();
+
+  document.addEventListener('click', function (event) {
+    var button = event.target.closest('button');
+    var action = button && (button.getAttribute('onclick') || '');
+    if (action && /reset/i.test(action)) setTimeout(function () {
+      document.querySelectorAll('.pbs-filter-date-native').forEach(updateDateField);
+    }, 0);
+  }, true);
+})();

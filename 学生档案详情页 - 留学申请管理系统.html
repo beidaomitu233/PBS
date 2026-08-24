@@ -197,53 +197,53 @@
       <!-- 顶部：客户信息卡片（下单人）+ 申请人信息卡片 -->
       <div class="grid grid-cols-1 xl:grid-cols-2 gap-6 mb-6">
         <!-- 客户信息卡片 -->
-        <div class="bg-gradient-to-br from-blue-600 to-blue-700 rounded-xl shadow-sm p-6 text-white">
+        <div id="customerInfoCard" class="bg-gradient-to-br from-blue-600 to-blue-700 rounded-xl shadow-sm p-6 text-white">
           <div class="flex items-center justify-between mb-4">
             <h2 class="text-base font-semibold flex items-center gap-2">
               <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
               客户信息（下单人）
             </h2>
-            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-400 text-yellow-900">待分配</span>
+            <div class="flex items-center gap-2"><button class="p-1.5 text-blue-100 hover:text-white rounded-lg hover:bg-white/10" title="编辑" onclick="openProfileCardEdit('customer')"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg></button><span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-400 text-yellow-900">待分配</span></div>
           </div>
           <div class="flex items-center gap-4 mb-4">
             <div class="w-14 h-14 bg-white bg-opacity-20 rounded-full flex items-center justify-center text-xl font-semibold">建</div>
             <div>
-              <p class="text-lg font-semibold">张建国</p>
-              <p class="text-sm text-blue-100">与学生关系：父亲</p>
+              <p id="profile-customer-name" class="text-lg font-semibold">张建国</p>
+              <p class="text-sm text-blue-100">与学生关系：<span id="profile-customer-relation">父亲</span></p>
             </div>
           </div>
           <div class="grid grid-cols-2 gap-x-6 gap-y-3 text-sm">
-            <div><p class="text-blue-200 text-xs mb-0.5">联系电话</p><p class="font-medium">139****1111</p></div>
-            <div><p class="text-blue-200 text-xs mb-0.5">微信号</p><p class="font-medium">zjg2026</p></div>
+            <div><p class="text-blue-200 text-xs mb-0.5">联系电话</p><p id="profile-customer-phone" class="font-medium">139****1111</p></div>
+            <div><p class="text-blue-200 text-xs mb-0.5">微信号</p><p id="profile-customer-wechat" class="font-medium">zjg2026</p></div>
             <div><p class="text-blue-200 text-xs mb-0.5">项目号</p><p class="font-medium">PRJ-M-2607-0001</p></div>
-            <div><p class="text-blue-200 text-xs mb-0.5">来源渠道</p><p class="font-medium">官网表单</p></div>
+            <div><p class="text-blue-200 text-xs mb-0.5">来源渠道</p><p id="profile-customer-source" class="font-medium">官网表单</p></div>
             <div><p class="text-blue-200 text-xs mb-0.5">创建时间</p><p class="font-medium">2026-07-01</p></div>
           </div>
         </div>
         <!-- 申请人信息卡片 -->
-        <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+        <div id="studentInfoCard" class="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
           <div class="flex items-center justify-between mb-4">
             <h2 class="text-base font-semibold text-gray-800 flex items-center gap-2">
               <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
               学生信息
             </h2>
-            <span id="apply-level-badge" class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">本科申请</span>
+            <div class="flex items-center gap-2"><button class="p-1.5 text-gray-400 hover:text-blue-600 rounded-lg hover:bg-gray-100" title="编辑" onclick="openProfileCardEdit('student')"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg></button><span id="apply-level-badge" class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">本科申请</span></div>
           </div>
           <div class="flex items-center gap-4 mb-4">
             <div class="w-14 h-14 bg-blue-100 rounded-full flex items-center justify-center text-xl font-semibold text-blue-600">明</div>
             <div>
-              <p class="text-lg font-semibold text-gray-900">张明</p>
-              <p class="text-sm text-gray-500">男 · 2008-05-12 出生</p>
+              <p id="profile-student-name" class="text-lg font-semibold text-gray-900">张明</p>
+              <p class="text-sm text-gray-500"><span id="profile-student-gender">男</span> · <span id="profile-student-birth-summary">2008-05-12</span> 出生</p>
             </div>
           </div>
           <div class="grid grid-cols-2 gap-x-6 gap-y-3 text-sm">
             <div><p class="text-gray-400 text-xs mb-0.5">申请层次</p><p class="font-medium text-gray-900" id="apply-level-text">本科申请</p></div>
-            <div><p class="text-gray-400 text-xs mb-0.5">出生年月日</p><p class="font-medium text-gray-900">2008-05-12</p></div>
-            <div><p class="text-gray-400 text-xs mb-0.5">身份信息</p><p class="font-medium text-gray-900">大陆籍</p></div>
+            <div><p class="text-gray-400 text-xs mb-0.5">出生年月日</p><p id="profile-student-birth" class="font-medium text-gray-900">2008-05-12</p></div>
+            <div><p class="text-gray-400 text-xs mb-0.5">身份信息</p><p id="profile-student-identity" class="font-medium text-gray-900">大陆籍</p></div>
             <div data-f="idcard"><p class="text-gray-400 text-xs mb-0.5">身份证号</p><p class="font-medium text-gray-900" data-v="idcard">—</p></div>
-            <div><p class="text-gray-400 text-xs mb-0.5">联系电话</p><p class="font-medium text-gray-900">138****2222</p></div>
-            <div><p class="text-gray-400 text-xs mb-0.5">申请方向</p><p class="font-medium text-gray-900">美国 · 计算机科学</p></div>
-            <div><p class="text-gray-400 text-xs mb-0.5">现居住地</p><p class="font-medium text-gray-900">北京市朝阳区</p></div>
+            <div><p class="text-gray-400 text-xs mb-0.5">联系电话</p><p id="profile-student-phone" class="font-medium text-gray-900">138****2222</p></div>
+            <div><p class="text-gray-400 text-xs mb-0.5">申请方向</p><p class="font-medium text-gray-900"><span id="profile-student-country">美国</span> · <span id="profile-student-major">计算机科学</span></p></div>
+            <div><p class="text-gray-400 text-xs mb-0.5">现居住地</p><p id="profile-student-address" class="font-medium text-gray-900">北京市朝阳区</p></div>
           </div>
         </div>
       </div>
@@ -378,6 +378,7 @@
             语言成绩
           </h2>
           <div class="flex items-center gap-1">
+            <button class="p-1.5 text-gray-400 hover:text-blue-600 rounded-lg hover:bg-gray-100" title="编辑" onclick="event.stopPropagation();toggleFieldEdit('lang')"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg></button>
             <div class="relative" data-field-menu-wrap="">
           <button class="p-1.5 text-gray-400 hover:text-blue-600 rounded-lg hover:bg-gray-100 transition-colors" title="自定义显示字段" onclick="event.stopPropagation();toggleFieldMenu(&#39;lang&#39;)"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path></svg></button>
           <div id="fieldmenu-lang" class="hidden absolute right-0 top-9 w-52 bg-white border border-gray-200 rounded-xl shadow-xl z-40 py-2">
@@ -482,11 +483,42 @@
             学业信息
           </h2>
           <div class="flex items-center gap-1">
+            <button class="p-1.5 text-gray-400 hover:text-blue-600 rounded-lg hover:bg-gray-100" title="编辑" onclick="event.stopPropagation();toggleFieldEdit('score')"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg></button>
             <div class="relative" data-field-menu-wrap="">
           <button class="p-1.5 text-gray-400 hover:text-blue-600 rounded-lg hover:bg-gray-100 transition-colors" title="自定义显示字段" onclick="event.stopPropagation();toggleFieldMenu(&#39;score&#39;)"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path></svg></button>
           <div id="fieldmenu-score" class="hidden absolute right-0 top-9 w-52 bg-white border border-gray-200 rounded-xl shadow-xl z-40 py-2">
             <p class="px-4 pb-2 text-xs font-medium text-gray-400 border-b border-gray-100">自定义显示字段</p>
             <div class="max-h-64 overflow-y-auto"><label class="flex items-center gap-2 px-4 py-2 hover:bg-gray-50 cursor-pointer text-sm text-gray-700">
+              <input type="checkbox" class="w-4 h-4 text-blue-600 rounded border-gray-300" checked="" data-cfg-field="gradeNow" onchange="applyFieldVisibility('score')">
+              当前年级
+            </label><label class="flex items-center gap-2 px-4 py-2 hover:bg-gray-50 cursor-pointer text-sm text-gray-700">
+              <input type="checkbox" class="w-4 h-4 text-blue-600 rounded border-gray-300" checked="" data-cfg-field="curriculum" onchange="applyFieldVisibility('score')">
+              课程体系
+            </label><label class="flex items-center gap-2 px-4 py-2 hover:bg-gray-50 cursor-pointer text-sm text-gray-700">
+              <input type="checkbox" class="w-4 h-4 text-blue-600 rounded border-gray-300" checked="" data-cfg-field="avgScore" onchange="applyFieldVisibility('score')">
+              校内平均分
+            </label><label class="flex items-center gap-2 px-4 py-2 hover:bg-gray-50 cursor-pointer text-sm text-gray-700">
+              <input type="checkbox" class="w-4 h-4 text-blue-600 rounded border-gray-300" checked="" data-cfg-field="gpa" onchange="applyFieldVisibility('score')">
+              GPA
+            </label><label class="flex items-center gap-2 px-4 py-2 hover:bg-gray-50 cursor-pointer text-sm text-gray-700">
+              <input type="checkbox" class="w-4 h-4 text-blue-600 rounded border-gray-300" checked="" data-cfg-field="rank" onchange="applyFieldVisibility('score')">
+              年级排名
+            </label><label class="flex items-center gap-2 px-4 py-2 hover:bg-gray-50 cursor-pointer text-sm text-gray-700">
+              <input type="checkbox" class="w-4 h-4 text-blue-600 rounded border-gray-300" checked="" data-cfg-field="coreCourses" onchange="applyFieldVisibility('score')">
+              核心课程
+            </label><label class="flex items-center gap-2 px-4 py-2 hover:bg-gray-50 cursor-pointer text-sm text-gray-700">
+              <input type="checkbox" class="w-4 h-4 text-blue-600 rounded border-gray-300" checked="" data-cfg-field="satDate" onchange="applyFieldVisibility('score')">
+              SAT考试日期
+            </label><label class="flex items-center gap-2 px-4 py-2 hover:bg-gray-50 cursor-pointer text-sm text-gray-700">
+              <input type="checkbox" class="w-4 h-4 text-blue-600 rounded border-gray-300" checked="" data-cfg-field="act" onchange="applyFieldVisibility('score')">
+              ACT
+            </label><label class="flex items-center gap-2 px-4 py-2 hover:bg-gray-50 cursor-pointer text-sm text-gray-700">
+              <input type="checkbox" class="w-4 h-4 text-blue-600 rounded border-gray-300" checked="" data-cfg-field="gre" onchange="applyFieldVisibility('score')">
+              GRE
+            </label><label class="flex items-center gap-2 px-4 py-2 hover:bg-gray-50 cursor-pointer text-sm text-gray-700">
+              <input type="checkbox" class="w-4 h-4 text-blue-600 rounded border-gray-300" checked="" data-cfg-field="gmat" onchange="applyFieldVisibility('score')">
+              GMAT
+            </label><label class="flex items-center gap-2 px-4 py-2 hover:bg-gray-50 cursor-pointer text-sm text-gray-700">
               <input type="checkbox" class="w-4 h-4 text-blue-600 rounded border-gray-300" checked="" data-cfg-field="sat" onchange="applyFieldVisibility(&#39;score&#39;)">
               SAT
             </label><label class="flex items-center gap-2 px-4 py-2 hover:bg-gray-50 cursor-pointer text-sm text-gray-700">
@@ -537,7 +569,19 @@
           </div>
         </div>
         <div id="secbody-score" class="p-6 pt-5">
+        <div class="mb-5">
+          <div class="flex items-center justify-between mb-3"><h3 class="text-sm font-semibold text-gray-800">校内学业概况</h3><span class="text-xs text-gray-400">通用字段，适用于本科、硕士及博士申请</span></div>
+          <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+            <div data-f="gradeNow" class="bg-gray-50 rounded-xl p-4 border border-gray-100"><p class="text-xs text-gray-400 mb-1">当前年级</p><p data-v="gradeNow" class="text-sm font-semibold text-gray-900">高二（11年级）</p></div>
+            <div data-f="curriculum" class="bg-gray-50 rounded-xl p-4 border border-gray-100"><p class="text-xs text-gray-400 mb-1">课程体系</p><p data-v="curriculum" class="text-sm font-semibold text-gray-900">A-Level</p></div>
+            <div data-f="avgScore" class="bg-gray-50 rounded-xl p-4 border border-gray-100"><p class="text-xs text-gray-400 mb-1">校内平均分</p><p data-v="avgScore" class="text-sm font-semibold text-gray-900">92 / 100</p></div>
+            <div data-f="gpa" class="bg-gray-50 rounded-xl p-4 border border-gray-100"><p class="text-xs text-gray-400 mb-1">GPA</p><p data-v="gpa" class="text-sm font-semibold text-gray-900">3.86 / 4.0</p></div>
+            <div data-f="rank" class="bg-gray-50 rounded-xl p-4 border border-gray-100"><p class="text-xs text-gray-400 mb-1">年级排名</p><p data-v="rank" class="text-sm font-semibold text-gray-900">12 / 186（前 7%）</p></div>
+            <div data-f="coreCourses" class="bg-gray-50 rounded-xl p-4 border border-gray-100 md:col-span-3"><p class="text-xs text-gray-400 mb-1">核心课程</p><p data-v="coreCourses" class="text-sm font-semibold text-gray-900">数学 A*、物理 A、化学 A、计算机科学 A*</p></div>
+          </div>
+        </div>
         <div data-level-group="bachelor">
+          <div class="flex items-center justify-between mb-3"><h3 class="text-sm font-semibold text-gray-800">标准化考试与国际课程</h3><span class="text-xs text-gray-400">未参加的考试保留为空，后续可补充</span></div>
           <div class="grid grid-cols-4 gap-4">
           <div class="bg-gray-50 rounded-xl p-4 border border-gray-100" data-f="sat">
             <div class="flex items-center justify-between mb-2">
@@ -545,6 +589,12 @@
               <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-700">达标</span>
             </div>
             <p class="text-lg font-semibold text-gray-900" data-v="sat">1520</p>
+          </div>
+          <div class="grid grid-cols-2 md:grid-cols-4 gap-3 mt-3">
+            <div data-f="satDate" class="border border-gray-100 rounded-lg p-3"><p class="text-xs text-gray-400 mb-1">SAT考试日期</p><p data-v="satDate" class="text-sm font-medium text-gray-900">2026-03-14</p></div>
+            <div data-f="act" class="border border-gray-100 rounded-lg p-3"><p class="text-xs text-gray-400 mb-1">ACT</p><p data-v="act" class="text-sm font-medium text-gray-900">未参加</p></div>
+            <div data-f="gre" class="border border-gray-100 rounded-lg p-3"><p class="text-xs text-gray-400 mb-1">GRE</p><p data-v="gre" class="text-sm font-medium text-gray-900">—</p></div>
+            <div data-f="gmat" class="border border-gray-100 rounded-lg p-3"><p class="text-xs text-gray-400 mb-1">GMAT</p><p data-v="gmat" class="text-sm font-medium text-gray-900">—</p></div>
           </div>
           <div class="bg-gray-50 rounded-xl p-4 border border-gray-100" data-f="ap">
             <div class="flex items-center justify-between mb-2">
@@ -573,7 +623,8 @@
             <p class="text-sm font-medium text-gray-900">AP科目：微积分BC、物理C力学、物理C电磁学、化学、计算机科学A，均为5分。</p>
           </div>
         </div>
-        <div data-level-group="master" class="hidden">
+        <div data-level-group="master" class="mt-5">
+          <div class="flex items-center justify-between mb-3"><h3 class="text-sm font-semibold text-gray-800">研究成果与知识产权</h3><span class="text-xs text-gray-400">暂无内容时保留字段，便于后续补充</span></div>
           <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div class="border border-gray-200 rounded-xl p-5">
               <h3 class="text-sm font-semibold text-gray-800 mb-3">论文发表详情</h3>
@@ -617,7 +668,7 @@
             </div>
           </div>
         </div>
-        <p class="mt-4 text-xs text-gray-400">学业信息字段按申请层次动态显示：本科展示 SAT / AP / A-Level / IB；硕士、博士展示论文发表详情与专利信息。可通过右上角齿轮添加其他字段。</p>
+        <p class="mt-4 text-xs text-gray-400">学业字段完整展示，未采集信息以“—”或“未参加”标识；点击“编辑”可统一维护，齿轮仅控制显示字段和新增字段。</p>
         </div>
       </section>      <!-- 板块四：专业资质 -->
       <section id="sec-qual" data-section="qual" class="bg-white rounded-xl shadow-sm border border-gray-100 scroll-mt-24">
@@ -1745,6 +1796,7 @@
       var card = document.createElement('div');
       card.className = 'border border-blue-300 rounded-xl p-4 bg-blue-50/30';
       card.setAttribute('data-record', '');
+      card.setAttribute('data-record-key', sec + '-record-' + Date.now());
       var flds = fields.map(function (f) {
         return '<div data-f="' + f[0] + '"><p class="text-xs text-gray-400 mb-1">' + f[1] + '</p>' +
                '<input type="text" data-v="' + f[0] + '" placeholder="请输入' + f[1] + '" class="w-full px-2.5 py-1.5 border border-gray-300 rounded-lg text-sm focus:ring-1 focus:ring-blue-500 focus:border-blue-500"></div>';
@@ -1771,7 +1823,7 @@
       });
       card.classList.remove('border-blue-300', 'bg-blue-50/30');
       card.classList.add('border-gray-200', 'hover:border-blue-200');
-      btn.closest('.flex.items-center.gap-1').innerHTML = recordOpsHtml();
+      btn.closest('.flex.items-center.gap-1').innerHTML = recordOpsHtml(sec);
       renumber(sec);
       toast('记录已保存');
     };
@@ -1791,11 +1843,14 @@
         });
         card.classList.remove('border-blue-300', 'bg-blue-50/30');
         card.classList.add('border-gray-200', 'hover:border-blue-200');
-        btn.closest('.flex.items-center.gap-1').innerHTML = recordOpsHtml();
+        btn.closest('.flex.items-center.gap-1').innerHTML = recordOpsHtml(sec);
       }
     };
-    function recordOpsHtml() {
-      return '<button class="p-1.5 text-gray-400 hover:text-blue-600 rounded-lg hover:bg-gray-100" title="编辑" onclick="editRecord(this)">' +
+    function recordOpsHtml(sec) {
+      var addField = RECORD_CUSTOM_SECS.indexOf(sec) >= 0
+        ? '<button type="button" data-record-custom-add class="p-1.5 text-gray-400 hover:text-blue-600 rounded-lg hover:bg-gray-100" title="添加自定义字段" onclick="event.stopPropagation();openAddFieldForRecord(this)"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg></button>'
+        : '';
+      return addField + '<button class="p-1.5 text-gray-400 hover:text-blue-600 rounded-lg hover:bg-gray-100" title="编辑" onclick="editRecord(this)">' +
         '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg></button>' +
         '<button class="p-1.5 text-gray-400 hover:text-red-600 rounded-lg hover:bg-gray-100" title="删除" onclick="delRecord(this)">' +
         '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg></button>';
@@ -1820,7 +1875,17 @@
     window.delRecord = function (btn) {
       var card = btn.closest('[data-record]');
       var sec = card.closest('[id^="records-"]').id.replace('records-', '');
-      if (confirm('确定删除该条记录吗？')) { card.remove(); renumber(sec); toast('记录已删除'); }
+      if (confirm('确定删除该条记录吗？')) {
+        var recordKey = card.getAttribute('data-record-key');
+        if (recordKey) {
+          var kept = getCustomFields(sec).filter(function (f) { return f.recordKey !== recordKey; });
+          localStorage.setItem(customKey(sec), JSON.stringify(kept));
+        }
+        card.remove();
+        renumber(sec);
+        renderCustomFields(sec);
+        toast('记录已删除');
+      }
     };
 
     /* ---------- 账号管理列表：添加/删除行 + 密码显隐（覆盖旧实现） ---------- */
@@ -1885,16 +1950,10 @@
       mask.classList.toggle('hidden', !showing);
     };
 
-    /* ---------- 学业信息按申请层次切换 + 教育背景填写起点提示 ---------- */
+    /* ---------- 学业信息完整展示 + 教育背景填写起点提示 ---------- */
     (function () {
       var level = (document.getElementById('apply-level-text') || {}).textContent || '本科';
       var isBachelor = level.indexOf('本科') >= 0;
-      var b = document.querySelector('[data-level-group="bachelor"]');
-      var m = document.querySelector('[data-level-group="master"]');
-      if (b && m) {
-        b.classList.toggle('hidden', !isBachelor);
-        m.classList.toggle('hidden', isBachelor);
-      }
       var note = document.getElementById('edu-level-note-text');
       if (note) {
         note.textContent = isBachelor
@@ -1921,6 +1980,7 @@
 
     /* ---------- 板块字段自定义：新增字段 / 编辑字段信息（除客户信息、学生信息、资产文件外的板块） ---------- */
     var CFG_EDIT_SECS = ['edu', 'lang', 'score', 'qual', 'work', 'practice', 'honor', 'pub', 'apply', 'account'];
+    var RECORD_CUSTOM_SECS = ['edu', 'qual', 'work', 'pub'];
     function customKey(sec) { return 'pbs_fieldcfg_' + USER_KEY + '_detail_' + sec + '_custom'; }
     function valsKey(sec) { return 'pbs_fieldcfg_' + USER_KEY + '_detail_' + sec + '_vals'; }
     function escapeHtml(s) { return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;'); }
@@ -1933,7 +1993,24 @@
       try { return JSON.parse(localStorage.getItem(customKey(sec))) || []; } catch (e) { return []; }
     }
 
-    /* 齿轮菜单注入「新增字段 / 编辑字段信息」并恢复自定义字段与已存值 */
+    function prepareRecordCustomControls(sec) {
+      if (RECORD_CUSTOM_SECS.indexOf(sec) < 0) return;
+      document.querySelectorAll('#records-' + sec + ' [data-record]').forEach(function (card, index) {
+        if (!card.getAttribute('data-record-key')) card.setAttribute('data-record-key', sec + '-record-' + (index + 1));
+        var controls = card.querySelector(':scope > div:first-child > div.flex.items-center.gap-1');
+        if (!controls || controls.querySelector('[data-record-custom-add]')) return;
+        var btn = document.createElement('button');
+        btn.type = 'button';
+        btn.setAttribute('data-record-custom-add', '');
+        btn.className = 'p-1.5 text-gray-400 hover:text-blue-600 rounded-lg hover:bg-gray-100';
+        btn.title = '添加自定义字段';
+        btn.innerHTML = '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>';
+        btn.onclick = function (e) { e.stopPropagation(); openAddFieldForRecord(btn); };
+        controls.insertBefore(btn, controls.firstChild);
+      });
+    }
+
+    /* 齿轮菜单注入字段能力并恢复自定义字段与已存值 */
     CFG_EDIT_SECS.forEach(function (sec) {
       var menu = document.getElementById('fieldmenu-' + sec);
       if (!menu) return;
@@ -1946,20 +2023,48 @@
           '<button class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 rounded-b-xl" onclick="event.stopPropagation();toggleFieldEdit(\'' + sec + '\')">✎ 编辑字段信息</button>';
         menu.appendChild(div);
       }
+      if (RECORD_CUSTOM_SECS.indexOf(sec) >= 0) {
+        var addFromMenu = menu.querySelector('button[onclick*="openAddField"]');
+        if (addFromMenu) {
+          addFromMenu.outerHTML = '<p class="px-4 py-2 text-xs text-gray-400 border-t border-gray-100">请在每条经历右上角点击加号图标，不同经历可配置不同字段。</p>';
+        }
+        prepareRecordCustomControls(sec);
+      }
+      if (sec === 'lang' || sec === 'score') {
+        var editFromMenu = menu.querySelector('button[onclick*="toggleFieldEdit"]');
+        if (editFromMenu) editFromMenu.remove();
+      }
       renderCustomFields(sec);
       applyValOverrides(sec);
     });
 
     /* 新增字段弹窗 */
-    window.openAddField = function (sec) {
+    var addFieldContext = null;
+    window.openAddFieldForRecord = function (btn) {
+      var card = btn.closest('[data-record]');
+      var wrap = card && card.closest('[id^="records-"]');
+      if (!card || !wrap) return;
+      openAddField(wrap.id.replace('records-', ''), btn);
+    };
+    window.openAddField = function (sec, trigger) {
       document.getElementById('fieldmenu-' + sec).classList.add('hidden');
+      var recordKey = null;
+      var recordLabel = '';
+      if (RECORD_CUSTOM_SECS.indexOf(sec) >= 0) {
+        var card = trigger && trigger.closest('[data-record]');
+        if (!card) { toast('请在具体经历右上角点击加号图标'); return; }
+        recordKey = card.getAttribute('data-record-key');
+        var records = Array.from(card.parentElement.querySelectorAll('[data-record]'));
+        recordLabel = ' · 第 ' + (records.indexOf(card) + 1) + ' 条经历';
+      }
+      addFieldContext = { sec: sec, recordKey: recordKey };
       closeAddField();
       var ov = document.createElement('div');
       ov.id = 'addf-overlay';
       ov.className = 'addf-overlay';
       ov.innerHTML =
         '<div class="addf-dialog">' +
-          '<h3 class="addf-title">新增字段</h3>' +
+          '<h3 class="addf-title">新增字段' + recordLabel + '</h3>' +
           '<label class="addf-label">字段名称</label>' +
           '<input id="addf-label" type="text" placeholder="如：备注" class="addf-input">' +
           '<label class="addf-label">字段内容</label>' +
@@ -1983,7 +2088,7 @@
       if (!label) { toast('请填写字段名称'); return; }
       if (!value) value = '—';
       var list = getCustomFields(sec);
-      list.push({ id: 'c' + Date.now(), label: label, value: value });
+      list.push({ id: 'c' + Date.now(), label: label, value: value, recordKey: addFieldContext && addFieldContext.sec === sec ? addFieldContext.recordKey : null });
       localStorage.setItem(customKey(sec), JSON.stringify(list));
       closeAddField();
       renderCustomFields(sec);
@@ -2000,20 +2105,50 @@
       if (!body) return;
       var old = body.querySelector('[data-custom-area]');
       if (old) old.remove();
+      body.querySelectorAll('[data-custom-field-id]').forEach(function (el) { el.remove(); });
       var list = getCustomFields(sec);
-      if (!list.length) return;
-      var area = document.createElement('div');
-      area.setAttribute('data-custom-area', sec);
-      area.className = 'mt-5 pt-4 border-t border-dashed border-gray-200';
-      var html = '<p class="text-xs text-gray-400 mb-3">自定义字段</p><div class="grid grid-cols-3 gap-x-6 gap-y-4">';
+      var menu = document.getElementById('fieldmenu-' + sec);
+      var menuList = menu && menu.querySelector('.max-h-64');
+      if (menuList) menuList.querySelectorAll('[data-custom-cfg]').forEach(function (el) { el.remove(); });
+      var hidden = [];
+      try { hidden = JSON.parse(localStorage.getItem(cfgKey(sec)) || '[]'); } catch (e) {}
       list.forEach(function (f) {
-        html += '<div data-f="' + f.id + '" data-custom="1">' +
+        if (menuList) {
+          var recordText = '';
+          if (f.recordKey) {
+            var recordCard = body.querySelector('[data-record-key="' + f.recordKey + '"]');
+            var allRecords = recordCard ? Array.from(recordCard.parentElement.querySelectorAll('[data-record]')) : [];
+            recordText = recordCard ? '第' + (allRecords.indexOf(recordCard) + 1) + '条 · ' : '';
+          }
+          var option = document.createElement('label');
+          option.setAttribute('data-custom-cfg', f.id);
+          option.className = 'flex items-center gap-2 px-4 py-2 hover:bg-gray-50 cursor-pointer text-sm text-gray-700';
+          option.innerHTML = '<input type="checkbox" class="w-4 h-4 text-blue-600 rounded border-gray-300" data-cfg-field="' + f.id + '" ' + (hidden.indexOf(f.id) < 0 ? 'checked' : '') + ' onchange="applyFieldVisibility(\'' + sec + '\')"><span class="truncate">' + escapeHtml(recordText + f.label) + '</span>';
+          menuList.appendChild(option);
+        }
+        var fieldHtml = '<div data-f="' + f.id + '" data-custom="1" data-custom-field-id="' + f.id + '">' +
           '<p class="text-xs text-gray-400 mb-1 flex items-center justify-between gap-2"><span>' + escapeHtml(f.label) + '</span>' +
           '<button type="button" class="text-gray-300 hover:text-red-500 text-base leading-none" title="删除字段" onclick="event.stopPropagation();delCustomField(\'' + sec + '\',\'' + f.id + '\')">×</button></p>' +
           '<p class="text-sm font-medium text-gray-900" data-v="' + f.id + '">' + escapeHtml(f.value) + '</p></div>';
+        if (f.recordKey) {
+          var record = body.querySelector('[data-record-key="' + f.recordKey + '"]');
+          if (record) {
+            var grid = Array.from(record.children).find(function (el) { return el.classList && el.classList.contains('grid'); });
+            if (grid) grid.insertAdjacentHTML('beforeend', fieldHtml);
+          }
+        } else {
+          var area = body.querySelector('[data-custom-area]');
+          if (!area) {
+            area = document.createElement('div');
+            area.setAttribute('data-custom-area', sec);
+            area.className = 'mt-5 pt-4 border-t border-dashed border-gray-200';
+            area.innerHTML = '<p class="text-xs text-gray-400 mb-3">自定义字段</p><div class="grid grid-cols-3 gap-x-6 gap-y-4"></div>';
+            body.appendChild(area);
+          }
+          area.querySelector('.grid').insertAdjacentHTML('beforeend', fieldHtml);
+        }
       });
-      area.innerHTML = html + '</div>';
-      body.appendChild(area);
+      applyFieldVisibility(sec);
     }
 
     /* 编辑字段信息模式 */
@@ -2087,7 +2222,101 @@
       } catch (e) {}
     }
 
+    /* ---------- 客户 / 学生基础信息卡片编辑 ---------- */
+    var PROFILE_FIELDS = {
+      customer: [
+        { key:'name', label:'客户姓名', required:true },
+        { key:'relation', label:'与学生关系', type:'select', options:['父亲','母亲','本人','其他亲属'] },
+        { key:'phone', label:'联系电话' },
+        { key:'wechat', label:'微信号' },
+        { key:'source', label:'来源渠道' }
+      ],
+      student: [
+        { key:'name', label:'学生姓名', required:true },
+        { key:'gender', label:'性别', type:'select', options:['男','女'] },
+        { key:'birth', label:'出生日期', type:'date', optional:true },
+        { key:'level', label:'申请层次', type:'select', options:['本科申请','硕士申请','博士申请'], required:true },
+        { key:'identity', label:'身份信息', type:'select', options:['大陆籍','港澳台','外籍'] },
+        { key:'idcard', label:'身份证号', optional:true },
+        { key:'phone', label:'联系电话' },
+        { key:'country', label:'意向国家' },
+        { key:'major', label:'意向专业' },
+        { key:'address', label:'现居住地', optional:true }
+      ]
+    };
+    function readProfile(type) {
+      if (type === 'customer') return {
+        name:document.getElementById('profile-customer-name').textContent.trim(), relation:document.getElementById('profile-customer-relation').textContent.trim(),
+        phone:document.getElementById('profile-customer-phone').textContent.trim(), wechat:document.getElementById('profile-customer-wechat').textContent.trim(), source:document.getElementById('profile-customer-source').textContent.trim()
+      };
+      return {
+        name:document.getElementById('profile-student-name').textContent.trim(), gender:document.getElementById('profile-student-gender').textContent.trim(),
+        birth:document.getElementById('profile-student-birth').textContent.trim() === '待补充' ? '' : document.getElementById('profile-student-birth').textContent.trim(),
+        level:document.getElementById('apply-level-text').textContent.trim(), identity:document.getElementById('profile-student-identity').textContent.trim(),
+        idcard:(document.querySelector('#studentInfoCard [data-v="idcard"]') || {}).textContent || '', phone:document.getElementById('profile-student-phone').textContent.trim(),
+        country:document.getElementById('profile-student-country').textContent.trim(), major:document.getElementById('profile-student-major').textContent.trim(), address:document.getElementById('profile-student-address').textContent.trim()
+      };
+    }
+    function profileControl(field, value) {
+      var label = field.label + (field.optional ? '<span class="ml-1 text-xs text-gray-400">选填，可后补</span>' : '') + (field.required ? '<span class="ml-1 text-red-500">*</span>' : '');
+      var control = '';
+      if (field.type === 'select') {
+        control = '<select data-profile-input="' + field.key + '" class="w-full h-10 px-3 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500">' + field.options.map(function (item) { return '<option' + (item === value ? ' selected' : '') + '>' + item + '</option>'; }).join('') + '</select>';
+      } else {
+        control = '<input data-profile-input="' + field.key + '" type="' + (field.type || 'text') + '" value="' + escapeHtml(value === '—' ? '' : value) + '" class="w-full h-10 px-3 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500" placeholder="请输入' + field.label + '">';
+      }
+      return '<div><label class="block text-sm text-gray-600 mb-1.5">' + label + '</label>' + control + '</div>';
+    }
+    window.openProfileCardEdit = function (type) {
+      var values = readProfile(type);
+      var ov = document.createElement('div');
+      ov.id = 'profileEditModal';
+      ov.className = 'fixed inset-0 z-[100] bg-black bg-opacity-40 flex items-center justify-center p-6';
+      ov.innerHTML = '<div class="w-full max-w-2xl bg-white rounded-2xl shadow-2xl overflow-hidden"><div class="flex items-center justify-between px-6 py-4 border-b border-gray-100"><div><h3 class="text-lg font-semibold text-gray-900">编辑' + (type === 'customer' ? '客户信息' : '学生信息') + '</h3><p class="text-xs text-gray-400 mt-1">项目号、创建时间等系统信息不可修改</p></div><button class="text-2xl text-gray-400 hover:text-gray-700" onclick="closeProfileCardEdit()">×</button></div><div class="p-6 grid grid-cols-2 gap-4">' + PROFILE_FIELDS[type].map(function (field) { return profileControl(field, values[field.key] || ''); }).join('') + '</div><div class="flex justify-end gap-3 px-6 py-4 bg-gray-50 border-t border-gray-100"><button class="px-5 h-10 border border-gray-300 text-gray-700 rounded-lg hover:bg-white" onclick="closeProfileCardEdit()">取消</button><button class="px-5 h-10 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium" onclick="saveProfileCardEdit(\'' + type + '\')">保存</button></div></div>';
+      ov.addEventListener('click', function (e) { if (e.target === ov) closeProfileCardEdit(); });
+      document.body.appendChild(ov);
+    };
+    window.closeProfileCardEdit = function () { var ov = document.getElementById('profileEditModal'); if (ov) ov.remove(); };
+    function applyProfileValues(type, values) {
+      if (type === 'customer') {
+        document.getElementById('profile-customer-name').textContent = values.name;
+        document.getElementById('profile-customer-relation').textContent = values.relation || '—';
+        document.getElementById('profile-customer-phone').textContent = values.phone || '—';
+        document.getElementById('profile-customer-wechat').textContent = values.wechat || '—';
+        document.getElementById('profile-customer-source').textContent = values.source || '—';
+        return;
+      }
+      document.getElementById('profile-student-name').textContent = values.name;
+      document.getElementById('profile-student-gender').textContent = values.gender || '—';
+      document.getElementById('profile-student-birth').textContent = values.birth || '待补充';
+      document.getElementById('profile-student-birth-summary').textContent = values.birth || '待补充';
+      document.getElementById('apply-level-text').textContent = values.level;
+      document.getElementById('apply-level-badge').textContent = values.level;
+      document.getElementById('profile-student-identity').textContent = values.identity || '—';
+      document.querySelector('#studentInfoCard [data-v="idcard"]').textContent = values.idcard || '—';
+      document.getElementById('profile-student-phone').textContent = values.phone || '—';
+      document.getElementById('profile-student-country').textContent = values.country || '—';
+      document.getElementById('profile-student-major').textContent = values.major || '—';
+      document.getElementById('profile-student-address').textContent = values.address || '待补充';
+    }
+    window.saveProfileCardEdit = function (type) {
+      var values = {};
+      PROFILE_FIELDS[type].forEach(function (field) { values[field.key] = (document.querySelector('[data-profile-input="' + field.key + '"]') || {}).value || ''; });
+      var missing = PROFILE_FIELDS[type].find(function (field) { return field.required && !values[field.key].trim(); });
+      if (missing) { toast('请填写' + missing.label); return; }
+      applyProfileValues(type, values);
+      localStorage.setItem('pbs_profile_card_' + type, JSON.stringify(values));
+      closeProfileCardEdit();
+      toast((type === 'customer' ? '客户' : '学生') + '信息已保存');
+    };
+
     /* ---------- 初始化 ---------- */
+    ['customer', 'student'].forEach(function (type) {
+      try {
+        var savedProfile = JSON.parse(localStorage.getItem('pbs_profile_card_' + type) || 'null');
+        if (savedProfile && savedProfile.name) applyProfileValues(type, savedProfile);
+      } catch (e) {}
+    });
     loadFieldCfg();
   })();
   </script>

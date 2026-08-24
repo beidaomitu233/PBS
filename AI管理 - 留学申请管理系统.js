@@ -2,14 +2,12 @@
 (function () {
   'use strict';
 
-  var AI_STORAGE_KEY = 'pbs_ai_management_v5';
-  var LEGACY_AI_STORAGE_KEYS = ['pbs_ai_management_v4', 'pbs_ai_management_v3', 'pbs_ai_management_v2'];
+  var AI_STORAGE_KEY = 'pbs_ai_management_v6';
+  var LEGACY_AI_STORAGE_KEYS = ['pbs_ai_management_v5', 'pbs_ai_management_v4', 'pbs_ai_management_v3', 'pbs_ai_management_v2'];
   var OPERATION_LOG_KEY = 'pbs_operation_logs_v1';
   var AI_TABS = ['models', 'monitor', 'prompts'];
   var activePrompt = 0;
   var currentReportId = '';
-  var pendingPublishPromptKey = '';
-  var pendingPublishPromptTitle = '';
   var customDatasetCount = 0;
   var autoSaveTimers = {};
   var evalTimer = null;
@@ -48,14 +46,6 @@
     { id: 'key-glm-01', alias: 'glm-prod-01', providerType: 'glm', modelIds: ['m-glm'], quotaGroup: '智谱生产账号', last4: 'G8M3', enabled: true, health: 'healthy', load: 41, quotaRemaining: 73, latency: 754, priority: 2, weight: 100, checkedAt: '2026-08-22 09:57:58' }
   ];
 
-  var DEFAULT_ROUTING_POLICY = {
-    strategy: 'least_load',
-    orgConcurrency: 4,
-    queueTimeout: 30,
-    retry: 1,
-    cooldownSeconds: 60
-  };
-
   var DEFAULT_CALL_LOGS = [
     { id: 'call-01', time: '2026-08-22 09:58:12', org: '北岛留学', scene: '文书编辑', modelId: 'm-qwen', keyId: 'key-qwen-01', latency: 642, result: 'success', detail: '主模型命中' },
     { id: 'call-02', time: '2026-08-22 09:57:46', org: '远航教育', scene: '材料解析', modelId: 'm-qwen', keyId: 'key-qwen-02', latency: 1280, result: 'failed', detail: '429 限流，Key 已进入冷却' },
@@ -64,16 +54,208 @@
     { id: 'call-05', time: '2026-08-22 09:56:21', org: '北岛留学', scene: '文书审核', modelId: 'm-glm', keyId: 'key-glm-01', latency: 754, result: 'success', detail: '按低负载策略命中' }
   ];
 
-  var BASE_PROMPTS = [
+  var LEGACY_BASE_PROMPTS = [
     { id: 'asset', module: '学生档案', title: '资产文件 AI 解析', version: 'v1.2.0', vars: ['file_text', 'file_type', 'student_id', 'field_dictionary'], system: '你是留学申请材料结构化专家。仅依据文件内容提取信息，不得补全或猜测。每个字段必须返回原文证据、页码和置信度；敏感信息只标记存在，不输出原值。无法确定时返回 null。', user: '请按字段字典解析 {{file_type}} 文件。\n学生标识：{{student_id}}\n字段字典：{{field_dictionary}}\nOCR 文本：{{file_text}}', schema: '{"document_type":"string","fields":[{"name":"string","value":"string|null","evidence":"string","page":0,"confidence":0.0}],"warnings":["string"]}', metric: '字段 Exact Match、证据定位准确率、缺失字段召回率', threshold: 'Exact Match ≥95%；证据准确率 ≥98%；幻觉率 ≤0.5%' },
     { id: 'editor', module: '文书交付', title: '编辑框 AI 助手', version: 'v1.1.0', vars: ['selected_text', 'instruction', 'student_profile', 'school_prompt', 'word_limit'], system: '你是留学文书协作编辑。保持学生事实与个人声音，只对用户选中文本执行明确指令。禁止虚构经历、成绩、奖项或院校信息；事实不足时先提出澄清问题。', user: '院校题目：{{school_prompt}}\n字数限制：{{word_limit}}\n学生资料：{{student_profile}}\n选中文本：{{selected_text}}\n编辑指令：{{instruction}}', schema: '{"revised_text":"string","changes":[{"type":"string","reason":"string"}],"fact_risks":["string"],"questions":["string"]}', metric: '人工采纳率、事实一致性、风格保持率', threshold: '采纳率 ≥45%；事实错误率 ≤1%；越权改写率 ≤2%' },
     { id: 'suggest', module: '文书交付', title: '右侧 AI 建议', version: 'v1.0.3', vars: ['student_profile', 'draft', 'school_prompt', 'rubric'], system: '你是留学文书教练。基于学生资料、院校题目和当前草稿给出最多 5 条可执行建议。每条建议指出证据位置、问题、改进动作和优先级。', user: '学生资料：{{student_profile}}\n院校题目：{{school_prompt}}\n评价规则：{{rubric}}\n当前草稿：{{draft}}', schema: '{"suggestions":[{"priority":"P0|P1|P2","location":"string","issue":"string","action":"string","evidence":"string"}],"missing_facts":["string"]}', metric: '建议相关性、可执行性、重复率、人工采纳率', threshold: '专家相关性 ≥4.2/5；采纳率 ≥40%；重复率 ≤5%' },
     { id: 'case', module: '文书交付', title: '案例包 AI 解析', version: 'v1.4.0', vars: [], system: '', user: '', schema: '', metric: '字段完整率、证据定位准确率、结构一致性', threshold: '字段完整率 ≥95%；证据准确率 ≥98%；结构一致性 100%' },
     { id: 'review', module: '文书审核', title: 'AI 整体评价', version: 'v2.0.0', vars: ['draft', 'school_prompt', 'student_profile', 'rubric', 'word_limit'], system: '你是留学文书质量审核助手。依据院校题目和 PBS 评分规则进行辅助评价，不替代人工终审。所有事实判断必须与学生档案对照，并列出扣分证据。', user: '院校题目：{{school_prompt}}\n字数限制：{{word_limit}}\n学生资料：{{student_profile}}\n评分规则：{{rubric}}\n文书全文：{{draft}}', schema: '{"overall_score":0,"dimension_scores":{"relevance":0,"logic":0,"evidence":0,"language":0,"voice":0,"compliance":0},"strengths":[{"text":"string","evidence":"string"}],"improvements":[{"text":"string","evidence":"string","priority":"P0|P1|P2"}],"overall_comment":"string","fact_risks":["string"]}', metric: '与人工评分相关性、MAE、维度一致性', threshold: 'Spearman ≥0.75；MAE ≤6；事实错误率 ≤1%' },
     { id: 'classify', module: '监控管理', title: '邮件/页面 AI 分类', version: 'v1.4.0', vars: ['subject', 'sender', 'body', 'attachments', 'school', 'application_id'], system: '你是留学申请通知分类器。结合发件域名、标题、正文和附件完成分类，必须输出证据关键词、置信度和建议状态；不确定时选择 UNKNOWN。', user: '申请：{{application_id}} / {{school}}\n发件人：{{sender}}\n标题：{{subject}}\n正文：{{body}}\n附件：{{attachments}}', schema: '{"category":"OFFER|REJECTION|WAITLIST|INTERVIEW|MISSING_MATERIAL|ACTION_REQUIRED|STATUS_UPDATE|SCHOLARSHIP|NOISE|UNKNOWN","confidence":0.0,"keywords":["string"],"evidence":"string","suggested_status":"string|null","manual_review":true}', metric: 'Macro-F1、关键类别召回率、误更新率', threshold: 'Macro-F1 ≥0.90；关键类别召回 ≥0.95；误更新率 ≤0.2%' },
-    { id: 'confidence', module: '监控管理', title: '低置信度异常识别', version: 'v1.0.1', vars: ['classification', 'top2_scores', 'rules_hit', 'message_metadata'], system: '你是 AI 分类质量守门器。根据最高置信度、前两类差值、规则冲突和关键信息缺失判断是否进入人工复核。', user: '分类结果：{{classification}}\nTop2 分数：{{top2_scores}}\n命中规则：{{rules_hit}}\n元数据：{{message_metadata}}', schema: '{"is_abnormal":true,"reason_codes":["LOW_CONFIDENCE|SMALL_MARGIN|RULE_CONFLICT|MISSING_EVIDENCE|HIGH_RISK_CATEGORY"],"route":"AUTO_UPDATE|MANUAL_REVIEW","explanation":"string"}', metric: '异常检出精确率、关键风险召回率', threshold: '关键风险召回 100%；异常精确率 ≥85%' },
     { id: 'school', module: '选校管理', title: 'AI 选校推荐说明', version: 'v1.2.0', vars: ['student_profile', 'school_candidates', 'requirements', 'preferences', 'historical_cases', 'data_date'], system: '你是选校决策辅助顾问。先校验硬性条件，再对候选学校分层。每项推荐必须引用院校要求及数据日期，明确不确定性，不得承诺录取概率。', user: '学生资料：{{student_profile}}\n偏好：{{preferences}}\n候选学校：{{school_candidates}}\n院校要求：{{requirements}}\n历史案例：{{historical_cases}}\n数据日期：{{data_date}}', schema: '{"recommendations":[{"school":"string","program":"string","tier":"REACH|MATCH|SAFETY","reasons":["string"],"risks":["string"],"actions":["string"],"source_refs":["string"],"confidence":0.0}],"hard_constraint_violations":["string"],"disclaimer":"string"}', metric: '硬条件违规率、专家 Top-K 接受率、证据覆盖率', threshold: '硬条件违规率 0%；专家接受率 ≥80%；证据覆盖率 100%' }
   ];
+
+  var BASE_PROMPTS = [
+    {
+      id: 'suggest', module: '文书编辑', title: 'AI 建议',
+      content: String.raw`你是一名专业留学文书顾问。请根据系统提供的学生资料、申请信息、资产文件解析结果、当前文书内容，针对当前文书类型 {{current_document_type}} 生成填写建议。
+
+系统会动态传入当前文书类型：CV / PS / RL / RP / 套磁信。
+
+【核心要求】
+1. 只基于学生真实资料给建议，不得编造经历、成绩、论文、奖项、导师或研究成果。
+2. 建议重点回答：这一部分写什么、使用哪段学生经历、突出什么、还缺什么信息。
+3. 不直接代写完整文书，不输出大段正文。
+4. 根据申请层次（本科/硕士/博士/本硕连读）调整建议重点。
+5. 优先使用与目标院校、专业、研究方向相关度最高的资料。
+6. 学生资料不足时明确提示“建议补充”，不得自行推测。
+
+【CV】
+推荐结构：个人信息 → 教育背景 → 经历 → 荣誉奖项 → 技能与语言。所有经历按时间倒序；本科重点为竞赛、活动、志愿服务、标化成绩；硕士重点为科研、课程项目或实习工作经历，突出“角色 + 方法/职责 + 成果”；博士重点为科研经历、论文、项目、导师、研究方法及成果；奖项尽量体现排名或获奖比例；默认不建议写照片、性别、出生日期、婚姻状况。
+
+【PS】
+推荐结构：个人经历 → 研究兴趣 → 学术背景 → 为什么选择学校和专业 → 未来规划 → 结语。用具体经历解释申请动机和成长过程；研究兴趣体现“经历 → 问题 → 兴趣方向”；本科突出学习潜力和成长；硕士突出专业基础、课程、科研/实习与申请方向的关系；博士突出科研经历、研究方法、学术成果及与导师方向的匹配；避免空泛表达。
+
+【RP】
+推荐结构：题目 → 摘要 → 研究背景 → 研究问题 → 文献综述 → 研究方法 → 预期成果 → 时间安排 → 参考文献。研究问题必须明确、具体、可研究；研究方法说明数据、对象、方法、技术路线和验证方式；预期成果区分学术贡献和实际产出；时间安排拆解为可执行阶段并预留风险调整空间；博士可增加资源需求。
+
+【RL】
+推荐结构：推荐人介绍 → 学生情况 → 结语 → 落款。始终从推荐人视角提出建议；本科突出学习潜力、课堂表现、领导力和协作能力；硕士突出知识基础、学习能力、科研能力和个人素质；博士突出科研能力、治学态度、学术规范和培养潜力；所有评价尽量用真实具体事件支撑；推荐人信息缺失时明确提示补充。
+
+【套磁信】
+推荐结构：邮件主题 → 首段 → 第二段 → 第三段 → 尾段。语言极度克制、逻辑严密、开门见山、专业且自信，禁止华而不实的客套话。首段说明来意与身份，写明教授姓氏；第二段结合教授具体论文或近期研究方向说明匹配点；第三段用 GPA 排名、论文发表、核心技能栈等事实证明科研能力；尾段说明附件并请求 15—30 分钟线上会议，提供可选时间；总字数严格控制在 150—200 个英文单词以内。`,
+      output: String.raw`最终只输出 JSON，不输出分析过程或其他说明：
+{
+  "section": "对应章节",
+  "suggestion": "结合学生现有资料说明该部分应该写什么、重点突出什么",
+  "missing_information": ["需要补充的信息"]
+}
+输出 3—6 条最重要建议。`,
+      context: [
+        ['当前文书类型', 'current_document_type', '当前文书任务'],
+        ['完整学生档案', 'student_profile', '学生档案及关联教育、成绩、经历、奖项、技能数据'],
+        ['申请信息', 'application_context', '院校目标、专业、申请层次及官方要求'],
+        ['资产解析结果', 'asset_parse_results', '学生资产文件及 AI 结构化解析结果'],
+        ['当前文书', 'current_document', '当前文书全文、章节及字数信息']
+      ]
+    },
+    {
+      id: 'assistant', module: '文书编辑', title: 'AI 写作助手',
+      content: String.raw`你是资深留学文书顾问，熟悉香港、美国、英国、澳洲、欧洲主流院校对申请文书的评审标准。你的任务是协助文书老师完成留学申请文书的撰写、改写与润色。
+
+【文书结构标准】
+CV：个人信息 → 教育背景 → 经历段（按层次适配）→ 荣誉奖项 → 技能与语言。所有含时间的条目按时间倒序。个人信息默认不放照片、性别、出生日期、婚姻状况；教育背景包含院校、学位、院系、就读年份、GPA 或排名；经历按本科、硕士研究型/授课型、博士层次分别突出活动、实习、科研、论文与成果。
+
+PS：个人经历陈述 → 研究兴趣陈述 → 学术背景陈述 → 为什么选择目标学校和专业 → 未来规划 → 结语。用具体经历说明成长、研究问题与申请动机；博士层次必须说明目标导师研究成果与个人研究规划的关系。
+
+RP：题目 → 摘要 → 研究背景 → 研究问题 → 文献综述 → 研究方法/研究计划 → 预期成果和贡献 → 时间安排（博士层次加资源需求）→ 参考文献。研究方法需写清数据、对象、分析框架、方法论、技术路线和验证方式。
+
+RL：自我介绍 → 学生情况陈述 → 结语 → 落款。始终从推荐人视角写作，所有评价以真实具体事件支撑；按本科、硕士、博士、本硕连读层次调整评价重点。
+
+套磁信：邮件主题 → 首段 → 第二段 → 第三段 → 尾段。提供 3 个简短主题；结合教授具体论文或项目说明匹配；用论文、GPA 排名、技能栈等事实证明科研能力；请求 15—30 分钟线上会议；总字数严格控制在 150—200 个英文单词以内。
+
+【硬性约束】
+1. 不得编造学生经历、数据、奖项或成果，所有内容必须基于输入资料。
+2. 改写时保留学生原意与个人风格，每一处改动需在 change_log 中说明位置与理由。
+3. 如院校有官方字数或格式规定，以院校规定为准并在建议中提醒。
+4. 确保文本原创，无语法、单词和语病错误，避免模板化表达。
+5. 院校若发布官方模板或填写建议，应提醒文书老师按官网格式调整。
+6. 输入中的隐私信息已脱敏，输出时保留占位符，不得还原或猜测真实信息。`,
+      output: String.raw`按当前操作返回文书内容，并返回 change_log：
+{
+  "content": "生成或修改后的内容",
+  "change_log": [{"location":"修改位置","reason":"修改理由"}],
+  "missing_information": ["仍需补充的信息"],
+  "compliance_notes": ["字数、格式或事实风险提示"]
+}`,
+      context: [
+        ['操作指令', 'writing_instruction', '编辑器当前输入的生成、改写或润色指令'],
+        ['选中文本', 'selected_text', '编辑器当前选区；未选中时为空'],
+        ['当前文书', 'current_document', '文书类型、全文、章节、字数及历史修改'],
+        ['完整学生档案', 'student_profile', '学生档案及关联教育、成绩、经历、奖项、技能数据'],
+        ['申请信息', 'application_context', '目标院校、专业、申请层次、题目及官方格式要求'],
+        ['资产解析结果', 'asset_parse_results', '学生资产文件的结构化解析结果']
+      ]
+    },
+    {
+      id: 'case', module: '模板库编辑', title: '案例包 AI 解析',
+      content: String.raw`你是留学文书案例分析专家。你的任务是把历史优秀文书案例解析为可复用的结构化知识，供模板库使用。
+
+【解析标准】
+依据文书结构标准（CV / PS / RP / RL 四类，按申请层次适配）识别案例的段落结构：
+1. structure：按顺序输出案例的段落清单，每段给出 section_title（对齐标准结构命名）与 summary（该段写什么、怎么写）。
+2. highlights：摘录可借鉴的亮点句，原文照录，注明所属段落与亮点原因。
+3. reusable_expressions：提取可复用的表达方式或句式框架，抽象为不含个人信息的通用句式。
+4. variables：识别文中可变量化的位置，如学校名、专业名、成绩、经历，输出变量名与示例值。
+
+【硬性约束】
+1. 输入案例已脱敏，输出中不得还原或猜测真实个人信息。
+2. reusable_expressions 必须去除个人信息，不得包含任何可识别个人的内容。
+3. 只做结构化解析，不改写、不评价案例优劣。`,
+      output: String.raw`仅输出结构化 JSON：
+{
+  "structure": [{"section_title":"章节名称","summary":"内容与写法摘要"}],
+  "highlights": [{"section_title":"所属章节","quote":"原文亮点句","reason":"亮点原因"}],
+  "reusable_expressions": ["已去除个人信息的句式框架"],
+  "variables": [{"name":"变量名","example":"脱敏示例值"}]
+}`,
+      context: [
+        ['案例文书', 'case_document', '当前上传案例文件、OCR 文本及页码信息'],
+        ['文书类型', 'current_document_type', '案例所属 CV、PS、RP 或 RL 类型'],
+        ['申请层次', 'application_level', '本科、硕士、博士或本硕连读'],
+        ['结构标准', 'document_standard', '系统内置的对应文书类型结构标准']
+      ]
+    },
+    {
+      id: 'school', module: '选校方案详情', title: '选校说明',
+      content: String.raw`你是留学选校顾问。你的任务是为“选校方案详情页”生成选校说明，向学生与家长解释推荐该校该专业的理由。
+
+【生成要求】
+1. 基于学生条件（成绩、背景）与院校要求（语言、GPA 等）逐项比对，给出匹配度理由。
+2. 结合梯度档位（冲刺/匹配/保底）说明该院校在整体方案中的定位。
+3. 如实提示风险，如某单项成绩未达标、竞争激烈、轮次紧张等。
+4. 全文 300 字以内，语言平实，面向学生与家长可读。
+
+【硬性约束】
+1. 不得承诺或暗示录取结果。
+2. 不得贬低任何院校。
+3. 所有判断必须基于输入数据，不得编造院校要求或学生条件。
+4. 输入中学生隐私信息已脱敏，输出保留占位符。`,
+      output: '输出 300 字以内的选校说明正文，不输出分析过程。',
+      context: [
+        ['完整学生档案', 'student_profile', '成绩、语言、教育背景、科研、实习及其他申请条件'],
+        ['院校与专业', 'school_program', '当前院校目标及专业信息'],
+        ['录取要求', 'admission_requirements', '院校专业的语言、GPA、材料、轮次等要求'],
+        ['方案梯度', 'plan_tier', '当前目标在方案中的冲刺、匹配或保底定位']
+      ]
+    },
+    {
+      id: 'review', module: '文书审核', title: 'AI 整体评价',
+      content: String.raw`你是留学文书评审专家。你的任务是对提交的文书进行整体评价，输出维度评分、亮点、待改进点与总体评语，供人工审核参考。
+
+【评价维度与权重】（1—5 分，0.5 步进）
+1. 内容与针对性（30%）：是否回应院校题目要求，内容是否贴合文书类型的结构标准。
+2. 结构与逻辑（25%）：段落组织是否符合该文书类型与申请层次的标准结构，论证是否连贯。
+3. 语言与表达（20%）：语法、用词、句式质量，须达到可通过 plagiarism-detection 审查的原创度。
+4. 个性化与亮点（15%）：是否体现学生独特经历与特质，避免模板化。
+5. 合规与事实准确性（10%）：字数是否合规、格式是否符合院校要求；事实性错误一票否决，直接判定打回。
+
+【结构标准】
+按文书类型与申请层次套用对应结构：CV 为个人信息、教育背景、经历、荣誉奖项、技能与语言；PS 为个人经历、研究兴趣、学术背景、选校与专业原因、未来规划、结语；RP 为题目、摘要、研究背景、研究问题、文献综述、研究方法、预期成果、时间安排、参考文献；RL 为推荐人介绍、学生情况、结语、落款。
+
+【硬性约束】
+1. 评价必须引用文书原文作为依据，不得泛泛而谈。
+2. 不得修改文书，只做评价。
+3. 总分为各维度得分乘以权重后加总；总分 ≥3.5 为可提交，3.0—3.5 为需修改，低于 3.0 为重写。
+4. 输入中的学生隐私信息已脱敏，评语中保留占位符。`,
+      output: String.raw`仅输出结构化 JSON：
+{
+  "dimension_scores": [{"dimension":"评价维度","score":0,"evidence":"文书原文依据"}],
+  "total_score": 0,
+  "decision": "可提交|需修改|重写|事实错误打回",
+  "strengths": [{"text":"亮点","evidence":"原文依据"}],
+  "improvements": [{"text":"待改进点","evidence":"原文依据"}],
+  "overall_comment": "总体评语",
+  "fact_risks": ["事实或合规风险"]
+}`,
+      context: [
+        ['待审核文书', 'current_document', '文书全文、类型、字数及版本内容'],
+        ['完整学生档案', 'student_profile', '用于核对文书中的经历、成绩、奖项与成果事实'],
+        ['申请信息', 'application_context', '申请层次、目标院校专业、文书题目及官方要求'],
+        ['结构标准', 'document_standard', '对应文书类型及申请层次的结构规则'],
+        ['参考文件', 'reference_documents', '院校官方模板或审核所需参考材料；无文件时为空数组']
+      ]
+    }
+  ];
+
+  var RESTORED_PROMPT_CONTEXTS = {
+    asset: [
+      ['待解析文件', 'source_document', '学生档案当前上传文件、OCR 文本及页码信息'],
+      ['文件类型', 'file_type', '当前资产文件类型'],
+      ['学生标识', 'student_id', '当前学生档案 ID'],
+      ['档案字段字典', 'field_dictionary', '学生档案可写入字段及结构定义']
+    ],
+    classify: [
+      ['邮件或页面内容', 'message_content', '监控任务抓取的标题、正文、发件人、附件及页面信息'],
+      ['申请信息', 'application_context', '当前学生、院校目标、专业及申请账号信息'],
+      ['分类规则', 'classification_rules', '系统内置通知分类及状态映射规则']
+    ]
+  };
+
+  var restoredPrompts = ['asset', 'classify'].map(function (id) {
+    var source = LEGACY_BASE_PROMPTS.find(function (prompt) { return prompt.id === id; });
+    return Object.assign({}, source, { context: RESTORED_PROMPT_CONTEXTS[id] });
+  });
+  BASE_PROMPTS = [restoredPrompts[0]].concat(BASE_PROMPTS, restoredPrompts.slice(1));
 
   var CASE_TEMPLATES = [
     { id: 'cv-undergraduate', material: 'CV', stage: '本科', focus: '突出课程基础、竞赛、社团活动、志愿服务与领导力。', fields: ['基本信息', '教育经历', '核心课程', '竞赛与奖项', '活动与领导力', '志愿服务', '技能与语言'] },
@@ -97,7 +279,6 @@
     { id: 'case', name: '案例包 AI 解析', metric: '结构一致性', threshold: '100%', result: '100%', samples: 120, status: 'pass', updated: '2026-08-11 18:30' },
     { id: 'review', name: '文书审核 AI 评价', metric: 'Spearman / MAE', threshold: '≥0.75 / ≤6', result: '0.79 / 5.2', samples: 200, status: 'pass', updated: '2026-08-11 18:30' },
     { id: 'classify', name: '监控 AI 分类', metric: 'Macro-F1', threshold: '≥0.90', result: '0.93', samples: 220, status: 'pass', updated: '2026-08-11 18:30' },
-    { id: 'confidence', name: '低置信度异常识别', metric: '关键风险召回', threshold: '100%', result: '96.4%', samples: 84, status: 'fail', updated: '2026-08-11 18:30' },
     { id: 'school', name: 'AI 选校推荐', metric: '硬条件违规 / 接受率', threshold: '0% / ≥80%', result: '0% / 83%', samples: 76, status: 'pass', updated: '2026-08-11 18:30' }
   ];
 
@@ -116,10 +297,8 @@
       models: cloneJson(DEFAULT_MODELS),
       globalRoute: { primary: 'm-qwen', backup: 'm-deepseek' },
       keys: cloneJson(DEFAULT_KEYS),
-      routingPolicy: cloneJson(DEFAULT_ROUTING_POLICY),
       callLogs: cloneJson(DEFAULT_CALL_LOGS),
       promptOverrides: {},
-      promptStatus: {},
       caseTemplateOverrides: {},
       selectedCaseTemplate: 'cv-undergraduate',
       evalResults: {}
@@ -129,17 +308,23 @@
   function loadAiState() {
     var state = defaultAiState();
     var saved = null;
+    var loadedFromLegacy = false;
     try { saved = JSON.parse(localStorage.getItem(AI_STORAGE_KEY) || 'null'); } catch (e) { saved = null; }
     if (!saved) {
       LEGACY_AI_STORAGE_KEYS.some(function (key) {
         try { saved = JSON.parse(localStorage.getItem(key) || 'null'); } catch (e2) { saved = null; }
+        if (saved) loadedFromLegacy = true;
         return !!saved;
       });
     }
     if (saved && typeof saved === 'object') {
-      ['models', 'globalRoute', 'keys', 'routingPolicy', 'callLogs', 'promptOverrides', 'promptStatus', 'caseTemplateOverrides', 'selectedCaseTemplate', 'evalResults'].forEach(function (key) {
+      ['models', 'globalRoute', 'keys', 'callLogs', 'promptOverrides', 'caseTemplateOverrides', 'selectedCaseTemplate', 'evalResults'].forEach(function (key) {
         if (saved[key] !== undefined) state[key] = saved[key];
       });
+      if (loadedFromLegacy) {
+        state.promptOverrides = {};
+        state.caseTemplateOverrides = {};
+      }
     }
     if (!Array.isArray(state.models) || !state.models.length) state.models = cloneJson(DEFAULT_MODELS);
     if (!state.models.some(function (model) { return model.id === 'm-qwen-long'; }) && state.models.some(function (model) { return model.id === 'm-qwen'; })) {
@@ -209,10 +394,8 @@
         state.keys.push({ id: 'key-legacy-' + model.id, alias: model.name + '-legacy', providerType: model.providerType, modelIds: [model.id], quotaGroup: modelProviderPreset(model).name + ' 默认账号', last4: model.keyLast4 || '****', enabled: true, health: 'healthy', load: 0, quotaRemaining: 100, latency: 0, priority: 2, weight: 100, checkedAt: nowText() });
       });
     }
-    state.routingPolicy = Object.assign({}, DEFAULT_ROUTING_POLICY, state.routingPolicy || {});
     if (!Array.isArray(state.callLogs)) state.callLogs = cloneJson(DEFAULT_CALL_LOGS);
     if (!state.promptOverrides || typeof state.promptOverrides !== 'object') state.promptOverrides = {};
-    if (!state.promptStatus || typeof state.promptStatus !== 'object') state.promptStatus = {};
     if (!state.caseTemplateOverrides || typeof state.caseTemplateOverrides !== 'object') state.caseTemplateOverrides = {};
     if (!state.evalResults || typeof state.evalResults !== 'object') state.evalResults = {};
     if (!CASE_TEMPLATES.some(function (item) { return item.id === state.selectedCaseTemplate; })) state.selectedCaseTemplate = CASE_TEMPLATES[0].id;
@@ -241,7 +424,7 @@
   function visiblePrompts() {
     var role = currentRole();
     if (role === '文书机构管理员') {
-      return BASE_PROMPTS.filter(function (p) { return p.module === '文书交付' || p.module === '文书审核'; });
+      return BASE_PROMPTS.filter(function (p) { return p.module === '文书编辑' || p.module === '模板库编辑' || p.module === '文书审核'; });
     }
     return BASE_PROMPTS.slice();
   }
@@ -368,7 +551,7 @@
         '<td><div class="provider"><div class="provider-logo" style="background:' + preset.color + '">' + escapeHtml(preset.short) + '</div><b>' + escapeHtml(preset.name) + '</b></div></td>' +
         '<td><b>' + availableKeys + ' 个可用 Key</b><div class="subtle">' + escapeHtml(keyAliases || '尚未添加 Key') + (keys.length > 2 ? ' 等' : '') + '</div></td>' +
         '<td>' + escapeHtml(modelRouteRole(model.id)) + '</td>' +
-        '<td><div class="table-actions"><button class="btn ghost sm" onclick="openModelKeyPool(\'' + model.id + '\')">配置 Key</button><button class="btn ghost sm" onclick="openModelEditor(\'' + model.id + '\')">编辑模型</button></div></td></tr>';
+        '<td><div class="table-actions"><button class="btn ghost sm" onclick="openModelKeyPool(\'' + model.id + '\')">配置 Key</button><button class="btn ghost sm" onclick="openModelEditor(\'' + model.id + '\')">编辑</button><button class="btn ghost sm danger-text" onclick="deleteModel(\'' + model.id + '\')">删除</button></div></td></tr>';
     }).join('');
     updateSummary();
   }
@@ -376,7 +559,7 @@
   window.openModelEditor = function (id) {
     var model = id ? modelById(id) : null;
     byId('modelEditId').value = model ? model.id : '';
-    byId('modelModalTitle').textContent = model ? '编辑目标模型' : '新增目标模型';
+    byId('modelModalTitle').textContent = model ? '编辑 AI 模型' : '新增 AI 模型';
     byId('newModelName').value = model ? model.name : '';
     byId('modelProviderType').value = model ? model.providerType : 'qwen';
     byId('newModelId').value = model ? model.modelId : '';
@@ -443,7 +626,7 @@
       window.openModelKeyPool(model.id);
       var hasReusableKey = aiState.keys.some(function (key) { return key.providerType === model.providerType && key.modelIds.indexOf(model.id) < 0; });
       if (!hasReusableKey) window.openInlineKeyForm();
-      showToast(hasReusableKey ? '目标模型已保存，可直接复用已有 Key' : '目标模型已保存，请继续添加 Key');
+      showToast(hasReusableKey ? 'AI 模型已保存，可直接复用已有 Key' : 'AI 模型已保存，请继续添加 Key');
     } else {
       showToast(model.name + ' 已自动保存' + (removedBindings ? '，已解除 ' + removedBindings + ' 个跨厂商 Key 关联' : ''));
     }
@@ -473,12 +656,33 @@
       return;
     }
     aiState.globalRoute = { primary: primary, backup: backup };
-    byId('routeHint').textContent = '主模型池无健康 Key 时自动切换备用模型池。';
+    byId('routeHint').textContent = '主模型池无可用 Key 时自动切换备用模型池。';
     byId('routeHint').className = 'help';
     var primaryName = (modelById(primary) || {}).name || '未配置';
     var backupName = (modelById(backup) || {}).name || '未配置';
     commitAutoSave('修改模型路由', primaryName + ' → ' + backupName, 'global-route');
     renderModels();
+  };
+
+  window.deleteModel = function (id) {
+    var model = modelById(id);
+    if (!model || !window.confirm('确认删除 AI 模型“' + model.name + '”吗？')) return;
+    aiState.models = aiState.models.filter(function (item) { return item.id !== id; });
+    aiState.keys.forEach(function (key) {
+      key.modelIds = key.modelIds.filter(function (modelId) { return modelId !== id; });
+    });
+    aiState.keys = aiState.keys.filter(function (key) { return key.modelIds.length; });
+    if (aiState.globalRoute.primary === id) aiState.globalRoute.primary = '';
+    if (aiState.globalRoute.backup === id) aiState.globalRoute.backup = '';
+    if (activeKeyPoolModelId === id) {
+      activeKeyPoolModelId = '';
+      closeModal('modelKeyPoolModal');
+    }
+    commitAutoSave('删除 AI 模型', model.name + ' / ' + model.modelId, 'model-delete-' + id, true);
+    renderModels();
+    populateModelSelectors();
+    renderMonitoring();
+    showToast('AI 模型已删除');
   };
 
   function keyById(id) { return aiState.keys.find(function (key) { return key.id === id; }); }
@@ -616,7 +820,7 @@
     renderModels();
     renderMonitoring();
     renderModelKeyPool();
-    showToast(key.alias + ' 已保存并关联 ' + modelIds.length + ' 个目标模型');
+    showToast(key.alias + ' 已保存并关联 ' + modelIds.length + ' 个 AI 模型');
   };
 
   window.toggleKey = function (id) {
@@ -645,29 +849,6 @@
     if (activeKeyPoolModelId && byId('modelKeyPoolModal').classList.contains('show')) renderModelKeyPool();
     renderMonitoring();
     showToast(key.alias + ' 检测通过');
-  };
-
-  function renderRoutingPolicy() {
-    var policy = aiState.routingPolicy;
-    byId('routeStrategy').value = policy.strategy;
-    byId('orgConcurrency').value = policy.orgConcurrency;
-    byId('queueTimeout').value = policy.queueTimeout;
-    byId('routeRetry').value = policy.retry;
-    byId('cooldownSeconds').value = policy.cooldownSeconds;
-  }
-
-  window.saveRoutingPolicy = function (explicit) {
-    var policy = {
-      strategy: byId('routeStrategy').value,
-      orgConcurrency: Math.max(1, Math.min(50, Number(byId('orgConcurrency').value || DEFAULT_ROUTING_POLICY.orgConcurrency))),
-      queueTimeout: Math.max(5, Math.min(300, Number(byId('queueTimeout').value || DEFAULT_ROUTING_POLICY.queueTimeout))),
-      retry: Math.max(0, Math.min(3, Number(byId('routeRetry').value || 0))),
-      cooldownSeconds: Math.max(10, Math.min(600, Number(byId('cooldownSeconds').value || DEFAULT_ROUTING_POLICY.cooldownSeconds)))
-    };
-    aiState.routingPolicy = policy;
-    commitAutoSave('修改 AI 调度策略', '单机构并发 ' + policy.orgConcurrency + '，排队超时 ' + policy.queueTimeout + ' 秒，冷却 ' + policy.cooldownSeconds + ' 秒', 'routing-policy', !!explicit);
-    renderRoutingPolicy();
-    if (explicit) showToast('调度策略已保存');
   };
 
   function populateMonitoringFilters() {
@@ -761,8 +942,6 @@
       templateId: template.id,
       module: '文书交付',
       title: '案例包 AI 解析',
-      version: 'v1.4.0',
-      vars: ['case_documents', 'template_id', 'material_type', 'application_stage'],
       system: '你是留学材料结构化解析专家。必须使用固定模板 ' + template.id + ' 解析，不得改变字段名称或输出层级。材料类型为' + template.material + '，申请阶段为' + template.stage + '。' + template.focus + '每个字段返回值、原文证据、页码与置信度；缺失返回 null，材料冲突单独列出，禁止推测。',
       user: '模板：{{template_id}}\n材料类型：{{material_type}}\n申请阶段：{{application_stage}}\n固定字段：' + template.fields.join('、') + '\n待解析案例包：{{case_documents}}',
       schema: JSON.stringify(schema, null, 2),
@@ -787,59 +966,54 @@
   }
 
   function currentPrompt() {
-    var base = currentBasePrompt();
-    if (base.id !== 'case') return basePromptWithOverride(base);
-    return selectedCasePrompt();
+    return basePromptWithOverride(currentBasePrompt());
   }
-
-  function currentPromptStatusKey() {
-    var base = currentBasePrompt();
-    return base.id === 'case' ? 'case:' + aiState.selectedCaseTemplate : base.id;
-  }
-
-  function promptStatus(key) { return aiState.promptStatus[key] || '已发布'; }
 
   function renderPromptList() {
     var list = visiblePrompts();
     if (activePrompt >= list.length) activePrompt = 0;
     byId('promptList').innerHTML = list.map(function (base, index) {
-      var key = base.id === 'case' ? 'case:' + aiState.selectedCaseTemplate : base.id;
-      var version = base.id === 'case' ? selectedCasePrompt().version : basePromptWithOverride(base).version;
-      return '<div class="prompt-item ' + (index === activePrompt ? 'active' : '') + '" onclick="selectPrompt(' + index + ')"><div class="prompt-name">' + (index + 1) + '. ' + escapeHtml(base.title) + '</div><div class="prompt-meta"><span>' + escapeHtml(base.module) + ' · ' + escapeHtml(promptStatus(key)) + '</span><span>' + escapeHtml(version) + '</span></div></div>';
+      return '<div class="prompt-item ' + (index === activePrompt ? 'active' : '') + '" onclick="selectPrompt(' + index + ')"><div class="prompt-name">' + (index + 1) + '. ' + escapeHtml(base.title) + '</div><div class="prompt-meta">' + escapeHtml(base.module) + '</div></div>';
     }).join('');
   }
 
-  function renderPromptStatus() {
-    var status = promptStatus(currentPromptStatusKey());
-    byId('promptStatus').textContent = status;
-    byId('promptStatus').className = 'prompt-status ' + ({'草稿':'draft','评测中':'testing','已驳回':'rejected','已归档':'archived'}[status] || '');
+  function promptContent(prompt) {
+    if (prompt.content != null) return prompt.content;
+    return [prompt.system, prompt.user].filter(Boolean).join('\n\n');
   }
 
-  function renderCaseTemplatePanel() {
-    var isCase = currentBasePrompt().id === 'case';
-    byId('caseTemplatePanel').classList.toggle('hidden', !isCase);
-    if (!isCase) return;
-    var template = selectedCaseTemplate();
-    byId('caseMaterial').value = template.material;
-    byId('caseStage').value = template.stage;
-    byId('caseTemplateName').textContent = template.material + ' · ' + template.stage + '解析模板（' + template.id + '）';
-    byId('caseTemplateFocus').textContent = template.focus;
-    byId('caseTemplateFields').textContent = '固定字段：' + template.fields.join('、');
+  function promptOutput(prompt) {
+    return prompt.output != null ? prompt.output : (prompt.schema || '');
+  }
+
+  function renderDetectedVariables() {
+    var content = byId('promptContent').value;
+    var variables = [];
+    content.replace(/\{\{([^{}]+)\}\}/g, function (_, variable) {
+      variable = variable.trim();
+      if (variable && variables.indexOf(variable) < 0) variables.push(variable);
+    });
+    byId('detectedVariables').innerHTML = variables.length
+      ? '<span class="label">正文动态参数</span>' + variables.map(function (variable) { return '<span class="variable-tag">{{' + escapeHtml(variable) + '}}</span>'; }).join('')
+      : '<span class="label">当前正文无动态参数，业务数据仍会按下方配置自动传入</span>';
+  }
+
+  function renderPromptContext(prompt) {
+    var contexts = Array.isArray(prompt.context) ? prompt.context : [];
+    byId('promptContextCount').textContent = contexts.length + ' 项数据';
+    byId('promptContextRows').innerHTML = contexts.map(function (item) {
+      return '<tr><td class="context-name"><b>' + escapeHtml(item[0]) + '</b><span>结构化对象</span></td><td><span class="context-key">' + escapeHtml(item[1]) + '</span></td><td>' + escapeHtml(item[2]) + '</td></tr>';
+    }).join('');
   }
 
   function loadPrompt() {
     var prompt = currentPrompt();
     byId('promptModule').textContent = prompt.module;
     byId('promptTitle').textContent = prompt.title;
-    byId('promptVersion').textContent = prompt.version;
-    byId('systemPrompt').value = prompt.system;
-    byId('userPrompt').value = prompt.user;
-    byId('outputSchema').value = prompt.schema;
-    byId('promptMetric').value = prompt.metric;
-    byId('promptThreshold').value = prompt.threshold;
-    byId('promptVariables').innerHTML = prompt.vars.map(function (variable) { return '<button class="chip" type="button" onclick="insertVariable(\'' + variable + '\')">{{' + variable + '}}</button>'; }).join('');
-    renderCaseTemplatePanel();
-    renderPromptStatus();
+    byId('promptContent').value = promptContent(prompt);
+    byId('promptOutput').value = promptOutput(prompt);
+    renderPromptContext(prompt);
+    renderDetectedVariables();
   }
 
   function renderPrompts() { renderPromptList(); loadPrompt(); }
@@ -852,102 +1026,16 @@
   function capturePromptForm(autoSave) {
     var prompt = currentPrompt();
     var saved = {
-      system: byId('systemPrompt').value,
-      user: byId('userPrompt').value,
-      schema: byId('outputSchema').value,
-      metric: byId('promptMetric').value,
-      threshold: byId('promptThreshold').value,
-      version: prompt.version
+      content: byId('promptContent').value,
+      output: byId('promptOutput').value
     };
-    if (currentBasePrompt().id === 'case') aiState.caseTemplateOverrides[aiState.selectedCaseTemplate] = saved;
-    else aiState.promptOverrides[prompt.id] = saved;
+    aiState.promptOverrides[prompt.id] = saved;
     if (autoSave) {
-      aiState.promptStatus[currentPromptStatusKey()] = '草稿';
-      renderPromptStatus();
-      renderPromptList();
-      commitAutoSave('自动保存提示词', prompt.title + ' ' + prompt.version, 'prompt-' + currentPromptStatusKey());
+      renderDetectedVariables();
+      commitAutoSave('自动保存提示词', prompt.title, 'prompt-' + prompt.id);
     }
     return Object.assign(prompt, saved);
   }
-
-  window.changeCaseTemplate = function () {
-    var template = caseTemplateFor(byId('caseMaterial').value, byId('caseStage').value);
-    aiState.selectedCaseTemplate = template.id;
-    commitAutoSave('切换案例包解析模板', template.material + ' / ' + template.stage + ' / ' + template.id, 'case-template-select');
-    renderPrompts();
-  };
-
-  window.insertVariable = function (name) {
-    var textarea = byId('userPrompt');
-    var position = textarea.selectionStart || textarea.value.length;
-    textarea.value = textarea.value.slice(0, position) + '{{' + name + '}}' + textarea.value.slice(position);
-    textarea.focus();
-    capturePromptForm(true);
-  };
-
-  window.clonePrompt = function () {
-    var prompt = capturePromptForm(false);
-    var parts = prompt.version.replace('v', '').split('.');
-    while (parts.length < 3) parts.push('0');
-    parts[2] = String(Number(parts[2]) + 1);
-    var version = 'v' + parts.join('.');
-    if (currentBasePrompt().id === 'case') aiState.caseTemplateOverrides[aiState.selectedCaseTemplate].version = version;
-    else aiState.promptOverrides[prompt.id].version = version;
-    aiState.promptStatus[currentPromptStatusKey()] = '草稿';
-    commitAutoSave('复制提示词版本', prompt.title + ' → ' + version, 'prompt-clone-' + currentPromptStatusKey(), true);
-    renderPrompts();
-    showToast('已复制为 ' + version);
-  };
-
-  window.validatePrompt = function (silent) {
-    var prompt = capturePromptForm(false);
-    var error = '';
-    try { JSON.parse(prompt.schema); } catch (e) { error = '输出结构不是有效 JSON'; }
-    if (!prompt.system.trim() || !prompt.user.trim()) error = '系统提示词和用户模板不能为空';
-    var variables = [];
-    prompt.user.replace(/\{\{([a-zA-Z0-9_]+)\}\}/g, function (_, variable) { variables.push(variable); });
-    var unknown = variables.filter(function (variable) { return prompt.vars.indexOf(variable) < 0; });
-    if (unknown.length) error = '存在未定义变量：' + unknown.join(', ');
-    if (!silent) showToast(error || '模板校验通过');
-    return !error;
-  };
-
-  window.publishPrompt = function () {
-    var prompt = capturePromptForm(false);
-    if (!window.validatePrompt(true)) { showToast('模板校验失败，暂不能发布'); return; }
-    pendingPublishPromptKey = currentPromptStatusKey();
-    pendingPublishPromptTitle = prompt.title;
-    aiState.promptStatus[pendingPublishPromptKey] = '评测中';
-    saveAiState();
-    renderPromptStatus();
-    renderPromptList();
-    window.openEvaluation(prompt.id, true);
-  };
-
-  window.openPromptTest = function () {
-    openModal('promptTestModal');
-    byId('testOutput').textContent = '点击“运行测试”生成结构化示例结果。';
-    byId('testLatency').textContent = '—';
-    byId('testTokens').textContent = '—';
-    byId('testSchema').textContent = '—';
-  };
-
-  window.runPromptTest = function () {
-    var prompt = currentPrompt();
-    var primary = modelById(aiState.globalRoute.primary);
-    var output = byId('testOutput');
-    if (!window.validatePrompt(true)) { output.textContent = '模板校验失败，无法运行。'; return; }
-    if (!primary) { output.textContent = '尚未配置主模型。'; return; }
-    output.textContent = '正在请求主模型 ' + primary.name + '…';
-    setTimeout(function () {
-      var templateText = prompt.templateId ? '\n解析模板：' + prompt.templateId : '';
-      output.innerHTML = '<span class="ok">✓ 调试响应成功</span>\n场景：' + escapeHtml(prompt.title) + templateText + '\n主模型：' + escapeHtml(primary.name) + '\n输出结构校验：通过\n敏感信息检查：通过';
-      byId('testLatency').textContent = '1.46s';
-      byId('testTokens').textContent = '1,126';
-      byId('testSchema').innerHTML = '<span class="good">通过</span>';
-      logAiAction('提示词在线调试', prompt.title + ' / ' + primary.name);
-    }, 800);
-  };
 
   function mergedEvalItem(base) { return Object.assign({}, base, aiState.evalResults[base.id] || {}); }
   function evalItemById(id) {
@@ -1001,7 +1089,6 @@
   window.openEvaluation = function (sceneId, publishAfter) {
     byId('evalScenario').innerHTML = BASE_EVALS.map(function (item) { return '<option value="' + item.id + '">' + escapeHtml(item.name) + '</option>'; }).join('');
     if (sceneId && evalItemById(sceneId)) byId('evalScenario').value = sceneId;
-    if (!publishAfter) { pendingPublishPromptKey = ''; pendingPublishPromptTitle = ''; }
     byId('evalDataset').value = 'gold';
     byId('evalScope').value = 'quick';
     byId('customDatasetFile').value = '';
@@ -1062,20 +1149,11 @@
   };
 
   function completeEvaluation(baseItem, samples, datasetName) {
-    var passed = baseItem.id !== 'confidence';
-    var result = passed ? baseItem.result : '97.6%';
+    var passed = true;
+    var result = baseItem.result;
     aiState.evalResults[baseItem.id] = { status: passed ? 'pass' : 'fail', result: result, samples: samples, updated: nowText(), dataset: datasetName, reviewed: false };
     saveAiState();
     logAiAction('运行 AI 效果评测', baseItem.name + '，' + datasetName + ' ' + samples + ' 条，结果' + (passed ? '通过' : '未通过'));
-    if (pendingPublishPromptKey) {
-      aiState.promptStatus[pendingPublishPromptKey] = passed ? '已发布' : '已驳回';
-      saveAiState();
-      logAiAction(passed ? '发布提示词版本' : '阻止提示词发布', pendingPublishPromptTitle + '，评测' + (passed ? '通过' : '未通过'));
-      pendingPublishPromptKey = '';
-      pendingPublishPromptTitle = '';
-      renderPromptList();
-      if (currentBasePrompt().id === baseItem.id) renderPromptStatus();
-    }
     renderEval();
     setTimeout(function () { byId('evalTaskPanel').classList.add('hidden'); }, 900);
     window.openEvalReport(baseItem.id);
@@ -1129,7 +1207,6 @@
     initializeEvalActions();
     renderModels();
     populateModelSelectors();
-    renderRoutingPolicy();
     renderMonitoring();
     renderPrompts();
     renderEval();

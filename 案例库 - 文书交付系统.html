@@ -30,7 +30,7 @@
     @keyframes pulse-soft { 0%,100% { opacity: 1; } 50% { opacity: .45; } }
     .parsing-dot { animation: pulse-soft 1.4s ease-in-out infinite; }
   </style>
-<link rel="stylesheet" href="./assets/css/pbs-theme.css?v=6.1">
+  <link rel="stylesheet" href="./assets/css/pbs-theme.css?v=6.3">
 </head>
 <body class="min-h-screen">
   <!-- 顶部导航栏 -->
@@ -187,8 +187,8 @@
             </select>
           </div>
           <div>
-            <label class="block text-sm text-gray-600 mb-2">上传时间</label>
-            <input id="flt-time" type="text" placeholder="如 2026-07-28" class="w-28 h-10 px-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm">
+            <label class="block text-sm text-gray-600 mb-2">上传时间段</label>
+            <div class="flex items-center gap-2"><input id="flt-time" type="date" title="开始日期" class="w-36 h-10 px-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm"><span class="text-gray-400">至</span><input id="flt-time-end" type="date" title="结束日期" class="w-36 h-10 px-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm"></div>
           </div>
         </div>
         <div class="flex items-center gap-3 mt-4">
@@ -812,6 +812,7 @@
       var org = document.getElementById('flt-org').value;
       var direction = document.getElementById('flt-direction').value;
       var time = document.getElementById('flt-time').value.trim();
+      var timeEnd = document.getElementById('flt-time-end').value.trim();
       var rows = document.querySelectorAll('#caseTbody tr:not(#flt-empty)');
       var visible = 0;
       rows.forEach(function(r) {
@@ -822,7 +823,9 @@
         if (status && r.dataset.status !== status) ok = false;
         if (org && r.dataset.org !== org) ok = false;
         if (direction && r.dataset.direction !== direction) ok = false;
-        if (time && (r.dataset.time || '').indexOf(time) === -1) ok = false;
+        var caseDate = (r.dataset.time || '').slice(0, 10);
+        if (time && (!caseDate || caseDate < time)) ok = false;
+        if (timeEnd && (!caseDate || caseDate > timeEnd)) ok = false;
         r.style.display = ok ? '' : 'none';
         if (ok) visible++;
       });
@@ -831,7 +834,7 @@
     }
 
     function resetFilter() {
-      ['flt-kw','flt-time'].forEach(function(id){ document.getElementById(id).value = ''; });
+      ['flt-kw','flt-time','flt-time-end'].forEach(function(id){ document.getElementById(id).value = ''; });
       ['flt-type','flt-level','flt-status','flt-direction'].forEach(function(id){ document.getElementById(id).value = ''; });
       var orgFilter = document.getElementById('flt-org');
       if (!orgFilter.disabled) orgFilter.value = '';
@@ -958,7 +961,7 @@
       updateSelected();
     });
   </script>
-  <script src="./assets/js/pbs-app.js?v=6.0"></script>
+  <script src="./assets/js/pbs-app.js?v=6.2"></script>
 
 
 </body></html>

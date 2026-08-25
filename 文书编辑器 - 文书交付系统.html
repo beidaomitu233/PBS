@@ -990,7 +990,7 @@ body {
               <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-blue-600 text-white">当前版本</span>
             </div>
             <p class="text-xs text-gray-500 mb-1">2026-07-17 14:32 · 张老师</p>
-            <p class="text-xs text-gray-500 mb-2">856 字 · 修改研究经历段落</p>
+            <p id="currentVersionChangeNote" class="text-xs text-gray-500 mb-2">856 字 · 修改研究经历段落</p>
             <div class="flex items-center gap-3 text-xs">
               <button class="text-blue-600 hover:text-blue-800 font-medium">预览</button>
               <button class="text-gray-500 hover:text-gray-700">下载</button>
@@ -1503,6 +1503,36 @@ body {
     </div>
   </div>
 
+  <!-- 提交文书：更改说明必填弹窗 -->
+  <div id="submitChangeModal" class="fixed inset-0 z-[110] hidden" role="dialog" aria-modal="true" aria-labelledby="submitChangeModalTitle">
+    <div class="absolute inset-0 bg-black bg-opacity-30" onclick="closeSubmitChangeModal()"></div>
+    <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-white rounded-2xl shadow-2xl overflow-hidden" style="width: 560px; max-width: calc(100vw - 32px);">
+      <div class="flex items-start justify-between px-6 py-5 border-b border-gray-100">
+        <div>
+          <h3 id="submitChangeModalTitle" class="text-lg font-semibold text-gray-900">填写更改说明</h3>
+          <p class="text-xs text-gray-500 mt-1">提交后将进入审核流程，更改说明会同步记录到历史版本。</p>
+        </div>
+        <button type="button" class="text-gray-400 hover:text-gray-700 text-xl" aria-label="关闭" onclick="closeSubmitChangeModal()">×</button>
+      </div>
+      <div class="px-6 py-5">
+        <div class="flex items-center justify-between p-3 mb-4 bg-blue-50 border border-blue-100 rounded-xl">
+          <div><p class="text-xs text-blue-600">当前版本</p><p class="text-sm font-semibold text-blue-900 mt-0.5">v1.2 · 856 字</p></div>
+          <span class="text-xs font-medium text-blue-700">提交后进入审核</span>
+        </div>
+        <label for="submitChangeNote" class="block text-sm font-medium text-gray-700 mb-2">更改说明 <span class="text-red-500">*</span></label>
+        <textarea id="submitChangeNote" rows="5" maxlength="300" class="w-full px-4 py-3 border border-gray-300 rounded-xl text-sm leading-relaxed resize-none focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="请简要说明本次提交或修改的内容，例如：&#10;首次提交：完成文书初稿&#10;第二次提交：根据反馈调整研究经历&#10;补充了学术论文介绍与量化成果" oninput="updateSubmitChangeState()"></textarea>
+        <div class="flex items-center justify-between mt-2">
+          <p id="submitChangeError" class="text-xs text-red-500 hidden">请填写更改说明后再提交</p>
+          <p id="submitChangeCount" class="text-xs text-gray-400 ml-auto">0 / 300</p>
+        </div>
+      </div>
+      <div class="flex justify-end gap-3 px-6 py-4 bg-gray-50 border-t border-gray-100">
+        <button type="button" class="px-5 h-10 bg-white border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-100" onclick="closeSubmitChangeModal()">取消</button>
+        <button id="confirmDocumentSubmit" type="button" class="px-5 h-10 bg-blue-600 text-white rounded-lg font-medium disabled:opacity-40 disabled:cursor-not-allowed" disabled onclick="confirmDocumentSubmission()">确认提交</button>
+      </div>
+    </div>
+  </div>
+
   <script>
     document.addEventListener('DOMContentLoaded', function() {
       // 左侧面板切换
@@ -1561,9 +1591,7 @@ body {
       var submitBtn = document.querySelector('[data-dom-id="btn-submit"]');
       if (submitBtn) {
         submitBtn.addEventListener('click', function() {
-          if (confirm('确认提交当前文书？提交后进入审核流程，将无法直接编辑。')) {
-            alert('文书已提交审核');
-          }
+          openSubmitChangeModal();
         });
       }
 
@@ -2348,6 +2376,53 @@ function closeCaseOriginal() {
   document.getElementById('caseOriginalModal')?.classList.add('hidden');
 }
 
+function openSubmitChangeModal() {
+  var modal = document.getElementById('submitChangeModal');
+  var textarea = document.getElementById('submitChangeNote');
+  if (!modal || !textarea) return;
+  textarea.value = '';
+  document.getElementById('submitChangeError')?.classList.add('hidden');
+  modal.classList.remove('hidden');
+  updateSubmitChangeState();
+  setTimeout(function() { textarea.focus(); }, 0);
+}
+
+function closeSubmitChangeModal() {
+  document.getElementById('submitChangeModal')?.classList.add('hidden');
+}
+
+function updateSubmitChangeState() {
+  var textarea = document.getElementById('submitChangeNote');
+  var confirmButton = document.getElementById('confirmDocumentSubmit');
+  var counter = document.getElementById('submitChangeCount');
+  var error = document.getElementById('submitChangeError');
+  if (!textarea || !confirmButton) return;
+  var note = textarea.value.trim();
+  confirmButton.disabled = !note;
+  if (counter) counter.textContent = textarea.value.length + ' / 300';
+  if (note && error) error.classList.add('hidden');
+}
+
+function confirmDocumentSubmission() {
+  var textarea = document.getElementById('submitChangeNote');
+  var error = document.getElementById('submitChangeError');
+  var note = textarea ? textarea.value.trim() : '';
+  if (!note) {
+    if (error) error.classList.remove('hidden');
+    if (textarea) textarea.focus();
+    return;
+  }
+  clearTimeout(documentAutoSaveTimer);
+  if (typeof persistDocumentDraft === 'function') persistDocumentDraft();
+  localStorage.setItem('pbs_document_last_submit_note', note);
+  var currentNote = document.getElementById('currentVersionChangeNote');
+  if (currentNote) currentNote.textContent = '856 字 · ' + note;
+  var status = document.querySelector('.topbar-status');
+  if (status) status.innerHTML = '<span class="topbar-status-dot"></span>审核中';
+  closeSubmitChangeModal();
+  showToast('文书已提交审核，更改说明已记录', 'success');
+}
+
 // 增强保存按钮
 document.querySelector('[data-dom-id="btn-save"]')?.addEventListener('click', function() {
   clearTimeout(documentAutoSaveTimer);
@@ -2355,12 +2430,6 @@ document.querySelector('[data-dom-id="btn-save"]')?.addEventListener('click', fu
   showToast('文书已保存', 'success');
 });
 
-// 增强提交按钮
-document.querySelector('[data-dom-id="btn-submit"]')?.addEventListener('click', function() {
-  if (confirm('确认提交当前文书？提交后进入审核流程，将无法直接编辑。')) {
-    showToast('文书已提交审核', 'success');
-  }
-});
 </script>
 
 </body></html>

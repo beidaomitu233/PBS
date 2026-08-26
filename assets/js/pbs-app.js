@@ -12,17 +12,13 @@
   var ROLES = ['超级管理员', '平台运维人员', '机构管理员', '销售人员', '项目经理',
     '文书人员', '网申人员', '文书审核', '文书机构管理员'];
 
-  /* 权限继承：PM覆盖项目交付团队；机构管理员在自身权限外继承PM全部权限；文书机构管理员继承文书交付与审核团队 */
-  var ROLE_INHERITANCE = {
-    '项目经理': ['文书人员', '网申人员', '文书审核'],
-    '机构管理员': ['项目经理', '文书人员', '网申人员', '文书审核'],
-    '文书机构管理员': ['文书人员', '文书审核']
-  };
+  /* 角色严格隔离：多角色账号按实际被授予的角色取权限并集，不再通过管理岗位自动继承执行岗位。 */
+  var ROLE_INHERITANCE = {};
   function roleCanAccess(role, allowedRoles) {
-    if (role === '超级管理员') return true;
+    var roles = Array.isArray(role) ? role : [role];
+    if (roles.indexOf('超级管理员') >= 0) return true;
     if (!allowedRoles || !allowedRoles.length) return false;
-    var capabilities = [role].concat(ROLE_INHERITANCE[role] || []);
-    return capabilities.some(function (capability) { return allowedRoles.indexOf(capability) >= 0; });
+    return roles.some(function (candidate) { return allowedRoles.indexOf(candidate) >= 0; });
   }
 
   /* 用户真实角色列表（登录写入 session.roles；超级管理员拥有全部角色视角） */
@@ -74,6 +70,551 @@
     docadmin: 'workbench_docadmin'
   };
 
+  /* ============================================================
+     权限模型：按「页面 → 权限项」组织
+     - 每个业务页面独立成组，组 id 即权限存储的键
+     - 每组第一项恒为「列表展示」，其余为该页面上真实存在的操作
+     - 纯展示控件（搜索/重置/分页/关闭弹窗）不做权限项，避免无意义的配置噪音
+     - 权限项 id 全局唯一；跨页面同名操作按页面拆分为独立 id，便于逐页精细授权
+     ============================================================ */
+  var PERMISSION_TREE = [];
+  function definePermissionPage(module, id, name, file, items) {
+    PERMISSION_TREE.push({ module: module, id: id, name: name, file: file || '', items: items });
+  }
+
+  /* 历史默认授权快照已移除；旧配置统一通过下方权限别名迁移。 */
+
+  definePermissionPage('工作台', 'wb_home', '工作台首页', '', [
+    { id: 'workbench_platform', label: '平台运维工作台', desc: '可见平台运维视角' },
+    { id: 'workbench_org_admin', label: '机构管理员工作台', desc: '可见机构运营视角' },
+    { id: 'workbench_pm', label: '项目经理工作台', desc: '可见项目经理视角' },
+    { id: 'workbench_sales', label: '销售人员工作台', desc: '可见销售视角' },
+    { id: 'workbench_writer', label: '文书人员工作台', desc: '可见文书交付视角' },
+    { id: 'workbench_apply', label: '网申人员工作台', desc: '可见网申视角' },
+    { id: 'workbench_audit', label: '文书审核工作台', desc: '可见审核视角' },
+    { id: 'workbench_docadmin', label: '文书机构管理员工作台', desc: '可见文书管理视角' }
+  ]);
+
+  definePermissionPage('学生档案', 'student_list', '学生档案列表页', '学生档案列表页 - 留学申请管理系统.html', [
+    { id: 'customer_view', label: '列表展示' },
+    { id: 'customer_manage', label: '管理学生档案' },
+    { id: 'customer_export', label: '导出档案数据' }
+  ]);
+  definePermissionPage('学生档案', 'student_detail', '学生档案详情页', '学生档案详情页 - 留学申请管理系统.html', [
+    { id: 'customer_view_detail', label: '列表展示' },
+    { id: 'customer_edit', label: '维护档案详情' }
+  ]);
+
+  /* ToB SaaS 边界：角色权限 / 操作日志 / AI / 视频只属于平台运维侧。
+     所有机构业务角色均不得持有这些页面的权限项，也看不到对应菜单与页面。 */
+  var PLATFORM_ONLY_SYSTEM_ROLES = [
+    '机构管理员', '销售人员', '项目经理', '文书人员',
+    '网申人员', '文书审核', '文书机构管理员'
+  ];
+  var PLATFORM_ONLY_PAGE_GROUPS = ['role_perm', 'op_log', 'ai_admin', 'video_admin'];
+
+  definePermissionPage('PMO监控台', 'project_pool', '项目池列表页', '项目池列表页 - 留学申请管理系统.html', [
+    { id: 'project_view', label: '列表展示' },
+    { id: 'project_create', label: '新建线下项目', desc: '创建线下项目档案及购买服务' }
+  ]);
+  definePermissionPage('PMO监控台', 'project_detail', '项目详情页', '项目详情页 - 留学申请管理系统.html', [
+    { id: 'project_view_detail', label: '列表展示' },
+    { id: 'project_team_manage', label: '管理团队' }
+  ]);
+  definePermissionPage('PMO监控台', 'goal_detail', '院校目标详情页', '院校目标详情页 - 留学申请管理系统.html', [
+    { id: 'goal_view', label: '列表展示' },
+    { id: 'goal_team_manage', label: '管理目标任务分配' },
+    { id: 'goal_complete', label: '确认完成任务' }
+  ]);
+
+  definePermissionPage('项目管理', 'my_project_list', '我的项目列表页', '我的项目列表页 - 留学申请管理系统.html', [
+    { id: 'my_project_view', label: '列表展示' },
+    { id: 'my_project_handle', label: '处理项目接收' }
+  ]);
+  definePermissionPage('项目管理', 'my_project_detail', '我的项目详情页', '我的项目详情页 - 留学申请管理系统.html', [
+    { id: 'my_project_view_detail', label: '列表展示' },
+    { id: 'my_project_team_manage', label: '管理项目成员' },
+    { id: 'my_project_complete', label: '完成任务' }
+  ]);
+
+  definePermissionPage('文书交付', 'doc_task_list', '任务列表页', '任务列表页 - 文书交付系统.html', [
+    { id: 'doc_view', label: '列表展示' },
+    { id: 'doc_task_handle', label: '处理文书任务' }
+  ]);
+  definePermissionPage('文书交付', 'doc_editor', '文书编辑器', '文书编辑器 - 文书交付系统.html', [
+    { id: 'doc_editor_view', label: '列表展示' },
+    { id: 'doc_edit', label: '编辑文书' },
+    { id: 'doc_download', label: '导出与下载文书' },
+    { id: 'doc_submit', label: '提交文书任务' }
+  ]);
+  definePermissionPage('文书交付', 'doc_template_list', '模板库列表', '模板库列表 - 文书交付系统.html', [
+    { id: 'library_view', label: '列表展示' },
+    { id: 'library_manage', label: '管理模板' },
+    { id: 'library_export', label: '导出与下载模板' }
+  ]);
+  definePermissionPage('文书交付', 'doc_template_edit', '模板库编辑', '模板库编辑 - 文书交付系统.html', [
+    { id: 'doc_template_edit_view', label: '列表展示' },
+    { id: 'doc_template_save', label: '编辑并保存模板' }
+  ]);
+  definePermissionPage('文书交付', 'doc_case_list', '案例库', '案例库 - 文书交付系统.html', [
+    { id: 'case_view', label: '列表展示' },
+    { id: 'case_manage', label: '管理案例' },
+    { id: 'case_export', label: '导出与下载案例' }
+  ]);
+
+  definePermissionPage('文书审核', 'doc_review_list', '文书审核列表页', '文书审核列表页 - 留学申请管理系统.html', [
+    { id: 'doc_review', label: '列表展示' },
+    { id: 'review_task_handle', label: '处理审核任务' }
+  ]);
+  definePermissionPage('文书审核', 'doc_review_detail', '文书审核详情页', '文书审核详情页 - 留学申请管理系统.html', [
+    { id: 'review_view_detail', label: '列表展示' },
+    { id: 'review_score', label: '评审文书' },
+    { id: 'review_decide', label: '提交审核结论' },
+    { id: 'review_download', label: '下载与导出文书' }
+  ]);
+
+  definePermissionPage('网申管理', 'app_task_list', '网申任务列表页', '网申任务列表页 - 留学申请管理系统.html', [
+    { id: 'app_view', label: '列表展示' },
+    { id: 'app_task_handle', label: '处理网申任务' }
+  ]);
+  definePermissionPage('网申管理', 'app_task_detail', '网申任务详情页', '网申任务详情页 - 留学申请管理系统.html', [
+    { id: 'app_view_detail', label: '列表展示' },
+    { id: 'app_fill', label: '维护网申内容' },
+    { id: 'app_submit', label: '提交申请与更新结果' }
+  ]);
+  definePermissionPage('网申管理', 'app_template_list', '网申模板库', '网申模板库 - 留学申请管理系统.html', [
+    { id: 'app_library_view', label: '列表展示' },
+    { id: 'app_library_manage', label: '管理网申模板' },
+    { id: 'app_library_export', label: '导出与下载模板' }
+  ]);
+  definePermissionPage('网申管理', 'app_template_edit', '网申模板编辑', '网申模板编辑 - 留学申请管理系统.html', [
+    { id: 'app_template_edit_view', label: '列表展示' },
+    { id: 'app_template_save', label: '编辑并保存模板' }
+  ]);
+
+  definePermissionPage('监控管理', 'monitor_list', '监控任务列表', '监控任务列表 - PBS留学CRM.html', [
+    { id: 'monitor_view', label: '列表展示' },
+    { id: 'monitor_track', label: '手动触发监控' }
+  ]);
+  definePermissionPage('监控管理', 'monitor_detail', '监控详情页', '监控详情页 - 留学申请管理系统.html', [
+    { id: 'monitor_detail_view', label: '列表展示' }
+  ]);
+  definePermissionPage('监控管理', 'monitor_detail_site', '监控详情页（官网）', '监控详情页（官网） - 留学申请管理系统.html', [
+    { id: 'monitor_site_view', label: '列表展示' },
+    { id: 'monitor_site_manage', label: '维护官网监控' }
+  ]);
+  definePermissionPage('监控管理', 'monitor_detail_mail', '监控详情页（邮件）', '监控详情页（邮件） - 留学申请管理系统.html', [
+    { id: 'monitor_mail_view', label: '列表展示' },
+    { id: 'monitor_mail_manage', label: '维护邮件监控' }
+  ]);
+
+  definePermissionPage('结项归档', 'archive_list', '结项归档列表', '结项归档列表 - PBS留学CRM系统.html', [
+    { id: 'archive_view', label: '列表展示' }
+  ]);
+  definePermissionPage('结项归档', 'archive_detail', '结项详情页', '结项详情页 - 留学申请管理系统.html', [
+    { id: 'archive_view_detail', label: '列表展示' },
+    { id: 'archive_create', label: '编制结项' },
+    { id: 'archive_approve', label: '确认结项' }
+  ]);
+
+  definePermissionPage('选校管理', 'school_task_list', '选校任务列表页', '选校任务列表页 - 留学申请管理系统.html', [
+    { id: 'school_task', label: '列表展示' },
+    { id: 'school_task_manage', label: '管理选校任务' }
+  ]);
+  definePermissionPage('选校管理', 'school_workspace', '选校工作台页', '选校工作台页 - 留学申请管理系统.html', [
+    { id: 'school_plan', label: '列表展示' },
+    { id: 'school_plan_manage', label: '维护选校方案' },
+    { id: 'school_plan_share', label: '分享方案给客户' }
+  ]);
+  definePermissionPage('选校管理', 'school_plan_empty', '选校方案未生成', '选校方案未生成 - 留学申请管理系统.html', [
+    { id: 'school_plan_empty_view', label: '列表展示' }
+  ]);
+  definePermissionPage('选校管理', 'school_share_h5', '选校方案分享H5', '选校方案分享H5 - PBS留学.html', [
+    { id: 'school_share_view', label: '列表展示', desc: '客户端方案预览' }
+  ]);
+
+  definePermissionPage('机构与成员', 'org_list', '机构管理', '机构管理 - PBS留学CRM系统.html', [
+    { id: 'sys_org', label: '列表展示' }
+  ]);
+  definePermissionPage('机构与成员', 'personnel_list', '人员管理', '人员管理 - PBS留学CRM系统.html', [
+    { id: 'personnel_view', label: '列表展示' },
+    { id: 'personnel_manage', label: '管理成员' },
+    { id: 'personnel_assign_roles', label: '配置成员角色', desc: '控制新增或编辑成员时可选择的角色' }
+  ]);
+
+  definePermissionPage('系统管理', 'role_perm', '角色权限管理', '角色权限管理 - 留学申请管理系统.html', [
+    { id: 'sys_role', label: '列表展示' },
+    { id: 'sys_role_manage', label: '管理角色与授权' }
+  ]);
+  definePermissionPage('系统管理', 'op_log', '操作日志审计', '操作日志审计 - 留学申请管理系统.html', [
+    { id: 'sys_log', label: '列表展示' },
+    { id: 'sys_log_export', label: '导出日志' }
+  ]);
+  definePermissionPage('系统管理', 'ai_admin', 'AI管理', 'AI管理 - 留学申请管理系统.html', [
+    { id: 'ai_view', label: '列表展示' },
+    { id: 'ai_manage', label: '管理 AI 配置' }
+  ]);
+  definePermissionPage('系统管理', 'video_admin', '视频管理', '视频管理 - 留学申请管理系统.html', [
+    { id: 'video_view', label: '列表展示' },
+    { id: 'video_manage', label: '管理视频' }
+  ]);
+
+  /* ---------- 权限树派生索引 ---------- */
+  var PERMISSION_GROUP_OF = {};   /* 权限项 id → 所属页面分组 id */
+  var PERMISSION_GROUP_IDS = [];  /* 全部页面分组 id */
+  var PAGE_VIEW_PERMISSION = {};  /* 页面文件名 → 该页「列表展示」权限项 id */
+  PERMISSION_TREE.forEach(function (group) {
+    PERMISSION_GROUP_IDS.push(group.id);
+    group.items.forEach(function (item) { PERMISSION_GROUP_OF[item.id] = group.id; });
+    if (group.file && group.items.length) PAGE_VIEW_PERMISSION[group.file] = group.items[0].id;
+  });
+  function permissionGroupIds(ids) {
+    /* 把扁平的权限项 id 列表还原成 { 页面分组: [id...] } 的存储结构 */
+    var out = {};
+    PERMISSION_GROUP_IDS.forEach(function (groupId) { out[groupId] = []; });
+    (ids || []).forEach(function (id) {
+      var groupId = PERMISSION_GROUP_OF[id];
+      if (groupId && out[groupId].indexOf(id) < 0) out[groupId].push(id);
+    });
+    return out;
+  }
+
+  /* ---------- 内置角色的默认授权（扁平权限项列表） ----------
+     语义与旧版一一对应；机构侧角色一律不含系统管理类页面。 */
+  var ROLE_DEFAULT_GRANTS = {
+    '平台运维人员': [
+      'workbench_platform',
+      'library_view', 'library_manage', 'library_export', 'doc_template_edit_view', 'doc_template_save',
+      'case_view', 'case_manage', 'case_export',
+      'app_library_view', 'app_library_manage', 'app_library_export', 'app_template_edit_view', 'app_template_save',
+      'monitor_view', 'monitor_detail_view', 'monitor_site_view', 'monitor_mail_view',
+      'sys_org',
+      'personnel_view', 'personnel_manage', 'personnel_assign_roles',
+      'sys_role', 'sys_role_manage', 'sys_log', 'sys_log_export',
+      'ai_view', 'ai_manage', 'video_view', 'video_manage'
+    ],
+    '机构管理员': [
+      'workbench_org_admin',
+      'customer_view', 'customer_view_detail',
+      'project_view', 'project_create', 'project_view_detail', 'project_team_manage',
+      'goal_view', 'goal_team_manage',
+      'monitor_view', 'monitor_track', 'monitor_detail_view',
+      'monitor_site_view', 'monitor_site_manage', 'monitor_mail_view', 'monitor_mail_manage',
+      'school_task', 'school_task_manage', 'school_plan_empty_view',
+      'personnel_view', 'personnel_manage', 'personnel_assign_roles'
+    ],
+    '销售人员': [
+      'workbench_sales',
+      'customer_view', 'customer_manage', 'customer_view_detail', 'customer_edit',
+      'school_task', 'school_task_manage',
+      'school_plan', 'school_plan_manage', 'school_plan_share', 'school_plan_empty_view', 'school_share_view'
+    ],
+    '项目经理': [
+      'workbench_pm',
+      'customer_view', 'customer_manage', 'customer_view_detail', 'customer_edit',
+      'my_project_view', 'my_project_handle', 'my_project_view_detail', 'my_project_team_manage', 'my_project_complete',
+      'goal_view', 'goal_team_manage', 'goal_complete',
+      'app_view', 'app_view_detail', 'app_library_view', 'app_template_edit_view',
+      'monitor_view', 'monitor_track', 'monitor_detail_view',
+      'monitor_site_view', 'monitor_site_manage', 'monitor_mail_view', 'monitor_mail_manage',
+      'archive_view', 'archive_view_detail', 'archive_create', 'archive_approve'
+    ],
+    '文书人员': [
+      'workbench_writer',
+      'customer_view', 'customer_view_detail',
+      'doc_view', 'doc_task_handle',
+      'doc_editor_view', 'doc_edit', 'doc_download', 'doc_submit',
+      'library_view', 'library_manage', 'library_export', 'doc_template_edit_view', 'doc_template_save',
+      'case_view', 'case_manage', 'case_export',
+      'archive_view', 'archive_view_detail'
+    ],
+    '网申人员': [
+      'workbench_apply',
+      'customer_view', 'customer_view_detail',
+      'app_view', 'app_task_handle', 'app_view_detail', 'app_fill', 'app_submit',
+      'app_library_view', 'app_library_manage', 'app_library_export', 'app_template_edit_view', 'app_template_save',
+      'archive_view', 'archive_view_detail'
+    ],
+    '文书审核': [
+      'workbench_audit',
+      'customer_view', 'customer_view_detail',
+      'doc_review', 'review_task_handle',
+      'review_view_detail', 'review_score', 'review_decide', 'review_download'
+    ],
+    '文书机构管理员': [
+      'workbench_docadmin',
+      'customer_view', 'customer_view_detail',
+      'doc_view',
+      'doc_editor_view', 'doc_edit', 'doc_download', 'doc_submit',
+      'library_view', 'library_manage', 'library_export', 'doc_template_edit_view', 'doc_template_save',
+      'case_view', 'case_manage', 'case_export',
+      'doc_review', 'review_view_detail', 'review_score', 'review_decide', 'review_download',
+      'personnel_view', 'personnel_manage', 'personnel_assign_roles'
+    ]
+  };
+
+  /* 角色权限页尚未保存配置时使用的默认权限；保存后完全以页面配置为准。 */
+  var DEFAULT_ROLE_PERMISSIONS = {};
+  Object.keys(ROLE_DEFAULT_GRANTS).forEach(function (role) {
+    DEFAULT_ROLE_PERMISSIONS[role] = permissionGroupIds(ROLE_DEFAULT_GRANTS[role]);
+  });
+
+  /* 旧权限项 id → 新权限项 id：用于迁移 localStorage 中已保存的历史配置，
+     保证升级后各角色的实际可操作范围不变。 */
+  var LEGACY_PERMISSION_ALIASES = {
+    wb_urge: [],
+    wb_message: [],
+    customer_view: ['customer_view', 'customer_view_detail'],
+    customer_add: ['customer_manage'],
+    customer_import: ['customer_manage'],
+    customer_delete: ['customer_manage'],
+    customer_edit: ['customer_edit'],
+    customer_field: ['customer_edit'],
+    customer_experience: ['customer_edit'],
+    customer_credential: ['customer_edit'],
+    customer_upload: ['customer_edit'],
+    customer_item_delete: ['customer_edit'],
+    project_view: ['project_view', 'my_project_view'],
+    project_view_detail: ['project_view_detail', 'my_project_view_detail', 'goal_view'],
+    project_assign_pm: ['project_team_manage'],
+    project_detail_assign_pm: ['project_team_manage'],
+    project_change_pm: ['project_team_manage'],
+    project_assign_member: ['project_team_manage', 'my_project_team_manage', 'goal_team_manage'],
+    project_change_member: ['project_team_manage', 'my_project_team_manage', 'goal_team_manage'],
+    project_assign: ['project_team_manage', 'my_project_team_manage', 'goal_team_manage'],
+    task_receive: ['my_project_handle', 'doc_task_handle', 'review_task_handle', 'app_task_handle'],
+    task_reject: ['my_project_handle', 'doc_task_handle', 'review_task_handle', 'app_task_handle'],
+    task_urge: [],
+    task_complete: ['goal_complete', 'my_project_complete', 'doc_submit', 'review_decide'],
+    project_pool_urge: [],
+    goal_urge: [],
+    my_project_urge: [],
+    my_project_detail_urge: [],
+    doc_task_urge: [],
+    review_urge: [],
+    app_urge: [],
+    doc_view: ['doc_view', 'doc_editor_view'],
+    doc_task_open_editor: ['doc_editor_view'],
+    doc_upload: ['doc_edit'],
+    doc_edit: ['doc_editor_view', 'doc_edit'],
+    doc_ai: ['doc_edit'],
+    doc_apply_template: ['doc_edit'],
+    doc_review: ['doc_review', 'review_view_detail', 'review_score'],
+    doc_download: ['doc_download', 'review_download'],
+    library_view: ['library_view', 'doc_template_edit_view', 'case_view', 'app_library_view', 'app_template_edit_view'],
+    library_create: ['library_manage', 'case_manage', 'app_library_manage'],
+    library_edit: ['doc_template_edit_view', 'doc_template_save'],
+    library_delete: ['library_manage', 'case_manage', 'app_library_manage'],
+    library_import: ['library_manage', 'case_manage', 'app_library_manage'],
+    library_export: ['library_export', 'case_export', 'app_library_export'],
+    case_upload: ['case_manage'],
+    case_parse: ['case_manage'],
+    case_to_template: ['case_manage'],
+    case_delete: ['case_manage'],
+    review_ai: ['review_score'],
+    review_receive: ['review_task_handle'],
+    review_reject: ['review_task_handle'],
+    review_pass: ['review_decide'],
+    review_return: ['review_decide'],
+    app_view: ['app_view', 'app_view_detail'],
+    app_receive: ['app_task_handle'],
+    app_reject: ['app_task_handle'],
+    app_fill: ['app_fill'],
+    app_ev_import: ['app_fill'],
+    app_upload: ['app_fill'],
+    app_create: ['app_fill'],
+    app_library_create: ['app_library_manage'],
+    app_library_delete: ['app_library_manage'],
+    app_library_import: ['app_library_manage'],
+    app_library_edit: ['app_template_edit_view', 'app_template_save'],
+    monitor_view: ['monitor_view', 'monitor_detail_view', 'monitor_site_view', 'monitor_mail_view'],
+    monitor_track: ['monitor_track', 'monitor_site_manage', 'monitor_mail_manage'],
+    monitor_alert: ['monitor_site_manage', 'monitor_mail_manage'],
+    monitor_report: ['monitor_detail_view'],
+    monitor_detail_track: ['monitor_track'],
+    monitor_site_track: ['monitor_track'],
+    monitor_mail_track: ['monitor_track'],
+    monitor_site_alert: [],
+    monitor_mail_alert: [],
+    monitor_site_config: ['monitor_site_manage'],
+    monitor_site_upload: ['monitor_site_manage'],
+    monitor_mail_config: ['monitor_mail_manage'],
+    monitor_mail_upload: ['monitor_mail_manage'],
+    archive_view: ['archive_view', 'archive_view_detail'],
+    archive_create: ['archive_create'],
+    archive_report: ['archive_create'],
+    school_task: ['school_task', 'school_plan_empty_view'],
+    school_task_create: ['school_task_manage'],
+    school_task_status: ['school_task_manage'],
+    school_task_open: ['school_plan'],
+    school_plan: ['school_plan', 'school_plan_manage'],
+    school_catalog: ['school_plan'],
+    school_plan_edit: ['school_plan_manage'],
+    school_plan_save: ['school_plan_manage'],
+    school_communication: ['school_plan_manage'],
+    school_plan_share: ['school_plan_share', 'school_share_view'],
+    personnel_add: ['personnel_manage'],
+    personnel_edit: ['personnel_manage'],
+    personnel_status: ['personnel_manage'],
+    personnel_account: ['personnel_manage'],
+    org_view_members: ['personnel_view'],
+    sys_user: ['personnel_view', 'personnel_manage'],
+    sys_org: ['sys_org', 'personnel_view'],
+    sys_role: ['sys_role', 'sys_role_manage'],
+    sys_role_create: ['sys_role_manage'],
+    sys_role_delete: ['sys_role_manage'],
+    sys_role_save: ['sys_role_manage'],
+    sys_log: ['sys_log', 'sys_log_export'],
+    sys_log_detail: ['sys_log'],
+    sys_personnel: ['personnel_view', 'personnel_manage', 'personnel_assign_roles'],
+    ai_model: ['ai_manage'],
+    ai_key: ['ai_manage'],
+    ai_prompt: ['ai_manage'],
+    ai_monitor: ['ai_view'],
+    sys_ai: ['ai_view', 'ai_manage'],
+    video_upload: ['video_manage'],
+    video_policy: ['video_manage'],
+    video_reset_first_play: ['video_manage'],
+    sys_video: ['video_view', 'video_manage'],
+    sys_config: ['ai_view', 'ai_manage', 'video_view', 'video_manage']
+  };
+  /* 当前页面结构中已移除或合并的权限项：读取旧保存数据时迁移到保留能力。 */
+  var REMOVED_PERMISSION_ALIASES = {
+    wb_urge: [],
+    wb_message: [],
+    customer_add: ['customer_manage'],
+    customer_import: ['customer_manage'],
+    customer_delete: ['customer_manage'],
+    customer_credential: ['customer_edit'],
+    customer_upload: ['customer_edit'],
+    customer_item_delete: ['customer_edit'],
+    customer_field: ['customer_edit'],
+    customer_experience: ['customer_edit'],
+    project_assign_pm: ['project_team_manage'],
+    project_detail_assign_pm: ['project_team_manage'],
+    project_pool_urge: [],
+    project_change_pm: ['project_team_manage'],
+    project_assign_member: ['project_team_manage'],
+    project_change_member: ['project_team_manage'],
+    goal_assign_member: ['goal_team_manage'],
+    goal_change_member: ['goal_team_manage'],
+    goal_urge: [],
+    my_project_receive: ['my_project_handle'],
+    my_project_reject: ['my_project_handle'],
+    my_project_urge: [],
+    my_project_assign_member: ['my_project_team_manage'],
+    my_project_change_member: ['my_project_team_manage'],
+    my_project_detail_urge: [],
+    doc_task_receive: ['doc_task_handle'],
+    doc_task_reject: ['doc_task_handle'],
+    doc_task_urge: [],
+    doc_task_open_editor: ['doc_editor_view'],
+    doc_upload: ['doc_edit'],
+    doc_ai: ['doc_edit'],
+    doc_apply_template: ['doc_edit'],
+    library_create: ['library_manage'],
+    library_delete: ['library_manage'],
+    library_import: ['library_manage'],
+    library_edit: ['doc_template_edit_view', 'doc_template_save'],
+    case_upload: ['case_manage'],
+    case_parse: ['case_manage'],
+    case_to_template: ['case_manage'],
+    case_delete: ['case_manage'],
+    review_receive: ['review_task_handle'],
+    review_reject: ['review_task_handle'],
+    review_urge: [],
+    review_pass: ['review_decide'],
+    review_return: ['review_decide'],
+    review_ai: ['review_score'],
+    app_receive: ['app_task_handle'],
+    app_reject: ['app_task_handle'],
+    app_urge: [],
+    app_ev_import: ['app_fill'],
+    app_upload: ['app_fill'],
+    app_create: ['app_fill'],
+    app_library_create: ['app_library_manage'],
+    app_library_delete: ['app_library_manage'],
+    app_library_import: ['app_library_manage'],
+    app_library_edit: ['app_template_edit_view', 'app_template_save'],
+    monitor_report: ['monitor_detail_view'],
+    monitor_detail_track: ['monitor_track'],
+    monitor_site_track: ['monitor_track'],
+    monitor_mail_track: ['monitor_track'],
+    monitor_detail_alert: [],
+    monitor_site_alert: [],
+    monitor_mail_alert: [],
+    monitor_site_config: ['monitor_site_manage'],
+    monitor_site_upload: ['monitor_site_manage'],
+    monitor_mail_config: ['monitor_mail_manage'],
+    monitor_mail_upload: ['monitor_mail_manage'],
+    archive_report: ['archive_create'],
+    school_task_create: ['school_task_manage'],
+    school_task_status: ['school_task_manage'],
+    school_task_open: ['school_plan'],
+    school_catalog: ['school_plan'],
+    school_plan_edit: ['school_plan_manage'],
+    school_plan_save: ['school_plan_manage'],
+    school_communication: ['school_plan_manage'],
+    personnel_add: ['personnel_manage'],
+    personnel_edit: ['personnel_manage'],
+    personnel_status: ['personnel_manage'],
+    personnel_account: ['personnel_manage'],
+    org_view_members: ['personnel_view'],
+    sys_user: ['personnel_view', 'personnel_manage'],
+    sys_role_create: ['sys_role_manage'],
+    sys_role_delete: ['sys_role_manage'],
+    sys_role_save: ['sys_role_manage'],
+    sys_log_detail: ['sys_log'],
+    ai_model: ['ai_manage'],
+    ai_key: ['ai_manage'],
+    ai_prompt: ['ai_manage'],
+    ai_monitor: ['ai_view'],
+    video_upload: ['video_manage'],
+    video_policy: ['video_manage'],
+    video_reset_first_play: ['video_manage']
+  };
+  /* 旧版按业务模块保存时用的分组键；用它判断一份已保存配置是旧结构还是新结构。
+     新结构的分组 id（wb_home / student_list / ...）与这些键不重名，判断可靠。 */
+  var LEGACY_MODULE_KEYS = ['workbench', 'customer', 'project', 'personnel', 'task', 'document',
+    'library', 'application', 'monitor', 'archive', 'school', 'system', 'ai', 'video'];
+  function isLegacyPermissionShape(source) {
+    return Object.keys(source || {}).some(function (key) { return LEGACY_MODULE_KEYS.indexOf(key) >= 0; });
+  }
+  /* 旧 id 展开成新 id。注意：只能对「旧结构」的配置做展开——
+     新结构下用户可能故意只勾了 project_view 而不勾 my_project_view，
+     若无条件展开会在每次读取时把用户取消掉的权限又加回来。 */
+  function expandLegacyPermissionIds(ids) {
+    var out = [];
+    function push(id) { if (PERMISSION_GROUP_OF[id] && out.indexOf(id) < 0) out.push(id); }
+    (ids || []).forEach(function (id) {
+      var alias = LEGACY_PERMISSION_ALIASES[id];
+      if (alias) alias.forEach(push);
+      else push(id);
+    });
+    return out;
+  }
+  function normalizePermissionIds(ids, legacy) {
+    if (legacy) return expandLegacyPermissionIds(ids);
+    var out = [];
+    function push(id) { if (PERMISSION_GROUP_OF[id] && out.indexOf(id) < 0) out.push(id); }
+    (ids || []).forEach(function (id) {
+      if (PERMISSION_GROUP_OF[id]) push(id);
+      else if (REMOVED_PERMISSION_ALIASES[id]) REMOVED_PERMISSION_ALIASES[id].forEach(push);
+      else expandLegacyPermissionIds([id]).forEach(push);
+    });
+    return out;
+  }
+
+  window.pbsPermissionTree = PERMISSION_TREE;
+  window.pbsPermissionGroupOf = PERMISSION_GROUP_OF;
+  window.pbsDefaultRolePermissions = DEFAULT_ROLE_PERMISSIONS;
+  window.pbsPlatformOnlyPageGroups = PLATFORM_ONLY_PAGE_GROUPS;
+  window.pbsPlatformOnlySystemRoles = PLATFORM_ONLY_SYSTEM_ROLES;
+  window.pbsExpandLegacyPermissionIds = expandLegacyPermissionIds;
+  window.pbsNormalizePermissionIds = normalizePermissionIds;
+  window.pbsIsLegacyPermissionShape = isLegacyPermissionShape;
+  window.pbsPermissionGroupIds = permissionGroupIds;
+
   /* 组件页（弹窗/抽屉，用于iframe弹层，不做权限校验与侧边栏渲染） */
   var COMPONENT_PAGES = ['新增用户弹窗.html', '新增人员弹窗.html', '新增角色弹窗.html', '系统消息弹窗.html'];
 
@@ -101,44 +642,45 @@
   /* ---------------- 菜单定义（RBAC） ---------------- */
   var MENUS = [
     { key: 'workbench', label: '工作台首页', icon: 'home', roles: ROLES.slice(), single: true },
-    { key: 'student', label: '学生档案', icon: 'idcard',
-      roles: ['平台运维人员', '机构管理员', '销售人员', '项目经理', '文书人员', '网申人员', '文书审核'],
+    { key: 'student', label: '学生档案', icon: 'idcard', permission: 'customer_view',
+      roles: ['机构管理员', '销售人员', '项目经理', '文书人员', '网申人员', '文书审核', '文书机构管理员'],
       children: [{ label: '学生档案列表', file: '学生档案列表页 - 留学申请管理系统.html' }] },
-    { key: 'pmo', label: 'PMO监控台', icon: 'folder', roles: ['机构管理员'],
+    { key: 'pmo', label: 'PMO监控台', icon: 'folder', permission: 'project_view', roles: ['机构管理员'],
       children: [
         { label: '项目池列表', file: '项目池列表页 - 留学申请管理系统.html' }] },
-    { key: 'project', label: '项目管理', icon: 'folder', roles: ['项目经理'],
+    { key: 'project', label: '项目管理', icon: 'folder', permission: 'my_project_view', roles: ['项目经理'],
       children: [
-        { label: '项目池列表', file: '项目池列表页 - 留学申请管理系统.html', roles: ['机构管理员'] },
-        { label: '我的项目列表', file: '我的项目列表页 - 留学申请管理系统.html' }] },
-    { key: 'doc', label: '文书交付', icon: 'doc', roles: ['文书人员', '平台运维人员'],
+        { label: '项目池列表', file: '项目池列表页 - 留学申请管理系统.html', permission: 'project_view', roles: ['机构管理员'] },
+        { label: '我的项目列表', file: '我的项目列表页 - 留学申请管理系统.html', permission: 'my_project_view' }] },
+    { key: 'doc', label: '文书交付', icon: 'doc', roles: ['文书人员', '平台运维人员', '文书机构管理员'],
       children: [
-        { label: '任务列表', file: '任务列表页 - 文书交付系统.html', roles: ['文书人员'] },
-        { label: '模板库', file: '模板库列表 - 文书交付系统.html', roles: ['文书人员', '平台运维人员'] },
-        { label: '案例库', file: '案例库 - 文书交付系统.html', roles: ['文书人员', '平台运维人员'] }] },
+        { label: '任务列表', file: '任务列表页 - 文书交付系统.html', permission: 'doc_view', roles: ['文书人员', '文书机构管理员'] },
+        { label: '模板库', file: '模板库列表 - 文书交付系统.html', permission: 'library_view', roles: ['文书人员', '平台运维人员', '文书机构管理员'] },
+        { label: '案例库', file: '案例库 - 文书交付系统.html', permission: 'case_view', roles: ['文书人员', '平台运维人员', '文书机构管理员'] }] },
     { key: 'apply', label: '网申管理', icon: 'globe', roles: ['网申人员', '项目经理', '平台运维人员'],
       children: [
-        { label: '网申任务列表', file: '网申任务列表页 - 留学申请管理系统.html', roles: ['网申人员', '项目经理'] },
-        { label: '网申模板库', file: '网申模板库 - 留学申请管理系统.html', roles: ['网申人员', '项目经理', '平台运维人员'] }
+        { label: '网申任务列表', file: '网申任务列表页 - 留学申请管理系统.html', permission: 'app_view', roles: ['网申人员', '项目经理'] },
+        { label: '网申模板库', file: '网申模板库 - 留学申请管理系统.html', permission: 'app_library_view', roles: ['网申人员', '项目经理', '平台运维人员'] }
       ] },
-    { key: 'monitor', label: '监控管理', icon: 'eye', roles: ['项目经理'],
+    { key: 'monitor', label: '监控管理', icon: 'eye', permission: 'monitor_view', roles: ['平台运维人员', '机构管理员', '项目经理'],
       children: [{ label: '监控任务列表', file: '监控任务列表 - PBS留学CRM.html' }] },
-    { key: 'archive', label: '结项归档', icon: 'archive', roles: ['项目经理', '文书人员', '网申人员'],
+    { key: 'archive', label: '结项归档', icon: 'archive', permission: 'archive_view', roles: ['项目经理', '文书人员', '网申人员'],
       children: [{ label: '结项归档列表', file: '结项归档列表 - PBS留学CRM系统.html' }] },
-    { key: 'review', label: '文书审核', icon: 'shield', roles: ['文书审核'],
+    { key: 'review', label: '文书审核', icon: 'shield', permission: 'doc_review', roles: ['文书审核', '文书机构管理员'],
       children: [{ label: '文书审核列表', file: '文书审核列表页 - 留学申请管理系统.html' }] },
-    { key: 'school', label: '选校管理', icon: 'map', roles: ['机构管理员', '销售人员'],
+    { key: 'school', label: '选校管理', icon: 'map', permission: ['school_task','school_plan'], roles: ['机构管理员', '销售人员'],
       children: [
-        { label: '选校任务列表', file: '选校任务列表页 - 留学申请管理系统.html', roles: ['机构管理员', '销售人员'] },
-        { label: '院校列表', file: '选校工作台页 - 留学申请管理系统.html', href: '选校工作台页 - 留学申请管理系统.html?mode=catalog', roles: ['销售人员'] }] },
-    { key: 'organization', label: '机构管理', icon: 'users', roles: ['平台运维人员'], single: true, file: '机构管理 - PBS留学CRM系统.html' },
-    { key: 'personnel', label: '机构成员管理', icon: 'idcard', roles: ['平台运维人员', '机构管理员', '文书机构管理员'], single: true, file: '人员管理 - PBS留学CRM系统.html' },
-    { key: 'usermgmt', label: '系统管理', icon: 'users', roles: ['平台运维人员', '机构管理员', '文书机构管理员'],
+        { label: '选校任务列表', file: '选校任务列表页 - 留学申请管理系统.html', permission: 'school_task', roles: ['机构管理员', '销售人员'] },
+        { label: '院校列表', file: '选校工作台页 - 留学申请管理系统.html', href: '选校工作台页 - 留学申请管理系统.html?mode=catalog', permission: 'school_plan', roles: ['销售人员'] }] },
+    { key: 'organization', label: '机构管理', icon: 'users', permission: 'sys_org', roles: ['平台运维人员'], single: true, file: '机构管理 - PBS留学CRM系统.html' },
+    { key: 'personnel', label: '机构成员管理', icon: 'idcard', permission: 'personnel_view', roles: ['机构管理员', '文书机构管理员'], single: true, file: '人员管理 - PBS留学CRM系统.html' },
+    /* 系统管理属于 SaaS 平台侧职责：仅平台运维人员可见，机构侧角色（含机构管理员）一律不暴露。 */
+    { key: 'usermgmt', label: '系统管理', icon: 'users', roles: ['平台运维人员'],
       children: [
-        { label: '角色权限管理', file: '角色权限管理 - 留学申请管理系统.html', roles: ['平台运维人员', '机构管理员', '文书机构管理员'] },
-        { label: '操作日志审计', file: '操作日志审计 - 留学申请管理系统.html', roles: ['平台运维人员', '机构管理员', '文书机构管理员'] },
-        { label: 'AI管理', file: 'AI管理 - 留学申请管理系统.html', roles: ['平台运维人员', '机构管理员', '文书机构管理员'] },
-        { label: '视频管理', file: '视频管理 - 留学申请管理系统.html', roles: ['平台运维人员', '机构管理员', '文书机构管理员'] }] }
+        { label: '角色权限管理', file: '角色权限管理 - 留学申请管理系统.html', permission: 'sys_role', roles: ['平台运维人员'] },
+        { label: '操作日志审计', file: '操作日志审计 - 留学申请管理系统.html', permission: 'sys_log', roles: ['平台运维人员'] },
+        { label: 'AI管理', file: 'AI管理 - 留学申请管理系统.html', permission: 'ai_view', roles: ['平台运维人员'] },
+        { label: '视频管理', file: '视频管理 - 留学申请管理系统.html', permission: 'video_view', roles: ['平台运维人员'] }] }
   ];
 
   /* ---------------- 页面级权限（RBAC） ---------------- */
@@ -147,8 +689,8 @@
     '平台运维工作台 - PBS留学CRM系统.html': ['平台运维人员'],
     '机构管理员工作台 - 留学申请管理系统.html': ['机构管理员'],
     '项目经理工作台 - 留学申请管理系统.html': ['项目经理'],
-    '学生档案列表页 - 留学申请管理系统.html': ['平台运维人员', '机构管理员', '销售人员', '项目经理', '文书人员', '网申人员', '文书审核', '文书机构管理员'],
-    '学生档案详情页 - 留学申请管理系统.html': ['平台运维人员', '机构管理员', '销售人员', '项目经理', '文书人员', '网申人员', '文书审核', '文书机构管理员'],
+    '学生档案列表页 - 留学申请管理系统.html': ['机构管理员', '销售人员', '项目经理', '文书人员', '网申人员', '文书审核', '文书机构管理员'],
+    '学生档案详情页 - 留学申请管理系统.html': ['机构管理员', '销售人员', '项目经理', '文书人员', '网申人员', '文书审核', '文书机构管理员'],
     '项目池列表页 - 留学申请管理系统.html': ['机构管理员'],
     '项目详情页 - 留学申请管理系统.html': ['机构管理员'],
     'PMO看板 - 留学申请管理系统.html': ['机构管理员'],
@@ -163,66 +705,41 @@
     '网申任务详情页 - 留学申请管理系统.html': ['网申人员', '项目经理'],
     '网申模板库 - 留学申请管理系统.html': ['网申人员', '项目经理', '平台运维人员'],
     '网申模板编辑 - 留学申请管理系统.html': ['网申人员', '项目经理', '平台运维人员'],
-    '监控任务列表 - PBS留学CRM.html': ['项目经理'],
-    '监控详情页 - 留学申请管理系统.html': ['项目经理'],
-    '监控详情页（官网） - 留学申请管理系统.html': ['项目经理'],
-    '监控详情页（邮件） - 留学申请管理系统.html': ['项目经理'],
+    '监控任务列表 - PBS留学CRM.html': ['平台运维人员', '机构管理员', '项目经理'],
+    '监控详情页 - 留学申请管理系统.html': ['平台运维人员', '机构管理员', '项目经理'],
+    '监控详情页（官网） - 留学申请管理系统.html': ['平台运维人员', '机构管理员', '项目经理'],
+    '监控详情页（邮件） - 留学申请管理系统.html': ['平台运维人员', '机构管理员', '项目经理'],
     '结项归档列表 - PBS留学CRM系统.html': ['项目经理', '文书人员', '网申人员'],
     '结项详情页 - 留学申请管理系统.html': ['项目经理', '文书人员', '网申人员'],
     '用户管理 - 留学申请管理系统.html': ['平台运维人员'],
     '机构管理 - PBS留学CRM系统.html': ['平台运维人员'],
     '人员管理 - PBS留学CRM系统.html': ['平台运维人员', '机构管理员', '文书机构管理员'],
-    '角色权限管理 - 留学申请管理系统.html': ['平台运维人员', '机构管理员', '文书机构管理员'],
-    '操作日志审计 - 留学申请管理系统.html': ['平台运维人员', '机构管理员', '文书机构管理员'],
-    'AI管理 - 留学申请管理系统.html': ['平台运维人员', '机构管理员', '文书机构管理员'],
-    '视频管理 - 留学申请管理系统.html': ['平台运维人员', '机构管理员', '文书机构管理员'],
+    /* 系统管理类页面仅平台运维人员可访问 */
+    '角色权限管理 - 留学申请管理系统.html': ['平台运维人员'],
+    '操作日志审计 - 留学申请管理系统.html': ['平台运维人员'],
+    'AI管理 - 留学申请管理系统.html': ['平台运维人员'],
+    '视频管理 - 留学申请管理系统.html': ['平台运维人员'],
     '文书审核列表页 - 留学申请管理系统.html': ['文书审核', '文书机构管理员'],
     '文书审核详情页 - 留学申请管理系统.html': ['文书审核', '文书机构管理员'],
     '选校订单池页 - 留学申请管理系统.html': ['机构管理员', '销售人员'],
     '选校任务列表页 - 留学申请管理系统.html': ['机构管理员', '销售人员'],
     '选校工作台页 - 留学申请管理系统.html': ['销售人员'],
-    '选校方案详情页 - 留学申请管理系统.html': ['销售人员', '机构管理员'],
+    '选校方案未生成 - 留学申请管理系统.html': ['销售人员', '机构管理员'],
     '院校目标详情页 - 留学申请管理系统.html': ['项目经理', '机构管理员']
   };
 
   /* 页面 → 权限点映射：角色权限管理页保存的配置通过此表驱动页面访问。
      未配置权限的角色按 PAGE_PERMS 默认角色放行；一旦在角色权限页保存过该角色的配置，
      则以「权限点」为准（project_view 等真正控制页面可达）。 */
-  var PAGE_PERM_KEYS = {
-    '学生档案列表页 - 留学申请管理系统.html': ['customer_view'],
-    '学生档案详情页 - 留学申请管理系统.html': ['customer_view'],
-    '项目池列表页 - 留学申请管理系统.html': ['project_view'],
-    '项目详情页 - 留学申请管理系统.html': ['project_view_detail'],
-    'PMO看板 - 留学申请管理系统.html': ['project_view'],
-    '我的项目列表页 - 留学申请管理系统.html': ['project_view'],
-    '我的项目详情页 - 留学申请管理系统.html': ['project_view_detail'],
-    '任务列表页 - 文书交付系统.html': ['doc_view'],
-    '文书编辑器 - 文书交付系统.html': ['doc_view', 'doc_edit'],
-    '模板库列表 - 文书交付系统.html': ['doc_view'],
-    '模板库编辑 - 文书交付系统.html': ['doc_edit'],
-    '案例库 - 文书交付系统.html': ['doc_view'],
-    '网申任务列表页 - 留学申请管理系统.html': ['app_view'],
-    '网申任务详情页 - 留学申请管理系统.html': ['app_view'],
-    '网申模板库 - 留学申请管理系统.html': ['app_view'],
-    '网申模板编辑 - 留学申请管理系统.html': ['app_fill'],
-    '监控任务列表 - PBS留学CRM.html': ['monitor_view'],
-    '监控详情页 - 留学申请管理系统.html': ['monitor_view'],
-    '监控详情页（官网） - 留学申请管理系统.html': ['monitor_view'],
-    '监控详情页（邮件） - 留学申请管理系统.html': ['monitor_view'],
-    '结项归档列表 - PBS留学CRM系统.html': ['archive_view'],
-    '结项详情页 - 留学申请管理系统.html': ['archive_view'],
-    '用户管理 - 留学申请管理系统.html': ['sys_user'],
-    '机构管理 - PBS留学CRM系统.html': ['sys_org'],
-    '人员管理 - PBS留学CRM系统.html': ['sys_personnel'],
-    '角色权限管理 - 留学申请管理系统.html': ['sys_role'],
-    '操作日志审计 - 留学申请管理系统.html': ['sys_log'],
-    'AI管理 - 留学申请管理系统.html': ['sys_ai'],
-    '视频管理 - 留学申请管理系统.html': ['sys_video'],
-    '选校订单池页 - 留学申请管理系统.html': ['school_task'],
-    '选校任务列表页 - 留学申请管理系统.html': ['school_task'],
-    '选校工作台页 - 留学申请管理系统.html': ['school_plan', 'school_catalog'],
-    '选校方案详情页 - 留学申请管理系统.html': ['school_plan']
-  };
+  /* 直接由权限树派生：每个页面的可达性由该页「列表展示」权限项决定，
+     新增页面只需在 PERMISSION_TREE 里声明，无需再手工维护这张表。 */
+  var PAGE_PERM_KEYS = {};
+  Object.keys(PAGE_VIEW_PERMISSION).forEach(function (file) {
+    PAGE_PERM_KEYS[file] = [PAGE_VIEW_PERMISSION[file]];
+  });
+  /* 重定向页：boot() 会先跳转，这里保留兜底权限点 */
+  PAGE_PERM_KEYS['用户管理 - 留学申请管理系统.html'] = ['personnel_view'];
+  PAGE_PERM_KEYS['选校订单池页 - 留学申请管理系统.html'] = ['school_task'];
 
   /* ---------------- 会话 ---------------- */
   function getSession() {
@@ -531,14 +1048,18 @@
     '网申模板库 - 留学申请管理系统.html': ['网申模板库 - 留学申请管理系统.html', '网申模板编辑 - 留学申请管理系统.html'],
     '监控任务列表 - PBS留学CRM.html': ['监控任务列表 - PBS留学CRM.html', '监控详情页 - 留学申请管理系统.html'],
     '结项归档列表 - PBS留学CRM系统.html': ['结项归档列表 - PBS留学CRM系统.html', '结项详情页 - 留学申请管理系统.html'],
-    '选校任务列表页 - 留学申请管理系统.html': ['选校任务列表页 - 留学申请管理系统.html', '选校方案详情页 - 留学申请管理系统.html']
+    '选校任务列表页 - 留学申请管理系统.html': ['选校任务列表页 - 留学申请管理系统.html', '选校方案未生成 - 留学申请管理系统.html']
   };
 
   function hrefFile(href) {
     return (href || '').split('?')[0];
   }
 
-  function renderRoleNavigation(role, file, workbenchHref, showWorkbench) {
+  function renderRoleNavigation(session, file, workbenchHref, showWorkbench) {
+    var role = session.role;
+    var accessRoles = session.previewRole && session.previewRole !== 'all'
+      ? [session.previewRole]
+      : (session.userRoles && session.userRoles.length ? session.userRoles : [session.role]);
     var menuMap = {};
     MENUS.forEach(function(menu) { menuMap[menu.key] = menu; });
     var workbenchTarget = hrefFile(workbenchHref);
@@ -550,7 +1071,7 @@
     }
 
     var studentMenu = menuMap.student;
-    if (studentMenu && roleCanAccess(role, studentMenu.roles)) {
+    if (studentMenu && roleCanAccess(accessRoles, studentMenu.roles) && sessionHasPermission(session, studentMenu.permission)) {
       var studentTarget = studentMenu.children[0].file;
       var studentActive = !workbenchView && NAV_ACTIVE_FILES[studentTarget].indexOf(file) >= 0;
       html += '<a href="' + encodeURI(studentTarget) + '" class="pbs-pm-primary-link ' + (studentActive ? 'is-active' : '') + '">' + svgIcon(ICONS.idcard, 'w-5 h-5') + '<span>学生档案</span></a>';
@@ -560,11 +1081,11 @@
     var stepNumber = 0;
     FLOW_MENU_ORDER.forEach(function(key) {
       var menu = menuMap[key];
-      if (!menu || !roleCanAccess(role, menu.roles)) return;
+      if (!menu || !roleCanAccess(accessRoles, menu.roles) || !sessionHasPermission(session, menu.permission)) return;
       var target = menu.file || '';
       var children = (menu.children || []).filter(function(child) {
         if (key === 'project' && child.file === '项目池列表页 - 留学申请管理系统.html') return false;
-        return !child.roles || roleCanAccess(role, child.roles);
+        return (!child.roles || roleCanAccess(accessRoles, child.roles)) && sessionHasPermission(session, child.permission);
       });
       if (!menu.single && !children.length) return;
 
@@ -603,7 +1124,7 @@
     var role = session.role;
     var workbenchFile = ROLE_WORKBENCH[role];
 
-    var html = renderRoleNavigation(role, file, workbenchFile, workbenchVisible(session));
+    var html = renderRoleNavigation(session, file, workbenchFile, workbenchVisible(session));
     html += '<div class="p-4 border-t border-gray-100">' +
       '<div class="flex items-center gap-3 px-3 py-3 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl">' +
       '<div class="w-9 h-9 bg-gradient-to-br from-blue-500 to-purple-500 rounded-full flex items-center justify-center flex-shrink-0">' +
@@ -1378,9 +1899,9 @@
     '项目详情页 - 留学申请管理系统.html': function () {
       /* 分配/更换抽屉由页面内脚本自行绑定（openAssignDrawer/openChangePMDrawer 为页面闭包函数），此处不重复绑定 */
     },
-    /* 客户详情页：仅项目经理可编辑档案，其余角色隐藏"编辑档案"按钮 */
+    /* 学生档案：是否可编辑由 customer_edit 权限决定。 */
     '学生档案详情页 - 留学申请管理系统.html': function (session) {
-      if (session && !roleCanAccess(session.role, ['项目经理'])) {
+      if (session && !sessionHasPermission(session, 'customer_edit')) {
         document.querySelectorAll('button, a').forEach(function (el) {
           if (el.textContent.replace(/\s/g, '') === '编辑档案') el.style.display = 'none';
         });
@@ -1448,14 +1969,38 @@
     '文书审核列表页 - 留学申请管理系统.html': { param: true, keys: ['audit'] }
   };
 
-  /* 各工作台独立权限：角色权限管理页保存到 localStorage；未配置时仅默认开放角色本人的工作台。 */
+  /* 把任意版本（旧按模块 / 新按页面）的已保存配置统一归一化成
+     { 页面分组 id: [权限项 id] } 的新结构；旧 id 经 LEGACY_PERMISSION_ALIASES 展开。 */
+  function migrateSavedRolePermissions(role, source) {
+    var flat = [];
+    Object.keys(source || {}).forEach(function (groupId) {
+      var ids = source[groupId];
+      if (!Array.isArray(ids)) return;
+      ids.forEach(function (id) { if (flat.indexOf(id) < 0) flat.push(id); });
+    });
+    /* 兼容最早期的通用工作台权限：只转换成该角色自己的工作台视角。 */
+    if (flat.indexOf('workbench_view') >= 0) {
+      var ownWorkbench = WORKBENCH_ROLE_PERMISSION[role];
+      if (ownWorkbench && flat.indexOf(ownWorkbench) < 0) flat.push(ownWorkbench);
+    }
+    var value = permissionGroupIds(normalizePermissionIds(flat, isLegacyPermissionShape(source)));
+    /* 平台运维不参与机构侧学生档案业务 */
+    if (role === '平台运维人员') {
+      value.student_list = [];
+      value.student_detail = [];
+    }
+    /* 平台系统页面只允许平台运维角色持有；机构内置角色和自建角色的
+       历史残留一律清空，避免配置页显示已授权而运行时必然拒绝。 */
+    if (role !== '平台运维人员' && role !== '超级管理员') {
+      PLATFORM_ONLY_PAGE_GROUPS.forEach(function (groupId) { value[groupId] = []; });
+    }
+    return value;
+  }
   function savedRolePerms() {
     try {
       var saved = JSON.parse(localStorage.getItem(ROLE_PERMS_KEY) || '{}');
       Object.keys(saved || {}).forEach(function (role) {
-        var system = saved[role] && saved[role].system;
-        if (!Array.isArray(system) || system.indexOf('sys_config') < 0) return;
-        ['sys_ai', 'sys_video'].forEach(function (id) { if (system.indexOf(id) < 0) system.push(id); });
+        saved[role] = migrateSavedRolePermissions(role, saved[role]);
       });
       return saved;
     } catch (e) { return {}; }
@@ -1465,19 +2010,225 @@
     if (!permIds || !permIds.length) return true;
     if (role === '超级管理员') return true;
     var perms = savedRolePerms();
-    var checkRoles = [role].concat(ROLE_INHERITANCE[role] || []);
-    return checkRoles.some(function (r) {
-      var p = perms[r];
-      if (!p) return null; /* 未配置：交给调用方按默认角色表兜底 */
-      return permIds.some(function (id) {
-        return Object.keys(p).some(function (mod) { return (p[mod] || []).indexOf(id) >= 0; });
-      });
+    var p = perms[role] || DEFAULT_ROLE_PERMISSIONS[role];
+    if (!p) return false;
+    return permIds.some(function (id) {
+      return Object.keys(p).some(function (mod) { return (p[mod] || []).indexOf(id) >= 0; });
     });
   }
   function roleIsConfigured(role) {
     if (role === '超级管理员') return true;
     var perms = savedRolePerms();
     return !!(perms && perms[role]);
+  }
+  function sessionRoles(session) {
+    if (!session) return [];
+    if (session.previewRole && session.previewRole !== 'all') return [session.previewRole];
+    return session.userRoles && session.userRoles.length ? session.userRoles.slice() : [session.role];
+  }
+  function sessionHasPermission(session, permIds) {
+    if (!permIds || (Array.isArray(permIds) && !permIds.length)) return true;
+    var ids = Array.isArray(permIds) ? permIds : [permIds];
+    return sessionRoles(session).some(function (role) { return roleHasPermission(role, ids); });
+  }
+  window.pbsHasPermission = function (permIds) {
+    return sessionHasPermission(window.pbsGetSession ? window.pbsGetSession() : null, permIds);
+  };
+
+  /* ---------------- 按钮级权限 ----------------
+     复用角色权限页现有权限点；没有独立权限点的动作暂随所属页面权限，不擅自扩充配置项。 */
+  var ACTION_PERMISSION_RULES = {
+    '学生档案列表页 - 留学申请管理系统.html': [
+      { permission: 'customer_manage', texts: ['新增学生档案','新增档案','批量导入','导入学生档案','确认导入','删除','批量删除'] },
+      { permission: 'customer_export', texts: ['导出','批量导出'] }
+    ],
+    '学生档案详情页 - 留学申请管理系统.html': [
+      { permission: 'customer_edit', texts: ['编辑档案','保存','新增科目','新增字段','编辑字段信息','保存设置','添加工作经历','添加教育经历','添加荣誉','添加实践经历','添加学术发表','添加账号','添加资质','上传文件','开始上传','选择文件','删除'] }
+    ],
+    '项目池列表页 - 留学申请管理系统.html': [
+      { permission: 'project_create', texts: ['新增项目','新建项目','创建项目档案','确认创建','移除'] },
+      { permission: 'project_team_manage', texts: ['分配','确认分配'] }
+    ],
+    '项目详情页 - 留学申请管理系统.html': [
+      { permission: 'project_team_manage', texts: ['分配','确认分配','更换项目经理','确认更换','提前分配','完成本院校目标分配','按需更换','完成本院校目标更换'] }
+    ],
+    '我的项目列表页 - 留学申请管理系统.html': [
+      { permission: 'my_project_handle', texts: ['接收','立即接收','退回','确认退回'] }
+    ],
+    '我的项目详情页 - 留学申请管理系统.html': [
+      { permission: 'my_project_team_manage', texts: ['分配人员','确认分配','更换人员','确认更换'] },
+      { permission: 'my_project_complete', texts: ['完成任务','确认完成'] }
+    ],
+    '院校目标详情页 - 留学申请管理系统.html': [
+      { permission: 'goal_team_manage', texts: ['分配任务','确认分发','更换分配','确认更换'] },
+      { permission: 'goal_complete', texts: ['完成任务','确认完成'] }
+    ],
+    '机构管理 - PBS留学CRM系统.html': [
+      { permission: 'personnel_view', texts: ['查看成员'] }
+    ],
+    '人员管理 - PBS留学CRM系统.html': [
+      { permission: 'personnel_manage', texts: ['新增成员','确认创建','编辑','保存','停职','复职'] },
+      { permission: 'personnel_manage', selector: '#add-expiry-type,#add-expiry-date,#add-must-change-pwd,input[name="add-status"]', mode: 'disable' },
+      { permission: 'personnel_assign_roles', selector: '#add-roles input,#edit-roles input', mode: 'disable' }
+    ],
+    '任务列表页 - 文书交付系统.html': [
+      { permission: 'doc_editor_view', texts: ['进入文书编辑器'] },
+      { permission: 'doc_task_handle', texts: ['接收','立即接收','接收任务','退回','确认退回'] }
+    ],
+    '文书编辑器 - 文书交付系统.html': [
+      { permission: 'doc_edit', texts: ['保存','编辑','补充信息','删除','新增邮箱','基于当前内容发起请求','扩写段落','润色优化','续写段落','语法检查','AI修改','套用','确认套用','上传文件','开始上传','选择文件'] },
+      { permission: 'doc_submit', texts: ['提交','确认提交','完成任务'] },
+      { permission: 'doc_download', texts: ['导出Word','下载'] }
+    ],
+    '模板库列表 - 文书交付系统.html': [
+      { permission: 'library_manage', texts: ['新建模板','删除','批量删除','导入','批量导入'] },
+      { permission: 'doc_template_edit_view', texts: ['编辑'] },
+      { permission: 'library_export', texts: ['下载','导出','批量导出'] }
+    ],
+    '模板库编辑 - 文书交付系统.html': [
+      { permission: 'doc_template_save', texts: ['保存'] }
+    ],
+    '案例库 - 文书交付系统.html': [
+      { permission: 'case_manage', texts: ['生成模板','解析','开始解析','批量解析','批量填充示例信息','重新解析','批量删除','删除','删除案例','上传案例包','上传并入库'] },
+      { permission: 'case_export', texts: ['批量导出','下载','下载原文'] }
+    ],
+    '网申模板库 - 留学申请管理系统.html': [
+      { permission: 'app_library_manage', texts: ['新增模板','删除','导入','确认导入'] },
+      { permission: 'app_template_edit_view', texts: ['编辑模板','编辑'] },
+      { permission: 'app_library_export', texts: ['导出','下载'] }
+    ],
+    '网申模板编辑 - 留学申请管理系统.html': [
+      { permission: 'app_template_save', texts: ['保存','保存模板'] }
+    ],
+    '网申任务列表页 - 留学申请管理系统.html': [
+      { permission: 'app_task_handle', texts: ['接收','立即接收','接收任务','领取任务','退回','确认退回'] }
+    ],
+    '文书审核列表页 - 留学申请管理系统.html': [
+      { permission: 'review_task_handle', texts: ['接收','退回','确认退回'] }
+    ],
+    '文书审核详情页 - 留学申请管理系统.html': [
+      { permission: 'review_score', texts: ['保存修改','采纳AI评分','提交批注','修改评分','修改文书','生成AI评价','重新生成'] },
+      { permission: 'review_decide', texts: ['打回重写','确认打回','审核通过'] },
+      { permission: 'review_download', texts: ['下载','导出'] }
+    ],
+    '网申任务详情页 - 留学申请管理系统.html': [
+      { permission: 'app_fill', texts: ['保存表单','保存配置','复用此版本','复用模板','更换图片','配置进度线','确认绑定','添加节点','移除','从EV系统导入','确认导入','确认上传','上传','上传材料'] },
+      { permission: 'app_submit', texts: ['保存申请结果','更新进度','确认更新','上传Offer/结果图片'] }
+    ],
+    '监控任务列表 - PBS留学CRM.html': [
+      { permission: 'monitor_track', texts: ['手动触发'] }
+    ],
+    '监控详情页 - 留学申请管理系统.html': [
+      { permission: 'monitor_track', texts: ['手动触发'] }
+    ],
+    '监控详情页（官网） - 留学申请管理系统.html': [
+      { permission: 'monitor_track', texts: ['手动触发'] },
+      { permission: 'monitor_site_manage', texts: ['编辑配置','保存配置','上传监控记录','上传截图','确认上传'] }
+    ],
+    '监控详情页（邮件） - 留学申请管理系统.html': [
+      { permission: 'monitor_track', texts: ['手动触发'] },
+      { permission: 'monitor_mail_manage', texts: ['编辑配置','保存配置','上传监控记录','上传截图','确认上传'] }
+    ],
+    '结项详情页 - 留学申请管理系统.html': [
+      { permission: 'archive_create', texts: ['查看/编辑','保存','编辑内容','插入Offer邮件图片','生成《客户项目结项报告》','生成《项目管理结项报告》'] },
+      { permission: 'archive_approve', texts: ['确认结果','确认结项','手动确认结项'] }
+    ],
+    '选校任务列表页 - 留学申请管理系统.html': [
+      { permission: 'school_task_manage', texts: ['新建任务','确认创建'] },
+      { permission: 'school_plan', texts: ['进入工作台'] },
+      { permission: 'school_task_manage', selector: '#selTaskTbody select', mode: 'disable' }
+    ],
+    '选校工作台页 - 留学申请管理系统.html': [
+      { permission: 'school_plan_manage', selector: '#schoolWorkspace button,#schoolActionBar button,#savePlanModal button', texts: ['加入清单','加入选校清单','删除','保存方案'] },
+      { permission: 'school_plan_share', texts: ['分享客户（H5链接）'] },
+      { permission: 'school_plan_manage', selector: '#workbenchHistoryModal button,#workbenchCommunicationModal button', texts: ['新增记录','编辑','删除','保存'] }
+    ],
+    '角色权限管理 - 留学申请管理系统.html': [
+      { permission: 'sys_role_manage', texts: ['新增角色','确认创建','删除','保存并生效'] }
+    ],
+    '操作日志审计 - 留学申请管理系统.html': [
+      { permission: 'sys_log_export', texts: ['导出'] }
+    ],
+    'AI管理 - 留学申请管理系统.html': [
+      { permission: 'ai_manage', selector: '[data-tab="models"]' },
+      { permission: 'ai_view', selector: '[data-tab="monitor"]' },
+      { permission: 'ai_manage', selector: '[data-tab="prompts"]' },
+      { permission: 'ai_manage', texts: ['新增 AI 模型'] },
+      { permission: 'ai_manage', selector: '#modelRows button,#modelModal button', texts: ['编辑','删除','确认'] },
+      { permission: 'ai_manage', selector: '#pane-models select,#modelModal input,#modelModal select', mode: 'disable' },
+      { permission: 'ai_manage', selector: '#modelRows button,#modelKeyPoolModal button', texts: ['配置 Key','添加 Key','保存 Key','检测','启用','停用','移出','复用','删除'] },
+      { permission: 'ai_view', texts: ['刷新数据'] },
+      { permission: 'ai_manage', selector: '#pane-prompts input,#pane-prompts textarea,#pane-prompts select', mode: 'disable' }
+    ],
+    '视频管理 - 留学申请管理系统.html': [
+      { permission: 'video_manage', texts: ['管理视频','保存展示内容','选择视频','保存播放策略','重置所有账号首次播放'] },
+      { permission: 'video_manage', selector: '#videoFileInput,#videoEnabled,#autoPlayFirstVisit', mode: 'disable' }
+    ]
+  };
+
+  function normalizedActionText(element) {
+    return String(element && element.textContent || '').replace(/\s+/g, '').replace(/[→↗＋+✎📤⚡]/g, '').trim();
+  }
+  function matchesActionText(element, texts) {
+    if (!texts || !texts.length) return true;
+    var actual = normalizedActionText(element);
+    return texts.some(function (text) {
+      var expected = String(text).replace(/\s+/g, '').replace(/[→↗＋+✎📤⚡]/g, '');
+      return actual === expected || actual.slice(-expected.length) === expected;
+    });
+  }
+  function restrictAction(element, mode) {
+    if (!element || element.getAttribute('data-pbs-permission-locked') === 'true') return;
+    element.setAttribute('data-pbs-permission-locked', 'true');
+    element.setAttribute('aria-disabled', 'true');
+    element.title = '当前角色无此操作权限';
+    if (mode === 'disable') {
+      element.disabled = true;
+      element.classList.add('opacity-50', 'cursor-not-allowed');
+    } else {
+      element.style.display = 'none';
+    }
+  }
+  function applyActionPermissions(session, file) {
+    document.querySelectorAll('[data-pbs-permission]').forEach(function (element) {
+      var ids = String(element.getAttribute('data-pbs-permission') || '').split(',').map(function (id) { return id.trim(); }).filter(Boolean);
+      if (!sessionHasPermission(session, ids)) restrictAction(element, element.getAttribute('data-pbs-permission-mode'));
+    });
+    (ACTION_PERMISSION_RULES[file] || []).forEach(function (rule) {
+      if (sessionHasPermission(session, rule.permission)) return;
+      document.querySelectorAll(rule.selector || 'button,a').forEach(function (element) {
+        if (matchesActionText(element, rule.texts)) restrictAction(element, rule.mode);
+      });
+    });
+    if (file === 'AI管理 - 留学申请管理系统.html') ensureAccessibleAiTab(session);
+  }
+
+  function ensureAccessibleAiTab(session) {
+    var tabPermissions = { models: ['ai_manage'], monitor: ['ai_view'], prompts: ['ai_manage'] };
+    var firstAllowed = null;
+    Object.keys(tabPermissions).forEach(function (tabId) {
+      var allowed = sessionHasPermission(session, tabPermissions[tabId]);
+      var tab = document.querySelector('[data-tab="' + tabId + '"]');
+      var pane = document.getElementById('pane-' + tabId);
+      if (!allowed) {
+        if (tab) tab.style.display = 'none';
+        if (pane) pane.style.display = 'none';
+      } else if (!firstAllowed) {
+        firstAllowed = tab;
+      }
+    });
+    var activeTab = document.querySelector('[data-tab].active');
+    if ((!activeTab || activeTab.style.display === 'none') && firstAllowed) firstAllowed.click();
+  }
+  function observePermissionActions(session, file) {
+    if (!window.MutationObserver || document.documentElement.getAttribute('data-pbs-permission-observed') === 'true') return;
+    document.documentElement.setAttribute('data-pbs-permission-observed', 'true');
+    var scheduled = false;
+    new MutationObserver(function () {
+      if (scheduled) return;
+      scheduled = true;
+      requestAnimationFrame(function () { scheduled = false; applyActionPermissions(session, file); });
+    }).observe(document.body, { childList: true, subtree: true });
   }
   function workbenchPermissionVisible(session, permissionId) {
     if (!permissionId) return false;
@@ -1487,16 +2238,19 @@
     if (checkRoles.indexOf('超级管理员') >= 0) return true;
     var perms = savedRolePerms();
     return checkRoles.some(function (r) {
-      var p = perms[r];
-      var configured = p && Array.isArray(p.workbench) ? p.workbench : null;
-      if (!configured) return WORKBENCH_ROLE_PERMISSION[r] === permissionId;
+      var configuredSource = perms[r] || DEFAULT_ROLE_PERMISSIONS[r];
+      if (!configuredSource) return false;
+      /* 工作台视角权限项统一挂在 wb_home 分组下；兼容旧版 workbench 分组键。 */
+      var configured = Array.isArray(configuredSource.wb_home) ? configuredSource.wb_home
+        : (Array.isArray(configuredSource.workbench) ? configuredSource.workbench : null);
+      if (!configured) return false;
       if (configured.indexOf(permissionId) >= 0) return true;
       /* 兼容旧版通用 workbench_view：只折算为该角色自己的工作台。 */
       return configured.indexOf('workbench_view') >= 0 && WORKBENCH_ROLE_PERMISSION[r] === permissionId;
     });
   }
   function workbenchVisible(session) {
-    return session.role === '超级管理员' || workbenchPermissionVisible(session, WORKBENCH_ROLE_PERMISSION[session.role]);
+    return sessionRoles(session).indexOf('超级管理员') >= 0 || workbenchPermissionVisible(session, WORKBENCH_ROLE_PERMISSION[session.role]);
   }
 
   /* 无「工作台可见」权限时的空态提示 */
@@ -1605,12 +2359,12 @@
        2) 未保存过配置 → 按 PAGE_PERMS 默认角色表放行。 */
     var perms = PAGE_PERMS[file];
     var permKeys = PAGE_PERM_KEYS[file];
+    var activeRoles = sessionRoles(session);
     var denied = false;
-    if (session.role !== '超级管理员' && perms && !roleCanAccess(session.role, perms)) {
+    if (activeRoles.indexOf('超级管理员') < 0 && perms && !roleCanAccess(activeRoles, perms)) {
       denied = true;
-    } else if (session.role !== '超级管理员' && permKeys && roleIsConfigured(session.role)) {
-      var granted = [session.role].concat(ROLE_INHERITANCE[session.role] || []).some(function (r) { return roleHasPermission(r, permKeys); });
-      if (!granted) denied = true;
+    } else if (activeRoles.indexOf('超级管理员') < 0 && permKeys && !sessionHasPermission(session, permKeys)) {
+      denied = true;
     }
     if (denied) {
       showForbiddenToast(session.role);
@@ -1622,6 +2376,8 @@
     mountRoleWorkbench(session, file);
     var w = PAGE_WIRING[file];
     if (w) { try { w(session); } catch (e) { console.error(e); } }
+    applyActionPermissions(session, file);
+    observePermissionActions(session, file);
     initSystemIntroduction(session);
   }
 

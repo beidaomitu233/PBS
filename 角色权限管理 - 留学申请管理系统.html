@@ -115,11 +115,77 @@
 </style>
   <style>
     body { font-family: var(--font-family); background: var(--color-bg-page); }
-    .role-row { transition: all 0.2s ease; }
-    .role-row:hover { background-color: var(--color-bg-hover); }
-    .role-row.active { background-color: var(--color-bg-active); border-left: 3px solid var(--color-primary); }
-    .perm-group { transition: all 0.2s ease; }
-    .perm-group:hover { background-color: var(--color-bg-hover); }
+    .permission-layout { display: grid; grid-template-columns: 280px minmax(0, 1fr); gap: 18px; align-items: start; }
+
+    /* 左侧角色列表 */
+    .role-selector-bar { position: sticky; top: 80px; overflow: hidden; border: 1px solid #e5e7eb; border-radius: 13px; background: #fff; box-shadow: 0 1px 3px rgba(15, 23, 42, .05); }
+    .role-selector-head { padding: 16px; border-bottom: 1px solid #eef2f7; }
+    .role-selector-title { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+    .role-selector-title h2 { color: #1f2937; font-size: 15px; font-weight: 700; }
+    .role-selector-title p { color: #94a3b8; font-size: 12px; white-space: nowrap; }
+    .role-search { width: 100%; height: 38px; margin-top: 12px; padding: 0 12px; border: 1px solid #e5e7eb; border-radius: 9px; background: #f8fafc; color: #334155; font-size: 13px; outline: none; }
+    .role-search:focus { border-color: #93c5fd; background: #fff; box-shadow: 0 0 0 3px rgba(59,130,246,.08); }
+    .role-list { display: flex; flex-direction: column; gap: 6px; max-height: calc(100vh - 201px); padding: 10px; overflow-y: auto; }
+    .role-row { display: flex; align-items: center; gap: 8px; width: 100%; min-height: 46px; padding: 9px 12px; border: 1px solid transparent; border-radius: 9px; background: #fff; transition: border-color .15s ease, background-color .15s ease; }
+    .role-row:hover { border-color: #dbeafe; background: #f8fbff; }
+    .role-row.active { border-color: #bfdbfe; background: #eff6ff; }
+    .role-row-name { min-width: 0; flex: 1; overflow: hidden; color: #334155; font-size: 13px; font-weight: 600; text-overflow: ellipsis; white-space: nowrap; }
+    .role-row.active .role-row-name { color: #1d4ed8; }
+    .role-row-tag { padding: 2px 7px; border-radius: 999px; background: #f1f5f9; color: #94a3b8; font-size: 10px; white-space: nowrap; }
+
+    /* 权限配置：模块分段，每个页面固定一行 */
+    .permission-panel { overflow: hidden; border: 1px solid #e5e7eb; border-radius: 14px; background: #fff; box-shadow: 0 1px 2px rgba(15, 23, 42, .04); }
+    .permission-head { display: flex; align-items: center; justify-content: space-between; gap: 20px; padding: 17px 20px; border-bottom: 1px solid #eef2f7; background: #fff; }
+    .permission-summary { display: flex; align-items: center; gap: 8px; flex: none; }
+    .permission-count { padding: 5px 9px; border-radius: 999px; background: #eff6ff; color: #1d4ed8; font-size: 11px; font-weight: 700; }
+    .permission-dirty { padding: 5px 9px; border-radius: 999px; background: #fff7ed; color: #c2410c; font-size: 11px; font-weight: 700; }
+    .permission-content { padding: 18px; }
+    .permission-toolbar { display: flex; align-items: center; justify-content: space-between; gap: 14px; margin-bottom: 14px; }
+    .permission-filter { width: 260px; height: 36px; padding: 0 12px; border: 1px solid #e5e7eb; border-radius: 9px; background: #f8fafc; color: #334155; font-size: 13px; outline: none; }
+    .permission-filter:focus { border-color: #93c5fd; background: #fff; box-shadow: 0 0 0 3px rgba(59,130,246,.08); }
+    .permission-list-section { overflow: hidden; border: 1px solid #e5e7eb; border-radius: 12px; background: #fff; }
+    .permission-list-section + .permission-list-section { margin-top: 14px; }
+    .permission-section-head { display: flex; align-items: center; gap: 10px; min-height: 44px; padding: 8px 14px; border-bottom: 1px solid #e5e7eb; background: #f8fafc; }
+    .permission-section-mark { width: 3px; height: 17px; border-radius: 999px; background: #2563eb; flex: none; }
+    .permission-section-name { color: #1f2937; font-size: 13px; font-weight: 700; }
+    .permission-meta { padding: 2px 7px; border-radius: 999px; background: #e9eef5; color: #64748b; font-size: 10px; font-weight: 600; white-space: nowrap; }
+    .permission-meta.is-full { background: #dbeafe; color: #1d4ed8; }
+    .permission-meta.is-empty { background: #f1f5f9; color: #9ca3af; }
+    .permission-spacer { min-width: 10px; flex: 1; }
+    .permission-bulk { flex: none; padding: 4px 8px; border: 0; border-radius: 6px; color: #2563eb; font-size: 11px; font-weight: 600; white-space: nowrap; }
+    .permission-bulk:hover { background: #eaf2ff; }
+    .permission-list-row { display: grid; grid-template-columns: minmax(135px, 175px) minmax(0, 1fr); gap: 14px; align-items: center; min-height: 52px; padding: 9px 13px; border-top: 1px solid #f1f5f9; transition: background-color .15s ease; }
+    .permission-section-head + .permission-list-row { border-top: 0; }
+    .permission-list-row:hover { background: #fbfdff; }
+    .permission-page { min-width: 0; }
+    .permission-page-main { display: flex; align-items: center; gap: 6px; }
+    .permission-page-name { overflow: hidden; color: #334155; font-size: 12px; font-weight: 650; text-overflow: ellipsis; white-space: nowrap; }
+    .permission-items { display: flex; flex-wrap: wrap; gap: 6px; min-width: 0; }
+    .permission-item { display: inline-flex; align-items: center; gap: 5px; min-height: 29px; padding: 5px 9px; border: 1px solid #e2e8f0; border-radius: 7px; background: #fff; color: #475569; font-size: 11px; line-height: 1.2; cursor: pointer; transition: border-color .14s ease, background-color .14s ease, color .14s ease; }
+    .permission-item:hover { border-color: #93c5fd; background: #f8fbff; }
+    .permission-item.is-checked { border-color: #bfdbfe; background: #eff6ff; color: #1d4ed8; font-weight: 600; }
+    .permission-item.is-entry { border-color: #cbd5e1; }
+    .permission-item.is-entry.is-checked { border-color: #60a5fa; background: #dbeafe; }
+    .permission-item input { width: 13px; height: 13px; margin: 0; accent-color: #2563eb; flex: none; }
+    .permission-empty { padding: 30px; color: #94a3b8; font-size: 13px; text-align: center; }
+    .permission-actions { position: sticky; bottom: 0; z-index: 4; display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-top: 16px; padding: 13px 0 0; border-top: 1px solid #e5e7eb; background: rgba(255,255,255,.96); backdrop-filter: blur(8px); }
+    .permission-toast { position: fixed; right: 24px; bottom: 24px; z-index: 80; padding: 12px 16px; border-radius: 10px; background: #0f172a; color: #fff; box-shadow: 0 14px 30px rgba(15,23,42,.22); font-size: 13px; opacity: 0; transform: translateY(10px); pointer-events: none; transition: all .2s ease; }
+    .permission-toast.show { opacity: 1; transform: translateY(0); }
+    @media (max-width: 1100px) {
+      .permission-layout { grid-template-columns: 240px minmax(0, 1fr); gap: 14px; }
+      .role-selector-head { padding: 14px; }
+      .role-list { padding: 8px; }
+      .role-row { padding: 9px 10px; }
+      .permission-list-row { grid-template-columns: 135px minmax(0, 1fr); gap: 10px; }
+    }
+    @media (max-width: 820px) {
+      .permission-layout { display: block; }
+      .role-selector-bar { position: static; margin-bottom: 14px; }
+      .role-list { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); max-height: 260px; }
+      .permission-toolbar, .permission-actions { align-items: stretch; flex-direction: column; }
+      .permission-filter { width: 100%; }
+      .permission-list-row { display: flex; align-items: stretch; flex-direction: column; gap: 8px; }
+    }
     .sidebar-item { transition: all 0.2s ease; }
     .sidebar-item:hover { background-color: var(--color-bg-hover); }
     .sidebar-item.active { background-color: var(--color-primary-bg); color: var(--color-primary); }
@@ -208,8 +274,11 @@
     <!-- 主内容区 -->
     <main class="flex-1 p-6">
       <!-- 页面标题栏 -->
-      <div class="flex items-center justify-between mb-6">
-        <h1 class="text-2xl font-semibold text-gray-800">角色权限管理</h1>
+      <div class="flex items-center justify-between mb-5">
+        <div>
+          <h1 class="text-2xl font-semibold text-gray-800">角色权限管理</h1>
+          <p class="text-sm text-gray-500 mt-1">按角色配置菜单、页面及操作按钮权限，保存后在全站生效</p>
+        </div>
         <div class="flex items-center gap-3">
           <button data-dom-id="btn-add-role" class="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors" onclick="pbsOpenOverlay(&#39;新增角色弹窗.html&#39;,{width:&#39;780px&#39;})">
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -220,7 +289,33 @@
         </div>
       </div>
 
-      <div class="flex gap-6">
+      <div class="permission-layout">
+        <section class="role-selector-bar">
+          <div class="role-selector-head">
+            <div class="role-selector-title">
+              <h2>选择角色</h2>
+              <p id="roleCount">0 个角色</p>
+            </div>
+            <input id="roleSearch" class="role-search" placeholder="搜索角色" oninput="renderRoleList()">
+          </div>
+          <div class="role-list" id="roleListContainerV2"></div>
+        </section>
+
+        <section class="permission-panel">
+          <div class="permission-head">
+            <div class="min-w-0">
+              <h2 class="text-base font-semibold text-gray-800" id="selectedRoleNameV2">权限配置</h2>
+            </div>
+            <div class="permission-summary">
+              <span class="permission-count" id="selectedPermissionCount">已选 0 项</span>
+              <span class="permission-dirty hidden" id="permissionDirtyBadge">有未保存修改</span>
+            </div>
+          </div>
+          <div class="permission-content" id="permissionConfigAreaV2"></div>
+        </section>
+      </div>
+
+      <div class="flex gap-6" style="display:none" aria-hidden="true">
         <!-- 左侧：角色列表 -->
         <div class="w-2/5">
           <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
@@ -237,7 +332,7 @@
             <div class="px-6 py-4 border-b border-gray-100 bg-gray-50 flex items-center justify-between">
               <div>
                 <h2 class="text-base font-semibold text-gray-800" id="selectedRoleName">权限配置</h2>
-                <p class="text-xs text-gray-500 mt-1" id="selectedRoleDesc">请从左侧选择一个角色</p>
+                <p class="text-xs text-gray-500 mt-1" id="selectedRoleDesc">请在上方选择一个角色</p>
               </div>
             </div>
             <div class="p-6" id="permissionConfigArea">
@@ -246,7 +341,7 @@
                 <svg class="w-16 h-16 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path>
                 </svg>
-                <p class="text-sm">请从左侧选择一个角色以查看和配置权限</p>
+                <p class="text-sm">请在上方选择一个角色以查看和配置权限</p>
               </div>
             </div>
           </div>
@@ -254,6 +349,8 @@
       </div>
     </main>
   </div>
+
+  <div class="permission-toast" id="permissionToast"></div>
 
   <!-- 系统消息弹窗 -->
   <div id="notificationModal" class="fixed inset-0 z-50 hidden">
@@ -303,121 +400,69 @@
 
   <script>
     // ==================== 数据定义 ====================
-    var permissionModules = [
-      {
-        id: 'workbench',
-        name: '工作台可见权限',
-        items: [
-          { id: 'workbench_platform', label: '平台运维工作台可见' },
-          { id: 'workbench_org_admin', label: '机构管理员工作台可见' },
-          { id: 'workbench_sales', label: '销售人员工作台可见' },
-          { id: 'workbench_pm', label: '项目经理工作台可见' },
-          { id: 'workbench_writer', label: '文书人员工作台可见' },
-          { id: 'workbench_apply', label: '网申人员工作台可见' },
-          { id: 'workbench_audit', label: '文书审核工作台可见' },
-          { id: 'workbench_docadmin', label: '文书机构管理员工作台可见' }
-        ]
-      },
-      {
-        id: 'customer',
-        name: '学生档案管理',
-        items: [
-          { id: 'customer_view', label: '查看客户列表' },
-          { id: 'customer_add', label: '新增客户' },
-          { id: 'customer_edit', label: '编辑客户信息' },
-          { id: 'customer_delete', label: '删除客户' },
-          { id: 'customer_import', label: '导入客户数据' }
-        ]
-      },
-      {
-        id: 'project',
-        name: '项目管理',
-        items: [
-          { id: 'project_view', label: '查看项目列表' },
-          { id: 'project_assign', label: '分配项目' },
-          { id: 'project_change_pm', label: '更换项目经理' },
-          { id: 'project_view_detail', label: '查看项目详情' }
-        ]
-      },
-      {
-        id: 'document',
-        name: '文书交付',
-        items: [
-          { id: 'doc_view', label: '查看文书列表' },
-          { id: 'doc_upload', label: '上传文书材料' },
-          { id: 'doc_edit', label: '编辑文书内容' },
-          { id: 'doc_review', label: '审核文书' },
-          { id: 'doc_download', label: '下载文书材料' }
-        ]
-      },
-      {
-        id: 'application',
-        name: '网申管理',
-        items: [
-          { id: 'app_view', label: '查看申请列表' },
-          { id: 'app_create', label: '创建申请任务' },
-          { id: 'app_submit', label: '提交申请' },
-          { id: 'app_fill', label: '填写网申内容' }
-        ]
-      },
-      {
-        id: 'monitor',
-        name: '监控管理',
-        items: [
-          { id: 'monitor_view', label: '查看监控列表' },
-          { id: 'monitor_track', label: '跟踪项目进度' },
-          { id: 'monitor_alert', label: '处理异常告警' },
-          { id: 'monitor_report', label: '查看监控报告' }
-        ]
-      },
-      {
-        id: 'archive',
-        name: '结项归档',
-        items: [
-          { id: 'archive_view', label: '查看归档列表' },
-          { id: 'archive_create', label: '创建归档' },
-          { id: 'archive_approve', label: '审核归档' }
-        ]
-      },
-      {
-        id: 'school',
-        name: '选校管理',
-        items: [
-          { id: 'school_task', label: '查看选校任务' },
-          { id: 'school_plan', label: '制作与维护选校方案' },
-          { id: 'school_catalog', label: '查看院校库' }
-        ]
-      },
-      {
-        id: 'system',
-        name: '系统管理',
-        items: [
-          { id: 'sys_user', label: '管理用户账号' },
-          { id: 'sys_org', label: '管理机构信息' },
-          { id: 'sys_role', label: '管理角色权限' },
-          { id: 'sys_personnel', label: '管理人员信息' },
-          { id: 'sys_log', label: '查看操作日志' },
-          { id: 'sys_ai', label: '管理 AI 配置' },
-          { id: 'sys_video', label: '管理介绍视频' }
-        ]
-      }
+    /* 权限树以 assets/js/pbs-app.js 中的 PERMISSION_TREE 为唯一来源（按「页面 → 权限项」组织），
+       这里只做消费，避免两处定义漂移。pbs-app.js 以 defer 加载，故渲染放在 DOMContentLoaded 之后。 */
+    var permissionModules = [];        // 扁平的页面分组列表（每个页面一个分组）
+    var permissionSections = [];       // 按业务模块归并后的分区，用于分区渲染
+    function loadPermissionTree() {
+      var tree = window.pbsPermissionTree || [];
+      permissionModules = tree.slice();
+      permissionSections = [];
+      var indexByModule = {};
+      tree.forEach(function (group) {
+        if (!(group.module in indexByModule)) {
+          indexByModule[group.module] = permissionSections.length;
+          permissionSections.push({ module: group.module, pages: [] });
+        }
+        permissionSections[indexByModule[group.module]].pages.push(group);
+      });
+      return permissionModules.length > 0;
+    }
+    /* 角色元数据；默认权限统一取自 pbs-app.js 的 DEFAULT_ROLE_PERMISSIONS，
+       避免与全站 RBAC 出现两份不一致的默认值。 */
+    var ROLE_META = [
+      { id: 1, name: '平台运维人员', description: '负责平台账号、机构、系统配置与运维', creator: '系统初始', createTime: '2025-01-01' },
+      { id: 2, name: '机构管理员', description: '负责本机构项目分配、成员管理与全局监控', creator: '系统初始', createTime: '2025-01-01' },
+      { id: 3, name: '销售人员', description: '负责客户跟进、选校任务与选校方案', creator: '管理员', createTime: '2025-03-01' },
+      { id: 5, name: '项目经理', description: '负责项目全流程管理、成员分配与任务推进', creator: '管理员', createTime: '2025-01-15' },
+      { id: 6, name: '文书人员', description: '负责接收任务并完成文书撰写交付', creator: '管理员', createTime: '2025-02-01' },
+      { id: 7, name: '网申人员', description: '负责接收任务并完成网申填写与提交', creator: '管理员', createTime: '2025-02-01' },
+      { id: 8, name: '文书审核', description: '负责接收审核任务并通过或退回文书', creator: '管理员', createTime: '2025-02-10' },
+      { id: 9, name: '文书机构管理员', description: '文书团队内部小组长，负责成员协作、文书交付与审核', creator: '系统初始', createTime: '2025-01-01' }
     ];
-
-    // 角色数据
-    var roles = [
-      { id: 1, name: '平台运维人员', description: '平台级超级管理员，负责系统配置和运维', creator: '系统初始', createTime: '2025-01-01', permissions: { workbench: ['workbench_platform'], customer: ['customer_view'], project: [], document: [], application: [], monitor: ['monitor_view'], archive: [], school: [], system: ['sys_user','sys_org','sys_role','sys_personnel','sys_log','sys_ai','sys_video'] } },
-      { id: 2, name: '机构管理员', description: '机构管理员，负责项目分配、人员管理与全局监控', creator: '系统初始', createTime: '2025-01-01', permissions: { workbench: ['workbench_org_admin'], customer: ['customer_view'], project: ['project_view','project_assign','project_change_pm','project_view_detail'], document: [], application: [], monitor: ['monitor_view','monitor_track','monitor_alert','monitor_report'], archive: [], school: ['school_task','school_plan'], system: ['sys_role','sys_personnel','sys_log','sys_ai','sys_video'] } },
-      { id: 3, name: '销售人员', description: '负责客户开发和跟进，执行选校方案制作', creator: '管理员', createTime: '2025-03-01', permissions: { workbench: ['workbench_sales'], customer: ['customer_view','customer_add','customer_edit'], project: [], document: [], application: [], monitor: [], archive: [], school: ['school_task','school_plan','school_catalog'], system: [] } },
-      { id: 5, name: '项目经理', description: '负责项目全流程管理和任务分发', creator: '管理员', createTime: '2025-01-15', permissions: { workbench: ['workbench_pm'], customer: ['customer_view','customer_add','customer_edit'], project: ['project_view','project_assign','project_change_pm','project_view_detail'], document: ['doc_view','doc_download'], application: ['app_view'], monitor: ['monitor_view','monitor_track','monitor_report'], archive: ['archive_view','archive_create','archive_approve'], school: [], system: [] } },
-      { id: 6, name: '文书人员', description: '负责执行文书撰写工作', creator: '管理员', createTime: '2025-02-01', permissions: { workbench: ['workbench_writer'], customer: ['customer_view'], project: [], document: ['doc_view','doc_upload','doc_edit','doc_download'], application: [], monitor: [], archive: ['archive_view'], school: [], system: [] } },
-      { id: 7, name: '网申人员', description: '负责执行网申填写与提交工作', creator: '管理员', createTime: '2025-02-01', permissions: { workbench: ['workbench_apply'], customer: ['customer_view'], project: [], document: [], application: ['app_view','app_create','app_submit','app_fill'], monitor: [], archive: ['archive_view'], school: [], system: [] } },
-      { id: 8, name: '文书审核', description: '负责文书内容的审核，通过或打回', creator: '管理员', createTime: '2025-02-10', permissions: { workbench: ['workbench_audit'], customer: ['customer_view'], project: [], document: ['doc_view','doc_review','doc_download'], application: [], monitor: [], archive: [], school: [], system: [] } },
-      { id: 9, name: '文书机构管理员', description: '统筹文书交付与审核，管理机构内文书团队成员', creator: '系统初始', createTime: '2025-01-01', permissions: { workbench: ['workbench_docadmin'], customer: ['customer_view'], project: [], document: ['doc_view','doc_upload','doc_edit','doc_review','doc_download'], application: [], monitor: [], archive: [], school: [], system: ['sys_role','sys_personnel','sys_ai','sys_video'] } }
-    ];
+    function emptyPermissionMap() {
+      var map = {};
+      permissionModules.forEach(function (group) { map[group.id] = []; });
+      return map;
+    }
+    var DEFAULT_ROLES = [];
+    function buildDefaultRoles() {
+      var shared = window.pbsDefaultRolePermissions || {};
+      DEFAULT_ROLES = ROLE_META.map(function (meta) {
+        var perms = emptyPermissionMap();
+        var source = shared[meta.name] || {};
+        Object.keys(source).forEach(function (groupId) {
+          if (Array.isArray(perms[groupId])) perms[groupId] = source[groupId].slice();
+        });
+        return {
+          id: meta.id, name: meta.name, description: meta.description,
+          creator: meta.creator, createTime: meta.createTime, permissions: perms
+        };
+      });
+      return DEFAULT_ROLES;
+    }
+    var roles = [];
 
     // 当前选中的角色和权限备份
     var currentRoleId = null;
     var permissionBackup = {};
+    var permissionDirty = false;
+
+    /* ToB SaaS 边界：平台系统权限只允许平台运维角色配置；
+       所有机构内置角色和自建角色均不展示这些权限分组。 */
+    function canConfigurePlatformSystem(roleName) {
+      return roleName === '平台运维人员';
+    }
 
     // ==================== 权限持久化（原型：localStorage 共享给全站 RBAC） ====================
     var ROLE_PERMS_KEY = 'pbs_role_perms_v1';
@@ -446,7 +491,32 @@
         localStorage.setItem('pbs_role_perms_scoped_v1', JSON.stringify(scoped));
       } catch (e) {}
     }
-    // 页面加载时回读已保存的权限配置（优先本机构副本，其次平台默认）
+    /* 页面加载时回读已保存的权限配置（优先本机构副本，其次平台默认）。
+       旧版按业务模块保存的配置由 pbs-app.js 的迁移逻辑统一归一化到「页面 → 权限项」结构，
+       这里只补一条历史兼容：旧的通用 workbench_view 折算成该角色自己的工作台。 */
+    function migratePermissions(role, source) {
+      var flat = [];
+      Object.keys(source || {}).forEach(function (groupId) {
+        if (!Array.isArray(source[groupId])) return;
+        source[groupId].forEach(function (id) { if (flat.indexOf(id) < 0) flat.push(id); });
+      });
+      if (flat.indexOf('workbench_view') >= 0) {
+        var ownWorkbench = DEFAULT_WORKBENCH_PERMISSION[role.name];
+        if (ownWorkbench && flat.indexOf(ownWorkbench) < 0) flat.push(ownWorkbench);
+      }
+      var legacyShape = window.pbsIsLegacyPermissionShape ? window.pbsIsLegacyPermissionShape(source) : false;
+      var expanded = window.pbsNormalizePermissionIds ? window.pbsNormalizePermissionIds(flat, legacyShape) : flat;
+      var persisted = window.pbsPermissionGroupIds ? window.pbsPermissionGroupIds(expanded) : emptyPermissionMap();
+      permissionModules.forEach(function (group) {
+        if (!Array.isArray(persisted[group.id])) persisted[group.id] = [];
+      });
+      if (role.name === '平台运维人员') { persisted.student_list = []; persisted.student_detail = []; }
+      /* 平台系统权限只允许平台运维角色持有，机构角色及自建角色的历史残留一律清空。 */
+      if (!canConfigurePlatformSystem(role.name)) {
+        (window.pbsPlatformOnlyPageGroups || []).forEach(function (groupId) { persisted[groupId] = []; });
+      }
+      return persisted;
+    }
     function loadPersistedRolePerms() {
       var map = {};
       try {
@@ -458,23 +528,7 @@
       }
       roles.forEach(function (r) {
         if (!map[r.name]) return;
-        var persisted = map[r.name];
-        permissionModules.forEach(function (module) {
-          if (!Array.isArray(persisted[module.id])) persisted[module.id] = (r.permissions[module.id] || []).slice();
-        });
-        if (persisted.system.indexOf('sys_config') >= 0) {
-          ['sys_ai', 'sys_video'].forEach(function (id) { if (persisted.system.indexOf(id) < 0) persisted.system.push(id); });
-          persisted.system = persisted.system.filter(function (id) { return id !== 'sys_config'; });
-        }
-        if (!Array.isArray(persisted.workbench)) {
-          persisted.workbench = (r.permissions.workbench || []).slice();
-        } else if (persisted.workbench.indexOf('workbench_view') >= 0) {
-          persisted.workbench = persisted.workbench.filter(function (id) { return id !== 'workbench_view'; });
-          if (DEFAULT_WORKBENCH_PERMISSION[r.name] && persisted.workbench.indexOf(DEFAULT_WORKBENCH_PERMISSION[r.name]) < 0) {
-            persisted.workbench.push(DEFAULT_WORKBENCH_PERMISSION[r.name]);
-          }
-        }
-        r.permissions = persisted;
+        r.permissions = migratePermissions(r, map[r.name]);
       });
     }
 
@@ -482,67 +536,137 @@
 
     // 渲染角色列表
     function renderRoleList() {
-      var container = document.getElementById('roleListContainer');
+      var container = document.getElementById('roleListContainerV2');
       var html = '';
-      roles.forEach(function(role) {
+      var keyword = String((document.getElementById('roleSearch') || {}).value || '').trim().toLowerCase();
+      var filtered = roles.filter(function (role) {
+        return !keyword || (role.name + ' ' + role.description).toLowerCase().indexOf(keyword) >= 0;
+      });
+      var count = document.getElementById('roleCount');
+      if (count) count.textContent = filtered.length + ' 个角色';
+      filtered.forEach(function(role) {
         var isActive = role.id === currentRoleId ? 'active' : '';
-        html += '<div class="role-row px-6 py-4 cursor-pointer ' + isActive + '" data-role-id="' + role.id + '" onclick="selectRole(' + role.id + ')">';
-        html += '  <div class="flex items-center justify-between">';
-        html += '    <div class="flex-1">';
-        html += '      <div class="flex items-center gap-2">';
-        html += '        <span class="text-sm font-medium text-gray-900">' + role.name + '</span>' + (role.status === '禁用' ? '<span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-500">已禁用</span>' : '');
-        html += '      </div>';
-        html += '      <p class="text-xs text-gray-500 mt-1 line-clamp-2">' + role.description + '</p>';
-        html += '      <div class="flex items-center gap-3 mt-2 text-xs text-gray-400">';
-        html += '        <span>创建人：' + role.creator + '</span>';
-        html += '        <span>创建时间：' + role.createTime + '</span>';
-        html += '      </div>';
-        html += '    </div>';
-        html += '  </div>';
-        html += '  <div class="flex justify-end mt-2">';
-        html += '    <button class="text-red-500 hover:text-red-700 text-xs font-medium px-2 py-1 rounded hover:bg-red-50 transition-colors" onclick="event.stopPropagation();deleteRole(' + role.id + ')">删除</button>';
-        html += '  </div>';
+        var isProtected = SYSTEM_PROTECTED_ROLES.indexOf(role.name) >= 0;
+        var granted = countPermissions(role.permissions);
+        html += '<div class="role-row cursor-pointer ' + isActive + '" data-role-id="' + role.id + '" title="' + role.description + '" onclick="selectRole(' + role.id + ')">';
+        html += '  <span class="role-row-name">' + role.name + '</span>';
+        html += '  <span class="role-row-tag">' + granted + ' 项</span>';
+        if (isProtected) html += '<span class="role-row-tag" style="background:#eff6ff;color:#1d4ed8">系统</span>';
+        else html += '<button class="text-xs text-red-500 hover:text-red-700" onclick="event.stopPropagation();deleteRole(' + role.id + ')">删除</button>';
         html += '</div>';
       });
-      container.innerHTML = html;
+      container.innerHTML = html || '<div class="text-sm text-gray-400 py-3">未找到匹配角色</div>';
     }
 
-    // 渲染权限配置
+    function metaTone(selected, total) {
+      if (total > 0 && selected === total) return 'is-full';
+      if (selected === 0) return 'is-empty';
+      return '';
+    }
+    function pageMatchesKeyword(group, keyword) {
+      if (!keyword) return true;
+      if ((group.name + ' ' + (group.file || '')).toLowerCase().indexOf(keyword) >= 0) return true;
+      return group.items.some(function (item) {
+        return (item.label + ' ' + (item.desc || '') + ' ' + item.id).toLowerCase().indexOf(keyword) >= 0;
+      });
+    }
+    function onPermFilterInput() {
+      var input = document.getElementById('permissionFilter');
+      var caret = input ? input.selectionStart : null;
+      renderPermissionConfig();
+      var next = document.getElementById('permissionFilter');
+      if (next) {
+        next.focus();
+        if (caret !== null) { try { next.setSelectionRange(caret, caret); } catch (e) {} }
+      }
+    }
+
+    // 渲染权限配置：按模块分段，每个页面及全部权限项固定显示在一行
+    function pageGroupVisibleForRole(role, group) {
+      if (role.name === '平台运维人员' && ['student_list', 'student_detail'].indexOf(group.id) >= 0) return false;
+      if (!canConfigurePlatformSystem(role.name) &&
+        (window.pbsPlatformOnlyPageGroups || []).indexOf(group.id) >= 0) return false;
+      return true;
+    }
+    function permissionModulesForRole(role) {
+      return permissionModules.filter(function (group) { return pageGroupVisibleForRole(role, group); });
+    }
+    function permissionSectionsForRole(role) {
+      return permissionSections.map(function (section) {
+        return {
+          module: section.module,
+          pages: section.pages.filter(function (group) { return pageGroupVisibleForRole(role, group); })
+        };
+      }).filter(function (section) { return section.pages.length > 0; });
+    }
     function renderPermissionConfig() {
       var role = findRoleById(currentRoleId);
       if (!role) return;
 
-      document.getElementById('selectedRoleName').textContent = role.name + ' - 权限配置';
-      document.getElementById('selectedRoleDesc').textContent = role.description;
+      document.getElementById('selectedRoleNameV2').textContent = role.name;
 
-      var area = document.getElementById('permissionConfigArea');
+      var area = document.getElementById('permissionConfigAreaV2');
       var html = '';
 
-      permissionModules.forEach(function(module) {
-        var permIds = role.permissions[module.id] || [];
-        html += '<div class="perm-group bg-gray-50 rounded-lg p-4 mb-4">';
-        html += '  <h3 class="text-sm font-semibold text-gray-700 mb-3 flex items-center gap-2">';
-        html += '    <span class="w-1.5 h-5 bg-blue-600 rounded-full inline-block"></span>';
-        html += '    ' + module.name;
-        html += '  </h3>';
-        html += '  <div class="grid grid-cols-2 gap-3">';
-        module.items.forEach(function(item) {
-          var checked = permIds.indexOf(item.id) !== -1 ? 'checked' : '';
-          html += '    <label class="flex items-center gap-2 px-3 py-2 bg-white rounded-lg border border-gray-100 cursor-pointer hover:border-blue-200 transition-colors">';
-          html += '      <input type="checkbox" class="checkbox-custom w-4 h-4 rounded" ' + checked + ' data-module="' + module.id + '" data-perm="' + item.id + '" onchange="onPermissionChange()">';
-          html += '      <span class="text-sm text-gray-700">' + item.label + '</span>';
-          html += '    </label>';
+      var keyword = String((document.getElementById('permissionFilter') || {}).value || '').trim().toLowerCase();
+      html += '<div class="permission-toolbar">' +
+        '<input id="permissionFilter" class="permission-filter" placeholder="搜索页面或权限" value="' + keyword.replace(/"/g, '&quot;') + '" oninput="onPermFilterInput()">' +
+        '</div>';
+
+      var sections = permissionSectionsForRole(role);
+      var matchedPages = 0;
+      sections.forEach(function (section) {
+        var pages = section.pages.filter(function (group) { return pageMatchesKeyword(group, keyword); });
+        if (!pages.length) return;
+        matchedPages += pages.length;
+
+        var sectionTotal = 0;
+        var sectionSelected = 0;
+        section.pages.forEach(function (group) {
+          sectionTotal += group.items.length;
+          sectionSelected += (role.permissions[group.id] || []).length;
         });
-        html += '  </div>';
-        html += '</div>';
+
+        html += '<section class="permission-list-section" data-permission-section="' + section.module + '">';
+        html += '  <div class="permission-section-head">' +
+          '<span class="permission-section-mark"></span>' +
+          '<span class="permission-section-name">' + section.module + '</span>' +
+          '<span class="permission-meta ' + metaTone(sectionSelected, sectionTotal) + '" data-section-count="' + section.module + '">' + sectionSelected + ' / ' + sectionTotal + ' 项 · ' + section.pages.length + ' 个页面</span>' +
+          '<span class="permission-spacer"></span>' +
+          '<button class="permission-bulk" onclick="toggleSectionPermissions(\'' + section.module + '\')">' +
+          (sectionSelected === sectionTotal ? '取消全选' : '全选') + '</button>' +
+          '</div>';
+
+        pages.forEach(function (group) {
+          var permIds = role.permissions[group.id] || [];
+          html += '<div class="permission-list-row" data-permission-card="' + group.id + '" data-section="' + section.module + '">';
+          html += '  <div class="permission-page">' +
+            '<div class="permission-page-main"><span class="permission-page-name">' + group.name + '</span>' +
+            '<span class="permission-meta ' + metaTone(permIds.length, group.items.length) + '" data-module-count="' + group.id + '">' + permIds.length + ' / ' + group.items.length + '</span></div>' +
+            '</div>';
+          html += '  <div class="permission-items">';
+          group.items.forEach(function (item, index) {
+            var checked = permIds.indexOf(item.id) !== -1 ? 'checked' : '';
+            var tip = item.desc ? item.label + '：' + item.desc : item.label;
+            html += '<label class="permission-item ' + (checked ? 'is-checked' : '') + (index === 0 ? ' is-entry' : '') + '" title="' + tip + '">' +
+              '<input type="checkbox" ' + checked + ' data-module="' + group.id + '" data-section="' + section.module + '" data-perm="' + item.id + '" onchange="onPermissionChange()">' +
+              '<span>' + item.label + '</span></label>';
+          });
+          html += '  </div>';
+          html += '</div>';
+        });
+        html += '</section>';
       });
 
-      html += '<div class="flex items-center gap-3 pt-4 border-t border-gray-100">';
-      html += '  <button class="px-6 h-10 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium" onclick="savePermission()">保存权限配置</button>';
-      html += '  <button class="px-6 h-10 bg-white border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors" onclick="resetPermission()">重置</button>';
+      if (!matchedPages) html += '<div class="permission-empty">没有匹配「' + keyword + '」的页面或权限项</div>';
+      html += '<div class="permission-actions"><span></span><div class="flex items-center gap-3">';
+      html += '  <button class="px-5 h-10 bg-white border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors" onclick="resetPermission()">撤销修改</button>';
+      html += '  <button id="savePermissionBtn" class="px-5 h-10 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium" onclick="savePermission()">保存并生效</button>';
+      html += '</div>';
       html += '</div>';
 
       area.innerHTML = html;
+      updatePermissionMeta();
     }
 
     // ==================== 交互函数 ====================
@@ -556,14 +680,72 @@
 
     // 选择角色
     function selectRole(roleId) {
+      if (currentRoleId !== null && currentRoleId !== roleId && permissionDirty) {
+        if (!confirm('当前角色的权限尚未保存，切换后将撤销这些修改。是否继续？')) return;
+        var previousRole = findRoleById(currentRoleId);
+        if (previousRole) previousRole.permissions = JSON.parse(JSON.stringify(permissionBackup));
+      }
       currentRoleId = roleId;
       var role = findRoleById(roleId);
       if (role) {
-        // 备份当前权限状态
         permissionBackup = JSON.parse(JSON.stringify(role.permissions));
       }
+      permissionDirty = false;
       renderRoleList();
       renderPermissionConfig();
+    }
+
+    function countPermissions(permissions) {
+      return permissionModules.reduce(function (total, module) {
+        return total + ((permissions && permissions[module.id]) || []).length;
+      }, 0);
+    }
+
+    function updatePermissionMeta() {
+      var role = findRoleById(currentRoleId);
+      var count = document.getElementById('selectedPermissionCount');
+      var dirty = document.getElementById('permissionDirtyBadge');
+      var visibleGroups = role ? permissionModulesForRole(role) : [];
+      var total = visibleGroups.reduce(function (sum, group) { return sum + group.items.length; }, 0);
+      var selectedTotal = visibleGroups.reduce(function (sum, group) {
+        return sum + ((role.permissions && role.permissions[group.id]) || []).length;
+      }, 0);
+      if (count) count.textContent = '已选 ' + selectedTotal + ' / ' + total + ' 项';
+      if (dirty) dirty.classList.toggle('hidden', !permissionDirty);
+      var activeRoleCount = document.querySelector('[data-role-id="' + currentRoleId + '"] .role-row-tag');
+      if (activeRoleCount) activeRoleCount.textContent = selectedTotal + ' 项';
+      permissionModules.forEach(function (group) {
+        var boxes = Array.prototype.slice.call(document.querySelectorAll('#permissionConfigAreaV2 input[data-module="' + group.id + '"]'));
+        var selected = boxes.filter(function (box) { return box.checked; }).length;
+        var countEl = document.querySelector('[data-module-count="' + group.id + '"]');
+        if (countEl) {
+          countEl.textContent = selected + ' / ' + group.items.length;
+          countEl.classList.toggle('is-full', selected === group.items.length);
+          countEl.classList.toggle('is-empty', selected === 0);
+        }
+      });
+      permissionSections.forEach(function (section) {
+        var boxes = Array.prototype.slice.call(document.querySelectorAll('#permissionConfigAreaV2 input[data-section="' + section.module + '"]'));
+        if (!boxes.length) return;
+        var selected = boxes.filter(function (box) { return box.checked; }).length;
+        var pageCount = document.querySelectorAll('[data-permission-card][data-section="' + section.module + '"]').length;
+        var metaEl = document.querySelector('[data-section-count="' + section.module + '"]');
+        if (metaEl) {
+          metaEl.textContent = selected + ' / ' + boxes.length + ' 项 · ' + pageCount + ' 个页面';
+          metaEl.classList.toggle('is-full', selected === boxes.length);
+          metaEl.classList.toggle('is-empty', selected === 0);
+        }
+        var sectionEl = document.querySelector('[data-permission-section="' + section.module + '"]');
+        var sectionToggle = sectionEl && sectionEl.querySelector('.permission-section-head .permission-bulk');
+        if (sectionToggle) sectionToggle.textContent = selected === boxes.length ? '取消全选' : '全选';
+      });
+    }
+
+    function toggleSectionPermissions(sectionName) {
+      var boxes = Array.prototype.slice.call(document.querySelectorAll('#permissionConfigAreaV2 input[data-section="' + sectionName + '"]'));
+      var shouldCheck = boxes.some(function (box) { return !box.checked; });
+      boxes.forEach(function (box) { box.checked = shouldCheck; });
+      onPermissionChange();
     }
 
     // 权限变更时更新角色数据
@@ -571,11 +753,16 @@
       var role = findRoleById(currentRoleId);
       if (!role) return;
 
-      var checkboxes = document.querySelectorAll('#permissionConfigArea input[type="checkbox"]');
-      // 重新构建 permissions
-      var newPerms = {};
-      permissionModules.forEach(function(module) {
-        newPerms[module.id] = [];
+      var checkboxes = document.querySelectorAll('#permissionConfigAreaV2 input[type="checkbox"]');
+      // 只重建当前实际渲染的页面，搜索筛选隐藏的页面保持原配置不变
+      var newPerms = JSON.parse(JSON.stringify(role.permissions || {}));
+      var renderedModules = {};
+      checkboxes.forEach(function (cb) {
+        var moduleId = cb.getAttribute('data-module');
+        if (!renderedModules[moduleId]) {
+          renderedModules[moduleId] = true;
+          newPerms[moduleId] = [];
+        }
       });
 
       checkboxes.forEach(function(cb) {
@@ -588,6 +775,21 @@
       });
 
       role.permissions = newPerms;
+      permissionDirty = JSON.stringify(role.permissions) !== JSON.stringify(permissionBackup);
+      checkboxes.forEach(function (cb) {
+        var option = cb.closest('.permission-item');
+        if (option) option.classList.toggle('is-checked', cb.checked);
+      });
+      updatePermissionMeta();
+    }
+
+    function showPermissionToast(message) {
+      var toast = document.getElementById('permissionToast');
+      if (!toast) return;
+      toast.textContent = message;
+      toast.classList.add('show');
+      clearTimeout(showPermissionToast.timer);
+      showPermissionToast.timer = setTimeout(function () { toast.classList.remove('show'); }, 2200);
     }
 
     // 保存权限配置
@@ -597,11 +799,12 @@
         alert('请先选择一个角色');
         return;
       }
-      // 更新备份
       permissionBackup = JSON.parse(JSON.stringify(role.permissions));
+      permissionDirty = false;
       persistRolePerms();
       if (window.pbsRecordOperation) window.pbsRecordOperation('账号与权限', '修改', '保存角色「' + role.name + '」的权限配置');
-      alert('角色"' + role.name + '"的权限配置已保存成功，已全站生效。');
+      updatePermissionMeta();
+      showPermissionToast('「' + role.name + '」权限已保存并全站生效');
     }
 
     // 重置权限配置
@@ -611,9 +814,10 @@
         alert('请先选择一个角色');
         return;
       }
-      // 从备份恢复
       role.permissions = JSON.parse(JSON.stringify(permissionBackup));
+      permissionDirty = false;
       renderPermissionConfig();
+      showPermissionToast('已撤销当前未保存修改');
     }
 
     // 删除角色（系统初始角色受保护）
@@ -639,14 +843,13 @@
           roles.splice(idx, 1);
           if (currentRoleId === roleId) {
             currentRoleId = null;
-            document.getElementById('selectedRoleName').textContent = '权限配置';
-            document.getElementById('selectedRoleDesc').textContent = '请从左侧选择一个角色';
-            document.getElementById('permissionConfigArea').innerHTML =
+            document.getElementById('selectedRoleNameV2').textContent = '权限配置';
+            document.getElementById('permissionConfigAreaV2').innerHTML =
               '<div class="flex flex-col items-center justify-center py-16 text-gray-400">' +
               '  <svg class="w-16 h-16 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">' +
               '    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path>' +
               '  </svg>' +
-              '  <p class="text-sm">请从左侧选择一个角色以查看和配置权限</p>' +
+              '  <p class="text-sm">请在上方选择一个角色以查看和配置权限</p>' +
               '</div>';
           }
           renderRoleList();
@@ -715,29 +918,12 @@
     // 刷新页面
     function refreshPage() {
       // 重置所有数据到初始状态
-      roles = [
-        { id: 1, name: '平台运维人员', description: '平台级超级管理员，负责系统配置和运维', creator: '系统初始', createTime: '2025-01-01', permissions: { workbench: ['workbench_platform'], customer: ['customer_view'], project: [], document: [], application: [], monitor: ['monitor_view'], archive: [], school: [], system: ['sys_user','sys_org','sys_role','sys_personnel','sys_log','sys_ai','sys_video'] } },
-        { id: 2, name: '机构管理员', description: '机构管理员，负责项目分配、人员管理与全局监控', creator: '系统初始', createTime: '2025-01-01', permissions: { workbench: ['workbench_org_admin'], customer: ['customer_view'], project: ['project_view','project_assign','project_change_pm','project_view_detail'], document: [], application: [], monitor: ['monitor_view','monitor_track','monitor_alert','monitor_report'], archive: [], school: ['school_task','school_plan'], system: ['sys_role','sys_personnel','sys_log','sys_ai','sys_video'] } },
-        { id: 3, name: '销售人员', description: '负责客户开发和跟进，执行选校方案制作', creator: '管理员', createTime: '2025-03-01', permissions: { workbench: ['workbench_sales'], customer: ['customer_view','customer_add','customer_edit'], project: [], document: [], application: [], monitor: [], archive: [], school: ['school_task','school_plan','school_catalog'], system: [] } },
-        { id: 5, name: '项目经理', description: '负责项目全流程管理和任务分发', creator: '管理员', createTime: '2025-01-15', permissions: { workbench: ['workbench_pm'], customer: ['customer_view','customer_add','customer_edit'], project: ['project_view','project_assign','project_change_pm','project_view_detail'], document: ['doc_view','doc_download'], application: ['app_view'], monitor: ['monitor_view','monitor_track','monitor_report'], archive: ['archive_view','archive_create','archive_approve'], school: [], system: [] } },
-        { id: 6, name: '文书人员', description: '负责执行文书撰写工作', creator: '管理员', createTime: '2025-02-01', permissions: { workbench: ['workbench_writer'], customer: ['customer_view'], project: [], document: ['doc_view','doc_upload','doc_edit','doc_download'], application: [], monitor: [], archive: ['archive_view'], school: [], system: [] } },
-        { id: 7, name: '网申人员', description: '负责执行网申填写与提交工作', creator: '管理员', createTime: '2025-02-01', permissions: { workbench: ['workbench_apply'], customer: ['customer_view'], project: [], document: [], application: ['app_view','app_create','app_submit','app_fill'], monitor: [], archive: ['archive_view'], school: [], system: [] } },
-        { id: 8, name: '文书审核', description: '负责文书内容的审核，通过或打回', creator: '管理员', createTime: '2025-02-10', permissions: { workbench: ['workbench_audit'], customer: ['customer_view'], project: [], document: ['doc_view','doc_review','doc_download'], application: [], monitor: [], archive: [], school: [], system: [] } },
-        { id: 9, name: '文书机构管理员', description: '统筹文书交付与审核，管理机构内文书团队成员', creator: '系统初始', createTime: '2025-01-01', permissions: { workbench: ['workbench_docadmin'], customer: ['customer_view'], project: [], document: ['doc_view','doc_upload','doc_edit','doc_review','doc_download'], application: [], monitor: [], archive: [], school: [], system: ['sys_role','sys_personnel','sys_ai','sys_video'] } }
-    ];
-      currentRoleId = null;
+      roles = JSON.parse(JSON.stringify(DEFAULT_ROLES));
+      currentRoleId = roles.length ? roles[0].id : null;
       permissionBackup = {};
+      permissionDirty = false;
       try { localStorage.removeItem(ROLE_PERMS_KEY); } catch (e) {}
-      document.getElementById('selectedRoleName').textContent = '权限配置';
-      document.getElementById('selectedRoleDesc').textContent = '请从左侧选择一个角色';
-      document.getElementById('permissionConfigArea').innerHTML =
-        '<div class="flex flex-col items-center justify-center py-16 text-gray-400">' +
-        '  <svg class="w-16 h-16 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">' +
-        '    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path>' +
-        '  </svg>' +
-        '  <p class="text-sm">请从左侧选择一个角色以查看和配置权限</p>' +
-        '</div>';
-      renderRoleList();
+      if (currentRoleId !== null) selectRole(currentRoleId);
     }
 
     // 弹窗相关
@@ -745,10 +931,20 @@
       document.getElementById('notificationModal').classList.add('hidden');
     }
 
-    // 初始化
+    // 初始化：先从 pbs-app.js 载入权限树，再构建角色默认权限并回读已保存配置
     document.addEventListener('DOMContentLoaded', function() {
+      if (!loadPermissionTree()) {
+        document.getElementById('permissionConfigAreaV2').innerHTML =
+          '<div class="text-sm text-red-500 text-center py-10">权限树加载失败：未找到 assets/js/pbs-app.js 中的 PERMISSION_TREE</div>';
+        return;
+      }
+      buildDefaultRoles();
+      roles = JSON.parse(JSON.stringify(DEFAULT_ROLES));
+      window.permissionModules = permissionModules;
+      window.roles = roles;
       loadPersistedRolePerms();
       renderRoleList();
+      if (roles.length) selectRole(roles[0].id);
 
       var notifBtn = document.querySelector('[data-dom-id="btn-notification"]');
       if (notifBtn) {

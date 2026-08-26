@@ -42,7 +42,7 @@
         <p class="text-xs text-gray-400 mt-1.5">选择已有角色后，下方权限将按该角色自动勾选，可在此基础上修改</p>
       </div>
       <div>
-        <label class="block text-sm text-gray-700 mb-2">权限配置 <span class="text-xs text-gray-400 font-normal">（按功能模块勾选）</span></label>
+        <label class="block text-sm text-gray-700 mb-2">权限配置 <span class="text-xs text-gray-400 font-normal">（按页面逐项勾选）</span></label>
         <div id="permModules" class="space-y-3"></div>
       </div>
       <p id="roleFormError" class="hidden text-xs text-red-500"></p>
@@ -54,44 +54,30 @@
     </form>
   </div>
   <script>
-    // 权限模块定义：优先读取父页面的 permissionModules，保证与权限配置区一致；读取失败时使用内置副本
-    var fallbackModules = [
-      { id: 'workbench', name: '工作台可见权限', items: [
-        { id: 'workbench_platform', label: '平台运维工作台可见' }, { id: 'workbench_org_admin', label: '机构管理员工作台可见' },
-        { id: 'workbench_sales', label: '销售人员工作台可见' }, { id: 'workbench_pm', label: '项目经理工作台可见' },
-        { id: 'workbench_writer', label: '文书人员工作台可见' },
-        { id: 'workbench_apply', label: '网申人员工作台可见' }, { id: 'workbench_audit', label: '文书审核工作台可见' } ] },
-      { id: 'customer', name: '学生档案管理', items: [
-        { id: 'customer_view', label: '查看客户列表' }, { id: 'customer_add', label: '新增客户' },
-        { id: 'customer_edit', label: '编辑客户信息' }, { id: 'customer_delete', label: '删除客户' },
-        { id: 'customer_import', label: '导入客户数据' } ] },
-      { id: 'project', name: '项目管理', items: [
-        { id: 'project_view', label: '查看项目列表' }, { id: 'project_assign', label: '分配项目' },
-        { id: 'project_change_pm', label: '更换项目经理' }, { id: 'project_view_detail', label: '查看项目详情' } ] },
-      { id: 'document', name: '文书交付', items: [
-        { id: 'doc_view', label: '查看文书列表' }, { id: 'doc_upload', label: '上传文书材料' },
-        { id: 'doc_edit', label: '编辑文书内容' }, { id: 'doc_review', label: '审核文书' },
-        { id: 'doc_download', label: '下载文书材料' } ] },
-      { id: 'application', name: '网申管理', items: [
-        { id: 'app_view', label: '查看申请列表' }, { id: 'app_create', label: '创建申请任务' },
-        { id: 'app_submit', label: '提交申请' }, { id: 'app_fill', label: '填写网申内容' } ] },
-      { id: 'monitor', name: '监控管理', items: [
-        { id: 'monitor_view', label: '查看监控列表' }, { id: 'monitor_track', label: '跟踪项目进度' },
-        { id: 'monitor_alert', label: '处理异常告警' }, { id: 'monitor_report', label: '查看监控报告' } ] },
-      { id: 'archive', name: '结项归档', items: [
-        { id: 'archive_view', label: '查看归档列表' }, { id: 'archive_create', label: '创建归档' },
-        { id: 'archive_approve', label: '审核归档' } ] },
-      { id: 'system', name: '系统管理', items: [
-        { id: 'sys_user', label: '管理用户账号' }, { id: 'sys_role', label: '管理角色权限' },
-        { id: 'sys_personnel', label: '管理人员信息' }, { id: 'sys_log', label: '查看操作日志' },
-        { id: 'sys_config', label: '系统配置管理' } ] }
-    ];
+    // 权限定义统一读取父页面共享权限树；弹窗应从角色权限管理页打开
+    var fallbackModules = [];
+    /* 读取父页面中由 pbs-app.js 导出的页面级权限树。 */
     var modules = fallbackModules;
     var parentRoles = [];
     try {
-      if (parent.permissionModules && parent.permissionModules.length) modules = parent.permissionModules;
+      if (parent.pbsPermissionTree && parent.pbsPermissionTree.length) modules = parent.pbsPermissionTree;
+      else if (parent.permissionModules && parent.permissionModules.length) modules = parent.permissionModules;
       if (parent.roles && parent.roles.length) parentRoles = parent.roles;
     } catch (e) {}
+    /* 按业务模块把页面分组归并成分区，没有 module 字段时（旧版副本）归到「功能模块」 */
+    function groupedSections() {
+      var sections = [];
+      var indexOfModule = {};
+      modules.forEach(function (group) {
+        var key = group.module || '功能模块';
+        if (!(key in indexOfModule)) {
+          indexOfModule[key] = sections.length;
+          sections.push({ module: key, pages: [] });
+        }
+        sections[indexOfModule[key]].pages.push(group);
+      });
+      return sections;
+    }
 
     function renderCopyOptions() {
       var sel = document.getElementById('copyFrom');
@@ -101,21 +87,33 @@
     }
 
     function renderPermModules() {
+      if (!modules.length) {
+        document.getElementById('permModules').innerHTML = '<div class="text-sm text-gray-500 text-center py-8">请从角色权限管理页打开新增角色</div>';
+        return;
+      }
       var html = '';
-      modules.forEach(function (mod) {
-        html += '<div class="border border-gray-200 rounded-lg p-3">' +
-          '<label class="flex items-center gap-2 mb-2 cursor-pointer">' +
-            '<input type="checkbox" class="w-4 h-4 text-blue-600 rounded" onchange="toggleModuleAll(\'' + mod.id + '\', this.checked)">' +
-            '<span class="text-sm font-medium text-gray-800">' + mod.name + '</span>' +
-            '<span class="text-xs text-gray-400">（全选）</span>' +
-          '</label>' +
-          '<div class="grid grid-cols-3 gap-2 ml-6">' +
-          mod.items.map(function (item) {
-            return '<label class="flex items-center gap-1.5 text-sm text-gray-600 cursor-pointer">' +
-              '<input type="checkbox" data-module="' + mod.id + '" value="' + item.id + '" class="w-3.5 h-3.5 text-blue-600 rounded">' +
-              item.label + '</label>';
-          }).join('') +
-          '</div></div>';
+      groupedSections().forEach(function (section) {
+        html += '<div class="rounded-lg border border-gray-200 overflow-hidden">' +
+          '<div class="flex items-center justify-between px-3 py-2 bg-gray-50 border-b border-gray-200">' +
+            '<span class="text-sm font-semibold text-gray-800">' + section.module + '</span>' +
+            '<span class="text-xs text-gray-400">' + section.pages.length + ' 个页面</span>' +
+          '</div><div class="p-3 space-y-3">';
+        section.pages.forEach(function (mod) {
+          html += '<div>' +
+            '<label class="flex items-center gap-2 mb-1.5 cursor-pointer">' +
+              '<input type="checkbox" class="w-4 h-4 text-blue-600 rounded" onchange="toggleModuleAll(\'' + mod.id + '\', this.checked)">' +
+              '<span class="text-sm font-medium text-gray-700">' + mod.name + '</span>' +
+              '<span class="text-xs text-gray-400">（本页全选）</span>' +
+            '</label>' +
+            '<div class="grid grid-cols-3 gap-2 ml-6">' +
+            mod.items.map(function (item) {
+              return '<label class="flex items-center gap-1.5 text-sm text-gray-600 cursor-pointer">' +
+                '<input type="checkbox" data-module="' + mod.id + '" value="' + item.id + '" class="w-3.5 h-3.5 text-blue-600 rounded">' +
+                item.label + '</label>';
+            }).join('') +
+            '</div></div>';
+        });
+        html += '</div></div>';
       });
       document.getElementById('permModules').innerHTML = html;
     }

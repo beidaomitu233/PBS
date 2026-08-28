@@ -9,7 +9,7 @@
   var PREVIEW_ROLE_KEY = 'pbs_role_preview_v51';
 
   /* ---------------- 角色定义 ---------------- */
-  var ROLES = ['超级管理员', '平台运维人员', '机构管理员', '销售人员', '项目经理',
+  var ROLES = ['超级管理员', '平台运维人员', '机构管理员', '销售人员管理员', '销售人员', '项目经理',
     '文书人员', '网申人员', '文书审核', '文书机构管理员'];
 
   /* 角色严格隔离：多角色账号按实际被授予的角色取权限并集，不再通过管理岗位自动继承执行岗位。 */
@@ -44,18 +44,20 @@
     '超级管理员': '管理员工作台 - 留学申请管理系统.html',
     '平台运维人员': '平台运维工作台 - PBS留学CRM系统.html',
     '机构管理员': '机构管理员工作台 - 留学申请管理系统.html',
-    '销售人员': '选校任务列表页 - 留学申请管理系统.html?view=workbench',
+    '销售人员管理员': '选校任务列表页 - 留学申请管理系统.html#workbench',
+    '销售人员': '选校任务列表页 - 留学申请管理系统.html#workbench',
     '项目经理': '项目经理工作台 - 留学申请管理系统.html',
-    '文书人员': '任务列表页 - 文书交付系统.html?view=workbench',
-    '网申人员': '网申任务列表页 - 留学申请管理系统.html?view=workbench',
-    '文书审核': '文书审核列表页 - 留学申请管理系统.html?view=workbench',
-    '文书机构管理员': '任务列表页 - 文书交付系统.html?view=workbench'
+    '文书人员': '任务列表页 - 文书交付系统.html#workbench',
+    '网申人员': '网申任务列表页 - 留学申请管理系统.html#workbench',
+    '文书审核': '文书审核列表页 - 留学申请管理系统.html#workbench',
+    '文书机构管理员': '任务列表页 - 文书交付系统.html#workbench'
   };
 
   /* 每一种工作台都是独立权限；同一角色可按需获得多个工作台视角。 */
   var WORKBENCH_ROLE_PERMISSION = {
     '平台运维人员': 'workbench_platform',
     '机构管理员': 'workbench_org_admin',
+    '销售人员管理员': 'workbench_sales_manager',
     '销售人员': 'workbench_sales',
     '项目经理': 'workbench_pm',
     '文书人员': 'workbench_writer',
@@ -65,7 +67,7 @@
   };
   var WORKBENCH_KEY_PERMISSION = {
     pm: 'workbench_pm', writer: 'workbench_writer',
-    sales: 'workbench_sales', apply: 'workbench_apply', audit: 'workbench_audit',
+    salesmanager: 'workbench_sales_manager', sales: 'workbench_sales', apply: 'workbench_apply', audit: 'workbench_audit',
     platform: 'workbench_platform', orgadmin: 'workbench_org_admin',
     docadmin: 'workbench_docadmin'
   };
@@ -87,6 +89,7 @@
   definePermissionPage('工作台', 'wb_home', '工作台首页', '', [
     { id: 'workbench_platform', label: '平台运维工作台', desc: '可见平台运维视角' },
     { id: 'workbench_org_admin', label: '机构管理员工作台', desc: '可见机构运营视角' },
+    { id: 'workbench_sales_manager', label: '销售人员管理员工作台', desc: '可见选校团队管理视角' },
     { id: 'workbench_pm', label: '项目经理工作台', desc: '可见项目经理视角' },
     { id: 'workbench_sales', label: '销售人员工作台', desc: '可见销售视角' },
     { id: 'workbench_writer', label: '文书人员工作台', desc: '可见文书交付视角' },
@@ -108,7 +111,7 @@
   /* ToB SaaS 边界：角色权限 / 操作日志 / AI / 视频只属于平台运维侧。
      所有机构业务角色均不得持有这些页面的权限项，也看不到对应菜单与页面。 */
   var PLATFORM_ONLY_SYSTEM_ROLES = [
-    '机构管理员', '销售人员', '项目经理', '文书人员',
+    '机构管理员', '销售人员管理员', '销售人员', '项目经理', '文书人员',
     '网申人员', '文书审核', '文书机构管理员'
   ];
   var PLATFORM_ONLY_PAGE_GROUPS = ['role_perm', 'op_log', 'ai_admin', 'video_admin'];
@@ -302,6 +305,10 @@
       'monitor_site_view', 'monitor_site_manage', 'monitor_mail_view', 'monitor_mail_manage',
       'school_task', 'school_task_manage', 'school_plan_empty_view',
       'personnel_view', 'personnel_manage', 'personnel_assign_roles'
+    ],
+    '销售人员管理员': [
+      'workbench_sales_manager',
+      'school_task', 'school_task_manage', 'school_plan_empty_view'
     ],
     '销售人员': [
       'workbench_sales',
@@ -668,9 +675,9 @@
       children: [{ label: '结项归档列表', file: '结项归档列表 - PBS留学CRM系统.html' }] },
     { key: 'review', label: '文书审核', icon: 'shield', permission: 'doc_review', roles: ['文书审核', '文书机构管理员'],
       children: [{ label: '文书审核列表', file: '文书审核列表页 - 留学申请管理系统.html' }] },
-    { key: 'school', label: '选校管理', icon: 'map', permission: ['school_task','school_plan'], roles: ['机构管理员', '销售人员'],
+    { key: 'school', label: '选校管理', icon: 'map', permission: ['school_task','school_plan'], roles: ['机构管理员', '销售人员管理员', '销售人员'],
       children: [
-        { label: '选校任务列表', file: '选校任务列表页 - 留学申请管理系统.html', permission: 'school_task', roles: ['机构管理员', '销售人员'] },
+        { label: '选校任务列表', file: '选校任务列表页 - 留学申请管理系统.html', permission: 'school_task', roles: ['机构管理员', '销售人员管理员', '销售人员'] },
         { label: '院校列表', file: '选校工作台页 - 留学申请管理系统.html', href: '选校工作台页 - 留学申请管理系统.html?mode=catalog', permission: 'school_plan', roles: ['销售人员'] }] },
     { key: 'organization', label: '机构管理', icon: 'users', permission: 'sys_org', roles: ['平台运维人员'], single: true, file: '机构管理 - PBS留学CRM系统.html' },
     { key: 'personnel', label: '机构成员管理', icon: 'idcard', permission: 'personnel_view', roles: ['机构管理员', '文书机构管理员'], single: true, file: '人员管理 - PBS留学CRM系统.html' },
@@ -721,8 +728,8 @@
     '视频管理 - 留学申请管理系统.html': ['平台运维人员'],
     '文书审核列表页 - 留学申请管理系统.html': ['文书审核', '文书机构管理员'],
     '文书审核详情页 - 留学申请管理系统.html': ['文书审核', '文书机构管理员'],
-    '选校订单池页 - 留学申请管理系统.html': ['机构管理员', '销售人员'],
-    '选校任务列表页 - 留学申请管理系统.html': ['机构管理员', '销售人员'],
+    '选校订单池页 - 留学申请管理系统.html': ['机构管理员', '销售人员管理员', '销售人员'],
+    '选校任务列表页 - 留学申请管理系统.html': ['机构管理员', '销售人员管理员', '销售人员'],
     '选校工作台页 - 留学申请管理系统.html': ['销售人员'],
     '选校方案未生成 - 留学申请管理系统.html': ['销售人员', '机构管理员'],
     '院校目标详情页 - 留学申请管理系统.html': ['项目经理', '机构管理员']
@@ -1052,7 +1059,10 @@
   };
 
   function hrefFile(href) {
-    return (href || '').split('?')[0];
+    return (href || '').split(/[?#]/)[0];
+  }
+  function isWorkbenchRequest() {
+    return new URLSearchParams(location.search).get('view') === 'workbench' || location.hash === '#workbench';
   }
 
   function renderRoleNavigation(session, file, workbenchHref, showWorkbench) {
@@ -1063,8 +1073,8 @@
     var menuMap = {};
     MENUS.forEach(function(menu) { menuMap[menu.key] = menu; });
     var workbenchTarget = hrefFile(workbenchHref);
-    var workbenchView = new URLSearchParams(location.search).get('view') === 'workbench';
-    var workbenchActive = file === workbenchTarget && (workbenchHref.indexOf('?view=workbench') < 0 || workbenchView);
+    var workbenchView = isWorkbenchRequest();
+    var workbenchActive = file === workbenchTarget && (workbenchHref.indexOf('workbench') < 0 || workbenchView);
     var html = '<nav class="p-4 flex-1 pbs-pm-navigation">';
     if (showWorkbench !== false) {
       html += '<a href="' + encodeURI(workbenchHref) + '" class="pbs-pm-primary-link ' + (workbenchActive ? 'is-active' : '') + '">' + svgIcon(ICONS.home, 'w-5 h-5') + '<span>工作台</span></a>';
@@ -1957,14 +1967,14 @@
   };
 
   /* ---------------- 角色工作台（多角色视角 × 工作台可见权限） ---------------- */
-  /* 工作台宿主页：always=独立工作台页；param=列表页以 ?view=workbench 承载工作台视角 */
+  /* 工作台宿主页：always=独立工作台页；param=列表页以 #workbench（兼容 ?view=workbench）承载工作台视角 */
   var WORKBENCH_HOSTS = {
-    '管理员工作台 - 留学申请管理系统.html': { always: true, keys: ['pm', 'writer', 'sales', 'apply', 'audit', 'platform', 'orgadmin'] },
+    '管理员工作台 - 留学申请管理系统.html': { always: true, keys: ['platform', 'orgadmin', 'salesmanager', 'sales', 'pm', 'writer', 'audit', 'apply', 'docadmin'] },
     '平台运维工作台 - PBS留学CRM系统.html': { always: true, keys: ['platform'], permission: 'workbench_platform' },
     '机构管理员工作台 - 留学申请管理系统.html': { always: true, keys: ['orgadmin'], permission: 'workbench_org_admin' },
     '项目经理工作台 - 留学申请管理系统.html': { always: true, keys: ['pm'] },
     '任务列表页 - 文书交付系统.html': { param: true, keys: ['writer', 'docadmin'] },
-    '选校任务列表页 - 留学申请管理系统.html': { param: true, keys: ['sales'] },
+    '选校任务列表页 - 留学申请管理系统.html': { param: true, keys: ['salesmanager', 'sales'] },
     '网申任务列表页 - 留学申请管理系统.html': { param: true, keys: ['apply'] },
     '文书审核列表页 - 留学申请管理系统.html': { param: true, keys: ['audit'] }
   };
@@ -2270,7 +2280,7 @@
   function mountRoleWorkbench(session, file) {
     var host = WORKBENCH_HOSTS[file];
     if (!host) return;
-    var isWorkbenchView = host.always || new URLSearchParams(location.search).get('view') === 'workbench';
+    var isWorkbenchView = host.always || isWorkbenchRequest();
     if (!isWorkbenchView) return;
 
     /* 独立静态工作台也按各自权限校验。 */

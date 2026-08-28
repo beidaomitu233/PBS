@@ -525,6 +525,7 @@
     let filteredData = [...personnelData];
     let personnelScopeOrg = '';
     let isPlatformPersonnelManager = false;
+    let currentPersonnelRole = '机构管理员';
 
     function getOrganizationById(id) {
       return organizationData.find(function (organization) { return organization.id === id; });
@@ -556,12 +557,38 @@
       '网申人员': 'bg-lime-100 text-lime-700',
       '文书审核': 'bg-red-100 text-red-700'
     };
-    /* 机构成员只能分配机构级业务角色，平台运维账号由平台侧单独管理。 */
-    var ALL_ROLES = ['机构管理员', '项目经理', '文书人员', '网申人员', '文书审核', '销售人员'];
+    /* 创建成员时按当前管理角色隔离可分配范围；平台运维账号不属于机构成员。
+       机构管理员可自行授予/回收「机构管理员」角色，换人接管不需要平台运维介入。 */
+    var INSTITUTION_ROLES = ['机构管理员', '项目经理', '文书人员', '网申人员', '文书审核', '销售人员', '文书机构管理员'];
+    function assignableRoles() {
+      if (currentPersonnelRole === '超级管理员' || currentPersonnelRole === '平台运维人员') return INSTITUTION_ROLES.slice();
+      if (currentPersonnelRole === '机构管理员') return ['机构管理员', '项目经理', '文书人员', '网申人员', '文书审核', '销售人员', '文书机构管理员'];
+      if (currentPersonnelRole === '文书机构管理员') return ['文书人员', '文书审核'];
+      return [];
+    }
+    function canManagePerson(person) {
+      var allowed = assignableRoles();
+      if (currentPersonnelRole === '超级管理员' || currentPersonnelRole === '平台运维人员') return true;
+      return (person.roles || []).length > 0 && person.roles.every(function (role) { return allowed.indexOf(role) >= 0; });
+    }
+    /* 机构自治的兜底：本机构必须始终保留至少一名在职机构管理员，
+       否则机构会把自己锁死，又得回头找平台运维——正是要避免的情况。 */
+    function activeOrgAdmins() {
+      return personnelData.filter(function (person) {
+        if (personnelScopeOrg && person.org !== personnelScopeOrg) return false;
+        return person.status === '在职' && (person.roles || []).indexOf('机构管理员') >= 0;
+      });
+    }
+    function isLastActiveOrgAdmin(person) {
+      if (!person || person.status !== '在职' || (person.roles || []).indexOf('机构管理员') < 0) return false;
+      var admins = activeOrgAdmins();
+      return admins.length <= 1 && admins.some(function (item) { return item.id === person.id; });
+    }
 
     function renderRoleOptions(containerId, selectedRoles) {
       var selected = selectedRoles || [];
-      document.getElementById(containerId).innerHTML = ALL_ROLES.map(function (role) {
+      var available = assignableRoles();
+      document.getElementById(containerId).innerHTML = available.map(function (role) {
         return '<label class="flex items-center gap-2 px-3 py-2 rounded-lg border border-gray-200 hover:border-blue-400 hover:bg-blue-50 cursor-pointer text-sm text-gray-700 transition-colors">' +
           '<input type="checkbox" value="' + role + '"' + (selected.indexOf(role) >= 0 ? ' checked' : '') + ' class="w-4 h-4 accent-blue-600">' + role + '</label>';
       }).join('');
@@ -705,6 +732,7 @@ closeAddUser();
           var roleBadges = '<div class="flex flex-wrap gap-1">' + p.roles.map(function (r) {
             return '<span class="inline-flex px-2.5 py-1 text-xs font-medium rounded-full ' + (ROLE_COLORS[r] || 'bg-gray-100 text-gray-700') + '">' + r + '</span>';
           }).join('') + '</div>';
+          var manageable = canManagePerson(p);
           html += '<tr class="hover:bg-gray-50 transition-colors">' +
             '<td class="px-5 py-4"><div class="flex items-center gap-3">' +
               '<div class="w-9 h-9 bg-gradient-to-br from-blue-500 to-purple-500 rounded-full flex items-center justify-center flex-shrink-0"><span class="text-white text-sm font-medium">' + escapeHtml(p.name.charAt(0)) + '</span></div>' +
@@ -715,9 +743,10 @@ closeAddUser();
             '<td class="px-5 py-4">' + roleBadges + '</td>' +
             '<td class="px-5 py-4"><span class="inline-flex items-center gap-1.5 px-2.5 py-1 text-xs font-medium rounded-full ' + (p.status === '在职' ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-500') + '">' +
               '<span class="w-1.5 h-1.5 rounded-full ' + (p.status === '在职' ? 'bg-green-500' : 'bg-gray-400') + '"></span>' + p.status + '</span></td>' +
-            '<td class="px-5 py-4 text-sm whitespace-nowrap">' +
+            '<td class="px-5 py-4 text-sm whitespace-nowrap">' + (manageable ?
               '<button class="text-blue-600 hover:text-blue-800 font-medium mr-4" onclick="editPerson(' + p.id + ')">编辑</button>' +
-              '<button class="font-medium ' + (p.status === '在职' ? 'text-red-600 hover:text-red-800' : 'text-green-600 hover:text-green-800') + '" onclick="togglePersonStatus(' + p.id + ')">' + (p.status === '在职' ? '停职' : '复职') + '</button>' +
+              '<button class="font-medium ' + (p.status === '在职' ? 'text-red-600 hover:text-red-800' : 'text-green-600 hover:text-green-800') + '" onclick="togglePersonStatus(' + p.id + ')">' + (p.status === '在职' ? '停职' : '复职') + '</button>' :
+              '<span class="text-xs text-gray-400">无权调整该角色</span>') +
             '</td></tr>';
         });
         tbody.innerHTML = html;
@@ -756,6 +785,7 @@ closeAddUser();
       filteredData = personnelData.filter(function (p) {
         var ok = true;
         if (personnelScopeOrg) ok = ok && p.org === personnelScopeOrg;
+        if (currentPersonnelRole === '文书机构管理员') ok = ok && p.roles.some(function (item) { return item === '文书人员' || item === '文书审核'; });
         if (org) ok = ok && p.org === org;
         if (kw) ok = ok && (p.name + p.org + p.account + p.roles.join('') + p.status).toLowerCase().indexOf(kw) >= 0;
         if (name) ok = ok && p.name.indexOf(name) >= 0;
@@ -827,6 +857,10 @@ closeAddUser();
       if (checkedRoles.indexOf('平台运维人员') >= 0) {
         showModalError('edit-user-error', '机构成员不能分配平台运维人员角色'); return;
       }
+      if (checkedRoles.indexOf('机构管理员') < 0 && isLastActiveOrgAdmin(p)) {
+        showModalError('edit-user-error', '「' + p.name + '」是本机构唯一在职的机构管理员，请先指定其他成员为机构管理员，再回收该角色');
+        return;
+      }
       var originalAccount = p.account;
       var passwordChanged = !!password;
       p.account = account;
@@ -850,6 +884,14 @@ closeAddUser();
       showPersonnelToast('成员“' + updatedName + '”的信息已保存' + (passwordChanged ? '，密码已更新' : ''));
     }
     function togglePersonStatus(id) {
+      var target = null;
+      for (var t = 0; t < personnelData.length; t++) {
+        if (personnelData[t].id === id) { target = personnelData[t]; break; }
+      }
+      if (target && isLastActiveOrgAdmin(target)) {
+        showPersonnelToast('「' + target.name + '」是本机构唯一在职的机构管理员，请先指定接任人再停职', 'error');
+        return;
+      }
       var changedPerson = null;
       for (var i = 0; i < personnelData.length; i++) {
         if (personnelData[i].id === id) {
@@ -884,6 +926,7 @@ closeAddUser();
 
     document.addEventListener('DOMContentLoaded', function () {
       var session = window.pbsGetSession ? window.pbsGetSession() : null;
+      currentPersonnelRole = session && session.role ? session.role : '超级管理员';
       isPlatformPersonnelManager = !session || session.role === '超级管理员' || session.role === '平台运维人员';
       if (!isPlatformPersonnelManager) {
         var sessionOrganizationName = session.org || 'PBS留学总部';
@@ -896,8 +939,16 @@ closeAddUser();
         openOrganization(sessionOrganization.id);
       } else {
         var requestedOrganization = new URLSearchParams(location.search).get('org');
-        var initialOrganization = getOrganizationById(requestedOrganization) || getOrganizationByName(requestedOrganization) || organizationData[0];
-        if (initialOrganization) openOrganization(initialOrganization.id);
+        if (!requestedOrganization) {
+          location.replace('机构管理 - PBS留学CRM系统.html');
+          return;
+        }
+        var initialOrganization = getOrganizationById(requestedOrganization) || getOrganizationByName(requestedOrganization);
+        if (!initialOrganization) {
+          location.replace('机构管理 - PBS留学CRM系统.html');
+          return;
+        }
+        openOrganization(initialOrganization.id);
       }
       var notifBtn = document.querySelector('[data-dom-id="btn-notification"]');
       if (notifBtn) {

@@ -27,11 +27,11 @@
       <div class="md:flex md:items-end md:justify-between md:gap-8">
         <div>
           <p class="text-sm text-blue-200 mb-2">PBS 定制选校建议</p>
-          <h1 class="text-2xl sm:text-3xl font-semibold tracking-tight">周雨薇同学的专属方案</h1>
+          <h1 id="sharedPlanTitle" class="text-2xl sm:text-3xl font-semibold tracking-tight">周雨薇同学的专属方案</h1>
           <p class="text-sm text-blue-100 mt-4 max-w-2xl leading-6">基于学生背景、申请目标与院校录取要求形成的分层选校建议。</p>
         </div>
         <div class="flex items-center gap-2 mt-6 md:mt-0 text-xs text-blue-100">
-          <span class="px-3 py-2 rounded-lg bg-white/10">美国</span><span class="px-3 py-2 rounded-lg bg-white/10">硕士申请</span><span class="px-3 py-2 rounded-lg bg-white/10">计算机科学</span>
+          <span id="sharedPlanCountry" class="px-3 py-2 rounded-lg bg-white/10">美国</span><span id="sharedPlanLevel" class="px-3 py-2 rounded-lg bg-white/10">硕士申请</span><span id="sharedPlanMajor" class="px-3 py-2 rounded-lg bg-white/10">计算机科学</span>
         </div>
       </div>
     </div>
@@ -78,6 +78,18 @@
   </div>
 
   <script>
+    (function hydrateSharedPlanHeader() {
+      var params = new URLSearchParams(location.search);
+      var student = params.get('student') || '周雨薇';
+      var country = params.get('country') || '美国';
+      var level = params.get('level') || '硕士申请';
+      var major = params.get('major') || '计算机科学';
+      document.title = student + '的选校方案 - PBS留学';
+      document.getElementById('sharedPlanTitle').textContent = student + '同学的专属方案';
+      document.getElementById('sharedPlanCountry').textContent = country;
+      document.getElementById('sharedPlanLevel').textContent = level;
+      document.getElementById('sharedPlanMajor').textContent = major;
+    })();
     var schools = [
       { id: 'cmu', zone: '冲刺区', target: 'zoneReach', name: '卡内基梅隆大学', program: '计算机科学（MSCS）', rank: 'QS #52', duration: '2 年', deadline: '2025-12-15', tuition: 'USD 58,000/年', reason: '科研经历与 NLP 方向高度契合，计算机学科实力突出，建议作为重点冲刺项目。', feature: '课程覆盖系统、理论与人工智能方向，学院与多家科技企业设有联合研究项目。', requirement: '建议 GPA 3.8+、托福 105+，GRE 325+；部分申请者需参加视频面试。' },
       { id: 'uiuc', zone: '匹配区', target: 'zoneMatch', name: '伊利诺伊大学厄巴纳-香槟分校', program: '计算机科学（MCS）', rank: 'QS #69', duration: '1.5–2 年', deadline: '2026-01-15', tuition: 'USD 42,000/年', reason: '学生成绩区间与往年录取画像匹配，工程学院资源和就业表现稳定。', feature: '计算机与工程学科基础雄厚，课程选择灵活，校友与雇主网络成熟。', requirement: '建议 GPA 3.5+、托福 103+，有算法、系统及科研项目经历更具竞争力。' },

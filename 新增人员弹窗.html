@@ -33,18 +33,15 @@
   <script>
     var ALL_ASSIGNABLE_ROLES = ['机构管理员', '销售人员', '项目经理', '文书人员', '网申人员', '文书审核', '文书机构管理员'];
     function getAssignableRoles(currentRole) {
-      try {
-        var saved = JSON.parse(localStorage.getItem('pbs_role_assignment_perms_v1') || '{}');
-        if (saved[currentRole] && Array.isArray(saved[currentRole])) return saved[currentRole];
-      } catch (e) {}
-      // 默认配置：与需求描述一致
+      // 默认配置：机构成员角色按当前管理岗位隔离，平台运维账号不在此创建。
+      // 机构管理员可自行授予「机构管理员」角色，换人接管不必找平台运维。
       var defaults = {
+        '超级管理员': ALL_ASSIGNABLE_ROLES.slice(),
         '平台运维人员': ALL_ASSIGNABLE_ROLES.slice(),
-        '机构管理员': ['销售人员', '项目经理', '文书人员', '网申人员', '文书审核', '文书机构管理员'],
-        '文书机构管理员': ['文书人员'],
-        '项目经理': ['文书人员', '网申人员', '文书审核']
+        '机构管理员': ['机构管理员', '销售人员', '项目经理', '文书人员', '网申人员', '文书审核', '文书机构管理员'],
+        '文书机构管理员': ['文书人员', '文书审核']
       };
-      return defaults[currentRole] || ALL_ASSIGNABLE_ROLES.slice();
+      return defaults[currentRole] || [];
     }
     try {
       var session = parent.pbsGetSession ? parent.pbsGetSession() : null;

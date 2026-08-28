@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>方案未生成 - 留学申请管理系统</title>
+  <script src="./assets/vendor/tailwind-runtime.js"></script>
+  <link rel="stylesheet" href="./assets/css/pbs-theme.css?v=6.1">
+</head>
+<body class="bg-gray-50 min-h-screen">
+  <header class="h-16 bg-white border-b border-gray-200 sticky top-0 z-40">
+    <div class="h-16 flex items-center justify-between px-6">
+      <div class="flex items-center gap-3">
+        <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-blue-500 to-purple-500 flex items-center justify-center text-white font-semibold">P</div>
+        <div><p class="text-sm font-semibold text-gray-900">PBS 留学申请管理系统</p><p class="text-xs text-gray-400">选校管理</p></div>
+      </div>
+      <div class="flex items-center gap-4">
+        <button class="relative p-2 text-gray-500 hover:text-gray-700" data-dom-id="btn-notification" aria-label="通知">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.4-1.4A2 2 0 0118 14.2V11a6 6 0 00-4-5.7V5a2 2 0 10-4 0v.3A6 6 0 006 11v3.2a2 2 0 01-.6 1.4L4 17h5m6 0v1a3 3 0 11-6 0v-1"></path></svg>
+        </button>
+        <div class="flex items-center gap-3 pl-4 border-l border-gray-200 relative">
+          <div class="w-8 h-8 rounded-full bg-gradient-to-br from-blue-500 to-purple-500 flex items-center justify-center cursor-pointer" onclick="toggleUserMenu()"><span class="text-white text-sm font-medium">测</span></div>
+          <span class="text-sm text-gray-700">测试账号</span>
+        </div>
+      </div>
+    </div>
+  </header>
+  <div class="flex">
+    <aside id="pbs-sidebar" class="w-56 bg-white border-r border-gray-200 min-h-[calc(100vh-4rem)] flex flex-col"></aside>
+    <main class="flex-1 p-6">
+      <button class="inline-flex items-center gap-2 h-10 px-4 mb-6 bg-white border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50" onclick="location.href='选校任务列表页 - 留学申请管理系统.html'">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>返回任务列表
+      </button>
+      <section class="bg-white border border-gray-100 rounded-2xl shadow-sm min-h-[560px] flex items-center justify-center p-10">
+        <div class="max-w-xl text-center">
+          <div class="w-20 h-20 mx-auto rounded-2xl bg-blue-50 flex items-center justify-center text-blue-600 mb-6">
+            <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.6a1 1 0 01.7.3l5.4 5.4a1 1 0 01.3.7V19a2 2 0 01-2 2z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7" d="M13 3v6h6"></path></svg>
+          </div>
+          <span class="inline-flex px-3 py-1 rounded-full bg-amber-50 text-amber-700 text-xs font-medium mb-4">方案未生成</span>
+          <h1 class="text-2xl font-semibold text-gray-900">尚未生成第一版选校方案</h1>
+          <p class="text-sm text-gray-500 mt-3 leading-7"><span id="missingStudent">当前学生</span>的选校任务已创建，但尚未保存任何方案。完成院校筛选并首次保存后，“查看方案”将直接打开客户分享页面。</p>
+          <div class="mt-6 rounded-xl bg-gray-50 border border-gray-100 px-5 py-4 text-left text-sm">
+            <div class="flex justify-between gap-6"><span class="text-gray-500">项目号</span><span id="missingProject" class="font-medium text-gray-900">—</span></div>
+            <div class="flex justify-between gap-6 mt-3"><span class="text-gray-500">当前状态</span><span class="font-medium text-amber-700">等待生成第一版方案</span></div>
+          </div>
+          <div class="flex justify-center gap-3 mt-7">
+            <button class="h-10 px-5 bg-white border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50" onclick="location.href='选校任务列表页 - 留学申请管理系统.html'">返回任务列表</button>
+            <button class="h-10 px-5 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium" data-pbs-permission="school_plan" onclick="location.href='选校工作台页 - 留学申请管理系统.html'">进入选校工作台</button>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+  <script>
+    (function () {
+      var params = new URLSearchParams(location.search);
+      document.getElementById('missingProject').textContent = params.get('project') || '暂未关联项目号';
+      document.getElementById('missingStudent').textContent = (params.get('student') || '当前学生') + '同学';
+    })();
+  </script>
+  <script src="./assets/js/pbs-workbench.js"></script>
+  <script src="./assets/js/pbs-app.js?v=6.4"></script>
+</body>
+</html>

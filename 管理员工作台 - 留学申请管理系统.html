@@ -206,7 +206,7 @@
       <!-- 页面标题栏 -->
       <div class="mb-5">
         <h1 class="text-2xl font-semibold text-gray-800">角色工作台</h1>
-        <p class="text-sm text-gray-400 mt-1">启航留学 · 每个角色一个工作台：指标 × 卡片 × 今日待办 × DDL 日历 × 数据看板 · 数据均来自系统内真实任务 · <span id="pbsTodayDate">今天</span></p>
+        <p class="text-sm text-gray-400 mt-1">启航留学 · 每个角色按权限展示：可下钻数据总览、DDL 与日程、业务消息与待处理 · <span id="pbsTodayDate">数据按角色范围过滤</span></p>
       </div>
 
       <!-- 角色工作台挂载点：由 pbs-workbench.js 按当前登录用户的角色渲染（多角色可切换多个工作台视角，单角色仅显示本人工作台） -->
@@ -319,9 +319,7 @@
       function fill() {
         var el = document.getElementById('pbsTodayDate');
         if (!el) return;
-        var now = new Date();
-        var y = now.getFullYear(), m = String(now.getMonth() + 1).padStart(2, '0'), d = String(now.getDate()).padStart(2, '0');
-        el.textContent = '今天 ' + y + '-' + m + '-' + d;
+        el.textContent = '数据按角色权限实时过滤';
       }
       if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', fill); else fill();
     })();

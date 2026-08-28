@@ -43,12 +43,17 @@
   <script>
     var ASSIGNABLE_ROLES = ['机构管理员', '销售人员', '项目经理', '文书人员', '网申人员', '文书审核', '文书机构管理员'];
     (function initRoles() {
-      var roles = ASSIGNABLE_ROLES.slice();
+      var roles = [];
       try {
         var session = parent.pbsGetSession ? parent.pbsGetSession() : null;
-        var saved = JSON.parse(localStorage.getItem('pbs_role_assignment_perms_v1') || '{}');
         var currentRole = (session && session.role) || '平台运维人员';
-        if (saved[currentRole] && Array.isArray(saved[currentRole])) roles = saved[currentRole];
+        var defaults = {
+          '超级管理员': ASSIGNABLE_ROLES.slice(),
+          '平台运维人员': ASSIGNABLE_ROLES.slice(),
+          '机构管理员': ['销售人员', '项目经理', '文书人员', '网申人员', '文书审核', '文书机构管理员'],
+          '文书机构管理员': ['文书人员', '文书审核']
+        };
+        roles = defaults[currentRole] || [];
       } catch (e) {}
       document.getElementById('roleOptions').innerHTML = roles.map(function (role) {
         return '<label class="flex items-center gap-2 px-3 py-2 border border-gray-200 rounded-lg text-sm text-gray-700 cursor-pointer hover:border-blue-400"><input type="checkbox" value="' + role + '" class="accent-blue-600">' + role + '</label>';

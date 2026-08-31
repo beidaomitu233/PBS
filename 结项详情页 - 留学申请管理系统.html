@@ -180,18 +180,16 @@
   
     <!-- 主内容区 -->
     <main class="p-6">
-      <!-- 页面标题 -->
-      <div class="flex items-center justify-between mb-6">
-        <div>
-          <h1 class="text-2xl font-semibold text-gray-800">结项详情</h1>
-          <p class="text-sm text-gray-500 mt-1">查看结项申请详细信息，确认项目结果并生成结项报告</p>
+      <div class="pbs-detail-topbar">
+        <div class="pbs-detail-topbar__main">
+          <button class="pbs-detail-back" onclick="window.location.href=&#39;结项归档列表 - PBS留学CRM系统.html&#39;" type="button" aria-label="返回结项归档列表" title="返回结项归档列表">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+          </button>
+          <div class="pbs-detail-topbar__copy">
+            <h1 class="pbs-detail-topbar__title">结项详情</h1>
+            <p class="pbs-detail-topbar__subtitle">查看结项申请详细信息，确认项目结果并生成结项报告</p>
+          </div>
         </div>
-        <button class="flex items-center gap-2 px-4 py-2 bg-white border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors" onclick="window.location.href=&#39;结项归档列表 - PBS留学CRM系统.html&#39;">
-          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
-          </svg>
-          返回列表
-        </button>
       </div>
 
       <!-- 结项申请基础信息区 -->

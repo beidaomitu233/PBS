@@ -63,7 +63,7 @@
     main.p-6 { display: flex; flex-direction: column; }
     main.p-6 > * { width: 100%; }
     .school-assignment-badge { display:inline-flex; align-items:center; padding:6px 9px; border-radius:999px; background:#FFF7ED; color:#9A6B32; font-size:11px; font-weight:650; white-space:nowrap; }
-    .school-assignment-badge.is-assigned { background:#EEF4F0; color:#5E806A; }
+    .school-assignment-badge.hidden { display:none; }
     /* 项目关键 DDL：三组摘要，详细文书时限按需展开 */
     .project-ddl-panel { grid-template-columns:118px minmax(0,1fr); padding:12px 14px; }
     .project-ddl-strip { grid-template-columns:repeat(3,minmax(0,1fr)); gap:8px; }
@@ -142,16 +142,6 @@
 
     <!-- 主内容区 -->
     <main class="p-6">
-      <!-- 操作按钮区 -->
-      <div class="flex items-center justify-end gap-3 mb-6">
-        <button onclick="window.location.href='我的项目列表页 - 留学申请管理系统.html'" class="flex items-center gap-2 px-4 py-2 bg-white border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors" data-dom-id="btn-back-my-projects">
-          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
-          </svg>
-          返回列表
-        </button>
-      </div>
-
       <!-- 板块三：学生资料与学术背景（项目共用参考区，默认收起，点击展开） -->
       <section class="order-3 mb-6">
         <details class="student-profile-details bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden">
@@ -299,6 +289,9 @@
         <div class="p-5">
           <div class="flex items-center justify-between flex-wrap gap-4">
             <div class="flex items-center gap-7 flex-wrap">
+              <button onclick="window.location.href='我的项目列表页 - 留学申请管理系统.html'" class="pbs-detail-back" data-dom-id="btn-back-my-projects" type="button" aria-label="返回我的项目列表" title="返回我的项目列表">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+              </button>
               <div class="flex items-center gap-3">
                 <span id="myProjectStudentAvatar" class="w-11 h-11 rounded-xl bg-gradient-to-br from-blue-500 to-indigo-600 text-white flex items-center justify-center flex-shrink-0 text-base font-bold">李</span>
                 <div>
@@ -307,15 +300,6 @@
                     <span id="myProjectStateLabel" class="text-[11px] px-2 py-0.5 rounded-full bg-blue-50 text-blue-700 font-medium">交付中</span>
                   </div>
                   <p id="myProjectNo" class="text-xs text-gray-400 mt-0.5 font-mono">PRJ20260701002</p>
-                </div>
-              </div>
-              <div class="flex items-center gap-3">
-                <span class="w-10 h-10 rounded-xl bg-violet-50 text-violet-600 flex items-center justify-center flex-shrink-0">
-                  <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5.121 17.804A13.937 13.937 0 0112 16c2.5 0 4.847.655 6.879 1.804M15 10a3 3 0 11-6 0 3 3 0 016 0zm6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                </span>
-                <div>
-                  <p class="text-xs text-gray-400 mb-0.5">项目经理</p>
-                  <p id="myProjectManager" class="text-sm font-semibold text-gray-900">张老师</p>
                 </div>
               </div>
               <div class="flex items-center gap-3">
@@ -341,11 +325,11 @@
               <div class="project-school-selector">
                 <label for="schoolCockpitSelect">院校目标</label>
                 <select id="schoolCockpitSelect" onchange="switchSchoolCockpit(this.value)" aria-label="切换院校目标">
-                  <option value="cmu">卡内基梅隆大学 · 人工智能（机构已分配）</option>
-                  <option value="stanford">斯坦福大学 · 计算机科学（人员待分配）</option>
+                  <option value="cmu">卡内基梅隆大学 · 人工智能</option>
+                  <option value="stanford">斯坦福大学 · 计算机科学（未分配）</option>
                 </select>
               </div>
-              <span id="schoolAssignmentBadge" class="school-assignment-badge">人员待分配</span>
+              <span id="schoolAssignmentBadge" class="school-assignment-badge hidden">项目经理和成员未分配</span>
               <button id="assignStaffButton" type="button" class="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition-colors shadow-sm" onclick="openAssignDrawer()">分配人员</button>
               <button id="changeStaffButton" type="button" class="px-4 py-2 text-sm font-medium text-orange-600 bg-white border border-orange-300 rounded-lg hover:bg-orange-50 transition-colors" onclick="openChangeDrawer()">更换人员</button>
             </div>
@@ -568,7 +552,6 @@
         myProjectTitle: MY_PROJECT_CONTEXT.student + ' · ' + MY_PROJECT_CONTEXT.level,
         myProjectStateLabel: MY_PROJECT_CONTEXT.state,
         myProjectNo: MY_PROJECT_CONTEXT.projectNo,
-        myProjectManager: MY_PROJECT_CONTEXT.manager,
         myProjectDirection: MY_PROJECT_CONTEXT.direction,
         myProjectStudentProfileName: MY_PROJECT_CONTEXT.student,
         myProjectProfileLevel: MY_PROJECT_CONTEXT.level,
@@ -1268,12 +1251,14 @@
     }
 
     /* ==================== 驾驶舱切换与初始化 ==================== */
+    function isSchoolStaffAssigned(target) {
+      return !!(target.docs.length && target.docs.every(function(doc) { return !!doc.owner && !!doc.reviewer; }) && target.network.owner);
+    }
     function refreshCockpit() {
       var s = school();
-      var staffAssigned = !!(s.docs.length && s.docs.every(function(doc) { return !!doc.owner && !!doc.reviewer; }) && s.network.owner);
+      var staffAssigned = isSchoolStaffAssigned(s);
       var allProjectStaffAssigned = Object.keys(SCHOOL_COCKPITS).every(function(schoolId) {
-        var target = SCHOOL_COCKPITS[schoolId];
-        return target.docs.every(function(doc) { return !!doc.owner && !!doc.reviewer; }) && !!target.network.owner;
+        return isSchoolStaffAssigned(SCHOOL_COCKPITS[schoolId]);
       });
       var projectStateLabel = document.getElementById('myProjectStateLabel');
       if (projectStateLabel) projectStateLabel.textContent = allProjectStaffAssigned ? (MY_PROJECT_CONTEXT.state === '交付中' ? '交付中' : '人员已分配') : '人员待分配';
@@ -1281,16 +1266,18 @@
       var assignButton = document.getElementById('assignStaffButton');
       var changeButton = document.getElementById('changeStaffButton');
       if (assignmentBadge) {
-        assignmentBadge.textContent = s.locked ? '机构已分配 · 只读' : (staffAssigned ? '项目经理已分配 · 可调整' : '人员待分配');
-        assignmentBadge.classList.toggle('is-assigned', staffAssigned);
+        assignmentBadge.textContent = '项目经理和成员未分配';
+        assignmentBadge.classList.toggle('hidden', staffAssigned);
       }
       if (assignButton) {
         assignButton.textContent = s.locked ? '查看人员' : '分配人员';
         assignButton.classList.toggle('hidden', staffAssigned && !s.locked);
       }
       if (changeButton) changeButton.classList.toggle('hidden', s.locked || !staffAssigned);
-      var schoolOption = document.querySelector('#schoolCockpitSelect option[value="' + currentSchoolCockpit + '"]');
-      if (schoolOption) schoolOption.textContent = s.name + (s.locked ? '（机构已分配）' : (staffAssigned ? '（项目经理已分配）' : '（人员待分配）'));
+      document.querySelectorAll('#schoolCockpitSelect option').forEach(function(schoolOption) {
+        var target = SCHOOL_COCKPITS[schoolOption.value];
+        if (target) schoolOption.textContent = target.name + (isSchoolStaffAssigned(target) ? '' : '（未分配）');
+      });
       document.getElementById('schoolCockpitMeta').textContent = '申请轮次 ' + s.round + ' · 当前阶段 ' + s.current;
       document.getElementById('projectDdlStrip').innerHTML = renderProjectDdls(s);
       /* 阶段按钮状态 */

@@ -669,6 +669,82 @@ input[placeholder^="搜索"] { min-width: 18rem; }
   cursor: pointer;
 }
 
+/* ---------- 详情页顶部操作栏 ---------- */
+.pbs-detail-topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  margin: -4px 0 14px;
+  padding: 11px 14px;
+  border: 1px solid #E2E8F0;
+  border-radius: 12px;
+  background: #FFFFFF;
+  box-shadow: 0 2px 10px rgba(15, 39, 66, 0.045);
+}
+.pbs-detail-topbar__main {
+  display: flex;
+  min-width: 0;
+  align-items: center;
+  gap: 12px;
+}
+.pbs-detail-topbar__copy { min-width: 0; }
+.pbs-detail-topbar__title {
+  margin: 0;
+  color: #172033;
+  font-size: 18px;
+  font-weight: 700;
+  line-height: 1.35;
+  letter-spacing: -0.01em;
+}
+.pbs-detail-topbar__subtitle {
+  margin: 2px 0 0;
+  overflow: hidden;
+  color: #718096;
+  font-size: 12px;
+  line-height: 1.4;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.pbs-detail-topbar__actions {
+  display: flex;
+  flex: 0 0 auto;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+}
+.pbs-detail-back {
+  display: inline-flex;
+  width: 36px;
+  height: 36px;
+  flex: 0 0 36px;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid #D8E4F0;
+  border-radius: 10px;
+  background: linear-gradient(145deg, #FFFFFF 0%, #EEF5FF 100%);
+  color: #2563EB;
+  box-shadow: 0 3px 8px rgba(37, 99, 235, 0.10);
+  transition: border-color .16s ease, background .16s ease, box-shadow .16s ease, color .16s ease, transform .16s ease;
+}
+.pbs-detail-back:hover {
+  border-color: #AFC7E5;
+  background: #EAF2FF;
+  color: #1D4ED8;
+  box-shadow: 0 5px 12px rgba(37, 99, 235, 0.16);
+  transform: translateX(-1px);
+}
+.pbs-detail-back:focus-visible {
+  outline: 3px solid rgba(37, 99, 235, 0.20);
+  outline-offset: 2px;
+}
+.pbs-detail-back svg { width: 18px; height: 18px; }
+
+@media (max-width: 900px) {
+  .pbs-detail-topbar { align-items: flex-start; flex-direction: column; }
+  .pbs-detail-topbar__actions { width: 100%; flex-wrap: wrap; justify-content: flex-start; padding-left: 48px; }
+}
+
 @media (max-width: 1180px) {
   .pm-kpi-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .pm-cockpit-grid { grid-template-columns: 1fr; }
@@ -679,6 +755,9 @@ input[placeholder^="搜索"] { min-width: 18rem; }
 }
 
 @media (max-width: 640px) {
+  .pbs-detail-topbar { align-items: flex-start; flex-direction: column; padding: 10px 12px; }
+  .pbs-detail-topbar__main { width: 100%; }
+  .pbs-detail-topbar__subtitle { white-space: normal; }
   .pbs-notification-layer { padding: 72px 12px 12px; }
   .pbs-notification-dialog { width: 100%; max-height: calc(100vh - 84px); }
   .pbs-notification-header, .pbs-notification-list, .pbs-notification-footer { padding-left: 16px; padding-right: 16px; }

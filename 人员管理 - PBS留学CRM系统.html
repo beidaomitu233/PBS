@@ -197,14 +197,17 @@
     <!-- 主内容区 -->
     <main class="flex-1 p-6">
       <section id="organizationPersonnelView">
-      <!-- 页面标题栏 -->
-      <div class="flex items-center justify-between mb-6">
-        <div>
-          <button id="backToOrganizationDirectory" class="inline-flex items-center gap-2 px-3 py-2 mb-4 bg-white border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 text-sm font-medium transition-colors" onclick="showOrganizationDirectory()"><span aria-hidden="true">←</span>返回机构管理</button>
-          <h1 class="text-2xl font-semibold text-gray-800">机构成员管理</h1>
-          <p id="personnelScopeHint" class="text-sm text-gray-400 mt-1">统一管理账号、人员状态与角色权限</p>
+      <div class="pbs-detail-topbar">
+        <div class="pbs-detail-topbar__main">
+          <button id="backToOrganizationDirectory" class="pbs-detail-back" onclick="showOrganizationDirectory()" type="button" aria-label="返回机构管理" title="返回机构管理">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+          </button>
+          <div class="pbs-detail-topbar__copy">
+            <h1 class="pbs-detail-topbar__title">机构成员管理</h1>
+            <p id="personnelScopeHint" class="pbs-detail-topbar__subtitle">统一管理账号、人员状态与角色权限</p>
+          </div>
         </div>
-        <div class="flex items-end gap-3">
+        <div class="pbs-detail-topbar__actions">
           <button id="addOrganizationUserButton" onclick="openAddUser()" class="flex items-center gap-2 px-4 h-10 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium">
           <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
           新增成员

@@ -34,15 +34,16 @@
   <div class="monitor-layout">
     <aside id="pbs-sidebar" class="bg-white border-r border-gray-200 min-h-screen"></aside>
     <main class="monitor-main detail-page">
-      <div class="monitor-page-head compact">
-        <div>
-          <h1>学生监控详情</h1>
-          <p>院校按邮件实际接收时间由近到远排列；选择院校后，邮件监控与官网监控联动展示。</p>
+      <div class="monitor-page-head compact pbs-detail-topbar">
+        <div class="pbs-detail-topbar__main">
+          <button class="pbs-detail-back" onclick="window.location.href='监控任务列表 - PBS留学CRM.html'" type="button" aria-label="返回监控任务列表" title="返回监控任务列表">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
+          </button>
+          <div class="pbs-detail-topbar__copy">
+            <h1>学生监控详情</h1>
+            <p>院校按邮件实际接收时间由近到远排列；选择院校后，邮件监控与官网监控联动展示。</p>
+          </div>
         </div>
-        <button class="monitor-back" onclick="window.location.href='监控任务列表 - PBS留学CRM.html'">
-          <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
-          返回任务列表
-        </button>
       </div>
 
       <section id="monitorStudentStrip" class="student-strip" aria-label="学生监控任务信息"></section>

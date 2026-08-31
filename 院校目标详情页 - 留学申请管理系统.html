@@ -180,8 +180,17 @@
   
     <!-- 主内容区 -->
     <main class="p-6">
-      <!-- 操作按钮区 -->
-      <div class="flex items-center justify-end gap-3 mb-6">
+      <div class="pbs-detail-topbar">
+        <div class="pbs-detail-topbar__main">
+          <button class="pbs-detail-back" onclick="window.location.href=&#39;我的项目详情页 - 留学申请管理系统.html&#39;" data-dom-id="btn-back-my-project-detail" type="button" aria-label="返回项目详情" title="返回项目详情">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+          </button>
+          <div class="pbs-detail-topbar__copy">
+            <h1 class="pbs-detail-topbar__title">院校目标详情</h1>
+            <p class="pbs-detail-topbar__subtitle">查看院校申请要求、任务分配与交付节点</p>
+          </div>
+        </div>
+        <div class="pbs-detail-topbar__actions">
         <button class="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors" onclick="openDistributeDrawer()" data-dom-id="btn-distribute-task">
           <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
@@ -191,12 +200,7 @@
         <button class="hidden flex items-center gap-2 px-4 py-2 bg-orange-500 text-white rounded-lg hover:bg-orange-600 transition-colors" onclick="openChangeTaskDrawer()" data-dom-id="btn-change-task">
           <span id="changeButtonText">更换分配</span>
         </button>
-        <button class="flex items-center gap-2 px-4 py-2 bg-white border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors" onclick="window.location.href=&#39;我的项目详情页 - 留学申请管理系统.html&#39;" data-dom-id="btn-back-my-project-detail">
-          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
-          </svg>
-          返回项目详情
-        </button>
+        </div>
       </div>
 
       <div id="institutionAssignmentLockNotice" class="hidden mb-6 rounded-xl border border-blue-200 bg-blue-50 px-5 py-4">

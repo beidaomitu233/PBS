@@ -10,6 +10,11 @@
     body { font-family: "Microsoft YaHei", "PingFang SC", sans-serif; }
     .drawer { transform: translateX(100%); transition: transform .25s ease; }
     .drawer.open { transform: translateX(0); }
+    .plugin-detail-head { display:flex; align-items:center; justify-content:space-between; gap:14px; margin-bottom:14px; padding:11px 14px; border:1px solid #e2e8f0; border-radius:12px; background:#fff; box-shadow:0 2px 10px rgba(15,39,66,.045); }
+    .plugin-detail-main { display:flex; min-width:0; align-items:center; gap:12px; }
+    .plugin-back { display:inline-flex; width:36px; height:36px; flex:0 0 36px; align-items:center; justify-content:center; border:1px solid #d8e4f0; border-radius:10px; background:linear-gradient(145deg,#fff 0%,#eef5ff 100%); color:#2563eb; box-shadow:0 3px 8px rgba(37,99,235,.10); transition:all .16s ease; }
+    .plugin-back:hover { border-color:#afc7e5; background:#eaf2ff; color:#1d4ed8; box-shadow:0 5px 12px rgba(37,99,235,.16); transform:translateX(-1px); }
+    .plugin-back svg { width:18px; height:18px; }
   </style>
 </head>
 <body class="bg-slate-100 min-h-screen">
@@ -27,16 +32,17 @@
         </div>
 
         <div id="schoolView" class="hidden">
-          <button class="text-sm text-blue-600 hover:underline mb-5" onclick="showStudents()">← 返回学生列表</button>
-          <div class="flex items-center justify-between mb-5"><div><h2 id="studentTitle" class="text-xl font-semibold text-slate-900"></h2><p id="studentMeta" class="text-sm text-slate-500 mt-1"></p></div><span id="studentTaskCount" class="text-sm text-slate-400"></span></div>
+          <div class="plugin-detail-head">
+            <div class="plugin-detail-main"><button class="plugin-back" onclick="showStudents()" type="button" aria-label="返回学生列表" title="返回学生列表"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg></button><div><h2 id="studentTitle" class="text-xl font-semibold text-slate-900"></h2><p id="studentMeta" class="text-sm text-slate-500 mt-1"></p></div></div>
+            <span id="studentTaskCount" class="text-sm text-slate-400"></span>
+          </div>
           <div id="schoolCards" class="grid grid-cols-1 lg:grid-cols-2 gap-4"></div>
         </div>
 
         <div id="projectView" class="hidden">
-          <button class="text-sm text-blue-600 hover:underline mb-5" onclick="backToSchools()">← 返回院校列表</button>
           <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
             <div class="p-6 border-b border-slate-100">
-              <div class="flex items-start justify-between gap-5"><div><p id="projectStudent" class="text-sm text-blue-600 mb-1"></p><h2 id="projectSchool" class="text-xl font-semibold text-slate-900"></h2><p id="projectProgram" class="text-sm text-slate-500 mt-1"></p></div><span id="projectStatus" class="px-2.5 py-1 rounded-full bg-amber-50 text-amber-700 text-xs font-medium">待扫描</span></div>
+              <div class="flex items-start justify-between gap-5"><div class="plugin-detail-main"><button class="plugin-back" onclick="backToSchools()" type="button" aria-label="返回院校列表" title="返回院校列表"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg></button><div><p id="projectStudent" class="text-sm text-blue-600 mb-1"></p><h2 id="projectSchool" class="text-xl font-semibold text-slate-900"></h2><p id="projectProgram" class="text-sm text-slate-500 mt-1"></p></div></div><span id="projectStatus" class="px-2.5 py-1 rounded-full bg-amber-50 text-amber-700 text-xs font-medium">待扫描</span></div>
             </div>
             <div class="grid md:grid-cols-3 gap-4 p-6">
               <div class="rounded-xl bg-slate-50 p-4"><p class="text-xs text-slate-400">申请轮次</p><p class="text-sm font-medium text-slate-800 mt-1">常规申请 RD</p></div>

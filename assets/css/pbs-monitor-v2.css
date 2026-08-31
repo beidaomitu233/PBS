@@ -73,13 +73,13 @@ body[data-monitor-page="detail"] .monitor-layout { height: calc(100vh - 64px); m
 .student-strip-meta span { display: block; color: #94a3b8; font-size: 11px; }
 .student-strip-meta strong { display: block; margin-top: 3px; color: #334155; font-size: 13px; }
 
-.monitor-main.detail-page { height: 100%; overflow: hidden; padding: 20px 24px 18px; }
-.monitor-page-head.compact { align-items: center; margin-bottom: 12px; }
-.monitor-page-head.compact h1 { font-size: 23px; }
+.monitor-main.detail-page { display: flex; height: 100%; overflow: hidden; flex-direction: column; padding: 20px 24px 18px; }
+.monitor-page-head.compact { align-items: center; margin-bottom: 10px; padding: 10px 12px; }
+.monitor-page-head.compact h1 { font-size: 20px; }
 .monitor-page-head.compact p { margin-top: 4px; }
 .detail-page .student-strip { margin-bottom: 12px; padding: 12px 16px; }
 .detail-page .student-avatar { width: 40px; height: 40px; }
-.monitor-master-detail { display: grid; height: calc(100% - 145px); min-height: 0; grid-template-columns: 252px minmax(0, 1fr); gap: 14px; align-items: stretch; }
+.monitor-master-detail { display: grid; height: auto; min-height: 0; flex: 1; grid-template-columns: 252px minmax(0, 1fr); gap: 14px; align-items: stretch; }
 .school-rail { display: flex; height: 100%; min-height: 0; overflow: hidden; flex-direction: column; border: 1px solid #dce5ef; border-radius: 14px; background: #fff; }
 .school-rail-head { display: flex; align-items: center; justify-content: space-between; padding: 15px 16px 12px; border-bottom: 1px solid #e8eef5; }
 .school-rail-head h2 { margin: 0; color: #0f172a; font-size: 16px; font-weight: 750; }

@@ -182,12 +182,17 @@
     <main class="flex-1 p-6 min-h-0 overflow-y-auto">
 
       <!-- 操作按钮区 -->
-      <div class="flex items-center justify-between mb-6">
-        <div>
-          <h1 class="text-xl font-bold text-gray-900">网申任务详情</h1>
-          <p class="text-sm text-gray-500 mt-1">查看和管理网申任务的完整信息</p>
+      <div class="pbs-detail-topbar">
+        <div class="pbs-detail-topbar__main">
+          <button class="pbs-detail-back" onclick="window.location.href=&#39;网申任务列表页 - 留学申请管理系统.html&#39;" type="button" aria-label="返回网申任务列表" title="返回网申任务列表">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+          </button>
+          <div class="pbs-detail-topbar__copy">
+            <h1 class="pbs-detail-topbar__title">网申任务详情</h1>
+            <p class="pbs-detail-topbar__subtitle">查看和管理网申任务的完整信息</p>
+          </div>
         </div>
-        <div class="flex items-center gap-3">
+        <div class="pbs-detail-topbar__actions">
           <button data-dom-id="btn-reuse-template" class="flex items-center gap-2 px-4 py-2 bg-white border border-blue-300 text-blue-600 rounded-lg hover:bg-blue-50 transition-colors font-medium" onclick="openTemplateReuseModal()">
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v6h6M20 20v-6h-6M5.07 15A7 7 0 0017 18.93M18.93 9A7 7 0 007 5.07"></path></svg>
             复用模板
@@ -199,12 +204,6 @@
             更新进度
           </button>
 
-          <button class="flex items-center gap-2 px-4 py-2 bg-white border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors" onclick="window.location.href=&#39;网申任务列表页 - 留学申请管理系统.html&#39;">
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
-            </svg>
-            返回列表
-          </button>
         </div>
       </div>
 

@@ -180,9 +180,17 @@
   
     <!-- 主内容区 -->
     <main class="p-6">
-      <!-- 操作按钮区 -->
-      <div class="flex items-center justify-between mb-6">
-        <div class="flex items-center gap-3">
+      <div class="pbs-detail-topbar">
+        <div class="pbs-detail-topbar__main">
+          <button class="pbs-detail-back" data-dom-id="btn-back-pool" type="button" aria-label="返回项目池列表" title="返回项目池列表">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+          </button>
+          <div class="pbs-detail-topbar__copy">
+            <h1 class="pbs-detail-topbar__title">项目详情</h1>
+            <p class="pbs-detail-topbar__subtitle">查看项目基础信息、成员分配与交付进度</p>
+          </div>
+        </div>
+        <div class="pbs-detail-topbar__actions">
           <button class="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors" data-dom-id="btn-assign">
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
@@ -193,17 +201,11 @@
             更换项目经理
           </button>
         </div>
-        <button class="flex items-center gap-2 px-4 py-2 bg-white border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors" data-dom-id="btn-back-pool">
-          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
-          </svg>
-          返回列表
-        </button>
       </div>
 
       <!-- 订单基础信息栏 -->
       <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-5 mb-6">
-        <div class="flex items-center justify-between">
+        <div class="grid grid-cols-2 xl:grid-cols-5 gap-6">
           <div>
             <span class="text-sm text-gray-500">项目号</span>
             <p id="projectContextNo" class="text-lg font-semibold text-gray-900">PRJ-M-2607-0002</p>
@@ -211,6 +213,10 @@
           <div>
             <span class="text-sm text-gray-500">客户姓名</span>
             <p id="projectContextCustomer" class="text-lg font-semibold text-gray-900">李慧敏</p>
+          </div>
+          <div>
+            <span class="text-sm text-gray-500">项目经理</span>
+            <p id="projectContextManager" class="text-lg font-semibold text-gray-900">张老师</p>
           </div>
           <div>
             <span class="text-sm text-gray-500">项目状态</span>
@@ -224,7 +230,6 @@
             <span class="text-sm text-gray-500">申请层次</span>
             <p id="projectContextLevel" class="text-lg font-semibold text-gray-900">硕士申请</p>
           </div>
-          
         </div>
       </div>
 
@@ -1253,6 +1258,7 @@
       setProjectContextText('projectContextStudent', PROJECT_CONTEXT.student);
       setProjectContextText('projectContextStudentAvatar', PROJECT_CONTEXT.student.slice(-1));
       setProjectContextText('projectContextLevel', PROJECT_CONTEXT.level);
+      setProjectContextText('projectContextManager', PROJECT_CONTEXT.defaultManager || '—');
       setProjectContextText('apply-level-badge', PROJECT_CONTEXT.level);
       setProjectContextText('apply-level-text', PROJECT_CONTEXT.level);
       setProjectContextText('assignContextStudent', PROJECT_CONTEXT.student);
@@ -1305,6 +1311,7 @@
     function syncProjectAssignmentState() {
       var assignment = readProjectAssignment();
       var shared = window.pbsProjects ? window.pbsProjects.find(PROJECT_CONTEXT.projectNo) : null;
+      setProjectContextText('projectContextManager', assignment.projectManager || '—');
       var assigned = !!assignment.projectManager;
       var accepted = !!(shared && shared.pmAccepted);
       var assignButton = document.querySelector('[data-dom-id="btn-assign"]');

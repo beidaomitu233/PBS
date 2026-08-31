@@ -526,18 +526,24 @@ body.sidebar-resizing #left-sidebar-resizer::before {
 }
 .topbar-back {
   display: inline-flex;
+  width: 38px;
+  height: 38px;
   align-items: center;
-  gap: 6px;
-  padding: 7px 12px;
-  font-size: 13px;
-  font-weight: 500;
-  color: #475569;
-  border-radius: 10px;
+  justify-content: center;
+  padding: 0;
+  color: #2563eb;
+  border: 1px solid #d8e4f0;
+  border-radius: 11px;
+  background: linear-gradient(145deg, #fff 0%, #eef5ff 100%);
+  box-shadow: 0 3px 8px rgba(37, 99, 235, .10);
   transition: all 0.18s ease;
 }
 .topbar-back:hover {
-  color: #0f172a;
-  background: #f1f5f9;
+  color: #1d4ed8;
+  border-color: #afc7e5;
+  background: #eaf2ff;
+  box-shadow: 0 5px 12px rgba(37, 99, 235, .16);
+  transform: translateX(-1px);
 }
 .topbar-brand {
   display: flex;
@@ -694,11 +700,10 @@ body {
         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
       </button>
 
-        <button class="topbar-back" data-dom-id="btn-back-task-list">
+        <button class="topbar-back" data-dom-id="btn-back-task-list" type="button" aria-label="返回文书任务列表" title="返回文书任务列表">
           <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
           </svg>
-          返回
         </button>
         <div class="topbar-divider"></div>
         <div class="topbar-brand">

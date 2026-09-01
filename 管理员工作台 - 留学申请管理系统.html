@@ -203,13 +203,7 @@
 
     <!-- ========== 主内容区 ========== -->
     <main class="flex-1 p-6 overflow-auto">
-      <!-- 页面标题栏 -->
-      <div class="mb-5">
-        <h1 class="text-2xl font-semibold text-gray-800">角色工作台</h1>
-        <p class="text-sm text-gray-400 mt-1">启航留学 · 每个角色按权限展示：可下钻数据总览、DDL 与日程、业务消息与待处理 · <span id="pbsTodayDate">数据按角色范围过滤</span></p>
-      </div>
-
-      <!-- 角色工作台挂载点：由 pbs-workbench.js 按当前登录用户的角色渲染（多角色可切换多个工作台视角，单角色仅显示本人工作台） -->
+      <!-- 工作台挂载点：当前角色由顶部 Navbar 统一切换 -->
       <div id="pbs-workbench-mount"></div>
 
     </main>
@@ -314,16 +308,6 @@
 
   </script>
   <script src="./assets/js/pbs-workbench.js"></script>
-  <script>
-    (function () {
-      function fill() {
-        var el = document.getElementById('pbsTodayDate');
-        if (!el) return;
-        el.textContent = '数据按角色权限实时过滤';
-      }
-      if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', fill); else fill();
-    })();
-  </script>
   <script src="./assets/js/pbs-app.js?v=6.0"></script>
 
 

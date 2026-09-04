@@ -4,14 +4,26 @@
   var params = new URLSearchParams(location.search);
   var isNew = params.get('mode') === 'new';
   var templateId = Number(params.get('id') || 1);
+  var savedTemplateId = isNew ? Date.now() : templateId;
+  var templateStoreKey = 'pbs_web_application_templates';
   var metadata = {
     1: { name: 'CMU 计算机科学硕士网申模板', school: '卡内基梅隆大学', program: '计算机科学', region: '美国', version: 'V3.2', fieldCount: 42, materialCount: 6 },
     2: { name: '斯坦福计算机科学网申模板', school: '斯坦福大学', program: '计算机科学', region: '美国', version: 'V2.4', fieldCount: 38, materialCount: 7 },
     3: { name: '哥伦比亚金融工程网申模板', school: '哥伦比亚大学', program: '金融工程', region: '美国', version: 'V2.1', fieldCount: 35, materialCount: 8 },
     4: { name: '剑桥金融学网申模板', school: '剑桥大学', program: '金融学', region: '英国', version: 'V1.8', fieldCount: 31, materialCount: 7 },
-    5: { name: '香港大学数据科学网申模板', school: '香港大学', program: '数据科学', region: '中国香港', version: 'V1.6', fieldCount: 29, materialCount: 6 }
+    5: { name: '香港大学数据科学网申模板', school: '香港大学', program: '数据科学', region: '中国香港', version: 'V1.6', fieldCount: 29, materialCount: 6 },
+    6: { name: 'CMU 人工智能硕士网申案例', school: '卡内基梅隆大学', program: '人工智能', region: '美国', version: 'V2.2', fieldCount: 39, materialCount: 7 },
+    7: { name: 'CMU 软件工程硕士网申案例', school: '卡内基梅隆大学', program: '软件工程', region: '美国', version: 'V1.4', fieldCount: 34, materialCount: 6 },
+    8: { name: '通用数据科学网申案例', school: '', program: '数据科学', region: '', version: 'V1.1', fieldCount: 26, materialCount: 6 }
   };
   var currentMeta = metadata[templateId] || metadata[1];
+  try {
+    var storedMetadata = JSON.parse(localStorage.getItem(templateStoreKey) || '[]').find(function (item) { return Number(item.id) === Number(templateId); });
+    if (storedMetadata && storedMetadata.versions && storedMetadata.versions.length) {
+      var storedCurrent = storedMetadata.versions[0];
+      currentMeta = { name: storedMetadata.name, school: storedMetadata.school || '', program: storedMetadata.program, region: storedMetadata.region || '', version: String(storedCurrent.version || 'v1.0').toUpperCase(), fieldCount: storedCurrent.fields || 0, materialCount: storedCurrent.materials || 0 };
+    }
+  } catch (error) {}
   var fields = isNew ? [] : [
     { name: 'First Name', type: '文本', required: true, note: '与护照英文名保持一致' },
     { name: 'Last Name', type: '文本', required: true, note: '与护照英文姓保持一致' },
@@ -132,13 +144,32 @@
     var region = document.getElementById('templateRegion').value.trim();
     var school = document.getElementById('templateSchool').value.trim();
     var program = document.getElementById('templateProgram').value.trim();
-    if (!name || !school || !program) { showToast('请完整填写模板信息（国家/地区为选填）'); return; }
+    if (!name || !program) { showToast('请填写案例名称和绑定专业'); return; }
     if (!fields.length || fields.some(function (item) { return !item.name; })) { showToast('请至少添加一个完整的官网字段'); return; }
     if (!materials.length || materials.some(function (item) { return !item.name; })) { showToast('请至少添加一项完整的申请材料'); return; }
     var current = document.getElementById('currentVersion').textContent;
     var version = isNew && !histories.length ? 'V1.0' : nextVersion(current);
     document.getElementById('currentVersion').textContent = version;
     histories.unshift({ version: version, time: '2026-08-17 15:30', editor: '王志强', fields: fields.length, materials: materials.length, change: isNew && histories.length === 0 ? '创建网申模板并保存字段与材料清单。' : '更新官网字段与申请材料清单。' });
+    var stored = [];
+    try { stored = JSON.parse(localStorage.getItem(templateStoreKey) || '[]'); } catch (error) { stored = []; }
+    var session = window.pbsGetSession ? window.pbsGetSession() : { org: 'PBS留学总部' };
+    var existing = stored.find(function (item) { return Number(item.id) === Number(savedTemplateId); });
+    var versions = existing && Array.isArray(existing.versions) ? existing.versions.slice() : histories.slice(1).map(function (item) {
+      return { version: String(item.version).toLowerCase(), fields: item.fields, materials: item.materials, updated: item.time.slice(0, 10), review: '历史版本，仅供查看与复用。' };
+    });
+    versions.unshift({
+      version: version.toLowerCase(),
+      fields: fields.length,
+      materials: materials.length,
+      updated: new Date().toISOString().slice(0, 10),
+      review: school ? '请按当前申请季复核官网字段与材料要求。' : '当前案例未绑定院校，复用时必须人工确认官网差异。',
+      fieldDetails: fields,
+      materialDetails: materials
+    });
+    stored = stored.filter(function (item) { return Number(item.id) !== Number(savedTemplateId); });
+    stored.push({ id: savedTemplateId, name: name, school: school, program: program, region: region, org: session.org || 'PBS留学总部', versions: versions });
+    localStorage.setItem(templateStoreKey, JSON.stringify(stored));
     showToast(version + ' 已保存');
   };
 

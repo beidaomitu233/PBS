@@ -946,7 +946,7 @@ body {
       </div>
 
       <!-- 院校目标信息面板（默认隐藏）：字段信息进入页面后自动从 EV 系统同步 -->
-      <div id="panel-goal-info" class="flex-1 overflow-y-auto p-4 space-y-4 hidden">
+      <div id="panel-goal-info" data-has-content="true" class="flex-1 overflow-y-auto p-4 space-y-4 hidden">
         <div class="bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden">
           <div class="h-1.5 bg-gradient-to-r from-purple-500 to-violet-600"></div>
           <div class="p-4">
@@ -1337,7 +1337,7 @@ body {
       </div>
 
       <!-- 补充信息面板（默认隐藏，自左侧迁移至此） -->
-      <div id="panel-supplement" class="flex-1 overflow-y-auto p-4 hidden">
+      <div id="panel-supplement" data-has-content="true" class="flex-1 overflow-y-auto p-4 hidden">
         <div class="space-y-4">
           <!-- 学校/专业基本信息 -->
           <div class="card p-4">
@@ -1532,6 +1532,21 @@ body {
 
   <script>
     document.addEventListener('DOMContentLoaded', function() {
+      var optionalParams = new URLSearchParams(location.search);
+      var noEvExample = optionalParams.get('noev') === '1';
+      var goalPanel = document.getElementById('panel-goal-info');
+      var supplementPanel = document.getElementById('panel-supplement');
+      var hasGoalInfo = goalPanel.dataset.hasContent === 'true' && !noEvExample && optionalParams.get('emptyGoal') !== '1';
+      var hasSupplementInfo = supplementPanel.dataset.hasContent === 'true' && !noEvExample && optionalParams.get('emptySupplement') !== '1';
+      if (!hasGoalInfo) {
+        document.getElementById('tab-goal-info').classList.add('hidden');
+        goalPanel.classList.add('hidden');
+      }
+      if (!hasSupplementInfo) {
+        document.getElementById('tab-supplement').classList.add('hidden');
+        supplementPanel.classList.add('hidden');
+      }
+
       // 左侧面板切换
       document.getElementById('tab-student-info').addEventListener('click', function() {
         showLeftPanel('student-info');
@@ -2025,6 +2040,8 @@ function showEditorToast(msg, ok) {
 }
 /* 页面加载时自动同步当前院校目标的全部 EV 非空字段，无需用户二次确认。 */
 document.addEventListener('DOMContentLoaded', function() {
+  var optionalParams = new URLSearchParams(location.search);
+  if (optionalParams.get('noev') === '1' || optionalParams.get('emptyGoal') === '1') return;
   var values = {};
   Object.keys(EV_IMPORT_DATA).forEach(function(key) {
     if (EV_IMPORT_DATA[key] && EV_IMPORT_DATA[key].ev) values[key] = EV_IMPORT_DATA[key].ev;

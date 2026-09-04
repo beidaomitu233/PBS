@@ -2519,6 +2519,16 @@
     renderScoreLevelGroups();
     renderScoreSubs();
     initAssetFiles();
+    var assetEntryParams = new URLSearchParams(location.search);
+    if (assetEntryParams.get('section') === 'asset') {
+      setTimeout(function () {
+        var assetSection = document.getElementById('sec-asset');
+        var assetBody = document.getElementById('secbody-asset');
+        if (assetBody) assetBody.classList.remove('hidden');
+        if (assetSection) assetSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        if (assetEntryParams.get('upload') === '1') openAssetUpload();
+      }, 120);
+    }
   })();
   </script>
   <!-- AI 智能解析：待审核标记 / 审核按钮组 / 溯源高亮样式 -->

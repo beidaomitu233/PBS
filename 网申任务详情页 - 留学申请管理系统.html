@@ -900,14 +900,11 @@
     <div class="absolute inset-0 bg-black bg-opacity-30" onclick="closeTemplateReuseModal()"></div>
     <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[680px] max-h-[80vh] overflow-y-auto bg-white rounded-2xl shadow-2xl p-6">
       <div class="flex items-center justify-between mb-1">
-        <div><h3 class="text-lg font-semibold text-gray-800">复用网申模板</h3><p class="text-xs text-gray-400 mt-1">卡内基梅隆大学 · 计算机科学</p></div>
+        <div><h3 class="text-lg font-semibold text-gray-800">复用网申模板</h3><p class="text-xs text-gray-400 mt-1">当前任务：卡内基梅隆大学 · 计算机科学</p></div>
         <button class="p-1 text-gray-400 hover:text-gray-600" onclick="closeTemplateReuseModal()"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg></button>
       </div>
-      <div class="space-y-3 mt-5">
-        <div class="border border-blue-200 bg-blue-50 rounded-xl p-4 flex items-center justify-between gap-4"><div><div class="flex items-center gap-2"><span class="text-sm font-semibold text-gray-900">v3.2</span><span class="text-xs px-2 py-0.5 rounded bg-blue-100 text-blue-700">当前推荐</span></div><p class="text-xs text-gray-500 mt-2">2026-07-08 更新 · 官网字段 12 项 · 申请材料 6 项</p><p class="text-xs text-gray-400 mt-1">来源：2027 Fall · 计算机科学硕士申请</p></div><button class="px-4 py-2 text-sm text-white bg-blue-600 rounded-lg hover:bg-blue-700 font-medium flex-shrink-0" onclick="reuseTemplateVersion('v3.2')">复用此版本</button></div>
-        <div class="border border-gray-200 rounded-xl p-4 flex items-center justify-between gap-4"><div><span class="text-sm font-semibold text-gray-900">v3.1</span><p class="text-xs text-gray-500 mt-2">2026-05-21 更新 · 官网字段 11 项 · 申请材料 6 项</p><p class="text-xs text-gray-400 mt-1">来源：2026 Fall · 计算机科学硕士申请</p></div><button class="px-4 py-2 text-sm text-blue-600 bg-blue-50 rounded-lg hover:bg-blue-100 font-medium flex-shrink-0" onclick="reuseTemplateVersion('v3.1')">复用此版本</button></div>
-        <div class="border border-gray-200 rounded-xl p-4 flex items-center justify-between gap-4"><div><span class="text-sm font-semibold text-gray-900">v2.8</span><p class="text-xs text-gray-500 mt-2">2025-11-16 更新 · 官网字段 10 项 · 申请材料 5 项</p><p class="text-xs text-gray-400 mt-1">来源：2026 Spring · 软件工程硕士申请</p></div><button class="px-4 py-2 text-sm text-blue-600 bg-blue-50 rounded-lg hover:bg-blue-100 font-medium flex-shrink-0" onclick="reuseTemplateVersion('v2.8')">复用此版本</button></div>
-      </div>
+      <div class="relative mt-5"><svg class="absolute left-3 top-2.5 w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m19 19-4-4m2-5a7 7 0 1 1-14 0 7 7 0 0 1 14 0Z"></path></svg><input id="templateReuseSearch" type="text" class="w-full h-10 pl-10 pr-3 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="搜索其他院校、专业或案例名称" oninput="renderTemplateReuseOptions()"></div>
+      <div id="templateReuseResults" class="space-y-3 mt-4"></div>
     </div>
   </div>
 
@@ -1473,22 +1470,53 @@
     }
 
     // ===== 申请材料与官网字段：历史模板复用 =====
+    var CURRENT_APPLICATION_SCHOOL = '卡内基梅隆大学';
+    var TEMPLATE_REUSE_OPTIONS = [
+      { key: 'cmu-v3.2', school: '卡内基梅隆大学', program: '计算机科学', name: 'CMU 计算机科学硕士网申案例', version: 'v3.2', updated: '2026-07-08', season: '2027 Fall', fields: 12, materials: 6, gre: 'GRE 328 + 4.0' },
+      { key: 'cmu-v3.1', school: '卡内基梅隆大学', program: '计算机科学', name: 'CMU 计算机科学硕士网申案例', version: 'v3.1', updated: '2026-05-21', season: '2026 Fall', fields: 11, materials: 6, gre: 'GRE 326 + 3.5' },
+      { key: 'stanford-v2.4', school: '斯坦福大学', program: '计算机科学', name: '斯坦福计算机科学网申案例', version: 'v2.4', updated: '2026-08-05', season: '2027 Fall', fields: 38, materials: 7, gre: 'GRE 328' },
+      { key: 'hku-v1.6', school: '香港大学', program: '数据科学', name: '香港大学数据科学网申案例', version: 'v1.6', updated: '2026-07-25', season: '2027 Fall', fields: 29, materials: 6, gre: 'GRE 可选' },
+      { key: 'generic-v1.1', school: '', program: '数据科学', name: '通用数据科学网申案例', version: 'v1.1', updated: '2026-08-10', season: '通用', fields: 26, materials: 6, gre: '按官网要求' }
+    ];
+    function escapeTemplateText(value) {
+      return String(value == null ? '' : value).replace(/[&<>"']/g, function(char) {
+        return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[char];
+      });
+    }
+    function renderTemplateReuseOptions() {
+      var input = document.getElementById('templateReuseSearch');
+      var keyword = input ? input.value.trim().toLowerCase() : '';
+      var options = TEMPLATE_REUSE_OPTIONS.filter(function(item) {
+        return !keyword || (item.school + item.program + item.name + item.version).toLowerCase().indexOf(keyword) >= 0;
+      });
+      var container = document.getElementById('templateReuseResults');
+      if (!container) return;
+      if (!options.length) {
+        container.innerHTML = '<div class="py-10 text-center text-sm text-gray-400">没有匹配的模板案例</div>';
+        return;
+      }
+      container.innerHTML = options.map(function(item) {
+        var isCurrentSchool = item.school === CURRENT_APPLICATION_SCHOOL;
+        var schoolName = item.school || '未绑定院校';
+        return '<div class="border ' + (isCurrentSchool ? 'border-blue-200 bg-blue-50' : 'border-gray-200 bg-white') + ' rounded-xl p-4 flex items-center justify-between gap-4"><div class="min-w-0"><div class="flex items-center gap-2 flex-wrap"><span class="text-sm font-semibold text-gray-900">' + escapeTemplateText(schoolName) + ' · ' + escapeTemplateText(item.program) + '</span>' + (isCurrentSchool ? '<span class="text-xs px-2 py-0.5 rounded bg-blue-100 text-blue-700">当前院校</span>' : '<span class="text-xs px-2 py-0.5 rounded bg-gray-100 text-gray-500">跨院校参考</span>') + '</div><p class="text-xs text-gray-500 mt-2">' + escapeTemplateText(item.name) + ' · ' + escapeTemplateText(item.version) + '</p><p class="text-xs text-gray-400 mt-1">' + escapeTemplateText(item.updated) + ' 更新 · ' + item.fields + ' 个官网字段 · ' + item.materials + ' 项材料 · ' + escapeTemplateText(item.season) + '</p></div><button class="px-4 py-2 text-sm ' + (isCurrentSchool ? 'text-white bg-blue-600 hover:bg-blue-700' : 'text-blue-600 bg-blue-50 hover:bg-blue-100') + ' rounded-lg font-medium flex-shrink-0" onclick="reuseTemplateVersion(\'' + item.key + '\')">复用此版本</button></div>';
+      }).join('');
+    }
     function openTemplateReuseModal() {
       document.getElementById('templateReuseModal').classList.remove('hidden');
       document.body.style.overflow = 'hidden';
+      var search = document.getElementById('templateReuseSearch');
+      if (search) search.value = '';
+      renderTemplateReuseOptions();
+      setTimeout(function() { if (search) search.focus(); }, 0);
     }
     function closeTemplateReuseModal() {
       document.getElementById('templateReuseModal').classList.add('hidden');
       document.body.style.overflow = '';
     }
-    function reuseTemplateVersion(version) {
-      var versions = {
-        'v3.2': { address: '浙江省杭州市西湖区余杭塘路866号', gre: 'GRE 328 + 4.0', fields: 12, materials: 6 },
-        'v3.1': { address: '浙江省杭州市西湖区余杭塘路866号', gre: 'GRE 326 + 3.5', fields: 11, materials: 6 },
-        'v2.8': { address: '浙江省杭州市西湖区余杭塘路866号', gre: 'GRE 325', fields: 10, materials: 5 }
-      };
-      var selected = versions[version];
-      document.getElementById('wf-address').value = selected.address;
+    function reuseTemplateVersion(key) {
+      var selected = TEMPLATE_REUSE_OPTIONS.find(function(item) { return item.key === key; });
+      if (!selected) return;
+      document.getElementById('wf-address').value = '浙江省杭州市西湖区余杭塘路866号';
       document.getElementById('wf-greScore').value = selected.gre;
       document.getElementById('wf-address').classList.remove('border-yellow-400', 'bg-yellow-50');
       var pending = document.getElementById('materialListPending');
@@ -1496,14 +1524,15 @@
       var badge = document.getElementById('scanStateBadge');
       pending.classList.add('hidden');
       scanned.classList.remove('hidden');
-      badge.textContent = '已复用 ' + version;
+      badge.textContent = '已复用 ' + selected.version;
       badge.className = 'inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-green-100 text-green-700';
-      document.getElementById('templateFieldSummary').innerHTML = '<div><p class="text-sm font-medium text-blue-800">已复用模板 ' + version + ' · 官网字段 ' + selected.fields + ' 项</p><p class="text-xs text-blue-600 mt-0.5">申请官网字段和材料清单已同步，请核对后保存。</p></div><a href="网申模板库 - 留学申请管理系统.html" class="text-xs text-blue-700 font-medium hover:underline flex-shrink-0">查看模板详情</a>';
+      var selectedSchool = selected.school || '未绑定院校';
+      document.getElementById('templateFieldSummary').innerHTML = '<div><p class="text-sm font-medium text-blue-800">已复用 ' + escapeTemplateText(selectedSchool) + ' · ' + escapeTemplateText(selected.program) + ' · ' + escapeTemplateText(selected.version) + '</p><p class="text-xs text-blue-600 mt-0.5">官网字段 ' + selected.fields + ' 项 · 申请材料 ' + selected.materials + ' 项，请核对后保存。</p></div><a href="网申模板库 - 留学申请管理系统.html" class="text-xs text-blue-700 font-medium hover:underline flex-shrink-0">查看模板详情</a>';
       var notice = document.getElementById('templateFieldNotice');
       notice.classList.remove('hidden');
-      notice.textContent = '模板已同步。通信地址与标准化考试成绩已更新，请项目经理核对当前申请要求。';
+      notice.textContent = selected.school !== CURRENT_APPLICATION_SCHOOL ? '已跨院校复用模板。请逐项核对当前学校官网字段和材料要求后再提交。' : '模板已同步。通信地址与标准化考试成绩已更新，请项目经理核对当前申请要求。';
       closeTemplateReuseModal();
-      alert('已复用模板 ' + version + '，官网字段与申请材料清单已同步更新');
+      alert('已复用 ' + selectedSchool + ' · ' + selected.program + ' ' + selected.version + '，官网字段与申请材料清单已同步更新');
     }
 
     // ===== 申请官网字段表单：保存 =====

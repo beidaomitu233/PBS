@@ -779,9 +779,9 @@
             ['当前环节滞留时长', s.stageDurations.material]
           ],
           body: s.materialScanned
-            ? '<div class="project-action-card"><span class="project-action-icon">✓</span><div><p class="text-sm font-semibold text-gray-900">材料清单已生成</p><p class="text-xs text-gray-500 mt-1">' + s.materialScanInfo + ' · 与网申详情页申请材料清单一致</p></div><div class="flex gap-2"><button class="px-4 py-2 text-sm font-medium text-amber-600 bg-amber-50 rounded-lg" onclick="openUrgeModal(\'材料准备\',\'' + (s.network.owner || '') + '\',\'材料清单\')">催办网申人员</button><button class="px-4 py-2 text-sm font-medium text-purple-600 bg-purple-50 rounded-lg" onclick="openMaterialModal()">查看材料清单</button></div></div>' +
+            ? '<div class="project-action-card"><span class="project-action-icon">✓</span><div><p class="text-sm font-semibold text-gray-900">材料清单已生成</p><p class="text-xs text-gray-500 mt-1">' + s.materialScanInfo + ' · 与网申详情页申请材料清单一致</p></div><div class="flex gap-2 flex-wrap justify-end"><button class="px-4 py-2 text-sm font-medium text-blue-600 bg-blue-50 rounded-lg" onclick="openStudentAssetUpload()">上传学生档案文件</button><button class="px-4 py-2 text-sm font-medium text-amber-600 bg-amber-50 rounded-lg" onclick="openUrgeModal(\'材料准备\',\'' + (s.network.owner || '') + '\',\'材料清单\')">催办网申人员</button><button class="px-4 py-2 text-sm font-medium text-purple-600 bg-purple-50 rounded-lg" onclick="openMaterialModal()">查看材料清单</button></div></div>' +
               (materialStats.missing.length ? '<div class="project-action-card is-warning"><span class="project-action-icon">!</span><div><p class="text-sm font-semibold text-gray-900">缺失材料：' + materialStats.missing.map(function(item) { return item.name; }).join('、') + '</p><p class="text-xs text-gray-500 mt-1">' + s.materialIssue + '</p></div><span class="text-xs text-gray-400">待学生补充</span></div>' : '')
-            : '<div class="project-action-card is-warning"><span class="project-action-icon">!</span><div><p class="text-sm font-semibold text-gray-900">材料清单未生成</p><p class="text-xs text-gray-500 mt-1">网申人员尚未预扫描申请官网，清单无法生成；可点击催办提醒网申人员</p></div><div class="flex gap-2"><button class="px-4 py-2 text-sm font-medium text-white bg-amber-500 rounded-lg" onclick="openUrgeModal()">催办网申人员</button><button class="px-4 py-2 text-sm font-medium text-purple-600 bg-purple-50 rounded-lg" onclick="openMaterialModal()">查看材料清单</button></div></div>'
+            : '<div class="project-action-card is-warning"><span class="project-action-icon">!</span><div><p class="text-sm font-semibold text-gray-900">材料清单未生成</p><p class="text-xs text-gray-500 mt-1">网申人员尚未预扫描申请官网，清单无法生成；可先向学生档案补充文件</p></div><div class="flex gap-2 flex-wrap justify-end"><button class="px-4 py-2 text-sm font-medium text-blue-600 bg-blue-50 rounded-lg" onclick="openStudentAssetUpload()">上传学生档案文件</button><button class="px-4 py-2 text-sm font-medium text-white bg-amber-500 rounded-lg" onclick="openUrgeModal()">催办网申人员</button><button class="px-4 py-2 text-sm font-medium text-purple-600 bg-purple-50 rounded-lg" onclick="openMaterialModal()">查看材料清单</button></div></div>'
         },
         essay: {
           kicker: s.name, title: '文书交付',
@@ -906,6 +906,9 @@
     }
 
     /* ==================== 材料清单弹窗 + 催办 ==================== */
+    function openStudentAssetUpload() {
+      location.href = '学生档案详情页 - 留学申请管理系统.html?section=asset&upload=1#sec-asset';
+    }
     function openMaterialModal() {
       var s = school();
       document.getElementById('materialModalSchool').textContent = s.name;

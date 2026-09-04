@@ -850,12 +850,11 @@
   /* 系统内置角色：不可删除/改名，权限可配置但保留默认兜底 */
   var SYSTEM_ROLES = ['超级管理员', '平台运维人员', '机构管理员', '文书机构管理员'];
 
-  /* 项目状态机（与 PRD 7.2.2 对齐）：
-     待分配(未分配PM) → 待接收(PM已分配) → 进行中(PM已接收) → 暂停/已退回 → 已结项 */
+  /* 项目状态机：待分配(未分配PM) → 待接收(PM已分配) → 进行中(PM已接收) → 已结项 */
   function normalizeProjectStatus(project) {
     if (!project) return '待分配';
     var explicit = project.status;
-    if (explicit === '已结项' || explicit === '暂停' || explicit === '已退回') return explicit;
+    if (explicit === '已结项') return explicit;
     if (!project.projectManager) return '待分配';
     if (project.pmAccepted) return '进行中';
     return '待接收';
@@ -935,13 +934,13 @@
       this.saveOne(p);
       return p;
     },
-    /* 项目经理退回：→ 已退回，并通知机构管理员 */
+    /* 项目经理退回后重新进入待分配，并通知机构管理员 */
     rejectPM: function (projectNo, reason) {
       var p = this.find(projectNo);
       if (!p) return null;
       p.pmAccepted = false;
       p.projectManager = '';
-      p.status = '已退回';
+      p.status = '待分配';
       p.rejectedAt = new Date().toISOString();
       p.rejectReason = reason || '';
       this.saveOne(p);
@@ -972,8 +971,8 @@
       { projectNo: 'PRJ-M-2607-0001', customer: '张建国', student: '张明', level: '本科申请', source: '线上', projectManager: '', pmAccepted: false, status: '待接收', org: 'PBS留学总部', createdAt: '2026-07-03 14:30' },
       { projectNo: 'PRJ-M-2607-0002', customer: '李慧敏', student: '李雪', level: '硕士申请', source: '线上', projectManager: '张老师', pmAccepted: true, status: '进行中', org: 'PBS留学总部', createdAt: '2026-07-05 09:20' },
       { projectNo: 'PRJ-O-2607-0003', customer: '王建军', student: '王伟', level: '博士申请', source: '线下', projectManager: '李老师', pmAccepted: true, status: '已结项', org: 'PBS留学总部', createdAt: '2026-06-12 16:40' },
-      { projectNo: 'PRJ-M-2607-0004', customer: '赵文华', student: '赵婷', level: '硕士申请', source: '线上', projectManager: '王老师', pmAccepted: true, status: '暂停', org: 'PBS留学总部', createdAt: '2026-06-28 11:15' },
-      { projectNo: 'PRJ-O-2607-0005', customer: '陈国平', student: '陈晓', level: '本科申请', source: '线下', projectManager: '', pmAccepted: false, status: '已退回', org: 'PBS留学总部', createdAt: '2026-07-08 15:05' }
+      { projectNo: 'PRJ-M-2607-0004', customer: '赵文华', student: '赵婷', level: '硕士申请', source: '线上', projectManager: '王老师', pmAccepted: true, status: '进行中', org: 'PBS留学总部', createdAt: '2026-06-28 11:15' },
+      { projectNo: 'PRJ-O-2607-0005', customer: '陈国平', student: '陈晓', level: '本科申请', source: '线下', projectManager: '', pmAccepted: false, status: '待分配', org: 'PBS留学总部', createdAt: '2026-07-08 15:05' }
     ];
     var added = false;
     seeds.forEach(function (seed) {

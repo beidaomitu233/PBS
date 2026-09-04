@@ -224,8 +224,6 @@
               <option>待分配</option>
               <option>待接收</option>
               <option>进行中</option>
-              <option>已退回</option>
-              <option>暂停</option>
               <option>已结项</option>
             </select>
           </div>
@@ -332,24 +330,24 @@
                 <div class="flex items-center gap-3"><button class="text-blue-600 hover:text-blue-800 text-sm font-medium" data-dom-id="btn-project-detail-3">查看详情</button><button class="text-orange-600 hover:text-orange-800 text-sm font-medium" onclick="event.stopPropagation(); showToast('已催办该项目')">催办</button></div>
               </td>
             </tr>
-            <tr class="hover:bg-gray-50 transition-colors cursor-pointer" data-kw="PRJ-M-2607-0004赵文华赵婷硕士申请" data-name="赵文华" data-applicant="赵婷" data-status="暂停" data-pm="王老师" data-time="2026-07-05" data-project="PRJ-M-2607-0004" data-level="硕士申请">
+            <tr class="hover:bg-gray-50 transition-colors cursor-pointer" data-kw="PRJ-M-2607-0004赵文华赵婷硕士申请" data-name="赵文华" data-applicant="赵婷" data-status="进行中" data-pm="王老师" data-time="2026-07-05" data-project="PRJ-M-2607-0004" data-level="硕士申请">
               <td class="px-5 py-4 text-sm text-gray-900">5</td>
               <td class="px-5 py-4 text-sm text-gray-900">PRJ-M-2607-0004</td>
               <td class="px-5 py-4 text-sm font-medium text-gray-900">赵文华</td>
               <td class="px-5 py-4 text-sm text-gray-900">赵婷</td>
               <td class="px-5 py-4 text-sm text-gray-900">硕士申请</td>
-              <td class="px-5 py-4"><span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-orange-100 text-orange-800">暂停</span></td>
+              <td class="px-5 py-4"><span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">进行中</span></td>
               <td class="px-5 py-4 text-sm text-gray-900">王老师</td>
               <td class="px-5 py-4 text-sm text-gray-900">2026-07-05 16:30</td>
               <td class="px-5 py-4"><div class="flex items-center gap-3"><button class="text-blue-600 hover:text-blue-800 text-sm font-medium" onclick="event.stopPropagation(); openPoolProjectDetail('PRJ-M-2607-0004')">查看详情</button><button class="text-orange-600 hover:text-orange-800 text-sm font-medium" onclick="event.stopPropagation(); showToast('已催办该项目')">催办</button></div></td>
             </tr>
-            <tr class="hover:bg-gray-50 transition-colors cursor-pointer" data-kw="PRJ-O-2607-0005陈国平陈晓本科申请" data-name="陈国平" data-applicant="陈晓" data-status="已退回" data-pm="—" data-time="2026-07-08" data-project="PRJ-O-2607-0005" data-level="本科申请">
+            <tr class="hover:bg-gray-50 transition-colors cursor-pointer" data-kw="PRJ-O-2607-0005陈国平陈晓本科申请" data-name="陈国平" data-applicant="陈晓" data-status="待分配" data-pm="—" data-time="2026-07-08" data-project="PRJ-O-2607-0005" data-level="本科申请">
               <td class="px-5 py-4 text-sm text-gray-900">6</td>
               <td class="px-5 py-4 text-sm text-gray-900">PRJ-O-2607-0005</td>
               <td class="px-5 py-4 text-sm font-medium text-gray-900">陈国平</td>
               <td class="px-5 py-4 text-sm text-gray-900">陈晓</td>
               <td class="px-5 py-4 text-sm text-gray-900">本科申请</td>
-              <td class="px-5 py-4"><span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-700">已退回</span></td>
+              <td class="px-5 py-4"><span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-amber-100 text-amber-700">待分配</span></td>
               <td class="px-5 py-4 text-sm text-gray-900">—</td>
               <td class="px-5 py-4 text-sm text-gray-900">2026-07-08 11:12</td>
               <td class="px-5 py-4"><div class="flex items-center gap-3"><button class="text-blue-600 hover:text-blue-800 text-sm font-medium" onclick="event.stopPropagation(); openPoolProjectDetail('PRJ-O-2607-0005')">查看详情</button><button class="text-orange-600 hover:text-orange-800 text-sm font-medium" onclick="event.stopPropagation(); showToast('已催办该项目')">催办</button></div></td>
@@ -514,8 +512,6 @@
       '待分配': 'bg-amber-100 text-amber-700',
       '待接收': 'bg-blue-100 text-blue-800',
       '进行中': 'bg-green-100 text-green-800',
-      '暂停': 'bg-orange-100 text-orange-700',
-      '已退回': 'bg-red-100 text-red-700',
       '已结项': 'bg-gray-100 text-gray-500'
     };
     function syncStaticRowsFromStore() {

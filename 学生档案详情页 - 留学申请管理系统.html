@@ -298,7 +298,7 @@
               终止时间
             </label><label class="flex items-center gap-2 px-4 py-2 hover:bg-gray-50 cursor-pointer text-sm text-gray-700">
               <input type="checkbox" class="w-4 h-4 text-blue-600 rounded border-gray-300" checked="" data-cfg-field="school" onchange="applyFieldVisibility(&#39;edu&#39;)">
-              就读学校/所在院系
+              就读学校
             </label><label class="flex items-center gap-2 px-4 py-2 hover:bg-gray-50 cursor-pointer text-sm text-gray-700">
               <input type="checkbox" class="w-4 h-4 text-blue-600 rounded border-gray-300" checked="" data-cfg-field="addr" onchange="applyFieldVisibility(&#39;edu&#39;)">
               学校地址
@@ -309,8 +309,11 @@
               <input type="checkbox" class="w-4 h-4 text-blue-600 rounded border-gray-300" checked="" data-cfg-field="grade" onchange="applyFieldVisibility(&#39;edu&#39;)">
               成绩
             </label><label class="flex items-center gap-2 px-4 py-2 hover:bg-gray-50 cursor-pointer text-sm text-gray-700">
-              <input type="checkbox" class="w-4 h-4 text-blue-600 rounded border-gray-300" checked="" data-cfg-field="sys" onchange="applyFieldVisibility(&#39;edu&#39;)">
-              学制/学历
+              <input type="checkbox" class="w-4 h-4 text-blue-600 rounded border-gray-300" checked="" data-cfg-field="duration" onchange="applyFieldVisibility(&#39;edu&#39;)">
+              学制
+            </label><label class="flex items-center gap-2 px-4 py-2 hover:bg-gray-50 cursor-pointer text-sm text-gray-700">
+              <input type="checkbox" class="w-4 h-4 text-blue-600 rounded border-gray-300" checked="" data-cfg-field="education" onchange="applyFieldVisibility(&#39;edu&#39;)">
+              学历
             </label><label class="flex items-center gap-2 px-4 py-2 hover:bg-gray-50 cursor-pointer text-sm text-gray-700">
               <input type="checkbox" class="w-4 h-4 text-blue-600 rounded border-gray-300" checked="" data-cfg-field="degree" onchange="applyFieldVisibility(&#39;edu&#39;)">
               所获学位
@@ -350,7 +353,7 @@
               <p class="text-xs text-gray-400 mb-1">终止时间</p>
               <p class="text-sm font-medium text-gray-900" data-v="end">2027-06（预计）</p>
             </div><div data-f="school">
-              <p class="text-xs text-gray-400 mb-1">就读学校/所在院系</p>
+              <p class="text-xs text-gray-400 mb-1">就读学校</p>
               <p class="text-sm font-medium text-gray-900" data-v="school">—</p>
             </div><div data-f="addr">
               <p class="text-xs text-gray-400 mb-1">学校地址</p>
@@ -361,9 +364,12 @@
             </div><div data-f="grade">
               <p class="text-xs text-gray-400 mb-1">成绩</p>
               <p class="text-sm font-medium text-gray-900" data-v="grade">—</p>
-            </div><div data-f="sys">
-              <p class="text-xs text-gray-400 mb-1">学制/学历</p>
-              <p class="text-sm font-medium text-gray-900" data-v="sys">三年制 / 高中</p>
+            </div><div data-f="duration">
+              <p class="text-xs text-gray-400 mb-1">学制</p>
+              <p class="text-sm font-medium text-gray-900" data-v="duration">三年制</p>
+            </div><div data-f="education">
+              <p class="text-xs text-gray-400 mb-1">学历</p>
+              <p class="text-sm font-medium text-gray-900" data-v="education">高中</p>
             </div><div data-f="degree">
               <p class="text-xs text-gray-400 mb-1">所获学位</p>
               <p class="text-sm font-medium text-gray-900" data-v="degree">高中毕业证（预计 2027-06）</p>
@@ -540,7 +546,7 @@
               <p class="text-xs text-gray-400">AP</p>
               <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-700">达标</span>
             </div>
-            <p class="text-lg font-semibold text-gray-900" data-v="ap">5门 · 全5分</p>
+            <p class="text-lg font-semibold text-gray-900" data-v="ap">25</p>
               <div class="mt-3 score-sub-list" data-sub="ap"></div>
             </div>
             <div class="bg-gray-50 rounded-xl p-4 border border-gray-100" data-f="alevel">
@@ -577,7 +583,7 @@
             </div>
           </div>
         </div>
-        <p class="mt-4 text-xs text-gray-400">学业字段完整展示，未采集信息以“—”或“未参加”标识；点击“编辑”可统一维护，齿轮仅控制显示字段和新增字段。</p>
+        <p class="mt-4 text-xs text-gray-400">总分与单科成绩分别维护；A-Level 总成绩按单科成绩由高到低自动拼接。</p>
         </div>
       </section>      <!-- 板块四：专业资质 -->
       <section id="sec-qual" data-section="qual" class="bg-white rounded-xl shadow-sm border border-gray-100 scroll-mt-24">
@@ -1622,13 +1628,75 @@
 
     /* ---------- 新增板块：记录增删改 ---------- */
     var RECORD_FIELDS = {
-      edu: [['start','起始时间'],['end','终止时间'],['school','就读学校/所在院系'],['addr','学校地址'],['major','专业'],['grade','成绩'],['sys','学制/学历'],['degree','所获学位']],
+      edu: [['start','起始时间'],['end','终止时间'],['school','就读学校'],['addr','学校地址'],['major','专业'],['grade','成绩'],['duration','学制'],['education','学历'],['degree','所获学位']],
       qual: [['qn','资质名称'],['org','发证机构'],['date','获取日期'],['no','资质编号'],['valid','有效期']],
       work: [['co','公司名称'],['post','岗位'],['start','开始时间'],['end','结束时间'],['desc','工作内容'],['ref','证明人及联系方式']],
       practice: [['org','组织名称'],['role','角色'],['start','开始时间'],['end','结束时间'],['act','活动内容'],['gain','收获/成果']],
       honor: [['hn','荣誉名称'],['org','颁奖机构'],['date','获奖日期'],['lvl','荣誉级别'],['note','相关说明']],
       pub: [['title','论文标题'],['journal','发表刊物'],['date','发表日期'],['order','作者排序'],['doi','DOI/链接'],['jlvl','刊物级别']]
     };
+    var TIME_FIELD_CONFIG = {
+      'edu.start': { type: 'month' },
+      'edu.end': { type: 'month', option: '预计', optionMode: 'suffix' },
+      'qual.date': { type: 'month' },
+      'qual.valid': { type: 'month', option: '长期有效', optionMode: 'replace' },
+      'work.start': { type: 'month' },
+      'work.end': { type: 'month', option: '至今', optionMode: 'replace' },
+      'practice.start': { type: 'month' },
+      'practice.end': { type: 'month', option: '至今', optionMode: 'replace' },
+      'honor.date': { type: 'month' },
+      'pub.date': { type: 'month' },
+      'apply.time': { type: 'date' },
+      'asset.fdate': { type: 'date' }
+    };
+    function timeFieldConfig(sec, key) {
+      return TIME_FIELD_CONFIG[sec + '.' + key] || null;
+    }
+    function pickerValue(value, type) {
+      var pattern = type === 'date' ? /\d{4}-\d{2}-\d{2}/ : /\d{4}-\d{2}/;
+      var match = String(value || '').match(pattern);
+      return match ? match[0] : '';
+    }
+    function fieldEditorHtml(sec, key, value, original) {
+      var cfg = timeFieldConfig(sec, key);
+      var origAttr = original == null ? '' : ' data-orig="' + escapeHtml(original) + '"';
+      if (!cfg) {
+        return '<input type="text" data-v="' + key + '"' + origAttr + ' value="' + escapeHtml(value === '—' ? '' : value) + '" placeholder="请输入" class="w-full px-2.5 py-1.5 border border-gray-300 rounded-lg text-sm focus:ring-1 focus:ring-blue-500 focus:border-blue-500">';
+      }
+      var optionChecked = cfg.option && String(value || '').indexOf(cfg.option) >= 0;
+      var pickerDisabled = optionChecked && cfg.optionMode === 'replace';
+      var option = cfg.option
+        ? '<label class="inline-flex flex-shrink-0 items-center gap-1 text-xs text-gray-600"><input type="checkbox" data-time-option value="' + cfg.option + '" data-option-mode="' + cfg.optionMode + '" ' + (optionChecked ? 'checked ' : '') + 'onchange="toggleTimeFieldOption(this)" class="w-3.5 h-3.5 rounded border-gray-300 text-blue-600"><span>' + cfg.option + '</span></label>'
+        : '';
+      return '<span data-v="' + key + '" data-time-control' + origAttr + ' class="flex items-center gap-2">' +
+        '<input type="' + cfg.type + '" data-time-picker value="' + pickerValue(value, cfg.type) + '" ' + (pickerDisabled ? 'disabled ' : '') + 'class="min-w-0 flex-1 px-2.5 py-1.5 border border-gray-300 rounded-lg text-sm focus:ring-1 focus:ring-blue-500 focus:border-blue-500 disabled:bg-gray-100 disabled:text-gray-400">' + option + '</span>';
+    }
+    function createFieldEditor(sec, key, value, original) {
+      var host = document.createElement('div');
+      host.innerHTML = fieldEditorHtml(sec, key, value, original);
+      return host.firstElementChild;
+    }
+    window.toggleTimeFieldOption = function (checkbox) {
+      var control = checkbox.closest('[data-time-control]');
+      var picker = control ? control.querySelector('[data-time-picker]') : null;
+      if (!picker) return;
+      if (checkbox.getAttribute('data-option-mode') === 'replace') {
+        picker.disabled = checkbox.checked;
+        if (!checkbox.checked) picker.focus();
+      }
+    };
+    function fieldEditorValue(control) {
+      if (!control) return '';
+      if (!control.hasAttribute('data-time-control')) return control.value.trim();
+      var picker = control.querySelector('[data-time-picker]');
+      var option = control.querySelector('[data-time-option]');
+      if (option && option.checked) {
+        return option.getAttribute('data-option-mode') === 'suffix'
+          ? ((picker.value || '') + '（' + option.value + '）')
+          : option.value;
+      }
+      return picker ? picker.value : '';
+    }
     function renumber(sec) {
       document.querySelectorAll('#records-' + sec + ' [data-record] > div:first-child > span').forEach(function (b, i) {
         b.textContent = i + 1;
@@ -1643,7 +1711,7 @@
       card.setAttribute('data-record-key', sec + '-record-' + Date.now());
       var flds = fields.map(function (f) {
         return '<div data-f="' + f[0] + '"><p class="text-xs text-gray-400 mb-1">' + f[1] + '</p>' +
-               '<input type="text" data-v="' + f[0] + '" placeholder="请输入' + f[1] + '" class="w-full px-2.5 py-1.5 border border-gray-300 rounded-lg text-sm focus:ring-1 focus:ring-blue-500 focus:border-blue-500"></div>';
+               fieldEditorHtml(sec, f[0], '', null) + '</div>';
       }).join('');
       card.innerHTML = '<div class="flex items-center justify-between mb-3">' +
         '<span class="inline-flex items-center justify-center w-6 h-6 rounded-full bg-blue-100 text-blue-700 text-xs font-semibold"></span>' +
@@ -1658,11 +1726,11 @@
     window.saveRecord = function (btn) {
       var card = btn.closest('[data-record]');
       var sec = card.closest('[id^="records-"]').id.replace('records-', '');
-      card.querySelectorAll('input[data-v]').forEach(function (inp) {
+      card.querySelectorAll('[data-v]').forEach(function (inp) {
         var p = document.createElement('p');
         p.className = 'text-sm font-medium text-gray-900';
         p.setAttribute('data-v', inp.getAttribute('data-v'));
-        p.textContent = inp.value.trim() || '—';
+        p.textContent = fieldEditorValue(inp) || '—';
         inp.parentElement.replaceChild(p, inp);
       });
       card.classList.remove('border-blue-300', 'bg-blue-50/30');
@@ -1675,12 +1743,12 @@
       var card = btn.closest('[data-record]');
       /* 判定依据：编辑已有记录时，editRecord 生成的输入框会携带 data-orig 原始值；
          新增记录（addRecord）的输入框没有该属性。避免取消编辑时误删已有记录。 */
-      var isNew = card.querySelector('input[data-v]') !== null && card.querySelector('input[data-v][data-orig]') === null;
+      var isNew = card.querySelector('[data-v]') !== null && card.querySelector('[data-v][data-orig]') === null;
       var sec = card.closest('[id^="records-"]').id.replace('records-', '');
       if (isNew) { card.remove(); renumber(sec); }
       else {
         /* 取消编辑：还原为文本 */
-        card.querySelectorAll('input[data-v]').forEach(function (inp) {
+        card.querySelectorAll('[data-v]').forEach(function (inp) {
           var p = document.createElement('p');
           p.className = 'text-sm font-medium text-gray-900';
           p.setAttribute('data-v', inp.getAttribute('data-v'));
@@ -1703,13 +1771,9 @@
     }
     window.editRecord = function (btn) {
       var card = btn.closest('[data-record]');
+      var sec = card.closest('[id^="records-"]').id.replace('records-', '');
       card.querySelectorAll('p[data-v]').forEach(function (p) {
-        var inp = document.createElement('input');
-        inp.type = 'text';
-        inp.className = 'w-full px-2.5 py-1.5 border border-gray-300 rounded-lg text-sm focus:ring-1 focus:ring-blue-500 focus:border-blue-500';
-        inp.value = p.textContent === '—' ? '' : p.textContent;
-        inp.setAttribute('data-v', p.getAttribute('data-v'));
-        inp.setAttribute('data-orig', p.textContent);
+        var inp = createFieldEditor(sec, p.getAttribute('data-v'), p.textContent, p.textContent);
         p.parentElement.replaceChild(inp, p);
       });
       card.classList.add('border-blue-300', 'bg-blue-50/30');
@@ -2010,14 +2074,17 @@
         var v = fieldValueEl(cell);
         /* 守卫：跳过正处于行内编辑（输入框）状态的字段，避免两种编辑模式互相覆盖造成内容丢失 */
         if (v && (v.tagName === 'INPUT' || v.tagName === 'SELECT' || v.querySelector('input, select'))) v = null;
-        if (v) cells.push({ el: v, text: v.textContent.trim() });
+        if (v) cells.push({ el: v, text: v.textContent.trim(), field: cell.getAttribute('data-f') });
       });
       if (!cells.length) { toast('该板块暂无可编辑字段'); return; }
       cells.forEach(function (c) {
-        var inp = document.createElement('input');
-        inp.type = 'text';
-        inp.value = c.text === '—' ? '' : c.text;
-        inp.className = 'w-full h-8 px-2 border border-blue-300 rounded-lg text-sm bg-blue-50/40 focus:ring-2 focus:ring-blue-500 focus:border-blue-500';
+        var inp = createFieldEditor(sec, c.field, c.text, c.text);
+        if (inp.hasAttribute('data-time-control')) {
+          inp.className = 'flex items-center gap-2';
+          inp.querySelector('[data-time-picker]').className = 'min-w-0 flex-1 h-8 px-2 border border-blue-300 rounded-lg text-sm bg-blue-50/40 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 disabled:bg-gray-100 disabled:text-gray-400';
+        } else {
+          inp.className = 'w-full h-8 px-2 border border-blue-300 rounded-lg text-sm bg-blue-50/40 focus:ring-2 focus:ring-blue-500 focus:border-blue-500';
+        }
         c.el.innerHTML = '';
         c.el.appendChild(inp);
       });
@@ -2035,8 +2102,8 @@
       if (!st) return;
       var vals = [];
       st.cells.forEach(function (c) {
-        var inp = c.el.querySelector('input');
-        var t = inp ? inp.value.trim() : c.text;
+        var inp = c.el.querySelector('[data-time-control], input');
+        var t = inp ? fieldEditorValue(inp) : c.text;
         if (!t) t = '—';
         c.el.textContent = t;
         vals.push(t);
@@ -2162,7 +2229,7 @@
     /* ---------- 学业信息：申请阶段分组 + 标化小分明细 ---------- */
     var SCORE_SUB_DEFAULTS = {
       sat: { total: '1520', items: [{name:'阅读', score:'380'}, {name:'文法', score:'370'}, {name:'数学', score:'770'}] },
-      ap: { total: '5门 · 全5分', items: [{name:'微积分BC', score:'5'}, {name:'物理C力学', score:'5'}, {name:'物理C电磁学', score:'5'}, {name:'化学', score:'5'}, {name:'计算机科学A', score:'5'}] },
+      ap: { total: '25', items: [{name:'微积分BC', score:'5'}, {name:'物理C力学', score:'5'}, {name:'物理C电磁学', score:'5'}, {name:'化学', score:'5'}, {name:'计算机科学A', score:'5'}] },
       alevel: { total: 'A*AA', items: [{name:'数学', score:'A*'}, {name:'物理', score:'A'}, {name:'化学', score:'A'}] },
       ib: { total: '', items: [] },
       gre: { total: '', items: [{name:'Verbal', score:''}, {name:'Quant', score:''}, {name:'Analytical Writing', score:''}] },
@@ -2184,16 +2251,35 @@
     function saveScoreSubData() {
       localStorage.setItem(scoreSubKey(), JSON.stringify(scoreSubData));
     }
+    function aLevelScoreWeight(score) {
+      var rank = { 'A*': 7, 'A': 6, 'B': 5, 'C': 4, 'D': 3, 'E': 2, 'U': 1 };
+      return rank[String(score || '').trim().toUpperCase()] || 0;
+    }
+    function normalizeScoreData(key, data) {
+      if (key === 'ap' && data.total === '5门 · 全5分') data.total = '25';
+      if (key === 'alevel') {
+        data.items.sort(function(a, b) { return aLevelScoreWeight(b.score) - aLevelScoreWeight(a.score); });
+        data.total = data.items.map(function(item) { return String(item.score || '').trim(); }).filter(Boolean).join('');
+      }
+      return data;
+    }
     window.renderScoreSubs = function () {
       loadScoreSubData();
       document.querySelectorAll('[data-sub]').forEach(function (container) {
         var key = container.getAttribute('data-sub');
-        var data = scoreSubData[key] || { total: '', items: [] };
+        var data = normalizeScoreData(key, scoreSubData[key] || { total: '', items: [] });
         var editing = container.getAttribute('data-sub-editing') === '1';
         var isFixed = FIXED_SUB_KEYS.indexOf(key) >= 0;
+        var totalElement = document.querySelector('[data-f="' + key + '"] [data-v="' + key + '"]');
+        if (totalElement) totalElement.textContent = data.total || '—';
         var html = '';
         if (editing) {
           html += '<div class="space-y-2">';
+          if (key === 'alevel') {
+            html += '<p class="text-[11px] text-gray-400">总成绩将按单科成绩由高到低自动拼接</p>';
+          } else {
+            html += '<div class="flex items-center gap-2"><span class="w-12 text-xs text-gray-500">总分</span><input type="text" data-sub-total value="' + escapeHtml(data.total || '') + '" class="flex-1 min-w-0 px-2 py-1 text-xs border border-gray-300 rounded" placeholder="填写总分"></div>';
+          }
           data.items.forEach(function (item, idx) {
             html += '<div class="flex items-center gap-2">' +
               '<input type="text" data-sub-name="' + idx + '" value="' + escapeHtml(item.name) + '" class="flex-1 min-w-0 px-2 py-1 text-xs border border-gray-300 rounded" placeholder="名称">' +
@@ -2219,6 +2305,7 @@
               html += '<p class="text-xs text-gray-700"><span class="text-gray-500">' + escapeHtml(item.name || '') + '：</span>' + (item.score ? escapeHtml(item.score) : '—') + '</p>';
             });
           }
+          if (key === 'alevel') html += '<p class="mt-2 text-[11px] text-gray-400">成绩较好的科目优先展示</p>';
           var label = isFixed ? '编辑小分' : '编辑科目';
           html += '<button type="button" class="mt-2 text-xs text-blue-600 hover:text-blue-800" onclick="event.stopPropagation();toggleScoreSubEdit(\'' + key + '\')">' + label + '</button>';
         }
@@ -2232,6 +2319,8 @@
       if (editing) {
         var data = scoreSubData[key];
         var isFixed = FIXED_SUB_KEYS.indexOf(key) >= 0;
+        var totalInput = container.querySelector('[data-sub-total]');
+        if (totalInput) data.total = totalInput.value.trim();
         container.querySelectorAll('[data-sub-name]').forEach(function (inp, idx) {
           if (data.items[idx]) {
             data.items[idx].name = inp.value.trim();
@@ -2241,6 +2330,7 @@
         if (!isFixed) {
           data.items = data.items.filter(function (i) { return i.name || i.score; });
         }
+        normalizeScoreData(key, data);
         saveScoreSubData();
         container.removeAttribute('data-sub-editing');
         delete scoreSubBackup[key]; /* 已保存，丢弃快照 */
@@ -2265,17 +2355,17 @@
       if (!scoreSubData[key]) scoreSubData[key] = { total: '', items: [] };
       scoreSubData[key].items.push({ name: '', score: '' });
       saveScoreSubData();
-      renderScoreSubs();
       var container = document.querySelector('[data-sub="' + key + '"]');
       if (container) container.setAttribute('data-sub-editing', '1');
+      renderScoreSubs();
     };
     window.deleteScoreSubItem = function (key, idx) {
       if (!scoreSubData[key]) return;
       scoreSubData[key].items.splice(idx, 1);
       saveScoreSubData();
-      renderScoreSubs();
       var container = document.querySelector('[data-sub="' + key + '"]');
       if (container) container.setAttribute('data-sub-editing', '1');
+      renderScoreSubs();
     };
     window.renderScoreLevelGroups = function () {
       var levelEl = document.getElementById('apply-level-text');
@@ -2510,7 +2600,7 @@
         { sel: '[data-v="idcard"]', label: '身份证号', value: '11010120080512331X', ref: '证件人像面 · 公民身份号码栏' }
       ],
       transcript: [
-        { sel: '#records-edu [data-v="school"]', label: '就读学校/所在院系', value: '北京二十一世纪国际学校 / 国际部 A-Level 中心', ref: '第 1 页 · 学生基本信息栏' },
+        { sel: '#records-edu [data-v="school"]', label: '就读学校', value: '北京二十一世纪国际学校', ref: '第 1 页 · 学生基本信息栏' },
         { sel: '#records-edu [data-v="major"]', label: '专业', value: 'A-Level 课程（数学 / 物理 / 化学）', ref: '第 1 页 · 课程体系说明' },
         { sel: '#records-edu [data-v="grade"]', label: '成绩', value: '数学 A* / 物理 A / 化学 A', ref: '第 1 页 · 成绩汇总表' }
       ],

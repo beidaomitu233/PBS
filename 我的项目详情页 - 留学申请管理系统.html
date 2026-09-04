@@ -78,6 +78,11 @@
     .student-profile-details summary::-webkit-details-marker { display: none; }
     .student-profile-details[open] .details-arrow { transform: rotate(180deg); }
     .details-arrow { transition: transform .2s ease; }
+    .monitor-scroll { height: 430px; overflow-y: auto; scrollbar-width: thin; scrollbar-color: #CBD5E1 transparent; }
+    .monitor-timeline { position: relative; padding-left: 22px; }
+    .monitor-timeline:before { content:""; position:absolute; left:7px; top:8px; bottom:8px; width:1px; background:#E2E8F0; }
+    .monitor-dot { position:absolute; left:1px; top:24px; width:13px; height:13px; border:3px solid white; border-radius:999px; background:#60A5FA; box-shadow:0 0 0 2px #BFDBFE; }
+    .monitor-shot-preview { height:118px; background:linear-gradient(180deg,#F8FAFC,#F1F5F9); }
   </style>
   <link rel="stylesheet" href="./assets/css/pbs-theme.css?v=6.1">
 </head>
@@ -354,7 +359,7 @@
           </aside>
           <div id="projectStageContent" class="project-flow-content" aria-live="polite"></div>
         </div>
-        <p class="stage-iframe-note mt-2">流程阶段说明：文书交付与网申提交的 DDL 分为「管理配置」（项目经理在分配人员时设置）与「来自商城」（商户/商城传入，不可改）；监控阶段同步监控任务列表 / 监控详情页；目标结项同步结项归档列表 / 结项详情页。</p>
+        <p class="stage-iframe-note mt-2">每个院校目标独立推进材料、文书、网申、监控与结项流程。</p>
       </section>
 
     </main>
@@ -433,7 +438,7 @@
         <div class="w-12 h-12 bg-amber-100 rounded-full flex items-center justify-center mb-3">
           <svg class="w-6 h-6 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path></svg>
         </div>
-        <h3 class="text-lg font-semibold text-gray-800">催办网申人员</h3>
+        <h3 id="urgeModalTitle" class="text-lg font-semibold text-gray-800">发送催办</h3>
         <p id="urgeModalText" class="text-sm text-gray-500 mt-2">网申人员尚未预扫描申请官网，材料清单未生成。是否发送催办提醒？</p>
       </div>
       <div class="flex gap-3">
@@ -579,11 +584,11 @@
           { name: '护照复印件', req: '有效期覆盖入学当年', desc: '护照有效期未识别，需人工确认', source: '学生档案', uploaded: false }
         ],
         docs: [
-          { key: 'CV', name: 'CV 简历', req: '2页 · 科研经历重点', owner: '刘老师', reviewer: '孙老师', ddl: '2026-10-08', mall: '2026-10-05', status: '已完成', duration: '—' },
-          { key: 'PS', name: 'PS 个人陈述', req: '1000词 · 学术背景+研究方向', owner: '刘老师', reviewer: '孙老师', ddl: '2026-10-15', mall: '2026-10-10', status: '待PM确认', duration: '滞留 2 天', near: true },
-          { key: 'RL', name: 'RL 推荐信×2', req: '500词/封 · 导师推荐', owner: '陈老师', reviewer: '周老师', ddl: '2026-10-12', mall: '2026-10-08', status: '审核中', duration: '滞留 1 天' },
-          { key: 'RP', name: 'RP 研究计划', req: '2000词 · 研究方法+时间安排', owner: '刘老师', reviewer: '周老师', ddl: '2026-10-20', mall: '2026-10-18', status: '撰写中', duration: '滞留 4 天' },
-          { key: 'TCX', name: '套磁信', req: '导师沟通邮件 · DDL 跟随网申提交', owner: '刘老师', reviewer: '孙老师', ddl: '2026-11-01', mall: '2026-10-25', status: '撰写中', duration: '—' }
+          { key: 'CV', name: 'CV 简历', owner: '刘老师', reviewer: '孙老师', ddl: '2026-10-08', mall: '2026-10-05', status: '已完成', duration: '—' },
+          { key: 'PS', name: 'PS 个人陈述', owner: '刘老师', reviewer: '孙老师', ddl: '2026-10-15', mall: '2026-10-10', status: '待PM确认', duration: '滞留 2 天', near: true },
+          { key: 'RL', name: 'RL 推荐信×2', owner: '陈老师', reviewer: '周老师', ddl: '2026-10-12', mall: '2026-10-08', status: '审核中', duration: '滞留 1 天' },
+          { key: 'RP', name: 'RP 研究计划', owner: '刘老师', reviewer: '周老师', ddl: '2026-10-20', mall: '2026-10-18', status: '撰写中', duration: '滞留 4 天' },
+          { key: 'TCX', name: '套磁信', owner: '刘老师', reviewer: '孙老师', ddl: '2026-11-01', mall: '2026-10-25', status: '撰写中', duration: '—' }
         ],
         materialDdl: { managed: '2026-09-25', merchant: '2026-09-28' },
         applyDdl: { managed: '2026-11-01', merchant: '2026-10-25' },
@@ -593,7 +598,19 @@
           emailUrl: 'https://mail.google.com', email: 'lixue.apply@gmail.com', emailPwd: 'Ap••••••88',
           fieldsTotal: 36, fieldsMatched: 32
         },
-        monitor: { status: '未开启', type: '官网 + 邮箱', freq: '每 6 小时', lastRun: '—', news: [] },
+        monitor: {
+          status: '监控中', type: '官网 + 邮箱', freq: '每 6 小时', lastRun: '2026-08-18 10:12', owner: '赵老师',
+          emails: [
+            { time: '2026-08-18 10:12:36', type: '录取通知', title: 'Conditional Offer - MSc in Computer Science', sender: 'admissions@cmu.edu', summary: '学校已发出有条件录取，请登录申请系统确认并完成后续材料提交。' },
+            { time: '2026-08-17 16:48:09', type: '材料提醒', title: 'Supporting documents reminder', sender: 'admissions@cmu.edu', summary: '请在截止日期前补充最终成绩单。' },
+            { time: '2026-08-15 09:10:21', type: '材料确认', title: 'Supporting documents verified', sender: 'admissions@cmu.edu', summary: '语言成绩与推荐信已完成核验。' }
+          ],
+          screenshots: [
+            { title: '申请状态页', uploader: '赵老师', time: '2026-08-18 10:12' },
+            { title: '材料清单页', uploader: '赵老师', time: '2026-08-16 08:00' },
+            { title: '录取结果页', uploader: '赵老师', time: '2026-08-14 18:30' }
+          ], news: []
+        },
         archive: { status: '待结项', time: '—', offers: 0, rejects: 0, reports: '未生成' },
         stageDurations: { material: '滞留 12 天', essay: '滞留 9 天', apply: '尚未开始', monitor: '尚未开始', archive: '尚未开始' }
       },
@@ -604,11 +621,11 @@
         materialIssue: '',
         materials: [],
         docs: [
-          { key: 'CV', name: 'CV 简历', req: '2页 · 实习经历重点', owner: null, reviewer: null, ddl: null, mall: '2026-11-25', status: '待分配', duration: '—' },
-          { key: 'PS', name: 'PS 个人陈述', req: '800词 · 数据项目经历', owner: null, reviewer: null, ddl: null, mall: '2026-11-30', status: '待分配', duration: '—', near: true },
-          { key: 'RL', name: 'RL 推荐信×2', req: '500词/封 · 教授推荐', owner: null, reviewer: null, ddl: null, mall: '2026-11-28', status: '待分配', duration: '—' },
-          { key: 'RP', name: 'RP 研究计划', req: '1500词 · 研究设计', owner: null, reviewer: null, ddl: null, mall: '2026-12-04', status: '待分配', duration: '—' },
-          { key: 'TCX', name: '套磁信', req: '导师沟通邮件 · DDL 跟随网申提交', owner: null, reviewer: null, ddl: null, mall: '2027-01-05', status: '待分配', duration: '—' }
+          { key: 'CV', name: 'CV 简历', owner: null, reviewer: null, ddl: null, mall: '2026-11-25', status: '待分配', duration: '—' },
+          { key: 'PS', name: 'PS 个人陈述', owner: null, reviewer: null, ddl: null, mall: '2026-11-30', status: '待分配', duration: '—', near: true },
+          { key: 'RL', name: 'RL 推荐信×2', owner: null, reviewer: null, ddl: null, mall: '2026-11-28', status: '待分配', duration: '—' },
+          { key: 'RP', name: 'RP 研究计划', owner: null, reviewer: null, ddl: null, mall: '2026-12-04', status: '待分配', duration: '—' },
+          { key: 'TCX', name: '套磁信', owner: null, reviewer: null, ddl: null, mall: '2027-01-05', status: '待分配', duration: '—' }
         ],
         materialDdl: { managed: null, merchant: '2026-11-10' },
         applyDdl: { managed: null, merchant: '2027-01-05' },
@@ -618,7 +635,7 @@
           emailUrl: '—', email: '待补充', emailPwd: '—',
           fieldsTotal: 36, fieldsMatched: 0
         },
-        monitor: { status: '未开启', type: '官网 + 邮箱', freq: '每 6 小时', lastRun: '—', news: [] },
+        monitor: { status: '待开启', type: '官网 + 邮箱', freq: '每 6 小时', lastRun: '—', owner: null, emails: [], screenshots: [], news: [] },
         archive: { status: '待结项', time: '—', offers: 0, rejects: 0, reports: '未生成' },
         stageDurations: { material: '滞留 6 天', essay: '尚未开始', apply: '尚未开始', monitor: '尚未开始', archive: '尚未开始' }
       }
@@ -697,20 +714,19 @@
     }
 
     /* ==================== 项目关键 DDL（文书交付按 CV/PS/RL/RP/套磁信 拆分） ==================== */
-    function ddlSummaryCard(title, primaryLabel, primaryDate, managed, merchant, color, extraHtml, near) {
+    function ddlSummaryCard(title, primaryLabel, primaryDate, color, extraHtml, near) {
       return '<div class="project-ddl-card' + (near ? ' is-near' : '') + '">' +
         '<p class="project-ddl-title flex items-center gap-1.5"><span class="inline-block w-1.5 h-1.5 rounded-full" style="background:' + color + '"></span>' + title + '</p>' +
-        '<p class="project-ddl-primary"><span>' + primaryLabel + '</span><strong>' + (primaryDate || '分配后显示') + '</strong></p>' +
-        '<p class="project-ddl-line"><span>管理配置 / 商城</span><strong>' + (managed || '—') + ' / ' + (merchant || '—') + '</strong></p>' + (extraHtml || '') + '</div>';
+        '<p class="project-ddl-primary"><span>' + primaryLabel + '</span><strong>' + (primaryDate || '分配后显示') + '</strong></p>' + (extraHtml || '') + '</div>';
     }
     function renderProjectDdls(s) {
-      var docs = s.docs.slice().sort(function(a, b) { return String(a.mall).localeCompare(String(b.mall)); });
+      var docs = s.docs.slice().sort(function(a, b) { return String(a.ddl || a.mall).localeCompare(String(b.ddl || b.mall)); });
       var nextDoc = docs.find(function(d) { return d.status !== '已完成'; }) || docs[0];
-      var detailRows = s.docs.map(function(d) { return '<span>' + d.name + '</span><strong>' + (d.ddl || '分配后显示') + ' / ' + d.mall + '</strong>'; }).join('');
+      var detailRows = s.docs.map(function(d) { return '<span>' + d.name + '</span><strong>' + (d.ddl || d.mall || '分配后显示') + '</strong>'; }).join('');
       var docDetails = '<details class="project-ddl-more"><summary>查看全部 ' + s.docs.length + ' 项文书 DDL</summary><div>' + detailRows + '</div></details>';
-      return ddlSummaryCard('材料准备', '最近时限', s.materialDdl.managed || s.materialDdl.merchant, s.materialDdl.managed, s.materialDdl.merchant, '#C9A87C') +
-        ddlSummaryCard('文书交付', '最近：' + nextDoc.name, nextDoc.ddl || nextDoc.mall, nextDoc.ddl, nextDoc.mall, '#7D869A', docDetails, !!nextDoc.near) +
-        ddlSummaryCard('网申提交', '最近时限', s.applyDdl.managed || s.applyDdl.merchant, s.applyDdl.managed, s.applyDdl.merchant, '#6D9A7E');
+      return ddlSummaryCard('材料准备', '最近时限', s.materialDdl.managed || s.materialDdl.merchant, '#C9A87C') +
+        ddlSummaryCard('文书交付', '最近：' + nextDoc.name, nextDoc.ddl || nextDoc.mall, '#7D869A', docDetails, !!nextDoc.near) +
+        ddlSummaryCard('网申提交', '最近时限', s.applyDdl.managed || s.applyDdl.merchant, '#6D9A7E');
     }
 
     /* ==================== 院校申请流程：五个阶段 ==================== */
@@ -729,19 +745,22 @@
       var rows = s.docs.map(function(d) {
         var owner = d.owner ? '<span class="text-gray-900 font-medium">' + d.owner + '</span>' : '<span class="text-gray-400">待分配</span>';
         var reviewer = d.reviewer ? '<span class="text-gray-900">' + d.reviewer + '</span>' : '<span class="text-gray-400">待分配</span>';
-        var ddl = d.ddl ? '<span class="text-gray-900 font-medium">' + d.ddl + '</span>' : '<span class="text-gray-400 text-xs">分配后显示</span>';
+        var ddl = d.ddl || d.mall;
+        var urgeActions = '<div class="flex flex-col items-start gap-1">' +
+          (d.owner ? '<button class="text-xs font-medium text-amber-600 hover:text-amber-700" onclick="openUrgeModal(\'文书交付\',\'' + d.owner + '\',\'' + d.name + '\')">催办交付</button>' : '<span class="text-xs text-gray-300">交付未分配</span>') +
+          (d.reviewer ? '<button class="text-xs font-medium text-amber-600 hover:text-amber-700" onclick="openUrgeModal(\'文书审核\',\'' + d.reviewer + '\',\'' + d.name + '\')">催办审核</button>' : '<span class="text-xs text-gray-300">审核未分配</span>') + '</div>';
         return '<tr>' +
-          '<td><p class="font-medium text-gray-900">' + d.name + '</p><p class="text-[11px] text-gray-400 mt-0.5">' + d.req + '</p></td>' +
+          '<td><p class="font-medium text-gray-900">' + d.name + '</p></td>' +
           '<td>' + owner + '</td>' +
           '<td>' + reviewer + '</td>' +
-          '<td>' + ddl + '</td>' +
-          '<td><span class="text-gray-700">' + d.mall + '</span> <span class="mall-tag">商城</span></td>' +
+          '<td><span class="text-gray-900 font-medium">' + (ddl || '分配后显示') + '</span></td>' +
           '<td>' + docStatusBadge(d.status) + '</td>' +
           '<td><span class="' + (d.duration.indexOf('滞留') === 0 ? 'text-amber-600 font-medium' : 'text-gray-400') + '">' + d.duration + '</span></td>' +
+          '<td>' + urgeActions + '</td>' +
           '</tr>';
       }).join('');
       return '<div class="border border-gray-100 rounded-xl overflow-hidden mb-4"><table class="w-full doc-flow-table">' +
-        '<thead><tr><th>文书</th><th>交付人员</th><th>审核人员</th><th>管理配置 DDL</th><th>交付 DDL（来自商城）</th><th>状态</th><th>当前环节滞留时长</th></tr></thead>' +
+        '<thead><tr><th>文书</th><th>交付人员</th><th>审核人员</th><th>交付 DDL</th><th>状态</th><th>当前环节滞留时长</th><th>催办</th></tr></thead>' +
         '<tbody>' + rows + '</tbody></table></div>';
     }
     function getSchoolStageView(stage) {
@@ -760,7 +779,7 @@
             ['当前环节滞留时长', s.stageDurations.material]
           ],
           body: s.materialScanned
-            ? '<div class="project-action-card"><span class="project-action-icon">✓</span><div><p class="text-sm font-semibold text-gray-900">材料清单已生成</p><p class="text-xs text-gray-500 mt-1">' + s.materialScanInfo + ' · 与网申详情页申请材料清单一致</p></div><button class="px-4 py-2 text-sm font-medium text-purple-600 bg-purple-50 rounded-lg" onclick="openMaterialModal()">查看材料清单</button></div>' +
+            ? '<div class="project-action-card"><span class="project-action-icon">✓</span><div><p class="text-sm font-semibold text-gray-900">材料清单已生成</p><p class="text-xs text-gray-500 mt-1">' + s.materialScanInfo + ' · 与网申详情页申请材料清单一致</p></div><div class="flex gap-2"><button class="px-4 py-2 text-sm font-medium text-amber-600 bg-amber-50 rounded-lg" onclick="openUrgeModal(\'材料准备\',\'' + (s.network.owner || '') + '\',\'材料清单\')">催办网申人员</button><button class="px-4 py-2 text-sm font-medium text-purple-600 bg-purple-50 rounded-lg" onclick="openMaterialModal()">查看材料清单</button></div></div>' +
               (materialStats.missing.length ? '<div class="project-action-card is-warning"><span class="project-action-icon">!</span><div><p class="text-sm font-semibold text-gray-900">缺失材料：' + materialStats.missing.map(function(item) { return item.name; }).join('、') + '</p><p class="text-xs text-gray-500 mt-1">' + s.materialIssue + '</p></div><span class="text-xs text-gray-400">待学生补充</span></div>' : '')
             : '<div class="project-action-card is-warning"><span class="project-action-icon">!</span><div><p class="text-sm font-semibold text-gray-900">材料清单未生成</p><p class="text-xs text-gray-500 mt-1">网申人员尚未预扫描申请官网，清单无法生成；可点击催办提醒网申人员</p></div><div class="flex gap-2"><button class="px-4 py-2 text-sm font-medium text-white bg-amber-500 rounded-lg" onclick="openUrgeModal()">催办网申人员</button><button class="px-4 py-2 text-sm font-medium text-purple-600 bg-purple-50 rounded-lg" onclick="openMaterialModal()">查看材料清单</button></div></div>'
         },
@@ -769,11 +788,11 @@
           status: doneDocs === s.docs.length ? '全部完成' : (nearDocs.length ? nearDocs.length + ' 项临期' : (s.docs[0].owner ? '推进中' : '待分配')),
           metrics: [
             ['完成进度', doneDocs + ' / ' + s.docs.length],
-            ['临期文书', nearDocs.length ? nearDocs.map(function(d) { return d.key + ' · 商城 ' + d.mall; }).join('；') : '无'],
+            ['临期文书 <span class="ml-1 text-[10px] font-normal text-gray-400">到期前三天提醒</span>', nearDocs.length ? nearDocs.map(function(d) { return d.key + ' · ' + (d.ddl || d.mall); }).join('；') : '无'],
             ['当前环节滞留时长', s.stageDurations.essay]
           ],
           body: renderEssayDocTable(s) +
-            (s.docs[0].owner ? '' : '<div class="project-action-card is-warning"><span class="project-action-icon">!</span><div><p class="text-sm font-semibold text-gray-900">文书交付 / 审核人员待分配</p><p class="text-xs text-gray-500 mt-1">机构管理员未提前分配该院校目标成员，请项目经理分配；分配后管理配置 DDL 才会显示</p></div><button class="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg" onclick="openAssignDrawer()">分配人员</button></div>')
+            (s.docs[0].owner ? '' : '<div class="project-action-card is-warning"><span class="project-action-icon">!</span><div><p class="text-sm font-semibold text-gray-900">文书交付 / 审核人员待分配</p><p class="text-xs text-gray-500 mt-1">完成分配后即可进入文书制作与审核流程。</p></div><button class="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg" onclick="openAssignDrawer()">分配人员</button></div>')
         },
         apply: {
           kicker: s.name, title: '网申提交',
@@ -789,13 +808,7 @@
         monitor: {
           kicker: s.name, title: '监控阶段',
           status: s.monitor.status,
-          metrics: [
-            ['监控状态', s.monitor.status],
-            ['监控类型', s.monitor.type],
-            ['监控频率', s.monitor.freq],
-            ['上次监控时间', s.monitor.lastRun],
-            ['当前环节滞留时长', s.stageDurations.monitor]
-          ],
+          metrics: [],
           body: renderMonitorBody(s)
         },
         archive: {
@@ -842,37 +855,46 @@
         '<button class="mt-3 text-xs font-medium text-purple-600" onclick="openMaterialModal()">查看申请材料清单 →</button></div>';
       var pendingCard = n.owner ? ''
         : '<div class="project-action-card is-warning"><span class="project-action-icon">!</span><div><p class="text-sm font-semibold text-gray-900">申请账号待补充 · 网申人员待分配</p><p class="text-xs text-gray-500 mt-1">当前卡在项目经理：补充账号并分配网申人员后，网申人员可开始预扫描与字段核对</p></div><div class="flex gap-2"><button class="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg" onclick="openAssignDrawer()">分配人员</button><button class="px-4 py-2 text-sm font-medium text-purple-600 bg-purple-50 rounded-lg" onclick="location.href=\'学生档案详情页 - 留学申请管理系统.html\'">去补充账号</button></div></div>';
-      return accountRows + pendingCard + '<div class="grid grid-cols-1 xl:grid-cols-2 gap-4">' + fieldBlock + materialBlock + '</div>';
+      var ownerBar = n.owner ? '<div class="flex items-center justify-between gap-4 border border-gray-100 rounded-xl px-4 py-3 mb-4"><div><p class="text-xs text-gray-400">网申负责人</p><p class="text-sm font-semibold text-gray-900 mt-0.5">' + n.owner + '</p></div><button class="px-3 py-2 text-xs font-medium text-amber-600 bg-amber-50 rounded-lg" onclick="openUrgeModal(\'网申提交\',\'' + n.owner + '\',\'网申任务\')">催办网申人员</button></div>' : '';
+      return ownerBar + accountRows + pendingCard + '<div class="grid grid-cols-1 xl:grid-cols-2 gap-4">' + fieldBlock + materialBlock + '</div>';
     }
     function renderMonitorBody(s) {
-      var head =
-        '<div class="border border-gray-100 rounded-xl overflow-hidden mb-4"><table class="w-full doc-flow-table">' +
-        '<thead><tr><th>监控类型</th><th>监控频率</th><th>监控状态</th><th>上次监控时间</th></tr></thead>' +
-        '<tbody><tr>' +
-        '<td class="text-gray-900 font-medium">' + s.monitor.type + '</td>' +
-        '<td class="text-gray-700">' + s.monitor.freq + '</td>' +
-        '<td>' + (s.monitor.status === '未开启' ? '<span class="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-medium bg-gray-100 text-gray-500">未开启</span>' : s.monitor.status) + '</td>' +
-        '<td class="text-gray-700">' + s.monitor.lastRun + '</td>' +
-        '</tr></tbody></table></div>' +
-        '<p class="text-[11px] text-gray-400 mb-4">监控任务字段同步自监控任务列表；动态明细同步自监控详情页（官网快照 / 邮件识别）</p>';
-      var newsBlock;
-      if (s.monitor.news.length) {
-        newsBlock = '<div class="border border-gray-100 rounded-xl p-4 mb-4"><p class="text-sm font-semibold text-gray-800 mb-3">最新监控动态</p><div class="space-y-2">' +
-          s.monitor.news.map(function(item) {
-            return '<div class="flex items-start gap-2 text-sm"><span class="w-1.5 h-1.5 rounded-full bg-blue-400 mt-2 flex-shrink-0"></span><p class="text-gray-700">' + item + '</p></div>';
-          }).join('') + '</div></div>';
-      } else {
-        newsBlock = '<div class="border border-dashed border-gray-200 rounded-xl p-5 mb-4 text-center"><p class="text-sm font-medium text-gray-500">暂无监控动态</p><p class="text-xs text-gray-400 mt-1">该院校目标网申提交后，系统将自动创建官网 + 邮箱监控任务；Offer / 拒信等新动态会实时同步到这里</p></div>';
-      }
-      return head + newsBlock +
-        '<div class="project-action-card"><span class="project-action-icon">4</span><div><p class="text-sm font-semibold text-gray-900">查看完整监控信息</p><p class="text-xs text-gray-500 mt-1">监控任务列表查看任务状态，监控详情页查看官网快照对比与邮件原文识别结果</p></div><div class="flex gap-2"><button class="px-4 py-2 text-sm font-medium text-purple-600 bg-purple-50 rounded-lg" onclick="location.href=\'监控任务列表 - PBS留学CRM.html\'">监控任务列表</button><button class="px-4 py-2 text-sm font-medium text-gray-600 bg-gray-100 rounded-lg" onclick="location.href=\'监控详情页 - 留学申请管理系统.html\'">监控详情页</button></div></div>';
+      var m = s.monitor;
+      var emailItems = (m.emails || []).map(function(item) {
+        return '<div class="monitor-timeline"><span class="monitor-dot"></span><div class="border border-gray-200 rounded-xl p-4 bg-white"><div class="flex items-center justify-between gap-3"><span class="text-xs text-gray-400">' + item.time + '</span><span class="text-xs font-medium text-amber-600">' + item.type + '</span></div><p class="mt-3 text-sm font-semibold text-gray-900">' + item.title + '</p><p class="mt-1 text-xs text-gray-500">发件人：' + item.sender + '</p><p class="mt-2 text-xs text-gray-600 leading-5">' + item.summary + '</p><button class="mt-3 text-xs font-medium text-blue-600" onclick="showPageToast(\'已打开邮件原文\', true)">查看邮件原文</button></div></div>';
+      }).join('') || '<div class="h-full flex items-center justify-center text-sm text-gray-400">暂无邮件记录</div>';
+      var shotItems = (m.screenshots || []).map(function(item) {
+        return '<div class="border border-gray-200 rounded-xl overflow-hidden bg-white"><div class="monitor-shot-preview p-4"><div class="flex gap-1 mb-4"><span class="w-2 h-2 bg-slate-300 rounded-full"></span><span class="w-2 h-2 bg-slate-300 rounded-full"></span><span class="w-2 h-2 bg-slate-300 rounded-full"></span></div><div class="w-2/5 h-3 bg-slate-300 rounded mb-4"></div><div class="w-full h-2.5 bg-blue-100 rounded mb-3"></div><div class="w-3/5 h-2.5 bg-slate-200 rounded"></div></div><div class="flex items-center justify-between px-4 py-3 border-t border-gray-100"><p class="text-sm font-semibold text-gray-800">' + item.title + '</p><span class="text-xs text-gray-400">' + item.uploader + ' · ' + item.time + '</span></div></div>';
+      }).join('') || '<div class="h-full flex items-center justify-center text-sm text-gray-400">暂无官网截图</div>';
+      return '<div class="grid grid-cols-1 xl:grid-cols-2 gap-4">' +
+        '<section class="border border-gray-200 rounded-xl overflow-hidden bg-white"><header class="flex items-center justify-between gap-4 px-5 py-4 border-b border-gray-100"><div><p class="text-base font-semibold text-gray-900">邮件监控</p><p class="text-xs text-gray-400 mt-1">按实际接收时间倒序</p></div><button class="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg" onclick="refreshMonitorEmail()">更新邮件</button></header><div class="monitor-scroll space-y-4 p-5">' + emailItems + '</div></section>' +
+        '<section class="border border-gray-200 rounded-xl overflow-hidden bg-white"><header class="flex items-center justify-between gap-4 px-5 py-4 border-b border-gray-100"><div><p class="text-base font-semibold text-gray-900">官网监控</p><p class="text-xs text-gray-400 mt-1">申请系统页面快照</p></div><button class="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg" onclick="document.getElementById(\'monitorScreenshotInput\').click()">上传截图</button><input id="monitorScreenshotInput" class="hidden" type="file" accept="image/*" onchange="handleMonitorScreenshot(this)"></header><div class="monitor-scroll space-y-4 p-5">' + shotItems + '</div></section></div>';
+    }
+    function refreshMonitorEmail() {
+      var s = school();
+      var now = new Date();
+      var stamp = now.getFullYear() + '-' + String(now.getMonth() + 1).padStart(2, '0') + '-' + String(now.getDate()).padStart(2, '0') + ' ' + String(now.getHours()).padStart(2, '0') + ':' + String(now.getMinutes()).padStart(2, '0');
+      s.monitor.lastRun = stamp;
+      s.monitor.status = '监控中';
+      switchProjectStage('monitor', document.querySelector('[data-project-stage="monitor"]'));
+      showPageToast('邮件监控已更新', true);
+    }
+    function handleMonitorScreenshot(input) {
+      if (!input.files || !input.files[0]) return;
+      var s = school();
+      var filename = input.files[0].name.replace(/\.[^.]+$/, '') || '申请状态页';
+      s.monitor.screenshots = s.monitor.screenshots || [];
+      s.monitor.screenshots.unshift({ title: filename, uploader: '王强', time: '刚刚' });
+      switchProjectStage('monitor', document.querySelector('[data-project-stage="monitor"]'));
+      showPageToast('官网截图已上传', true);
     }
     function renderProjectStageView(view) {
       var metrics = '';
       (view.metrics || []).forEach(function(item) {
         metrics += '<div class="project-stage-metric"><p class="text-xs text-gray-400">' + item[0] + '</p><p class="text-base font-semibold text-gray-900 mt-2">' + item[1] + '</p></div>';
       });
-      return '<div class="flex items-start justify-between gap-5 mb-5"><div><p class="text-xs font-medium text-purple-600 mb-1">' + view.kicker + '</p><h2 class="text-xl font-semibold text-gray-900">' + view.title + '</h2></div><span class="text-xs text-gray-500">' + view.status + '</span></div><div class="project-stage-summary mb-5">' + metrics + '</div>' + view.body;
+      var metricsBlock = metrics ? '<div class="project-stage-summary mb-5">' + metrics + '</div>' : '';
+      return '<div class="flex items-start justify-between gap-5 mb-5"><div><p class="text-xs font-medium text-purple-600 mb-1">' + view.kicker + '</p><h2 class="text-xl font-semibold text-gray-900">' + view.title + '</h2></div><span class="text-xs text-gray-500">' + view.status + '</span></div>' + metricsBlock + view.body;
     }
     function switchProjectStage(stage, button) {
       document.querySelectorAll('[data-project-stage]').forEach(function(item) { item.classList.remove('is-active'); });
@@ -918,32 +940,44 @@
       document.getElementById('materialModal').classList.remove('hidden');
     }
     function closeMaterialModal() { document.getElementById('materialModal').classList.add('hidden'); }
-    function openUrgeModal() {
+    var pendingUrge = null;
+    function openUrgeModal(process, person, task) {
       var s = school();
-      document.getElementById('urgeModalText').textContent = '网申人员尚未预扫描「' + s.name + '」的申请官网，材料清单未生成。是否发送催办提醒？';
+      process = process || '材料准备';
+      person = person || s.network.owner;
+      task = task || '官网预扫描与材料清单';
+      if (!person) {
+        showPageToast('当前流程尚未分配负责人，请先完成人员分配');
+        return;
+      }
+      pendingUrge = { process: process, person: person, task: task };
+      document.getElementById('urgeModalTitle').textContent = '催办 ' + person;
+      document.getElementById('urgeModalText').textContent = '将提醒 ' + person + ' 尽快处理「' + s.name + ' · ' + task + '」。';
       document.getElementById('urgeModal').classList.remove('hidden');
     }
     function closeUrgeModal() { document.getElementById('urgeModal').classList.add('hidden'); }
     function confirmUrge() {
       closeUrgeModal();
       var s = school();
-      if (!s.network.owner) {
-        showPageToast('当前院校目标尚未分配网申人员，请先完成分配');
+      if (!pendingUrge || !pendingUrge.person) {
+        showPageToast('未找到可催办的负责人');
         return;
       }
+      var role = pendingUrge.process.indexOf('审核') >= 0 ? '文书审核' : (pendingUrge.process.indexOf('文书') >= 0 ? '文书人员' : (pendingUrge.process.indexOf('监控') >= 0 ? '网申人员' : '网申人员'));
       if (window.pbsCreateNotification) {
         var urgeSession = window.pbsGetSession ? window.pbsGetSession() : { org: 'PBS留学总部' };
         window.pbsCreateNotification({
-          kind: 'task_urge', type: '任务催办提醒', title: s.name + ' 官网预扫描任务收到催办',
-          business: '李雪 · ' + s.name + ' · 申请材料准备',
-          detail: '项目经理王强发起催办，请尽快完成官网字段与材料清单预扫描。',
-          reminderBy: '王强（项目经理）', reminderNote: '材料清单尚未生成，已影响后续网申准备。',
-          recipientRoles: ['网申人员'], recipientName: s.network.owner,
-          organization: urgeSession.org, href: '网申任务详情页 - 留学申请管理系统.html', level: 'danger'
+          kind: 'task_urge', type: '任务催办提醒', title: s.name + ' · ' + pendingUrge.task + ' 收到催办',
+          business: MY_PROJECT_CONTEXT.student + ' · ' + s.name + ' · ' + pendingUrge.process,
+          detail: '项目经理发起催办，请尽快处理当前任务。',
+          reminderBy: '王强（项目经理）', reminderNote: pendingUrge.task,
+          recipientRoles: [role], recipientName: pendingUrge.person,
+          organization: urgeSession.org, href: pendingUrge.process.indexOf('文书') >= 0 ? '任务列表页 - 文书交付系统.html' : '网申任务详情页 - 留学申请管理系统.html', level: 'danger'
         });
       }
-      if (window.pbsRecordOperation) window.pbsRecordOperation('网申管理', '催办', '催办 ' + s.network.owner + ' 完成 ' + s.name + ' 官网预扫描');
-      showPageToast('已催办网申人员' + (s.network.owner ? ' ' + s.network.owner : '') + '：请尽快预扫描申请官网并生成材料清单', true);
+      if (window.pbsRecordOperation) window.pbsRecordOperation('项目管理', '催办', '催办 ' + pendingUrge.person + ' 处理 ' + s.name + ' · ' + pendingUrge.task);
+      showPageToast('已催办 ' + pendingUrge.person, true);
+      pendingUrge = null;
     }
 
     /* ==================== 分配 / 更换人员抽屉（与项目详情页分配抽屉同构） ==================== */
@@ -1007,16 +1041,10 @@
         }
       });
     });
-    /* 审核卡片跟随交付 DDL 回显（时间来自商城，审核不单独设置 DDL） */
-    function syncReviewDdlEcho(prefix, docKey, val) {
-      var el = document.getElementById(prefix + 'RevDdlEcho_' + docKey);
-      if (el) { el.textContent = val || '—'; }
-    }
-    /* 网申提交 DDL 变更时：套磁信交付 DDL 与其审核回显同步跟随 */
+    /* 网申提交 DDL 变更时，套磁信完成时间同步跟随 */
     function syncAppDdlFollowers(prefix, val) {
       var ddlEl = document.getElementById(prefix + 'Ddl_TCX');
       if (ddlEl) { ddlEl.value = val || ''; }
-      syncReviewDdlEcho(prefix, 'TCX', val);
     }
 
     function lockNoticeHtml(s) {
@@ -1036,36 +1064,36 @@
         '<span class="w-8 h-8 rounded-lg bg-blue-100 flex items-center justify-center"><svg class="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg></span>' +
         '<span class="text-sm font-semibold text-gray-800">文书交付人员</span>' +
         '<span class="text-[10px] px-1.5 py-0.5 rounded bg-blue-50 text-blue-600 font-medium">按文书分配</span></div>' +
-        '<p class="text-xs text-gray-400 mb-3 pl-10">每种文书单独指定交付人员及交付 DDL（默认来自商城，可调整）</p>';
+        '<p class="text-xs text-gray-400 mb-3 pl-10">每种文书单独指定交付人员与完成时间</p>';
       s.docs.forEach(function(d) {
         var key = prefix + 'd_' + d.key;
         var cur = isChange ? d.owner : null;
         selectedPersons[key] = cur;
         html += '<div class="border border-gray-100 rounded-lg p-3 mb-2 bg-gray-50">' +
-          '<div class="flex items-center justify-between gap-2 mb-2"><p class="text-xs font-semibold text-gray-700">' + d.name + '（' + d.req + '）</p>' +
+          '<div class="flex items-center justify-between gap-2 mb-2"><p class="text-xs font-semibold text-gray-700">' + d.name + '</p>' +
           (isChange ? '<span class="text-[10px] text-gray-400">当前：' + (d.owner || '未分配') + '</span>' : '') + '</div>' +
           '<div class="flex items-center gap-2">' +
           dropdownHtml(key, cur, isChange ? '选择新交付人员' : '选择交付人员') +
           (d.key === 'TCX'
             ? '<input type="date" value="' + (s.applyDdl.managed || s.applyDdl.merchant) + '" id="' + prefix + 'Ddl_' + d.key + '" title="交付 DDL 跟随网申提交 DDL，无需单独设置" disabled class="w-[132px] flex-shrink-0 h-9 px-2 text-sm border border-gray-200 rounded-lg bg-gray-100 text-gray-400 cursor-not-allowed">'
-            : '<input type="date" value="' + (d.ddl || d.mall) + '" id="' + prefix + 'Ddl_' + d.key + '" title="交付 DDL（默认来自商城，可调整）" oninput="syncReviewDdlEcho(\'' + prefix + '\',\'' + d.key + '\',this.value)" class="w-[132px] flex-shrink-0 h-9 px-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500">') +
+            : '<input type="date" value="' + (d.ddl || d.mall) + '" id="' + prefix + 'Ddl_' + d.key + '" title="文书完成时间" class="w-[132px] flex-shrink-0 h-9 px-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500">') +
           '</div></div>';
       });
       html += '</div>';
-      /* 文书审核人员（按文书分配：CV/PS/RL/RP 各一名；不设审核 DDL，跟随交付 DDL 来自商城） */
+      /* 文书审核人员：文书完成后自动进入审核，不单独设置审核 DDL */
       html += '<div class="border border-gray-200 rounded-xl p-4 mb-3 bg-white">' +
         '<div class="flex items-center gap-2 mb-1">' +
         '<span class="w-8 h-8 rounded-lg bg-green-100 flex items-center justify-center"><svg class="w-4 h-4 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg></span>' +
         '<span class="text-sm font-semibold text-gray-800">文书审核人员</span>' +
         '<span class="text-[10px] px-1.5 py-0.5 rounded bg-green-50 text-green-600 font-medium">按文书分配</span></div>' +
-        '<p class="text-xs text-gray-400 mb-3 pl-10">每种文书单独指定审核人员；审核不单独设置 DDL，跟随对应文书交付 DDL（时间来自商城）</p>';
+        '<p class="text-xs text-gray-400 mb-3 pl-10">每种文书单独指定审核人员；文书完成后自动进入审核</p>';
       s.docs.forEach(function(d) {
         var rKey = prefix + 'Reviewer_' + d.key;
         var cur = isChange ? d.reviewer : null;
         selectedPersons[rKey] = cur;
         html += '<div class="border border-gray-100 rounded-lg p-3 mb-2 bg-gray-50">' +
           '<div class="flex items-center justify-between gap-2 mb-2"><p class="text-xs font-semibold text-gray-700">' + d.name + '</p>' +
-          '<span class="text-[10px] text-gray-500 flex-shrink-0">交付 DDL <span class="text-gray-800 font-medium" id="' + prefix + 'RevDdlEcho_' + d.key + '">' + (d.key === 'TCX' ? (s.applyDdl.managed || s.applyDdl.merchant) : (d.ddl || d.mall)) + '</span>' + (d.key === 'TCX' ? ' · 跟随网申提交 DDL' : ' · 来自商城') + '</span></div>' +
+          '<span class="text-[10px] text-gray-500 flex-shrink-0">文书完成后自动进入审核</span></div>' +
           (isChange ? '<p class="text-[10px] text-gray-400 mb-2">当前：' + (d.reviewer || '未分配') + '</p>' : '') +
           dropdownHtml(rKey, cur, isChange ? '选择新 ' + d.name + ' 审核人员' : '选择 ' + d.name + ' 审核人员') +
           '</div>';
@@ -1086,11 +1114,7 @@
         '<div><label class="block text-xs text-gray-500 mb-1">材料准备 DDL</label><input type="date" value="' + (s.materialDdl.managed || s.materialDdl.merchant) + '" id="' + prefix + 'DdlMatNetwork" class="w-full h-9 px-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"></div>' +
         '<div><label class="block text-xs text-gray-500 mb-1">网申提交 DDL</label><input type="date" value="' + (s.applyDdl.managed || s.applyDdl.merchant) + '" id="' + prefix + 'DdlAppNetwork" oninput="syncAppDdlFollowers(\'' + prefix + '\', this.value)" class="w-full h-9 px-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"></div>' +
         '</div>' +
-        '<p class="text-xs text-gray-400 bg-gray-50 rounded-lg px-3 py-2">商城时限：材料准备 ' + s.materialDdl.merchant + ' ｜ 网申提交 ' + s.applyDdl.merchant + '；套磁信的交付 DDL 跟随上方网申提交 DDL</p></div>';
-      /* 任务要求 */
-      html += '<div class="mb-2">' +
-        '<label class="block text-sm font-medium text-gray-700 mb-2">任务要求</label>' +
-        '<textarea rows="3" maxlength="1000" placeholder="请描述任务的具体要求、注意事项、参考信息等..." class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 resize-none text-sm"></textarea></div>';
+        '<p class="text-xs text-gray-400 bg-gray-50 rounded-lg px-3 py-2">套磁信完成时间跟随上方网申提交 DDL</p></div>';
       return html;
     }
     function openAssignDrawer() {
@@ -1222,7 +1246,7 @@
           reviewPeople[doc.reviewer] = true;
         });
         Object.keys(deliveryPeople).forEach(function(person, index) {
-          window.pbsCreateNotification({ id: 'task-assigned-writer-' + Date.now() + '-' + index, kind: 'task_assigned', type: '任务派发提醒', title: assignedSchool.name + ' 文书任务已分配给你', business: MY_PROJECT_CONTEXT.student + ' · ' + assignedSchool.name + ' · 文书交付', detail: '项目经理已完成任务派发，请查看任务要求与交付 DDL。', recipientRoles: ['文书人员'], recipientName: person, organization: assignmentSession.org, href: '任务列表页 - 文书交付系统.html' });
+          window.pbsCreateNotification({ id: 'task-assigned-writer-' + Date.now() + '-' + index, kind: 'task_assigned', type: '任务派发提醒', title: assignedSchool.name + ' 文书任务已分配给你', business: MY_PROJECT_CONTEXT.student + ' · ' + assignedSchool.name + ' · 文书交付', detail: '项目经理已完成任务派发，请查看文书类型与完成时间。', recipientRoles: ['文书人员'], recipientName: person, organization: assignmentSession.org, href: '任务列表页 - 文书交付系统.html' });
         });
         Object.keys(reviewPeople).forEach(function(person, index) {
           window.pbsCreateNotification({ id: 'task-assigned-review-' + Date.now() + '-' + index, kind: 'task_assigned', type: '任务派发提醒', title: assignedSchool.name + ' 文书审核任务已分配给你', business: MY_PROJECT_CONTEXT.student + ' · ' + assignedSchool.name + ' · 文书审核', detail: '请在文书交付人员提交后完成审核。', recipientRoles: ['文书审核'], recipientName: person, organization: assignmentSession.org, href: '文书审核列表页 - 留学申请管理系统.html' });

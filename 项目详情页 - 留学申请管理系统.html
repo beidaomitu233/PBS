@@ -198,7 +198,7 @@
             分配
           </button>
           <button class="hidden flex items-center gap-2 px-4 py-2 bg-orange-500 text-white rounded-lg hover:bg-orange-600 transition-colors" data-dom-id="btn-change-pm">
-            更换项目经理
+            更换人员
           </button>
         </div>
       </div>
@@ -403,12 +403,6 @@
 
         <div class="mb-4 rounded-lg border border-blue-100 bg-blue-50 px-3 py-2 text-xs text-blue-700">项目经理接收后，可继续为未由机构分配的院校目标补充文书、审核和网申人员。</div>
 
-        <!-- 任务要求 -->
-        <div class="mb-2">
-          <label class="block text-sm font-medium text-gray-700 mb-2">任务要求</label>
-          <textarea id="taskRemark" rows="4" maxlength="1000" placeholder="请描述任务的具体要求、注意事项、参考信息等..." class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 resize-none text-sm" oninput="updateRemarkCount()"></textarea>
-          <p class="text-xs text-gray-500 mt-1 text-right" id="remarkCount">0/1000</p>
-        </div>
       </div>
       <!-- 底部操作按钮（固定） -->
       <div class="flex-shrink-0 px-6 py-4 border-t border-gray-200 bg-white">
@@ -442,7 +436,7 @@
       <!-- 头部 -->
       <div class="flex items-center justify-between px-6 py-4 border-b border-gray-200 flex-shrink-0">
         <div class="flex items-center gap-3">
-          <h2 class="text-lg font-semibold text-gray-800">更换项目经理</h2>
+          <h2 class="text-lg font-semibold text-gray-800">更换人员</h2>
           <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-50 text-blue-600">替换原负责人</span>
         </div>
         <button class="p-1 text-gray-400 hover:text-gray-600" onclick="closeChangePMDrawer()">
@@ -478,16 +472,15 @@
         </div>
         <!-- 项目分配信息 -->
         <h3 class="text-sm font-medium text-gray-700 mb-3">新项目经理</h3>
-        <!-- 卡片一：项目经理（仅项目级可更换） -->
+        <!-- 卡片一：项目经理 -->
         <div class="border border-gray-200 rounded-xl p-4 mb-4">
           <div class="flex items-center gap-2 mb-1">
             <span class="w-8 h-8 rounded-lg bg-indigo-100 flex items-center justify-center">
               <svg class="w-4 h-4 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5.121 17.804A13.937 13.937 0 0112 16c2.5 0 4.847.655 6.879 1.804M15 10a3 3 0 11-6 0 3 3 0 016 0zm6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
             </span>
             <span class="text-sm font-semibold text-gray-800">项目经理</span>
-            <span class="text-[10px] px-1.5 py-0.5 rounded bg-indigo-50 text-indigo-600 font-medium">仅项目级可更换</span>
           </div>
-          <p id="currentManagerSummary" class="text-xs text-gray-400 mb-3 pl-10">当前：张老师 ｜ 更换后新经理将接管整个项目</p>
+          <p id="currentManagerSummary" class="text-xs text-gray-400 mb-3 pl-10">当前：张老师</p>
           <div class="relative mb-3" data-sel="chgPm">
             <div class="flex items-center w-full h-10 px-4 border border-gray-300 rounded-lg cursor-pointer bg-white" onclick="togglePersonDropdown(&#39;chgPm&#39;)">
               <span class="text-gray-400 text-sm flex-1" id="chgPmPlaceholder">点击选择新项目经理</span>
@@ -505,7 +498,6 @@
             <button id="optionalChangeToggle" type="button" class="text-xs font-medium text-blue-600 hover:text-blue-800" onclick="toggleOptionalAssignment('optionalChangeAssignmentPanel','optionalChangeToggle','按需更换','收起')">按需更换</button>
           </div>
         </div>
-        <p class="text-xs text-gray-400 mb-2">可单独更换项目经理，也可按院校目标调整成员；未调整目标继续保留当前分配。</p>
         <div id="optionalChangeAssignmentPanel" class="hidden">
         <div id="chgGoalTabs" class="space-y-2 mb-4"></div>
         <!-- 当前院校目标的更换面板（JS 动态渲染） -->
@@ -514,12 +506,6 @@
 
         <div class="mb-4 rounded-lg border border-blue-100 bg-blue-50 px-3 py-2 text-xs text-blue-700">项目仍只对应一名项目经理；机构完成的院校目标成员分配将同步锁定到项目经理端。</div>
 
-        <!-- 任务要求 -->
-        <div class="mb-2">
-          <label class="block text-sm font-medium text-gray-700 mb-2">任务要求</label>
-          <textarea id="chgTaskRemark" rows="4" maxlength="1000" placeholder="请描述任务的具体要求、注意事项、参考信息等..." class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 resize-none text-sm" oninput="updateChgRemarkCount()"></textarea>
-          <p class="text-xs text-gray-500 mt-1 text-right" id="chgRemarkCount">0/1000</p>
-        </div>
       </div>
       <!-- 底部操作按钮（固定） -->
       <div class="flex-shrink-0 px-6 py-4 border-t border-gray-200 bg-white">
@@ -846,7 +832,7 @@
         '<div class="flex items-center gap-2 mb-1">' +
         '<span class="w-8 h-8 rounded-lg bg-blue-100 flex items-center justify-center"><svg class="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg></span>' +
         '<span class="text-sm font-semibold text-gray-800">文书交付人员</span>' +
-        '<span class="text-[10px] px-1.5 py-0.5 rounded bg-blue-50 text-blue-600 font-medium">按文书分配</span></div>' +
+        '</div>' +
         '<p class="text-xs text-gray-400 mb-3 pl-10">每种文书单独指定交付人员及交付 DDL，仅显示文书交付人员</p>';
       g.docs.forEach(function(d) {
         var key = 'gd_' + d.key;
@@ -858,26 +844,25 @@
           dropdownHtml(key, selectedPersons[key], '选择交付人员') +
           (d.key === 'TCX'
             ? '<input type="date" value="' + (st.networkDdl || g.appDdl) + '" id="gDdl_' + d.key + '" title="交付 DDL 跟随网申提交 DDL，无需单独设置" disabled class="w-[132px] flex-shrink-0 h-9 px-2 text-sm border border-gray-200 rounded-lg bg-gray-100 text-gray-400 cursor-not-allowed">'
-            : '<input type="date" value="' + (saved && saved.ddl ? saved.ddl : d.ddl) + '" id="gDdl_' + d.key + '" title="交付 DDL（默认来自商城，可调整）" oninput="syncReviewDdlEcho(\'g\',\'' + d.key + '\',this.value)" class="w-[132px] flex-shrink-0 h-9 px-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500">') +
+            : '<input type="date" value="' + (saved && saved.ddl ? saved.ddl : d.ddl) + '" id="gDdl_' + d.key + '" title="文书完成时间" class="w-[132px] flex-shrink-0 h-9 px-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500">') +
           '</div></div>';
       });
       html += '<p class="text-xs text-gray-400 bg-gray-50 rounded-lg px-3 py-2">需知晓：材料准备 DDL ' + g.materialDdl + ' ｜ 网申提交 DDL ' + g.appDdl + '</p></div>';
-      /* 文书审核人员（按文书分配：CV/PS/RL/RP 各一名；审核无需设置 DDL，跟随对应文书交付 DDL） */
+      /* 文书审核人员：文书完成后自动进入审核，不单独设置审核 DDL */
       html += '<div class="border border-gray-200 rounded-xl p-4 mb-3 bg-white">' +
         '<div class="flex items-center gap-2 mb-1">' +
         '<span class="w-8 h-8 rounded-lg bg-green-100 flex items-center justify-center"><svg class="w-4 h-4 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg></span>' +
         '<span class="text-sm font-semibold text-gray-800">文书审核人员</span>' +
-        '<span class="text-[10px] px-1.5 py-0.5 rounded bg-green-50 text-green-600 font-medium">按文书分配</span></div>' +
-        '<p class="text-xs text-gray-400 mb-3 pl-10">每种文书单独指定审核人员；审核不单独设置 DDL，跟随对应文书交付 DDL（时间来自商城）</p>';
+        '</div>' +
+        '<p class="text-xs text-gray-400 mb-3 pl-10">每种文书单独指定审核人员；文书完成后自动进入审核</p>';
       g.docs.forEach(function(d) {
         var rKey = 'gReviewer_' + d.key;
         var savedR = (st.reviewers || {})[d.key] || null;
         selectedPersons[rKey] = savedR;
-        var echoDdl = d.key === 'TCX' ? (st.networkDdl || g.appDdl) : ((docs[d.key] && docs[d.key].ddl) || d.ddl);
         html += '<div class="border border-gray-100 rounded-lg p-3 mb-2 bg-gray-50">' +
           '<div class="flex items-center justify-between gap-2 mb-2">' +
           '<p class="text-xs font-semibold text-gray-700">' + d.name + '</p>' +
-          '<span class="text-[10px] text-gray-500 flex-shrink-0">交付 DDL <span class="text-gray-800 font-medium" id="gRevDdlEcho_' + d.key + '">' + echoDdl + '</span>' + (d.key === 'TCX' ? ' · 跟随网申提交 DDL' : ' · 来自商城') + '</span></div>' +
+          '<span class="text-[10px] text-gray-500 flex-shrink-0">文书完成后自动进入审核</span></div>' +
           dropdownHtml(rKey, savedR, '选择 ' + d.name + ' 审核人员') +
           '</div>';
       });
@@ -1022,7 +1007,7 @@
           dropdownHtml(key, selectedPersons[key], '选择新交付人员') +
           (d.key === 'TCX'
             ? '<input type="date" value="' + (st.networkDdl || g.appDdl) + '" id="cgDdl_' + d.key + '" title="交付 DDL 跟随网申提交 DDL，无需单独设置" disabled class="w-[132px] flex-shrink-0 h-9 px-2 text-sm border border-gray-200 rounded-lg bg-gray-100 text-gray-400 cursor-not-allowed">'
-            : '<input type="date" value="' + (saved && saved.ddl ? saved.ddl : d.ddl) + '" id="cgDdl_' + d.key + '" title="交付 DDL（默认来自商城，可调整）" oninput="syncReviewDdlEcho(\'cg\',\'' + d.key + '\',this.value)" class="w-[132px] flex-shrink-0 h-9 px-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500">') +
+            : '<input type="date" value="' + (saved && saved.ddl ? saved.ddl : d.ddl) + '" id="cgDdl_' + d.key + '" title="文书完成时间" class="w-[132px] flex-shrink-0 h-9 px-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500">') +
           '</div></div>';
       });
       html += '<p class="text-xs text-gray-400 bg-gray-50 rounded-lg px-3 py-2">需知晓：材料准备 DDL ' + g.materialDdl + ' ｜ 网申提交 DDL ' + g.appDdl + '</p></div>';
@@ -1032,16 +1017,15 @@
         '<span class="w-8 h-8 rounded-lg bg-green-100 flex items-center justify-center"><svg class="w-4 h-4 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg></span>' +
         '<span class="text-sm font-semibold text-gray-800">文书审核人员</span>' +
         '<span class="text-[10px] px-1.5 py-0.5 rounded bg-green-50 text-green-600 font-medium">按文书更换</span></div>' +
-        '<p class="text-xs text-gray-400 mb-3 pl-10">每种文书单独指定新审核人员；审核不单独设置 DDL，跟随对应文书交付 DDL（时间来自商城）</p>';
+        '<p class="text-xs text-gray-400 mb-3 pl-10">每种文书单独指定新审核人员；文书完成后自动进入审核</p>';
       g.docs.forEach(function(d) {
         var rKey = 'cgReviewer_' + d.key;
         var savedR = (st.reviewers || {})[d.key] || null;
         selectedPersons[rKey] = savedR;
-        var echoDdl = d.key === 'TCX' ? (st.networkDdl || g.appDdl) : ((docs[d.key] && docs[d.key].ddl) || d.ddl);
         html += '<div class="border border-gray-100 rounded-lg p-3 mb-2 bg-gray-50">' +
           '<div class="flex items-center justify-between gap-2 mb-1"><p class="text-xs font-semibold text-gray-700">' + d.name + '</p>' +
           '<span class="text-[10px] text-gray-400 flex-shrink-0">当前：' + (savedR || (g.current.reviewers && g.current.reviewers[d.key]) || '未分配') + '</span></div>' +
-          '<p class="text-[10px] text-gray-500 mb-2">交付 DDL <span class="text-gray-800 font-medium" id="cgRevDdlEcho_' + d.key + '">' + echoDdl + '</span>' + (d.key === 'TCX' ? ' · 跟随网申提交 DDL' : ' · 来自商城') + '</p>' +
+          '<p class="text-[10px] text-gray-500 mb-2">文书完成后自动进入审核</p>' +
           dropdownHtml(rKey, savedR, '选择新 ' + d.name + ' 审核人员') +
           '</div>';
       });
@@ -1157,7 +1141,7 @@
       placeholder.textContent = '点击选择新项目经理';
       placeholder.className = 'text-gray-400 text-sm flex-1';
       document.getElementById('currentProjectManager').textContent = currentManager;
-      document.getElementById('currentManagerSummary').textContent = '当前：' + currentManager + ' ｜ 更换后新经理将接管整个项目';
+      document.getElementById('currentManagerSummary').textContent = '当前：' + currentManager;
       var currentGoalAssignments = readProjectAssignment().goalAssignments || {};
       chgGoalAssign = {};
       GOALS.forEach(function(goal) {
@@ -1179,14 +1163,6 @@
       document.body.style.overflow = '';
     }
 
-    function updateRemarkCount() {
-      var ta = document.getElementById('taskRemark');
-      document.getElementById('remarkCount').textContent = ta.value.length + '/1000';
-    }
-    function updateChgRemarkCount() {
-      var ta = document.getElementById('chgTaskRemark');
-      document.getElementById('chgRemarkCount').textContent = ta.value.length + '/1000';
-    }
     function showPageToast(msg, ok) {
       var t = document.getElementById('pageToast');
       t.textContent = msg;
@@ -1196,16 +1172,10 @@
     }
     function distVal(id) { var el = document.getElementById(id); return el ? el.value : ''; }
     function toggleUserMenu() { var m = document.getElementById('userMenu'); if (m) m.classList.toggle('hidden'); }
-    /* 审核卡片跟随交付 DDL 回显：交付日期变更时同步刷新对应文书的“交付 DDL（来自商城）” */
-    function syncReviewDdlEcho(prefix, docKey, val) {
-      var el = document.getElementById(prefix + 'RevDdlEcho_' + docKey);
-      if (el) { el.textContent = val || '—'; }
-    }
-    /* 网申提交 DDL 变更时：套磁信交付 DDL 与其审核回显同步跟随 */
+    /* 网申提交 DDL 变更时，套磁信完成时间同步跟随 */
     function syncAppDdlFollowers(prefix, val) {
       var ddlEl = document.getElementById(prefix + 'Ddl_TCX');
       if (ddlEl) { ddlEl.value = val || ''; }
-      syncReviewDdlEcho(prefix, 'TCX', val);
     }
     /* 更换抽屉标签页摘要：当前审核人员（按文书去重） */
     function currentReviewerSummary(g) {
@@ -1271,7 +1241,7 @@
         var saved = localStorage.getItem(PROJECT_ASSIGNMENT_KEY);
         if (saved) return JSON.parse(saved);
       } catch (e) {}
-      // 新进入项目池的项目默认待分配；完成分配后再切换为「更换项目经理」入口
+      // 新进入项目池的项目默认待分配；完成分配后切换为「更换人员」入口
       return { projectManager: PROJECT_CONTEXT.defaultManager || '', goalAssignments: {} };
     }
     function persistProjectManager(projectManager) {

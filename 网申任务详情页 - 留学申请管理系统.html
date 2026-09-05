@@ -898,13 +898,13 @@
   <!-- 复用模板弹窗 -->
   <div id="templateReuseModal" class="fixed inset-0 z-50 hidden">
     <div class="absolute inset-0 bg-black bg-opacity-30" onclick="closeTemplateReuseModal()"></div>
-    <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[680px] max-h-[80vh] overflow-y-auto bg-white rounded-2xl shadow-2xl p-6">
+    <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[760px] max-w-[94vw] max-h-[88vh] overflow-y-auto bg-white rounded-2xl shadow-2xl p-6">
       <div class="flex items-center justify-between mb-1">
         <div><h3 class="text-lg font-semibold text-gray-800">复用网申模板</h3><p class="text-xs text-gray-400 mt-1">当前任务：卡内基梅隆大学 · 计算机科学</p></div>
         <button class="p-1 text-gray-400 hover:text-gray-600" onclick="closeTemplateReuseModal()"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg></button>
       </div>
       <div class="relative mt-5"><svg class="absolute left-3 top-2.5 w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m19 19-4-4m2-5a7 7 0 1 1-14 0 7 7 0 0 1 14 0Z"></path></svg><input id="templateReuseSearch" type="text" class="w-full h-10 pl-10 pr-3 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="搜索其他院校、专业或案例名称" oninput="renderTemplateReuseOptions()"></div>
-      <div id="templateReuseResults" class="space-y-3 mt-4"></div>
+      <div id="templateReuseResults" class="space-y-3 mt-4" style="max-height:52vh;overflow-y:auto"></div>
     </div>
   </div>
 
@@ -1483,25 +1483,37 @@
         return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[char];
       });
     }
+
+    var reuseSelectedVersions = {};
+    function templateGroupKey(item) { return JSON.stringify([item.school, item.program]); }
+    function selectReuseVersion(select) {
+      var item=TEMPLATE_REUSE_OPTIONS.find(function(o){return o.key===select.value;});
+      if(item) reuseSelectedVersions[templateGroupKey(item)]=item.key;
+      renderTemplateReuseOptions();
+    }
     function renderTemplateReuseOptions() {
-      var input = document.getElementById('templateReuseSearch');
-      var keyword = input ? input.value.trim().toLowerCase() : '';
-      var options = TEMPLATE_REUSE_OPTIONS.filter(function(item) {
-        return !keyword || (item.school + item.program + item.name + item.version).toLowerCase().indexOf(keyword) >= 0;
+      var keyword=document.getElementById('templateReuseSearch').value.trim().toLowerCase();
+      var groups=[];
+      TEMPLATE_REUSE_OPTIONS.forEach(function(item) {
+        var key=templateGroupKey(item), group=groups.find(function(g){return g.key===key;});
+        if(!group) { group={key:key,versions:[]}; groups.push(group); } group.versions.push(item);
       });
-      var container = document.getElementById('templateReuseResults');
-      if (!container) return;
-      if (!options.length) {
-        container.innerHTML = '<div class="py-10 text-center text-sm text-gray-400">没有匹配的模板案例</div>';
-        return;
-      }
-      container.innerHTML = options.map(function(item) {
-        var isCurrentSchool = item.school === CURRENT_APPLICATION_SCHOOL;
-        var schoolName = item.school || '未绑定院校';
-        return '<div class="border ' + (isCurrentSchool ? 'border-blue-200 bg-blue-50' : 'border-gray-200 bg-white') + ' rounded-xl p-4 flex items-center justify-between gap-4"><div class="min-w-0"><div class="flex items-center gap-2 flex-wrap"><span class="text-sm font-semibold text-gray-900">' + escapeTemplateText(schoolName) + ' · ' + escapeTemplateText(item.program) + '</span>' + (isCurrentSchool ? '<span class="text-xs px-2 py-0.5 rounded bg-blue-100 text-blue-700">当前院校</span>' : '<span class="text-xs px-2 py-0.5 rounded bg-gray-100 text-gray-500">跨院校参考</span>') + '</div><p class="text-xs text-gray-500 mt-2">' + escapeTemplateText(item.name) + ' · ' + escapeTemplateText(item.version) + '</p><p class="text-xs text-gray-400 mt-1">' + escapeTemplateText(item.updated) + ' 更新 · ' + item.fields + ' 个官网字段 · ' + item.materials + ' 项材料 · ' + escapeTemplateText(item.season) + '</p></div><button class="px-4 py-2 text-sm ' + (isCurrentSchool ? 'text-white bg-blue-600 hover:bg-blue-700' : 'text-blue-600 bg-blue-50 hover:bg-blue-100') + ' rounded-lg font-medium flex-shrink-0" onclick="reuseTemplateVersion(\'' + item.key + '\')">复用此版本</button></div>';
-      }).join('');
+      groups=groups.filter(function(g){return g.versions.some(function(o){return !keyword || (o.school+' '+o.program+' '+o.name).toLowerCase().indexOf(keyword)>=0;});});
+      groups.sort(function(a,b){return Number(b.versions[0].school===CURRENT_APPLICATION_SCHOOL)-Number(a.versions[0].school===CURRENT_APPLICATION_SCHOOL);});
+      var container=document.getElementById('templateReuseResults'); container.innerHTML='';
+      groups.forEach(function(g) {
+        g.versions.sort(function(a,b){return b.version.localeCompare(a.version,undefined,{numeric:true}) || b.updated.localeCompare(a.updated);});
+        var item=g.versions.find(function(o){return o.key===reuseSelectedVersions[g.key];}) || g.versions[0];
+        var current=item.school===CURRENT_APPLICATION_SCHOOL, latest=item===g.versions[0];
+        var row=document.createElement('div'); row.className='border rounded-xl p-4 bg-white';
+        row.innerHTML='<div class="flex items-center gap-2 flex-wrap"><b class="text-sm">'+escapeTemplateText(item.program)+'</b><span class="text-xs text-gray-500">'+escapeTemplateText(item.school || '未绑定院校')+'</span><span class="text-xs text-blue-600">'+(current ? '当前院校' : '跨院校参考')+'</span></div><p class="text-xs text-gray-500 mt-2">'+escapeTemplateText(item.name)+'</p><div class="flex items-center gap-3 mt-3 flex-wrap"><label class="text-xs text-gray-500">复用版本 <select aria-label="'+escapeTemplateText(item.school+' '+item.program+' 版本')+'" class="border border-gray-300 rounded-lg p-2 text-sm">'+g.versions.map(function(v,i){return '<option value="'+escapeTemplateText(v.key)+'" '+(v===item ? 'selected' : '')+'>'+escapeTemplateText(v.version)+(i===0 ? ' · 最新' : ' · 历史')+'</option>';}).join('')+'</select></label><span class="text-xs text-gray-400">共 '+g.versions.length+' 个版本</span><button class="px-4 py-2 text-sm text-white bg-blue-600 rounded-lg" style="margin-left:auto">复用此版本</button></div><p class="text-xs text-gray-500 mt-3">'+escapeTemplateText(item.updated)+' 更新 · '+item.fields+' 个官网字段 · '+item.materials+' 项材料'+'</p>'+(!latest ? '<p class="text-xs text-amber-600 mt-2">当前选择历史版本，请核对申请季及官网要求。</p>' : '');
+        row.querySelector('select').addEventListener('change',function(){selectReuseVersion(this);});
+        row.querySelector('button').addEventListener('click',function(){reuseTemplateVersion(item.key);}); container.appendChild(row);
+      });
+      if(!groups.length) container.innerHTML='<div class="py-10 text-center text-sm text-gray-400">没有匹配的专业，请尝试其他院校或专业名称</div>';
     }
     function openTemplateReuseModal() {
+      reuseSelectedVersions = {};
       document.getElementById('templateReuseModal').classList.remove('hidden');
       document.body.style.overflow = 'hidden';
       var search = document.getElementById('templateReuseSearch');

@@ -29,9 +29,9 @@
   }
 
   var DEFAULT_MODELS = [
-    defaultModel('m-qwen', 'Qwen 主模型', 'qwen', 'qwen-plus'),
+    defaultModel('m-qwen', 'Qwen 通用模型', 'qwen', 'qwen-plus'),
     defaultModel('m-qwen-long', 'Qwen 长文本模型', 'qwen', 'qwen-long'),
-    defaultModel('m-deepseek', 'DeepSeek 备用模型', 'deepseek', 'deepseek-v4-flash'),
+    defaultModel('m-deepseek', 'DeepSeek 通用模型', 'deepseek', 'deepseek-v4-flash'),
     defaultModel('m-kimi', 'Kimi 长文本模型', 'kimi', 'kimi-k2.6'),
     defaultModel('m-seed', 'Seed 通用模型', 'seed', 'doubao-seed-2-0-lite-260215'),
     defaultModel('m-glm', 'GLM 通用模型', 'glm', 'glm-5.2')
@@ -318,7 +318,7 @@ RL：自我介绍 → 学生情况陈述 → 结语 → 落款。始终从推荐
       });
     }
     if (saved && typeof saved === 'object') {
-      ['models', 'globalRoute', 'keys', 'callLogs', 'promptOverrides', 'caseTemplateOverrides', 'selectedCaseTemplate', 'evalResults'].forEach(function (key) {
+      ['models', 'globalRoute', 'keys', 'callLogs', 'promptOverrides', 'caseTemplateOverrides', 'selectedCaseTemplate', 'evalResults', 'customPrompts', 'dataObjects'].forEach(function (key) {
         if (saved[key] !== undefined) state[key] = saved[key];
       });
       if (loadedFromLegacy) {
@@ -326,12 +326,7 @@ RL：自我介绍 → 学生情况陈述 → 结语 → 落款。始终从推荐
         state.caseTemplateOverrides = {};
       }
     }
-    if (!Array.isArray(state.models) || !state.models.length) state.models = cloneJson(DEFAULT_MODELS);
-    if (!state.models.some(function (model) { return model.id === 'm-qwen-long'; }) && state.models.some(function (model) { return model.id === 'm-qwen'; })) {
-      state.models.splice(1, 0, cloneJson(DEFAULT_MODELS[1]));
-    }
-    var legacyBackupModel = state.models.find(function (model) { return model.id === 'm-deepseek' && model.name === 'DeepSeek 次模型'; });
-    if (legacyBackupModel) legacyBackupModel.name = 'DeepSeek 备用模型';
+    if (!Array.isArray(state.models)) state.models = cloneJson(DEFAULT_MODELS);
     state.models.forEach(function (model) {
       var legacyProvider = saved && Array.isArray(saved.providers) ? saved.providers.find(function (provider) { return provider.id === model.providerId; }) : null;
       var providerType = model.providerType || (legacyProvider && legacyProvider.type) || model.providerId || 'openai_compatible';
@@ -351,14 +346,15 @@ RL：自我介绍 → 学生情况陈述 → 结语 → 落款。始终从推荐
       delete model.params.thinking;
       delete model.providerId;
       delete model.maxOutput;
-      delete model.endpoint;
+      model.endpoint = model.endpoint || '';
+      model.name = model.name.replace(/主模型|次模型|备用模型/g, '通用模型');
       delete model.connectionStatus;
       delete model.latency;
       delete model.auth;
       delete model.header;
       delete model.inputPrice;
       delete model.outputPrice;
-      delete model.enabled;
+      model.enabled = model.enabled !== false;
       delete model.capabilities;
       delete model.thinking;
     });
@@ -399,6 +395,8 @@ RL：自我介绍 → 学生情况陈述 → 结语 → 落款。始终从推荐
     if (!state.caseTemplateOverrides || typeof state.caseTemplateOverrides !== 'object') state.caseTemplateOverrides = {};
     if (!state.evalResults || typeof state.evalResults !== 'object') state.evalResults = {};
     if (!CASE_TEMPLATES.some(function (item) { return item.id === state.selectedCaseTemplate; })) state.selectedCaseTemplate = CASE_TEMPLATES[0].id;
+    if (!Array.isArray(state.customPrompts)) state.customPrompts = [];
+    if (!Array.isArray(state.dataObjects)) state.dataObjects = [];
     return state;
   }
 
@@ -424,9 +422,9 @@ RL：自我介绍 → 学生情况陈述 → 结语 → 落款。始终从推荐
   function visiblePrompts() {
     var role = currentRole();
     if (role === '文书机构管理员') {
-      return BASE_PROMPTS.filter(function (p) { return p.module === '文书编辑' || p.module === '模板库编辑' || p.module === '文书审核'; });
+      return BASE_PROMPTS.concat(aiState.customPrompts).filter(function (p) { return p.module === '文书编辑' || p.module === '模板库编辑' || p.module === '文书审核'; });
     }
-    return BASE_PROMPTS.slice();
+    return BASE_PROMPTS.concat(aiState.customPrompts);
   }
 
   function currentBasePrompt() {
@@ -523,167 +521,46 @@ RL：自我介绍 → 学生情况陈述 → 结语 → 落款。始终从推荐
   function modelById(id) { return aiState.models.find(function (m) { return m.id === id; }); }
   function modelProviderPreset(model) { return PROVIDER_PRESETS[model.providerType] || PROVIDER_PRESETS.openai_compatible; }
 
-  function updateSummary() {
-    var routeCount = [aiState.globalRoute.primary, aiState.globalRoute.backup].filter(Boolean).length;
-    var modelTotal = byId('modelTotalCount'), routeTotal = byId('routeModelCount'), routeSummary = byId('routeModelSummary');
-    if (modelTotal) modelTotal.textContent = String(aiState.models.length);
-    if (routeTotal) routeTotal.textContent = String(routeCount);
-    if (routeSummary) {
-      routeSummary.textContent = routeCount === 2 ? '主模型与次模型已选择' : '请选择主模型与次模型';
-      routeSummary.className = 'metric-sub ' + (routeCount === 2 ? 'good' : 'warn');
-    }
-  }
-
-  function modelRouteRole(modelId) {
-    var roles = [];
-    if (aiState.globalRoute.primary === modelId) roles.push('主模型');
-    if (aiState.globalRoute.backup === modelId) roles.push('备用模型');
-    return roles.join(' / ') || '—';
-  }
 
   function renderModels() {
-    byId('modelRows').innerHTML = aiState.models.map(function (model) {
-      var preset = modelProviderPreset(model);
-      var keys = modelKeys(model.id);
-      var availableKeys = keys.filter(function (key) { return key.enabled && (key.health === 'healthy' || key.health === 'warning'); }).length;
-      var keyAliases = keys.slice(0, 2).map(function (key) { return key.alias; }).join('、');
-      return '<tr><td><b>' + escapeHtml(model.name) + '</b><div class="subtle">' + escapeHtml(model.modelId) + '</div></td>' +
-        '<td><div class="provider"><div class="provider-logo" style="background:' + preset.color + '">' + escapeHtml(preset.short) + '</div><b>' + escapeHtml(preset.name) + '</b></div></td>' +
-        '<td><b>' + availableKeys + ' 个可用 Key</b><div class="subtle">' + escapeHtml(keyAliases || '尚未添加 Key') + (keys.length > 2 ? ' 等' : '') + '</div></td>' +
-        '<td>' + escapeHtml(modelRouteRole(model.id)) + '</td>' +
-        '<td><div class="table-actions"><button class="btn ghost sm" onclick="openModelKeyPool(\'' + model.id + '\')">配置 Key</button><button class="btn ghost sm" onclick="openModelEditor(\'' + model.id + '\')">编辑</button><button class="btn ghost sm danger-text" onclick="deleteModel(\'' + model.id + '\')">删除</button></div></td></tr>';
-    }).join('');
-    updateSummary();
+    byId('modelRows').innerHTML = aiState.models.map(function(m, i) {
+      return '<tr><td><b>'+escapeHtml(m.name)+'</b><div class="subtle">'+escapeHtml(m.modelId)+'</div></td><td class="mono" style="max-width:260px;overflow-wrap:anywhere">'+escapeHtml(m.endpoint || '待配置 API 地址')+'</td><td>'+ (m.hasKey ? '•••• '+escapeHtml(m.keyLast4) : '未配置')+'</td><td><span class="pill '+(m.enabled ? 'success' : 'disabled')+'">'+(m.enabled ? '启用' : '停用')+'</span></td><td><div class="table-actions"><button class="btn ghost sm" onclick="openModelEditorByIndex('+i+')">编辑接入</button><button class="btn ghost sm" onclick="toggleModel('+i+')">'+(m.enabled ? '停用' : '启用')+'</button><button class="btn ghost sm danger-text" onclick="removeModel('+i+')">删除</button></div></td></tr>';
+    }).join('') || '<tr><td colspan="5" style="text-align:center;padding:32px">暂无接入模型，点击「新增 AI 模型」开始配置</td></tr>';
   }
-
-  window.openModelEditor = function (id) {
-    var model = id ? modelById(id) : null;
-    byId('modelEditId').value = model ? model.id : '';
-    byId('modelModalTitle').textContent = model ? '编辑 AI 模型' : '新增 AI 模型';
-    byId('newModelName').value = model ? model.name : '';
-    byId('modelProviderType').value = model ? model.providerType : 'qwen';
-    byId('newModelId').value = model ? model.modelId : '';
-    var params = Object.assign({}, DEFAULT_MODEL_PARAMS, model ? model.params : {});
-    byId('modelTemperature').value = params.temperature;
-    byId('modelTimeout').value = params.timeout;
-    byId('modelRetry').value = params.retry;
+  window.openModelEditorByIndex = function(i) { window.openModelEditor(aiState.models[i].id); };
+  window.openModelEditor = function(id) {
+    var m = modelById(id);
+    byId('modelEditId').value = m ? m.id : '';
+    byId('modelModalTitle').textContent = m ? '编辑模型接入' : '新增 AI 模型';
+    byId('newModelName').value = m ? m.name : '';
+    byId('newModelId').value = m ? m.modelId : '';
+    byId('modelEndpoint').value = m ? m.endpoint : '';
+    byId('modelApiKey').value = '';
+    byId('modelApiKey').placeholder = m && m.hasKey ? '已配置，留空保留原凭证（末四位 '+m.keyLast4+'）' : '输入API Key';
+    byId('modelEnabled').checked = m ? m.enabled : true;
     byId('modelFormError').textContent = '';
     openModal('modelModal');
   };
-
-  function modelFormValues() {
-    return {
-      name: byId('newModelName').value.trim(),
-      providerType: byId('modelProviderType').value,
-      modelId: byId('newModelId').value.trim(),
-      params: {
-        temperature: Number(byId('modelTemperature').value),
-        timeout: Number(byId('modelTimeout').value),
-        retry: Number(byId('modelRetry').value),
-        stream: true
-      }
-    };
-  }
-
-  function validateModelForm(values) {
-    if (!values.name) return '请填写模型名称';
-    if (!values.modelId) return '请填写 Model ID';
-    if (values.params.temperature < 0 || values.params.temperature > 2) return 'Temperature 需要在 0 到 2 之间';
-    if (values.params.timeout <= 0 || values.params.retry < 0 || values.params.retry > 3) return '请检查模型参数';
-    return '';
-  }
-
-  window.saveModel = function () {
-    var values = modelFormValues();
-    var error = validateModelForm(values);
+  window.saveModel = function() {
+    var m = modelById(byId('modelEditId').value);
+    var name = byId('newModelName').value.trim(), modelId = byId('newModelId').value.trim();
+    var endpoint = byId('modelEndpoint').value.trim(), key = byId('modelApiKey').value.trim(), error = '';
+    try { var url = new URL(endpoint); if (!/^https?:$/.test(url.protocol) || url.username || url.password || url.search || url.hash) error = '请填写不含账号、查询参数的 HTTP(S) 接口地址'; } catch(e) { error = '请填写有效的API 接口地址'; }
+    if (!name || !modelId) error = '请填写模型名称和 Model ID';
+    if ((!m || !m.hasKey) && !key) error = '请填写API Key';
+    if (key && key.length < 8) error = 'API Key 至少需要 8 个字符';
+    if (aiState.models.some(function(other) { return other !== m && other.endpoint === endpoint && other.modelId === modelId; })) error = '该地址下的 Model ID 已存在';
     byId('modelFormError').textContent = error;
     if (error) return;
-    var model = modelById(byId('modelEditId').value);
-    var isNewModel = !model;
-    var previousProvider = model ? model.providerType : '';
-    if (!model) { model = { id: 'model_' + Date.now() }; aiState.models.push(model); }
-    model.name = values.name;
-    model.providerType = values.providerType;
-    model.modelId = values.modelId;
-    model.context = 131072;
-    model.params = values.params;
-    delete model.capabilities;
-    delete model.thinking;
-    var removedBindings = 0;
-    if (previousProvider && previousProvider !== model.providerType) {
-      aiState.keys.forEach(function (key) {
-        if (key.providerType !== model.providerType && key.modelIds.indexOf(model.id) >= 0) {
-          key.modelIds = key.modelIds.filter(function (id) { return id !== model.id; });
-          removedBindings += 1;
-        }
-      });
-    }
-    commitAutoSave('修改模型', model.name + ' / ' + model.modelId + '，Temperature ' + model.params.temperature + '，超时 ' + model.params.timeout + ' 秒，重试 ' + model.params.retry + ' 次', 'model-' + model.id, true);
-    closeModal('modelModal');
-    renderModels();
-    populateModelSelectors();
-    if (isNewModel) {
-      window.openModelKeyPool(model.id);
-      var hasReusableKey = aiState.keys.some(function (key) { return key.providerType === model.providerType && key.modelIds.indexOf(model.id) < 0; });
-      if (!hasReusableKey) window.openInlineKeyForm();
-      showToast(hasReusableKey ? 'AI 模型已保存，可直接复用已有 Key' : 'AI 模型已保存，请继续添加 Key');
-    } else {
-      showToast(model.name + ' 已自动保存' + (removedBindings ? '，已解除 ' + removedBindings + ' 个跨厂商 Key 关联' : ''));
-    }
+    if (!m) { m = {id:'model_'+Date.now(), providerType:'openai_compatible'}; aiState.models.push(m); }
+    Object.assign(m, {name:name, modelId:modelId, endpoint:endpoint, enabled:byId('modelEnabled').checked});
+    if (key) { m.hasKey = true; m.keyLast4 = key.slice(-4); }
+    byId('modelApiKey').value = '';
+    commitAutoSave('保存模型接入', name, 'model-'+m.id, true);
+    renderModels(); closeModal('modelModal'); showToast('模型接入配置已保存');
   };
-
-  function modelOptions(selected) {
-    return '<option value="">未配置</option>' + aiState.models.map(function (model) {
-      return '<option value="' + model.id + '"' + (model.id === selected ? ' selected' : '') + '>' + escapeHtml(model.name) + '</option>';
-    }).join('');
-  }
-
-  function populateModelSelectors() {
-    byId('globalPrimary').innerHTML = modelOptions(aiState.globalRoute.primary);
-    byId('globalBackup').innerHTML = modelOptions(aiState.globalRoute.backup);
-    byId('globalPrimary').value = aiState.globalRoute.primary || '';
-    byId('globalBackup').value = aiState.globalRoute.backup || '';
-  }
-
-  window.autoSaveGlobalRoute = function () {
-    var primary = byId('globalPrimary').value;
-    var backup = byId('globalBackup').value;
-    if (primary && primary === backup) {
-      byId('routeHint').textContent = '主模型与次模型不能相同。';
-      byId('routeHint').className = 'help danger-text';
-      populateModelSelectors();
-      showToast('主模型与次模型不能相同');
-      return;
-    }
-    aiState.globalRoute = { primary: primary, backup: backup };
-    byId('routeHint').textContent = '主模型池无可用 Key 时自动切换备用模型池。';
-    byId('routeHint').className = 'help';
-    var primaryName = (modelById(primary) || {}).name || '未配置';
-    var backupName = (modelById(backup) || {}).name || '未配置';
-    commitAutoSave('修改模型路由', primaryName + ' → ' + backupName, 'global-route');
-    renderModels();
-  };
-
-  window.deleteModel = function (id) {
-    var model = modelById(id);
-    if (!model || !window.confirm('确认删除 AI 模型“' + model.name + '”吗？')) return;
-    aiState.models = aiState.models.filter(function (item) { return item.id !== id; });
-    aiState.keys.forEach(function (key) {
-      key.modelIds = key.modelIds.filter(function (modelId) { return modelId !== id; });
-    });
-    aiState.keys = aiState.keys.filter(function (key) { return key.modelIds.length; });
-    if (aiState.globalRoute.primary === id) aiState.globalRoute.primary = '';
-    if (aiState.globalRoute.backup === id) aiState.globalRoute.backup = '';
-    if (activeKeyPoolModelId === id) {
-      activeKeyPoolModelId = '';
-      closeModal('modelKeyPoolModal');
-    }
-    commitAutoSave('删除 AI 模型', model.name + ' / ' + model.modelId, 'model-delete-' + id, true);
-    renderModels();
-    populateModelSelectors();
-    renderMonitoring();
-    showToast('AI 模型已删除');
-  };
+  window.toggleModel = function(i) { var m=aiState.models[i]; m.enabled=!m.enabled; commitAutoSave('切换模型状态',m.name,'model-'+m.id,true); renderModels(); };
+  window.removeModel = function(i) { if (!confirm('确认删除模型“'+aiState.models[i].name+'”的接入配置？')) return; aiState.models.splice(i,1); saveAiState(); renderModels(); };
 
   function keyById(id) { return aiState.keys.find(function (key) { return key.id === id; }); }
   function modelKeys(modelId) { return aiState.keys.filter(function (key) { return key.modelIds.indexOf(modelId) >= 0; }); }
@@ -699,158 +576,6 @@ RL：自我介绍 → 学生情况陈述 → 结语 → 落款。始终从推荐
   function keyModelNames(key) {
     return key.modelIds.map(function (id) { return (modelById(id) || {}).name; }).filter(Boolean);
   }
-  function renderModelKeyPool() {
-    var model = modelById(activeKeyPoolModelId);
-    if (!model) return;
-    var preset = modelProviderPreset(model);
-    byId('modelKeyPoolTitle').textContent = model.name + ' · 配置 Key';
-    byId('modelKeyPoolInfo').innerHTML = '<b>' + escapeHtml(model.name) + '</b><span>' + escapeHtml(preset.name) + ' · ' + escapeHtml(model.modelId) + ' · 系统会自动从健康 Key 中选择调用</span>';
-    var keys = modelKeys(model.id);
-    byId('modelKeyPoolRows').innerHTML = keys.length ? keys.map(function (key) {
-      var health = healthMeta(key);
-      var otherNames = key.modelIds.filter(function (id) { return id !== model.id; }).map(function (id) { return (modelById(id) || {}).name; }).filter(Boolean);
-      return '<tr><td><b>' + escapeHtml(key.alias) + '</b><div class="masked-key mono">•••••••• ' + escapeHtml(key.last4) + '</div></td>' +
-        '<td>' + escapeHtml(key.quotaGroup) + '</td>' +
-        '<td><span class="pill ' + health.value + '">' + health.label + '</span></td>' +
-        '<td>' + (otherNames.length ? '<div class="tags">' + otherNames.map(function (name) { return '<span class="tag">' + escapeHtml(name) + '</span>'; }).join('') + '</div>' : '<span class="subtle">仅当前模型</span>') + '</td>' +
-        '<td><div class="table-actions"><button class="switch' + (key.enabled ? ' on' : '') + '" type="button" aria-label="' + (key.enabled ? '停用' : '启用') + ' ' + escapeHtml(key.alias) + '" onclick="toggleKey(\'' + key.id + '\')"></button><button class="btn ghost sm" onclick="testKey(\'' + key.id + '\')">检测</button><button class="btn ghost sm" onclick="openInlineKeyForm(\'' + key.id + '\')">编辑</button><button class="btn ghost sm danger-text" onclick="unlinkKeyFromModel(\'' + key.id + '\')">' + (key.modelIds.length > 1 ? '移出' : '删除') + '</button></div></td></tr>';
-    }).join('') : '<tr><td colspan="5" class="subtle" style="text-align:center;padding:28px">当前模型还没有 Key，请点击“添加 Key”</td></tr>';
-    var reusable = aiState.keys.filter(function (key) { return key.providerType === model.providerType && key.modelIds.indexOf(model.id) < 0; });
-    byId('modelReusableSection').classList.toggle('hidden', !reusable.length);
-    byId('modelReusableKeys').innerHTML = reusable.map(function (key) {
-      var usedBy = keyModelNames(key).join('、') || '尚未用于其他模型';
-      return '<div class="reuse-item"><div><b>' + escapeHtml(key.alias) + ' · ' + escapeHtml(key.quotaGroup) + '</b><span>当前用于：' + escapeHtml(usedBy) + '</span></div><button class="btn sm" onclick="linkExistingKey(\'' + key.id + '\')">加入当前模型</button></div>';
-    }).join('');
-  }
-
-  window.openModelKeyPool = function (modelId) {
-    if (!modelById(modelId)) return;
-    activeKeyPoolModelId = modelId;
-    byId('keyInlineForm').classList.add('hidden');
-    byId('keyRawValue').value = '';
-    renderModelKeyPool();
-    openModal('modelKeyPoolModal');
-  };
-
-  window.linkExistingKey = function (keyId) {
-    var key = keyById(keyId);
-    var model = modelById(activeKeyPoolModelId);
-    if (!key || !model || key.providerType !== model.providerType) return;
-    if (key.modelIds.indexOf(model.id) < 0) key.modelIds.push(model.id);
-    commitAutoSave('关联模型 Key', model.name + ' ← ' + key.alias, 'key-link-' + key.id + '-' + model.id, true);
-    renderModelKeyPool();
-    renderModels();
-    showToast(key.alias + ' 已加入当前模型');
-  };
-
-  window.unlinkKeyFromModel = function (keyId) {
-    var key = keyById(keyId);
-    var model = modelById(activeKeyPoolModelId);
-    if (!key || !model) return;
-    var removeKey = key.modelIds.length === 1;
-    if (removeKey && !window.confirm('确认删除“' + key.alias + '”吗？删除后该 Key 不再参与调用。')) return;
-    if (removeKey) aiState.keys = aiState.keys.filter(function (item) { return item.id !== key.id; });
-    else key.modelIds = key.modelIds.filter(function (id) { return id !== model.id; });
-    commitAutoSave(removeKey ? '删除 AI Key' : '解除模型 Key 关联', model.name + ' × ' + key.alias, 'key-unlink-' + key.id + '-' + model.id, true);
-    renderModelKeyPool();
-    renderModels();
-    renderMonitoring();
-    showToast(removeKey ? 'Key 已删除' : '已从当前模型移出，其他模型不受影响');
-  };
-
-  window.openInlineKeyForm = function (id) {
-    var model = modelById(activeKeyPoolModelId);
-    var key = id ? keyById(id) : null;
-    if (!model || (key && key.providerType !== model.providerType)) return;
-    byId('keyEditId').value = key ? key.id : '';
-    byId('keyInlineTitle').textContent = key ? '编辑 Key' : '添加 Key';
-    byId('keyAlias').value = key ? key.alias : model.name + ' Key';
-    byId('keyQuotaGroup').value = key ? key.quotaGroup : '';
-    byId('keyRawValue').value = '';
-    byId('keyRawValue').placeholder = key ? '留空保留当前密钥（末四位 ' + key.last4 + '）' : '请输入完整 Key';
-    byId('keyRawRequired').classList.toggle('hidden', !!key);
-    byId('keyRawHelp').textContent = key ? '留空表示不替换当前 Key。' : '保存后只显示末四位，原始 Key 不再回显。';
-    byId('keyCurrentModelFixed').textContent = model.name + ' · ' + model.modelId;
-    var otherModels = aiState.models.filter(function (item) { return item.providerType === model.providerType && item.id !== model.id; });
-    byId('keyOtherModelsField').classList.toggle('hidden', !otherModels.length);
-    byId('keyOtherModelScope').innerHTML = otherModels.map(function (item) {
-      var checked = key && key.modelIds.indexOf(item.id) >= 0;
-      return '<label class="scope-option"><input type="checkbox" value="' + escapeHtml(item.id) + '"' + (checked ? ' checked' : '') + '><span><b>' + escapeHtml(item.name) + '</b><span>' + escapeHtml(item.modelId) + '</span></span></label>';
-    }).join('');
-    byId('keyEnabled').checked = key ? key.enabled : true;
-    byId('keyFormError').textContent = '';
-    byId('keyInlineForm').classList.remove('hidden');
-    byId('keyInlineForm').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-  };
-
-  window.cancelInlineKeyForm = function () {
-    byId('keyRawValue').value = '';
-    byId('keyInlineForm').classList.add('hidden');
-  };
-
-  window.saveInlineKey = function () {
-    var model = modelById(activeKeyPoolModelId);
-    if (!model) return;
-    var id = byId('keyEditId').value;
-    var key = id ? keyById(id) : null;
-    var alias = plainText(byId('keyAlias').value);
-    var modelIds = [model.id].concat(Array.prototype.slice.call(document.querySelectorAll('#keyOtherModelScope input:checked')).map(function (input) { return input.value; }));
-    var quotaGroup = plainText(byId('keyQuotaGroup').value);
-    var rawKey = byId('keyRawValue').value.trim();
-    var enabled = byId('keyEnabled').checked;
-    var error = !alias ? '请填写 Key 名称' : !quotaGroup ? '请填写厂商账号或配额组' : !key && !rawKey ? '请输入完整 API Key' : '';
-    if (!error && aiState.keys.some(function (item) { return item.alias === alias && item.id !== id; })) error = 'Key 别名不能重复';
-    byId('keyFormError').textContent = error;
-    if (error) return;
-    if (!key) {
-      key = { id: 'key_' + Date.now(), health: enabled ? 'healthy' : 'disabled', load: 0, quotaRemaining: 100, latency: 0, priority: 2, weight: 100, checkedAt: '尚未检测' };
-      aiState.keys.push(key);
-    }
-    key.alias = alias;
-    key.providerType = model.providerType;
-    key.modelIds = modelIds;
-    key.quotaGroup = quotaGroup;
-    if (rawKey) key.last4 = rawKey.slice(-4);
-    key.enabled = enabled;
-    if (!enabled) key.health = 'disabled';
-    if (enabled && key.health === 'disabled') key.health = 'healthy';
-    byId('keyRawValue').value = '';
-    commitAutoSave('维护共享 AI Key', key.alias + '，可调用 ' + keyModelNames(key).join('、') + '，配额组 ' + key.quotaGroup, 'key-' + key.id, true);
-    byId('keyInlineForm').classList.add('hidden');
-    renderModels();
-    renderMonitoring();
-    renderModelKeyPool();
-    showToast(key.alias + ' 已保存并关联 ' + modelIds.length + ' 个 AI 模型');
-  };
-
-  window.toggleKey = function (id) {
-    var key = keyById(id);
-    if (!key) return;
-    key.enabled = !key.enabled;
-    key.health = key.enabled ? 'healthy' : 'disabled';
-    key.checkedAt = nowText();
-    commitAutoSave(key.enabled ? '启用 AI Key' : '停用 AI Key', key.alias + ' / ' + key.quotaGroup, 'key-toggle-' + key.id, true);
-    renderModels();
-    if (activeKeyPoolModelId && byId('modelKeyPoolModal').classList.contains('show')) renderModelKeyPool();
-    renderMonitoring();
-    showToast(key.alias + (key.enabled ? ' 已启用' : ' 已停用'));
-  };
-
-  window.testKey = function (id) {
-    var key = keyById(id);
-    if (!key) return;
-    if (!key.enabled) { showToast('请先启用该 Key'); return; }
-    key.health = 'healthy';
-    key.latency = 520 + Math.floor(Math.random() * 360);
-    key.load = Math.max(8, Math.min(68, key.load - 12));
-    key.checkedAt = nowText();
-    commitAutoSave('检测 AI Key', key.alias + '，连接正常，' + key.latency + ' ms', 'key-test-' + key.id, true);
-    renderModels();
-    if (activeKeyPoolModelId && byId('modelKeyPoolModal').classList.contains('show')) renderModelKeyPool();
-    renderMonitoring();
-    showToast(key.alias + ' 检测通过');
-  };
-
   function populateMonitoringFilters() {
     var orgFilter = byId('monitorOrgFilter');
     var sceneFilter = byId('monitorSceneFilter');
@@ -1003,7 +728,7 @@ RL：自我介绍 → 学生情况陈述 → 结语 → 落款。始终从推荐
     byId('promptContextCount').textContent = contexts.length + ' 项数据';
     byId('promptContextRows').innerHTML = contexts.map(function (item) {
       return '<tr><td class="context-name"><b>' + escapeHtml(item[0]) + '</b><span>结构化对象</span></td><td><span class="context-key">' + escapeHtml(item[1]) + '</span></td><td>' + escapeHtml(item[2]) + '</td></tr>';
-    }).join('');
+    }).join('') || '<tr><td colspan="3" class="subtle" style="text-align:center;padding:20px">尚未选择数据对象，可点击「选择数据对象」配置</td></tr>';
   }
 
   function loadPrompt() {
@@ -1029,7 +754,7 @@ RL：自我介绍 → 学生情况陈述 → 结语 → 落款。始终从推荐
       content: byId('promptContent').value,
       output: byId('promptOutput').value
     };
-    aiState.promptOverrides[prompt.id] = saved;
+    aiState.promptOverrides[prompt.id] = Object.assign({}, aiState.promptOverrides[prompt.id] || {}, saved);
     if (autoSave) {
       renderDetectedVariables();
       commitAutoSave('自动保存提示词', prompt.title, 'prompt-' + prompt.id);
@@ -1201,12 +926,68 @@ RL：自我介绍 → 学生情况陈述 → 结语 → 落款。始终从推荐
     });
   }
 
+  function availableObjects() {
+    var objects = [];
+    BASE_PROMPTS.forEach(function(p) { (p.context || []).forEach(function(c) { if (!objects.some(function(o) { return o[1] === c[1]; })) objects.push(c); }); });
+    return objects.concat(aiState.dataObjects);
+  }
+  function objectChecks(selected) {
+    return availableObjects().map(function(o,i) { return '<label class="scope-option"><input type="checkbox" value="'+i+'" '+(selected.indexOf(o[1]) >= 0 ? 'checked' : '')+'><div><b>'+escapeHtml(o[0])+'</b><span>'+escapeHtml(o[1])+' · '+escapeHtml(o[2])+'</span></div></label>'; }).join('');
+  }
+  function readObjectChecks(id) {
+    var objects=availableObjects();
+    return Array.prototype.map.call(byId(id).querySelectorAll('input:checked'),function(input) { return cloneJson(objects[Number(input.value)]); });
+  }
+  window.openNewPrompt = function() {
+    byId('newPromptName').value=''; byId('newPromptModule').value='';
+    byId('newPromptChecks').innerHTML=objectChecks([]); byId('newPromptError').textContent=''; openModal('newPromptModal');
+  };
+  window.createPrompt = function() {
+    var name=byId('newPromptName').value.trim(), module=byId('newPromptModule').value.trim();
+    if (!name || !module) { byId('newPromptError').textContent='请填写提示词名称和业务模块'; return; }
+    if (visiblePrompts().some(function(p) { return p.title===name; })) { byId('newPromptError').textContent='提示词名称已存在'; return; }
+    var p={id:'custom_'+Date.now(),title:name,module:module,content:'',output:'',context:readObjectChecks('newPromptChecks')};
+    aiState.customPrompts.push(p); saveAiState(); activePrompt=visiblePrompts().findIndex(function(item) { return item.id===p.id; });
+    closeModal('newPromptModal'); renderPrompts(); byId('promptContent').focus(); showToast('已新增提示词，可开始编写正文');
+  };
+  window.openContextPicker = function() { byId('contextChecks').innerHTML=objectChecks((currentPrompt().context || []).map(function(c) {return c[1];})); openModal('contextPickerModal'); };
+  window.saveContextSelection = function() {
+    var p=currentPrompt();
+    aiState.promptOverrides[p.id]=Object.assign({},aiState.promptOverrides[p.id] || {},{context:readObjectChecks('contextChecks')});
+    commitAutoSave('配置提示词数据对象',p.title,'context-'+p.id,true); renderPromptContext(currentPrompt()); closeModal('contextPickerModal'); showToast('可用数据对象已更新');
+  };
+  window.restorePromptOutput = function() {
+    byId('promptOutput').value=promptOutput(currentBasePrompt()); capturePromptForm(true); showToast('已恢复当前模板默认输出格式');
+  };
+  window.openDataObjects = function() {
+    byId('objectName').value=''; byId('objectKey').value=''; byId('objectSource').value=''; byId('objectEditKey').value=''; byId('objectError').textContent='';
+    byId('objectRows').innerHTML=availableObjects().map(function(o) {
+      var index=aiState.dataObjects.findIndex(function(c){return c[1]===o[1];});
+      return '<tr><td>'+escapeHtml(o[0])+'</td><td class="mono">'+escapeHtml(o[1])+'</td><td>'+escapeHtml(o[2])+'</td><td>'+(index<0 ? '<span class="subtle">系统内置</span>' : '<button class="btn ghost sm" onclick="editDataObject('+index+')">编辑</button><button class="btn ghost sm danger-text" onclick="deleteDataObject('+index+')">删除</button>')+'</td></tr>';
+    }).join(''); openModal('dataObjectsModal');
+  };
+  window.editDataObject = function(i) { var o=aiState.dataObjects[i]; byId('objectName').value=o[0]; byId('objectKey').value=o[1]; byId('objectSource').value=o[2]; byId('objectEditKey').value=o[1]; };
+  function objectUsed(key) { return BASE_PROMPTS.concat(aiState.customPrompts).some(function(p) { return (basePromptWithOverride(p).context || []).some(function(c){ return c[1]===key; }); }); }
+  window.deleteDataObject = function(i) { var o=aiState.dataObjects[i]; if(objectUsed(o[1])) { byId('objectError').textContent='该对象正在被提示词引用，请先取消选择后再删除'; return; } aiState.dataObjects.splice(i,1); saveAiState(); window.openDataObjects(); };
+  window.saveDataObject = function() {
+    var name=byId('objectName').value.trim(), key=byId('objectKey').value.trim(), source=byId('objectSource').value.trim(), old=byId('objectEditKey').value;
+    var error='';
+    if(!name || !source || !/^[a-z][a-z0-9_]*$/.test(key)) error='请填写名称、查询来源；标识使用小写字母开头的字母、数字或下划线';
+    if(availableObjects().some(function(o){return o[1]===key && o[1]!==old;})) error='注入标识已存在';
+    if(old && old!==key && objectUsed(old)) error='已被引用的对象不能修改标识，请新增另一个对象';
+    byId('objectError').textContent=error; if(error)return;
+    var object=[name,key,source], index=aiState.dataObjects.findIndex(function(o){return o[1]===old;});
+    if(index<0) aiState.dataObjects.push(object); else aiState.dataObjects[index]=object;
+    BASE_PROMPTS.concat(aiState.customPrompts).forEach(function(p){ var actual=basePromptWithOverride(p); if((actual.context || []).some(function(c){return c[1]===old;})) aiState.promptOverrides[p.id]=Object.assign({},aiState.promptOverrides[p.id] || {},{context:actual.context.map(function(c){return c[1]===old ? object : c;})}); });
+    saveAiState(); window.openDataObjects(); renderPromptContext(currentPrompt()); showToast('数据对象已保存，可在提示词中选择');
+  };
+
   function initialize() {
     initializeTabs();
     initializeDialogs();
     initializeEvalActions();
     renderModels();
-    populateModelSelectors();
+
     renderMonitoring();
     renderPrompts();
     renderEval();

@@ -318,7 +318,7 @@ RL：自我介绍 → 学生情况陈述 → 结语 → 落款。始终从推荐
       });
     }
     if (saved && typeof saved === 'object') {
-      ['models', 'globalRoute', 'keys', 'callLogs', 'promptOverrides', 'caseTemplateOverrides', 'selectedCaseTemplate', 'evalResults', 'customPrompts', 'dataObjects'].forEach(function (key) {
+      ['models', 'globalRoute', 'keys', 'callLogs', 'promptOverrides', 'caseTemplateOverrides', 'selectedCaseTemplate', 'evalResults', 'customPrompts'].forEach(function (key) {
         if (saved[key] !== undefined) state[key] = saved[key];
       });
       if (loadedFromLegacy) {
@@ -396,7 +396,6 @@ RL：自我介绍 → 学生情况陈述 → 结语 → 落款。始终从推荐
     if (!state.evalResults || typeof state.evalResults !== 'object') state.evalResults = {};
     if (!CASE_TEMPLATES.some(function (item) { return item.id === state.selectedCaseTemplate; })) state.selectedCaseTemplate = CASE_TEMPLATES[0].id;
     if (!Array.isArray(state.customPrompts)) state.customPrompts = [];
-    if (!Array.isArray(state.dataObjects)) state.dataObjects = [];
     return state;
   }
 
@@ -724,11 +723,12 @@ RL：自我介绍 → 学生情况陈述 → 结语 → 落款。始终从推荐
   }
 
   function renderPromptContext(prompt) {
-    var contexts = Array.isArray(prompt.context) ? prompt.context : [];
+    var builtInKeys = availableObjects().map(function (item) { return item[1]; });
+    var contexts = Array.isArray(prompt.context) ? prompt.context.filter(function (item) { return builtInKeys.indexOf(item[1]) >= 0; }) : [];
     byId('promptContextCount').textContent = contexts.length + ' 项数据';
     byId('promptContextRows').innerHTML = contexts.map(function (item) {
       return '<tr><td class="context-name"><b>' + escapeHtml(item[0]) + '</b><span>结构化对象</span></td><td><span class="context-key">' + escapeHtml(item[1]) + '</span></td><td>' + escapeHtml(item[2]) + '</td></tr>';
-    }).join('') || '<tr><td colspan="3" class="subtle" style="text-align:center;padding:20px">尚未选择数据对象，可点击「选择数据对象」配置</td></tr>';
+    }).join('') || '<tr><td colspan="3" class="subtle" style="text-align:center;padding:20px">当前提示词尚未勾选数据对象</td></tr>';
   }
 
   function loadPrompt() {
@@ -929,7 +929,7 @@ RL：自我介绍 → 学生情况陈述 → 结语 → 落款。始终从推荐
   function availableObjects() {
     var objects = [];
     BASE_PROMPTS.forEach(function(p) { (p.context || []).forEach(function(c) { if (!objects.some(function(o) { return o[1] === c[1]; })) objects.push(c); }); });
-    return objects.concat(aiState.dataObjects);
+    return objects;
   }
   function objectChecks(selected) {
     return availableObjects().map(function(o,i) { return '<label class="scope-option"><input type="checkbox" value="'+i+'" '+(selected.indexOf(o[1]) >= 0 ? 'checked' : '')+'><div><b>'+escapeHtml(o[0])+'</b><span>'+escapeHtml(o[1])+' · '+escapeHtml(o[2])+'</span></div></label>'; }).join('');
@@ -950,38 +950,20 @@ RL：自我介绍 → 学生情况陈述 → 结语 → 落款。始终从推荐
     aiState.customPrompts.push(p); saveAiState(); activePrompt=visiblePrompts().findIndex(function(item) { return item.id===p.id; });
     closeModal('newPromptModal'); renderPrompts(); byId('promptContent').focus(); showToast('已新增提示词，可开始编写正文');
   };
-  window.openContextPicker = function() { byId('contextChecks').innerHTML=objectChecks((currentPrompt().context || []).map(function(c) {return c[1];})); openModal('contextPickerModal'); };
+  window.openContextPicker = function() {
+    var prompt=currentPrompt();
+    byId('contextPickerPromptName').textContent='当前提示词：'+prompt.title;
+    byId('contextChecks').innerHTML=objectChecks((prompt.context || []).map(function(c) {return c[1];}));
+    openModal('contextPickerModal');
+  };
   window.saveContextSelection = function() {
     var p=currentPrompt();
     aiState.promptOverrides[p.id]=Object.assign({},aiState.promptOverrides[p.id] || {},{context:readObjectChecks('contextChecks')});
-    commitAutoSave('配置提示词数据对象',p.title,'context-'+p.id,true); renderPromptContext(currentPrompt()); closeModal('contextPickerModal'); showToast('可用数据对象已更新');
+    commitAutoSave('配置提示词数据对象',p.title,'context-'+p.id,true); renderPromptContext(currentPrompt()); closeModal('contextPickerModal'); showToast('当前提示词的数据对象已更新');
   };
   window.restorePromptOutput = function() {
     byId('promptOutput').value=promptOutput(currentBasePrompt()); capturePromptForm(true); showToast('已恢复当前模板默认输出格式');
   };
-  window.openDataObjects = function() {
-    byId('objectName').value=''; byId('objectKey').value=''; byId('objectSource').value=''; byId('objectEditKey').value=''; byId('objectError').textContent='';
-    byId('objectRows').innerHTML=availableObjects().map(function(o) {
-      var index=aiState.dataObjects.findIndex(function(c){return c[1]===o[1];});
-      return '<tr><td>'+escapeHtml(o[0])+'</td><td class="mono">'+escapeHtml(o[1])+'</td><td>'+escapeHtml(o[2])+'</td><td>'+(index<0 ? '<span class="subtle">系统内置</span>' : '<button class="btn ghost sm" onclick="editDataObject('+index+')">编辑</button><button class="btn ghost sm danger-text" onclick="deleteDataObject('+index+')">删除</button>')+'</td></tr>';
-    }).join(''); openModal('dataObjectsModal');
-  };
-  window.editDataObject = function(i) { var o=aiState.dataObjects[i]; byId('objectName').value=o[0]; byId('objectKey').value=o[1]; byId('objectSource').value=o[2]; byId('objectEditKey').value=o[1]; };
-  function objectUsed(key) { return BASE_PROMPTS.concat(aiState.customPrompts).some(function(p) { return (basePromptWithOverride(p).context || []).some(function(c){ return c[1]===key; }); }); }
-  window.deleteDataObject = function(i) { var o=aiState.dataObjects[i]; if(objectUsed(o[1])) { byId('objectError').textContent='该对象正在被提示词引用，请先取消选择后再删除'; return; } aiState.dataObjects.splice(i,1); saveAiState(); window.openDataObjects(); };
-  window.saveDataObject = function() {
-    var name=byId('objectName').value.trim(), key=byId('objectKey').value.trim(), source=byId('objectSource').value.trim(), old=byId('objectEditKey').value;
-    var error='';
-    if(!name || !source || !/^[a-z][a-z0-9_]*$/.test(key)) error='请填写名称、查询来源；标识使用小写字母开头的字母、数字或下划线';
-    if(availableObjects().some(function(o){return o[1]===key && o[1]!==old;})) error='注入标识已存在';
-    if(old && old!==key && objectUsed(old)) error='已被引用的对象不能修改标识，请新增另一个对象';
-    byId('objectError').textContent=error; if(error)return;
-    var object=[name,key,source], index=aiState.dataObjects.findIndex(function(o){return o[1]===old;});
-    if(index<0) aiState.dataObjects.push(object); else aiState.dataObjects[index]=object;
-    BASE_PROMPTS.concat(aiState.customPrompts).forEach(function(p){ var actual=basePromptWithOverride(p); if((actual.context || []).some(function(c){return c[1]===old;})) aiState.promptOverrides[p.id]=Object.assign({},aiState.promptOverrides[p.id] || {},{context:actual.context.map(function(c){return c[1]===old ? object : c;})}); });
-    saveAiState(); window.openDataObjects(); renderPromptContext(currentPrompt()); showToast('数据对象已保存，可在提示词中选择');
-  };
-
   function initialize() {
     initializeTabs();
     initializeDialogs();

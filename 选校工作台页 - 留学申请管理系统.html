@@ -228,7 +228,7 @@
             <button id="taskNoteToggle" class="text-xs text-blue-600 hover:text-blue-700 font-medium" onclick="toggleTaskNote()">展开</button>
             <button class="inline-flex items-center gap-1 px-3 h-7 text-xs font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700" onclick="openAiReasonModal()">
               <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
-              AI理由
+              AI推荐说明
             </button>
           </div>
         </div>
@@ -432,19 +432,19 @@
             <div class="px-4 py-2.5 border-b border-red-100 flex items-center justify-between">
               <h3 class="text-sm font-semibold text-red-700">冲刺区</h3><span class="text-xs text-red-400" id="count-reach">1所</span>
             </div>
-            <div class="flex-1 overflow-y-auto p-3 space-y-2" id="zone-reach" data-zone="reach"><div class="bg-white border border-gray-200 rounded-lg p-3 shadow-sm" data-school-item="cmu"><div class="flex items-start justify-between gap-2"><div class="min-w-0"><p class="text-sm font-medium text-gray-900 truncate">卡内基梅隆大学</p><p class="text-xs text-gray-500 mt-0.5">QS #52 · 计算机科学（MSCS）</p></div><button class="flex-shrink-0 p-1 text-gray-300 hover:text-red-500" onclick="removeFromZone(this)" title="移除"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg></button></div><div class="mt-2 pt-2 border-t border-gray-100 reason-row cursor-text" ondblclick="editCardReason(this)" title="双击编辑推荐理由"><p class="text-xs leading-5 line-clamp-2 reason-text text-gray-400 italic">暂无推荐理由，请点击AI理由生成</p></div></div></div>
+            <div class="flex-1 overflow-y-auto p-3 space-y-2" id="zone-reach" data-zone="reach"><div class="bg-white border border-gray-200 rounded-lg p-3 shadow-sm" data-school-item="cmu"><div class="flex items-start justify-between gap-2"><div class="min-w-0"><p class="text-sm font-medium text-gray-900 truncate">卡内基梅隆大学</p><p class="text-xs text-gray-500 mt-0.5">QS #52 · 计算机科学（MSCS）</p></div><button class="flex-shrink-0 p-1 text-gray-300 hover:text-red-500" onclick="removeFromZone(this)" title="移除"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg></button></div><div class="mt-2 pt-2 border-t border-gray-100 reason-row cursor-text" ondblclick="editCardReason(this)" title="双击编辑AI推荐说明"><p class="text-xs leading-5 line-clamp-2 reason-text text-gray-400 italic">暂无AI推荐说明，请点击生成</p></div></div></div>
           </div>
           <div class="flex-1 bg-blue-50/60 rounded-xl border border-blue-100 flex flex-col" ondragover="event.preventDefault()" ondrop="dropToZone(event,&#39;match&#39;)">
             <div class="px-4 py-2.5 border-b border-blue-100 flex items-center justify-between">
               <h3 class="text-sm font-semibold text-blue-700">匹配区</h3><span class="text-xs text-blue-400" id="count-match">1所</span>
             </div>
-            <div class="flex-1 overflow-y-auto p-3 space-y-2" id="zone-match" data-zone="match"><div class="bg-white border border-gray-200 rounded-lg p-3 shadow-sm" data-school-item="uiuc"><div class="flex items-start justify-between gap-2"><div class="min-w-0"><p class="text-sm font-medium text-gray-900 truncate">伊利诺伊大学厄巴纳-香槟分校</p><p class="text-xs text-gray-500 mt-0.5">QS #69 · 计算机科学（MCS）</p></div><button class="flex-shrink-0 p-1 text-gray-300 hover:text-red-500" onclick="removeFromZone(this)" title="移除"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg></button></div><div class="mt-2 pt-2 border-t border-gray-100 reason-row cursor-text" ondblclick="editCardReason(this)" title="双击编辑推荐理由"><p class="text-xs leading-5 line-clamp-2 reason-text text-gray-400 italic">暂无推荐理由，请点击AI理由生成</p></div></div></div>
+            <div class="flex-1 overflow-y-auto p-3 space-y-2" id="zone-match" data-zone="match"><div class="bg-white border border-gray-200 rounded-lg p-3 shadow-sm" data-school-item="uiuc"><div class="flex items-start justify-between gap-2"><div class="min-w-0"><p class="text-sm font-medium text-gray-900 truncate">伊利诺伊大学厄巴纳-香槟分校</p><p class="text-xs text-gray-500 mt-0.5">QS #69 · 计算机科学（MCS）</p></div><button class="flex-shrink-0 p-1 text-gray-300 hover:text-red-500" onclick="removeFromZone(this)" title="移除"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg></button></div><div class="mt-2 pt-2 border-t border-gray-100 reason-row cursor-text" ondblclick="editCardReason(this)" title="双击编辑AI推荐说明"><p class="text-xs leading-5 line-clamp-2 reason-text text-gray-400 italic">暂无AI推荐说明，请点击生成</p></div></div></div>
           </div>
           <div class="flex-1 bg-green-50/60 rounded-xl border border-green-100 flex flex-col" ondragover="event.preventDefault()" ondrop="dropToZone(event,&#39;safe&#39;)">
             <div class="px-4 py-2.5 border-b border-green-100 flex items-center justify-between">
               <h3 class="text-sm font-semibold text-green-700">保底区</h3><span class="text-xs text-green-400" id="count-safe">1所</span>
             </div>
-            <div class="flex-1 overflow-y-auto p-3 space-y-2" id="zone-safe" data-zone="safe"><div class="bg-white border border-gray-200 rounded-lg p-3 shadow-sm" data-school-item="bu"><div class="flex items-start justify-between gap-2"><div class="min-w-0"><p class="text-sm font-medium text-gray-900 truncate">波士顿大学</p><p class="text-xs text-gray-500 mt-0.5">QS #108 · 计算机科学（MSCS）</p></div><button class="flex-shrink-0 p-1 text-gray-300 hover:text-red-500" onclick="removeFromZone(this)" title="移除"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg></button></div><div class="mt-2 pt-2 border-t border-gray-100 reason-row cursor-text" ondblclick="editCardReason(this)" title="双击编辑推荐理由"><p class="text-xs leading-5 line-clamp-2 reason-text text-gray-400 italic">暂无推荐理由，请点击AI理由生成</p></div></div></div>
+            <div class="flex-1 overflow-y-auto p-3 space-y-2" id="zone-safe" data-zone="safe"><div class="bg-white border border-gray-200 rounded-lg p-3 shadow-sm" data-school-item="bu"><div class="flex items-start justify-between gap-2"><div class="min-w-0"><p class="text-sm font-medium text-gray-900 truncate">波士顿大学</p><p class="text-xs text-gray-500 mt-0.5">QS #108 · 计算机科学（MSCS）</p></div><button class="flex-shrink-0 p-1 text-gray-300 hover:text-red-500" onclick="removeFromZone(this)" title="移除"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg></button></div><div class="mt-2 pt-2 border-t border-gray-100 reason-row cursor-text" ondblclick="editCardReason(this)" title="双击编辑AI推荐说明"><p class="text-xs leading-5 line-clamp-2 reason-text text-gray-400 italic">暂无AI推荐说明，请点击生成</p></div></div></div>
           </div>
         </div>
       </div>
@@ -525,13 +525,13 @@
       </div>
 
   
-      <!-- AI理由弹窗 -->
+      <!-- AI推荐说明弹窗 -->
       <div id="aiReasonModal" class="hidden fixed inset-0 bg-black bg-opacity-40 z-[60] flex items-center justify-center p-6" onclick="if(event.target===this)closeAiReasonModal()">
         <div class="w-[720px] max-w-[94vw] max-h-[88vh] bg-white rounded-2xl shadow-2xl overflow-hidden flex flex-col">
           <div class="flex items-center justify-between px-6 py-4 border-b border-gray-100">
             <h3 class="text-lg font-semibold text-gray-900 flex items-center gap-2">
               <svg class="w-5 h-5 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"/></svg>
-              智能推荐理由生成器
+              AI推荐说明
             </h3>
             <button class="text-2xl leading-none text-gray-400 hover:text-gray-700" onclick="closeAiReasonModal()">×</button>
           </div>
@@ -539,7 +539,7 @@
             <div class="mb-5">
               <label class="block text-sm font-medium text-gray-700 mb-2">提示词</label>
               <div>
-                <textarea id="aiReasonPrompt" rows="3" class="w-full px-3 py-2.5 border border-gray-300 rounded-lg text-sm leading-6 resize-none focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="输入提示词，例如：结合学生背景和院校特色，突出匹配度">根据学生背景和院校特点，为每个学校生成推荐理由</textarea>
+                <textarea id="aiReasonPrompt" rows="3" class="w-full px-3 py-2.5 border border-gray-300 rounded-lg text-sm leading-6 resize-none focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="输入提示词，例如：结合学生背景和院校特色，突出匹配度">根据学生背景和院校特点，为每个学校生成AI推荐说明</textarea>
               </div>
               <p class="mt-1.5 text-xs text-gray-400">示例：结合学生背景和院校特色，突出匹配度；或：强调科研资源与就业前景</p>
             </div>
@@ -552,11 +552,8 @@
             </div>
           </div>
           <div class="px-6 py-4 border-t border-gray-100 bg-gray-50 flex items-center justify-between">
-            <button class="px-4 h-9 text-sm font-medium text-purple-700 bg-purple-50 border border-purple-200 rounded-lg hover:bg-purple-100 transition" onclick="generateAllReasons()">生成理由</button>
-            <div class="flex items-center gap-3">
-              <button class="px-4 h-9 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-100 transition" onclick="closeAiReasonModal()">取消</button>
-              <button class="px-5 h-9 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 shadow-sm transition" onclick="adoptAllReasons()">全部保存</button>
-            </div>
+            <button class="px-4 h-9 text-sm font-medium text-purple-700 bg-purple-50 border border-purple-200 rounded-lg hover:bg-purple-100 transition" onclick="generateAllReasons()">生成说明</button>
+            <button class="px-5 h-9 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 shadow-sm transition" onclick="closeAiReasonModal()">完成</button>
           </div>
         </div>
       </div>
@@ -866,10 +863,10 @@
       applySchoolFilter();
     }
     refreshNullBadges();
-    /* ---------- 选校推荐理由存储与管理 ---------- */
+    /* ---------- 选校 AI 推荐说明存储与管理 ---------- */
     var TASK_PROJECT_NO = 'PRJ-M-2607-0003';
     var schoolReasons = {};
-    var currentAiPrompt = '根据学生背景和院校特点，为每个学校生成推荐理由';
+    var currentAiPrompt = '根据学生背景和院校特点，为每个学校生成AI推荐说明';
 
     function getReasonStorageKey() { return 'pbs_school_reasons_' + TASK_PROJECT_NO; }
     function loadSchoolReasons() {
@@ -889,7 +886,7 @@
       var textEl = card.querySelector('.reason-text');
       if (!textEl) return;
       if (reason) { textEl.textContent = reason; textEl.classList.remove('text-gray-400', 'italic'); textEl.classList.add('text-gray-600'); }
-      else { textEl.textContent = '暂无推荐理由，请点击AI理由生成'; textEl.classList.remove('text-gray-600'); textEl.classList.add('text-gray-400', 'italic'); }
+      else { textEl.textContent = '暂无AI推荐说明，请点击生成'; textEl.classList.remove('text-gray-600'); textEl.classList.add('text-gray-400', 'italic'); }
     }
     function escapeHtml(text) { var div = document.createElement('div'); div.textContent = text || ''; return div.innerHTML; }
 
@@ -911,14 +908,14 @@
       textarea.className = 'w-full text-xs leading-5 text-gray-700 border border-blue-300 rounded px-2 py-1 resize-none focus:outline-none focus:ring-2 focus:ring-blue-500';
       textarea.rows = 3;
       textarea.value = current;
-      textarea.placeholder = '输入推荐理由，按回车保存';
+      textarea.placeholder = '输入AI推荐说明，按回车确认';
       p.replaceWith(textarea);
       textarea.focus();
       function finish(save) {
         var newValue = textarea.value.trim();
         var newP = document.createElement('p');
         newP.className = 'text-xs leading-5 line-clamp-2 reason-text ' + (save && newValue ? 'text-gray-600' : 'text-gray-400 italic');
-        newP.textContent = save && newValue ? newValue : (getSchoolReason(sid) || '暂无推荐理由，请点击AI理由生成');
+        newP.textContent = save && newValue ? newValue : (getSchoolReason(sid) || '暂无AI推荐说明，请点击生成');
         textarea.replaceWith(newP);
         if (save) setSchoolReason(sid, newValue);
       }
@@ -934,51 +931,50 @@
       renderAiReasonSchools();
       document.getElementById('aiReasonModal').classList.remove('hidden');
     }
-    function closeAiReasonModal() { document.getElementById('aiReasonModal').classList.add('hidden'); }
+    function syncAiReasonInput(sid) {
+      var input = document.getElementById('ai-reason-' + sid);
+      if (input) setSchoolReason(sid, input.value);
+    }
+    function syncAllAiReasonInputs() {
+      document.querySelectorAll('#aiReasonSchoolList [data-ai-school]').forEach(function(card) {
+        syncAiReasonInput(card.getAttribute('data-ai-school'));
+      });
+    }
+    function closeAiReasonModal() {
+      syncAllAiReasonInputs();
+      document.getElementById('aiReasonModal').classList.add('hidden');
+    }
     function renderAiReasonSchools() {
       var zones = [{ key: 'reach', label: '冲刺区', tone: 'red' }, { key: 'match', label: '匹配区', tone: 'blue' }, { key: 'safe', label: '保底区', tone: 'green' }];
-      var items = [];
-      zones.forEach(function(z) {
+      var total = 0;
+      var html = zones.map(function(z) {
         var container = document.getElementById('zone-' + z.key);
+        var items = [];
         Array.from(container.querySelectorAll('[data-school-item]')).forEach(function(card) {
           var sid = card.getAttribute('data-school-item');
           var d = SCHOOL_INFO[sid];
           if (!d) return;
-          items.push({ sid: sid, name: d.name, program: d.major, zone: z.label, tone: z.tone, reason: getSchoolReason(sid) });
+          items.push({ sid: sid, name: d.name, program: d.major, reason: getSchoolReason(sid) });
         });
-      });
-      var html = items.length ? items.map(function(item) {
-        var badgeClass = item.tone === 'red' ? 'bg-red-50 text-red-700 border-red-100' : (item.tone === 'blue' ? 'bg-blue-50 text-blue-700 border-blue-100' : 'bg-green-50 text-green-700 border-green-100');
-        var hasReason = !!item.reason;
-        return '<div class="rounded-xl border border-gray-200 p-4" data-ai-school="' + item.sid + '">' +
-          '<div class="flex items-center gap-2 mb-2 flex-wrap">' +
-            '<h5 class="text-sm font-semibold text-gray-900">' + item.name + '</h5>' +
-            '<span class="text-xs px-2 py-0.5 rounded-full border ' + badgeClass + '">' + item.zone + '</span>' +
-            '<span class="text-xs text-gray-400">' + item.program + '</span>' +
-            (hasReason ? '<span class="ml-auto inline-flex items-center gap-1 text-xs px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-600 border border-emerald-200"><svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>已采纳</span>' : '') +
-          '</div>' +
-          '<textarea id="ai-reason-' + item.sid + '" rows="2" class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm leading-5 resize-none focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="输入或点击生成理由">' + (item.reason ? escapeHtml(item.reason) : '') + '</textarea>' +
-          '<div class="flex justify-end gap-2 mt-2">' +
-            '<button class="px-3 h-8 text-xs font-medium text-purple-700 bg-purple-50 border border-purple-200 rounded-lg hover:bg-purple-100 transition" onclick="regenerateOneReason(\'' + item.sid + '\')">重新生成</button>' +
-            '<button class="px-3 h-8 text-xs font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition" onclick="adoptAiReason(\'' + item.sid + '\')">保存</button>' +
-          '</div>' +
-        '</div>';
-      }).join('') : '<div class="text-center py-8 text-sm text-gray-400">右侧分层区暂无学校，请添加学校后使用AI理由</div>';
+        total += items.length;
+        var tone = z.tone === 'red'
+          ? { wrap: 'bg-red-50/60 border-red-100', head: 'border-red-100', title: 'text-red-700', count: 'text-red-400' }
+          : (z.tone === 'blue'
+            ? { wrap: 'bg-blue-50/60 border-blue-100', head: 'border-blue-100', title: 'text-blue-700', count: 'text-blue-400' }
+            : { wrap: 'bg-green-50/60 border-green-100', head: 'border-green-100', title: 'text-green-700', count: 'text-green-400' });
+        var cards = items.length ? items.map(function(item) {
+          return '<div class="bg-white rounded-lg border border-gray-200 p-4" data-ai-school="' + item.sid + '" data-ai-zone="' + z.key + '">' +
+            '<div class="flex items-start justify-between gap-3 mb-2"><div><h5 class="text-sm font-semibold text-gray-900">' + item.name + '</h5><p class="text-xs text-gray-400 mt-1">' + item.program + '</p></div><button class="px-3 h-8 text-xs font-medium text-purple-700 bg-purple-50 border border-purple-200 rounded-lg hover:bg-purple-100 transition flex-shrink-0" onclick="regenerateOneReason(\'' + item.sid + '\')">重新生成</button></div>' +
+            '<textarea id="ai-reason-' + item.sid + '" rows="2" class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm leading-5 resize-none focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="输入或点击生成AI推荐说明" oninput="syncAiReasonInput(\'' + item.sid + '\')">' + (item.reason ? escapeHtml(item.reason) : '') + '</textarea>' +
+          '</div>';
+        }).join('') : '<div class="py-5 text-center text-xs text-gray-400">暂无学校</div>';
+        return '<section class="rounded-xl border overflow-hidden ' + tone.wrap + '"><div class="px-4 py-2.5 border-b flex items-center justify-between ' + tone.head + '"><h4 class="text-sm font-semibold ' + tone.title + '">' + z.label + '</h4><span class="text-xs ' + tone.count + '">' + items.length + '所</span></div><div class="p-3 space-y-3">' + cards + '</div></section>';
+      }).join('');
+      if (!total) html = '<div class="text-center py-8 text-sm text-gray-400">右侧分层区暂无学校，请先添加学校</div>';
       document.getElementById('aiReasonSchoolList').innerHTML = html;
     }
-    function adoptAiReason(sid) {
-      var value = document.getElementById('ai-reason-' + sid).value.trim();
-      if (!value) { planToast('请先输入或生成推荐理由'); return; }
-      setSchoolReason(sid, value);
-      var card = document.querySelector('[data-ai-school="' + sid + '"]');
-      if (card && !card.querySelector('.bg-emerald-50')) {
-        var head = card.querySelector('.flex.items-center.gap-2.mb-2');
-        if (head) head.insertAdjacentHTML('beforeend', '<span class="ml-auto inline-flex items-center gap-1 text-xs px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-600 border border-emerald-200"><svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>已采纳</span>');
-      }
-      planToast('推荐理由已保存');
-    }
 
-    /* ---------- 模拟AI生成推荐理由（原型阶段：内置句式模板随机组合） ---------- */
+    /* ---------- 模拟 AI 生成推荐说明（原型阶段：内置句式模板随机组合） ---------- */
     var REASON_TEMPLATES = {
       reach: [
         '科研背景与{feature}高度契合，学术资源突出，建议作为重点冲刺项目。',
@@ -996,7 +992,7 @@
         '录取稳定性较好，{feature}，为方案提供安全边际。'
       ]
     };
-    // 从学校真实数据中提取亮点特征词，用于模拟AI生成的个性化推荐理由
+    // 从学校真实数据中提取亮点特征词，用于模拟 AI 生成的个性化推荐说明
     function pickSchoolFeature(sid) {
       var d = SCHOOL_INFO[sid] || {};
       var feats = [];
@@ -1027,31 +1023,25 @@
         Array.from(container.querySelectorAll('[data-school-item]')).forEach(function (card) {
           var sid = card.getAttribute('data-school-item');
           var ta = document.getElementById('ai-reason-' + sid);
-          if (ta) { ta.value = mockGenerateReason(sid, z.key); count++; }
+          if (ta) {
+            var reason = mockGenerateReason(sid, z.key);
+            ta.value = reason;
+            setSchoolReason(sid, reason);
+            count++;
+          }
         });
       });
-      if (count) planToast('已为 ' + count + ' 所学校生成推荐理由，请检查后保存');
+      if (count) planToast('已为 ' + count + ' 所学校生成AI推荐说明');
       else planToast('右侧分层区暂无学校，请先添加');
     }
     function regenerateOneReason(sid) {
       var card = document.querySelector('[data-ai-school="' + sid + '"]');
       if (!card) return;
-      var zoneLabel = card.querySelector('span').textContent || '';
-      var zoneKey = zoneLabel.indexOf('冲刺') >= 0 ? 'reach' : (zoneLabel.indexOf('保底') >= 0 ? 'safe' : 'match');
-      document.getElementById('ai-reason-' + sid).value = mockGenerateReason(sid, zoneKey);
-      planToast('已重新生成，请检查后保存');
-    }
-    function adoptAllReasons() {
-      var saved = 0, skipped = 0;
-      document.querySelectorAll('#aiReasonSchoolList [data-ai-school]').forEach(function (card) {
-        var sid = card.getAttribute('data-ai-school');
-        var ta = document.getElementById('ai-reason-' + sid);
-        var value = ta ? ta.value.trim() : '';
-        if (value) { setSchoolReason(sid, value); saved++; } else skipped++;
-      });
-      if (!saved) { planToast('暂无可保存的推荐理由'); return; }
-      renderAiReasonSchools();
-      planToast('已全部保存 ' + saved + ' 条推荐理由' + (skipped ? '（' + skipped + ' 条为空未保存）' : ''));
+      var zoneKey = card.getAttribute('data-ai-zone') || 'match';
+      var reason = mockGenerateReason(sid, zoneKey);
+      document.getElementById('ai-reason-' + sid).value = reason;
+      setSchoolReason(sid, reason);
+      planToast('AI推荐说明已重新生成');
     }
 
     /* ---------- 分层清单：拖拽+按钮 ---------- */
@@ -1065,10 +1055,10 @@
         '<p class="text-xs text-gray-500 mt-0.5">' + d.rank + ' · ' + d.major + '</p></div>' +
         '<button class="flex-shrink-0 p-1 text-gray-300 hover:text-red-500" onclick="removeFromZone(this)" title="移除">' +
         '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg></button></div>' +
-        '<div class="mt-2 pt-2 border-t border-gray-100 reason-row cursor-text" ondblclick="editCardReason(this)" title="双击编辑推荐理由">' +
+        '<div class="mt-2 pt-2 border-t border-gray-100 reason-row cursor-text" ondblclick="editCardReason(this)" title="双击编辑AI推荐说明">' +
           '<div class="flex items-start gap-1.5">' +
             '<svg class="w-3.5 h-3.5 text-gray-400 mt-0.5 flex-shrink-0 reason-edit-hint opacity-0 transition-opacity" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>' +
-            '<p class="text-xs leading-5 line-clamp-2 reason-text text-gray-400 italic">暂无推荐理由，请点击AI理由生成</p>' +
+            '<p class="text-xs leading-5 line-clamp-2 reason-text text-gray-400 italic">暂无AI推荐说明，请点击生成</p>' +
           '</div>' +
         '</div>';
       updateCardReasonDisplay(div, sid);
@@ -1100,7 +1090,7 @@
       if (sid) addToZone(zone, sid);
     }
 
-    /* 预置演示数据：三区卡片已在 HTML 中静态预置，这里加载并刷新已保存的推荐理由 */
+    /* 预置演示数据：三区卡片已在 HTML 中静态预置，这里加载并刷新已确认的 AI 推荐说明 */
     loadSchoolReasons();
     if (Object.keys(schoolReasons).length === 0) {
       setSchoolReason('cmu', '科研经历与 NLP 方向高度契合，计算机学科实力突出，建议作为重点冲刺项目。');
@@ -1213,7 +1203,7 @@
         if (!snapshot || !snapshot.version || data.some(function (item) { return item.version === snapshot.version; })) return;
         var zones = Object.keys(labels).map(function (key) {
           var schools = snapshot.zones && Array.isArray(snapshot.zones[key]) ? snapshot.zones[key] : [];
-          return { name:labels[key][0], tone:labels[key][1], schools:schools.map(function (school) { return { school:school.name, program:'计算机科学', reason:school.reason || '本版本保存时的推荐理由。' }; }) };
+          return { name:labels[key][0], tone:labels[key][1], schools:schools.map(function (school) { return { school:school.name, program:'计算机科学', reason:school.reason || '本版本确认时的AI推荐说明。' }; }) };
         });
         var savedTime = snapshot.savedAt ? new Date(snapshot.savedAt) : new Date();
         data.push({ version:snapshot.version, time:savedTime.toLocaleString('zh-CN',{hour12:false}), author:'王一帆', zones:zones });
@@ -1243,7 +1233,7 @@
       document.getElementById('workbenchHistoryMeta').textContent = item.time + ' · ' + item.author + ' 保存';
       var toneMap = { red:'bg-red-50 border-red-100 text-red-700', blue:'bg-blue-50 border-blue-100 text-blue-700', green:'bg-green-50 border-green-100 text-green-700' };
       document.getElementById('workbenchHistoryContent').innerHTML = item.zones.map(function (zone) {
-        return '<section class="rounded-xl border p-4 ' + toneMap[zone.tone] + '"><h4 class="text-sm font-semibold mb-3">' + zone.name + '（' + zone.schools.length + '所）</h4><div class="space-y-2">' + zone.schools.map(function (school) { return '<div class="bg-white border border-gray-100 rounded-lg p-3 text-gray-700"><div class="flex justify-between gap-3"><p class="text-sm font-medium text-gray-900">' + school.school + '</p><span class="text-xs text-gray-400">' + school.program + '</span></div><p class="text-xs leading-5 text-gray-600 mt-2">推荐理由：' + school.reason + '</p></div>'; }).join('') + '</div></section>';
+        return '<section class="rounded-xl border p-4 ' + toneMap[zone.tone] + '"><h4 class="text-sm font-semibold mb-3">' + zone.name + '（' + zone.schools.length + '所）</h4><div class="space-y-2">' + zone.schools.map(function (school) { return '<div class="bg-white border border-gray-100 rounded-lg p-3 text-gray-700"><div class="flex justify-between gap-3"><p class="text-sm font-medium text-gray-900">' + school.school + '</p><span class="text-xs text-gray-400">' + school.program + '</span></div><p class="text-xs leading-5 text-gray-600 mt-2">AI推荐说明：' + school.reason + '</p></div>'; }).join('') + '</div></section>';
       }).join('');
     }
 

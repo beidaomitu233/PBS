@@ -1300,8 +1300,10 @@
     modal.style.display = 'none';
   }
   function sendUrge() {
+    var note = document.getElementById('urgeNote') ? document.getElementById('urgeNote').value.trim() : '';
     closeUrgeModal();
-    workbenchToast('催办消息已发送给 ' + urgeContext.target + '，对方将在消息提醒中看到催办内容');
+    if (window.pbsSendUrgeNotification) window.pbsSendUrgeNotification({ task: urgeContext.task, target: urgeContext.target, role: urgeContext.role, note: note });
+    if (window.pbsShowUrgeSuccess) window.pbsShowUrgeSuccess();
   }
 
   function ensurePmStudentsModal() {

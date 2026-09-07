@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>项目经理工作台 - 留学申请管理系统</title>
   <script src="./assets/vendor/tailwind-runtime.js"></script>
-  <link rel="stylesheet" href="./assets/css/pbs-theme.css?v=6.1">
+  <link rel="stylesheet" href="./assets/css/pbs-theme.css?v=6.4">
 </head>
 <body class="min-h-screen bg-gray-50">
   <header class="bg-white border-b border-gray-200 sticky top-0 z-50">
@@ -213,7 +213,8 @@
     function sendUrge() {
       var note = document.getElementById('urgeNote').value.trim();
       closeUrgeModal();
-      showWorkbenchToast('催办消息已发送给 ' + urgeContext.target + '，对方将在消息提醒中看到催办内容');
+      if (window.pbsSendUrgeNotification) window.pbsSendUrgeNotification({ task: urgeContext.task, target: urgeContext.target, role: urgeContext.role, note: note });
+      if (window.pbsShowUrgeSuccess) window.pbsShowUrgeSuccess();
     }
     /* ---------- 消息提醒弹窗 ---------- */
     function openPmMsgModal() {
@@ -223,7 +224,7 @@
       document.getElementById('pmMsgModal').classList.add('hidden');
     }
   </script>
-  <script src="./assets/js/pbs-workbench.js"></script>
-  <script src="./assets/js/pbs-app.js?v=6.0"></script>
+  <script src="./assets/js/pbs-workbench.js?v=2.1"></script>
+  <script src="./assets/js/pbs-app.js?v=6.5"></script>
 </body>
 </html>

@@ -1685,6 +1685,17 @@
   }
   window.pbsOpenChangePassword = function () { openChangePasswordDialog(false); };
 
+  window.pbsShowUrgeSuccess = function () {
+    var previous = document.getElementById('pbsUrgeSuccessToast');
+    if (previous) previous.remove();
+    var toast = document.createElement('div');
+    toast.id = 'pbsUrgeSuccessToast';
+    toast.textContent = '已通过短信和系统通知催办';
+    toast.style.cssText = 'position:fixed;top:24px;left:50%;transform:translateX(-50%);z-index:10080;padding:11px 18px;border-radius:10px;background:#FEF2F2;border:1px solid #FECACA;color:#DC2626;font-size:14px;font-weight:700;box-shadow:0 12px 32px rgba(127,29,29,.16)';
+    document.body.appendChild(toast);
+    setTimeout(function () { toast.remove(); }, 2600);
+  };
+
   /* ---------------- 通知消息：按当前角色、所属机构和接收人过滤 ---------------- */
   var NOTIFICATION_STORE_KEY = 'pbs_notifications_v2';
   var NOTIFICATION_READ_KEY = 'pbs_notification_read_v3';
@@ -1792,11 +1803,33 @@
       level: 'primary',
       result: '成功'
     }, item);
+    if (!Array.isArray(created.channels)) created.channels = created.kind === 'task_urge' ? ['系统通知', '短信通知'] : ['系统通知'];
     custom.unshift(created);
     localStorage.setItem(NOTIFICATION_STORE_KEY, JSON.stringify(custom.slice(0, 200)));
     updateNotificationBell();
     if (document.getElementById('pbsNotificationCenter') && document.getElementById('pbsNotificationCenter').classList.contains('is-open')) window.pbsOpenNotifications(lastNotificationTrigger);
     return created.id;
+  };
+  window.pbsSendUrgeNotification = function (options) {
+    options = options || {};
+    var roleMap = { '审核人员': '文书审核', '文书审核': '文书审核', '文书人员': '文书人员', '文书交付人员': '文书人员', '网申人员': '网申人员', '项目经理': '项目经理', '学生': '项目经理' };
+    var recipientRole = roleMap[options.role] || options.role || '项目经理';
+    var session = window.pbsGetSession ? window.pbsGetSession() : { org: 'PBS留学总部', name: '当前用户' };
+    return window.pbsCreateNotification({
+      kind: 'task_urge',
+      type: '任务催办提醒',
+      title: (options.task || '当前任务') + '收到催办',
+      business: options.business || options.task || '业务任务',
+      detail: '催办已同时通过系统通知与短信发送，请尽快处理并反馈进度。',
+      reminderBy: (session.name || '当前用户') + '（' + (session.role || '业务人员') + '）',
+      reminderNote: options.note || '请优先处理该任务，完成后及时反馈进度。',
+      recipientRoles: [recipientRole],
+      recipientName: options.target || '',
+      organization: session.org || 'PBS留学总部',
+      href: options.href || '',
+      channels: ['系统通知', '短信通知'],
+      level: 'danger'
+    });
   };
   window.pbsRefreshNotifications = updateNotificationBell;
   function ensureNotificationCenter() {
@@ -1847,9 +1880,11 @@
     role.textContent = session.previewLabel || session.role;
     list.innerHTML = items.length ? items.map(function (item) {
       var isUnread = read.indexOf(item.id) < 0;
+      var channels = Array.isArray(item.channels) ? item.channels : (item.kind === 'task_urge' ? ['系统通知', '短信通知'] : ['系统通知']);
+      var channelHtml = '<div class="pbs-notification-channels">' + channels.map(function(channel) { return '<span class="' + (channel === '短信通知' ? 'is-sms' : '') + '">' + notificationEscape(channel) + '</span>'; }).join('') + '</div>';
       var reminder = item.kind === 'task_urge'
         ? '<div class="pbs-notification-reminder"><span>催办人：' + notificationEscape(item.reminderBy || '—') + '</span><span>催办说明：' + notificationEscape(item.reminderNote || '—') + '</span></div>' : '';
-      return '<article tabindex="0" class="pbs-notification-item is-' + notificationEscape(item.level || 'primary') + (isUnread ? ' is-unread' : '') + '" data-pbs-notification-id="' + notificationEscape(item.id) + '"><span class="pbs-notification-dot"></span><div><div class="pbs-notification-meta"><span>' + notificationEscape(item.type) + '</span><div><em>' + (isUnread ? '未读' : '已读') + '</em><time>' + notificationEscape(item.time) + '</time></div></div><h3>' + notificationEscape(item.title) + '</h3><p class="pbs-notification-business">' + notificationEscape(item.business || '') + '</p><p>' + notificationEscape(item.detail) + '</p>' + reminder + '<button type="button" class="pbs-notification-action">立即处理</button></div></article>';
+      return '<article tabindex="0" class="pbs-notification-item is-' + notificationEscape(item.level || 'primary') + (isUnread ? ' is-unread' : '') + '" data-pbs-notification-id="' + notificationEscape(item.id) + '"><span class="pbs-notification-dot"></span><div><div class="pbs-notification-meta"><span>' + notificationEscape(item.type) + '</span><div><em>' + (isUnread ? '未读' : '已读') + '</em><time>' + notificationEscape(item.time) + '</time></div></div>' + channelHtml + '<h3>' + notificationEscape(item.title) + '</h3><p class="pbs-notification-business">' + notificationEscape(item.business || '') + '</p><p>' + notificationEscape(item.detail) + '</p>' + reminder + '<button type="button" class="pbs-notification-action">立即处理</button></div></article>';
     }).join('') : '<div class="pbs-notification-empty"><span>✓</span><h3>暂无通知消息</h3><p>当前角色暂无需要处理的新项目、任务派发或催办消息。</p></div>';
     count.textContent = items.length + ' 条消息 · ' + unread + ' 条未读';
     layer.classList.add('is-open');

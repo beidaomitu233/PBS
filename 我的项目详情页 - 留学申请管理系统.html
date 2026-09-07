@@ -84,7 +84,7 @@
     .monitor-dot { position:absolute; left:1px; top:24px; width:13px; height:13px; border:3px solid white; border-radius:999px; background:#60A5FA; box-shadow:0 0 0 2px #BFDBFE; }
     .monitor-shot-preview { height:118px; background:linear-gradient(180deg,#F8FAFC,#F1F5F9); }
   </style>
-  <link rel="stylesheet" href="./assets/css/pbs-theme.css?v=6.1">
+  <link rel="stylesheet" href="./assets/css/pbs-theme.css?v=6.4">
 </head>
 <body class="min-h-screen">
   <!-- 顶部导航栏 -->
@@ -339,6 +339,12 @@
               <button id="changeStaffButton" type="button" class="px-4 py-2 text-sm font-medium text-orange-600 bg-white border border-orange-300 rounded-lg hover:bg-orange-50 transition-colors" onclick="openChangeDrawer()">更换人员</button>
             </div>
           </div>
+          <div id="projectTaskNoteBar" class="hidden mt-4 border-t border-gray-100 pt-3">
+            <div class="flex items-start gap-2 rounded-lg bg-gray-50 px-3 py-2.5">
+              <svg class="w-4 h-4 text-blue-600 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5h2m-1 0v14m-4-8h8"></path></svg>
+              <p class="text-sm leading-5"><span class="font-semibold text-gray-700">任务说明：</span><span id="projectTaskNote" class="text-gray-600"></span></p>
+            </div>
+          </div>
         </div>
       </section>
 
@@ -524,7 +530,7 @@
       { name: '郑老师', role: '网申专员', color: 'from-cyan-500 to-blue-500' }
     ];
     var MY_PROJECT_CONTEXTS = {
-      'PRJ20260701002': { projectNo: 'PRJ20260701002', customer: '李慧敏', student: '李雪', level: '硕士申请', manager: '张老师', direction: '计算机科学 · 人工智能', state: '交付中', allStaffAssigned: true },
+      'PRJ20260701002': { projectNo: 'PRJ20260701002', customer: '李慧敏', student: '李雪', level: '硕士申请', manager: '张老师', direction: '计算机科学 · 人工智能', state: '交付中', allStaffAssigned: true, taskNote: '请优先核对学生科研经历与人工智能方向的匹配度，文书交付前同步项目经理确认。' },
       'PRJ20260701005': { projectNo: 'PRJ20260701005', customer: '刘洋', student: '刘晓', level: '本科申请', manager: '张老师', direction: '计算机科学 · 数据科学', state: '人员待分配', allStaffAssigned: false },
       'PRJ20260701001': { projectNo: 'PRJ20260701001', customer: '张建国', student: '张明', level: '本科申请', manager: '张老师', direction: '计算机科学 · 软件工程', state: '人员待分配', allStaffAssigned: false }
     };
@@ -551,6 +557,22 @@
       }
     }
     var PM_STAFF_ASSIGNMENT_KEY = 'pbs_pm_staff_assignment_v3_' + MY_PROJECT_CONTEXT.projectNo;
+    var PROJECT_ASSIGNMENT_ALIASES = {
+      'PRJ20260701002': 'PRJ-M-2607-0002',
+      'PRJ20260701001': 'PRJ-M-2607-0001',
+      'PRJ20260701005': 'PRJ-O-2607-0005'
+    };
+    function readInstitutionTaskNote() {
+      var projectNumbers = [MY_PROJECT_CONTEXT.projectNo];
+      if (PROJECT_ASSIGNMENT_ALIASES[MY_PROJECT_CONTEXT.projectNo]) projectNumbers.push(PROJECT_ASSIGNMENT_ALIASES[MY_PROJECT_CONTEXT.projectNo]);
+      for (var i = 0; i < projectNumbers.length; i++) {
+        try {
+          var assignment = JSON.parse(localStorage.getItem('pbs_project_assignment_v3_' + projectNumbers[i]) || 'null');
+          if (assignment && assignment.taskNote) return assignment.taskNote;
+        } catch (error) {}
+      }
+      return MY_PROJECT_CONTEXT.taskNote || '';
+    }
     function applyMyProjectContext() {
       var values = {
         myProjectStudentAvatar: MY_PROJECT_CONTEXT.student.slice(0, 1),
@@ -566,6 +588,11 @@
         var element = document.getElementById(id);
         if (element) element.textContent = values[id];
       });
+      var taskNote = readInstitutionTaskNote();
+      var taskNoteBar = document.getElementById('projectTaskNoteBar');
+      var taskNoteText = document.getElementById('projectTaskNote');
+      if (taskNoteText) taskNoteText.textContent = taskNote;
+      if (taskNoteBar) taskNoteBar.classList.toggle('hidden', !taskNote);
       document.title = MY_PROJECT_CONTEXT.projectNo + ' · 我的项目详情 - 留学申请管理系统';
     }
     /* 院校目标驾驶舱数据：DDL 分为 管理配置（分配人员时设置）与 来自商城（商户传入） */
@@ -979,7 +1006,7 @@
         });
       }
       if (window.pbsRecordOperation) window.pbsRecordOperation('项目管理', '催办', '催办 ' + pendingUrge.person + ' 处理 ' + s.name + ' · ' + pendingUrge.task);
-      showPageToast('已催办 ' + pendingUrge.person, true);
+      if (window.pbsShowUrgeSuccess) window.pbsShowUrgeSuccess();
       pendingUrge = null;
     }
 
@@ -1356,5 +1383,5 @@
       }
     });
   </script>
-  <script src="./assets/js/pbs-app.js?v=6.0"></script>
+  <script src="./assets/js/pbs-app.js?v=6.5"></script>
   </body></html>

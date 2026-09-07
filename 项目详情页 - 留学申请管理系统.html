@@ -403,6 +403,12 @@
 
         <div class="mb-4 rounded-lg border border-blue-100 bg-blue-50 px-3 py-2 text-xs text-blue-700">项目经理接收后，可继续为未由机构分配的院校目标补充文书、审核和网申人员。</div>
 
+        <div class="mb-1">
+          <label for="assignmentTaskNote" class="block text-sm font-medium text-gray-700 mb-2">任务说明</label>
+          <textarea id="assignmentTaskNote" rows="4" maxlength="1000" placeholder="填写该项目需要项目经理及各院校目标成员重点关注的事项" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 resize-none text-sm" oninput="updateAssignmentTaskNoteCount()"></textarea>
+          <div class="flex items-center justify-between mt-1.5"><span class="text-xs text-gray-400">分配完成后，将显示在该学生的项目院校界面顶部</span><span id="assignmentTaskNoteCount" class="text-xs text-gray-400">0/1000</span></div>
+        </div>
+
       </div>
       <!-- 底部操作按钮（固定） -->
       <div class="flex-shrink-0 px-6 py-4 border-t border-gray-200 bg-white">
@@ -1123,6 +1129,9 @@
       renderGoalTabs();
       renderGoalPanel();
       collapseOptionalAssignment('optionalGoalAssignmentPanel', 'optionalGoalToggle', '提前分配');
+      var taskNoteInput = document.getElementById('assignmentTaskNote');
+      if (taskNoteInput) taskNoteInput.value = readProjectAssignment().taskNote || '';
+      updateAssignmentTaskNoteCount();
       document.getElementById('drawerAssign').classList.remove('hidden');
       document.body.style.overflow = 'hidden';
     }
@@ -1170,7 +1179,13 @@
       t.classList.add(ok ? 'bg-green-500' : 'bg-red-500');
       setTimeout(function(){ t.classList.add('hidden'); }, 2200);
     }
+    function updateAssignmentTaskNoteCount() {
+      var input = document.getElementById('assignmentTaskNote');
+      var count = document.getElementById('assignmentTaskNoteCount');
+      if (input && count) count.textContent = input.value.length + '/1000';
+    }
     function distVal(id) { var el = document.getElementById(id); return el ? el.value : ''; }
+    function escapeHtml(value) { return String(value == null ? '' : value).replace(/[&<>"']/g, function(char) { return ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[char]; }); }
     function toggleUserMenu() { var m = document.getElementById('userMenu'); if (m) m.classList.toggle('hidden'); }
     /* 网申提交 DDL 变更时，套磁信完成时间同步跟随 */
     function syncAppDdlFollowers(prefix, val) {
@@ -1250,6 +1265,7 @@
         projectManager: projectManager,
         assignedBy: '机构管理员',
         assignedAt: new Date().toISOString(),
+        taskNote: existing.taskNote || '',
         goalAssignments: existing.goalAssignments || {}
       }));
       syncSharedProject(projectManager);
@@ -1262,6 +1278,9 @@
     }
     function persistProjectAssignment(store, projectManager, replaceGoalAssignments) {
       var existing = readProjectAssignment();
+      var taskNote = existing.taskNote || '';
+      var assignDrawer = document.getElementById('drawerAssign');
+      if (assignDrawer && !assignDrawer.classList.contains('hidden')) taskNote = distVal('assignmentTaskNote').trim();
       var completed = replaceGoalAssignments ? {} : (existing.goalAssignments || {});
       GOALS.forEach(function(goal) {
         if (store[goal.id] && store[goal.id].done) {
@@ -1274,6 +1293,7 @@
         projectManager: projectManager,
         assignedBy: '机构管理员',
         assignedAt: new Date().toISOString(),
+        taskNote: taskNote,
         goalAssignments: completed
       }));
       syncSharedProject(projectManager);
@@ -1351,6 +1371,7 @@
       var html =
         '<div class="bg-gray-50 rounded-lg p-3"><p class="text-xs text-gray-400 mb-1">项目</p><p class="font-medium text-gray-900">' + PROJECT_CONTEXT.projectNo + ' — ' + PROJECT_CONTEXT.student + '（' + PROJECT_CONTEXT.level + ' · ' + GOALS.length + '个院校目标）</p></div>' +
         '<div class="border border-blue-100 bg-blue-50 rounded-lg p-3"><p class="font-medium text-blue-900 mb-1.5">项目经理：' + selectedPersons.pm + '</p><p class="text-xs text-blue-700">该经理负责整个项目，等待其接收项目。</p></div>' +
+        (distVal('assignmentTaskNote').trim() ? '<div class="border border-amber-100 bg-amber-50 rounded-lg p-3"><p class="text-xs text-amber-600 mb-1">任务说明</p><p class="text-sm text-amber-900">' + escapeHtml(distVal('assignmentTaskNote').trim()) + '</p></div>' : '') +
         blocks;
       document.getElementById('assignSummary').innerHTML = html;
       document.getElementById('assignSuccessModal').classList.remove('hidden');

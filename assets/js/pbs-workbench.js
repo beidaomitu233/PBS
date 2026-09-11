@@ -1145,7 +1145,7 @@
     h += '</div><div class="wb-team-grid"><div class="wb-team-panel"><div class="wb-team-panel-h"><span class="wb-team-panel-t">PM 负责学生</span><span class="wb-team-panel-n">点击查看学生明细</span></div><div class="wb-pm-list">';
     for (var p = 0; p < team.people.length; p++) {
       var person = team.people[p];
-      h += '<button type="button" class="wb-pm-row" onclick="openPmStudents(' + p + ')"><span class="wb-pm-avatar">' + person.name.charAt(0) + '</span><span class="wb-pm-info"><span class="wb-pm-name">' + person.name + '</span><span class="wb-pm-skill">擅长：' + person.skills + '</span></span><span class="wb-pm-count"><strong>' + person.students.length + '</strong><span>名学生</span></span></button>';
+      h += '<button type="button" class="wb-pm-row" onclick="openPmStudents(' + p + ')"><span class="wb-pm-info"><span class="wb-pm-name">' + person.name + '</span><span class="wb-pm-skill">擅长：' + person.skills + '</span></span><span class="wb-pm-count"><strong>' + person.students.length + '</strong><span>名学生</span></span></button>';
     }
     h += '</div></div><div class="wb-team-panel"><div class="wb-team-panel-h"><span class="wb-team-panel-t">PM 擅长申请层次</span><span class="wb-team-panel-n">人数可重复统计</span></div><div class="wb-skill-chart"><div class="wb-chart-axis"><span>6</span><span>4</span><span>2</span><span>0</span></div>';
     for (var l = 0; l < team.levels.length; l++) {
@@ -1328,7 +1328,7 @@
     var h = '<div class="wb-student-grid">';
     for (var i = 0; i < person.students.length; i++) {
       var student = person.students[i];
-      h += '<section class="wb-student-card"><div class="wb-student-h"><span class="wb-student-avatar">' + student.name.charAt(0) + '</span><span class="wb-student-name">' + student.name + '</span></div>';
+      h += '<section class="wb-student-card"><div class="wb-student-h"><span class="wb-student-name">' + student.name + '</span></div>';
       for (var t = 0; t < student.targets.length; t++) {
         var target = student.targets[t];
         h += '<div class="wb-target"><div class="wb-target-name">' + target.school + ' · ' + target.major + '</div><div class="wb-target-package">' + target.packageName + '</div></div>';

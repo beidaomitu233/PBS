@@ -41,26 +41,26 @@
           </button>
           <div class="pbs-detail-topbar__copy">
             <h1>学生监控详情</h1>
-            <p>院校按邮件实际接收时间由近到远排列；选择院校后，邮件监控与官网监控联动展示。</p>
           </div>
         </div>
       </div>
 
-      <section id="monitorStudentStrip" class="student-strip" aria-label="学生监控任务信息"></section>
+      <section class="monitor-detail-card" aria-label="学生院校监控详情">
+        <section id="monitorStudentStrip" class="student-strip" aria-label="学生监控任务信息"></section>
 
-      <section class="monitor-master-detail" aria-label="院校监控工作区">
-        <aside class="school-rail" aria-labelledby="schoolSectionTitle">
-          <div class="school-rail-head">
-            <div><h2 id="schoolSectionTitle">申请院校</h2><p>按最新邮件时间排序</p></div>
-            <span>6</span>
-          </div>
-          <div id="monitorSchoolGrid" class="school-list"></div>
-        </aside>
+        <section class="monitor-master-detail" aria-label="院校监控工作区">
+          <aside class="school-rail" aria-labelledby="schoolSectionTitle">
+            <div class="school-rail-head">
+              <div><h2 id="schoolSectionTitle">申请院校</h2><p>按最新邮件时间排序</p></div>
+              <span>6</span>
+            </div>
+            <div id="monitorSchoolGrid" class="school-list"></div>
+          </aside>
 
-        <div class="school-workspace">
-          <section id="monitorSchoolDetailHead" class="school-detail-head" aria-label="当前学校与状态设置"></section>
+          <div class="school-workspace">
+            <section id="monitorSchoolDetailHead" class="school-detail-head" aria-label="当前学校与状态设置"></section>
 
-          <section class="channel-grid" aria-label="当前学校独立监控内容">
+            <section class="channel-grid" aria-label="当前学校独立监控内容">
             <article class="channel-panel">
               <header class="channel-panel-head">
                 <div class="channel-title">
@@ -86,8 +86,9 @@
               </header>
               <div id="monitorOfficialBody" class="channel-body"></div>
             </article>
-          </section>
-        </div>
+            </section>
+          </div>
+        </section>
       </section>
     </main>
   </div>

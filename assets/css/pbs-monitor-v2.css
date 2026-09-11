@@ -77,8 +77,25 @@ body[data-monitor-page="detail"] .monitor-layout { height: calc(100vh - 64px); m
 .monitor-page-head.compact { align-items: center; margin-bottom: 10px; padding: 10px 12px; }
 .monitor-page-head.compact h1 { font-size: 20px; }
 .monitor-page-head.compact p { margin-top: 4px; }
-.detail-page .student-strip { margin-bottom: 12px; padding: 12px 16px; }
-.detail-page .student-avatar { width: 40px; height: 40px; }
+.monitor-detail-card {
+  display: flex;
+  min-height: 0;
+  flex: 1;
+  flex-direction: column;
+  padding: 14px;
+  border: 1px solid #dce5ef;
+  border-radius: 14px;
+  background: #fff;
+  box-shadow: 0 2px 10px rgba(15, 39, 66, .045);
+}
+.detail-page .student-strip {
+  margin: 0 0 14px;
+  padding: 0 4px 14px;
+  border: 0;
+  border-bottom: 1px solid #DCE5EF;
+  border-radius: 0;
+  background: transparent;
+}
 .monitor-master-detail { display: grid; height: auto; min-height: 0; flex: 1; grid-template-columns: 252px minmax(0, 1fr); gap: 14px; align-items: stretch; }
 .school-rail { display: flex; height: 100%; min-height: 0; overflow: hidden; flex-direction: column; border: 1px solid #dce5ef; border-radius: 14px; background: #fff; }
 .school-rail-head { display: flex; align-items: center; justify-content: space-between; padding: 15px 16px 12px; border-bottom: 1px solid #e8eef5; }
@@ -99,7 +116,14 @@ body[data-monitor-page="detail"] .monitor-layout { height: calc(100vh - 64px); m
 .school-nav-meta span + span::before { content: "·"; margin-right: 6px; color: #cbd5e1; }
 .school-handling-status { background: transparent !important; font-weight: 700; }
 .school-workspace { display: flex; min-width: 0; min-height: 0; flex-direction: column; }
-.school-workspace .school-detail-head { margin-bottom: 10px; padding: 13px 15px; }
+.school-workspace .school-detail-head {
+  margin-bottom: 10px;
+  padding: 5px 2px 13px;
+  border: 0;
+  border-bottom: 1px solid #DCE5EF;
+  border-radius: 0;
+  background: transparent;
+}
 .school-focus-title { min-width: 0; }
 .school-focus-title p { overflow: hidden; max-width: 390px; text-overflow: ellipsis; white-space: nowrap; }
 

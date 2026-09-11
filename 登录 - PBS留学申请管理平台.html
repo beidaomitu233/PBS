@@ -221,7 +221,7 @@
         <div class="absolute inset-0 flex items-center"><div class="w-full border-t border-gray-300"></div></div>
         <div class="relative flex justify-center text-sm"><span class="px-2 bg-white text-gray-500">演示账号 · 点击一键登录（密码统一 pbs123456）</span></div>
       </div>
-      <div class="mt-4 grid grid-cols-3 gap-2.5" id="quickLoginGrid"><button type="button" onclick="quickLogin(&#39;test&#39;)" class="flex items-center gap-2.5 p-2.5 border border-gray-200 rounded-xl hover:border-blue-400 hover:bg-blue-50 hover:shadow-sm transition-all text-left group"><div class="w-9 h-9 bg-gradient-to-br from-yellow-500 to-amber-600 rounded-full flex items-center justify-center flex-shrink-0 shadow-sm"><span class="text-white text-sm font-medium">测</span></div><div class="min-w-0"><p class="text-sm font-semibold text-gray-800 truncate group-hover:text-blue-700">测试账号</p><p class="text-xs text-gray-500 truncate">超级管理员</p></div></button></div>
+      <div class="mt-4 grid grid-cols-3 gap-2.5" id="quickLoginGrid"><button type="button" onclick="quickLogin(&#39;test&#39;)" class="flex items-center p-2.5 border border-gray-200 rounded-xl hover:border-blue-400 hover:bg-blue-50 hover:shadow-sm transition-all text-left group"><div class="min-w-0"><p class="text-sm font-semibold text-gray-800 truncate group-hover:text-blue-700">测试账号</p><p class="text-xs text-gray-500 truncate">超级管理员</p></div></button></div>
     </div>
 
     <!-- 底部版权 -->
@@ -490,9 +490,7 @@
       var html = '';
       PBS_ACCOUNTS.forEach(function (a) {
         html += '<button type="button" onclick="quickLogin(\'' + a.u + '\')" ' +
-          'class="flex items-center gap-2.5 p-2.5 border border-gray-200 rounded-xl hover:border-blue-400 hover:bg-blue-50 hover:shadow-sm transition-all text-left group">' +
-          '<div class="w-9 h-9 bg-gradient-to-br ' + ROLE_COLORS[a.role] + ' rounded-full flex items-center justify-center flex-shrink-0 shadow-sm">' +
-          '<span class="text-white text-sm font-medium">' + a.name.charAt(0) + '</span></div>' +
+          'class="flex items-center p-2.5 border border-gray-200 rounded-xl hover:border-blue-400 hover:bg-blue-50 hover:shadow-sm transition-all text-left group">' +
           '<div class="min-w-0"><p class="text-sm font-semibold text-gray-800 truncate group-hover:text-blue-700">' + a.name + '</p>' +
           '<p class="text-xs text-gray-500 truncate">' + a.role + '</p></div></button>';
       });

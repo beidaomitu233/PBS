@@ -231,9 +231,8 @@
 
   function renderStudentStrip() {
     var task = currentTask();
-    var initial = task.student ? task.student.charAt(0) : '学';
     document.getElementById('monitorStudentStrip').innerHTML =
-      '<div class="student-strip-main"><div class="student-avatar">' + esc(initial) + '</div><div><h2>' + esc(task.student) + '</h2><p>客户：' + esc(task.customer) + '　负责人：' + esc(task.owner) + '</p></div></div>' +
+      '<div class="student-strip-main"><div><h2>' + esc(task.student) + '</h2><p>客户：' + esc(task.customer) + '　负责人：' + esc(task.owner) + '</p></div></div>' +
       '<div class="student-strip-meta"><div><span>申请项目</span><strong>' + esc(task.project) + '</strong></div><div><span>院校数量</span><strong>' + schoolData.length + ' 所</strong></div><div><span>最后汇总</span><strong>' + esc(task.lastSync) + '</strong></div></div>';
   }
 

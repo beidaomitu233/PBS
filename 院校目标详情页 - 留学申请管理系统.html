@@ -1102,8 +1102,7 @@
         var div = document.createElement('div');
         div.className = 'px-3 py-2 hover:bg-blue-50 cursor-pointer text-sm flex items-center gap-3' + (isSel ? ' bg-blue-50' : '');
         div.setAttribute('onclick', "selectPerson('" + key + "', '" + p.name + "')");
-        div.innerHTML = '<div class="w-8 h-8 bg-gradient-to-br ' + p.color + ' rounded-full flex items-center justify-center flex-shrink-0"><span class="text-white text-xs font-medium">' + p.name.charAt(0) + '</span></div>' +
-          '<div class="flex-1"><p class="font-medium text-gray-900">' + p.name + '</p><p class="text-xs text-gray-500">' + p.role + '</p></div>' +
+        div.innerHTML = '<div class="flex-1"><p class="font-medium text-gray-900">' + p.name + '</p><p class="text-xs text-gray-500">' + p.role + '</p></div>' +
           (isSel ? '<svg class="w-4 h-4 text-blue-600 flex-shrink-0" fill="currentColor" viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z"/></svg>' : '');
         list.appendChild(div);
       });

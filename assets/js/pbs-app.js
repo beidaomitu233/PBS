@@ -1052,7 +1052,7 @@
     return f;
   }
 
-  var FLOW_MENU_ORDER = ['pmo', 'project', 'doc', 'review', 'apply', 'monitor', 'archive', 'school', 'organization', 'personnel', 'usermgmt'];
+  var NAV_MENU_ORDER = ['student', 'pmo', 'project', 'doc', 'review', 'apply', 'monitor', 'archive', 'school', 'organization', 'personnel', 'usermgmt'];
   var NAV_ACTIVE_FILES = {
     '学生档案列表页 - 留学申请管理系统.html': ['学生档案列表页 - 留学申请管理系统.html', '学生档案详情页 - 留学申请管理系统.html'],
     '项目池列表页 - 留学申请管理系统.html': ['项目池列表页 - 留学申请管理系统.html', '项目详情页 - 留学申请管理系统.html'],
@@ -1074,6 +1074,21 @@
     return new URLSearchParams(location.search).get('view') === 'workbench' || location.hash === '#workbench';
   }
 
+  function navChildState(child, file, workbenchView) {
+    var target = child.href || child.file;
+    var activeFiles = NAV_ACTIVE_FILES[child.file] || [child.file];
+    var active = !workbenchView && activeFiles.indexOf(file) >= 0;
+    if (child.href && child.href.indexOf('?mode=catalog') >= 0) {
+      active = active && new URLSearchParams(location.search).get('mode') === 'catalog';
+    }
+    return { child: child, target: target, active: active };
+  }
+
+  function renderPrimaryNavLink(target, label, icon, active) {
+    return '<a href="' + encodeURI(target) + '" class="pbs-nav-item ' + (active ? 'is-active' : '') + '">' +
+      svgIcon(ICONS[icon], 'pbs-nav-icon') + '<span>' + label + '</span></a>';
+  }
+
   function renderRoleNavigation(session, file, workbenchHref, showWorkbench) {
     var role = session.role;
     var accessRoles = session.previewRole && session.previewRole !== 'all'
@@ -1084,21 +1099,12 @@
     var workbenchTarget = hrefFile(workbenchHref);
     var workbenchView = isWorkbenchRequest();
     var workbenchActive = file === workbenchTarget && (workbenchHref.indexOf('workbench') < 0 || workbenchView);
-    var html = '<nav class="p-4 flex-1 pbs-pm-navigation">';
+    var html = '<nav class="pbs-nav" aria-label="主导航">';
     if (showWorkbench !== false) {
-      html += '<a href="' + encodeURI(workbenchHref) + '" class="pbs-pm-primary-link ' + (workbenchActive ? 'is-active' : '') + '">' + svgIcon(ICONS.home, 'w-5 h-5') + '<span>工作台</span></a>';
+      html += renderPrimaryNavLink(workbenchHref, '工作台', 'home', workbenchActive);
     }
 
-    var studentMenu = menuMap.student;
-    if (studentMenu && roleCanAccess(accessRoles, studentMenu.roles) && sessionHasPermission(session, studentMenu.permission)) {
-      var studentTarget = studentMenu.children[0].file;
-      var studentActive = !workbenchView && NAV_ACTIVE_FILES[studentTarget].indexOf(file) >= 0;
-      html += '<a href="' + encodeURI(studentTarget) + '" class="pbs-pm-primary-link ' + (studentActive ? 'is-active' : '') + '">' + svgIcon(ICONS.idcard, 'w-5 h-5') + '<span>学生档案</span></a>';
-    }
-
-    html += '<p class="pbs-pm-flow-caption">业务功能流程</p><div class="pbs-pm-flow">';
-    var stepNumber = 0;
-    FLOW_MENU_ORDER.forEach(function(key) {
+    NAV_MENU_ORDER.forEach(function(key) {
       var menu = menuMap[key];
       if (!menu || !roleCanAccess(accessRoles, menu.roles) || !sessionHasPermission(session, menu.permission)) return;
       var target = menu.file || '';
@@ -1108,33 +1114,52 @@
       });
       if (!menu.single && !children.length) return;
 
-      stepNumber += 1;
       if (menu.single) {
         var singleActive = !workbenchView && file === hrefFile(target);
-        html += '<div class="pbs-pm-flow-step ' + (singleActive ? 'is-active' : '') + '">' +
-          '<a href="' + encodeURI(target) + '" class="pbs-pm-flow-heading"><span class="pbs-pm-flow-number">' + stepNumber + '</span><span>' + menu.label + '</span></a></div>';
+        html += renderPrimaryNavLink(target, menu.label, menu.icon, singleActive);
         return;
       }
 
       var childStates = children.map(function(child) {
-        var childTarget = child.href || child.file;
-        var activeFiles = NAV_ACTIVE_FILES[child.file] || [child.file];
-        var active = !workbenchView && activeFiles.indexOf(file) >= 0;
-        if (child.href && child.href.indexOf('?mode=catalog') >= 0) {
-          active = active && new URLSearchParams(location.search).get('mode') === 'catalog';
-        }
-        return { child: child, target: childTarget, active: active };
+        return navChildState(child, file, workbenchView);
       });
+
+      /* 当前角色仅能看到一个子菜单时，直接提升为一级入口。 */
+      if (childStates.length === 1) {
+        html += renderPrimaryNavLink(childStates[0].target, childStates[0].child.label, menu.icon, childStates[0].active);
+        return;
+      }
+
       var groupActive = childStates.some(function(state) { return state.active; });
-      html += '<div class="pbs-pm-flow-step ' + (groupActive ? 'is-active' : '') + '">' +
-        '<div class="pbs-pm-flow-heading"><span class="pbs-pm-flow-number">' + stepNumber + '</span><span>' + menu.label + '</span></div>' +
-        '<div class="pbs-pm-flow-children">';
+      var panelId = 'pbs-nav-children-' + menu.key;
+      html += '<div class="pbs-nav-group ' + (groupActive ? 'is-open is-active' : '') + '">' +
+        '<button type="button" class="pbs-nav-group-trigger" aria-expanded="' + (groupActive ? 'true' : 'false') + '" aria-controls="' + panelId + '">' +
+          svgIcon(ICONS[menu.icon], 'pbs-nav-icon') + '<span>' + menu.label + '</span>' +
+          svgIcon('M19 9l-7 7-7-7', 'pbs-nav-chevron') + '</button>' +
+        '<div id="' + panelId + '" class="pbs-nav-children"' + (groupActive ? '' : ' hidden') + '>';
       childStates.forEach(function(state) {
-        html += '<a href="' + encodeURI(state.target) + '" class="pbs-pm-flow-link ' + (state.active ? 'is-active' : '') + '">' + state.child.label + '</a>';
+        html += '<a href="' + encodeURI(state.target) + '" class="pbs-nav-child ' + (state.active ? 'is-active' : '') + '">' + state.child.label + '</a>';
       });
       html += '</div></div>';
     });
-    return html + '</div></nav>';
+    return html + '</nav>';
+  }
+
+  function initSidebarNavigation(aside) {
+    var triggers = aside.querySelectorAll('.pbs-nav-group-trigger');
+    Array.prototype.forEach.call(triggers, function(trigger) {
+      trigger.addEventListener('click', function() {
+        var willOpen = trigger.getAttribute('aria-expanded') !== 'true';
+        Array.prototype.forEach.call(triggers, function(item) {
+          var group = item.parentNode;
+          var panel = document.getElementById(item.getAttribute('aria-controls'));
+          var open = item === trigger && willOpen;
+          item.setAttribute('aria-expanded', open ? 'true' : 'false');
+          group.classList.toggle('is-open', open);
+          if (panel) panel.hidden = !open;
+        });
+      });
+    });
   }
 
   function renderSidebar(session, file) {
@@ -1145,13 +1170,11 @@
 
     var html = renderRoleNavigation(session, file, workbenchFile, workbenchVisible(session));
     html += '<div class="p-4 border-t border-gray-100">' +
-      '<div class="flex items-center gap-3 px-3 py-3 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl">' +
-      '<div class="w-9 h-9 bg-gradient-to-br from-blue-500 to-purple-500 rounded-full flex items-center justify-center flex-shrink-0">' +
-      '<span class="text-white text-sm font-medium">' + session.name.charAt(0) + '</span></div>' +
-      '<div class="min-w-0"><p class="text-sm font-semibold text-gray-800 truncate">' + session.name + '</p>' +
-      '<p class="text-xs text-blue-600 truncate">' + (session.previewLabel || session.role) + '</p></div></div></div>';
+      '<div class="pbs-sidebar-account"><p class="text-sm font-semibold text-gray-800 truncate">' + session.name + '</p>' +
+      '<p class="text-xs text-gray-500 truncate mt-1">' + (session.previewLabel || session.role) + '</p></div></div>';
     aside.innerHTML = html;
     if (aside.className.indexOf('flex') < 0) { aside.className += ' flex flex-col'; }
+    initSidebarNavigation(aside);
   }
 
   /* ---------------- 顶栏用户区 ---------------- */
@@ -1212,24 +1235,22 @@
     if (!header) return;
     renderRoleSwitcher(header, session);
 
-    /* 用户头像（header内最后一个不在用户菜单里的.rounded-full span） */
+    /* 优先使用标准用户区；兼容旧页面时通过原头像定位容器并移除头像。 */
+    var userArea = document.getElementById('userMenuContainer');
     var avatarSpans = header.querySelectorAll('.rounded-full span');
     var avatarSpan = null;
     for (var i = avatarSpans.length - 1; i >= 0; i--) {
       if (!avatarSpans[i].closest('#userMenu')) { avatarSpan = avatarSpans[i]; break; }
     }
-    if (!avatarSpan) return;
-    avatarSpan.textContent = session.name.charAt(0);
-
-    /* 用户区容器 = 头像的祖父元素 */
-    var userArea = avatarSpan.parentElement && avatarSpan.parentElement.parentElement;
+    if (!userArea && avatarSpan) userArea = avatarSpan.parentElement && avatarSpan.parentElement.parentElement;
     if (!userArea) return;
+    if (avatarSpan && avatarSpan.parentElement) avatarSpan.parentElement.remove();
+    userArea.classList.add('pbs-user-area');
 
     /* 用户区文本行（排除头像字母、用户菜单内容、徽章） */
     var texts = [];
     userArea.querySelectorAll('p, span').forEach(function (el) {
       if (el.children.length) return;
-      if (el === avatarSpan) return;
       if (el.closest('#userMenu')) return;
       if (el.classList.contains('pbs-role-badge')) return;
       if (!el.textContent.trim()) return;
@@ -1248,7 +1269,7 @@
     var badgeStyle = ROLE_BADGE_STYLES[roleLabel] || 'bg-blue-50 text-blue-700';
     if (!badge) {
       badge = document.createElement('span');
-      userArea.insertBefore(badge, avatarSpan.parentElement);
+      userArea.insertBefore(badge, userArea.firstChild);
     }
 
     badge.className = 'pbs-role-badge hidden sm:inline-block text-xs px-2.5 py-1 rounded-full font-medium ' + badgeStyle;
@@ -1272,12 +1293,13 @@
         roleLine.className = 'pbs-menu-role text-xs mt-0.5 ' + (ROLE_BADGE_STYLES[roleLabel] || 'bg-blue-50 text-blue-700').replace(/bg-(\w+)-50/, 'text-$1');
         roleLine.textContent = subTitle;
       }
-      var av = menu.querySelector('.w-10.h-10 span');
-      if (av) av.textContent = session.name.charAt(0);
+      var menuAvatar = menu.querySelector('.w-10.h-10.rounded-full');
+      if (menuAvatar) menuAvatar.remove();
       ensureSystemSettingsMenuItem(menu);
     } else {
       injectUserMenu(userArea, session);
     }
+    bindUserMenuToggle(userArea);
   }
 
   /* 注入标准用户菜单（下拉） */
@@ -1288,12 +1310,9 @@
     menu.id = 'userMenu';
     menu.className = 'absolute top-12 right-0 w-64 bg-white rounded-xl shadow-lg border border-gray-100 py-3 hidden z-50';
     menu.innerHTML =
-      '<div class="px-5 py-3 border-b border-gray-100"><div class="flex items-center gap-3">' +
-      '<div class="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-500 rounded-full flex items-center justify-center">' +
-      '<span class="text-white text-base font-medium">' + session.name.charAt(0) + '</span></div>' +
-      '<div><p class="text-sm font-semibold text-gray-900">' + session.name + '</p>' +
+      '<div class="px-5 py-3 border-b border-gray-100"><div><p class="text-sm font-semibold text-gray-900">' + session.name + '</p>' +
       '<p class="text-xs text-blue-600 mt-0.5">' + (session.previewLabel || session.role) + (session.org ? ' · ' + session.org : '') + '</p>' +
-      '<p class="text-xs text-gray-500">' + (session.email || '') + '</p></div></div></div>' +
+      '<p class="text-xs text-gray-500">' + (session.email || '') + '</p></div></div>' +
       '<div class="py-1">' +
       '<a href="#" class="flex items-center gap-3 px-5 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition-colors">' +
       '<svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>个人设置</a>' +
@@ -1305,7 +1324,17 @@
       '<svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path></svg>退出登录</a></div>' +
       '<div class="px-5 py-2 border-t border-gray-100"><p class="text-xs text-gray-400">PBS留学CRM v2.5</p></div>';
     userArea.appendChild(menu);
+  }
+
+  function bindUserMenuToggle(userArea) {
+    if (!userArea || userArea.dataset.pbsUserMenuBound === 'true') return;
+    var menu = userArea.querySelector('#userMenu') || document.getElementById('userMenu');
+    if (!menu) return;
+    userArea.dataset.pbsUserMenuBound = 'true';
+    userArea.style.position = 'relative';
+    userArea.style.cursor = 'pointer';
     userArea.addEventListener('click', function (e) {
+      if (e.target.closest('#userMenu a, #userMenu button')) return;
       e.stopPropagation();
       menu.classList.toggle('hidden');
     });
@@ -2400,6 +2429,309 @@
     (document.body || document.documentElement).appendChild(el);
   }
 
+  /* ---------------- 一级列表页：标题与筛选统一 ---------------- */
+  var FILTER_PAGE_CONTROLS = {
+    '学生档案列表页 - 留学申请管理系统.html': '#flt-kw',
+    '项目池列表页 - 留学申请管理系统.html': '#flt-kw',
+    '我的项目列表页 - 留学申请管理系统.html': '#flt-kw',
+    '任务列表页 - 文书交付系统.html': '#flt-kw',
+    '模板库列表 - 文书交付系统.html': '[data-dom-id="filter-type"]',
+    '案例库 - 文书交付系统.html': '#flt-kw',
+    '文书审核列表页 - 留学申请管理系统.html': '#flt-kw',
+    '网申任务列表页 - 留学申请管理系统.html': '#flt-kw',
+    '网申模板库 - 留学申请管理系统.html': '#templateKeyword',
+    '监控任务列表 - PBS留学CRM.html': '#monitorKeyword',
+    '结项归档列表 - PBS留学CRM系统.html': '#flt-kw',
+    '选校订单池页 - 留学申请管理系统.html': '#flt-kw',
+    '选校任务列表页 - 留学申请管理系统.html': '#flt-kw',
+    '用户管理 - 留学申请管理系统.html': '#flt-kw',
+    '人员管理 - PBS留学CRM系统.html': '#flt-kw',
+    '操作日志审计 - 留学申请管理系统.html': '#flt-kw'
+  };
+
+  function closestFilterCard(control) {
+    return control ? control.closest('.bg-white.rounded-xl, .card, .monitor-filter') : null;
+  }
+
+  function findFilterField(control, card) {
+    var node = control ? control.parentElement : null;
+    while (node && node !== card) {
+      if (node.querySelector('label') && node.querySelector('input:not([type="hidden"]), select')) return node;
+      node = node.parentElement;
+    }
+    return null;
+  }
+
+  function isFilterField(node) {
+    return !!(node && node.querySelector && node.querySelector('label') &&
+      node.querySelector('input:not([type="hidden"]), select'));
+  }
+
+  function filterFieldIsSearch(node) {
+    var label = node.querySelector('label');
+    var input = node.querySelector('input[type="text"], input[type="search"]');
+    var text = ((label && label.textContent) || '') + ' ' + ((input && input.placeholder) || '');
+    return !!input && /关键词|搜索/.test(text);
+  }
+
+  function syncFilterSelect(select) {
+    var group = select.parentElement.querySelector('.pbs-filter-options');
+    if (!group) return;
+    Array.prototype.forEach.call(group.querySelectorAll('.pbs-filter-option'), function(button) {
+      var selected = button.getAttribute('data-value') === select.value;
+      button.classList.toggle('is-selected', selected);
+      button.setAttribute('aria-pressed', selected ? 'true' : 'false');
+    });
+  }
+
+  function enhanceFilterSelect(select, label) {
+    if (!select || select.disabled || select.classList.contains('pbs-filter-native-select') || select.options.length < 2) return;
+    var group = document.createElement('div');
+    group.className = 'pbs-filter-options';
+    group.setAttribute('role', 'group');
+    group.setAttribute('aria-label', label || '筛选选项');
+    Array.prototype.forEach.call(select.options, function(option) {
+      var button = document.createElement('button');
+      button.type = 'button';
+      button.className = 'pbs-filter-option';
+      button.textContent = option.textContent;
+      button.setAttribute('data-value', option.value);
+      button.addEventListener('click', function() {
+        select.value = option.value;
+        syncFilterSelect(select);
+        select.dispatchEvent(new Event('change', { bubbles: true }));
+      });
+      group.appendChild(button);
+    });
+    select.classList.add('pbs-filter-native-select');
+    select.setAttribute('aria-hidden', 'true');
+    select.tabIndex = -1;
+    select.parentNode.insertBefore(group, select.nextSibling);
+    syncFilterSelect(select);
+  }
+
+  function collectFilterButtons(card, rowsContainer, fieldRows) {
+    var buttons = [];
+    var fieldSet = fieldRows.slice();
+    Array.prototype.forEach.call(Array.prototype.slice.call(rowsContainer.children), function(child) {
+      if (fieldSet.indexOf(child) >= 0) return;
+      if (child.tagName === 'BUTTON') buttons.push(child);
+      else if (child.querySelector && !child.querySelector('label')) {
+        Array.prototype.forEach.call(child.querySelectorAll('button'), function(button) { buttons.push(button); });
+      }
+    });
+    var sibling = rowsContainer.nextElementSibling;
+    if (sibling && !sibling.querySelector('table') && sibling.querySelector('button')) {
+      Array.prototype.forEach.call(sibling.querySelectorAll('button'), function(button) { buttons.push(button); });
+    }
+    return buttons;
+  }
+
+  function enhanceFilterCard(card, firstControl) {
+    var firstField = findFilterField(firstControl, card);
+    if (!firstField) return;
+    var rowsContainer = firstField.parentElement;
+    var fieldRows = Array.prototype.filter.call(rowsContainer.children, isFilterField);
+    if (!fieldRows.length) return;
+
+    var searchRow = fieldRows.filter(filterFieldIsSearch)[0];
+    if (searchRow && searchRow !== rowsContainer.firstElementChild) rowsContainer.insertBefore(searchRow, rowsContainer.firstElementChild);
+    fieldRows = Array.prototype.filter.call(rowsContainer.children, isFilterField);
+
+    var buttons = collectFilterButtons(card, rowsContainer, fieldRows);
+    if (rowsContainer === card) {
+      var rowWrap = document.createElement('div');
+      rowWrap.className = 'pbs-filter-rows';
+      card.insertBefore(rowWrap, fieldRows[0]);
+      fieldRows.forEach(function(row) { rowWrap.appendChild(row); });
+      rowsContainer = rowWrap;
+    } else {
+      rowsContainer.classList.add('pbs-filter-rows');
+    }
+
+    var visibleIndex = 0;
+    fieldRows.forEach(function(row) {
+      row.classList.add('pbs-filter-row');
+      var label = row.querySelector('label');
+      Array.prototype.forEach.call(row.querySelectorAll('select'), function(select) {
+        enhanceFilterSelect(select, label ? label.textContent.trim() : '筛选选项');
+      });
+      if (!row.classList.contains('hidden')) {
+        if (visibleIndex >= 2) {
+          row.classList.add('pbs-filter-extra');
+          row.hidden = true;
+        }
+        visibleIndex += 1;
+      }
+    });
+
+    var oldButtonParents = [];
+    buttons.forEach(function(button) {
+      if (button.parentElement && button.parentElement !== rowsContainer && oldButtonParents.indexOf(button.parentElement) < 0) {
+        oldButtonParents.push(button.parentElement);
+      }
+    });
+    var footer = document.createElement('div');
+    footer.className = 'pbs-filter-footer';
+    if (visibleIndex > 2) {
+      var toggle = document.createElement('button');
+      toggle.type = 'button';
+      toggle.className = 'pbs-filter-toggle';
+      toggle.setAttribute('aria-expanded', 'false');
+      toggle.innerHTML = '<span>展开筛选</span><span class="pbs-filter-toggle-icon">⌄</span>';
+      toggle.addEventListener('click', function() {
+        var expanded = toggle.getAttribute('aria-expanded') === 'true';
+        toggle.setAttribute('aria-expanded', expanded ? 'false' : 'true');
+        toggle.querySelector('span').textContent = expanded ? '展开筛选' : '收起筛选';
+        Array.prototype.forEach.call(rowsContainer.querySelectorAll('.pbs-filter-extra'), function(row) { row.hidden = expanded; });
+      });
+      footer.appendChild(toggle);
+    } else {
+      footer.appendChild(document.createElement('span'));
+    }
+    if (buttons.length) {
+      var actions = document.createElement('div');
+      actions.className = 'pbs-filter-actions';
+      buttons.forEach(function(button) { actions.appendChild(button); });
+      footer.appendChild(actions);
+    }
+    oldButtonParents.forEach(function(parent) { if (!parent.children.length) parent.remove(); });
+    card.appendChild(footer);
+    buttons.forEach(function(button) {
+      if (/重置/.test(button.textContent || '')) {
+        button.addEventListener('click', function() {
+          setTimeout(function() {
+            Array.prototype.forEach.call(card.querySelectorAll('.pbs-filter-native-select'), syncFilterSelect);
+          }, 0);
+        });
+      }
+    });
+  }
+
+  function findListInfoBar(main, card) {
+    var candidates = Array.prototype.filter.call(main.children, function(child) {
+      if (child === card || !child.querySelector) return false;
+      var heading = child.querySelector('h2');
+      var next = child.nextElementSibling;
+      return !!(heading && next && next.querySelector && next.querySelector('table'));
+    });
+    return candidates[0] || null;
+  }
+
+  function mergeListTitleIntoFilter(main, card) {
+    var title = main.querySelector('h1');
+    if (!title) return;
+    var listInfoBar = findListInfoBar(main, card);
+    var listHeading = listInfoBar && listInfoBar.querySelector('h2');
+    if (listHeading && listHeading.textContent.trim()) title.textContent = listHeading.textContent.trim();
+    var titleBar = title.closest('.pbs-detail-topbar');
+    if (!titleBar) {
+      titleBar = title.parentElement;
+      while (titleBar.parentElement && titleBar.parentElement !== main && titleBar.parentElement !== card.parentElement) {
+        titleBar = titleBar.parentElement;
+      }
+    }
+    if (!titleBar || titleBar === card || titleBar.contains(card)) return;
+    var titleLead = title.closest('.pbs-detail-topbar__main');
+    if (!titleLead || !titleBar.contains(titleLead)) {
+      titleLead = Array.prototype.filter.call(titleBar.children, function(child) { return child === title || child.contains(title); })[0] || title;
+    }
+    Array.prototype.forEach.call(titleLead.querySelectorAll ? titleLead.querySelectorAll('p') : [], function(desc) { desc.remove(); });
+
+    var titleActions = Array.prototype.filter.call(titleBar.children, function(child) { return child !== titleLead; });
+    var header = document.createElement('div');
+    header.className = 'pbs-filter-card-header';
+    var heading = document.createElement('div');
+    heading.className = 'pbs-filter-card-heading';
+    heading.appendChild(titleLead);
+    header.appendChild(heading);
+    if (titleActions.length) {
+      var actions = document.createElement('div');
+      actions.className = 'pbs-filter-card-actions';
+      titleActions.forEach(function(child) { actions.appendChild(child); });
+      header.appendChild(actions);
+    }
+    card.classList.add('pbs-filter-card');
+    titleBar.parentNode.insertBefore(card, titleBar);
+    card.insertBefore(header, card.firstChild);
+    titleBar.remove();
+    if (listInfoBar) listInfoBar.remove();
+  }
+
+  function enhanceListPage(file) {
+    var controlSelector = FILTER_PAGE_CONTROLS[file];
+    if (!controlSelector || document.getElementById('pbs-workbench-mount')) return;
+    var main = document.querySelector('main');
+    var control = main && main.querySelector(controlSelector);
+    var card = closestFilterCard(control);
+    if (!main || !control || !card) return;
+    enhanceFilterCard(card, control);
+    mergeListTitleIntoFilter(main, card);
+  }
+
+  function normalizeDisabledStatus(root) {
+    (root || document).querySelectorAll('span').forEach(function (item) {
+      var text = item.textContent.replace(/\s+/g, '');
+      var styledState = /(?:border|bg-|badge|status|rounded)/.test(item.className || '');
+      if ((text === '禁用' || text === '停用') && styledState) item.classList.add('pbs-status-disabled');
+    });
+  }
+
+  function removeTextAvatars(root) {
+    var scope = root || document;
+    scope.querySelectorAll('[id$="Avatar"], .wb-pm-avatar, .wb-student-avatar, .student-avatar, .pm-owner-avatar').forEach(function (item) {
+      if (!item.classList.contains('pbs-organization-avatar')) item.remove();
+    });
+    scope.querySelectorAll('.rounded-full.bg-gradient-to-br').forEach(function (item) {
+      if (!item.querySelector('img, svg') && item.textContent.trim()) item.remove();
+    });
+  }
+
+  function normalizeOutlinedColorControls(root) {
+    (root || document).querySelectorAll('button, a').forEach(function (item) {
+      var classes = item.className || '';
+      var coloredBorder = /border-(?:blue|red|orange|amber|yellow|green|emerald|purple|violet|pink|rose)-/.test(classes);
+      var coloredText = /text-(?:blue|red|orange|amber|yellow|green|emerald|purple|violet|pink|rose)-/.test(classes);
+      var lightSurface = /(?:bg-white|bg-transparent)/.test(classes);
+      if (coloredBorder && coloredText && lightSurface) item.classList.add('pbs-neutral-outline');
+    });
+  }
+
+  function compactDetailBackLabels(root) {
+    var labels = {
+      '返回我的项目列表': '项目列表',
+      '返回项目池列表': '项目列表',
+      '返回文书审核列表': '文书列表',
+      '返回文书任务列表': '文书列表',
+      '返回网申任务列表': '网申列表',
+      '返回监控任务列表': '监控列表',
+      '返回结项归档列表': '结项列表',
+      '返回学生档案列表': '学生列表',
+      '返回选校任务列表': '选校列表',
+      '返回模板库': '模板库',
+      '返回网申模板库': '模板库',
+      '返回项目详情': '项目详情'
+    };
+    (root || document).querySelectorAll('.pbs-detail-back').forEach(function (item) {
+      var fullLabel = item.getAttribute('aria-label') || item.getAttribute('title') || '返回';
+      item.dataset.backLabel = labels[fullLabel] || fullLabel.replace(/^返回/, '');
+    });
+  }
+
+  function ensureDetailSidebar(file) {
+    if (file.indexOf('详情') < 0 || document.getElementById('pbs-sidebar')) return;
+    var main = document.querySelector('body > main') || document.querySelector('main');
+    if (!main || main.closest('.pbs-detail-layout')) return;
+    var layout = document.createElement('div');
+    layout.className = 'pbs-detail-layout';
+    var sidebar = document.createElement('aside');
+    sidebar.id = 'pbs-sidebar';
+    sidebar.className = 'bg-white border-r border-gray-200 flex-shrink-0';
+    main.parentNode.insertBefore(layout, main);
+    layout.appendChild(sidebar);
+    layout.appendChild(main);
+  }
+
   /* ---------------- 启动 ---------------- */
   function boot() {
     var file = currentFile();
@@ -2438,11 +2770,17 @@
       setTimeout(function () { location.replace(ROLE_WORKBENCH[session.role]); }, 1200);
       return;
     }
+    ensureDetailSidebar(file);
     renderSidebar(session, file);
     bindHeader(session);
     mountRoleWorkbench(session, file);
     var w = PAGE_WIRING[file];
     if (w) { try { w(session); } catch (e) { console.error(e); } }
+    enhanceListPage(file);
+    normalizeDisabledStatus(document);
+    removeTextAvatars(document);
+    normalizeOutlinedColorControls(document);
+    compactDetailBackLabels(document);
     applyActionPermissions(session, file);
     observePermissionActions(session, file);
     initSystemIntroduction(session);
@@ -2453,6 +2791,14 @@
   } else {
     boot();
   }
+  document.addEventListener('click', function () {
+    setTimeout(function () {
+      normalizeDisabledStatus(document);
+      removeTextAvatars(document);
+      normalizeOutlinedColorControls(document);
+      compactDetailBackLabels(document);
+    }, 0);
+  });
 })();
 /* 列表筛选：关键词统一覆盖当前行全部可见文本字段。 */
 (function () {

@@ -80,6 +80,12 @@
       element.textContent = value == null ? '' : String(value);
       return element.innerHTML;
     }
+    function organizationAvatar(organization) {
+      if (organization.avatar) {
+        return '<span class="pbs-organization-avatar"><img src="' + escapeHtml(organization.avatar) + '" alt="' + escapeHtml(organization.name) + '机构头像"></span>';
+      }
+      return '<span class="pbs-organization-avatar" aria-label="' + escapeHtml(organization.name) + '机构头像">' + escapeHtml(organization.name.slice(0, 2)) + '</span>';
+    }
     function renderOrganizations() {
       var keyword = document.getElementById('organizationSearch').value.trim().toLowerCase();
       var rows = organizations.filter(function (organization) { return !keyword || organization.name.toLowerCase().indexOf(keyword) >= 0; });
@@ -90,7 +96,7 @@
       document.getElementById('organizationTableBody').innerHTML = rows.map(function (organization) {
         var count = memberCounts[organization.name] || 0;
         return '<tr class="hover:bg-gray-50 transition-colors">' +
-          '<td class="px-5 py-4 text-sm font-medium text-gray-900">' + escapeHtml(organization.name) + '</td>' +
+          '<td class="px-5 py-4 text-sm font-medium text-gray-900"><div class="pbs-organization-cell">' + organizationAvatar(organization) + '<span>' + escapeHtml(organization.name) + '</span></div></td>' +
           '<td class="px-5 py-4 text-sm text-gray-600">' + escapeHtml(organization.createdAt) + '</td>' +
           '<td class="px-5 py-4"><span class="inline-flex px-2.5 py-1 rounded-full text-xs font-medium ' + (count ? 'bg-blue-50 text-blue-700' : 'bg-gray-100 text-gray-500') + '">' + count + ' 人</span></td>' +
           '<td class="px-5 py-4"><button type="button" class="text-sm text-blue-600 hover:text-blue-800 font-medium" onclick="openOrganizationMembers(\'' + organization.id + '\')">查看成员</button></td>' +

@@ -590,6 +590,8 @@
           </p>
         </div>
         <div class="flex items-center gap-2">
+          <button class="flex items-center gap-1.5 px-3 py-1.5 text-xs bg-gray-100 text-gray-700 rounded-md hover:bg-gray-200 transition-colors" onclick="triggerReportLogoUpload()">替换 Logo</button>
+          <input type="file" id="reportLogoInput" accept="image/*" class="hidden" onchange="handleReportLogoSelect(this)">
           <button id="btnEditReport" class="flex items-center gap-1.5 px-3 py-1.5 text-xs bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors" onclick="toggleReportEdit()">
             <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
@@ -633,6 +635,8 @@
 
   <style>
     .report-doc { font-size: 14px; color: #1F2937; line-height: 1.8; }
+    .report-doc .report-logo { display:flex; justify-content:center; margin-bottom:12px; }
+    .report-doc .report-logo img { width:72px; height:72px; object-fit:contain; border-radius:14px; }
     .report-doc[contenteditable="true"] { outline: 2px dashed #B4C5D2; outline-offset: 4px; cursor: text; }
     .report-doc h1 { font-size: 20px; font-weight: 700; text-align: center; margin-bottom: 4px; color: #111827; }
     .report-doc .report-sub { text-align: center; font-size: 12px; color: #9CA3AF; margin-bottom: 20px; }
@@ -692,6 +696,7 @@
     var reportStore = {};          // 已生成报告 { id: {id,type,title,time,content,saved} }
     var currentReportId = null;    // 当前弹窗中的报告
     var closureDone = false;       // 是否已结项
+    var reportLogoSrc = './PRD参考文件/导航栏图标参考.jpg';
 
     function fmtTime(d) {
       return d.getFullYear() + '-' +
@@ -778,6 +783,10 @@
       return type === 'internal' ? buildInternalReportHtml(p) : buildClientReportHtml(p);
     }
 
+    function reportLogoHtml() {
+      return '<div class="report-logo"><img src="' + reportLogoSrc + '" alt="机构 Logo"></div>';
+    }
+
     // 对内《项目管理结项报告》
     function buildInternalReportHtml(p) {
       var admits = p.targets.filter(function(t){ return t.result === '录取'; });
@@ -803,7 +812,7 @@
         return '<tr><td>' + m.name + '</td><td>' + m.owner + '</td><td>' + m.ddl + '</td><td>' + m.done + '</td><td>' + m.note + '</td></tr>';
       }).join('');
 
-      var html = '';
+      var html = reportLogoHtml();
       html += '<h1>项目管理结项报告</h1>';
       html += '<p class="report-sub">对内归档文件 · 密级：内部公开</p>';
       html += '<table><tr><th style="width:16%">所属机构</th><td style="width:34%">上海荆意教育科技有限公司</td>' +
@@ -839,7 +848,7 @@
         return '<tr><td>' + t.school + '</td><td>' + t.major + '</td><td>学士 / Bachelor</td><td>4 年（2027年9月 至 2031年7月）</td></tr>';
       }).join('');
 
-      var html = '';
+      var html = reportLogoHtml();
       html += '<h1>申请录取结果<br><span style="font-size:14px;font-weight:500;color:#6B7280;">Admission Result</span></h1>';
       html += '<p class="report-sub">上海荆意教育科技有限公司 · 致客户正式文件</p>';
 
@@ -950,6 +959,26 @@
 
     function printReport() {
       window.print();
+    }
+
+    function triggerReportLogoUpload() {
+      if (!currentReportId) { alert('请先生成或打开一份报告'); return; }
+      document.getElementById('reportLogoInput').click();
+    }
+    function handleReportLogoSelect(input) {
+      if (!input.files || !input.files.length) return;
+      var file = input.files[0];
+      if (!/^image\//.test(file.type)) { alert('仅支持图片文件'); return; }
+      var reader = new FileReader();
+      reader.onload = function(e) {
+        reportLogoSrc = e.target.result;
+        var editor = document.getElementById('reportEditor');
+        var logo = editor.querySelector('.report-logo img');
+        if (logo) logo.src = reportLogoSrc;
+        document.getElementById('reportSavedTag').classList.add('hidden');
+      };
+      reader.readAsDataURL(file);
+      input.value = '';
     }
 
     // 插入Offer邮件图片到报告正文（插入到 Offer 邮件占位区，否则追加到文末）

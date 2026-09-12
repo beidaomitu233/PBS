@@ -59,7 +59,7 @@
     .doc-flow-table tr:last-child td { border-bottom: 0; }
     .mall-tag { display: inline-flex; align-items: center; gap: 2px; padding: 1px 6px; border-radius: 999px; background: #FFF7ED; color: #8C6F4E; font-size: 10px; font-weight: 600; border: 1px solid #F5EBDA; }
     .stage-iframe-note { font-size: 11px; color: #9A96A5; }
-    /* 板块视觉排序：项目概览 → 院校目标驾驶舱 → 学生资料（参考区） */
+    /* 板块视觉排序：项目概览 → 学生资料 → 院校目标驾驶舱 */
     main.p-6 { display: flex; flex-direction: column; }
     main.p-6 > * { width: 100%; }
     .school-assignment-badge { display:inline-flex; align-items:center; padding:6px 9px; border-radius:999px; background:#FFF7ED; color:#9A6B32; font-size:11px; font-weight:650; white-space:nowrap; }
@@ -67,13 +67,13 @@
     /* 项目总览：顶部操作、方向信息与关键 DDL 共用一张卡片 */
     .project-summary-card { overflow:hidden; border:1px solid #E2E8F0; border-radius:14px; background:#fff; box-shadow:0 2px 10px rgba(15,39,66,.045); }
     .project-summary-card .pbs-detail-topbar { margin:0; border:0; border-bottom:1px solid #E8EDF3; border-radius:0; box-shadow:none; }
-    .project-summary-content { display:grid; grid-template-columns:220px minmax(0,1fr); gap:18px; padding:14px; }
-    .project-overview-meta { display:grid; align-content:start; gap:12px; padding-right:18px; border-right:1px solid #E8EDF3; }
-    .project-overview-item { display:grid; gap:3px; }
+    .project-summary-content { display:block; padding:14px; }
+    .project-overview-meta { display:flex; align-items:center; gap:18px; margin-left:14px; padding-left:18px; border-left:1px solid #E8EDF3; }
+    .project-overview-item { display:grid; gap:2px; white-space:nowrap; }
     .project-overview-item span { color:#94A3B8; font-size:11px; }
     .project-overview-item strong { color:#1F2937; font-size:13px; font-weight:600; line-height:1.45; }
     .project-summary-ddl { min-width:0; }
-    .project-summary-content #projectTaskNoteBar { grid-column:1 / -1; }
+    .project-summary-content #projectTaskNoteBar { margin-top:12px; }
     .project-ddl-panel { grid-template-columns:104px minmax(0,1fr); padding:0; border:0; background:transparent; box-shadow:none; }
     .project-ddl-strip { grid-template-columns:repeat(3,minmax(0,1fr)); gap:8px; }
     .project-ddl-card { position:relative; padding:9px 11px; transition:border-color .18s ease,background .18s ease; }
@@ -82,7 +82,12 @@
     .project-ddl-primary strong { font-size:13px; }
     .project-ddl-more summary { margin-top:7px; cursor:pointer; font-size:10px; color:#6B829A; }
     .project-ddl-more div { display:grid; grid-template-columns:1fr auto; gap:3px 10px; margin-top:6px; padding-top:6px; border-top:1px solid #ECEEF1; font-size:10px; color:#77727F; }
-    @media (max-width:900px) { .project-summary-content{grid-template-columns:1fr}.project-overview-meta{grid-template-columns:repeat(2,minmax(0,1fr));padding:0 0 14px;border-right:0;border-bottom:1px solid #E8EDF3}.project-ddl-panel{grid-template-columns:1fr}.project-ddl-strip{grid-template-columns:1fr} }
+    .score-compare { display:grid; grid-template-columns:1fr 88px 88px; gap:8px; align-items:center; margin-bottom:14px; padding:10px 12px; border-radius:12px; background:#F8FAFC; font-size:12px; }
+    .score-compare__head { color:#94A3B8; font-size:11px; text-align:center; }
+    .score-compare__label { color:#64748B; }
+    .score-compare__value { color:#1F2937; font-weight:650; text-align:center; }
+    .material-inline-list > div + div { border-top:1px solid #F1F5F9; }
+    @media (max-width:900px) { .project-overview-meta{display:none}.project-ddl-panel{grid-template-columns:1fr}.project-ddl-strip{grid-template-columns:1fr} }
     /* 学生资料折叠区 */
     .student-profile-details summary::-webkit-details-marker { display: none; }
     .student-profile-details[open] .details-arrow { transform: rotate(180deg); }
@@ -156,9 +161,9 @@
 
     <!-- 主内容区 -->
     <main class="p-6">
-      <!-- 板块三：学生资料与学术背景（项目共用参考区，默认收起，点击展开） -->
-      <section class="order-3 mb-6">
-        <details class="student-profile-details bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden">
+      <!-- 板块二：学生资料与学术背景 -->
+      <section class="order-2 mb-6">
+        <details open class="student-profile-details bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden">
           <summary class="cursor-pointer px-5 py-4 flex items-center justify-between hover:bg-gray-50 transition-colors">
             <div class="flex items-center gap-3">
               <span class="w-9 h-9 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center flex-shrink-0">
@@ -212,6 +217,11 @@
               </span>
               语言成绩
             </h3>
+            <div class="score-compare" aria-label="语言成绩对比">
+              <span></span><span class="score-compare__head">本人填报</span><span class="score-compare__head">EV 系统</span>
+              <span class="score-compare__label">雅思</span><span class="score-compare__value">7.5</span><span class="score-compare__value">7.5</span>
+              <span class="score-compare__label">托福</span><span class="score-compare__value">105</span><span class="score-compare__value">105</span>
+            </div>
             <div class="space-y-4 text-sm">
               <div class="bg-gradient-to-br from-emerald-50 to-green-50 rounded-xl p-4 border border-emerald-100">
                 <div class="flex items-center justify-between mb-1">
@@ -275,6 +285,11 @@
             </span>
             学术成绩
           </h3>
+          <div class="score-compare" aria-label="学术成绩对比">
+            <span></span><span class="score-compare__head">本人填报</span><span class="score-compare__head">EV 系统</span>
+            <span class="score-compare__label">GPA</span><span class="score-compare__value">3.8 / 4.0</span><span class="score-compare__value">3.8 / 4.0</span>
+            <span class="score-compare__label">均分</span><span class="score-compare__value">89.6</span><span class="score-compare__value">89.6</span>
+          </div>
           <div class="space-y-3 text-sm">
             <p class="text-xs font-medium text-purple-600 uppercase tracking-wider">教育背景</p>
             <div class="flex items-center justify-between group"><span class="text-gray-400 flex items-center gap-1.5"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path></svg>就读学校（所在院系）</span><span class="text-gray-900 text-right">北京理工大学 · 计算机学院</span></div>
@@ -304,7 +319,7 @@
               <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
             </button>
             <div class="pbs-detail-topbar__copy">
-              <div class="flex items-center gap-2"><h1 id="myProjectTitle" class="pbs-detail-topbar__title">李雪 · 硕士申请</h1><span id="myProjectStateLabel" class="text-[11px] px-2 py-0.5 rounded-full bg-blue-50 text-blue-700 font-medium">交付中</span></div>
+              <div class="flex items-center gap-2"><h1 id="myProjectTitle" class="pbs-detail-topbar__title">李雪 · 硕士申请</h1><div class="project-overview-meta"><div class="project-overview-item"><span>申请方向</span><strong id="myProjectDirection">计算机科学 · 人工智能</strong></div><div class="project-overview-item"><span>院校目标</span><strong>2 个 · 推进中</strong></div></div><span id="myProjectStateLabel" class="text-[11px] px-2 py-0.5 rounded-full bg-blue-50 text-blue-700 font-medium">交付中</span></div>
               <p id="myProjectNo" class="pbs-detail-topbar__subtitle font-mono">PRJ20260701002</p>
             </div>
           </div>
@@ -322,10 +337,6 @@
           </div>
         </div>
         <div class="project-summary-content">
-          <div class="project-overview-meta">
-            <div class="project-overview-item"><span>申请方向</span><strong id="myProjectDirection">计算机科学 · 人工智能</strong></div>
-            <div class="project-overview-item"><span>院校目标</span><strong>2 个 · 推进中</strong></div>
-          </div>
           <div class="project-summary-ddl">
             <div class="pm-panel project-ddl-panel">
               <div class="project-ddl-heading"><h3>项目关键 DDL</h3><span id="schoolCockpitMeta"></span></div>
@@ -341,8 +352,8 @@
         </div>
       </section>
 
-      <!-- 板块二：院校目标驾驶舱 -->
-      <section id="schoolCockpitSection" class="order-2 mb-6">
+      <!-- 板块三：院校目标驾驶舱 -->
+      <section id="schoolCockpitSection" class="order-3 mb-6">
         <div class="project-cockpit-shell">
           <aside class="project-flow-rail">
             <p class="text-xs font-semibold text-gray-400 px-3 mb-2">院校申请流程</p>
@@ -795,9 +806,10 @@
             ['当前环节滞留时长', s.stageDurations.material]
           ],
           body: s.materialScanned
-            ? '<div class="project-action-card"><span class="project-action-icon">✓</span><div><p class="text-sm font-semibold text-gray-900">材料清单已生成</p><p class="text-xs text-gray-500 mt-1">' + s.materialScanInfo + ' · 与网申详情页申请材料清单一致</p></div><div class="flex gap-2 flex-wrap justify-end"><button class="px-4 py-2 text-sm font-medium text-blue-600 bg-blue-50 rounded-lg" onclick="openStudentAssetUpload()">上传学生档案文件</button><button class="px-4 py-2 text-sm font-medium text-amber-600 bg-amber-50 rounded-lg" onclick="openUrgeModal(\'材料准备\',\'' + (s.network.owner || '') + '\',\'材料清单\')">催办网申人员</button><button class="px-4 py-2 text-sm font-medium text-purple-600 bg-purple-50 rounded-lg" onclick="openMaterialModal()">查看材料清单</button></div></div>' +
+            ? '<div class="project-action-card"><span class="project-action-icon">✓</span><div><p class="text-sm font-semibold text-gray-900">材料清单已生成</p><p class="text-xs text-gray-500 mt-1">' + s.materialScanInfo + ' · 与网申详情页保持一致</p></div><div class="flex gap-2 flex-wrap justify-end"><button class="px-4 py-2 text-sm font-medium text-blue-600 bg-blue-50 rounded-lg" onclick="openStudentAssetUpload()">上传学生档案文件</button><button class="px-4 py-2 text-sm font-medium text-amber-600 bg-amber-50 rounded-lg" onclick="openUrgeModal(\'材料准备\',\'' + (s.network.owner || '') + '\',\'材料清单\')">催办网申人员</button></div></div>' +
+              '<section class="border border-gray-100 rounded-xl px-4 py-3 mb-4"><div class="flex items-center justify-between gap-3 mb-2"><h3 class="text-sm font-semibold text-gray-800">申请材料清单</h3><span class="text-xs font-medium ' + (materialStats.missing.length ? 'text-amber-600' : 'text-green-600') + '">' + materialStats.uploaded + ' / ' + materialStats.total + ' 已上传</span></div>' + renderInlineMaterials(s) + '</section>' +
               (materialStats.missing.length ? '<div class="project-action-card is-warning"><span class="project-action-icon">!</span><div><p class="text-sm font-semibold text-gray-900">缺失材料：' + materialStats.missing.map(function(item) { return item.name; }).join('、') + '</p><p class="text-xs text-gray-500 mt-1">' + s.materialIssue + '</p></div><span class="text-xs text-gray-400">待学生补充</span></div>' : '')
-            : '<div class="project-action-card is-warning"><span class="project-action-icon">!</span><div><p class="text-sm font-semibold text-gray-900">材料清单未生成</p><p class="text-xs text-gray-500 mt-1">网申人员尚未预扫描申请官网，清单无法生成；可先向学生档案补充文件</p></div><div class="flex gap-2 flex-wrap justify-end"><button class="px-4 py-2 text-sm font-medium text-blue-600 bg-blue-50 rounded-lg" onclick="openStudentAssetUpload()">上传学生档案文件</button><button class="px-4 py-2 text-sm font-medium text-white bg-amber-500 rounded-lg" onclick="openUrgeModal()">催办网申人员</button><button class="px-4 py-2 text-sm font-medium text-purple-600 bg-purple-50 rounded-lg" onclick="openMaterialModal()">查看材料清单</button></div></div>'
+            : '<div class="project-action-card is-warning"><span class="project-action-icon">!</span><div><p class="text-sm font-semibold text-gray-900">材料清单未生成</p><p class="text-xs text-gray-500 mt-1">网申人员尚未预扫描申请官网，清单无法生成；可先向学生档案补充文件</p></div><div class="flex gap-2 flex-wrap justify-end"><button class="px-4 py-2 text-sm font-medium text-blue-600 bg-blue-50 rounded-lg" onclick="openStudentAssetUpload()">上传学生档案文件</button><button class="px-4 py-2 text-sm font-medium text-white bg-amber-500 rounded-lg" onclick="openUrgeModal()">催办网申人员</button></div></div>'
         },
         essay: {
           kicker: s.name, title: '文书交付',
@@ -843,6 +855,12 @@
       };
       return views[stage];
     }
+    function renderInlineMaterials(s) {
+      if (!s.materialScanned) return '<p class="text-xs text-gray-500">网申人员预扫描申请官网后生成材料清单。</p>';
+      return '<div class="material-inline-list">' + s.materials.map(function(item) {
+        return '<div class="flex items-center justify-between gap-3 py-2"><div class="min-w-0"><p class="text-xs font-medium text-gray-800 truncate">' + item.name + '</p><p class="text-[11px] text-gray-400 mt-0.5 truncate">' + item.req + ' · ' + item.source + '</p></div><span class="text-xs font-medium ' + (item.uploaded ? 'text-green-600' : 'text-amber-600') + '">' + (item.uploaded ? '已上传' : '待补充') + '</span></div>';
+      }).join('') + '</div>';
+    }
     function renderApplyBody(s) {
       var n = s.network;
       var accountRows =
@@ -865,10 +883,8 @@
       var materialBlock =
         '<div class="border border-gray-100 rounded-xl p-4 h-full">' +
         '<div class="flex items-center justify-between gap-3 mb-3"><div><p class="text-sm font-semibold text-gray-800">申请材料准备</p><p class="text-[11px] text-gray-400 mt-0.5">与当前院校目标材料清单一致</p></div><span class="text-xs font-medium ' + (materialStats.missing.length ? 'text-amber-600' : 'text-green-600') + '">' + (s.materialScanned ? materialStats.uploaded + ' / ' + materialStats.total + ' 已上传' : '清单未生成') + '</span></div>' +
-        (s.materialScanned
-          ? '<div class="space-y-2"><div class="w-full h-2 bg-gray-100 rounded-full overflow-hidden"><div class="h-full bg-gradient-to-r from-green-500 to-emerald-500 rounded-full" style="width:' + (materialStats.total ? Math.round(materialStats.uploaded / materialStats.total * 100) : 0) + '%"></div></div><p class="text-xs text-gray-500">' + (materialStats.missing.length ? '仍缺：' + materialStats.missing.map(function(item) { return item.name; }).join('、') : '申请材料已齐备') + '</p></div>'
-          : '<p class="text-xs text-gray-500">网申人员预扫描申请官网后生成材料清单。</p>') +
-        '<button class="mt-3 text-xs font-medium text-purple-600" onclick="openMaterialModal()">查看申请材料清单 →</button></div>';
+        '<div class="w-full h-2 bg-gray-100 rounded-full overflow-hidden mb-2"><div class="h-full bg-gradient-to-r from-green-500 to-emerald-500 rounded-full" style="width:' + (materialStats.total ? Math.round(materialStats.uploaded / materialStats.total * 100) : 0) + '%"></div></div>' +
+        renderInlineMaterials(s) + '</div>';
       var pendingCard = n.owner ? ''
         : '<div class="project-action-card is-warning"><span class="project-action-icon">!</span><div><p class="text-sm font-semibold text-gray-900">申请账号待补充 · 网申人员待分配</p><p class="text-xs text-gray-500 mt-1">当前卡在项目经理：补充账号并分配网申人员后，网申人员可开始预扫描与字段核对</p></div><div class="flex gap-2"><button class="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg" onclick="openAssignDrawer()">分配人员</button><button class="px-4 py-2 text-sm font-medium text-purple-600 bg-purple-50 rounded-lg" onclick="location.href=\'学生档案详情页 - 留学申请管理系统.html\'">去补充账号</button></div></div>';
       var ownerBar = n.owner ? '<div class="flex items-center justify-between gap-4 border border-gray-100 rounded-xl px-4 py-3 mb-4"><div><p class="text-xs text-gray-400">网申负责人</p><p class="text-sm font-semibold text-gray-900 mt-0.5">' + n.owner + '</p></div><button class="px-3 py-2 text-xs font-medium text-amber-600 bg-amber-50 rounded-lg" onclick="openUrgeModal(\'网申提交\',\'' + n.owner + '\',\'网申任务\')">催办网申人员</button></div>' : '';
@@ -884,7 +900,12 @@
       }).join('') || '<div class="h-full flex items-center justify-center text-sm text-gray-400">暂无官网截图</div>';
       return '<div class="grid grid-cols-1 xl:grid-cols-2 gap-4">' +
         '<section class="border border-gray-200 rounded-xl overflow-hidden bg-white"><header class="flex items-center justify-between gap-4 px-5 py-4 border-b border-gray-100"><div><p class="text-base font-semibold text-gray-900">邮件监控</p><p class="text-xs text-gray-400 mt-1">按实际接收时间倒序</p></div><button class="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg" onclick="refreshMonitorEmail()">更新邮件</button></header><div class="monitor-scroll space-y-4 p-5">' + emailItems + '</div></section>' +
-        '<section class="border border-gray-200 rounded-xl overflow-hidden bg-white"><header class="flex items-center justify-between gap-4 px-5 py-4 border-b border-gray-100"><div><p class="text-base font-semibold text-gray-900">官网监控</p><p class="text-xs text-gray-400 mt-1">申请系统页面快照</p></div><button class="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg" onclick="document.getElementById(\'monitorScreenshotInput\').click()">上传截图</button><input id="monitorScreenshotInput" class="hidden" type="file" accept="image/*" onchange="handleMonitorScreenshot(this)"></header><div class="monitor-scroll space-y-4 p-5">' + shotItems + '</div></section></div>';
+        '<section class="border border-gray-200 rounded-xl overflow-hidden bg-white"><header class="flex items-center justify-between gap-4 px-5 py-4 border-b border-gray-100"><div><p class="text-base font-semibold text-gray-900">官网监控</p><p class="text-xs text-gray-400 mt-1">申请系统页面快照</p></div><div class="flex items-center gap-2"><button class="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200" onclick="openProjectOfficialSite()">查看官网</button><button class="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg" onclick="document.getElementById(\'monitorScreenshotInput\').click()">上传截图</button></div><input id="monitorScreenshotInput" class="hidden" type="file" accept="image/*" onchange="handleMonitorScreenshot(this)"></header><div class="monitor-scroll space-y-4 p-5">' + shotItems + '</div></section></div>';
+    }
+    function openProjectOfficialSite() {
+      var url = school().network.accountUrl;
+      if (!url || url === '—') { showPageToast('当前院校尚未配置申请官网'); return; }
+      window.open(url, '_blank', 'noopener');
     }
     function refreshMonitorEmail() {
       var s = school();

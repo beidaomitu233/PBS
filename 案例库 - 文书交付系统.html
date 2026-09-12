@@ -78,7 +78,7 @@
           </button>
           <button class="flex items-center gap-1.5 px-4 py-2 text-sm bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium" onclick="openUploadModal()">
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path></svg>
-            上传案例包
+            批量上传案例
           </button>
         </div>
       </div>
@@ -132,7 +132,7 @@
         <div class="flex items-end gap-2 flex-wrap">
           <div class="w-48 flex-none">
             <label class="block text-sm text-gray-600 mb-2">关键词搜索</label>
-            <input id="flt-kw" type="text" placeholder="搜索案例名称、来源学生、录取院校或上传人..." class="w-full h-10 px-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm">
+            <input id="flt-kw" type="text" placeholder="搜索案例名称、作者、来源学生或录取院校..." class="w-full h-10 px-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm">
           </div>
           <div>
             <label class="block text-sm text-gray-600 mb-2">文书类型</label>
@@ -165,7 +165,7 @@
               <option>已归档</option>
             </select>
           </div>
-          <div>
+          <div id="orgFilterField" class="hidden">
             <label class="block text-sm text-gray-600 mb-2">所属机构</label>
             <select id="flt-org" class="w-32 h-10 px-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm">
               <option value="">全部机构</option>
@@ -501,7 +501,7 @@
           <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path>
           </svg>
-          <h3 class="text-lg font-semibold text-gray-800">上传文书案例包</h3>
+          <h3 class="text-lg font-semibold text-gray-800">批量上传文书案例</h3>
           <span class="text-xs text-gray-400">批量上传过往文书，充实案例库，可用于 AI 解析生成模板</span>
         </div>
         <button class="p-1 text-gray-400 hover:text-gray-600" onclick="closeUploadModal()">
@@ -515,8 +515,13 @@
           <svg class="w-10 h-10 mx-auto text-gray-300 mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path>
           </svg>
-          <p class="text-sm font-medium text-gray-700">点击或拖拽上传文书案例包</p>
-          <p class="text-xs text-gray-400 mt-1.5">支持 .docx / .pdf / .zip 打包上传，单个文件不超过 50MB，单次最多 20 份文书</p>
+          <p class="text-sm font-medium text-gray-700">点击或拖拽上传文书案例</p>
+          <p class="text-xs text-gray-400 mt-1.5">支持 .docx / .pdf，可一次选择多份文书，单个文件不超过 50MB</p>
+        </div>
+
+        <div id="uploadOverallProgress" class="hidden mt-4 rounded-xl bg-gray-50 px-4 py-3" aria-live="polite">
+          <div class="flex items-center justify-between text-xs"><span id="uploadOverallLabel" class="font-medium text-gray-700">正在上传并解析</span><span id="uploadOverallPercent" class="text-blue-600">0%</span></div>
+          <div class="mt-2 h-2 w-full overflow-hidden rounded-full bg-gray-200"><div id="uploadOverallBar" class="h-full rounded-full bg-blue-600 transition-all" style="width:0%"></div></div>
         </div>
 
         <!-- 已上传文件列表（含批量信息补全） -->
@@ -541,7 +546,7 @@
                   </div>
                 </div>
                 <div class="flex items-center gap-2 flex-shrink-0">
-                  <span class="text-xs px-2 py-0.5 bg-green-50 text-green-600 rounded-full">已就绪</span>
+                  <span class="text-xs px-2 py-0.5 bg-green-50 text-green-600 rounded-full">已识别 PS</span>
                   <svg class="btn-remove-file w-4 h-4 text-gray-400 cursor-pointer hover:text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" onclick="removeUploadFile(this)"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
                 </div>
               </div>
@@ -569,7 +574,7 @@
                   </div>
                 </div>
                 <div class="flex items-center gap-2 flex-shrink-0">
-                  <span class="text-xs px-2 py-0.5 bg-green-50 text-green-600 rounded-full">已就绪</span>
+                  <span class="text-xs px-2 py-0.5 bg-green-50 text-green-600 rounded-full">已识别 CV</span>
                   <svg class="btn-remove-file w-4 h-4 text-gray-400 cursor-pointer hover:text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" onclick="removeUploadFile(this)"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
                 </div>
               </div>
@@ -596,7 +601,7 @@
                   </div>
                 </div>
                 <div class="flex items-center gap-2 flex-shrink-0">
-                  <span class="text-xs px-2 py-0.5 bg-green-50 text-green-600 rounded-full">已就绪</span>
+                  <span class="text-xs px-2 py-0.5 bg-green-50 text-green-600 rounded-full">已识别 推荐信</span>
                   <svg class="btn-remove-file w-4 h-4 text-gray-400 cursor-pointer hover:text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" onclick="removeUploadFile(this)"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
                 </div>
               </div>
@@ -910,10 +915,54 @@
     function confirmUpload() {
       var n = document.querySelectorAll('#upload-file-list .upload-file-item').length;
       if (n === 0) { showToast('请先上传至少 1 份文书案例'); return; }
-      closeUploadModal();
       var auto = document.getElementById('opt-auto-parse').checked;
-      showToast('已入库 ' + n + ' 份案例' + (auto ? '，AI 解析已自动开始' : ''));
+      var wrap = document.getElementById('uploadOverallProgress');
+      var bar = document.getElementById('uploadOverallBar');
+      var percent = document.getElementById('uploadOverallPercent');
+      var label = document.getElementById('uploadOverallLabel');
+      var value = 0;
+      wrap.classList.remove('hidden');
+      label.textContent = '正在处理 ' + n + ' 份文书';
+      bar.style.width = '0%';
+      percent.textContent = '0%';
+      var timer = setInterval(function() {
+        value = Math.min(100, value + 10);
+        bar.style.width = value + '%';
+        percent.textContent = value + '%';
+        if (value === 100) {
+          clearInterval(timer);
+          label.textContent = '全部文书处理完成';
+          setTimeout(function() {
+            closeUploadModal();
+            wrap.classList.add('hidden');
+            showToast('已入库 ' + n + ' 份案例' + (auto ? '，解析已完成' : ''));
+          }, 450);
+        }
+      }, 90);
     }
+
+    function enhanceAuthorColumn() {
+      var body = document.getElementById('caseTbody');
+      var table = body && body.closest('table');
+      if (!table || table.querySelector('[data-author-column]')) return;
+      var headRow = table.querySelector('thead tr');
+      var authorHead = document.createElement('th');
+      authorHead.setAttribute('data-author-column', 'true');
+      authorHead.className = 'px-5 py-4 text-left text-sm font-medium text-gray-500';
+      authorHead.textContent = '作者';
+      headRow.insertBefore(authorHead, headRow.children[7]);
+      var authors = ['刘老师','陈老师','周老师','赵老师','林老师','王老师','孙老师','吴老师'];
+      body.querySelectorAll('tr').forEach(function(row, index) {
+        var cell = document.createElement('td');
+        var author = row.dataset.author || authors[index % authors.length];
+        cell.className = 'px-5 py-4 text-sm text-gray-600';
+        cell.textContent = author;
+        row.dataset.author = author;
+        row.dataset.kw = (row.dataset.kw || '') + author;
+        row.insertBefore(cell, row.children[7]);
+      });
+    }
+    enhanceAuthorColumn();
 
     // ================= 详情抽屉 =================
     function openDrawer() { document.getElementById('caseDrawer').classList.remove('hidden'); }
@@ -947,15 +996,38 @@
       var rows = document.querySelectorAll('#caseTbody tr:not(#flt-empty)');
       rows.forEach(function(row, index) {
         row.dataset.org = organizationNames[index] || 'PBS留学总部';
-        var detail = row.querySelector('td:nth-child(2) .text-xs.text-gray-400');
-        if (detail) detail.textContent += ' · ' + row.dataset.org;
       });
       var orgFilter = document.getElementById('flt-org');
-      if (!isPlatformScope) {
+      var orgFilterField = document.getElementById('orgFilterField');
+      if (isPlatformScope) {
+        if (orgFilterField) orgFilterField.classList.remove('hidden');
+        var caseTable = document.querySelector('#caseTbody').closest('table');
+        var headRow = caseTable.querySelector('thead tr');
+        var orgHead = document.createElement('th');
+        orgHead.className = 'px-5 py-4 text-left text-sm font-medium text-gray-500';
+        orgHead.textContent = '机构';
+        orgHead.setAttribute('data-platform-column', 'organization');
+        headRow.insertBefore(orgHead, headRow.children[8]);
+        rows.forEach(function(row) {
+          var cell = document.createElement('td');
+          cell.className = 'px-5 py-4 text-sm text-gray-600';
+          cell.textContent = row.dataset.org;
+          cell.setAttribute('data-platform-column', 'organization');
+          row.insertBefore(cell, row.children[8]);
+        });
+        var tableScroll = document.createElement('div');
+        tableScroll.style.overflowX = 'auto';
+        caseTable.style.minWidth = '1540px';
+        caseTable.parentNode.insertBefore(tableScroll, caseTable);
+        tableScroll.appendChild(caseTable);
+      } else {
+        if (orgFilterField) orgFilterField.classList.add('hidden');
         orgFilter.value = organizationNames.indexOf(session.org) >= 0 ? session.org : 'PBS留学总部';
         orgFilter.disabled = true;
         orgFilter.title = '机构角色仅查看本机构案例';
       }
+      var emptyCell = document.querySelector('#flt-empty td');
+      if (emptyCell) emptyCell.colSpan = isPlatformScope ? 13 : 12;
       orgFilter.addEventListener('change', function() { applyFilter(); });
       applyFilter(true);
       updateSelected();

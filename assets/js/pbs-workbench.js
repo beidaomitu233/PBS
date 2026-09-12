@@ -39,14 +39,14 @@
     + '.wb-priority{box-sizing:border-box;display:flex;align-items:center;gap:13px;height:76px;min-height:76px;padding:14px 15px;margin-bottom:10px;border-radius:15px;background:#f8fafc;border:1px solid transparent;transition:border-color .15s,background .15s}'
     + '.wb-priority:last-child{margin-bottom:0}.wb-priority:hover{border-color:#dbe5ec;background:#fff}'
     + '.wb-priority-dot{width:9px;height:9px;border-radius:999px;flex-shrink:0}'
-    + '.wb-priority-b{flex:1;min-width:0}.wb-priority-t{font-size:14px;font-weight:650;color:#1f2937;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}'
+    + '.wb-priority-b{flex:1;min-width:0}.wb-priority-t{font-size:14px;font-weight:650;color:#1f2937;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.wb-priority-window{display:block;font-size:11px;font-weight:650;color:#64748b;margin-bottom:3px}'
     + '.wb-priority-m{font-size:12px;color:#94a3b8;margin-top:5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}'
     + '.wb-act{flex-shrink:0;font-size:12px;font-weight:600;padding:7px 12px;border-radius:9px;border:none;cursor:pointer;background:#6b829a;color:#fff}'
     + '.wb-act:hover{background:#556b7d}.wb-act.ghost{background:#edf2f5;color:#5f7488}.wb-act.plain{background:#f1f3f5;color:#475569}'
     + '.wb-calendar{display:flex;flex:1;min-height:0;flex-direction:column}.wb-cal-h{display:flex;flex-shrink:0;align-items:center;justify-content:space-between;margin-bottom:12px}.wb-cal-t{font-size:14px;font-weight:650;color:#334155}.wb-cal-nav{display:flex;gap:7px}'
     + '.wb-cal-nav button{width:30px;height:30px;border-radius:10px;border:1px solid #e2e8f0;background:#fff;color:#64748b;cursor:pointer;font-size:16px;line-height:1}.wb-cal-nav button:hover{background:#f8fafc}'
     + '.wb-cal-grid{display:grid;flex-shrink:0;grid-template-columns:repeat(7,1fr);grid-template-rows:20px repeat(6,38px);gap:5px}.wb-cal-w{font-size:11px;color:#a1aab7;text-align:center;padding:2px 0}'
-    + '.wb-day{position:relative;height:38px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:13px;color:#475569;cursor:pointer;border:1px solid transparent;background:#fff;user-select:none}.wb-day:hover{background:#f1f5f9}'
+    + '.wb-day{position:relative;height:38px;border-radius:10px;display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:13px;line-height:1.05;color:#475569;cursor:pointer;border:1px solid transparent;background:#fff;user-select:none}.wb-day small{font-size:9px;font-weight:500;color:#a75f59;margin-top:3px}.wb-day.sel small{color:#fff}.wb-day:hover{background:#f1f5f9}'
     + '.wb-day.out{color:#d6dbe2;cursor:default;background:transparent}.wb-day.has{font-weight:700;color:#a75f59;background:#f7ecea}.wb-day.has::after{content:"";position:absolute;bottom:4px;left:50%;transform:translateX(-50%);width:4px;height:4px;border-radius:999px;background:#b36b64}'
     + '.wb-day.today{border-color:#7890a6;color:#60798e;font-weight:700}.wb-day.sel{background:#6b829a;color:#fff;font-weight:700}.wb-day.sel.has{background:#b36b64;color:#fff}.wb-day.sel::after{background:#fff}'
     + '.wb-daydetail{flex:1;min-height:0;margin-top:14px;border-top:1px solid #edf1f4;padding-top:13px;overflow-y:auto;scrollbar-gutter:stable}.wb-dd{font-size:12px;font-weight:650;color:#475569;margin-bottom:8px}'
@@ -1112,9 +1112,11 @@
   }
 
   function wbPriorityRow(it) {
+    var source = [it.tag, it.title, it.time, it.meta].join('');
+    var windowLabel = source.indexOf('逾期') >= 0 ? '逾期' : (/今天|明天|临期|紧急/.test(source) ? '临近 3 天' : '临近 7 天');
     return '<div class="wb-priority">'
       + '<span class="wb-priority-dot" style="background:' + (it.bar || WB_BLUE) + '"></span>'
-      + '<div class="wb-priority-b"><div class="wb-priority-t">' + it.title + '</div>'
+      + '<div class="wb-priority-b"><span class="wb-priority-window">' + windowLabel + '</span><div class="wb-priority-t">' + it.title + '</div>'
       + '<div class="wb-priority-m">' + (it.time || it.meta || '待处理') + '</div></div>'
       + wbActBtn(it.act)
       + '</div>';
@@ -1177,7 +1179,7 @@
       if (ev[key]) cls += ' has';
       if (key === WB_TODAY) cls += ' today';
       if (key === st.sel) cls += ' sel';
-      h += '<div class="' + cls + '" onclick="wbCalSelect(\'' + role + '\',\'' + key + '\')">' + d + '</div>';
+      h += '<div class="' + cls + '" onclick="wbCalSelect(\'' + role + '\',\'' + key + '\')"><span>' + d + '</span>' + (ev[key] ? '<small>' + ev[key].length + '项</small>' : '') + '</div>';
     }
     var tail = (7 - (off + dim) % 7) % 7;
     for (var t = 1; t <= tail; t++) h += '<div class="wb-day out">' + t + '</div>';

@@ -372,7 +372,7 @@
               <svg class="w-4 h-4 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5.121 17.804A13.937 13.937 0 0112 16c2.5 0 4.847.655 6.879 1.804M15 10a3 3 0 11-6 0 3 3 0 016 0zm6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
             </span>
             <span class="text-sm font-semibold text-gray-800">项目经理</span>
-            <span class="text-[10px] px-1.5 py-0.5 rounded bg-red-50 text-red-600 font-medium">必填</span>
+            <span class="ml-auto text-sm text-red-600 font-semibold">必填</span>
           </div>
           <p class="text-xs text-gray-400 mb-3 pl-10">一个项目对应一名项目经理，负责接收项目并统筹全部院校目标</p>
           <div class="relative mb-3" data-sel="pm">
@@ -386,8 +386,9 @@
         </div>
         <!-- 机构可按院校目标提前分配项目成员 -->
         <div class="flex items-center justify-between mb-3">
-          <h3 class="text-sm font-medium text-gray-700">院校目标成员（可选）</h3>
+          <h3 class="text-sm font-medium text-gray-700">院校目标成员</h3>
           <div class="flex items-center gap-3">
+            <span class="text-base font-semibold text-gray-700">可选</span>
             <span id="goalProgress" class="text-xs font-medium text-blue-600">0/3 已由机构分配</span>
             <button id="optionalGoalToggle" type="button" class="text-xs font-medium text-blue-600 hover:text-blue-800" onclick="toggleOptionalAssignment('optionalGoalAssignmentPanel','optionalGoalToggle','提前分配','收起')">提前分配</button>
           </div>
@@ -496,8 +497,9 @@
         </div>
         <!-- 机构可按需更换院校目标成员 -->
         <div class="flex items-center justify-between mb-3">
-          <h3 class="text-sm font-medium text-gray-700">院校目标人员（可选更换）</h3>
+          <h3 class="text-sm font-medium text-gray-700">院校目标人员</h3>
           <div class="flex items-center gap-3">
+            <span class="text-base font-semibold text-gray-700">可选</span>
             <span id="chgGoalProgress" class="text-xs font-medium text-blue-600">0/3 已更换</span>
             <button id="optionalChangeToggle" type="button" class="text-xs font-medium text-blue-600 hover:text-blue-800" onclick="toggleOptionalAssignment('optionalChangeAssignmentPanel','optionalChangeToggle','按需更换','收起')">按需更换</button>
           </div>

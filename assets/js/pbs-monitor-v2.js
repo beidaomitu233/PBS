@@ -292,12 +292,29 @@
       }).join('') + '</div>';
   }
 
+  function officialUrlFor(school) {
+    var urls = {
+      hku: 'https://admissions.hku.hk/',
+      cuhk: 'https://www.gs.cuhk.edu.hk/admissions/',
+      cityu: 'https://www.cityu.edu.hk/pg/admissions',
+      hkbu: 'https://gs.hkbu.edu.hk/admission',
+      polyu: 'https://www.polyu.edu.hk/study/pg/',
+      lingnan: 'https://www.ln.edu.hk/admissions'
+    };
+    return urls[school.id] || 'https://www.google.com/';
+  }
+
+  function openOfficialSite() {
+    var school = currentSchool();
+    window.open(officialUrlFor(school), '_blank', 'noopener');
+  }
+
   function renderSchoolDetail() {
     var school = currentSchool();
     var statusOptions = ['审核中', '待补材料', '面试中', '已录取', '未录取'];
     var hasPending = workItemsFor(school).some(function (item) { return workItemState(school, item) === 'pending'; });
     document.getElementById('monitorSchoolDetailHead').innerHTML =
-      '<div class="school-focus-title"><h2>' + esc(school.name) + ' · 独立监控工作区</h2><p>当前流程：' + esc(school.milestone) + '</p></div>' +
+      '<div class="school-focus-title"><h2>' + esc(school.name) + ' · 独立监控工作区</h2><p>当前流程：' + esc(school.milestone) + ' · 申请官网：' + esc(officialUrlFor(school).replace(/^https?:\/\//, '')) + '</p></div>' +
       '<div class="school-status-editor"><label for="schoolOverallStatus">学校申请状态</label><select id="schoolOverallStatus" class="monitor-select">' +
       statusOptions.map(function (status) { return '<option' + (status === school.status ? ' selected' : '') + '>' + status + '</option>'; }).join('') +
       '</select><button class="monitor-btn small" data-pbs-permission="monitor_site_manage" onclick="pbsMonitor.saveSchoolStatus()">保存状态</button>' +
@@ -439,6 +456,7 @@
     previewSnapshot: previewSnapshot,
     submitSnapshot: submitSnapshot,
     openSnapshotViewer: openSnapshotViewer,
+    openOfficialSite: openOfficialSite,
     closeModal: function (id) { modal(id, false); }
   };
 

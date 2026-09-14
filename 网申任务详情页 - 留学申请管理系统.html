@@ -117,6 +117,101 @@
     body { font-family: var(--font-family); background: var(--color-bg-page); }
   </style>
   <link rel="stylesheet" href="./assets/css/pbs-theme.css?v=6.1">
+  <style>
+    .application-info-card { padding: 20px; }
+    .application-info-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0; border: 1px solid #eef1f5; border-radius: 12px; overflow: hidden; background: #fbfcfe; }
+    .application-info-group { padding: 18px 20px; min-width: 0; }
+    .application-info-group + .application-info-group { border-left: 1px solid #e8edf3; }
+    .application-info-group__heading { display: flex; align-items: center; justify-content: space-between; gap: 12px; min-height: 24px; margin-bottom: 8px; }
+    .application-info-group__title { display: flex; align-items: center; gap: 8px; color: #475569; font-size: 13px; font-weight: 600; }
+    .application-info-group__title svg { width: 16px; height: 16px; color: #64748b; }
+    .application-info-status { color: #2563eb; font-size: 12px; font-weight: 600; }
+    .application-info-fields { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); grid-template-rows: repeat(2, minmax(64px, auto)); column-gap: 18px; row-gap: 10px; }
+    .application-info-field { min-width: 0; padding: 8px 0; }
+    .application-info-field--wide { grid-column: 1 / -1; }
+    .application-info-label { display: block; margin-bottom: 5px; color: #94a3b8; font-size: 12px; line-height: 1.4; }
+    .application-info-label-row { display: flex; align-items: center; gap: 8px; margin-bottom: 5px; }
+    .application-info-label-row .application-info-label { margin-bottom: 0; }
+    .application-info-value { color: #172033; font-size: 14px; font-weight: 500; line-height: 1.5; word-break: break-word; }
+    .application-info-action { color: #2563eb; font-size: 12px; font-weight: 500; }
+    .application-workspace { display: grid; grid-template-columns: minmax(0, 3fr) minmax(360px, 2fr); gap: 24px; margin-bottom: 24px; align-items: stretch; }
+    .application-panel { display: flex; height: 580px; min-height: 0; flex-direction: column; background: #fff; border: 1px solid #eef1f5; border-radius: 12px; box-shadow: 0 1px 2px rgba(15, 23, 42, .04); padding: 20px; }
+    .application-panel__head { display: flex; flex-shrink: 0; align-items: center; justify-content: space-between; gap: 16px; margin-bottom: 20px; }
+    .application-panel__title { display: flex; align-items: center; gap: 8px; color: #1f2937; font-size: 16px; font-weight: 600; }
+    .application-panel__title svg { width: 20px; height: 20px; color: #2563eb; }
+    .application-timeline { position: relative; display: grid; min-height: 0; flex: 1; grid-template-rows: repeat(4, minmax(0, 1fr)); padding-left: 30px; }
+    .application-timeline::before { content: ""; position: absolute; left: 10px; top: 12px; bottom: 12px; width: 2px; background: #e5eaf0; }
+    .application-timeline-item { position: relative; min-height: 0; padding: 0 0 26px 14px; }
+    .application-timeline-item:last-child { padding-bottom: 0; }
+    .application-timeline-marker { position: absolute; left: -28px; top: 3px; z-index: 1; width: 18px; height: 18px; border: 2px solid #cbd5e1; border-radius: 999px; display: flex; align-items: center; justify-content: center; background: #fff; color: #94a3b8; font-size: 10px; font-weight: 700; }
+    .application-timeline-marker.is-complete { border-color: #2563eb; background: #2563eb; color: #fff; }
+    .application-timeline-marker.is-current { border-color: #2563eb; box-shadow: 0 0 0 4px #dbeafe; }
+    .application-timeline-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; }
+    .application-timeline-name { color: #172033; font-size: 14px; font-weight: 600; }
+    .application-timeline-date { color: #64748b; font-size: 12px; white-space: nowrap; }
+    .application-timeline-meta { display: flex; flex-wrap: wrap; gap: 6px 16px; margin-top: 6px; color: #64748b; font-size: 12px; }
+    .application-timeline-note { margin-top: 7px; color: #94a3b8; font-size: 12px; }
+    .material-summary { color: #64748b; font-size: 12px; white-space: nowrap; }
+    .material-list { display: flex; min-height: 0; flex: 1; flex-direction: column; gap: 10px; overflow-y: auto; padding-right: 8px; scrollbar-gutter: stable; }
+    .material-list::-webkit-scrollbar { width: 6px; }
+    .material-list::-webkit-scrollbar-track { background: #f3f6f9; border-radius: 999px; }
+    .material-list::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 999px; }
+    .material-item { display: flex; align-items: center; justify-content: space-between; gap: 16px; min-height: 82px; padding: 14px; border: 1px solid #e8edf3; border-radius: 10px; background: #fbfcfe; }
+    .material-item__main { min-width: 0; flex: 1; }
+    .material-item__name { display: flex; align-items: baseline; flex-wrap: wrap; gap: 7px; color: #172033; font-size: 14px; font-weight: 600; }
+    .material-item__rule { color: #94a3b8; font-size: 12px; font-weight: 400; }
+    .material-item__description { margin-top: 4px; color: #64748b; font-size: 12px; line-height: 1.5; }
+    .material-item__file { margin-top: 6px; color: #2563eb; font-size: 12px; }
+    .material-item__actions { display: flex; align-items: center; justify-content: flex-end; gap: 10px; flex-shrink: 0; }
+    .material-file-menu { position: relative; }
+    .material-file-menu__trigger { display: inline-flex; height: 30px; align-items: center; gap: 5px; padding: 0 11px; border-radius: 7px; background: #edf8f1; color: #15803d; font-size: 12px; font-weight: 600; }
+    .material-file-menu__panel { position: absolute; right: 0; top: calc(100% + 6px); z-index: 20; display: none; min-width: 116px; padding: 5px; border: 1px solid #e2e8f0; border-radius: 9px; background: #fff; box-shadow: 0 10px 24px rgba(15, 23, 42, .12); }
+    .material-file-menu:hover .material-file-menu__panel, .material-file-menu:focus-within .material-file-menu__panel { display: block; }
+    .material-file-menu__panel button { display: block; width: 100%; padding: 7px 9px; border-radius: 6px; color: #475569; font-size: 12px; text-align: left; }
+    .material-file-menu__panel button:hover { background: #f1f5f9; color: #1d4ed8; }
+    .material-item:nth-last-child(-n+2) .material-file-menu__panel { top: auto; bottom: calc(100% + 6px); }
+    .material-link-button { height: 30px; padding: 0 11px; border-radius: 7px; background: #eef4ff; color: #2563eb; font-size: 12px; font-weight: 600; }
+    .material-primary-button { height: 30px; padding: 0 13px; border-radius: 7px; background: #2563eb; color: #fff; font-size: 12px; font-weight: 600; }
+    .website-form-card { padding: 20px; }
+    .website-form-summary { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 12px 14px; border-radius: 10px; background: #f6f8fb; color: #475569; font-size: 13px; }
+    .website-form-summary strong { color: #172033; }
+    .website-form-groups { display: flex; flex-direction: column; gap: 10px; margin-top: 14px; }
+    .website-form-group { border: 1px solid #e8edf3; border-radius: 10px; overflow: hidden; background: #fff; }
+    .website-form-group summary { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 14px 16px; cursor: pointer; list-style: none; background: #fbfcfe; }
+    .website-form-group summary::-webkit-details-marker { display: none; }
+    .website-form-group[open] summary { border-bottom: 1px solid #e8edf3; }
+    .website-form-group__name { display: flex; align-items: center; gap: 10px; color: #172033; font-size: 14px; font-weight: 600; }
+    .website-form-group__index { display: inline-flex; width: 24px; height: 24px; align-items: center; justify-content: center; border-radius: 7px; background: #eaf1ff; color: #2563eb; font-size: 12px; }
+    .website-form-group__meta { color: #94a3b8; font-size: 12px; font-weight: 400; }
+    .website-form-group__chevron { width: 16px; height: 16px; color: #94a3b8; transition: transform .2s ease; }
+    .website-form-group[open] .website-form-group__chevron { transform: rotate(180deg); }
+    .website-form-fields { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px; padding: 18px 16px 20px; }
+    .website-form-field { display: flex; min-width: 0; flex-direction: column; }
+    .website-form-field label { order: 1; display: block; margin-bottom: 5px; color: #64748b; font-size: 12px; line-height: 1.4; }
+    .website-form-field[data-advice]::after { content: attr(data-advice); order: 2; min-height: 34px; margin-bottom: 8px; padding: 7px 9px; border-radius: 7px; background: #eef7f3; color: #39705f; font-size: 12px; line-height: 1.55; }
+    .website-form-field input, .website-form-field select, .website-form-field textarea { order: 3; width: 100%; min-height: 38px; padding: 8px 11px; border: 1px solid #d9e0e8; border-radius: 8px; background: #fff; color: #172033; font-size: 13px; outline: none; }
+    .website-form-field textarea { min-height: 76px; resize: vertical; }
+    .website-form-field input:focus, .website-form-field select:focus, .website-form-field textarea:focus { border-color: #4f82eb; box-shadow: 0 0 0 3px rgba(37, 99, 235, .1); }
+    .website-form-field input.is-invalid, .website-form-field select.is-invalid, .website-form-field textarea.is-invalid { border-color: #ef4444; box-shadow: 0 0 0 3px rgba(239, 68, 68, .08); }
+    .website-form-field--wide { grid-column: span 2; }
+    @media (max-width: 1180px) {
+      .application-info-grid { grid-template-columns: 1fr; }
+      .application-info-group + .application-info-group { border-left: 0; border-top: 1px solid #e8edf3; }
+      .website-form-fields { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .application-workspace { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 760px) {
+      .application-info-grid, .application-info-fields, .website-form-fields { grid-template-columns: 1fr; }
+      .application-info-fields { grid-template-rows: none; }
+      .application-info-group + .application-info-group { border-left: 0; border-top: 1px solid #e8edf3; }
+      .application-info-field--wide { grid-column: auto; }
+      .application-workspace { display: block; }
+      .application-panel + .application-panel { margin-top: 16px; }
+      .application-panel__head, .application-timeline-top, .material-item { align-items: flex-start; flex-direction: column; }
+      .material-item__actions { width: 100%; justify-content: flex-start; }
+      .website-form-field--wide { grid-column: auto; }
+    }
+  </style>
 <style>*, ::before, ::after{--tw-border-spacing-x:0;--tw-border-spacing-y:0;--tw-translate-x:0;--tw-translate-y:0;--tw-rotate:0;--tw-skew-x:0;--tw-skew-y:0;--tw-scale-x:1;--tw-scale-y:1;--tw-pan-x: ;--tw-pan-y: ;--tw-pinch-zoom: ;--tw-scroll-snap-strictness:proximity;--tw-gradient-from-position: ;--tw-gradient-via-position: ;--tw-gradient-to-position: ;--tw-ordinal: ;--tw-slashed-zero: ;--tw-numeric-figure: ;--tw-numeric-spacing: ;--tw-numeric-fraction: ;--tw-ring-inset: ;--tw-ring-offset-width:0px;--tw-ring-offset-color:#fff;--tw-ring-color:rgb(59 130 246 / 0.5);--tw-ring-offset-shadow:0 0 #0000;--tw-ring-shadow:0 0 #0000;--tw-shadow:0 0 #0000;--tw-shadow-colored:0 0 #0000;--tw-blur: ;--tw-brightness: ;--tw-contrast: ;--tw-grayscale: ;--tw-hue-rotate: ;--tw-invert: ;--tw-saturate: ;--tw-sepia: ;--tw-drop-shadow: ;--tw-backdrop-blur: ;--tw-backdrop-brightness: ;--tw-backdrop-contrast: ;--tw-backdrop-grayscale: ;--tw-backdrop-hue-rotate: ;--tw-backdrop-invert: ;--tw-backdrop-opacity: ;--tw-backdrop-saturate: ;--tw-backdrop-sepia: ;--tw-contain-size: ;--tw-contain-layout: ;--tw-contain-paint: ;--tw-contain-style: }::backdrop{--tw-border-spacing-x:0;--tw-border-spacing-y:0;--tw-translate-x:0;--tw-translate-y:0;--tw-rotate:0;--tw-skew-x:0;--tw-skew-y:0;--tw-scale-x:1;--tw-scale-y:1;--tw-pan-x: ;--tw-pan-y: ;--tw-pinch-zoom: ;--tw-scroll-snap-strictness:proximity;--tw-gradient-from-position: ;--tw-gradient-via-position: ;--tw-gradient-to-position: ;--tw-ordinal: ;--tw-slashed-zero: ;--tw-numeric-figure: ;--tw-numeric-spacing: ;--tw-numeric-fraction: ;--tw-ring-inset: ;--tw-ring-offset-width:0px;--tw-ring-offset-color:#fff;--tw-ring-color:rgb(59 130 246 / 0.5);--tw-ring-offset-shadow:0 0 #0000;--tw-ring-shadow:0 0 #0000;--tw-shadow:0 0 #0000;--tw-shadow-colored:0 0 #0000;--tw-blur: ;--tw-brightness: ;--tw-contrast: ;--tw-grayscale: ;--tw-hue-rotate: ;--tw-invert: ;--tw-saturate: ;--tw-sepia: ;--tw-drop-shadow: ;--tw-backdrop-blur: ;--tw-backdrop-brightness: ;--tw-backdrop-contrast: ;--tw-backdrop-grayscale: ;--tw-backdrop-hue-rotate: ;--tw-backdrop-invert: ;--tw-backdrop-opacity: ;--tw-backdrop-saturate: ;--tw-backdrop-sepia: ;--tw-contain-size: ;--tw-contain-layout: ;--tw-contain-paint: ;--tw-contain-style: }/* ! tailwindcss v3.4.17 | MIT License | https://tailwindcss.com */*,::after,::before{box-sizing:border-box;border-width:0;border-style:solid;border-color:#e5e7eb}::after,::before{--tw-content:''}:host,html{line-height:1.5;-webkit-text-size-adjust:100%;-moz-tab-size:4;tab-size:4;font-family:ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";font-feature-settings:normal;font-variation-settings:normal;-webkit-tap-highlight-color:transparent}body{margin:0;line-height:inherit}hr{height:0;color:inherit;border-top-width:1px}abbr:where([title]){-webkit-text-decoration:underline dotted;text-decoration:underline dotted}h1,h2,h3,h4,h5,h6{font-size:inherit;font-weight:inherit}a{color:inherit;text-decoration:inherit}b,strong{font-weight:bolder}code,kbd,pre,samp{font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;font-feature-settings:normal;font-variation-settings:normal;font-size:1em}small{font-size:80%}sub,sup{font-size:75%;line-height:0;position:relative;vertical-align:baseline}sub{bottom:-.25em}sup{top:-.5em}table{text-indent:0;border-color:inherit;border-collapse:collapse}button,input,optgroup,select,textarea{font-family:inherit;font-feature-settings:inherit;font-variation-settings:inherit;font-size:100%;font-weight:inherit;line-height:inherit;letter-spacing:inherit;color:inherit;margin:0;padding:0}button,select{text-transform:none}button,input:where([type=button]),input:where([type=reset]),input:where([type=submit]){-webkit-appearance:button;background-color:transparent;background-image:none}:-moz-focusring{outline:auto}:-moz-ui-invalid{box-shadow:none}progress{vertical-align:baseline}::-webkit-inner-spin-button,::-webkit-outer-spin-button{height:auto}[type=search]{-webkit-appearance:textfield;outline-offset:-2px}::-webkit-search-decoration{-webkit-appearance:none}::-webkit-file-upload-button{-webkit-appearance:button;font:inherit}summary{display:list-item}blockquote,dd,dl,figure,h1,h2,h3,h4,h5,h6,hr,p,pre{margin:0}fieldset{margin:0;padding:0}legend{padding:0}menu,ol,ul{list-style:none;margin:0;padding:0}dialog{padding:0}textarea{resize:vertical}input::placeholder,textarea::placeholder{opacity:1;color:#9ca3af}[role=button],button{cursor:pointer}:disabled{cursor:default}audio,canvas,embed,iframe,img,object,svg,video{display:block;vertical-align:middle}img,video{max-width:100%;height:auto}[hidden]:where(:not([hidden=until-found])){display:none}.fixed{position:fixed}.absolute{position:absolute}.relative{position:relative}.sticky{position:sticky}.inset-0{inset:0px}.left-1\/2{left:50%}.left-2\.5{left:0.625rem}.left-\[-18px\]{left:-18px}.right-0{right:0px}.right-1{right:0.25rem}.top-0{top:0px}.top-1{top:0.25rem}.top-1\/2{top:50%}.top-12{top:3rem}.top-5{top:1.25rem}.top-\[6px\]{top:6px}.z-50{z-index:50}.col-span-2{grid-column:span 2 / span 2}.col-span-3{grid-column:span 3 / span 3}.mx-auto{margin-left:auto;margin-right:auto}.mb-1{margin-bottom:0.25rem}.mb-1\.5{margin-bottom:0.375rem}.mb-2{margin-bottom:0.5rem}.mb-3{margin-bottom:0.75rem}.mb-4{margin-bottom:1rem}.mb-5{margin-bottom:1.25rem}.mb-6{margin-bottom:1.5rem}.ml-1{margin-left:0.25rem}.ml-3{margin-left:0.75rem}.mt-0\.5{margin-top:0.125rem}.mt-1{margin-top:0.25rem}.mt-1\.5{margin-top:0.375rem}.mt-6{margin-top:1.5rem}.block{display:block}.flex{display:flex}.inline-flex{display:inline-flex}.grid{display:grid}.hidden{display:none}.h-10{height:2.5rem}.h-14{height:3.5rem}.h-16{height:4rem}.h-2{height:0.5rem}.h-3{height:0.75rem}.h-3\.5{height:0.875rem}.h-4{height:1rem}.h-5{height:1.25rem}.h-6{height:1.5rem}.h-7{height:1.75rem}.h-8{height:2rem}.h-9{height:2.25rem}.h-full{height:100%}.min-h-0{min-height:0px}.min-h-screen{min-height:100vh}.w-0\.5{width:0.125rem}.w-10{width:2.5rem}.w-14{width:3.5rem}.w-2{width:0.5rem}.w-3{width:0.75rem}.w-3\.5{width:0.875rem}.w-4{width:1rem}.w-5{width:1.25rem}.w-6{width:1.5rem}.w-64{width:16rem}.w-7{width:1.75rem}.w-8{width:2rem}.w-\[420px\]{width:420px}.w-\[480px\]{width:480px}.w-full{width:100%}.min-w-0{min-width:0px}.flex-1{flex:1 1 0%}.flex-shrink-0{flex-shrink:0}.-translate-x-1\/2{--tw-translate-x:-50%;transform:translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))}.-translate-y-1\/2{--tw-translate-y:-50%;transform:translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))}.cursor-pointer{cursor:pointer}.resize-none{resize:none}.grid-cols-2{grid-template-columns:repeat(2, minmax(0, 1fr))}.grid-cols-3{grid-template-columns:repeat(3, minmax(0, 1fr))}.grid-cols-5{grid-template-columns:repeat(5, minmax(0, 1fr))}.flex-col{flex-direction:column}.items-start{align-items:flex-start}.items-center{align-items:center}.justify-center{justify-content:center}.justify-between{justify-content:space-between}.gap-1{gap:0.25rem}.gap-1\.5{gap:0.375rem}.gap-2{gap:0.5rem}.gap-3{gap:0.75rem}.gap-4{gap:1rem}.gap-6{gap:1.5rem}.space-y-0 > :not([hidden]) ~ :not([hidden]){--tw-space-y-reverse:0;margin-top:calc(0px * calc(1 - var(--tw-space-y-reverse)));margin-bottom:calc(0px * var(--tw-space-y-reverse))}.space-y-2 > :not([hidden]) ~ :not([hidden]){--tw-space-y-reverse:0;margin-top:calc(0.5rem * calc(1 - var(--tw-space-y-reverse)));margin-bottom:calc(0.5rem * var(--tw-space-y-reverse))}.space-y-3 > :not([hidden]) ~ :not([hidden]){--tw-space-y-reverse:0;margin-top:calc(0.75rem * calc(1 - var(--tw-space-y-reverse)));margin-bottom:calc(0.75rem * var(--tw-space-y-reverse))}.space-y-4 > :not([hidden]) ~ :not([hidden]){--tw-space-y-reverse:0;margin-top:calc(1rem * calc(1 - var(--tw-space-y-reverse)));margin-bottom:calc(1rem * var(--tw-space-y-reverse))}.overflow-y-auto{overflow-y:auto}.rounded{border-radius:0.25rem}.rounded-2xl{border-radius:1rem}.rounded-full{border-radius:9999px}.rounded-lg{border-radius:0.5rem}.rounded-md{border-radius:0.375rem}.rounded-xl{border-radius:0.75rem}.border{border-width:1px}.border-2{border-width:2px}.border-b{border-bottom-width:1px}.border-l{border-left-width:1px}.border-t{border-top-width:1px}.border-dashed{border-style:dashed}.border-blue-600{--tw-border-opacity:1;border-color:rgb(37 99 235 / var(--tw-border-opacity, 1))}.border-gray-100{--tw-border-opacity:1;border-color:rgb(243 244 246 / var(--tw-border-opacity, 1))}.border-gray-200{--tw-border-opacity:1;border-color:rgb(229 231 235 / var(--tw-border-opacity, 1))}.border-gray-300{--tw-border-opacity:1;border-color:rgb(209 213 219 / var(--tw-border-opacity, 1))}.bg-black{--tw-bg-opacity:1;background-color:rgb(0 0 0 / var(--tw-bg-opacity, 1))}.bg-blue-100{--tw-bg-opacity:1;background-color:rgb(219 234 254 / var(--tw-bg-opacity, 1))}.bg-blue-50{--tw-bg-opacity:1;background-color:rgb(239 246 255 / var(--tw-bg-opacity, 1))}.bg-blue-500{--tw-bg-opacity:1;background-color:rgb(59 130 246 / var(--tw-bg-opacity, 1))}.bg-blue-600{--tw-bg-opacity:1;background-color:rgb(37 99 235 / var(--tw-bg-opacity, 1))}.bg-gray-100{--tw-bg-opacity:1;background-color:rgb(243 244 246 / var(--tw-bg-opacity, 1))}.bg-gray-200{--tw-bg-opacity:1;background-color:rgb(229 231 235 / var(--tw-bg-opacity, 1))}.bg-gray-300{--tw-bg-opacity:1;background-color:rgb(209 213 219 / var(--tw-bg-opacity, 1))}.bg-gray-50{--tw-bg-opacity:1;background-color:rgb(249 250 251 / var(--tw-bg-opacity, 1))}.bg-green-100{--tw-bg-opacity:1;background-color:rgb(220 252 231 / var(--tw-bg-opacity, 1))}.bg-green-50{--tw-bg-opacity:1;background-color:rgb(240 253 244 / var(--tw-bg-opacity, 1))}.bg-red-500{--tw-bg-opacity:1;background-color:rgb(239 68 68 / var(--tw-bg-opacity, 1))}.bg-white{--tw-bg-opacity:1;background-color:rgb(255 255 255 / var(--tw-bg-opacity, 1))}.bg-yellow-100{--tw-bg-opacity:1;background-color:rgb(254 249 195 / var(--tw-bg-opacity, 1))}.bg-opacity-30{--tw-bg-opacity:0.3}.bg-gradient-to-br{background-image:linear-gradient(to bottom right, var(--tw-gradient-stops))}.from-blue-500{--tw-gradient-from:#7D94A6 var(--tw-gradient-from-position);--tw-gradient-to:rgb(59 130 246 / 0) var(--tw-gradient-to-position);--tw-gradient-stops:var(--tw-gradient-from), var(--tw-gradient-to)}.to-purple-500{--tw-gradient-to:#a855f7 var(--tw-gradient-to-position)}.p-1{padding:0.25rem}.p-1\.5{padding:0.375rem}.p-2{padding:0.5rem}.p-3{padding:0.75rem}.p-4{padding:1rem}.p-5{padding:1.25rem}.p-6{padding:1.5rem}.p-8{padding:2rem}.px-2{padding-left:0.5rem;padding-right:0.5rem}.px-2\.5{padding-left:0.625rem;padding-right:0.625rem}.px-3{padding-left:0.75rem;padding-right:0.75rem}.px-4{padding-left:1rem;padding-right:1rem}.px-5{padding-left:1.25rem;padding-right:1.25rem}.px-6{padding-left:1.5rem;padding-right:1.5rem}.py-0\.5{padding-top:0.125rem;padding-bottom:0.125rem}.py-1{padding-top:0.25rem;padding-bottom:0.25rem}.py-2{padding-top:0.5rem;padding-bottom:0.5rem}.py-2\.5{padding-top:0.625rem;padding-bottom:0.625rem}.py-3{padding-top:0.75rem;padding-bottom:0.75rem}.pb-0{padding-bottom:0px}.pb-6{padding-bottom:1.5rem}.pl-4{padding-left:1rem}.pl-6{padding-left:1.5rem}.pl-8{padding-left:2rem}.text-center{text-align:center}.text-base{font-size:1rem;line-height:1.5rem}.text-lg{font-size:1.125rem;line-height:1.75rem}.text-sm{font-size:0.875rem;line-height:1.25rem}.text-xl{font-size:1.25rem;line-height:1.75rem}.text-xs{font-size:0.75rem;line-height:1rem}.font-bold{font-weight:700}.font-medium{font-weight:500}.font-semibold{font-weight:600}.text-blue-500{--tw-text-opacity:1;color:rgb(59 130 246 / var(--tw-text-opacity, 1))}.text-blue-600{--tw-text-opacity:1;color:rgb(37 99 235 / var(--tw-text-opacity, 1))}.text-blue-800{--tw-text-opacity:1;color:rgb(30 64 175 / var(--tw-text-opacity, 1))}.text-gray-400{--tw-text-opacity:1;color:rgb(156 163 175 / var(--tw-text-opacity, 1))}.text-gray-500{--tw-text-opacity:1;color:rgb(107 114 128 / var(--tw-text-opacity, 1))}.text-gray-600{--tw-text-opacity:1;color:rgb(75 85 99 / var(--tw-text-opacity, 1))}.text-gray-700{--tw-text-opacity:1;color:rgb(55 65 81 / var(--tw-text-opacity, 1))}.text-gray-800{--tw-text-opacity:1;color:rgb(31 41 55 / var(--tw-text-opacity, 1))}.text-gray-900{--tw-text-opacity:1;color:rgb(17 24 39 / var(--tw-text-opacity, 1))}.text-green-500{--tw-text-opacity:1;color:rgb(34 197 94 / var(--tw-text-opacity, 1))}.text-green-700{--tw-text-opacity:1;color:rgb(21 128 61 / var(--tw-text-opacity, 1))}.text-red-500{--tw-text-opacity:1;color:rgb(239 68 68 / var(--tw-text-opacity, 1))}.text-red-600{--tw-text-opacity:1;color:rgb(220 38 38 / var(--tw-text-opacity, 1))}.text-white{--tw-text-opacity:1;color:rgb(255 255 255 / var(--tw-text-opacity, 1))}.text-yellow-700{--tw-text-opacity:1;color:rgb(161 98 7 / var(--tw-text-opacity, 1))}.text-blue-700{--tw-text-opacity:1;color:rgb(29 78 216 / var(--tw-text-opacity, 1))}.shadow-2xl{--tw-shadow:0 25px 50px -12px rgb(0 0 0 / 0.25);--tw-shadow-colored:0 25px 50px -12px var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}.shadow-lg{--tw-shadow:0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);--tw-shadow-colored:0 10px 15px -3px var(--tw-shadow-color), 0 4px 6px -4px var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}.shadow-sm{--tw-shadow:0 1px 2px 0 rgb(0 0 0 / 0.05);--tw-shadow-colored:0 1px 2px 0 var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}.transition-colors{transition-property:color, background-color, border-color, fill, stroke, -webkit-text-decoration-color;transition-property:color, background-color, border-color, text-decoration-color, fill, stroke;transition-property:color, background-color, border-color, text-decoration-color, fill, stroke, -webkit-text-decoration-color;transition-timing-function:cubic-bezier(0.4, 0, 0.2, 1);transition-duration:150ms}.hover\:border-blue-400:hover{--tw-border-opacity:1;border-color:rgb(96 165 250 / var(--tw-border-opacity, 1))}.hover\:bg-blue-100:hover{--tw-bg-opacity:1;background-color:rgb(219 234 254 / var(--tw-bg-opacity, 1))}.hover\:bg-blue-700:hover{--tw-bg-opacity:1;background-color:rgb(29 78 216 / var(--tw-bg-opacity, 1))}.hover\:bg-gray-100:hover{--tw-bg-opacity:1;background-color:rgb(243 244 246 / var(--tw-bg-opacity, 1))}.hover\:bg-gray-50:hover{--tw-bg-opacity:1;background-color:rgb(249 250 251 / var(--tw-bg-opacity, 1))}.hover\:bg-green-100:hover{--tw-bg-opacity:1;background-color:rgb(220 252 231 / var(--tw-bg-opacity, 1))}.hover\:text-blue-600:hover{--tw-text-opacity:1;color:rgb(37 99 235 / var(--tw-text-opacity, 1))}.hover\:text-gray-600:hover{--tw-text-opacity:1;color:rgb(75 85 99 / var(--tw-text-opacity, 1))}.hover\:text-gray-700:hover{--tw-text-opacity:1;color:rgb(55 65 81 / var(--tw-text-opacity, 1))}.hover\:text-green-600:hover{--tw-text-opacity:1;color:rgb(22 163 74 / var(--tw-text-opacity, 1))}.hover\:text-red-500:hover{--tw-text-opacity:1;color:rgb(239 68 68 / var(--tw-text-opacity, 1))}.hover\:underline:hover{-webkit-text-decoration-line:underline;text-decoration-line:underline}.focus\:border-blue-500:focus{--tw-border-opacity:1;border-color:rgb(59 130 246 / var(--tw-border-opacity, 1))}.focus\:ring-2:focus{--tw-ring-offset-shadow:var(--tw-ring-inset) 0 0 0 var(--tw-ring-offset-width) var(--tw-ring-offset-color);--tw-ring-shadow:var(--tw-ring-inset) 0 0 0 calc(2px + var(--tw-ring-offset-width)) var(--tw-ring-color);box-shadow:var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow, 0 0 #0000)}.focus\:ring-blue-500:focus{--tw-ring-opacity:1;--tw-ring-color:rgb(59 130 246 / var(--tw-ring-opacity, 1))}@media (min-width: 640px){.sm\:inline-block{display:inline-block}}</style></head>
 <body class="min-h-screen" data-viewport-mode="document-scroll">
   <!-- 顶部导航栏 -->
@@ -189,11 +284,10 @@
           </button>
           <div class="pbs-detail-topbar__copy">
             <h1 class="pbs-detail-topbar__title">网申任务详情</h1>
-            <p class="pbs-detail-topbar__subtitle">查看和管理网申任务的完整信息</p>
           </div>
         </div>
         <div class="pbs-detail-topbar__actions">
-          <button data-dom-id="btn-reuse-template" class="flex items-center gap-2 px-4 py-2 bg-white border border-blue-300 text-blue-600 rounded-lg hover:bg-blue-50 transition-colors font-medium" onclick="openTemplateReuseModal()">
+          <button data-dom-id="btn-reuse-template" class="flex items-center gap-2 px-4 py-2 bg-blue-50 text-blue-600 rounded-lg hover:bg-blue-100 transition-colors font-medium" onclick="openTemplateReuseModal()">
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v6h6M20 20v-6h-6M5.07 15A7 7 0 0017 18.93M18.93 9A7 7 0 007 5.07"></path></svg>
             复用模板
           </button>
@@ -201,650 +295,235 @@
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
             </svg>
-            更新进度
+            更新网申进度
           </button>
 
         </div>
       </div>
 
       <!-- 网申基础信息区 -->
-      <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-5 mb-6">
+      <div class="application-info-card bg-white rounded-xl shadow-sm border border-gray-100 mb-6">
         <div class="flex items-center gap-2 mb-4">
           <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
           </svg>
           <h2 class="text-base font-semibold text-gray-800">网申基础信息</h2>
         </div>
-        <div class="grid grid-cols-5 gap-6">
-          <div>
-            <span class="text-xs text-gray-500 block mb-1">学生姓名</span>
-            <span class="text-sm font-medium text-gray-900">张明</span>
-          </div>
-          <div>
-            <span class="text-xs text-gray-500 block mb-1">申请学校</span>
-            <span class="text-sm font-medium text-gray-900">卡内基梅隆大学</span>
-          </div>
-          <div>
-            <span class="text-xs text-gray-500 block mb-1">申请专业</span>
-            <span class="text-sm font-medium text-gray-900">计算机科学</span>
-          </div>
-          <div>
-            <span class="text-xs text-gray-500 block mb-1">申请轮次</span>
-            <span class="text-sm font-medium text-gray-900">常规（RD）</span>
-          </div>
-          <div>
-            <span class="text-xs text-gray-500 block mb-1">材料准备DDL</span>
-            <span class="text-sm font-medium text-orange-600">2026-12-20</span>
-          </div>
-          <div>
-            <span class="text-xs text-gray-500 block mb-1">网申提交DDL</span>
-            <span class="text-sm font-medium text-red-600">2027-01-15</span>
-          </div>
-          <div>
-            <span class="text-xs text-gray-500 block mb-1">网申状态</span>
-            <span data-app-status="" class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">网申中</span>
-          </div>
-          <div>
-            <span class="text-xs text-gray-500 block mb-1">学校官网申请URL</span>
-            <a class="text-sm text-blue-600 hover:underline inline-flex items-center gap-1" data-dom-id="application-url" href="https://apply.cmu.edu/" target="_blank">
-              https://apply.cmu.edu
-              <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path>
-              </svg>
-            </a>
-          </div>
-          <div>
-            <span class="text-xs text-gray-500 block mb-1">PBS 网申插件</span>
-            <div class="flex items-center gap-3"><a href="PBS插件/留学申请助手.html" class="text-sm font-medium text-blue-600 hover:underline">下载安装</a><button type="button" class="text-sm text-gray-500 hover:text-gray-800" onclick="alert('安装插件后登录 PBS 账号，在申请官网打开插件，即可识别字段并同步网申数据。')">使用说明</button></div>
-          </div>
-          <div>
-            <span class="text-xs text-gray-500 block mb-1">网申账号</span>
-            <span class="text-sm text-gray-900">zhangming_cmu</span>
-          </div>
-          <div>
-            <span class="text-xs text-gray-500 block mb-1">网申密码</span>
-            <div class="flex items-center gap-1">
-              <span class="text-sm text-gray-900" data-field="app-pwd">********</span>
-              <button class="p-1 text-gray-400 hover:text-blue-600" onclick="toggleAppPwd(this)" title="显示/隐藏密码">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
-                </svg>
-              </button>
+        <div class="application-info-grid">
+          <section class="application-info-group">
+            <div class="application-info-group__heading">
+              <h3 class="application-info-group__title"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM5 21a7 7 0 0114 0"></path></svg>申请信息</h3>
             </div>
-            <span class="hidden text-sm text-gray-900" data-field="app-pwd-plain">CmU2026!</span>
-          </div>
-          <div>
-            <span class="text-xs text-gray-500">关联邮箱</span>
-            <button type="button" class="w-full mt-1 flex items-center justify-between gap-3 text-left group" onclick="openEmailBindingModal()">
-              <span id="linkedEmailText" class="text-sm text-gray-900">zhangming@cmu.edu</span>
-              <span class="text-xs text-blue-600 group-hover:underline">注册 / 绑定 ›</span>
-            </button>
-          </div>
-          <div>
-            <span class="text-xs text-gray-500 block mb-1">关联邮箱密码</span>
-            <div class="flex items-center gap-1">
-              <span class="text-sm text-gray-900" data-field="email-pwd">********</span>
-              <button class="p-1 text-gray-400 hover:text-blue-600" onclick="toggleEmailPwd(this)" title="显示/隐藏邮箱密码">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
-                </svg>
-              </button>
+            <div class="application-info-fields">
+              <div class="application-info-field"><span class="application-info-label">学生姓名</span><span class="application-info-value">张明</span></div>
+              <div class="application-info-field"><span class="application-info-label">申请轮次</span><span class="application-info-value">常规（RD）</span></div>
+              <div class="application-info-field"><span class="application-info-label">申请学校</span><span class="application-info-value">卡内基梅隆大学</span></div>
+              <div class="application-info-field"><span class="application-info-label">申请专业</span><span class="application-info-value">计算机科学</span></div>
             </div>
-            <span class="hidden text-sm text-gray-900" data-field="email-pwd-plain">Zm@0831Mail</span>
-          </div>
+          </section>
+          <section class="application-info-group">
+            <div class="application-info-group__heading">
+              <h3 class="application-info-group__title"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 2m6-2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>时间与入口</h3>
+            </div>
+            <div class="application-info-fields">
+              <div class="application-info-field"><span class="application-info-label">材料准备 DDL</span><span class="application-info-value text-orange-600">2026-12-20</span></div>
+              <div class="application-info-field"><span class="application-info-label">网申提交 DDL</span><span class="application-info-value text-red-600">2027-01-15</span></div>
+              <div class="application-info-field"><span class="application-info-label">学校官网申请 URL</span><a class="application-info-value text-blue-600 hover:underline inline-flex items-center gap-1" data-dom-id="application-url" href="https://apply.cmu.edu/" target="_blank">https://apply.cmu.edu<svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg></a></div>
+              <div class="application-info-field"><span class="application-info-label">PBS 网申插件</span><div class="flex items-center gap-3"><a href="PBS插件/留学申请助手.html" class="application-info-action">下载安装</a><button type="button" class="application-info-action text-gray-500" onclick="alert('安装插件后登录 PBS 账号，在申请官网打开插件，即可识别字段并同步网申数据。')">使用说明</button></div></div>
+            </div>
+          </section>
+          <section class="application-info-group">
+            <div class="application-info-group__heading">
+              <h3 class="application-info-group__title"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 7a4 4 0 11-8 0 4 4 0 018 0zm6 14v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"></path></svg>账号信息</h3>
+            </div>
+            <div class="application-info-fields">
+              <div class="application-info-field"><span class="application-info-label">网申账号</span><span class="application-info-value">zhangming_cmu</span></div>
+              <div class="application-info-field">
+                <span class="application-info-label">网申密码</span>
+                <div class="flex items-center gap-1"><span class="application-info-value" data-field="app-pwd">********</span><span class="hidden application-info-value" data-field="app-pwd-plain">CmU2026!</span><button class="p-1 text-gray-400 hover:text-blue-600" onclick="toggleAppPwd(this)" title="显示/隐藏密码"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg></button></div>
+              </div>
+              <div class="application-info-field">
+                <div class="application-info-label-row"><span class="application-info-label">关联邮箱</span><button type="button" class="application-info-action" onclick="openEmailBindingModal()">绑定</button></div>
+                <span id="linkedEmailText" class="application-info-value">zhangming@cmu.edu</span>
+              </div>
+              <div class="application-info-field">
+                <span class="application-info-label">邮箱授权码</span>
+                <div class="flex items-center gap-1"><span class="application-info-value" data-field="email-auth-code">********</span><span class="hidden application-info-value" data-field="email-auth-code-plain">Zm@0831Auth</span><button class="p-1 text-gray-400 hover:text-blue-600" onclick="toggleEmailAuthCode(this)" title="显示/隐藏邮箱授权码"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg></button></div>
+              </div>
+            </div>
+          </section>
         </div>
       </div>
 
       <!-- 网申进度时间线 + 材料清单两列布局 -->
-      <div class="grid grid-cols-5 gap-6 mb-6">
-        <!-- 网申进度时间线 - 占3列 -->
-        <div class="col-span-3 bg-white rounded-xl shadow-sm border border-gray-100 p-5">
-          <div class="flex items-center justify-between mb-4">
+      <div class="application-workspace">
+        <section class="application-panel">
+          <div class="application-panel__head">
+            <h2 class="application-panel__title">
+              <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-8 8v2m8-2v2M9 3h6a2 2 0 012 2v6a2 2 0 01-2 2H9a2 2 0 01-2-2V5a2 2 0 012-2z"></path></svg>
+              网申进度时间线
+            </h2>
             <div class="flex items-center gap-2">
-              <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-8 8v2m8-2v2M9 3h6a2 2 0 012 2v6a2 2 0 01-2 2H9a2 2 0 01-2-2V5a2 2 0 012-2z"></path>
-              </svg>
-              <h2 class="text-base font-semibold text-gray-800">网申进度时间线</h2>
-              <span class="text-xs text-gray-400 ml-1">（点击节点可切换完成状态）</span>
-            </div>
-            <div class="flex items-center gap-2">
-              <button data-dom-id="btn-ev-import" class="flex items-center gap-1 px-3 py-1.5 text-xs text-blue-600 bg-blue-50 rounded-md hover:bg-blue-100 font-medium" onclick="openEvImport()" title="从EV系统导入网申进度线">
-                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path>
-                </svg>
-                从EV系统导入
-              </button>
-              <button data-dom-id="btn-timeline-config" class="flex items-center gap-1 px-3 py-1.5 text-xs text-gray-600 bg-gray-100 rounded-md hover:bg-gray-200 font-medium" onclick="openTimelineConfig()" title="配置网申进度线节点">
-                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path>
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
-                </svg>
-                配置进度线
-              </button>
+              <button data-dom-id="btn-ev-import" class="flex items-center gap-1 px-3 py-1.5 text-xs text-blue-600 bg-blue-50 rounded-md hover:bg-blue-100 font-medium" onclick="openEvImport()">从 EV 导入</button>
+              <button data-dom-id="btn-timeline-config" class="flex items-center gap-1 px-3 py-1.5 text-xs text-gray-600 bg-gray-100 rounded-md hover:bg-gray-200 font-medium" onclick="openTimelineConfig()">配置节点</button>
             </div>
           </div>
-          <div class="relative pl-8 space-y-0">
-            <!-- 节点 1: 早轮申请 -->
-            <div class="relative pb-6">
-              <div class="absolute left-[-18px] top-[6px]">
-                <div data-dom-id="timeline-node-1" class="w-5 h-5 rounded-full border-2 flex items-center justify-center cursor-pointer bg-blue-600 border-blue-600" onclick="toggleTimelineNode(1)" title="点击切换完成状态">
-                  <svg class="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path>
-                  </svg>
-                </div>
-                <div class="absolute top-5 left-2.5 w-0.5 h-full bg-blue-500"></div>
+          <div class="application-timeline">
+            <article class="application-timeline-item">
+              <button data-dom-id="timeline-node-1" class="application-timeline-marker is-complete" onclick="toggleTimelineNode(1)" title="切换完成状态" aria-label="切换早轮申请完成状态">✓</button>
+              <div class="application-timeline-content">
+                <div class="application-timeline-top"><h3 class="application-timeline-name">早轮申请（ED）</h3><span class="application-timeline-date">2026-11-01 截止</span></div>
+                <div class="application-timeline-meta"><span>2026-10-01 开始</span><span class="text-green-700">已完成</span></div>
+                <p class="application-timeline-note">早轮申请已提交，等待结果。</p>
               </div>
-              <div>
-                <div class="flex items-center justify-between">
-                  <h3 class="text-sm font-medium text-gray-900">早轮申请（ED）</h3>
-                  <div class="flex items-center gap-2">
-                    <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-green-100 text-green-700">已完成</span>
-                    <span class="text-xs text-gray-400">2026-11-01 截止</span>
-                  </div>
-                </div>
-                <div class="flex items-center gap-4 mt-1">
-                  <span class="text-xs text-gray-500">开始时间：2026-10-01</span>
-                  <span class="text-xs text-gray-500">结束时间：2026-11-01</span>
-                </div>
-                <p class="text-xs text-gray-400 mt-1">早轮申请已提交，等待结果中</p>
+            </article>
+            <article class="application-timeline-item">
+              <button data-dom-id="timeline-node-2" class="application-timeline-marker is-current" onclick="toggleTimelineNode(2)" title="切换完成状态" aria-label="切换常规申请完成状态">2</button>
+              <div class="application-timeline-content">
+                <div class="application-timeline-top"><h3 class="application-timeline-name">常规申请（RD）</h3><span class="application-timeline-date">2027-01-15 截止</span></div>
+                <div class="application-timeline-meta"><span>2026-11-02 开始</span><span class="text-blue-600">进行中</span></div>
+                <p class="application-timeline-note">材料准备中，文书正在修改。</p>
               </div>
-            </div>
-            <!-- 节点 2: 第二轮申请 -->
-            <div class="relative pb-6">
-              <div class="absolute left-[-18px] top-[6px]">
-                <div data-dom-id="timeline-node-2" class="w-5 h-5 rounded-full border-2 flex items-center justify-center cursor-pointer bg-white border-gray-300" onclick="toggleTimelineNode(2)" title="点击切换完成状态">
-                  <span class="text-xs font-medium text-gray-400">2</span>
-                </div>
-                <div class="absolute top-5 left-2.5 w-0.5 h-full bg-gray-200"></div>
+            </article>
+            <article class="application-timeline-item">
+              <button data-dom-id="timeline-node-3" class="application-timeline-marker" onclick="toggleTimelineNode(3)" title="切换完成状态" aria-label="切换面试完成状态">3</button>
+              <div class="application-timeline-content">
+                <div class="application-timeline-top"><h3 class="application-timeline-name">面试</h3><span class="application-timeline-date">2027-02 至 2027-03</span></div>
+                <div class="application-timeline-meta"><span>待安排</span></div>
+                <p class="application-timeline-note">等待申请审核结果后安排。</p>
               </div>
-              <div>
-                <div class="flex items-center justify-between">
-                  <h3 class="text-sm font-medium text-gray-900">常规申请（RD）</h3>
-                  <div class="flex items-center gap-2">
-                    <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-yellow-100 text-yellow-700">进行中</span>
-                    <span class="text-xs text-gray-400">2027-01-15 截止</span>
-                  </div>
-                </div>
-                <div class="flex items-center gap-4 mt-1">
-                  <span class="text-xs text-gray-500">开始时间：2026-11-02</span>
-                  <span class="text-xs text-gray-500">结束时间：2027-01-15</span>
-                </div>
-                <p class="text-xs text-gray-400 mt-1">材料准备中，文书正在修改</p>
+            </article>
+            <article class="application-timeline-item">
+              <button data-dom-id="timeline-node-4" class="application-timeline-marker" onclick="toggleTimelineNode(4)" title="切换完成状态" aria-label="切换录取入学完成状态">4</button>
+              <div class="application-timeline-content">
+                <div class="application-timeline-top"><h3 class="application-timeline-name">录取 / 入学</h3><span class="application-timeline-date">2027-04 放榜</span></div>
+                <div class="application-timeline-meta"><span>2027-03 起发放录取</span><span>2027-09 入学</span></div>
+                <p class="application-timeline-note">等待录取结果。</p>
               </div>
-            </div>
-            <!-- 节点 3: 面试 -->
-            <div class="relative pb-6">
-              <div class="absolute left-[-18px] top-[6px]">
-                <div data-dom-id="timeline-node-3" class="w-5 h-5 rounded-full border-2 flex items-center justify-center cursor-pointer bg-white border-gray-300" onclick="toggleTimelineNode(3)" title="点击切换完成状态">
-                  <span class="text-xs font-medium text-gray-400">3</span>
-                </div>
-                <div class="absolute top-5 left-2.5 w-0.5 h-full bg-gray-200"></div>
-              </div>
-              <div>
-                <div class="flex items-center justify-between">
-                  <h3 class="text-sm font-medium text-gray-900">面试</h3>
-                  <div class="flex items-center gap-2">
-                    <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-gray-100 text-gray-500">待安排</span>
-                  </div>
-                </div>
-                <div class="flex items-center gap-4 mt-1">
-                  <span class="text-xs text-gray-500">预计时间：2027-02 至 2027-03</span>
-                </div>
-                <p class="text-xs text-gray-400 mt-1">等待RD申请审核结果后安排</p>
-              </div>
-            </div>
-            <!-- 节点 4: 录取 -->
-            <div class="relative pb-0">
-              <div class="absolute left-[-18px] top-[6px]">
-                <div data-dom-id="timeline-node-4" class="w-5 h-5 rounded-full border-2 flex items-center justify-center cursor-pointer bg-white border-gray-300" onclick="toggleTimelineNode(4)" title="点击切换完成状态">
-                  <span class="text-xs font-medium text-gray-400">4</span>
-                </div>
-              </div>
-              <div>
-                <div class="flex items-center justify-between">
-                  <h3 class="text-sm font-medium text-gray-900">录取 / 入学</h3>
-                  <div class="flex items-center gap-2">
-                    <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-gray-100 text-gray-500">待定</span>
-                    <span class="text-xs text-gray-400">2027-04 放榜</span>
-                  </div>
-                </div>
-                <div class="flex items-center gap-4 mt-1">
-                  <span class="text-xs text-gray-500">录取开始：2027-03</span>
-                  <span class="text-xs text-gray-500">入学时间：2027-09</span>
-                </div>
-                <p class="text-xs text-gray-400 mt-1">等待录取结果，后续安排入学手续</p>
-              </div>
-            </div>
+            </article>
           </div>
-        </div>
+        </section>
 
-        <!-- 申请材料清单区 - 占2列 -->
-        <div class="col-span-2 bg-white rounded-xl shadow-sm border border-gray-100 p-5">
-          <div class="flex items-center justify-between mb-4">
-            <div class="flex items-center gap-2">
-              <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
-              </svg>
-              <h2 class="text-base font-semibold text-gray-800">申请材料清单</h2>
-            </div>
-            <div class="flex items-center gap-2">
-              <span id="scanStateBadge" class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-gray-100 text-gray-600">未复用模板</span>
-              <a href="网申模板库 - 留学申请管理系统.html" class="text-xs text-blue-600 hover:underline">查看模板库</a>
-              <button class="px-3 py-1.5 text-xs text-white bg-blue-600 rounded-md hover:bg-blue-700 font-medium" onclick="openUploadModal()">上传材料</button>
-            </div>
+        <section class="application-panel">
+          <div class="application-panel__head">
+            <h2 class="application-panel__title">
+              <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+              申请材料清单
+            </h2>
+            <span id="scanStateBadge" class="material-summary">4 / 6 已上传</span>
           </div>
-          <div class="mb-4 p-3 bg-blue-50 border border-blue-100 rounded-lg">
-            <p class="text-sm font-medium text-blue-800">卡内基梅隆大学已有历史模板</p>
-            <p class="text-xs text-blue-600 mt-0.5">点击页面顶部“复用模板”选择历史版本。</p>
+          <div id="materialListPending" class="hidden"></div>
+          <div id="materialListScanned" class="material-list">
+            <article id="materialRow-1" class="material-item">
+              <div class="material-item__main"><h3 class="material-item__name">个人陈述（PS）<span class="material-item__rule">1000 词</span></h3><p class="material-item__description">学术背景、研究方向与选校动机</p><p class="material-item__file">个人陈述-CMU.pdf · 2026-12-20</p></div>
+              <div id="materialAction-1" class="material-item__actions"><div class="material-file-menu"><button class="material-file-menu__trigger" aria-haspopup="menu">已上传 <span>⌄</span></button><div class="material-file-menu__panel" role="menu"><button role="menuitem" onclick="previewApplicationMaterial('个人陈述-CMU.pdf')">预览文件</button><button role="menuitem" onclick="openDocUpload(1)">替换文件</button></div></div></div>
+            </article>
+            <article id="materialRow-2" class="material-item">
+              <div class="material-item__main"><h3 class="material-item__name">推荐信（RL）<span class="material-item__rule">2 封 × 500 词</span></h3><p class="material-item__description">至少 1 封来自学术导师</p><p class="material-item__file">推荐信-教授A.pdf · 2026-12-22</p></div>
+              <div id="materialAction-2" class="material-item__actions"><div class="material-file-menu"><button class="material-file-menu__trigger" aria-haspopup="menu">已上传 <span>⌄</span></button><div class="material-file-menu__panel" role="menu"><button role="menuitem" onclick="previewApplicationMaterial('推荐信-教授A.pdf')">预览文件</button><button role="menuitem" onclick="openDocUpload(2)">替换文件</button></div></div></div>
+            </article>
+            <article id="materialRow-3" class="material-item">
+              <div class="material-item__main"><h3 class="material-item__name">简历（CV）<span class="material-item__rule">2 页</span></h3><p class="material-item__description">科研经历、论文发表与技术项目</p><p class="material-item__file">简历-CV.pdf · 2026-12-18</p></div>
+              <div id="materialAction-3" class="material-item__actions"><div class="material-file-menu"><button class="material-file-menu__trigger" aria-haspopup="menu">已上传 <span>⌄</span></button><div class="material-file-menu__panel" role="menu"><button role="menuitem" onclick="previewApplicationMaterial('简历-CV.pdf')">预览文件</button><button role="menuitem" onclick="openDocUpload(3)">替换文件</button></div></div></div>
+            </article>
+            <article id="materialRow-4" class="material-item">
+              <div class="material-item__main"><h3 class="material-item__name">本科成绩单<span class="material-item__rule">官方中英文版</span></h3><p class="material-item__description">学校官方开具的中英文成绩单</p></div>
+              <div id="materialAction-4" class="material-item__actions"><button data-dom-id="btn-upload-doc-4" class="material-primary-button" onclick="openDocUpload(4)">上传</button></div>
+            </article>
+            <article id="materialRow-5" class="material-item">
+              <div class="material-item__main"><h3 class="material-item__name">语言成绩单<span class="material-item__rule">雅思 / 托福</span></h3><p class="material-item__description">官方送分或成绩单扫描件</p><p class="material-item__file">雅思成绩单.pdf · 2026-12-15</p></div>
+              <div id="materialAction-5" class="material-item__actions"><div class="material-file-menu"><button class="material-file-menu__trigger" aria-haspopup="menu">已上传 <span>⌄</span></button><div class="material-file-menu__panel" role="menu"><button role="menuitem" onclick="previewApplicationMaterial('雅思成绩单.pdf')">预览文件</button><button role="menuitem" onclick="openDocUpload(5)">替换文件</button></div></div></div>
+            </article>
+            <article id="materialRow-6" class="material-item">
+              <div class="material-item__main"><h3 class="material-item__name">护照复印件<span class="material-item__rule">信息页</span></h3><p class="material-item__description">清晰可辨的护照信息页扫描件</p></div>
+              <div id="materialAction-6" class="material-item__actions"><button data-dom-id="btn-upload-doc-6" class="material-primary-button" onclick="openDocUpload(6)">上传</button></div>
+            </article>
           </div>
-          <!-- 复用前：显示待确认清单 -->
-          <div id="materialListPending" class="space-y-3">
-            <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-              <div class="flex-1 min-w-0">
-                <div class="flex items-center gap-2">
-                  <span class="text-sm font-medium text-gray-500">个人陈述（PS）</span>
-                  <span class="text-xs text-gray-300">| 字数待确认</span>
-                </div>
-                <p class="text-xs text-gray-400 mt-0.5">材料要求将在复用模板后同步</p>
-              </div>
-              <div class="flex items-center gap-2 flex-shrink-0 ml-3">
-                <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-gray-100 text-gray-500">待复用</span>
-              </div>
-            </div>
-            <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-              <div class="flex-1 min-w-0">
-                <div class="flex items-center gap-2">
-                  <span class="text-sm font-medium text-gray-500">推荐信（RL）</span>
-                  <span class="text-xs text-gray-300">| 数量待确认</span>
-                </div>
-                <p class="text-xs text-gray-400 mt-0.5">材料要求将在复用模板后同步</p>
-              </div>
-              <div class="flex items-center gap-2 flex-shrink-0 ml-3">
-                <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-gray-100 text-gray-500">待复用</span>
-              </div>
-            </div>
-            <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-              <div class="flex-1 min-w-0">
-                <div class="flex items-center gap-2">
-                  <span class="text-sm font-medium text-gray-500">简历（CV）</span>
-                  <span class="text-xs text-gray-300">| 格式待确认</span>
-                </div>
-                <p class="text-xs text-gray-400 mt-0.5">材料要求将在复用模板后同步</p>
-              </div>
-              <div class="flex items-center gap-2 flex-shrink-0 ml-3">
-                <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-gray-100 text-gray-500">待复用</span>
-              </div>
-            </div>
-            <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-              <div class="flex-1 min-w-0">
-                <div class="flex items-center gap-2">
-                  <span class="text-sm font-medium text-gray-500">本科成绩单</span>
-                  <span class="text-xs text-gray-300">| 要求待确认</span>
-                </div>
-                <p class="text-xs text-gray-400 mt-0.5">材料要求将在复用模板后同步</p>
-              </div>
-              <div class="flex items-center gap-2 flex-shrink-0 ml-3">
-                <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-gray-100 text-gray-500">待复用</span>
-              </div>
-            </div>
-            <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-              <div class="flex-1 min-w-0">
-                <div class="flex items-center gap-2">
-                  <span class="text-sm font-medium text-gray-500">语言成绩单</span>
-                  <span class="text-xs text-gray-300">| 分数线待确认</span>
-                </div>
-                <p class="text-xs text-gray-400 mt-0.5">材料要求将在复用模板后同步</p>
-              </div>
-              <div class="flex items-center gap-2 flex-shrink-0 ml-3">
-                <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-gray-100 text-gray-500">待复用</span>
-              </div>
-            </div>
-            <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-              <div class="flex-1 min-w-0">
-                <div class="flex items-center gap-2">
-                  <span class="text-sm font-medium text-gray-500">护照复印件</span>
-                  <span class="text-xs text-gray-300">| 要求待确认</span>
-                </div>
-                <p class="text-xs text-gray-400 mt-0.5">材料要求将在复用模板后同步</p>
-              </div>
-              <div class="flex items-center gap-2 flex-shrink-0 ml-3">
-                <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-gray-100 text-gray-500">待复用</span>
-              </div>
-            </div>
-            <div class="p-3 bg-yellow-50 border border-yellow-100 rounded-lg flex items-center justify-between gap-3">
-              <div class="flex items-start gap-2 min-w-0">
-                <svg class="w-4 h-4 text-yellow-500 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
-                </svg>
-                <p class="text-xs text-yellow-700">复用后请检查模板内容是否仍符合当前申请要求。</p>
-              </div>
-            </div>
-          </div>
-          <!-- 已复用模板：显示正式材料清单与人工核对项 -->
-          <div id="materialListScanned" class="space-y-3 hidden">
-            <div id="templateMaterialIssues" class="p-3 bg-yellow-50 border border-yellow-200 rounded-lg flex items-start gap-2">
-              <svg class="w-4 h-4 text-yellow-600 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
-              <p class="text-xs text-yellow-800"><span class="font-medium">待项目经理检查：</span>护照有效期未识别；推荐信是否必须使用学校抬头需在官网确认。</p>
-            </div>
-            <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-              <div class="flex-1 min-w-0">
-                <div class="flex items-center gap-2">
-                  <span class="text-sm font-medium text-gray-900">个人陈述（PS）</span>
-                  <span class="text-xs text-gray-400">| 1000词</span>
-                </div>
-                <p class="text-xs text-gray-500 mt-0.5">学术背景 + 研究方向 + 选校动机</p>
-              </div>
-              <div class="flex items-center gap-2 flex-shrink-0 ml-3">
-                <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-green-100 text-green-700">已上传</span>
-                <span class="text-xs text-gray-400">2026-12-20</span>
-              </div>
-            </div>
-            <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-              <div class="flex-1 min-w-0">
-                <div class="flex items-center gap-2">
-                  <span class="text-sm font-medium text-gray-900">推荐信（RL）</span>
-                  <span class="text-xs text-gray-400">| 2封 × 500词</span>
-                </div>
-                <p class="text-xs text-gray-500 mt-0.5">至少1封来自学术导师</p>
-              </div>
-              <div class="flex items-center gap-2 flex-shrink-0 ml-3">
-                <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-green-100 text-green-700">已上传</span>
-                <span class="text-xs text-gray-400">2026-12-22</span>
-              </div>
-            </div>
-            <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-              <div class="flex-1 min-w-0">
-                <div class="flex items-center gap-2">
-                  <span class="text-sm font-medium text-gray-900">简历（CV）</span>
-                  <span class="text-xs text-gray-400">| 2页</span>
-                </div>
-                <p class="text-xs text-gray-500 mt-0.5">科研经历、论文发表、技术项目</p>
-              </div>
-              <div class="flex items-center gap-2 flex-shrink-0 ml-3">
-                <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-green-100 text-green-700">已上传</span>
-                <span class="text-xs text-gray-400">2026-12-18</span>
-              </div>
-            </div>
-            <div id="materialRow-4" class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                <div class="flex-1 min-w-0">
-                  <div class="flex items-center gap-2">
-                    <span class="text-sm font-medium text-gray-900">本科成绩单</span>
-                    <span class="text-xs text-gray-400">| 官方密封件</span>
-                  </div>
-                  <p class="text-xs text-gray-500 mt-0.5">学校官方开具的中英文成绩单</p>
-                </div>
-                <div id="materialAction-4" class="flex items-center gap-2 flex-shrink-0 ml-3">
-                  <button data-dom-id="btn-upload-doc-4" class="px-3 py-1 text-xs text-blue-600 bg-blue-50 rounded-md hover:bg-blue-100 font-medium" onclick="openDocUpload(4)">上传</button>
-                </div>
-              </div>
-            <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-              <div class="flex-1 min-w-0">
-                <div class="flex items-center gap-2">
-                  <span class="text-sm font-medium text-gray-900">语言成绩单</span>
-                  <span class="text-xs text-gray-400">| 雅思/托福</span>
-                </div>
-                <p class="text-xs text-gray-500 mt-0.5">官方送分或扫描件</p>
-              </div>
-              <div class="flex items-center gap-2 flex-shrink-0 ml-3">
-                <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-green-100 text-green-700">已上传</span>
-                <span class="text-xs text-gray-400">2026-12-15</span>
-              </div>
-            </div>
-            <div id="materialRow-6" class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-              <div class="flex-1 min-w-0">
-                <div class="flex items-center gap-2">
-                  <span class="text-sm font-medium text-gray-900">护照复印件</span>
-                  <span class="text-xs text-gray-400">| 信息页</span>
-                </div>
-                <p class="text-xs text-gray-500 mt-0.5">清晰可辨的护照信息页扫描件</p>
-              </div>
-              <div id="materialAction-6" class="flex items-center gap-2 flex-shrink-0 ml-3">
-                <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-yellow-100 text-yellow-700">待上传</span>
-                <button data-dom-id="btn-upload-doc-6" class="px-3 py-1 text-xs text-blue-600 bg-blue-50 rounded-md hover:bg-blue-100 font-medium" onclick="openDocUpload(6)">上传</button>
-              </div>
-            </div>
-          </div>
-        </div>
+        </section>
       </div>
 
       <!-- 申请官网字段表单区 -->
-      <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-5 mb-6">
-        <div class="flex items-center justify-between mb-4">
-          <div class="flex items-center gap-2">
-            <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"></path>
-            </svg>
-            <h2 class="text-base font-semibold text-gray-800">申请官网字段表单</h2>
-            <span class="text-xs text-gray-400 ml-1">复用后请核对当前申请信息</span>
-          </div>
-          <div class="flex items-center gap-2">
-            <button data-dom-id="btn-save-website-form" class="flex items-center gap-1 px-3 py-1.5 text-xs text-white bg-blue-600 rounded-md hover:bg-blue-700 font-medium" onclick="saveWebsiteForm()">
-              <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-              </svg>
-              保存表单
-            </button>
+      <section class="website-form-card bg-white rounded-xl shadow-sm border border-gray-100 mb-6">
+        <div class="application-panel__head">
+          <h2 class="application-panel__title">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"></path></svg>
+            申请官网字段表单
+          </h2>
+          <div class="flex items-center gap-3">
+            <span id="websiteFormSaveState" class="text-xs text-gray-400"></span>
+            <button data-dom-id="btn-draft-website-form" class="px-4 py-2 text-sm text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 font-medium" onclick="saveWebsiteDraft()">暂存</button>
+            <button data-dom-id="btn-save-website-form" class="px-4 py-2 text-sm text-white bg-blue-600 rounded-lg hover:bg-blue-700 font-medium" onclick="saveWebsiteForm()">保存</button>
           </div>
         </div>
-        <div id="templateFieldSummary" class="mb-4 p-3 bg-blue-50 border border-blue-100 rounded-lg flex items-start justify-between gap-4">
-          <div><p class="text-sm font-medium text-blue-800">尚未复用历史模板</p><p class="text-xs text-blue-600 mt-0.5">复用后将同步官网字段和申请材料清单。</p></div>
-          <a href="网申模板库 - 留学申请管理系统.html" class="text-xs text-blue-700 font-medium hover:underline flex-shrink-0">查看模板详情</a>
+        <div id="templateFieldSummary" class="website-form-summary">
+          <span><strong>卡内基梅隆大学 · 计算机科学</strong>　模板 v3.2</span>
+          <span>10 个页面 · 168 个字段</span>
         </div>
-        <div id="templateFieldNotice" class="hidden mb-4 p-3 bg-yellow-50 border border-yellow-200 rounded-lg text-xs text-yellow-800"></div>
-        <div class="grid grid-cols-3 gap-5">
-          <div>
-            <label class="block text-xs text-gray-500 mb-1">名（First Name）<span class="text-red-500">*</span></label>
-            <input id="wf-firstName" data-wf-label="名（First Name）" type="text" value="Ming" class="w-full h-9 px-3 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="与护照一致">
-          </div>
-          <div>
-            <label class="block text-xs text-gray-500 mb-1">姓（Last Name）<span class="text-red-500">*</span></label>
-            <input id="wf-lastName" data-wf-label="姓（Last Name）" type="text" value="Zhang" class="w-full h-9 px-3 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="与护照一致">
-          </div>
-          <div>
-            <label class="block text-xs text-gray-500 mb-1">出生日期（Date of Birth）<span class="text-red-500">*</span></label>
-            <input id="wf-birthDate" data-wf-label="出生日期" type="date" value="2004-06-18" class="w-full h-9 px-3 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-          </div>
-          <div>
-            <label class="block text-xs text-gray-500 mb-1">国籍（Citizenship）<span class="text-red-500">*</span></label>
-            <select id="wf-citizenship" data-wf-label="国籍" class="w-full h-9 px-3 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-              <option value="中国" selected="">中国</option>
-              <option value="中国香港">中国香港</option>
-              <option value="其他">其他</option>
-            </select>
-          </div>
-          <div>
-            <label class="block text-xs text-gray-500 mb-1">联系邮箱（Email）<span class="text-red-500">*</span></label>
-            <input id="wf-email" data-wf-label="联系邮箱" type="email" value="zhangming@cmu.edu" class="w-full h-9 px-3 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="与网申注册邮箱一致">
-          </div>
-          <div>
-            <label class="block text-xs text-gray-500 mb-1">联系电话（Phone）</label>
-            <input id="wf-phone" data-wf-label="联系电话" type="tel" value="+86 138 0000 0000" class="w-full h-9 px-3 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-          </div>
-          <div>
-            <label class="block text-xs text-gray-500 mb-1">本科院校（Undergraduate School）<span class="text-red-500">*</span></label>
-            <input id="wf-undergrad" data-wf-label="本科院校" type="text" value="浙江大学" class="w-full h-9 px-3 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-          </div>
-          <div>
-            <label class="block text-xs text-gray-500 mb-1">本科专业（Major）<span class="text-red-500">*</span></label>
-            <input id="wf-major" data-wf-label="本科专业" type="text" value="计算机科学与技术" class="w-full h-9 px-3 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-          </div>
-          <div>
-            <label class="block text-xs text-gray-500 mb-1">GPA（4.0 Scale）<span class="text-red-500">*</span></label>
-            <input id="wf-gpa" data-wf-label="GPA" type="text" value="3.8 / 4.0" class="w-full h-9 px-3 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-          </div>
-          <div>
-            <label class="block text-xs text-gray-500 mb-1">TOEFL / IELTS 总分</label>
-            <input id="wf-englishScore" data-wf-label="语言成绩" type="text" value="TOEFL 108" class="w-full h-9 px-3 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-          </div>
-          <div>
-            <label class="block text-xs text-gray-500 mb-1">GRE / GMAT 成绩</label>
-            <input id="wf-greScore" data-wf-label="GRE/GMAT成绩" type="text" value="GRE 328 + 4.0" class="w-full h-9 px-3 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-          </div>
-          <div>
-            <label class="block text-xs text-gray-500 mb-1">通信地址（Mailing Address）</label>
-            <input id="wf-address" data-wf-label="通信地址" type="text" value="" class="w-full h-9 px-3 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="请填写通信地址">
-          </div>
-        </div>
-        <p class="text-xs text-gray-400 mt-4">保存前请核对当前字段内容。</p>
-      </div>
-
-      <!-- 网申材料预览区 -->
-      <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-5 mb-6">
-        <div class="flex items-center gap-2 mb-4">
-          <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
-          </svg>
-          <h2 class="text-base font-semibold text-gray-800">网申材料预览</h2>
-        </div>
-        <div class="grid grid-cols-2 gap-4">
-          <!-- 已上传的学生材料 -->
-          <div>
-            <h3 class="text-sm font-medium text-gray-700 mb-3 flex items-center gap-1.5">
-              <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path>
-              </svg>
-              已上传的学生材料
-            </h3>
-            <div class="space-y-2">
-              <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors cursor-pointer">
-                <div class="flex items-center gap-3">
-                  <svg class="w-8 h-8 text-red-500" fill="currentColor" viewBox="0 0 24 24">
-                    <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"></path>
-                    <path fill="white" d="M14 2v6h6M16 13H8M16 17H8M10 9H8"></path>
-                  </svg>
-                  <div>
-                    <p class="text-sm font-medium text-gray-900">本科成绩单.pdf</p>
-                    <p class="text-xs text-gray-500">2.4MB | 2026-12-15</p>
-                  </div>
-                </div>
-                <div class="flex items-center gap-1">
-                  <button class="p-1.5 text-gray-500 hover:text-blue-600" title="预览">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
-                    </svg>
-                  </button>
-                  <button class="p-1.5 text-gray-500 hover:text-green-600" title="下载">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path>
-                    </svg>
-                  </button>
-                </div>
-              </div>
-              <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors cursor-pointer">
-                <div class="flex items-center gap-3">
-                  <svg class="w-8 h-8 text-blue-500" fill="currentColor" viewBox="0 0 24 24">
-                    <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"></path>
-                    <path fill="white" d="M14 2v6h6M16 13H8M16 17H8M10 9H8"></path>
-                  </svg>
-                  <div>
-                    <p class="text-sm font-medium text-gray-900">雅思成绩单.pdf</p>
-                    <p class="text-xs text-gray-500">0.8MB | 2026-12-15</p>
-                  </div>
-                </div>
-                <div class="flex items-center gap-1">
-                  <button class="p-1.5 text-gray-500 hover:text-blue-600" title="预览">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
-                    </svg>
-                  </button>
-                  <button class="p-1.5 text-gray-500 hover:text-green-600" title="下载">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path>
-                    </svg>
-                  </button>
-                </div>
-              </div>
-              <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors cursor-pointer">
-                <div class="flex items-center gap-3">
-                  <svg class="w-8 h-8 text-green-500" fill="currentColor" viewBox="0 0 24 24">
-                    <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"></path>
-                    <path fill="white" d="M14 2v6h6M16 13H8M16 17H8M10 9H8"></path>
-                  </svg>
-                  <div>
-                    <p class="text-sm font-medium text-gray-900">护照扫描件.pdf</p>
-                    <p class="text-xs text-gray-500">1.2MB | 2026-12-20</p>
-                  </div>
-                </div>
-                <div class="flex items-center gap-1">
-                  <button class="p-1.5 text-gray-500 hover:text-blue-600" title="预览">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
-                    </svg>
-                  </button>
-                  <button class="p-1.5 text-gray-500 hover:text-green-600" title="下载">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path>
-                    </svg>
-                  </button>
-                </div>
-              </div>
+        <div id="templateFieldNotice" class="hidden"></div>
+        <div class="website-form-groups">
+          <details class="website-form-group" open>
+            <summary><span class="website-form-group__name"><span class="website-form-group__index">1</span>个人信息 <span class="website-form-group__meta">6 个字段</span></span><svg class="website-form-group__chevron" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg></summary>
+            <div class="website-form-fields">
+              <div class="website-form-field" data-advice="填写护照上的英文名，不含姓氏。"><label>名（First Name）<span class="text-red-500"> *</span></label><input id="wf-firstName" data-wf-label="名（First Name）" data-wf-required type="text" value="Ming" placeholder="与护照一致"></div>
+              <div class="website-form-field" data-advice="填写护照上的英文姓氏，不含名字。"><label>姓（Last Name）<span class="text-red-500"> *</span></label><input id="wf-lastName" data-wf-label="姓（Last Name）" data-wf-required type="text" value="Zhang" placeholder="与护照一致"></div>
+              <div class="website-form-field" data-advice="日期须与护照信息保持一致。"><label>出生日期（Date of Birth）<span class="text-red-500"> *</span></label><input id="wf-birthDate" data-wf-label="出生日期" data-wf-required type="date" value="2004-06-18"></div>
+              <div class="website-form-field" data-advice="按当前有效护照所示国籍选择。"><label>国籍（Citizenship）<span class="text-red-500"> *</span></label><select id="wf-citizenship" data-wf-label="国籍" data-wf-required><option value="中国" selected>中国</option><option value="中国香港">中国香港</option><option value="其他">其他</option></select></div>
+              <div class="website-form-field" data-advice="使用可长期接收院校通知的邮箱。"><label>联系邮箱（Email）<span class="text-red-500"> *</span></label><input id="wf-email" data-wf-label="联系邮箱" data-wf-required type="email" value="zhangming@cmu.edu"></div>
+              <div class="website-form-field" data-advice="填写包含国家区号的常用联系电话。"><label>联系电话（Phone）</label><input id="wf-phone" data-wf-label="联系电话" type="tel" value="+86 138 0000 0000"></div>
             </div>
-          </div>
-          <!-- 已完成的文书 -->
-          <div>
-            <h3 class="text-sm font-medium text-gray-700 mb-3 flex items-center gap-1.5">
-              <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
-              </svg>
-              已完成的文书
-            </h3>
-            <div class="space-y-2">
-              <div class="flex items-center justify-between p-3 bg-green-50 rounded-lg hover:bg-green-100 transition-colors cursor-pointer">
-                <div class="flex items-center gap-3">
-                  <svg class="w-8 h-8 text-green-500" fill="currentColor" viewBox="0 0 24 24">
-                    <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"></path>
-                    <path fill="white" d="M14 2v6h6M16 13H8M16 17H8M10 9H8"></path>
-                  </svg>
-                  <div>
-                    <p class="text-sm font-medium text-gray-900">个人陈述-CMU.pdf</p>
-                    <p class="text-xs text-gray-500">已审核通过 | 2026-12-20</p>
-                  </div>
-                </div>
-                <button class="px-3 py-1 text-xs text-blue-600 bg-blue-50 rounded-md hover:bg-blue-100 font-medium">预览</button>
-              </div>
-              <div class="flex items-center justify-between p-3 bg-green-50 rounded-lg hover:bg-green-100 transition-colors cursor-pointer">
-                <div class="flex items-center gap-3">
-                  <svg class="w-8 h-8 text-green-500" fill="currentColor" viewBox="0 0 24 24">
-                    <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"></path>
-                    <path fill="white" d="M14 2v6h6M16 13H8M16 17H8M10 9H8"></path>
-                  </svg>
-                  <div>
-                    <p class="text-sm font-medium text-gray-900">推荐信-教授A.pdf</p>
-                    <p class="text-xs text-gray-500">已审核通过 | 2026-12-22</p>
-                  </div>
-                </div>
-                <button class="px-3 py-1 text-xs text-blue-600 bg-blue-50 rounded-md hover:bg-blue-100 font-medium">预览</button>
-              </div>
-              <div class="flex items-center justify-between p-3 bg-green-50 rounded-lg hover:bg-green-100 transition-colors cursor-pointer">
-                <div class="flex items-center gap-3">
-                  <svg class="w-8 h-8 text-green-500" fill="currentColor" viewBox="0 0 24 24">
-                    <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"></path>
-                    <path fill="white" d="M14 2v6h6M16 13H8M16 17H8M10 9H8"></path>
-                  </svg>
-                  <div>
-                    <p class="text-sm font-medium text-gray-900">简历-CV.pdf</p>
-                    <p class="text-xs text-gray-500">已审核通过 | 2026-12-18</p>
-                  </div>
-                </div>
-                <button class="px-3 py-1 text-xs text-blue-600 bg-blue-50 rounded-md hover:bg-blue-100 font-medium">预览</button>
-              </div>
+          </details>
+          <details class="website-form-group">
+            <summary><span class="website-form-group__name"><span class="website-form-group__index">2</span>学历信息 <span class="website-form-group__meta">46 个字段</span></span><svg class="website-form-group__chevron" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg></summary>
+            <div class="website-form-fields">
+              <div class="website-form-field" data-advice="填写成绩单上显示的院校英文名称。"><label>本科院校（Undergraduate School）<span class="text-red-500"> *</span></label><input id="wf-undergrad" data-wf-label="本科院校" data-wf-required type="text" value="浙江大学"></div>
+              <div class="website-form-field" data-advice="专业名称须与成绩单或在读证明一致。"><label>本科专业（Major）<span class="text-red-500"> *</span></label><input id="wf-major" data-wf-label="本科专业" data-wf-required type="text" value="计算机科学与技术"></div>
+              <div class="website-form-field" data-advice="保留原始计分制，并注明满分。"><label>GPA（4.0 Scale）<span class="text-red-500"> *</span></label><input id="wf-gpa" data-wf-label="GPA" data-wf-required type="text" value="3.8 / 4.0"></div>
             </div>
-          </div>
+          </details>
+          <details class="website-form-group">
+            <summary><span class="website-form-group__name"><span class="website-form-group__index">3</span>语言考试 <span class="website-form-group__meta">23 个字段</span></span><svg class="website-form-group__chevron" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg></summary>
+            <div class="website-form-fields">
+              <div class="website-form-field" data-advice="填写当前有效的最高语言考试成绩。"><label>TOEFL / IELTS 总分</label><input id="wf-englishScore" data-wf-label="语言成绩" type="text" value="TOEFL 108"></div>
+              <div class="website-form-field" data-advice="依次填写总分与写作成绩。"><label>GRE / GMAT 成绩</label><input id="wf-greScore" data-wf-label="GRE/GMAT成绩" type="text" value="GRE 328 + 4.0"></div>
+              <div class="website-form-field" data-advice="选择该次成绩对应的正式考试日期。"><label>考试日期</label><input data-wf-label="考试日期" type="date" value="2026-08-22"></div>
+            </div>
+          </details>
+          <details class="website-form-group">
+            <summary><span class="website-form-group__name"><span class="website-form-group__index">4</span>联系信息 <span class="website-form-group__meta">9 个字段</span></span><svg class="website-form-group__chevron" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg></summary>
+            <div class="website-form-fields">
+              <div class="website-form-field website-form-field--wide" data-advice="填写可接收纸质材料的完整英文通信地址。"><label>通信地址（Mailing Address）</label><input id="wf-address" data-wf-label="通信地址" type="text" value="" placeholder="请填写通信地址"></div>
+              <div class="website-form-field" data-advice="选择通信地址所在的国家或地区。"><label>国家 / 地区</label><select data-wf-label="联系地址国家"><option selected>中国</option><option>美国</option><option>其他</option></select></div>
+            </div>
+          </details>
+          <details class="website-form-group">
+            <summary><span class="website-form-group__name"><span class="website-form-group__index">5</span>职业与活动经历 <span class="website-form-group__meta">48 个字段</span></span><svg class="website-form-group__chevron" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg></summary>
+            <div class="website-form-fields">
+              <div class="website-form-field" data-advice="填写工作或实习机构的正式英文名称。"><label>Name of organisation <span class="text-red-500">*</span></label><input data-wf-label="Name of organisation" data-wf-required type="text" value="浙江大学人工智能研究所"></div>
+              <div class="website-form-field" data-advice="填写该经历对应的职位或头衔。"><label>Position <span class="text-red-500">*</span></label><input data-wf-label="Position" data-wf-required type="text" value="Research Assistant"></div>
+              <div class="website-form-field" data-advice="选择全职或兼职工作模式。"><label>Mode <span class="text-red-500">*</span></label><select data-wf-label="Mode" data-wf-required><option selected>Part-time</option><option>Full-time</option></select></div>
+              <div class="website-form-field" data-advice="填写该段经历的开始年月。"><label>Start date</label><input data-wf-label="Start date" type="month" value="2025-07"></div>
+              <div class="website-form-field" data-advice="仍在进行时可保持为空。"><label>End date</label><input data-wf-label="End date" type="month" value="2026-06"></div>
+              <div class="website-form-field" data-advice="填写工作或实习所在地。"><label>Country / Region</label><input data-wf-label="Country / Region" type="text" value="China"></div>
+              <div class="website-form-field website-form-field--wide" data-advice="概括核心职责与成果，控制在官网字数限制内。"><label>Major responsibilities <span class="text-red-500">*</span></label><textarea data-wf-label="Major responsibilities" data-wf-required>参与多模态模型研究，负责数据处理、模型评估与实验记录。</textarea></div>
+            </div>
+          </details>
+          <details class="website-form-group">
+            <summary><span class="website-form-group__name"><span class="website-form-group__index">6</span>推荐人 <span class="website-form-group__meta">28 个字段</span></span><svg class="website-form-group__chevron" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg></summary>
+            <div class="website-form-fields"><div class="website-form-field" data-advice="与推荐信署名保持一致。"><label>推荐人姓名</label><input data-wf-label="推荐人姓名" type="text" value="王教授"></div><div class="website-form-field" data-advice="优先填写推荐人的机构邮箱。"><label>推荐人邮箱</label><input data-wf-label="推荐人邮箱" type="email" value="wang@example.edu.cn"></div><div class="website-form-field" data-advice="简要说明推荐人与申请人的关系。"><label>与申请人关系</label><input data-wf-label="推荐人关系" type="text" value="课程导师"></div></div>
+          </details>
+          <details class="website-form-group">
+            <summary><span class="website-form-group__name"><span class="website-form-group__index">7</span>申请资格与申请项 <span class="website-form-group__meta">8 个字段</span></span><svg class="website-form-group__chevron" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg></summary>
+            <div class="website-form-fields"><div class="website-form-field" data-advice="选择与项目申请目标一致的学位类型。"><label>申请学位</label><select data-wf-label="申请学位"><option selected>Master</option><option>PhD</option></select></div><div class="website-form-field" data-advice="使用院校官网公布的正式专业名称。"><label>申请专业</label><input data-wf-label="申请专业" type="text" value="Computer Science"></div><div class="website-form-field" data-advice="确认入学年份与申请季一致。"><label>入学学期</label><select data-wf-label="入学学期"><option selected>Fall 2027</option></select></div></div>
+          </details>
         </div>
-      </div>
+      </section>
 
-      <!-- 申请结果更新区 -->
+      <!-- 更新网申完成状态区 -->
       <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-5">
         <div class="flex items-center justify-between mb-4">
           <div class="flex items-center gap-2">
             <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-            <h2 class="text-base font-semibold text-gray-800">申请结果更新</h2>
+            <h2 class="text-base font-semibold text-gray-800">更新网申完成状态</h2>
           </div>
           <span id="admissionResultBadge" class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-500">未填写</span>
         </div>
@@ -917,7 +596,7 @@
     <div class="absolute inset-0 bg-black bg-opacity-30" onclick="closeUploadModal()"></div>
     <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[480px] bg-white rounded-2xl shadow-2xl p-6">
       <div class="flex items-center justify-between mb-5">
-        <h3 class="text-lg font-semibold text-gray-800">上传申请材料</h3>
+        <h3 id="uploadModalTitle" class="text-lg font-semibold text-gray-800">上传申请材料</h3>
         <button class="p-1 text-gray-400 hover:text-gray-600" onclick="closeUploadModal()">
           <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
@@ -966,7 +645,7 @@
         </div>
       </div>
       <div class="flex items-center gap-3 mt-6">
-        <button class="flex-1 h-10 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium" onclick="confirmUpload()">确认上传</button>
+        <button id="uploadConfirmButton" class="flex-1 h-10 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium" onclick="confirmUpload()">确认上传</button>
         <button class="flex-1 h-10 bg-white border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors font-medium" onclick="closeUploadModal()">取消</button>
       </div>
     </div>
@@ -1031,8 +710,8 @@
       <p class="text-xs text-gray-400 mb-5">绑定已有申请邮箱，系统通过 IMAP 协议读取邮件状态。</p>
       <div id="emailManualPanel" class="space-y-4">
         <div><label class="block text-sm font-medium text-gray-700 mb-1.5">邮箱账号 <span class="text-red-500">*</span></label><input id="manualEmailAccount" type="email" class="w-full h-10 px-3 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500" placeholder="请输入已有邮箱账号"></div>
-        <div><label class="block text-sm font-medium text-gray-700 mb-1.5">邮箱密码 / 授权码 <span class="text-red-500">*</span></label><input id="manualEmailPassword" type="password" class="w-full h-10 px-3 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500" placeholder="请输入邮箱密码或授权码"></div>
-        <p class="text-xs text-gray-400">使用 IMAP 协议连接，请先在邮箱中开启 IMAP 服务；建议优先使用邮箱授权码。</p>
+        <div><label class="block text-sm font-medium text-gray-700 mb-1.5">邮箱授权码 <span class="text-red-500">*</span></label><input id="manualEmailAuthCode" type="password" class="w-full h-10 px-3 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500" placeholder="请输入邮箱授权码"></div>
+        <p class="text-xs text-gray-400">请先在邮箱中开启 IMAP 服务并生成授权码。</p>
         <div class="flex items-center gap-3 pt-2"><button class="flex-1 h-10 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium" onclick="confirmManualEmailBinding()">确认绑定</button><button class="flex-1 h-10 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50" onclick="closeEmailBindingModal()">取消</button></div>
       </div>
     </div>
@@ -1167,11 +846,11 @@
       var node = document.querySelector('[data-dom-id="timeline-node-' + nodeId + '"]');
       if (!node) return;
       if (timelineNodeStatus[nodeId]) {
-        node.className = 'w-5 h-5 rounded-full border-2 flex items-center justify-center cursor-pointer bg-blue-600 border-blue-600';
-        node.innerHTML = '<svg class="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/></svg>';
+        node.className = 'application-timeline-marker is-complete';
+        node.textContent = '✓';
       } else {
-        node.className = 'w-5 h-5 rounded-full border-2 flex items-center justify-center cursor-pointer bg-white border-gray-300';
-        node.innerHTML = '<span class="text-xs font-medium text-gray-400">' + nodeId + '</span>';
+        node.className = 'application-timeline-marker';
+        node.textContent = nodeId;
       }
     }
 
@@ -1190,10 +869,10 @@
       }
     }
 
-    // 邮箱密码显示/隐藏
-    function toggleEmailPwd(btn) {
-      var pwdSpan = btn.parentElement.querySelector('[data-field="email-pwd"]');
-      var plainSpan = btn.parentElement.parentElement.querySelector('[data-field="email-pwd-plain"]');
+    // 邮箱授权码显示/隐藏
+    function toggleEmailAuthCode(btn) {
+      var pwdSpan = btn.parentElement.querySelector('[data-field="email-auth-code"]');
+      var plainSpan = btn.parentElement.parentElement.querySelector('[data-field="email-auth-code-plain"]');
       if (pwdSpan.style.display !== 'none') {
         pwdSpan.style.display = 'none';
         plainSpan.classList.remove('hidden');
@@ -1223,10 +902,12 @@
     // 材料上传弹窗
     var currentUploadDocId = null;
     var selectedUploadFile = null;
-    var uploadTypeByDocId = { 4: 'transcript', 6: 'passport' };
+    var uploadTypeByDocId = { 1: 'ps', 2: 'rl', 3: 'cv', 4: 'transcript', 5: 'language', 6: 'passport' };
     function openUploadModal() {
       currentUploadDocId = null;
       resetUploadForm();
+      document.getElementById('uploadModalTitle').textContent = '上传申请材料';
+      document.getElementById('uploadConfirmButton').textContent = '确认上传';
       document.getElementById('uploadModal').classList.remove('hidden');
     }
     function closeUploadModal() {
@@ -1238,6 +919,7 @@
       var type = document.getElementById('uploadDocType');
       var input = document.getElementById('fileInput');
       if (type) type.value = '';
+      if (type) type.disabled = false;
       if (input) input.value = '';
       selectedUploadFile = null;
       var info = document.getElementById('selectedFileInfo');
@@ -1248,7 +930,12 @@
     function openDocUpload(docId) {
       currentUploadDocId = docId;
       resetUploadForm();
-      document.getElementById('uploadDocType').value = uploadTypeByDocId[docId] || '';
+      var type = document.getElementById('uploadDocType');
+      type.value = uploadTypeByDocId[docId] || '';
+      type.disabled = true;
+      var isReplace = !!document.querySelector('#materialAction-' + docId + ' .material-file-menu');
+      document.getElementById('uploadModalTitle').textContent = isReplace ? '替换申请材料' : '上传申请材料';
+      document.getElementById('uploadConfirmButton').textContent = isReplace ? '确认替换' : '确认上传';
       document.getElementById('uploadModal').classList.remove('hidden');
     }
     function isAllowedUpload(file) {
@@ -1293,13 +980,37 @@
       if (!docType) { alert('请选择材料类型'); return; }
       if (!selectedUploadFile) { alert('请选择需要上传的文件'); return; }
       var docId = resolveUploadRow(docType);
+      var isReplacing = false;
       if (docId) {
         var action = document.getElementById('materialAction-' + docId);
-        if (action) action.innerHTML = '<span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-green-100 text-green-700">已上传</span><span class="text-xs text-gray-400">刚刚</span>';
+        var row = document.getElementById('materialRow-' + docId);
+        var fileName = escapeTemplateText(selectedUploadFile.name);
+        isReplacing = !!(action && action.querySelector('.material-file-menu'));
+        if (action) action.innerHTML = renderMaterialFileMenu(docId, fileName);
+        if (row) {
+          var main = row.querySelector('.material-item__main');
+          var fileLine = main.querySelector('.material-item__file');
+          if (!fileLine) {
+            fileLine = document.createElement('p');
+            fileLine.className = 'material-item__file';
+            main.appendChild(fileLine);
+          }
+          fileLine.textContent = selectedUploadFile.name + ' · 刚刚';
+        }
+        var materialSummary = document.getElementById('scanStateBadge');
+        if (materialSummary) materialSummary.textContent = document.querySelectorAll('#materialListScanned .material-file-menu').length + ' / 6 已上传';
       }
       var typeName = typeSelect.options[typeSelect.selectedIndex].text;
       closeUploadModal();
-      alert('上传成功：' + typeName);
+      alert((isReplacing ? '替换成功：' : '上传成功：') + typeName);
+    }
+
+    function renderMaterialFileMenu(docId, fileName) {
+      return '<div class="material-file-menu"><button class="material-file-menu__trigger" aria-haspopup="menu">已上传 <span>⌄</span></button><div class="material-file-menu__panel" role="menu"><button role="menuitem" data-file="' + fileName + '" onclick="previewApplicationMaterial(this.dataset.file)">预览文件</button><button role="menuitem" onclick="openDocUpload(' + docId + ')">替换文件</button></div></div>';
+    }
+
+    function previewApplicationMaterial(fileName) {
+      alert('正在预览：' + fileName);
     }
 
     // 提交申请
@@ -1334,9 +1045,9 @@
     // ===== 关联邮箱：绑定已有邮箱 =====
     function confirmManualEmailBinding() {
       var email = document.getElementById('manualEmailAccount').value.trim();
-      var password = document.getElementById('manualEmailPassword').value;
+      var authCode = document.getElementById('manualEmailAuthCode').value;
       if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { alert('请输入正确的邮箱账号'); return; }
-      if (!password) { alert('请输入邮箱密码或授权码'); return; }
+      if (!authCode) { alert('请输入邮箱授权码'); return; }
       document.getElementById('linkedEmailText').textContent = email;
       document.getElementById('wf-email').value = email;
       alert('邮箱已通过 IMAP 协议绑定');
@@ -1538,20 +1249,19 @@
       var pending = document.getElementById('materialListPending');
       var scanned = document.getElementById('materialListScanned');
       var badge = document.getElementById('scanStateBadge');
-      pending.classList.add('hidden');
-      scanned.classList.remove('hidden');
-      badge.textContent = '已复用 ' + selected.version;
-      badge.className = 'inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-green-100 text-green-700';
+      if (pending) pending.classList.add('hidden');
+      if (scanned) scanned.classList.remove('hidden');
+      if (badge) badge.textContent = '4 / 6 已上传 · ' + selected.version;
       var selectedSchool = selected.school || '未绑定院校';
-      document.getElementById('templateFieldSummary').innerHTML = '<div><p class="text-sm font-medium text-blue-800">已复用 ' + escapeTemplateText(selectedSchool) + ' · ' + escapeTemplateText(selected.program) + ' · ' + escapeTemplateText(selected.version) + '</p><p class="text-xs text-blue-600 mt-0.5">官网字段 ' + selected.fields + ' 项 · 申请材料 ' + selected.materials + ' 项，请核对后保存。</p></div><a href="网申模板库 - 留学申请管理系统.html" class="text-xs text-blue-700 font-medium hover:underline flex-shrink-0">查看模板详情</a>';
-      var notice = document.getElementById('templateFieldNotice');
-      notice.classList.remove('hidden');
-      notice.textContent = selected.school !== CURRENT_APPLICATION_SCHOOL ? '已跨院校复用模板。请逐项核对当前学校官网字段和材料要求后再提交。' : '模板已同步。通信地址与标准化考试成绩已更新，请项目经理核对当前申请要求。';
+      document.getElementById('templateFieldSummary').innerHTML = '<span><strong>' + escapeTemplateText(selectedSchool) + ' · ' + escapeTemplateText(selected.program) + '</strong>　模板 ' + escapeTemplateText(selected.version) + '</span><span>' + selected.fields + ' 个字段 · ' + selected.materials + ' 项材料</span>';
       closeTemplateReuseModal();
       alert('已复用 ' + selectedSchool + ' · ' + selected.program + ' ' + selected.version + '，官网字段与申请材料清单已同步更新');
     }
 
     // ===== 申请官网字段表单：保存 =====
+    var WEBSITE_FORM_DRAFT_KEY = 'pbs_cmu_website_form_draft';
+    var WEBSITE_FORM_SAVED_KEY = 'pbs_cmu_website_form_saved';
+
     function collectWebsiteFormData() {
       var data = {};
       document.querySelectorAll('[data-wf-label]').forEach(function(el) {
@@ -1559,18 +1269,63 @@
       });
       return data;
     }
+
+    function persistWebsiteForm(key) {
+      localStorage.setItem(key, JSON.stringify({ updatedAt: new Date().toISOString(), fields: collectWebsiteFormData() }));
+    }
+
+    function updateWebsiteFormSaveState(text) {
+      var state = document.getElementById('websiteFormSaveState');
+      if (state) state.textContent = text;
+    }
+
+    function saveWebsiteDraft() {
+      persistWebsiteForm(WEBSITE_FORM_DRAFT_KEY);
+      updateWebsiteFormSaveState('刚刚已暂存');
+      alert('当前填写进度已暂存');
+    }
+
     function saveWebsiteForm() {
-      var data = collectWebsiteFormData();
-      if (!data['名（First Name）'] || !data['姓（Last Name）']) {
-        alert('请至少填写姓名必填字段后再保存');
+      var missing = Array.from(document.querySelectorAll('[data-wf-required]')).filter(function(field) {
+        field.classList.remove('is-invalid');
+        return !String(field.value || '').trim();
+      });
+      if (missing.length) {
+        missing.forEach(function(field) { field.classList.add('is-invalid'); });
+        var first = missing[0];
+        var group = first.closest('details');
+        if (group) group.open = true;
+        first.focus();
+        var names = missing.slice(0, 3).map(function(field) {
+          var label = field.closest('.website-form-field').querySelector('label');
+          return label.textContent.replace('*', '').trim();
+        });
+        alert('请填写必填字段：' + names.join('、') + (missing.length > 3 ? '等 ' + missing.length + ' 项' : ''));
         return;
       }
-      if (!data['通信地址']) {
-        alert('仍有缺失字段，请项目经理完成黄色提示项后再保存');
-        document.getElementById('wf-address').focus();
-        return;
+      persistWebsiteForm(WEBSITE_FORM_SAVED_KEY);
+      localStorage.removeItem(WEBSITE_FORM_DRAFT_KEY);
+      updateWebsiteFormSaveState('刚刚已保存');
+      alert('申请官网字段表单已保存');
+    }
+
+    function restoreWebsiteForm() {
+      var fields = document.querySelectorAll('[data-wf-label]');
+      fields.forEach(function(field) {
+        field.addEventListener('input', function() { field.classList.remove('is-invalid'); });
+      });
+      var raw = localStorage.getItem(WEBSITE_FORM_DRAFT_KEY) || localStorage.getItem(WEBSITE_FORM_SAVED_KEY);
+      if (!raw) return;
+      try {
+        var record = JSON.parse(raw);
+        fields.forEach(function(field) {
+          var value = record.fields && record.fields[field.getAttribute('data-wf-label')];
+          if (value !== undefined) field.value = value;
+        });
+        updateWebsiteFormSaveState(localStorage.getItem(WEBSITE_FORM_DRAFT_KEY) ? '已恢复暂存内容' : '已加载保存内容');
+      } catch (error) {
+        localStorage.removeItem(WEBSITE_FORM_DRAFT_KEY);
       }
-      alert('申请官网字段表单已保存！\n保存字段数：' + Object.keys(data).length);
     }
     var selectedResultImageData = localStorage.getItem('pbs_offer_image_cmu') || '';
     function renderResultImage(name) {
@@ -1614,7 +1369,10 @@
       if (selectedResultImageData) localStorage.setItem('pbs_offer_image_cmu', selectedResultImageData);
       alert('申请结果已保存');
     }
-    document.addEventListener('DOMContentLoaded', function() { renderResultImage(''); });
+    document.addEventListener('DOMContentLoaded', function() {
+      renderResultImage('');
+      restoreWebsiteForm();
+    });
   </script>
   <script src="./assets/js/pbs-app.js?v=6.0"></script>
 

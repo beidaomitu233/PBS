@@ -2446,8 +2446,25 @@
     '选校任务列表页 - 留学申请管理系统.html': '#flt-kw',
     '用户管理 - 留学申请管理系统.html': '#flt-kw',
     '人员管理 - PBS留学CRM系统.html': '#flt-kw',
+    '机构管理 - PBS留学CRM系统.html': '#organizationSearch',
     '操作日志审计 - 留学申请管理系统.html': '#flt-kw'
   };
+
+  function mountAdvancedFilter(file) {
+    if (!FILTER_PAGE_CONTROLS[file]) return;
+    var link = document.createElement('link');
+    link.rel = 'stylesheet';
+    link.href = './assets/css/pbs-advanced-filter.css?v=6.6';
+    document.head.appendChild(link);
+    var script = document.createElement('script');
+    script.src = './assets/js/pbs-advanced-filter.js?v=6.6';
+    script.onload = function () {
+      if (window.PBSAdvancedFilter) {
+        window.PBSAdvancedFilter.mount({ file: file, controlSelector: FILTER_PAGE_CONTROLS[file] });
+      }
+    };
+    document.head.appendChild(script);
+  }
 
   function closestFilterCard(control) {
     return control ? control.closest('.bg-white.rounded-xl, .card, .monitor-filter') : null;
@@ -2777,6 +2794,7 @@
     var w = PAGE_WIRING[file];
     if (w) { try { w(session); } catch (e) { console.error(e); } }
     enhanceListPage(file);
+    mountAdvancedFilter(file);
     normalizeDisabledStatus(document);
     removeTextAvatars(document);
     normalizeOutlinedColorControls(document);
@@ -2799,6 +2817,30 @@
       compactDetailBackLabels(document);
     }, 0);
   });
+})();
+
+/* 已交付文件：文书、网申、结项归档与商城提交使用同一份跨页面数据。 */
+(function loadDeliveryWorkflow() {
+  var page = decodeURIComponent((location.pathname || '').split('/').pop() || '');
+  var enabledPages = [
+    '学生档案详情页 - 留学申请管理系统.html',
+    '文书审核详情页 - 留学申请管理系统.html',
+    '网申任务详情页 - 留学申请管理系统.html',
+    '结项详情页 - 留学申请管理系统.html',
+    '项目详情页 - 留学申请管理系统.html'
+  ];
+  if (enabledPages.indexOf(page) < 0) return;
+  if (!document.querySelector('link[href*="pbs-delivery.css"]')) {
+    var style = document.createElement('link');
+    style.rel = 'stylesheet';
+    style.href = './assets/css/pbs-delivery.css?v=1.7';
+    document.head.appendChild(style);
+  }
+  if (!document.querySelector('script[src*="pbs-delivery.js"]')) {
+    var script = document.createElement('script');
+    script.src = './assets/js/pbs-delivery.js?v=1.7';
+    document.body.appendChild(script);
+  }
 })();
 /* 列表筛选：关键词统一覆盖当前行全部可见文本字段。 */
 (function () {

@@ -9,6 +9,21 @@
   <style>
     *{box-sizing:border-box}html,body{margin:0;min-height:100%;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;background:#f5f7fb;color:#1f2937}button,input,select,textarea{font:inherit}button{cursor:pointer}.layout{display:flex;min-height:calc(100vh - 64px);align-items:flex-start}.main{flex:1;min-width:0;padding:24px 28px 56px}.card{background:#fff;border:1px solid #e5e7eb;border-radius:14px;box-shadow:0 1px 3px rgba(15,23,42,.04)}.input{width:100%;height:40px;border:1px solid #d1d5db;border-radius:9px;padding:0 12px;background:#fff;font-size:14px;outline:none}.input:focus,.textarea:focus{border-color:#7D94A6;box-shadow:0 0 0 3px rgba(59,130,246,.1)}.textarea{width:100%;min-height:74px;border:1px solid #d1d5db;border-radius:9px;padding:10px 12px;background:#fff;font-size:14px;line-height:1.5;resize:vertical;outline:none}.btn{height:38px;padding:0 15px;border:1px solid #d1d5db;border-radius:9px;background:#fff;color:#374151;font-size:13px;font-weight:600}.btn:hover{background:#f9fafb}.btn.primary{background:#6B829A;border-color:#6B829A;color:#fff}.btn.primary:hover{background:#556B7D}.btn.danger{color:#9A5A54;border-color:#EBCFCA;background:#fff}.modal{position:fixed;inset:0;z-index:100;display:none;align-items:center;justify-content:center;padding:20px;background:rgba(17,24,39,.45)}.modal.show{display:flex}.dialog{width:min(920px,96vw);max-height:90vh;display:flex;flex-direction:column;background:#fff;border-radius:16px;box-shadow:0 24px 70px rgba(0,0,0,.22)}.dialog-body{overflow:auto}.version-item.active{border-color:#6B829A;background:#E8EDF1}.toast{position:fixed;left:50%;bottom:28px;transform:translate(-50%,18px);opacity:0;pointer-events:none;background:#111827;color:#fff;border-radius:9px;padding:10px 16px;font-size:13px;transition:.2s;z-index:130}.toast.show{opacity:1;transform:translate(-50%,0)}@media(max-width:960px){#pbs-sidebar{display:none}.main{padding:20px 16px}.editor-grid{grid-template-columns:1fr}.field-grid{min-width:760px}}
   </style>
+  <style>
+    .search-select{position:relative}.program-selector-button{display:flex;width:100%;height:40px;align-items:center;justify-content:space-between;gap:12px;padding:0 12px;border:1px solid #d1d5db;border-radius:9px;background:#fff;color:#374151;font-size:14px}.program-selector-button.open{border-color:#7D94A6;box-shadow:0 0 0 3px rgba(59,130,246,.1)}#boundProgramSummary{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.selector-panel{position:absolute;top:46px;right:0;left:0;z-index:80;display:none;max-height:288px;padding:8px;overflow:hidden;border:1px solid #dbe1e8;border-radius:10px;background:#fff;box-shadow:0 12px 28px rgba(15,23,42,.14)}.selector-panel.show{display:block}#schoolSelectorPanel{overflow-y:auto;overscroll-behavior:contain}#programOptions{max-height:226px;overflow-y:auto;overscroll-behavior:contain}.selector-search{width:100%;height:34px;margin-bottom:6px;padding:0 9px;border:1px solid #dbe1e8;border-radius:7px;outline:none;font-size:12px}.selector-search:focus{border-color:#7D94A6}.program-option,.school-option{display:flex;width:100%;align-items:center;gap:9px;padding:9px 10px;border:0;border-radius:7px;background:#fff;color:#475569;font-size:13px;text-align:left}.program-option:hover,.school-option:hover,.school-option:focus-visible{background:#f4f6f8;outline:none}.program-option input{width:16px;height:16px;accent-color:#647f96}
+    .scope-tabs{display:flex;align-items:center;gap:7px;overflow-x:auto;padding:12px 20px;border-bottom:1px solid #edf0f3}.scope-tab{flex:none;height:32px;padding:0 12px;border:1px solid transparent;border-radius:8px;background:#fff;color:#64748b;font-size:12px}.scope-tab.active{border-color:#cdd6df;background:#edf1f5;color:#334155;font-weight:600}
+    .page-tabs{display:flex;gap:8px;overflow-x:auto;padding-bottom:2px;scrollbar-width:thin}
+    .page-tab{display:flex;min-width:150px;align-items:center;justify-content:space-between;gap:12px;padding:11px 13px;border:0;border-radius:10px;background:#f4f6f8;color:#475569;text-align:left}
+    .page-tab.active{background:#eaf2ff;color:#1d4ed8;box-shadow:inset 0 0 0 1px #c7dcff}
+    .page-tab strong{font-size:13px}.page-tab small{font-size:10px;color:#94a3b8}.page-tab.active small{color:#60a5fa}
+    .field-definition-grid{row-gap:28px!important;column-gap:32px!important}.field-definition{padding:18px 4px 24px;border-bottom:1px solid #e4e8ed;background:#fff}
+    .field-definition-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:12px}
+    .field-order{display:inline-flex;width:24px;height:24px;align-items:center;justify-content:center;border-radius:7px;background:#e6ebf2;color:#64748b;font-size:11px;font-weight:700}
+    .field-control-grid{display:grid;grid-template-columns:minmax(0,1fr) 110px 90px;gap:10px;align-items:end}
+    .field-definition label{display:block;margin-bottom:6px;color:#64748b;font-size:11px;font-weight:600}
+    .field-description{margin-top:10px}
+    @media(max-width:1200px){.template-info-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}@media(max-width:960px){.template-info-grid{grid-template-columns:1fr}.field-definition-grid{grid-template-columns:1fr}.field-control-grid{grid-template-columns:1fr 1fr}.field-control-grid>div:first-child{grid-column:1/-1}}
+  </style>
   <script src="./assets/js/pbs-app.js" defer></script>
 </head>
 <body>
@@ -31,25 +46,24 @@
             <span id="breadcrumbMode" class="sr-only">修改模板</span>
           </div>
         </div>
-        <div class="pbs-detail-topbar__actions"><button class="btn" onclick="openVersionHistory()">查看历史版本</button><button class="btn primary" onclick="saveNewVersion()">保存新版本</button></div>
+        <div class="pbs-detail-topbar__actions"><button class="btn" onclick="openVersionHistory()">查看历史版本</button><button class="btn" onclick="saveNewVersion()">另存新版本</button><button class="btn primary" onclick="saveTemplate()">保存</button></div>
       </div>
 
       <section class="card p-5 mb-5">
-        <div class="flex items-center justify-between mb-4"><h2 class="text-base font-semibold text-gray-900">模板信息</h2><span class="text-xs text-gray-400">带 * 为必填项</span></div>
-        <div class="grid grid-cols-2 gap-4 editor-grid">
-          <div><label class="block text-sm text-gray-600 mb-2">案例名称 <span class="text-red-500">*</span></label><input id="templateName" class="input" placeholder="例如：计算机科学硕士网申案例"></div>
-          <div><label class="block text-sm text-gray-600 mb-2">国家 / 地区 <span class="text-xs text-gray-400 font-normal">（选填）</span></label><input id="templateRegion" class="input" placeholder="手动输入，如：美国 / 英国 / 中国香港"></div>
-          <div><label class="block text-sm text-gray-600 mb-2">绑定院校 <span class="text-xs text-gray-400 font-normal">（选填）</span></label><select id="templateSchool" class="input"><option value="">不绑定院校</option><option>卡内基梅隆大学</option><option>斯坦福大学</option><option>哥伦比亚大学</option><option>剑桥大学</option><option>香港大学</option><option>纽约大学</option><option>波士顿大学</option></select></div>
-          <div><label class="block text-sm text-gray-600 mb-2">绑定专业 <span class="text-red-500">*</span></label><input id="templateProgram" class="input" placeholder="请输入专业名称"></div>
+        <div class="flex items-center justify-between mb-4"><h2 class="text-base font-semibold text-gray-900">模板信息</h2></div>
+        <div class="template-info-grid grid grid-cols-4 gap-4">
+          <div><label class="block text-sm text-gray-600 mb-2">模板名称 <span class="text-red-500">*</span></label><input id="templateName" class="input" placeholder="例如：CMU 多专业网申模板"></div>
+          <div><label class="block text-sm text-gray-600 mb-2">绑定院校 <span class="text-red-500">*</span></label><div class="search-select"><input id="templateSchool" class="input" placeholder="搜索并选择院校" autocomplete="off" role="combobox" aria-autocomplete="list" aria-expanded="false" aria-controls="schoolSelectorPanel" onfocus="openSchoolSelector()" oninput="filterSchoolOptions()"><div id="schoolSelectorPanel" class="selector-panel" role="listbox"></div></div></div>
+          <div><label class="block text-sm text-gray-600 mb-2">学院 <span class="text-red-500">*</span></label><input id="templateCollege" class="input" placeholder="手动填写学院名称"></div>
+          <div><label class="block text-sm text-gray-600 mb-2">绑定专业 <span class="text-xs text-gray-400 font-normal">（选填）</span></label><div class="search-select"><button id="programSelectorButton" type="button" class="program-selector-button" aria-haspopup="listbox" aria-expanded="false" aria-controls="programSelectorPanel" onclick="toggleProgramSelector()"><span id="boundProgramSummary">请选择专业</span><span class="text-gray-400">⌄</span></button><div id="programSelectorPanel" class="selector-panel" role="listbox" aria-multiselectable="true"><input id="programSearch" class="selector-search" placeholder="搜索专业" autocomplete="off" oninput="filterProgramOptions()"><div id="programOptions"></div></div></div></div>
         </div>
       </section>
 
       <section class="card mb-5 overflow-hidden">
-        <div class="flex items-center justify-between px-5 py-4 border-b border-gray-200"><div><h2 class="text-base font-semibold text-gray-900">申请官网字段</h2><p class="text-xs text-gray-400 mt-1">共 <span id="fieldCount">0</span> 个字段</p></div><button class="btn primary" onclick="addFieldRow()">+ 添加字段</button></div>
-        <div class="overflow-x-auto">
-          <div class="field-grid grid grid-cols-[minmax(220px,1.4fr)_150px_120px_minmax(220px,1fr)_64px] gap-3 px-5 py-3 bg-gray-50 text-xs font-medium text-gray-500"><span>字段名称</span><span>字段类型</span><span>是否必填</span><span>填写说明</span><span>操作</span></div>
-          <div id="fieldRows" class="divide-y divide-gray-100"></div>
-        </div>
+        <div class="flex items-center justify-between px-5 py-4 border-b border-gray-100"><div><h2 class="text-base font-semibold text-gray-900">申请官网字段</h2><p class="text-xs text-gray-400 mt-1"><span id="activePageName">当前页面</span> · <span id="fieldCount">0</span> 个字段</p></div><div class="flex gap-2"><button class="btn" onclick="addApplicationPage()">添加页面</button><button class="btn primary" onclick="addFieldRow()">添加字段</button></div></div>
+        <div id="programScopeTabs" class="scope-tabs"></div>
+        <div class="px-5 pt-4 pb-3 border-b border-gray-100"><div id="applicationPageTabs" class="page-tabs"></div></div>
+        <div id="fieldRows" class="field-definition-grid grid grid-cols-2 gap-x-6 px-5 pb-3"></div>
       </section>
 
       <section class="card overflow-hidden">

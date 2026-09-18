@@ -1,0 +1,27 @@
+{
+  "manifest_version": 3,
+  "name": "留學申請助手",
+  "description": "掃描申請頁、預覽建議，經人工確認後安全填寫空白欄位。",
+  "version": "0.1.0",
+  "minimum_chrome_version": "114",
+  "permissions": ["activeTab", "tabs", "webNavigation", "sidePanel", "storage", "scripting"],
+  "host_permissions": [
+    "http://localhost/*",
+    "http://127.0.0.1/*",
+    "http://8.160.165.7/*",
+    "https://*/*"
+  ],
+  "background": {
+    "service_worker": "background.js",
+    "type": "module"
+  },
+  "action": {
+    "default_title": "開啟留學申請助手"
+  },
+  "side_panel": {
+    "default_path": "sidepanel.html"
+  },
+  "content_security_policy": {
+    "extension_pages": "script-src 'self'; object-src 'self'; connect-src 'self' http://127.0.0.1:* http://localhost:* http://8.160.165.7:* https:"
+  }
+}

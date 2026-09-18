@@ -1637,12 +1637,12 @@ body {
         });
       }
 
-      // 同步至AI写作助手按钮
+      // AI写作按钮
       document.querySelectorAll('.btn-send-to-ai').forEach(function(btn) {
         btn.addEventListener('click', function() {
           var textarea = this.closest('.editor-block').querySelector('.editor-textarea');
           var content = textarea.value;
-          // 切换到右侧AI修改面板（AI写作助手子Tab）
+          // 切换到右侧 AI 写作面板
           activateRightPanel('ai');
           showAiSubPanel('write');
           // 将内容传入AI面板
@@ -1657,6 +1657,79 @@ body {
           }
         });
       });
+
+      var activeTranslationTextarea = null;
+      function ensureTranslationDialog() {
+        var dialog = document.getElementById('documentTranslationDialog');
+        if (dialog) return dialog;
+        dialog = document.createElement('div');
+        dialog.id = 'documentTranslationDialog';
+        dialog.className = 'fixed inset-0 z-[100] hidden items-center justify-center p-5';
+        dialog.innerHTML = '<div class="absolute inset-0 bg-slate-900/40" data-translation-close></div>'
+          + '<div class="relative w-full max-w-2xl overflow-hidden rounded-2xl bg-white shadow-2xl">'
+          + '<div class="flex items-center justify-between border-b border-gray-100 px-6 py-4"><div><h3 class="text-lg font-bold text-gray-900">翻译段落</h3><p class="mt-1 text-xs text-gray-400">选择目标语言，确认结果后写回当前段落</p></div><button type="button" class="text-2xl leading-none text-gray-400 hover:text-gray-600" data-translation-close>&times;</button></div>'
+          + '<div class="space-y-4 px-6 py-5"><div><label class="mb-1.5 block text-xs font-medium text-gray-500">目标语言</label><select id="translationLanguage" class="h-10 w-full rounded-lg border border-gray-200 bg-white px-3 text-sm text-gray-700 focus:border-blue-500 focus:outline-none"><option value="en">英语</option><option value="zh">简体中文</option><option value="ja">日语</option><option value="ko">韩语</option></select></div>'
+          + '<div><label class="mb-1.5 block text-xs font-medium text-gray-500">当前内容</label><textarea id="translationSource" rows="4" readonly class="w-full resize-none rounded-xl bg-gray-50 px-4 py-3 text-sm leading-6 text-gray-600 focus:outline-none"></textarea></div>'
+          + '<div><label class="mb-1.5 block text-xs font-medium text-gray-500">翻译结果</label><textarea id="translationResult" rows="5" class="w-full resize-none rounded-xl border border-gray-200 px-4 py-3 text-sm leading-6 text-gray-700 focus:border-blue-500 focus:outline-none" placeholder="点击“生成翻译”后可继续编辑"></textarea></div></div>'
+          + '<div class="flex justify-end gap-3 border-t border-gray-100 px-6 py-4"><button type="button" class="h-9 rounded-lg bg-gray-100 px-4 text-sm font-medium text-gray-600 hover:bg-gray-200" data-translation-close>取消</button><button type="button" id="generateTranslation" class="h-9 rounded-lg bg-blue-50 px-4 text-sm font-medium text-blue-700 hover:bg-blue-100">生成翻译</button><button type="button" id="applyTranslation" class="h-9 rounded-lg bg-blue-600 px-4 text-sm font-medium text-white hover:bg-blue-700">应用到段落</button></div></div>';
+        document.body.appendChild(dialog);
+        dialog.querySelectorAll('[data-translation-close]').forEach(function (button) {
+          button.addEventListener('click', function () { dialog.classList.add('hidden'); dialog.classList.remove('flex'); });
+        });
+        dialog.querySelector('#generateTranslation').addEventListener('click', function () {
+          var source = dialog.querySelector('#translationSource').value.trim();
+          var language = dialog.querySelector('#translationLanguage').value;
+          var samples = {
+            en: 'Through my academic training and project experience, I have developed a sustained interest in this field. I hope to deepen my expertise through the target program and apply it to future research and practice.',
+            zh: '通过系统的学术训练与项目实践，我逐步形成了对该领域的持续兴趣。希望在目标项目中进一步深化专业能力，并将所学应用于未来的研究与实践。',
+            ja: '学術的な学びとプロジェクト経験を通じて、この分野への関心を深めてきました。志望プログラムで専門性を高め、今後の研究と実践に生かしたいと考えています。',
+            ko: '학업과 프로젝트 경험을 통해 이 분야에 대한 지속적인 관심을 키워 왔습니다. 지원 프로그램에서 전문성을 심화하고 향후 연구와 실무에 적용하고자 합니다.'
+          };
+          dialog.querySelector('#translationResult').value = source ? samples[language] : '';
+        });
+        dialog.querySelector('#applyTranslation').addEventListener('click', function () {
+          var result = dialog.querySelector('#translationResult').value.trim();
+          if (!activeTranslationTextarea || !result) return;
+          activeTranslationTextarea.value = result;
+          activeTranslationTextarea.dispatchEvent(new Event('input', { bubbles: true }));
+          dialog.classList.add('hidden');
+          dialog.classList.remove('flex');
+        });
+        return dialog;
+      }
+
+      function enhanceEditorActions(root) {
+        (root || document).querySelectorAll('.btn-send-to-ai').forEach(function (aiButton) {
+          if (!aiButton.dataset.compactLabel) {
+            aiButton.dataset.compactLabel = 'true';
+            aiButton.innerHTML = '<svg class="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg><span>AI写作</span>';
+          }
+          var actions = aiButton.closest('.editor-inline-actions');
+          if (!actions) {
+            actions = document.createElement('div');
+            actions.className = 'editor-inline-actions flex items-center gap-2';
+            aiButton.parentNode.insertBefore(actions, aiButton);
+            actions.appendChild(aiButton);
+          }
+          if (!actions.querySelector('.btn-translate')) {
+            var translateButton = document.createElement('button');
+            translateButton.type = 'button';
+            translateButton.className = 'btn-translate flex items-center gap-1 rounded-lg bg-gray-200 px-2.5 py-1 text-xs font-medium text-gray-700 hover:bg-gray-300';
+            translateButton.innerHTML = '<svg class="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5h12M9 3v2m1.5 0a18.5 18.5 0 01-4 8m1-3a10 10 0 004 4M15 13l4 8m0-8l-4 8m-2-4h8"></path></svg><span>翻译</span>';
+            translateButton.addEventListener('click', function () {
+              activeTranslationTextarea = this.closest('.editor-block').querySelector('.editor-textarea');
+              var dialog = ensureTranslationDialog();
+              dialog.querySelector('#translationSource').value = activeTranslationTextarea.value;
+              dialog.querySelector('#translationResult').value = '';
+              dialog.classList.remove('hidden');
+              dialog.classList.add('flex');
+            });
+            actions.appendChild(translateButton);
+          }
+        });
+      }
+      window.enhanceEditorActions = enhanceEditorActions;
+      enhanceEditorActions(document);
 
       // 自动调整textarea高度
       document.querySelectorAll('.editor-textarea').forEach(function(textarea) {
@@ -1807,7 +1880,7 @@ body {
               + '<span class="text-xs font-medium text-gray-500">' + sec.label + '</span>'
               + '<button class="btn-send-to-ai flex items-center gap-1 px-2.5 py-1 text-xs font-medium bg-blue-600 text-white rounded-lg hover:bg-blue-700" data-section="section-' + (i + 1) + '">'
               + '<svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>'
-              + '同步至AI写作助手</button></div>'
+              + 'AI写作</button></div>'
               + '<textarea class="editor-textarea w-full p-4 text-gray-700 leading-relaxed text-sm resize-none focus:outline-none" rows="3"></textarea>'
               + '</div>';
           });
@@ -1836,6 +1909,7 @@ body {
               }
             });
           });
+          if (window.enhanceEditorActions) window.enhanceEditorActions(container);
         }
 
         function switchDocType(type) {

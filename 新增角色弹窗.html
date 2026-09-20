@@ -5,59 +5,29 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>新增角色</title>
   <script src="./assets/vendor/tailwind-runtime.js"></script>
-  <style>body { font-family: "Microsoft YaHei", "PingFang SC", sans-serif; background: transparent; }</style>
+  <style>
+    *{box-sizing:border-box}body{margin:0;font-family:"Microsoft YaHei","PingFang SC",sans-serif;background:transparent;color:#1f2937}.role-dialog{width:100%;max-height:86vh;overflow:hidden;border:1px solid #e5e7eb;border-radius:14px;background:#fff;box-shadow:0 24px 64px rgba(15,23,42,.24)}.dialog-head{display:flex;align-items:center;justify-content:space-between;height:60px;padding:0 22px;border-bottom:1px solid #e5e7eb}.dialog-head h1{margin:0;font-size:18px;font-weight:700}.dialog-close{width:32px;height:32px;border:0;border-radius:8px;background:#f3f4f6;color:#6b7280;font-size:20px}.role-form{display:grid;grid-template-columns:280px minmax(0,1fr);grid-template-rows:minmax(0,1fr) 68px;height:calc(86vh - 60px)}.basic-panel{padding:20px;border-right:1px solid #e5e7eb;background:#f8fafc}.field{margin-bottom:16px}.field label,.permissions-title{display:block;margin-bottom:7px;color:#374151;font-size:13px;font-weight:600}.field input[type="text"],.field textarea{width:100%;border:1px solid #d1d5db;border-radius:8px;background:#fff;color:#1f2937;font-size:13px;outline:none}.field input[type="text"]{height:40px;padding:0 11px}.field textarea{height:88px;padding:10px 11px;resize:none}.field input:focus,.field textarea:focus{border-color:#60a5fa;box-shadow:0 0 0 3px rgba(59,130,246,.1)}.status-options{display:grid;grid-template-columns:1fr 1fr;gap:8px}.status-option{display:flex;align-items:center;justify-content:center;gap:7px;height:38px;border:1px solid #d1d5db;border-radius:8px;background:#fff;color:#4b5563;font-size:13px;cursor:pointer}.status-option:has(input:checked){border-color:#93c5fd;background:#eff6ff;color:#1d4ed8}.status-option input{accent-color:#2563eb}.permissions-panel{min-width:0;padding:18px 20px;overflow:auto}.permissions-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}.permissions-title{margin:0;font-size:14px}.permission-groups{display:grid;gap:10px}.permission-section{overflow:hidden;border:1px solid #e5e7eb;border-radius:10px;background:#fff}.permission-section[open]{box-shadow:0 1px 2px rgba(15,23,42,.04)}.permission-section summary{display:flex;align-items:center;justify-content:space-between;min-height:44px;padding:0 14px;background:#f8fafc;color:#1f2937;font-size:13px;font-weight:700;cursor:pointer;list-style:none}.permission-section summary::-webkit-details-marker{display:none}.permission-section summary:after{content:'⌄';color:#94a3b8;font-size:16px;transition:transform .15s}.permission-section[open] summary:after{transform:rotate(180deg)}.permission-section-body{padding:2px 14px 10px}.permission-page{display:grid;grid-template-columns:150px minmax(0,1fr);gap:12px;padding:11px 0;border-top:1px solid #eef2f7}.permission-page:first-child{border-top:0}.permission-page-name{display:flex;align-items:flex-start;gap:7px;color:#374151;font-size:13px;font-weight:600}.permission-items{display:flex;gap:7px;flex-wrap:wrap}.permission-item{display:inline-flex;align-items:center;gap:6px;min-height:30px;padding:5px 9px;border:1px solid #dbe3ea;border-radius:7px;background:#fff;color:#4b5563;font-size:12px;cursor:pointer}.permission-item:has(input:checked){border-color:#93c5fd;background:#eff6ff;color:#1d4ed8}.permission-item input,.permission-page-name input{margin:1px 0 0;accent-color:#2563eb}.dialog-foot{grid-column:1/-1;display:flex;align-items:center;justify-content:space-between;gap:16px;padding:13px 20px;border-top:1px solid #e5e7eb;background:#fff}.form-error{color:#dc2626;font-size:12px}.dialog-actions{display:flex;gap:10px}.btn{height:38px;padding:0 18px;border:1px solid #d1d5db;border-radius:8px;background:#fff;color:#374151;font-size:13px;font-weight:600}.btn.primary{border-color:#2563eb;background:#2563eb;color:#fff}.empty-permissions{padding:36px;color:#94a3b8;font-size:13px;text-align:center}@media(max-width:760px){body{padding:0!important}.role-dialog{max-height:94vh}.role-form{display:flex;height:calc(94vh - 60px);flex-direction:column;overflow:auto}.basic-panel{border-right:0;border-bottom:1px solid #e5e7eb}.permissions-panel{overflow:visible}.permission-page{grid-template-columns:1fr}.dialog-foot{position:sticky;bottom:0}.dialog-actions{margin-left:auto}}
+  </style>
 </head>
-<body class="min-h-screen flex items-center justify-center p-4">
-  <div class="w-full bg-white rounded-2xl shadow-2xl overflow-hidden flex flex-col max-h-[86vh]">
-    <div class="flex items-center justify-between px-6 py-4 border-b border-gray-100 flex-shrink-0">
-      <div>
-        <h1 class="text-lg font-semibold text-gray-900">新增角色</h1>
-        <p class="text-xs text-gray-400 mt-1">创建角色并配置功能权限，创建后可在右侧权限配置区继续调整</p>
-      </div>
-      <button class="text-2xl leading-none text-gray-400 hover:text-gray-700" onclick="closeModal()">×</button>
-    </div>
-    <form class="p-6 space-y-4 overflow-y-auto" onsubmit="submitRole(event)">
-      <div class="grid grid-cols-2 gap-4">
-        <div>
-          <label class="block text-sm text-gray-700 mb-1.5">角色名称 <span class="text-red-500">*</span></label>
-          <input id="roleName" class="w-full h-10 px-3 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500" placeholder="如：选校顾问">
-        </div>
-        <div>
-          <label class="block text-sm text-gray-700 mb-1.5">角色状态</label>
-          <div class="flex items-center gap-4 h-10">
-            <label class="flex items-center gap-1.5 text-sm text-gray-700 cursor-pointer"><input type="radio" name="roleStatus" value="启用" checked class="w-4 h-4 text-blue-600">启用</label>
-            <label class="flex items-center gap-1.5 text-sm text-gray-700 cursor-pointer"><input type="radio" name="roleStatus" value="禁用" class="w-4 h-4 text-blue-600">禁用</label>
-          </div>
-        </div>
-      </div>
-      <div>
-        <label class="block text-sm text-gray-700 mb-1.5">角色描述</label>
-        <textarea id="roleDesc" rows="2" class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500" placeholder="简要说明该角色的职责与使用范围"></textarea>
-      </div>
-      <div>
-        <label class="block text-sm text-gray-700 mb-1.5">复制已有角色权限</label>
-        <select id="copyFrom" class="w-full h-10 px-3 border border-gray-300 rounded-lg text-sm bg-white text-gray-700 focus:ring-2 focus:ring-blue-500" onchange="copyFromRole(this.value)">
-          <option value="">不复制，从零开始配置</option>
-        </select>
-        <p class="text-xs text-gray-400 mt-1.5">选择已有角色后，下方权限将按该角色自动勾选，可在此基础上修改</p>
-      </div>
-      <div>
-        <label class="block text-sm text-gray-700 mb-2">权限配置 <span class="text-xs text-gray-400 font-normal">（按页面逐项勾选）</span></label>
-        <div id="permModules" class="space-y-3"></div>
-      </div>
-      <p id="roleFormError" class="hidden text-xs text-red-500"></p>
-      <div class="rounded-lg bg-blue-50 px-4 py-3 text-xs text-blue-700">角色创建后立即生效，可在「用户管理 / 人员管理」中分配给用户；多个角色的权限取并集。</div>
-      <div class="flex justify-end gap-3 pt-2">
-        <button type="button" class="px-5 h-10 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50" onclick="closeModal()">取消</button>
-        <button type="submit" class="px-5 h-10 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium">确认创建</button>
-      </div>
+<body class="min-h-screen flex items-center justify-center p-3">
+  <div class="role-dialog">
+    <div class="dialog-head"><h1>新增角色</h1><button class="dialog-close" type="button" onclick="closeModal()">×</button></div>
+    <form class="role-form" onsubmit="submitRole(event)">
+      <section class="basic-panel">
+        <div class="field"><label for="roleName">角色名称</label><input id="roleName" type="text" maxlength="30" placeholder="请输入角色名称"></div>
+        <div class="field"><label for="roleDesc">角色描述</label><textarea id="roleDesc" maxlength="100" placeholder="请输入角色描述"></textarea></div>
+        <div class="field"><label>角色状态</label><div class="status-options"><label class="status-option"><input type="radio" name="roleStatus" value="启用" checked>启用</label><label class="status-option"><input type="radio" name="roleStatus" value="禁用">禁用</label></div></div>
+      </section>
+      <section class="permissions-panel">
+        <div class="permissions-head"><h2 class="permissions-title">权限设置</h2></div>
+        <div id="permModules" class="permission-groups"></div>
+      </section>
+      <footer class="dialog-foot"><p id="roleFormError" class="form-error hidden"></p><div class="dialog-actions"><button type="button" class="btn" onclick="closeModal()">取消</button><button type="submit" class="btn primary">创建角色</button></div></footer>
     </form>
   </div>
+  <script src="./assets/js/pbs-app.js?v=6.0"></script>
   <script>
-    // 权限定义统一读取父页面共享权限树；弹窗应从角色权限管理页打开
-    var fallbackModules = [];
-    /* 读取父页面中由 pbs-app.js 导出的页面级权限树。 */
-    var modules = fallbackModules;
+    var modules = (window.pbsPermissionTree || []).slice();
     var parentRoles = [];
     try {
       if (parent.pbsPermissionTree && parent.pbsPermissionTree.length) modules = parent.pbsPermissionTree;
@@ -79,41 +49,27 @@
       return sections;
     }
 
-    function renderCopyOptions() {
-      var sel = document.getElementById('copyFrom');
-      parentRoles.forEach(function (r) {
-        sel.add(new Option(r.name, String(r.id)));
-      });
-    }
-
     function renderPermModules() {
       if (!modules.length) {
-        document.getElementById('permModules').innerHTML = '<div class="text-sm text-gray-500 text-center py-8">请从角色权限管理页打开新增角色</div>';
+        document.getElementById('permModules').innerHTML = '<div class="empty-permissions">权限数据加载失败，请关闭后重试</div>';
         return;
       }
       var html = '';
-      groupedSections().forEach(function (section) {
-        html += '<div class="rounded-lg border border-gray-200 overflow-hidden">' +
-          '<div class="flex items-center justify-between px-3 py-2 bg-gray-50 border-b border-gray-200">' +
-            '<span class="text-sm font-semibold text-gray-800">' + section.module + '</span>' +
-            '<span class="text-xs text-gray-400">' + section.pages.length + ' 个页面</span>' +
-          '</div><div class="p-3 space-y-3">';
+      groupedSections().forEach(function (section, sectionIndex) {
+        html += '<details class="permission-section"' + (sectionIndex === 0 ? ' open' : '') + '>' +
+          '<summary><span>' + section.module + '</span></summary><div class="permission-section-body">';
         section.pages.forEach(function (mod) {
-          html += '<div>' +
-            '<label class="flex items-center gap-2 mb-1.5 cursor-pointer">' +
-              '<input type="checkbox" class="w-4 h-4 text-blue-600 rounded" onchange="toggleModuleAll(\'' + mod.id + '\', this.checked)">' +
-              '<span class="text-sm font-medium text-gray-700">' + mod.name + '</span>' +
-              '<span class="text-xs text-gray-400">（本页全选）</span>' +
-            '</label>' +
-            '<div class="grid grid-cols-3 gap-2 ml-6">' +
+          html += '<div class="permission-page">' +
+            '<label class="permission-page-name"><input type="checkbox" onchange="toggleModuleAll(\'' + mod.id + '\', this.checked)"><span>' + mod.name + '</span></label>' +
+            '<div class="permission-items">' +
             mod.items.map(function (item) {
-              return '<label class="flex items-center gap-1.5 text-sm text-gray-600 cursor-pointer">' +
-                '<input type="checkbox" data-module="' + mod.id + '" value="' + item.id + '" class="w-3.5 h-3.5 text-blue-600 rounded">' +
+              return '<label class="permission-item">' +
+                '<input type="checkbox" data-module="' + mod.id + '" value="' + item.id + '">' +
                 item.label + '</label>';
             }).join('') +
             '</div></div>';
         });
-        html += '</div></div>';
+        html += '</div></details>';
       });
       document.getElementById('permModules').innerHTML = html;
     }
@@ -121,21 +77,6 @@
     function toggleModuleAll(modId, checked) {
       document.querySelectorAll('#permModules input[data-module="' + modId + '"]').forEach(function (cb) {
         cb.checked = checked;
-      });
-    }
-
-    // 按已有角色的权限勾选
-    function copyFromRole(roleId) {
-      document.querySelectorAll('#permModules input[type="checkbox"]').forEach(function (cb) { cb.checked = false; });
-      if (!roleId) return;
-      var role = null;
-      parentRoles.forEach(function (r) { if (String(r.id) === String(roleId)) role = r; });
-      if (!role || !role.permissions) return;
-      modules.forEach(function (mod) {
-        var granted = role.permissions[mod.id] || [];
-        document.querySelectorAll('#permModules input[data-module="' + mod.id + '"]').forEach(function (cb) {
-          cb.checked = granted.indexOf(cb.value) >= 0;
-        });
       });
     }
 
@@ -148,13 +89,17 @@
       return perms;
     }
 
-    function closeModal() { parent.postMessage('pbs:close', '*'); }
+    function closeModal() {
+      if (parent !== window) parent.postMessage('pbs:close', '*');
+      else location.href = '角色权限管理 - 留学申请管理系统.html';
+    }
 
     function submitRole(event) {
       event.preventDefault();
       var err = document.getElementById('roleFormError');
       var name = document.getElementById('roleName').value.trim();
       if (!name) { err.textContent = '请输入角色名称'; err.classList.remove('hidden'); return; }
+      if (parentRoles.some(function (role) { return role.name === name; })) { err.textContent = '角色名称已存在'; err.classList.remove('hidden'); return; }
       err.classList.add('hidden');
       var statusRadio = document.querySelector('input[name="roleStatus"]:checked');
       var data = {
@@ -163,11 +108,14 @@
         status: statusRadio ? statusRadio.value : '启用',
         permissions: collectPermissions()
       };
-      if (parent.addRoleFromModal) parent.addRoleFromModal(data);
-      closeModal();
+      if (parent !== window) {
+        parent.postMessage({ type: 'pbs:add-role', payload: data }, '*');
+      } else {
+        localStorage.setItem('pbs_pending_role_v1', JSON.stringify(data));
+        location.href = '角色权限管理 - 留学申请管理系统.html';
+      }
     }
 
-    renderCopyOptions();
     renderPermModules();
   </script>
 </body>

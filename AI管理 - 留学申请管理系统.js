@@ -1,11 +1,11 @@
-/* PBS AI 管理原型：配置保存在本地，API Key 仅记录末四位。 */
+/* PBS AI 管理配置：API Key 仅记录末四位。 */
 (function () {
   'use strict';
 
   var AI_STORAGE_KEY = 'pbs_ai_management_v6';
   var LEGACY_AI_STORAGE_KEYS = ['pbs_ai_management_v5', 'pbs_ai_management_v4', 'pbs_ai_management_v3', 'pbs_ai_management_v2'];
   var OPERATION_LOG_KEY = 'pbs_operation_logs_v1';
-  var AI_TABS = ['models', 'monitor', 'prompts'];
+  var AI_TABS = ['monitor', 'prompts'];
   var activePrompt = 0;
   var currentReportId = '';
   var customDatasetCount = 0;
@@ -514,7 +514,7 @@ RL：自我介绍 → 学生情况陈述 → 结语 → 落款。始终从推荐
     });
     document.querySelectorAll('.tabbar .tab').forEach(function (tab) { tab.setAttribute('aria-controls', 'pane-' + tab.dataset.tab); });
     document.querySelectorAll('.tabs .pane').forEach(function (pane) { pane.setAttribute('role', 'tabpanel'); });
-    activateAiTab('models');
+    activateAiTab('monitor');
   }
 
   function modelById(id) { return aiState.models.find(function (m) { return m.id === id; }); }
@@ -592,7 +592,7 @@ RL：自我介绍 → 学生情况陈述 → 结语 → 落款。始终从推荐
     populateMonitoringFilters();
     var enabled = aiState.keys.filter(function (key) { return key.enabled; });
     byId('monitorEnabledKeys').textContent = String(enabled.length);
-    byId('monitorHealthyKeys').textContent = String(enabled.filter(function (key) { return key.health === 'healthy'; }).length);
+    byId('monitorHealthyKeys').textContent = String(enabled.filter(function (key) { return key.health !== 'healthy'; }).length);
     var org = byId('monitorOrgFilter').value;
     var scene = byId('monitorSceneFilter').value;
     var resultFilter = byId('monitorResultFilter').value;

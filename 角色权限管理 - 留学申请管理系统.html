@@ -115,37 +115,41 @@
 </style>
   <style>
     body { font-family: var(--font-family); background: var(--color-bg-page); }
-    .permission-layout { display: grid; grid-template-columns: 280px minmax(0, 1fr); gap: 18px; align-items: start; }
+    .role-workspace-card { border:1px solid #e5e7eb; border-radius:12px; background:#fff; box-shadow:0 1px 2px rgba(15,23,42,.04); }
+    .role-workspace-head { display:flex; align-items:center; justify-content:space-between; gap:16px; padding:20px 22px; border-bottom:1px solid #e5e7eb; }
+    .role-workspace-body { background:#fff; border-radius:0 0 12px 12px; }
+    .role-page-title { font-size: 22px; font-weight: 700; }
+    .permission-layout { display: grid; grid-template-columns: 270px minmax(0, 1fr); gap: 0; align-items: start; }
 
     /* 左侧角色列表 */
-    .role-selector-bar { position: sticky; top: 80px; overflow: hidden; border: 1px solid #e5e7eb; border-radius: 13px; background: #fff; box-shadow: 0 1px 3px rgba(15, 23, 42, .05); }
+    .role-selector-bar { position: sticky; top: 80px; overflow: hidden; max-height:calc(100vh - 96px); border: 0; border-right:1px solid #e5e7eb; border-radius:0; background:#fff; box-shadow:none; }
     .role-selector-head { padding: 16px; border-bottom: 1px solid #eef2f7; }
     .role-selector-title { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
     .role-selector-title h2 { color: #1f2937; font-size: 15px; font-weight: 700; }
     .role-selector-title p { color: #94a3b8; font-size: 12px; white-space: nowrap; }
     .role-search { width: 100%; height: 38px; margin-top: 12px; padding: 0 12px; border: 1px solid #e5e7eb; border-radius: 9px; background: #f8fafc; color: #334155; font-size: 13px; outline: none; }
     .role-search:focus { border-color: #93c5fd; background: #fff; box-shadow: 0 0 0 3px rgba(59,130,246,.08); }
-    .role-list { display: flex; flex-direction: column; gap: 6px; max-height: calc(100vh - 201px); padding: 10px; overflow-y: auto; }
-    .role-row { display: flex; align-items: center; gap: 8px; width: 100%; min-height: 46px; padding: 9px 12px; border: 1px solid transparent; border-radius: 9px; background: #fff; transition: border-color .15s ease, background-color .15s ease; }
-    .role-row:hover { border-color: #dbeafe; background: #f8fbff; }
-    .role-row.active { border-color: #bfdbfe; background: #eff6ff; }
+    .role-list { display: flex; flex-direction: column; gap: 3px; max-height: calc(100vh - 176px); padding: 10px; overflow-y: auto; }
+    .role-row { display: flex; align-items: center; gap: 8px; width: 100%; min-height: 44px; padding: 8px 10px; border: 0; border-radius: 8px; background: transparent; transition: background-color .15s ease; }
+    .role-row:hover { background: #f8fafc; }
+    .role-row.active { background:#eff6ff; outline:1px solid #bfdbfe; outline-offset:-1px; }
     .role-row-name { min-width: 0; flex: 1; overflow: hidden; color: #334155; font-size: 13px; font-weight: 600; text-overflow: ellipsis; white-space: nowrap; }
     .role-row.active .role-row-name { color: #1d4ed8; }
-    .role-row-tag { padding: 2px 7px; border-radius: 999px; background: #f1f5f9; color: #94a3b8; font-size: 10px; white-space: nowrap; }
+    .role-row-tag { color:#94a3b8; font-size:10px; white-space:nowrap; }
 
     /* 权限配置：模块分段，每个页面固定一行 */
-    .permission-panel { overflow: hidden; border: 1px solid #e5e7eb; border-radius: 14px; background: #fff; box-shadow: 0 1px 2px rgba(15, 23, 42, .04); }
+    .permission-panel { min-width:0; overflow:hidden; border:0; border-radius:0; background:#fff; box-shadow:none; }
     .permission-head { display: flex; align-items: center; justify-content: space-between; gap: 20px; padding: 17px 20px; border-bottom: 1px solid #eef2f7; background: #fff; }
     .permission-summary { display: flex; align-items: center; gap: 8px; flex: none; }
     .permission-count { padding: 5px 9px; border-radius: 999px; background: #eff6ff; color: #1d4ed8; font-size: 11px; font-weight: 700; }
     .permission-dirty { padding: 5px 9px; border-radius: 999px; background: #fff7ed; color: #c2410c; font-size: 11px; font-weight: 700; }
-    .permission-content { padding: 18px; }
+    .permission-content { padding:18px 20px 20px; background:#fff; }
     .permission-toolbar { display: flex; align-items: center; justify-content: space-between; gap: 14px; margin-bottom: 14px; }
     .permission-filter { width: 260px; height: 36px; padding: 0 12px; border: 1px solid #e5e7eb; border-radius: 9px; background: #f8fafc; color: #334155; font-size: 13px; outline: none; }
     .permission-filter:focus { border-color: #93c5fd; background: #fff; box-shadow: 0 0 0 3px rgba(59,130,246,.08); }
-    .permission-list-section { overflow: hidden; border: 1px solid #e5e7eb; border-radius: 12px; background: #fff; }
-    .permission-list-section + .permission-list-section { margin-top: 14px; }
-    .permission-section-head { display: flex; align-items: center; gap: 10px; min-height: 44px; padding: 8px 14px; border-bottom: 1px solid #e5e7eb; background: #f8fafc; }
+    .permission-list-section { overflow:hidden; border:0; border-top:1px solid #e5e7eb; border-radius:0; background:#fff; }
+    .permission-list-section + .permission-list-section { margin-top:18px; }
+    .permission-section-head { display:flex; align-items:center; gap:10px; min-height:44px; padding:8px 4px; border-bottom:1px solid #e5e7eb; background:#fff; }
     .permission-section-mark { width: 3px; height: 17px; border-radius: 999px; background: #2563eb; flex: none; }
     .permission-section-name { color: #1f2937; font-size: 13px; font-weight: 700; }
     .permission-meta { padding: 2px 7px; border-radius: 999px; background: #e9eef5; color: #64748b; font-size: 10px; font-weight: 600; white-space: nowrap; }
@@ -154,7 +158,7 @@
     .permission-spacer { min-width: 10px; flex: 1; }
     .permission-bulk { flex: none; padding: 4px 8px; border: 0; border-radius: 6px; color: #2563eb; font-size: 11px; font-weight: 600; white-space: nowrap; }
     .permission-bulk:hover { background: #eaf2ff; }
-    .permission-list-row { display: grid; grid-template-columns: minmax(135px, 175px) minmax(0, 1fr); gap: 14px; align-items: center; min-height: 52px; padding: 9px 13px; border-top: 1px solid #f1f5f9; transition: background-color .15s ease; }
+    .permission-list-row { display:grid; grid-template-columns:minmax(135px,175px) minmax(0,1fr); gap:14px; align-items:center; min-height:52px; padding:9px 4px; border-top:1px solid #f1f5f9; transition:background-color .15s ease; }
     .permission-section-head + .permission-list-row { border-top: 0; }
     .permission-list-row:hover { background: #fbfdff; }
     .permission-page { min-width: 0; }
@@ -168,23 +172,35 @@
     .permission-item.is-entry.is-checked { border-color: #60a5fa; background: #dbeafe; }
     .permission-item input { width: 13px; height: 13px; margin: 0; accent-color: #2563eb; flex: none; }
     .permission-empty { padding: 30px; color: #94a3b8; font-size: 13px; text-align: center; }
-    .permission-actions { position: sticky; bottom: 0; z-index: 4; display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-top: 16px; padding: 13px 0 0; border-top: 1px solid #e5e7eb; background: rgba(255,255,255,.96); backdrop-filter: blur(8px); }
+    .permission-actions { position: sticky; bottom: 0; z-index: 4; display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-top: 16px; padding: 13px 0 0; border-top: 1px solid #e5e7eb; background: rgba(251,252,254,.96); backdrop-filter: blur(8px); }
     .permission-toast { position: fixed; right: 24px; bottom: 24px; z-index: 80; padding: 12px 16px; border-radius: 10px; background: #0f172a; color: #fff; box-shadow: 0 14px 30px rgba(15,23,42,.22); font-size: 13px; opacity: 0; transform: translateY(10px); pointer-events: none; transition: all .2s ease; }
     .permission-toast.show { opacity: 1; transform: translateY(0); }
     @media (max-width: 1100px) {
-      .permission-layout { grid-template-columns: 240px minmax(0, 1fr); gap: 14px; }
+      .permission-layout { grid-template-columns: 250px minmax(0, 1fr); gap: 0; }
       .role-selector-head { padding: 14px; }
       .role-list { padding: 8px; }
       .role-row { padding: 9px 10px; }
       .permission-list-row { grid-template-columns: 135px minmax(0, 1fr); gap: 10px; }
     }
     @media (max-width: 820px) {
+      html, body { overflow-x:hidden; }
+      #pbs-sidebar { display:none !important; }
+      main.flex-1 { width:100%; min-width:0; }
+      .role-workspace-card { width:100%; min-width:0; }
       .permission-layout { display: block; }
-      .role-selector-bar { position: static; margin-bottom: 14px; }
+      .role-selector-bar { position:static; max-height:none; margin-bottom:0; border-right:0; border-bottom:1px solid #e5e7eb; }
       .role-list { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); max-height: 260px; }
       .permission-toolbar, .permission-actions { align-items: stretch; flex-direction: column; }
       .permission-filter { width: 100%; }
       .permission-list-row { display: flex; align-items: stretch; flex-direction: column; gap: 8px; }
+    }
+    @media (max-width: 560px) {
+      main.flex-1 { padding: 16px; }
+      .role-workspace-head { align-items:flex-start; flex-direction:column; gap:14px; padding:18px; }
+      .role-workspace-body { padding:0; }
+      .role-list { grid-template-columns:1fr; }
+      .permission-head { align-items:flex-start; flex-direction:column; gap:10px; }
+      .permission-actions > div { display:grid; grid-template-columns:1fr 1fr; width:100%; }
     }
     .sidebar-item { transition: all 0.2s ease; }
     .sidebar-item:hover { background-color: var(--color-bg-hover); }
@@ -273,14 +289,13 @@
 
     <!-- 主内容区 -->
     <main class="flex-1 p-6">
-      <!-- 页面标题栏 -->
-      <div class="flex items-center justify-between mb-5">
+      <section class="role-workspace-card">
+      <div class="role-workspace-head">
         <div>
-          <h1 class="text-2xl font-semibold text-gray-800">角色权限管理</h1>
-          <p class="text-sm text-gray-500 mt-1">按角色配置菜单、页面及操作按钮权限，保存后在全站生效</p>
+          <h1 class="role-page-title text-gray-800">角色权限管理</h1>
         </div>
         <div class="flex items-center gap-3">
-          <button data-dom-id="btn-add-role" class="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors" onclick="pbsOpenOverlay(&#39;新增角色弹窗.html&#39;,{width:&#39;780px&#39;})">
+          <button data-dom-id="btn-add-role" class="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors" onclick="pbsOpenOverlay(&#39;新增角色弹窗.html&#39;,{width:&#39;980px&#39;})">
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
             </svg>
@@ -289,6 +304,7 @@
         </div>
       </div>
 
+      <div class="role-workspace-body">
       <div class="permission-layout">
         <section class="role-selector-bar">
           <div class="role-selector-head">
@@ -314,6 +330,8 @@
           <div class="permission-content" id="permissionConfigAreaV2"></div>
         </section>
       </div>
+      </div>
+      </section>
 
       <div class="flex gap-6" style="display:none" aria-hidden="true">
         <!-- 左侧：角色列表 -->
@@ -464,8 +482,9 @@
       return roleName === '平台运维人员';
     }
 
-    // ==================== 权限持久化（原型：localStorage 共享给全站 RBAC） ====================
+    // ==================== 权限持久化（localStorage 共享给全站 RBAC） ====================
     var ROLE_PERMS_KEY = 'pbs_role_perms_v1';
+    var CUSTOM_ROLES_KEY = 'pbs_custom_roles_v1';
     var DEFAULT_WORKBENCH_PERMISSION = {
       '平台运维人员': 'workbench_platform', '机构管理员': 'workbench_org_admin',
       '销售人员': 'workbench_sales',
@@ -490,6 +509,40 @@
         scoped[currentPermsScope()] = map;
         localStorage.setItem('pbs_role_perms_scoped_v1', JSON.stringify(scoped));
       } catch (e) {}
+    }
+    function loadCustomRoles() {
+      var scoped = {};
+      try { scoped = JSON.parse(localStorage.getItem(CUSTOM_ROLES_KEY) || '{}'); } catch (e) { scoped = {}; }
+      var saved = Array.isArray(scoped[currentPermsScope()]) ? scoped[currentPermsScope()] : [];
+      saved.forEach(function (savedRole) {
+        if (!savedRole || !savedRole.name || roles.some(function (role) { return role.name === savedRole.name; })) return;
+        var role = {
+          id: Number(savedRole.id) || Date.now(),
+          name: savedRole.name,
+          description: savedRole.description || '',
+          creator: '管理员',
+          createTime: savedRole.createTime || new Date().toISOString().slice(0, 10),
+          status: savedRole.status || '启用',
+          isCustom: true,
+          permissions: migratePermissions(savedRole, savedRole.permissions || {})
+        };
+        roles.push(role);
+      });
+    }
+    function persistCustomRoles() {
+      var scoped = {};
+      try { scoped = JSON.parse(localStorage.getItem(CUSTOM_ROLES_KEY) || '{}'); } catch (e) { scoped = {}; }
+      scoped[currentPermsScope()] = roles.filter(function (role) { return role.isCustom; }).map(function (role) {
+        return {
+          id: role.id,
+          name: role.name,
+          description: role.description || '',
+          createTime: role.createTime,
+          status: role.status || '启用',
+          permissions: role.permissions || {}
+        };
+      });
+      try { localStorage.setItem(CUSTOM_ROLES_KEY, JSON.stringify(scoped)); } catch (e) {}
     }
     /* 页面加载时回读已保存的权限配置（优先本机构副本，其次平台默认）。
        旧版按业务模块保存的配置由 pbs-app.js 的迁移逻辑统一归一化到「页面 → 权限项」结构，
@@ -551,8 +604,7 @@
         html += '<div class="role-row cursor-pointer ' + isActive + '" data-role-id="' + role.id + '" title="' + role.description + '" onclick="selectRole(' + role.id + ')">';
         html += '  <span class="role-row-name">' + role.name + '</span>';
         html += '  <span class="role-row-tag">' + granted + ' 项</span>';
-        if (isProtected) html += '<span class="role-row-tag" style="background:#eff6ff;color:#1d4ed8">系统</span>';
-        else html += '<button class="text-xs text-red-500 hover:text-red-700" onclick="event.stopPropagation();deleteRole(' + role.id + ')">删除</button>';
+        if (!isProtected) html += '<button class="text-xs text-red-500 hover:text-red-700" onclick="event.stopPropagation();deleteRole(' + role.id + ')">删除</button>';
         html += '</div>';
       });
       container.innerHTML = html || '<div class="text-sm text-gray-400 py-3">未找到匹配角色</div>';
@@ -604,6 +656,11 @@
       if (!role) return;
 
       document.getElementById('selectedRoleNameV2').textContent = role.name;
+      var roleDescription = document.getElementById('selectedRoleDescriptionV2');
+      if (roleDescription) {
+        roleDescription.textContent = role.description || '';
+        roleDescription.classList.toggle('hidden', !role.description);
+      }
 
       var area = document.getElementById('permissionConfigAreaV2');
       var html = '';
@@ -629,7 +686,6 @@
 
         html += '<section class="permission-list-section" data-permission-section="' + section.module + '">';
         html += '  <div class="permission-section-head">' +
-          '<span class="permission-section-mark"></span>' +
           '<span class="permission-section-name">' + section.module + '</span>' +
           '<span class="permission-meta ' + metaTone(sectionSelected, sectionTotal) + '" data-section-count="' + section.module + '">' + sectionSelected + ' / ' + sectionTotal + ' 项 · ' + section.pages.length + ' 个页面</span>' +
           '<span class="permission-spacer"></span>' +
@@ -841,9 +897,13 @@
         var idx = roles.indexOf(role);
         if (idx !== -1) {
           roles.splice(idx, 1);
+          persistCustomRoles();
+          persistRolePerms();
           if (currentRoleId === roleId) {
             currentRoleId = null;
             document.getElementById('selectedRoleNameV2').textContent = '权限配置';
+            var roleDescription = document.getElementById('selectedRoleDescriptionV2');
+            if (roleDescription) { roleDescription.textContent = ''; roleDescription.classList.add('hidden'); }
             document.getElementById('permissionConfigAreaV2').innerHTML =
               '<div class="flex flex-col items-center justify-center py-16 text-gray-400">' +
               '  <svg class="w-16 h-16 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">' +
@@ -860,6 +920,10 @@
     // 新增角色（弹窗组件回调：新增角色弹窗.html）
     function addRoleFromModal(data) {
       if (!data || !data.name) return;
+      if (roles.some(function (role) { return role.name === data.name; })) {
+        showPermissionToast('角色名称已存在');
+        return;
+      }
       var maxId = 0;
       roles.forEach(function(r) { if (r.id > maxId) maxId = r.id; });
       var newId = maxId + 1;
@@ -874,12 +938,22 @@
         creator: '管理员',
         createTime: new Date().toISOString().slice(0, 10),
         status: data.status || '启用',
+        isCustom: true,
         permissions: perms
       };
       roles.push(newRole);
+      persistCustomRoles();
+      persistRolePerms();
       renderRoleList();
       selectRole(newId);
+      showPermissionToast('角色已创建');
     }
+
+    window.addEventListener('message', function (event) {
+      if (!event.data || event.data.type !== 'pbs:add-role') return;
+      addRoleFromModal(event.data.payload);
+      if (window.pbsCloseOverlay) window.pbsCloseOverlay();
+    });
 
     // 新增角色
     function addNewRole() {
@@ -940,11 +1014,18 @@
       }
       buildDefaultRoles();
       roles = JSON.parse(JSON.stringify(DEFAULT_ROLES));
+      loadCustomRoles();
       window.permissionModules = permissionModules;
       window.roles = roles;
       loadPersistedRolePerms();
       renderRoleList();
       if (roles.length) selectRole(roles[0].id);
+      var pendingRole = null;
+      try { pendingRole = JSON.parse(localStorage.getItem('pbs_pending_role_v1') || 'null'); } catch (e) { pendingRole = null; }
+      if (pendingRole) {
+        localStorage.removeItem('pbs_pending_role_v1');
+        addRoleFromModal(pendingRole);
+      }
 
       var notifBtn = document.querySelector('[data-dom-id="btn-notification"]');
       if (notifBtn) {

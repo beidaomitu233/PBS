@@ -15,8 +15,21 @@
     .play-button{width:64px;height:64px;border-radius:999px;background:rgba(15,23,42,.56);border:1px solid rgba(255,255,255,.34);display:flex;align-items:center;justify-content:center;font-size:24px;transition:.18s}.play-button:hover{transform:scale(1.06);background:rgba(79,70,229,.8)}
     .video-upload{display:flex;align-items:center;justify-content:space-between;gap:18px;margin-top:16px;padding:15px 16px;border:1px dashed #c7d2fe;border-radius:13px;background:#f8faff;cursor:pointer;transition:.18s}.video-upload:hover{border-color:#818cf8;background:#f3f4ff}.video-upload-icon{width:42px;height:42px;border-radius:12px;background:#eef2ff;color:#4f46e5;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0}.video-upload-action{height:34px;padding:0 13px;border-radius:9px;background:#4f46e5;color:#fff;display:flex;align-items:center;font-size:13px;font-weight:600;white-space:nowrap}
     .switch{position:relative;width:44px;height:24px;display:inline-block}.switch input{opacity:0;width:0;height:0}.slider{position:absolute;inset:0;border-radius:999px;background:#cbd5e1;transition:.2s;cursor:pointer}.slider:before{content:"";position:absolute;width:18px;height:18px;left:3px;top:3px;border-radius:50%;background:#fff;box-shadow:0 1px 4px rgba(15,23,42,.25);transition:.2s}.switch input:checked+.slider{background:#4f46e5}.switch input:checked+.slider:before{transform:translateX(20px)}
-    .setting-row{display:flex;align-items:center;justify-content:space-between;gap:20px;padding:16px 0;border-bottom:1px solid #f1f5f9}.setting-row:last-child{border-bottom:0}.modal-layer{position:fixed;inset:0;z-index:10010;display:none;align-items:center;justify-content:center;padding:20px;background:rgba(15,23,42,.55);backdrop-filter:blur(5px)}.modal-layer.show{display:flex}.modal-card{width:min(620px,100%);max-height:90vh;overflow:auto;background:#fff;border-radius:18px;box-shadow:0 28px 80px rgba(15,23,42,.3)}
+    .setting-row{display:flex;align-items:center;justify-content:space-between;gap:20px;padding:16px 0;border-bottom:1px solid #f1f5f9}.setting-row:last-child{border-bottom:0}.modal-layer{position:fixed;inset:0;z-index:10010;display:none;align-items:center;justify-content:center;padding:20px;background:rgba(15,23,42,.55);backdrop-filter:blur(5px)}.modal-layer.show{display:flex}.modal-card{width:min(560px,100%);max-height:90vh;overflow:auto;background:#fff;border-radius:14px;box-shadow:0 28px 80px rgba(15,23,42,.3)}.video-editor-upload{display:flex;align-items:center;gap:12px;min-height:72px;padding:14px;border:1px dashed #94a3b8;border-radius:10px;background:#f8fafc;cursor:pointer}.video-editor-upload:hover{border-color:#60a5fa;background:#f0f7ff}.video-editor-upload-icon{display:grid;width:38px;height:38px;flex:none;place-items:center;border-radius:9px;background:#eaf2ff;color:#2563eb;font-size:22px}.video-editor-upload strong,.video-editor-upload small{display:block}.video-editor-upload strong{color:#1f2937;font-size:13px}.video-editor-upload small{margin-top:3px;color:#94a3b8;font-size:11px}
     .toast{position:fixed;left:50%;bottom:26px;z-index:10100;transform:translate(-50%,18px);opacity:0;padding:11px 18px;border-radius:10px;background:#111827;color:#fff;font-size:13px;transition:.2s;pointer-events:none}.toast.show{opacity:1;transform:translate(-50%,0)}
+    .video-page{background:#f5f7fa}.video-page-head{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;margin-bottom:20px}.video-page-title{margin:0 0 8px;font-size:22px;line-height:1.35;font-weight:700;color:#111827}.video-page-subtitle{margin:0;color:#6b7280;font-size:13px}.video-head-actions{display:flex;align-items:center;gap:10px}.video-btn{display:inline-flex;height:40px;align-items:center;justify-content:center;padding:0 16px;border:1px solid #d1d5db;border-radius:8px;background:#fff;color:#374151;font-size:14px;font-weight:500;transition:.15s}.video-btn:hover{border-color:#93c5fd;color:#1d4ed8}.video-btn.primary{border-color:#2563eb;background:#2563eb;color:#fff}.video-btn.primary:hover{border-color:#1d4ed8;background:#1d4ed8;color:#fff}
+    .video-layout{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:16px;margin-bottom:16px}.prototype-card{border:1px solid #e5e7eb;border-radius:12px;background:#fff;box-shadow:0 1px 2px rgba(15,23,42,.04)}.video-main-card,.video-settings-card,.viewer-status-card{padding:20px}.video-settings-card{height:max-content}.video-card-head,.viewer-status-head{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:16px}.video-card-title{margin:0;color:#111827;font-size:16px;font-weight:700}.video-card-subtitle{margin:6px 0 0;color:#6b7280;font-size:12px;line-height:1.5}.video-state{display:inline-flex;align-items:center;gap:6px;flex:none;padding:5px 9px;border-radius:999px;background:#ecfdf5;color:#047857;font-size:12px;font-weight:600}.video-state i{width:7px;height:7px;border-radius:50%;background:#10b981}.video-state.disabled{background:#f3f4f6;color:#6b7280}.video-state.disabled i{background:#9ca3af}
+    .media-frame{position:relative;width:100%;aspect-ratio:16/9;overflow:hidden;border:0;border-radius:10px;background:#0f172a;color:#fff}.media-frame .media-backdrop{position:absolute;inset:0;background:radial-gradient(circle at 20% 20%,rgba(59,130,246,.28),transparent 34%),radial-gradient(circle at 80% 75%,rgba(14,165,233,.18),transparent 32%),linear-gradient(145deg,#0f172a,#172554 58%,#1e3a8a)}.media-frame .media-copy{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:32px;text-align:center}.media-play{display:grid;width:58px;height:58px;place-items:center;border:1px solid rgba(255,255,255,.34);border-radius:50%;background:rgba(255,255,255,.14);box-shadow:0 12px 30px rgba(0,0,0,.18);backdrop-filter:blur(8px)}.media-play span{width:0;height:0;margin-left:4px;border-top:8px solid transparent;border-bottom:8px solid transparent;border-left:13px solid #fff}.media-kicker{margin:18px 0 8px;color:rgba(255,255,255,.68);font-size:12px;font-weight:600;letter-spacing:.12em}.media-title{margin:0 0 8px;font-size:clamp(20px,3vw,30px);font-weight:700}.media-desc{max-width:600px;margin:0;color:rgba(255,255,255,.72);font-size:13px;line-height:1.6}.media-duration{position:absolute;right:14px;bottom:14px;padding:5px 9px;border-radius:999px;background:rgba(0,0,0,.36);font-size:11px}
+    .media-toolbar{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-top:16px;padding-top:16px;border-top:1px solid #eef2f7}.video-file-summary{display:flex;align-items:center;gap:12px;min-width:0}.video-file-icon{display:grid;width:40px;height:40px;flex:none;place-items:center;border-radius:10px;background:#eff6ff;color:#2563eb}.video-file-icon svg{width:22px;height:22px}.video-file-copy{display:flex;min-width:0;flex-direction:column;gap:4px}.video-file-copy strong{overflow:hidden;color:#1f2937;font-size:13px;font-weight:600;text-overflow:ellipsis;white-space:nowrap}.video-file-copy small{color:#6b7280;font-size:12px}.media-toolbar-actions{display:flex;align-items:center;gap:12px;flex:none}.video-upload-limit{color:#9ca3af;font-size:12px}.video-upload-action{height:36px;padding:0 14px;border-radius:8px;background:#fff;color:#374151;border:1px solid #d1d5db}.video-upload-action:hover{border-color:#93c5fd;color:#1d4ed8}
+    .video-settings-head{padding-bottom:16px;border-bottom:1px solid #eef2f7}.setting-copy{display:flex;flex-direction:column;gap:4px}.setting-copy strong{color:#1f2937;font-size:14px;font-weight:600}.setting-copy small{color:#6b7280;font-size:12px;line-height:1.5}.video-page .switch input:checked+.slider{background:#2563eb}.save-settings{width:100%;margin-top:18px}.viewer-status-head{align-items:center}.viewer-status-actions,.viewer-summary{display:flex;align-items:center;gap:12px}.viewer-summary span{color:#6b7280;font-size:12px;white-space:nowrap}.viewer-summary strong{margin-right:3px;color:#1f2937;font-size:15px}.viewer-table-wrap{overflow:auto;border:1px solid #eef2f7;border-radius:10px}.viewer-table{width:100%;min-width:640px;border-collapse:collapse}.viewer-table th{padding:12px 14px;background:#f8fafc;color:#64748b;font-size:12px;font-weight:600;text-align:left}.viewer-table td{padding:13px 14px;border-top:1px solid #f0f2f5;color:#374151;font-size:13px}.viewer-result{display:inline-flex;align-items:center;gap:6px}.viewer-result i{width:7px;height:7px;border-radius:50%;background:#f59e0b}.viewer-result.played i{background:#10b981}.reset-note{margin:10px 0 0;color:#9ca3af;font-size:12px;line-height:1.5}
+    @media(max-width:1100px){.video-layout{grid-template-columns:1fr}.video-settings-card{display:grid;grid-template-columns:minmax(200px,.65fr) minmax(0,1.35fr);column-gap:24px;align-items:start}.video-settings-head{height:100%;margin:0;padding:0 24px 0 0;border-right:1px solid #eef2f7;border-bottom:0}.video-settings-list{margin-top:-8px}.save-settings{grid-column:2;margin-top:10px}}
+    @media(max-width:760px){#pbs-sidebar{display:none}.video-page{padding:16px}.video-page-head,.viewer-status-head,.media-toolbar{align-items:stretch;flex-direction:column}.video-head-actions{width:100%}.video-head-actions .video-btn{flex:1}.media-frame .media-copy{padding:22px}.media-toolbar-actions{justify-content:space-between}.video-settings-card{display:block}.video-settings-head{height:auto;margin-bottom:4px;padding:0 0 16px;border-right:0;border-bottom:1px solid #eef2f7}.video-settings-list{margin-top:0}.viewer-status-actions{justify-content:space-between;flex-wrap:wrap}}
+    @media(max-width:520px){.video-main-card,.video-settings-card,.viewer-status-card{padding:16px}.video-upload-limit{display:none}.media-toolbar-actions,.viewer-status-actions{width:100%}.video-upload-action{width:100%}.viewer-status-actions{align-items:stretch;flex-direction:column}.viewer-summary{justify-content:space-between}}
+    .video-workspace-card{overflow:hidden;border:1px solid #e5e7eb;border-radius:12px;background:#fff;box-shadow:0 1px 2px rgba(15,23,42,.04)}.video-workspace-head{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:20px 22px;border-bottom:1px solid #e5e7eb}.video-workspace-body{padding:20px}.video-content-head{margin-bottom:14px}.video-content-grid{display:grid;grid-template-columns:minmax(480px,3fr) minmax(280px,2fr);gap:24px;align-items:stretch}.video-preview-column{min-width:0}.video-preview-column .media-frame{width:100%;aspect-ratio:16/9}.video-preview-column .media-copy{padding:18px}.video-preview-column .media-play{width:44px;height:44px}.video-preview-column .media-play span{border-top-width:6px;border-bottom-width:6px;border-left-width:10px}.video-preview-column .media-kicker{margin:12px 0 5px;font-size:10px}.video-preview-column .media-title{margin-bottom:5px;font-size:20px}.video-preview-column .media-desc{font-size:11px;line-height:1.45}.video-meta-panel{display:flex;min-width:0;flex-direction:column;justify-content:space-between;padding:2px 0;background:#fff}.video-info-title{margin:0 0 8px;color:#1f2937;font-size:14px;font-weight:700}.video-info-list{margin:0}.video-info-row{display:grid;grid-template-columns:68px minmax(0,1fr);gap:12px;padding:10px 0;border-bottom:1px solid #eef2f7}.video-info-row dt{color:#94a3b8;font-size:12px}.video-info-row dd{min-width:0;margin:0;overflow:hidden;color:#374151;font-size:13px;line-height:1.5;text-overflow:ellipsis}.video-info-row dd.strong{color:#1f2937;font-weight:600}.video-meta-panel .media-toolbar{margin-top:16px;padding-top:16px}.video-meta-panel .video-file-copy small{white-space:normal}.video-meta-panel .video-upload-limit{display:none}
+    .settings-section,.viewer-status-section{margin-top:20px;padding-top:20px;border-top:1px solid #e5e7eb}.settings-section-head,.viewer-status-head{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:14px}.setting-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}.setting-grid .setting-row{min-height:58px;padding:12px 14px;border:1px solid #e5e7eb;border-radius:10px;background:#fbfcfe}.setting-grid .setting-row:last-child{border-bottom:1px solid #e5e7eb}.settings-section .save-settings{width:auto;margin:0}.viewer-status-section .viewer-status-head{margin-bottom:14px}
+    @media(max-width:1050px){.video-content-grid{grid-template-columns:minmax(400px,3fr) minmax(260px,2fr)}.video-meta-panel .media-toolbar{align-items:stretch;flex-direction:column}.video-meta-panel .media-toolbar-actions{justify-content:flex-end}}
+    @media(max-width:820px){html,body{overflow-x:hidden}.video-page{width:100%;max-width:100vw;min-width:0}.video-workspace-card{width:100%;min-width:0}.video-workspace-head{align-items:flex-start;flex-direction:column}.video-head-actions{display:grid;width:100%;grid-template-columns:1fr 1fr}.video-head-actions .video-btn{min-width:0;padding:0 10px}.video-content-grid{min-width:0;grid-template-columns:minmax(0,1fr)}.video-preview-column{width:100%;max-width:420px}.setting-grid{grid-template-columns:1fr}.settings-section-head,.viewer-status-head{align-items:flex-start;flex-direction:column}.viewer-status-actions{width:100%;justify-content:space-between}}
+    @media(max-width:520px){.video-workspace-head,.video-workspace-body{padding:16px}.video-meta-panel{padding:0}.video-preview-column{max-width:none}.video-meta-panel .media-toolbar-actions{width:100%}.video-meta-panel .video-upload-action{width:100%;text-align:center}.settings-section-head .video-btn{width:100%}}
   </style>
 </head>
 <body class="bg-gray-50 text-gray-800 min-h-screen">
@@ -29,43 +42,49 @@
 
   <div class="flex">
     <aside id="pbs-sidebar" class="w-56 bg-white border-r border-gray-200 min-h-[calc(100vh-64px)] flex flex-col flex-shrink-0"></aside>
-    <main class="flex-1 min-w-0 p-6">
-      <div class="flex items-start justify-between gap-4 mb-6">
-        <div><h1 class="text-2xl font-semibold text-gray-900">视频管理</h1><p class="text-sm text-gray-400 mt-1">直接替换当前系统介绍视频内容，并管理首次进入播放策略</p></div>
-        <button onclick="previewIntroVideo()" class="h-10 px-5 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 text-sm font-medium">预览当前视频</button>
-      </div>
+    <main class="video-page flex-1 min-w-0 p-6">
+      <section class="video-workspace-card">
+        <header class="video-workspace-head"><h1 class="video-page-title">视频管理</h1></header>
 
-      <section class="grid grid-cols-1 xl:grid-cols-[minmax(0,1.25fr)_minmax(360px,.75fr)] gap-5 mb-5">
-        <div class="video-panel p-5">
-          <div class="flex items-center justify-between gap-4 mb-4"><div><h2 class="text-base font-semibold text-gray-900">当前播放内容</h2><p class="text-xs text-gray-400 mt-1">以下内容与用户首次进入时看到的播放卡片完全一致</p></div><button onclick="openVideoEditor()" class="h-9 px-4 border border-indigo-200 bg-indigo-50 text-indigo-700 rounded-lg hover:bg-indigo-100 text-sm font-medium">管理视频</button></div>
-          <button class="video-cover w-full text-left" onclick="previewIntroVideo()" aria-label="预览系统介绍视频">
-            <div class="absolute inset-0 flex flex-col items-center justify-center px-6 text-center"><p id="coverKicker" class="text-xs font-semibold tracking-[.2em] text-indigo-200">WELCOME TO PBS</p><div class="play-button mt-4">▶</div><h3 id="coverTitle" class="text-2xl font-semibold mt-5">PBS 系统介绍视频</h3><p id="coverSubtitle" class="text-sm text-white/70 mt-2">用 32 秒了解角色工作台与申请交付主流程</p></div>
-            <div id="coverFileName" class="absolute left-4 bottom-4 max-w-[70%] truncate px-2.5 py-1 rounded-full bg-black/30 text-xs">内置动态图文视频</div><div id="coverDuration" class="absolute right-4 bottom-4 px-2.5 py-1 rounded-full bg-black/30 text-xs">32 秒</div>
-          </button>
-          <label class="video-upload" for="videoFileInput"><input id="videoFileInput" type="file" accept="video/mp4,video/webm,video/ogg" class="hidden" onchange="handleVideoUpload(this)"><span class="flex items-center gap-3 min-w-0"><span class="video-upload-icon">↑</span><span class="min-w-0"><strong id="uploadTitle" class="block text-sm text-gray-800">上传视频并替换当前视频</strong><small id="uploadHint" class="block text-xs text-gray-400 mt-1 truncate">支持 MP4、WebM、OGG，系统自动读取实际时长</small></span></span><span class="video-upload-action">选择视频</span></label>
-          <div class="flex items-center justify-between gap-4 mt-4 text-xs text-gray-400"><span>当前视频内容将被直接替换，不保留历史版本</span><span id="contentUpdated">更新于 2026-08-19 18:30</span></div>
+        <div class="video-workspace-body">
+          <section class="video-content-section">
+            <div class="video-content-head"><h2 class="video-card-title">首页介绍视频</h2></div>
+            <div class="video-content-grid">
+              <div class="video-preview-column">
+                <button class="media-frame" onclick="previewIntroVideo()" aria-label="预览系统介绍视频"><span class="media-backdrop"></span><span class="media-copy"><span class="media-play"><span></span></span><span id="coverKicker" class="media-kicker">WELCOME TO PBS</span><span id="coverTitle" class="media-title">PBS 系统介绍视频</span><span id="coverSubtitle" class="media-desc">用 32 秒了解角色工作台与申请交付主流程</span></span><span id="coverDuration" class="media-duration">32 秒</span></button>
+              </div>
+              <div class="video-meta-panel">
+                <div><h3 class="video-info-title">视频内容</h3><dl class="video-info-list"><div class="video-info-row"><dt>标题</dt><dd class="strong" id="videoMetaTitle">PBS 系统介绍视频</dd></div><div class="video-info-row"><dt>说明</dt><dd id="videoMetaSubtitle">用 32 秒了解角色工作台与申请交付主流程</dd></div><div class="video-info-row"><dt>更新时间</dt><dd id="contentUpdated">2026-08-19 18:30</dd></div></dl></div>
+                <div class="media-toolbar">
+                  <div class="video-file-summary"><span class="video-file-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true"><path d="m15 10 4.5-2.5v9L15 14v-4Z" stroke-width="1.8" stroke-linejoin="round"></path><rect x="3.5" y="6" width="11.5" height="12" rx="2" stroke-width="1.8"></rect></svg></span><span class="video-file-copy"><strong id="coverFileName">内置动态图文视频</strong><small id="uploadHint">支持 MP4、WebM、OGG，系统自动读取实际时长</small></span></div>
+                  <div class="media-toolbar-actions"><button id="uploadTitle" class="video-upload-action" type="button" onclick="openVideoEditor()">上传视频</button></div>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <section class="settings-section">
+            <div class="settings-section-head"><h2 class="video-card-title">播放设置</h2><button onclick="saveVideoPolicy()" class="video-btn primary save-settings">保存设置</button></div>
+            <div class="setting-grid">
+              <div class="setting-row"><span class="setting-copy"><strong>启用介绍视频</strong></span><label class="switch"><input id="videoEnabled" type="checkbox" checked><span class="slider"></span></label></div>
+              <div class="setting-row"><span class="setting-copy"><strong>首次自动播放</strong></span><label class="switch"><input id="autoPlayFirstVisit" type="checkbox" checked><span class="slider"></span></label></div>
+              <div class="setting-row"><span class="setting-copy"><strong>允许关闭</strong></span><label class="switch"><input type="checkbox" checked disabled><span class="slider"></span></label></div>
+            </div>
+          </section>
+
+          <section class="viewer-status-section">
+            <div class="viewer-status-head"><h2 class="video-card-title">账号播放状态</h2><div class="viewer-status-actions"><div class="viewer-summary"><span><strong id="playedViewerCount">0</strong> 已播放</span><span><strong id="pendingViewerCount">0</strong> 待播放</span></div><button onclick="resetAllViewers()" class="video-btn">重置播放状态</button></div></div>
+            <div class="viewer-table-wrap"><table class="viewer-table"><thead><tr><th>账号</th><th>姓名</th><th>机构</th><th>播放状态</th><th>播放时间</th></tr></thead><tbody id="viewerStatusRows"></tbody></table></div>
+          </section>
         </div>
-
-        <div class="video-panel p-5">
-          <div class="mb-2"><h2 class="text-base font-semibold text-gray-900">播放策略</h2><p class="text-xs text-gray-400 mt-1">修改后点击保存，策略将在所有业务页面生效</p></div>
-          <div class="setting-row"><div><p class="text-sm font-medium text-gray-800">启用系统介绍视频</p><p class="text-xs text-gray-400 mt-1">关闭后不再自动弹出，系统设置中仍可预览</p></div><label class="switch"><input id="videoEnabled" type="checkbox" checked><span class="slider"></span></label></div>
-          <div class="setting-row"><div><p class="text-sm font-medium text-gray-800">首次进入自动播放</p><p class="text-xs text-gray-400 mt-1">每个用户账号仅自动播放一次</p></div><label class="switch"><input id="autoPlayFirstVisit" type="checkbox" checked><span class="slider"></span></label></div>
-          <div class="setting-row"><div><p class="text-sm font-medium text-gray-800">允许用户关闭</p><p class="text-xs text-gray-400 mt-1">播放过程中可通过关闭按钮或遮罩退出</p></div><label class="switch"><input type="checkbox" checked disabled><span class="slider"></span></label></div>
-          <button onclick="saveVideoPolicy()" class="w-full h-10 mt-5 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 text-sm font-medium">保存播放策略</button>
-        </div>
-      </section>
-
-      <section class="video-panel p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4 sm:gap-6">
-        <div><h2 class="text-base font-semibold text-gray-900">首次播放状态</h2><p class="text-xs text-gray-400 mt-1">清除本系统记录的全部账号观看状态，使所有账号下次进入时重新自动播放介绍视频</p></div>
-        <button onclick="resetAllViewers()" class="h-9 px-4 border border-amber-200 bg-amber-50 text-amber-700 rounded-lg hover:bg-amber-100 text-sm whitespace-nowrap">重置所有账号首次播放</button>
       </section>
     </main>
   </div>
 
   <div id="videoEditorModal" class="modal-layer" role="dialog" aria-modal="true" aria-labelledby="videoEditorTitle" onclick="if(event.target===this)closeVideoEditor()">
-    <div class="modal-card"><div class="flex items-start justify-between gap-4 px-6 py-5 border-b border-gray-100"><div><h2 id="videoEditorTitle" class="text-lg font-semibold text-gray-900">管理视频</h2><p class="text-xs text-gray-400 mt-1">上传视频请使用播放卡片内的上传入口；此处管理播放器展示文案</p></div><button onclick="closeVideoEditor()" class="w-8 h-8 rounded-full bg-gray-100 text-gray-500 text-xl">×</button></div>
-      <div class="p-6 space-y-4"><div><label class="block text-sm text-gray-600 mb-2">顶部眉题</label><input id="editVideoKicker" maxlength="40" class="w-full h-10 px-3 border border-gray-300 rounded-lg text-sm" placeholder="如 WELCOME TO PBS"><p class="text-xs text-gray-400 mt-1.5">对应播放卡片顶部的小标题</p></div><div><label class="block text-sm text-gray-600 mb-2">视频标题</label><input id="editVideoTitle" maxlength="60" class="w-full h-10 px-3 border border-gray-300 rounded-lg text-sm" placeholder="如 PBS 系统介绍视频"></div><div><label class="block text-sm text-gray-600 mb-2">视频说明</label><textarea id="editVideoSubtitle" maxlength="120" rows="3" class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm resize-none" placeholder="如 用 32 秒了解角色工作台与申请交付主流程"></textarea></div></div>
-      <div class="flex justify-end gap-3 px-6 py-4 border-t border-gray-100"><button onclick="closeVideoEditor()" class="h-10 px-5 border border-gray-300 text-gray-700 rounded-lg text-sm">取消</button><button onclick="saveVideoMeta()" class="h-10 px-5 bg-indigo-600 text-white rounded-lg text-sm font-medium">保存展示内容</button></div>
+    <div class="modal-card"><div class="flex items-center justify-between gap-4 px-6 py-5 border-b border-gray-100"><h2 id="videoEditorTitle" class="text-lg font-semibold text-gray-900">上传视频</h2><button onclick="closeVideoEditor()" class="w-8 h-8 rounded-lg bg-gray-100 text-gray-500 text-xl">×</button></div>
+      <div class="p-6 space-y-4"><label class="video-editor-upload" for="videoEditorFile"><input id="videoEditorFile" type="file" accept="video/mp4,video/webm,video/ogg" class="hidden" onchange="prepareVideoUpload(this)"><span class="video-editor-upload-icon">＋</span><span><strong id="videoEditorFileName">选择视频文件</strong><small>MP4、WebM、OGG</small></span></label><div><label class="block text-sm text-gray-600 mb-2">视频标题</label><input id="editVideoTitle" maxlength="60" class="w-full h-10 px-3 border border-gray-300 rounded-lg text-sm" placeholder="请输入视频标题"></div><div><label class="block text-sm text-gray-600 mb-2">视频说明</label><textarea id="editVideoSubtitle" maxlength="120" rows="3" class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm resize-none" placeholder="请输入视频说明"></textarea></div></div>
+      <div class="flex justify-end gap-3 px-6 py-4 border-t border-gray-100"><button onclick="closeVideoEditor()" class="h-10 px-5 border border-gray-300 text-gray-700 rounded-lg text-sm">取消</button><button id="saveVideoContentBtn" onclick="saveVideoContent()" class="h-10 px-5 bg-blue-600 text-white rounded-lg text-sm font-medium">保存</button></div>
     </div>
   </div>
   <div id="videoToast" class="toast"></div>
@@ -78,6 +97,14 @@
     var VIDEO_ASSET_KEY = 'intro-video';
     var defaultMeta = { kicker: 'WELCOME TO PBS', title: 'PBS 系统介绍视频', subtitle: '用 32 秒了解角色工作台与申请交付主流程', duration: 32, updated: '2026-08-19 18:30' };
     var currentMeta = {};
+    var pendingVideoFile = null;
+    var pendingVideoDuration = null;
+    var viewerStatusList = [
+      { username: 'admin', realname: '平台运维', org: '平台', played: true, playedTime: '2026-09-18 09:12' },
+      { username: 'org_manager', realname: '机构管理员', org: '启航留学', played: true, playedTime: '2026-09-18 10:26' },
+      { username: 'pm_chen', realname: '陈老师', org: '启航留学', played: true, playedTime: '2026-09-18 14:08' },
+      { username: 'essay_lin', realname: '林老师', org: '远景教育', played: false, playedTime: '—' }
+    ];
     function readJson(key, fallback) { try { return Object.assign({}, fallback, JSON.parse(localStorage.getItem(key) || '{}')); } catch (e) { return Object.assign({}, fallback); } }
     function renderVideoPage() {
       currentMeta = readJson(META_KEY, defaultMeta);
@@ -88,32 +115,95 @@
       document.getElementById('coverKicker').textContent = currentMeta.kicker || defaultMeta.kicker;
       document.getElementById('coverTitle').textContent = currentMeta.title;
       document.getElementById('coverSubtitle').textContent = currentMeta.subtitle || defaultMeta.subtitle;
+      document.getElementById('videoMetaTitle').textContent = currentMeta.title;
+      document.getElementById('videoMetaSubtitle').textContent = currentMeta.subtitle || defaultMeta.subtitle;
       document.getElementById('coverDuration').textContent = currentMeta.duration + ' 秒';
       document.getElementById('coverFileName').textContent = currentMeta.fileName || '内置动态图文视频';
-      document.getElementById('uploadTitle').textContent = currentMeta.hasCustomVideo ? '重新上传并替换当前视频' : '上传视频并替换当前视频';
+      document.getElementById('uploadTitle').textContent = currentMeta.hasCustomVideo ? '替换视频' : '上传视频';
       document.getElementById('uploadHint').textContent = currentMeta.hasCustomVideo ? ((currentMeta.fileName || '当前视频') + ' · ' + currentMeta.duration + ' 秒') : '支持 MP4、WebM、OGG，系统自动读取实际时长';
-      document.getElementById('contentUpdated').textContent = '更新于 ' + currentMeta.updated;
+      document.getElementById('contentUpdated').textContent = currentMeta.updated;
+    }
+    function renderViewerStatus() {
+      var played = viewerStatusList.filter(function (item) { return item.played; }).length;
+      document.getElementById('playedViewerCount').textContent = played;
+      document.getElementById('pendingViewerCount').textContent = viewerStatusList.length - played;
+      document.getElementById('viewerStatusRows').innerHTML = viewerStatusList.map(function (item) {
+        return '<tr><td>' + item.username + '</td><td>' + item.realname + '</td><td>' + item.org + '</td><td><span class="viewer-result ' + (item.played ? 'played' : '') + '"><i></i>' + (item.played ? '已播放' : '待播放') + '</span></td><td>' + item.playedTime + '</td></tr>';
+      }).join('');
     }
     function previewIntroVideo() { if (window.pbsOpenIntroVideo) window.pbsOpenIntroVideo(); else showVideoToast('播放器正在初始化，请稍后重试'); }
     function saveVideoPolicy() {
       var policy = { enabled: document.getElementById('videoEnabled').checked, autoPlayFirstVisit: document.getElementById('autoPlayFirstVisit').checked, allowClose: true };
       localStorage.setItem(POLICY_KEY, JSON.stringify(policy)); renderVideoPage(); showVideoToast('播放策略已保存并全站生效');
     }
-    function resetAllViewers() { var keys = []; for (var i = 0; i < localStorage.length; i++) { var key = localStorage.key(i); if (key && key.indexOf('pbs_intro_video_seen_v1_') === 0) keys.push(key); } keys.forEach(function (key) { localStorage.removeItem(key); }); showVideoToast('已清除本浏览器的首次播放记录（正式环境为服务端批量重置，可指定机构/全员）'); }
+    function resetAllViewers() { var keys = []; for (var i = 0; i < localStorage.length; i++) { var key = localStorage.key(i); if (key && key.indexOf('pbs_intro_video_seen_v1_') === 0) keys.push(key); } keys.forEach(function (key) { localStorage.removeItem(key); }); viewerStatusList = viewerStatusList.map(function (item) { return Object.assign({}, item, { played: false, playedTime: '—' }); }); renderViewerStatus(); showVideoToast('已重置所有账号播放状态'); }
     function openVideoDb() { return new Promise(function (resolve, reject) { if (!window.indexedDB) { reject(new Error('当前浏览器不支持本地视频存储')); return; } var request = indexedDB.open(VIDEO_DB_NAME, 1); request.onupgradeneeded = function () { var db = request.result; if (!db.objectStoreNames.contains(VIDEO_STORE_NAME)) db.createObjectStore(VIDEO_STORE_NAME, { keyPath: 'id' }); }; request.onsuccess = function () { resolve(request.result); }; request.onerror = function () { reject(request.error || new Error('视频存储初始化失败')); }; }); }
     function storeVideoFile(file) { return openVideoDb().then(function (db) { return new Promise(function (resolve, reject) { var tx = db.transaction(VIDEO_STORE_NAME, 'readwrite'); tx.objectStore(VIDEO_STORE_NAME).put({ id: VIDEO_ASSET_KEY, blob: file, name: file.name, type: file.type, size: file.size, savedAt: Date.now() }); tx.oncomplete = function () { db.close(); resolve(); }; tx.onerror = function () { db.close(); reject(tx.error || new Error('视频保存失败')); }; }); }); }
     function readVideoDuration(file) { return new Promise(function (resolve, reject) { var probe = document.createElement('video'); var url = URL.createObjectURL(file); probe.preload = 'metadata'; probe.onloadedmetadata = function () { var duration = Number(probe.duration); URL.revokeObjectURL(url); if (isFinite(duration) && duration > 0) resolve(duration); else reject(new Error('无法读取视频时长')); }; probe.onerror = function () { URL.revokeObjectURL(url); reject(new Error('无法读取该视频文件')); }; probe.src = url; }); }
-    function handleVideoUpload(input) { var file = input.files && input.files[0]; if (!file) return; if (!file.type || file.type.indexOf('video/') !== 0) { showVideoToast('请选择 MP4、WebM 或 OGG 视频文件'); input.value = ''; return; } document.getElementById('uploadTitle').textContent = '正在读取并保存视频…'; Promise.all([readVideoDuration(file), storeVideoFile(file)]).then(function (values) { currentMeta.duration = Number(values[0].toFixed(2)); currentMeta.fileName = file.name; currentMeta.fileSize = file.size; currentMeta.mimeType = file.type; currentMeta.hasCustomVideo = true; currentMeta.updated = new Date().toLocaleString('zh-CN', { hour12: false }); localStorage.setItem(META_KEY, JSON.stringify(currentMeta)); renderVideoPage(); showVideoToast('视频已上传并替换，时长已自动识别'); }).catch(function (error) { renderVideoPage(); showVideoToast(error && error.message ? error.message : '视频上传失败，请重试'); }).finally(function () { input.value = ''; }); }
-    function openVideoEditor() { document.getElementById('editVideoKicker').value = currentMeta.kicker || defaultMeta.kicker; document.getElementById('editVideoTitle').value = currentMeta.title; document.getElementById('editVideoSubtitle').value = currentMeta.subtitle || currentMeta.description || defaultMeta.subtitle; document.getElementById('videoEditorModal').classList.add('show'); }
+    function prepareVideoUpload(input) {
+      var file = input.files && input.files[0];
+      if (!file) return;
+      if (!file.type || file.type.indexOf('video/') !== 0) { showVideoToast('请选择 MP4、WebM 或 OGG 视频文件'); input.value = ''; return; }
+      var fileName = document.getElementById('videoEditorFileName');
+      fileName.textContent = '正在读取 ' + file.name;
+      readVideoDuration(file).then(function (duration) {
+        pendingVideoFile = file;
+        pendingVideoDuration = Number(duration.toFixed(2));
+        fileName.textContent = file.name + ' · ' + pendingVideoDuration + ' 秒';
+      }).catch(function (error) {
+        pendingVideoFile = null;
+        pendingVideoDuration = null;
+        input.value = '';
+        fileName.textContent = currentMeta.fileName || '选择视频文件';
+        showVideoToast(error && error.message ? error.message : '无法读取该视频文件');
+      });
+    }
+    function openVideoEditor() {
+      pendingVideoFile = null;
+      pendingVideoDuration = null;
+      document.getElementById('videoEditorFile').value = '';
+      document.getElementById('videoEditorTitle').textContent = currentMeta.hasCustomVideo ? '替换视频' : '上传视频';
+      document.getElementById('videoEditorFileName').textContent = currentMeta.fileName || '选择视频文件';
+      document.getElementById('editVideoTitle').value = currentMeta.title;
+      document.getElementById('editVideoSubtitle').value = currentMeta.subtitle || currentMeta.description || defaultMeta.subtitle;
+      document.getElementById('videoEditorModal').classList.add('show');
+    }
     function closeVideoEditor() { document.getElementById('videoEditorModal').classList.remove('show'); }
-    function saveVideoMeta() {
-      var kicker = document.getElementById('editVideoKicker').value.trim(), title = document.getElementById('editVideoTitle').value.trim(), subtitle = document.getElementById('editVideoSubtitle').value.trim();
-      if (!kicker || !title || !subtitle) { showVideoToast('请完整填写播放卡片内容'); return; }
-      currentMeta = Object.assign({}, currentMeta, { kicker: kicker, title: title, subtitle: subtitle, duration: Number(currentMeta.duration) || defaultMeta.duration, updated: new Date().toLocaleString('zh-CN', { hour12: false }) });
-      localStorage.setItem(META_KEY, JSON.stringify(currentMeta)); closeVideoEditor(); renderVideoPage(); showVideoToast('当前视频内容已直接替换');
+    function saveVideoContent() {
+      var title = document.getElementById('editVideoTitle').value.trim();
+      var subtitle = document.getElementById('editVideoSubtitle').value.trim();
+      if (!title || !subtitle) { showVideoToast('请填写视频标题和说明'); return; }
+      var button = document.getElementById('saveVideoContentBtn');
+      button.disabled = true;
+      button.textContent = '保存中…';
+      var saveFile = pendingVideoFile ? storeVideoFile(pendingVideoFile) : Promise.resolve();
+      saveFile.then(function () {
+        currentMeta = Object.assign({}, currentMeta, {
+          kicker: currentMeta.kicker || defaultMeta.kicker,
+          title: title,
+          subtitle: subtitle,
+          duration: pendingVideoFile ? pendingVideoDuration : (Number(currentMeta.duration) || defaultMeta.duration),
+          updated: new Date().toLocaleString('zh-CN', { hour12: false })
+        });
+        if (pendingVideoFile) {
+          currentMeta.fileName = pendingVideoFile.name;
+          currentMeta.fileSize = pendingVideoFile.size;
+          currentMeta.mimeType = pendingVideoFile.type;
+          currentMeta.hasCustomVideo = true;
+        }
+        localStorage.setItem(META_KEY, JSON.stringify(currentMeta));
+        closeVideoEditor();
+        renderVideoPage();
+        showVideoToast(pendingVideoFile ? '视频已替换' : '视频内容已保存');
+      }).catch(function (error) {
+        showVideoToast(error && error.message ? error.message : '保存失败，请重试');
+      }).finally(function () {
+        button.disabled = false;
+        button.textContent = '保存';
+      });
     }
     function showVideoToast(message) { var toast = document.getElementById('videoToast'); toast.textContent = message; toast.classList.add('show'); clearTimeout(showVideoToast.timer); showVideoToast.timer = setTimeout(function () { toast.classList.remove('show'); }, 2200); }
-    document.addEventListener('DOMContentLoaded', renderVideoPage);
+    document.addEventListener('DOMContentLoaded', function () { renderVideoPage(); renderViewerStatus(); });
   </script>
 </body>
 </html>

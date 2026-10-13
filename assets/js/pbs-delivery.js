@@ -236,7 +236,22 @@
   }
 
   function currentPackageSchool() {
-    return window.selectedPackageId === 'ic' ? '帝国理工学院' : '卡内基梅隆大学';
+    var packageId = window.selectedPackageId || window.currentSchoolCockpit;
+    var context = window.PROJECT_CONTEXT || window.MY_PROJECT_CONTEXT;
+    var selected = context && (context.packages || []).find(function(item) { return item.id === packageId; });
+    if (selected) return selected.school;
+    return packageId === 'ic' ? '帝国理工学院' : packageId === 'stanford' ? '斯坦福大学' : '卡内基梅隆大学';
+  }
+
+  function normalizePaymentDeliveryStates(root) {
+    if (!root) return;
+    root.querySelectorAll('*').forEach(function (element) {
+      var state = element.textContent.trim();
+      if (/^(部分交付|已全部提交|已提交(?:商城|\s*\d+\/\d+)?|已交付)$/.test(state)) element.textContent = '已交付';
+      if (/^(待提交|待交付|可交付|暂无文件|暂无可交付文件|未交付)$/.test(state)) element.textContent = '未交付';
+      if (/^(支付完成|已付款|已支付)$/.test(state)) element.textContent = '已支付';
+      if (/^(部分支付|待支付|支付中|未付款|暂无支付|未支付)$/.test(state)) element.textContent = '未支付';
+    });
   }
 
   function nodeAmount(packageId, nodeId) {
@@ -249,38 +264,82 @@
 
   function money(value) { return value ? '¥' + Number(value).toLocaleString('en-US') : '套餐内'; }
 
+  var documentPayments = {
+    cmu: [
+      { label: 'CV', recordName: '学术简历', amount: 6000, paid: true },
+      { label: 'PS', recordName: '个人陈述', amount: 8000, paid: true },
+      { label: 'RP', recordName: '研究计划', amount: 8000, paid: false },
+      { label: 'RL', recordName: '推荐信', amount: 6000, paid: true },
+      { label: '套磁信', recordName: '套磁信', amount: 4000, paid: false }
+    ],
+    ic: [
+      { label: 'CV', recordName: '学术简历', amount: 4000, paid: true },
+      { label: 'PS', recordName: '个人陈述', amount: 6000, paid: true },
+      { label: 'RP', recordName: '研究计划', amount: 5000, paid: true },
+      { label: 'RL', recordName: '推荐信', amount: 4000, paid: false },
+      { label: '套磁信', recordName: '套磁信', amount: 3000, paid: false }
+    ]
+  };
+
+  function deliveryMeta(files) {
+    var submitted = files.filter(function (item) { return item.status === 'submitted'; }).length;
+    var available = files.filter(function (item) { return item.status !== 'submitted'; }).length;
+    return {
+      available: available,
+      state: !files.length ? '暂无文件' : (submitted === files.length ? '已交付' : (submitted ? '部分交付' : '待交付')),
+      stateClass: submitted === files.length && files.length ? 'is-sent' : (available ? 'is-ready' : '')
+    };
+  }
+
+  function deliveryButton(nodeId, recordName, meta) {
+    return '<button class="pbs-payment-action" data-submit-node="' + nodeId + '" data-submit-name="' + (recordName || '') + '" ' + (meta.available ? '' : 'disabled') + '>' + (meta.state === '已交付' ? '已交付' : '交付') + '</button>';
+  }
+
+  function deliveryRow(label, nodeId, recordName, files, extraClass) {
+    var meta = deliveryMeta(files);
+    return '<div class="pbs-payment-delivery-row ' + (extraClass || '') + '"><strong>' + label + '</strong><span class="pbs-payment-state ' + meta.stateClass + '">' + meta.state + '</span>' + deliveryButton(nodeId, recordName, meta) + '</div>';
+  }
+
   function renderPaymentNodes() {
     var root = document.getElementById('paymentInfo');
     if (!root) return;
     var records = readRecords();
     var school = currentPackageSchool();
-    var packageId = window.selectedPackageId || 'cmu';
+    var packageId = window.selectedPackageId || window.currentSchoolCockpit || 'cmu';
     var packageRecords = records.filter(function (item) { return item.school === school; });
-    var total = nodes.reduce(function (sum, node) { return sum + nodeAmount(packageId, node.id); }, 0);
-    var submittedCount = packageRecords.filter(function (item) { return item.status === 'submitted'; }).length;
-    var html = '<div class="pbs-payment-summary"><div><strong>' + money(total) + '</strong><span>四个服务节点总额</span></div><div style="text-align:right"><strong>' + submittedCount + ' 份</strong><span>已提交商城</span></div></div><div class="pbs-payment-nodes">';
-    nodes.forEach(function (node) {
-      var files = packageRecords.filter(function (item) { return item.node === node.id; });
-      var submitted = files.filter(function (item) { return item.status === 'submitted'; }).length;
-      var available = files.filter(function (item) { return item.status !== 'submitted'; }).length;
-      var state = files.length ? (submitted === files.length ? '已全部提交' : (submitted ? '已提交 ' + submitted + '/' + files.length : '待提交')) : '暂无文件';
-      var stateClass = submitted ? 'is-sent' : (available ? 'is-ready' : '');
-      var detail = node.id === 'document' ? '审核通过版本' : (node.id === 'application' ? '提交证明与结果分阶段交付' : (node.id === 'interview' ? '服务进度展示' : '客户结项报告'));
-      if (node.id === 'interview') {
-        html += '<div class="pbs-payment-node is-display-only"><div><strong>' + node.name + '</strong><small>' + detail + '</small></div><span class="pbs-payment-amount">' + money(nodeAmount(packageId, node.id)) + '</span><span class="pbs-payment-files">无需交付文件</span><span class="pbs-payment-state is-ready">服务进行中</span><span class="pbs-payment-display-only">进度展示</span></div>';
-      } else {
-        html += '<div class="pbs-payment-node"><div><strong>' + node.name + '</strong><small>' + detail + '</small></div><span class="pbs-payment-amount">' + money(nodeAmount(packageId, node.id)) + '</span><span class="pbs-payment-files">' + files.length + ' 份归档文件</span><span class="pbs-payment-state ' + stateClass + '">' + state + '</span><button class="pbs-payment-action" data-submit-node="' + node.id + '" ' + (available ? '' : 'disabled') + '>提交交付文件</button></div>';
-      }
+    var documents = documentPayments[packageId] || documentPayments.cmu;
+    var applicationPayment = nodeAmount(packageId, 'application');
+    var paymentTotal = documents.reduce(function (sum, item) { return sum + item.amount; }, 0) + applicationPayment;
+    var paidTotal = documents.reduce(function (sum, item) { return sum + (item.paid ? item.amount : 0); }, 0) + applicationPayment;
+    var html = '<div class="pbs-payment-summary"><div><strong>' + money(paidTotal) + '</strong><span>已支付金额</span></div><div style="text-align:right"><strong>' + money(paymentTotal) + '</strong><span>支付总额</span></div></div><div class="pbs-payment-groups">';
+
+    html += '<section class="pbs-payment-group"><div class="pbs-payment-group-head"><div><strong>文书</strong><small>按文书类型核对支付和交付</small></div></div><div class="pbs-payment-table"><div class="pbs-payment-table-head pbs-payment-document-grid"><span>文书类型</span><span>支付信息</span><span>支付金额</span><span>交付状态</span><span>操作</span></div>';
+    documents.forEach(function (documentItem) {
+      var files = packageRecords.filter(function (item) { return item.node === 'document' && item.name === documentItem.recordName; });
+      var meta = deliveryMeta(files);
+      html += '<div class="pbs-payment-table-row pbs-payment-document-grid"><strong>' + documentItem.label + '</strong><span class="pbs-payment-paid ' + (documentItem.paid ? 'is-paid' : 'is-unpaid') + '"><i></i>' + (documentItem.paid ? '已支付' : '未支付') + '</span><span class="pbs-payment-amount">' + money(documentItem.amount) + '</span><span class="pbs-payment-state ' + meta.stateClass + '">' + meta.state + '</span>' + deliveryButton('document', documentItem.recordName, meta) + '</div>';
     });
-    root.innerHTML = html + '</div>';
-    root.querySelectorAll('[data-submit-node]').forEach(function (button) { button.addEventListener('click', function () { openSubmit(button.dataset.submitNode); }); });
+    html += '</div></section>';
+
+    var proofFiles = packageRecords.filter(function (item) { return item.node === 'application' && item.name === '网申提交证明'; });
+    var resultFiles = packageRecords.filter(function (item) { return item.node === 'application' && item.name === '网申结果'; });
+    html += '<section class="pbs-payment-group"><div class="pbs-payment-group-head"><div><strong>网申</strong><small>支付一次，按业务进度分两次交付</small></div><div class="pbs-payment-group-payment"><span class="pbs-payment-paid is-paid"><i></i>已支付</span><strong>' + money(applicationPayment) + '</strong></div></div><div class="pbs-payment-deliveries">' + deliveryRow('网申提交证明', 'application', '网申提交证明', proofFiles) + deliveryRow('网申结果', 'application', '网申结果', resultFiles) + '</div></section>';
+
+    var closureFiles = packageRecords.filter(function (item) { return item.node === 'closure'; });
+    html += '<section class="pbs-payment-group"><div class="pbs-payment-group-head"><div><strong>结项</strong><small>项目完成后提交结项报告</small></div></div><div class="pbs-payment-deliveries">' + deliveryRow('结项报告', 'closure', '', closureFiles) + '</div></section></div>';
+    root.innerHTML = html;
+    root.querySelectorAll('.pbs-payment-group-head small').forEach(function (note) { note.remove(); });
+    normalizePaymentDeliveryStates(root);
+    root.querySelectorAll('[data-submit-node]').forEach(function (button) {
+      button.addEventListener('click', function () { openSubmit(button.dataset.submitNode, button.dataset.submitName || ''); });
+    });
   }
 
-  function openSubmit(nodeId) {
+  function openSubmit(nodeId, recordName) {
     var school = currentPackageSchool();
     var records = readRecords();
     var grouped = {};
-    records.filter(function (item) { return item.school === school && item.node === nodeId; }).forEach(function (item) {
+    records.filter(function (item) { return item.school === school && item.node === nodeId && (!recordName || item.name === recordName); }).forEach(function (item) {
       if (!grouped[item.name]) grouped[item.name] = [];
       grouped[item.name].push(item);
     });
@@ -295,7 +354,7 @@
       return '<div class="pbs-delivery-choice ' + (ready.length ? '' : 'is-disabled') + '"><input type="checkbox" data-delivery-choice ' + (ready.length ? '' : 'disabled') + '><button type="button" class="pbs-choice-main" data-choice-toggle ' + (ready.length ? '' : 'disabled') + '><span class="pbs-choice-check"><svg viewBox="0 0 20 20" fill="none"><path d="m5 10 3 3 7-7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="pbs-choice-copy"><strong>' + name + '</strong><small data-current-version-summary>' + current.fileName + '</small></span></button><div class="pbs-version-picker"><span class="pbs-version-label">版本</span><button type="button" class="pbs-version-trigger" data-version-trigger ' + (ready.length ? '' : 'disabled') + '><strong data-current-version-label>' + current.version + '</strong><svg viewBox="0 0 20 20" fill="none"><path d="m6 8 4 4 4-4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></button><div class="pbs-version-menu">' + options + '</div><input type="hidden" data-delivery-version value="' + current.id + '"></div><button class="pbs-delivery-preview-button" type="button" data-preview-delivery="' + current.id + '"><svg viewBox="0 0 24 24" fill="none"><path d="M2.5 12s3.5-6 9.5-6 9.5 6 9.5 6-3.5 6-9.5 6-9.5-6-9.5-6Z" stroke="currentColor" stroke-width="1.8"/><circle cx="12" cy="12" r="2.5" stroke="currentColor" stroke-width="1.8"/></svg><span>预览</span></button></div>';
     }).join('');
     if (!rows) rows = '<div class="pbs-delivery-empty">该节点暂无已交付文件</div>';
-    var body = '<div class="pbs-submit-layout"><div class="pbs-submit-file-panel"><div class="pbs-submit-panel-title"><span>选择文书与版本</span><strong id="selectedDeliveryCount">已选 0 项</strong></div><div class="pbs-submit-list">' + rows + '</div></div><div class="pbs-submit-preview-panel"><div class="pbs-submit-panel-title"><span>文件预览</span></div><div id="pbsInlineDeliveryPreview" class="pbs-submit-preview-empty">点击左侧“预览”查看文件内容</div></div></div>';
+    var body = '<div class="pbs-submit-layout"><div class="pbs-submit-file-panel"><div class="pbs-submit-panel-title"><span>选择交付文件与版本</span><strong id="selectedDeliveryCount">已选 0 项</strong></div><div class="pbs-submit-list">' + rows + '</div></div><div class="pbs-submit-preview-panel"><div class="pbs-submit-panel-title"><span>文件预览</span></div><div id="pbsInlineDeliveryPreview" class="pbs-submit-preview-empty">点击左侧“预览”查看文件内容</div></div></div>';
     openModal('提交' + node.name + '交付文件', school + ' · 选择文件和版本后提交至商城', body, '<button class="pbs-delivery-secondary" data-delivery-close>取消</button><button class="pbs-delivery-primary" id="pbsDeliverySubmitConfirm">提交商城</button>');
     document.querySelector('#pbsDeliveryModal .pbs-delivery-dialog').classList.add('pbs-delivery-dialog--submit');
     var confirm = document.getElementById('pbsDeliverySubmitConfirm');
@@ -488,6 +547,7 @@
     }
     window.renderPaymentInfo = renderPaymentNodes;
     renderPaymentNodes();
+    document.querySelectorAll('.pbs-payment-group-head small').forEach(function (note) { note.remove(); });
   }
 
   function init() {

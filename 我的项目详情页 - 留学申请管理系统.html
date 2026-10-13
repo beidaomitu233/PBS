@@ -99,6 +99,7 @@
     .monitor-shot-preview { height:118px; background:linear-gradient(180deg,#F8FAFC,#F1F5F9); }
   </style>
   <link rel="stylesheet" href="./assets/css/pbs-theme.css?v=6.4">
+  <link rel="stylesheet" href="./assets/css/pbs-student-profile.css?v=1.5">
 </head>
 <body class="min-h-screen">
   <!-- 顶部导航栏 -->
@@ -319,20 +320,20 @@
               <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
             </button>
             <div class="pbs-detail-topbar__copy">
-              <div class="flex items-center gap-2"><h1 id="myProjectTitle" class="pbs-detail-topbar__title">李雪 · 硕士申请</h1><div class="project-overview-meta"><div class="project-overview-item"><span>申请方向</span><strong id="myProjectDirection">计算机科学 · 人工智能</strong></div><div class="project-overview-item"><span>院校目标</span><strong>2 个 · 推进中</strong></div></div><span id="myProjectStateLabel" class="text-[11px] px-2 py-0.5 rounded-full bg-blue-50 text-blue-700 font-medium">交付中</span></div>
-              <p id="myProjectNo" class="pbs-detail-topbar__subtitle font-mono">PRJ20260701002</p>
+              <div class="flex items-center gap-2"><h1 id="myProjectTitle" class="pbs-detail-topbar__title">李雪 · 硕士申请</h1><div class="project-overview-meta"><div class="project-overview-item"><span>申请方向</span><strong id="myProjectDirection">计算机科学 · 人工智能</strong></div><div class="project-overview-item"><span>院校目标</span><strong id="myProjectGoalCount">2 个</strong></div></div><span id="myProjectStateLabel" class="text-[11px] px-2 py-0.5 rounded-full bg-blue-50 text-blue-700 font-medium">交付中</span></div>
+              <p id="myProjectNo" class="pbs-detail-topbar__subtitle font-mono">PRJ-M-2607-0002</p>
             </div>
           </div>
           <div class="pbs-detail-topbar__actions">
             <div class="project-school-selector">
               <label for="schoolCockpitSelect">院校目标</label>
-              <select id="schoolCockpitSelect" onchange="switchSchoolCockpit(this.value)" aria-label="切换院校目标">
+              <select id="schoolCockpitSelect" onchange="switchSchoolCockpit(this.value); if (window.renderPaymentInfo) window.renderPaymentInfo();" aria-label="切换院校目标">
                 <option value="cmu">卡内基梅隆大学 · 人工智能</option>
                 <option value="stanford">斯坦福大学 · 计算机科学（未分配）</option>
               </select>
             </div>
             <span id="schoolAssignmentBadge" class="school-assignment-badge hidden">项目经理和成员未分配</span>
-            <button id="assignStaffButton" type="button" class="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition-colors shadow-sm" onclick="openAssignDrawer()">分配人员</button>
+            <button id="assignStaffButton" type="button" class="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition-colors shadow-sm" onclick="openAssignDrawer()">分配</button>
             <button id="changeStaffButton" type="button" class="px-4 py-2 text-sm font-medium text-orange-600 bg-white border border-orange-300 rounded-lg hover:bg-orange-50 transition-colors" onclick="openChangeDrawer()">更换人员</button>
           </div>
         </div>
@@ -368,6 +369,20 @@
         <p class="stage-iframe-note mt-2">每个院校目标独立推进材料、文书、网申、监控与结项流程。</p>
       </section>
 
+      <section class="order-4 mb-6 bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden" aria-label="支付与交付信息">
+        <div class="px-5 py-4 border-b border-gray-100">
+          <h2 class="text-base font-semibold text-gray-900 flex items-center gap-2">
+            <span class="w-8 h-8 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 14l6-6m-5.5.5h.01m4.99 5h.01M5 5h14a2 2 0 012 2v10a2 2 0 01-2 2H5a2 2 0 01-2-2V7a2 2 0 012-2z"></path></svg>
+            </span>
+            支付与交付信息
+          </h2>
+        </div>
+        <div class="p-5">
+          <div id="paymentInfo" class="text-sm"></div>
+        </div>
+      </section>
+
     </main>
 
   <!-- 系统消息弹窗 -->
@@ -388,7 +403,7 @@
           <div class="flex items-start gap-3 p-2 bg-white rounded-lg">
             <div class="w-2 h-2 bg-red-500 rounded-full mt-1.5 flex-shrink-0"></div>
             <div>
-              <p class="text-sm text-gray-900">项目 PRJ20260701002 状态已更新为"交付中"</p>
+              <p class="text-sm text-gray-900">项目 PRJ-M-2607-0002 状态已更新为"交付中"</p>
               <p class="text-xs text-gray-400 mt-0.5">2 分钟前</p>
             </div>
           </div>
@@ -470,7 +485,7 @@
       <div class="flex-1 overflow-y-auto px-6 py-5" id="assignDrawerBody"></div>
       <div class="flex-shrink-0 px-6 py-4 border-t border-gray-200 bg-white" id="assignDrawerFooter">
         <div class="flex items-center gap-3">
-          <button class="flex-1 h-10 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium" onclick="confirmAssign()">确认分配</button>
+          <button class="flex-1 h-10 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium" onclick="confirmAssign()">完成分配</button>
           <button class="flex-1 h-10 bg-white border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors font-medium" onclick="closeAssignDrawer()">取消</button>
         </div>
       </div>
@@ -493,7 +508,7 @@
       <div class="flex-1 overflow-y-auto px-6 py-5" id="changeDrawerBody"></div>
       <div class="flex-shrink-0 px-6 py-4 border-t border-gray-200 bg-white" id="changeDrawerFooter">
         <div class="flex items-center gap-3">
-          <button class="flex-1 h-10 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium" onclick="confirmChange()">确认更换</button>
+          <button class="flex-1 h-10 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium" onclick="confirmChange()">完成分配</button>
           <button class="flex-1 h-10 bg-white border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors font-medium" onclick="closeChangeDrawer()">取消</button>
         </div>
       </div>
@@ -518,6 +533,8 @@
   <!-- 页面提示 Toast -->
   <div id="pageToast" class="hidden fixed top-6 left-1/2 transform -translate-x-1/2 z-[70] px-4 py-2.5 bg-red-500 text-white text-sm rounded-lg shadow-lg"></div>
 
+  <script src="./assets/js/pbs-app.js?v=7.5"></script>
+  <script src="./assets/js/pbs-student-data.js?v=1.3"></script>
   <script>
     /* ==================== 基础数据 ==================== */
     var TEAM = [
@@ -530,49 +547,32 @@
       { name: '郑老师', role: '网申专员', color: 'from-cyan-500 to-blue-500' }
     ];
     var MY_PROJECT_CONTEXTS = {
-      'PRJ20260701002': { projectNo: 'PRJ20260701002', customer: '李慧敏', student: '李雪', level: '硕士申请', manager: '张老师', direction: '计算机科学 · 人工智能', state: '交付中', allStaffAssigned: true, taskNote: '请优先核对学生科研经历与人工智能方向的匹配度，文书交付前同步项目经理确认。' },
-      'PRJ20260701005': { projectNo: 'PRJ20260701005', customer: '刘洋', student: '刘晓', level: '本科申请', manager: '张老师', direction: '计算机科学 · 数据科学', state: '人员待分配', allStaffAssigned: false },
-      'PRJ20260701001': { projectNo: 'PRJ20260701001', customer: '张建国', student: '张明', level: '本科申请', manager: '张老师', direction: '计算机科学 · 软件工程', state: '人员待分配', allStaffAssigned: false }
+      'PRJ-M-2607-0002': { projectNo: 'PRJ-M-2607-0002', customer: '李慧敏', student: '李雪', level: '硕士申请', manager: '张老师', direction: '计算机科学 · 人工智能', state: '交付中', allStaffAssigned: true, taskNote: '请优先核对学生科研经历与人工智能方向的匹配度，文书交付前同步项目经理确认。' },
+      'PRJ-O-2607-0008': { projectNo: 'PRJ-O-2607-0008', customer: '刘洋', student: '刘晓', level: '本科申请', manager: '张老师', direction: '计算机科学 · 数据科学', state: '人员待分配', allStaffAssigned: false },
+      'PRJ-M-2607-0001': { projectNo: 'PRJ-M-2607-0001', customer: '张建国', student: '张明', level: '本科申请', manager: '张老师', direction: '计算机科学 · 软件工程', state: '人员待分配', allStaffAssigned: false }
     };
     var MY_PROJECT_PARAMS = new URLSearchParams(window.location.search);
-    var requestedMyProjectNo = MY_PROJECT_PARAMS.get('project') || 'PRJ20260701002';
-    var MY_PROJECT_CONTEXT = MY_PROJECT_CONTEXTS[requestedMyProjectNo];
-    if (!MY_PROJECT_CONTEXT) {
-      /* 新建/新分配项目：从共享项目存储回读真实客户、学生、层次与项目经理 */
-      var sharedMyProject = window.pbsProjects ? window.pbsProjects.find(requestedMyProjectNo) : null;
-      if (sharedMyProject) {
-        var statusText = sharedMyProject.status || '进行中';
-        MY_PROJECT_CONTEXT = {
-          projectNo: sharedMyProject.projectNo,
-          customer: sharedMyProject.customer || '—',
-          student: sharedMyProject.student || '—',
-          level: sharedMyProject.level || '硕士申请',
-          manager: sharedMyProject.projectManager || '—',
-          direction: (sharedMyProject.packages && sharedMyProject.packages[0] && sharedMyProject.packages[0].school) || '待定方向',
-          state: statusText === '待接收' ? '待接收' : (statusText === '已结项' ? '已结项' : (sharedMyProject.allStaffAssigned ? '交付中' : '人员待分配')),
-          allStaffAssigned: !!sharedMyProject.allStaffAssigned
-        };
-      } else {
-        MY_PROJECT_CONTEXT = Object.assign({}, MY_PROJECT_CONTEXTS.PRJ20260701002, { projectNo: requestedMyProjectNo });
-      }
+    var requestedMyProjectNo = window.pbsProjects.canonicalNo(MY_PROJECT_PARAMS.get('project') || 'PRJ-M-2607-0002');
+    var sharedMyProject = window.pbsProjects.find(requestedMyProjectNo);
+    var MY_PROJECT_CONTEXT = Object.assign({}, MY_PROJECT_CONTEXTS[requestedMyProjectNo] || MY_PROJECT_CONTEXTS['PRJ-M-2607-0002']);
+    if (sharedMyProject) {
+      MY_PROJECT_CONTEXT = Object.assign(MY_PROJECT_CONTEXT, {
+        projectNo: sharedMyProject.projectNo,
+        customer: sharedMyProject.customer,
+        student: sharedMyProject.student,
+        level: sharedMyProject.level,
+        manager: sharedMyProject.projectManager || '—',
+        direction: sharedMyProject.direction || (sharedMyProject.packages || []).map(function(item) { return item.school + ' · ' + item.major; }).join('；') || '待定方向',
+        state: window.pbsProjects.statusOf(sharedMyProject),
+        allStaffAssigned: !!sharedMyProject.allStaffAssigned,
+        packages: sharedMyProject.packages || []
+      });
     }
     var PM_STAFF_ASSIGNMENT_KEY = 'pbs_pm_staff_assignment_v3_' + MY_PROJECT_CONTEXT.projectNo;
-    var PROJECT_ASSIGNMENT_ALIASES = {
-      'PRJ20260701002': 'PRJ-M-2607-0002',
-      'PRJ20260701001': 'PRJ-M-2607-0001',
-      'PRJ20260701005': 'PRJ-O-2607-0005'
-    };
     function readInstitutionTaskNote() {
-      var projectNumbers = [MY_PROJECT_CONTEXT.projectNo];
-      if (PROJECT_ASSIGNMENT_ALIASES[MY_PROJECT_CONTEXT.projectNo]) projectNumbers.push(PROJECT_ASSIGNMENT_ALIASES[MY_PROJECT_CONTEXT.projectNo]);
-      for (var i = 0; i < projectNumbers.length; i++) {
-        try {
-          var assignment = JSON.parse(localStorage.getItem('pbs_project_assignment_v3_' + projectNumbers[i]) || 'null');
-          if (assignment && assignment.taskNote) return assignment.taskNote;
-        } catch (error) {}
-      }
-      return MY_PROJECT_CONTEXT.taskNote || '';
+      return window.pbsProjects.getAssignment(MY_PROJECT_CONTEXT.projectNo).taskNote;
     }
+
     function applyMyProjectContext() {
       var values = {
         myProjectStudentAvatar: MY_PROJECT_CONTEXT.student.slice(0, 1),
@@ -580,6 +580,7 @@
         myProjectStateLabel: MY_PROJECT_CONTEXT.state,
         myProjectNo: MY_PROJECT_CONTEXT.projectNo,
         myProjectDirection: MY_PROJECT_CONTEXT.direction,
+        myProjectGoalCount: Object.keys(SCHOOL_COCKPITS).length + ' 个',
         myProjectStudentProfileName: MY_PROJECT_CONTEXT.student,
         myProjectProfileLevel: MY_PROJECT_CONTEXT.level,
         myProjectStudentSummary: MY_PROJECT_CONTEXT.student + ' · 北京理工大学 计算机科学与技术 · GPA 3.8/4.0 · 雅思 7.5 / 托福 105 · 项目共用基础资料，同步自学生档案详情页'
@@ -667,8 +668,22 @@
         stageDurations: { material: '滞留 6 天', essay: '尚未开始', apply: '尚未开始', monitor: '尚未开始', archive: '尚未开始' }
       }
     };
+    if (MY_PROJECT_CONTEXT.packages && MY_PROJECT_CONTEXT.packages.length) {
+      var projectTargets = {};
+      MY_PROJECT_CONTEXT.packages.forEach(function(item, index) {
+        var id = item.id || 'goal-' + index;
+        item.id = id;
+        var target = JSON.parse(JSON.stringify(SCHOOL_COCKPITS[id] || SCHOOL_COCKPITS.stanford));
+        target.name = item.school + ' · ' + item.major;
+        projectTargets[id] = target;
+      });
+      SCHOOL_COCKPITS = projectTargets;
+      var schoolSelect = document.getElementById('schoolCockpitSelect');
+      schoolSelect.innerHTML = '';
+      Object.keys(SCHOOL_COCKPITS).forEach(function(id) { var option = document.createElement('option'); option.value = id; option.textContent = SCHOOL_COCKPITS[id].name; schoolSelect.appendChild(option); });
+    }
     function readPmStaffAssignments() {
-      try { return JSON.parse(localStorage.getItem(PM_STAFF_ASSIGNMENT_KEY) || '{}') || {}; } catch (e) { return {}; }
+      try { return JSON.parse(localStorage.getItem(PM_STAFF_ASSIGNMENT_KEY) || localStorage.getItem('pbs_pm_staff_assignment_v3_' + window.pbsProjects.legacyNo(MY_PROJECT_CONTEXT.projectNo)) || '{}') || {}; } catch (e) { return {}; }
     }
     function applyPmStaffAssignment(schoolId, assignment) {
       var s = SCHOOL_COCKPITS[schoolId];
@@ -687,44 +702,44 @@
       s.applyDdl.managed = assignment.applyDdl;
       s.assignedByPm = true;
     }
-    function sampleCompletedAssignment(s) {
-      var docs = {};
-      s.docs.forEach(function(doc, index) {
-        docs[doc.key] = {
-          owner: index % 2 ? '陈老师' : '杨老师',
-          reviewer: index % 2 ? '周老师' : '孙老师',
-          ddl: doc.key === 'TCX' ? s.applyDdl.merchant : (doc.mall || s.applyDdl.merchant),
-          status: '待撰写'
-        };
-      });
-      return { docs: docs, networkOwner: '郑老师', networkStatus: '准备中', materialDdl: s.materialDdl.merchant, applyDdl: s.applyDdl.merchant, assignedBy: '项目经理' };
-    }
+
     function restorePmStaffAssignments() {
-      var saved = readPmStaffAssignments();
-      Object.keys(saved).forEach(function(schoolId) { applyPmStaffAssignment(schoolId, saved[schoolId]); });
-      if (MY_PROJECT_CONTEXT.allStaffAssigned && !saved.stanford) applyPmStaffAssignment('stanford', sampleCompletedAssignment(SCHOOL_COCKPITS.stanford));
+      var goals = window.pbsProjects.getAssignment(MY_PROJECT_CONTEXT.projectNo).goalAssignments;
+      Object.keys(SCHOOL_COCKPITS).forEach(function(id) {
+        var target = SCHOOL_COCKPITS[id], assignment = goals[id];
+        if (!assignment) {
+          target.docs.forEach(function(doc) { doc.owner = null; doc.reviewer = null; doc.ddl = null; doc.status = '待分配'; });
+          target.network.owner = null; target.materialDdl.managed = null; target.applyDdl.managed = null; target.locked = false;
+          return;
+        }
+        var docs = {};
+        target.docs.forEach(function(doc) {
+          var saved = (assignment.docs || {})[doc.key] || {};
+          docs[doc.key] = { owner: saved.person || null, reviewer: (assignment.reviewers || {})[doc.key] || null, ddl: saved.ddl, status: doc.status };
+        });
+        applyPmStaffAssignment(id, { docs: docs, networkOwner: assignment.network, networkStatus: target.network.status, materialDdl: assignment.networkMatDdl, applyDdl: assignment.networkDdl });
+        target.locked = !!assignment.locked;
+        target.assignedByPm = assignment.assignedBy === '项目经理';
+      });
     }
-    function persistCurrentPmStaffAssignment() {
-      var s = school();
-      var state = readPmStaffAssignments();
-      var docs = {};
+
+    function persistCurrentPmStaffAssignment(taskNote) {
+      var s = school(), state = readPmStaffAssignments(), docs = {}, goalDocs = {}, reviewers = {};
       s.docs.forEach(function(doc) {
         docs[doc.key] = { owner: doc.owner, reviewer: doc.reviewer, ddl: doc.ddl, status: doc.status };
+        goalDocs[doc.key] = { person: doc.owner, ddl: doc.ddl };
+        reviewers[doc.key] = doc.reviewer;
       });
-      state[currentSchoolCockpit] = {
-        docs: docs,
-        networkOwner: s.network.owner,
-        networkStatus: s.network.status,
-        materialDdl: s.materialDdl.managed,
-        applyDdl: s.applyDdl.managed,
-        assignedBy: '项目经理',
-        assignedAt: new Date().toISOString()
-      };
+      state[currentSchoolCockpit] = { docs: docs, networkOwner: s.network.owner, networkStatus: s.network.status, materialDdl: s.materialDdl.managed, applyDdl: s.applyDdl.managed, assignedBy: '项目经理', assignedAt: new Date().toISOString() };
       localStorage.setItem(PM_STAFF_ASSIGNMENT_KEY, JSON.stringify(state));
+      var goals = window.pbsProjects.getAssignment(MY_PROJECT_CONTEXT.projectNo).goalAssignments;
+      goals[currentSchoolCockpit] = { docs: goalDocs, reviewers: reviewers, requiredDocs: s.docs.map(function(doc) { return doc.key; }), network: s.network.owner, networkMatDdl: s.materialDdl.managed, networkDdl: s.applyDdl.managed, assignedBy: '项目经理', locked: false };
+      window.pbsProjects.saveAssignment(MY_PROJECT_CONTEXT.projectNo, goals, taskNote);
+      applyMyProjectContext();
     }
-    var currentSchoolCockpit = 'cmu';
-    var selectedPersons = {};
 
+    var currentSchoolCockpit = Object.keys(SCHOOL_COCKPITS)[0];
+    var selectedPersons = {};
     function school() { return SCHOOL_COCKPITS[currentSchoolCockpit]; }
     function distVal(id) { var el = document.getElementById(id); return el ? el.value : ''; }
     function getMaterialStats(s) {
@@ -741,19 +756,39 @@
     }
 
     /* ==================== 项目关键 DDL（文书交付按 CV/PS/RL/RP/套磁信 拆分） ==================== */
-    function ddlSummaryCard(title, primaryLabel, primaryDate, color, extraHtml, near) {
+    function ddlValue(date, task) {
+      if (date) return date;
+      if (!window.pbsHasPermission || !window.pbsHasPermission('my_project_assign_member')) return '分配后显示';
+      return '<button type="button" class="pbs-ddl-assign" onclick="openDdlAssignment(\'' + task + '\')">分配后显示</button>';
+    }
+    function openDdlAssignment(task) {
+      if (!window.pbsHasPermission('my_project_assign_member')) return;
+      var s = school();
+      var change = !s.locked && s.docs.some(function (doc) { return !!doc.owner; });
+      if (change) openChangeDrawer(); else openAssignDrawer();
+      var prefix = change ? 'c' : 'm';
+      var input = document.getElementById(prefix + (task === 'material' ? 'DdlMatNetwork' : task === 'apply' ? 'DdlAppNetwork' : 'Ddl_' + task)) || document.querySelector('#assignDrawerBody [data-ddl-task="' + task + '"]');
+      if (input) {
+        var row = input.closest('.border.rounded-lg') || input.parentElement;
+        row.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        row.classList.add('pbs-assignment-focus');
+        if (!input.disabled) input.focus({ preventScroll: true });
+        setTimeout(function () { row.classList.remove('pbs-assignment-focus'); }, 2200);
+      }
+    }
+    function ddlSummaryCard(title, primaryLabel, primaryDate, color, extraHtml, near, task) {
       return '<div class="project-ddl-card' + (near ? ' is-near' : '') + '">' +
         '<p class="project-ddl-title flex items-center gap-1.5"><span class="inline-block w-1.5 h-1.5 rounded-full" style="background:' + color + '"></span>' + title + '</p>' +
-        '<p class="project-ddl-primary"><span>' + primaryLabel + '</span><strong>' + (primaryDate || '分配后显示') + '</strong></p>' + (extraHtml || '') + '</div>';
+        '<p class="project-ddl-primary"><span>' + primaryLabel + '</span><strong>' + ddlValue(primaryDate, task) + '</strong></p>' + (extraHtml || '') + '</div>';
     }
     function renderProjectDdls(s) {
       var docs = s.docs.slice().sort(function(a, b) { return String(a.ddl || a.mall).localeCompare(String(b.ddl || b.mall)); });
       var nextDoc = docs.find(function(d) { return d.status !== '已完成'; }) || docs[0];
-      var detailRows = s.docs.map(function(d) { return '<span>' + d.name + '</span><strong>' + (d.ddl || d.mall || '分配后显示') + '</strong>'; }).join('');
+      var detailRows = s.docs.map(function(d) { return '<span>' + d.name + '</span><strong>' + ddlValue(d.ddl, d.key) + '</strong>'; }).join('');
       var docDetails = '<details class="project-ddl-more"><summary>查看全部 ' + s.docs.length + ' 项文书 DDL</summary><div>' + detailRows + '</div></details>';
-      return ddlSummaryCard('材料准备', '最近时限', s.materialDdl.managed || s.materialDdl.merchant, '#C9A87C') +
-        ddlSummaryCard('文书交付', '最近：' + nextDoc.name, nextDoc.ddl || nextDoc.mall, '#7D869A', docDetails, !!nextDoc.near) +
-        ddlSummaryCard('网申提交', '最近时限', s.applyDdl.managed || s.applyDdl.merchant, '#6D9A7E');
+      return ddlSummaryCard('材料准备', '最近时限', s.materialDdl.managed, '#C9A87C', '', false, 'material') +
+        ddlSummaryCard('文书交付', '最近：' + nextDoc.name, nextDoc.ddl, '#7D869A', docDetails, !!nextDoc.near, nextDoc.key) +
+        ddlSummaryCard('网申提交', '最近时限', s.applyDdl.managed, '#6D9A7E', '', false, 'apply');
     }
 
     /* ==================== 院校申请流程：五个阶段 ==================== */
@@ -820,7 +855,7 @@
             ['当前环节滞留时长', s.stageDurations.essay]
           ],
           body: renderEssayDocTable(s) +
-            (s.docs[0].owner ? '' : '<div class="project-action-card is-warning"><span class="project-action-icon">!</span><div><p class="text-sm font-semibold text-gray-900">文书交付 / 审核人员待分配</p><p class="text-xs text-gray-500 mt-1">完成分配后即可进入文书制作与审核流程。</p></div><button class="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg" onclick="openAssignDrawer()">分配人员</button></div>')
+            (s.docs[0].owner ? '' : '<div class="project-action-card is-warning"><span class="project-action-icon">!</span><div><p class="text-sm font-semibold text-gray-900">文书交付 / 审核人员待分配</p><p class="text-xs text-gray-500 mt-1">完成分配后即可进入文书制作与审核流程。</p></div><button class="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg" onclick="openAssignDrawer()">分配</button></div>')
         },
         apply: {
           kicker: s.name, title: '网申提交',
@@ -886,7 +921,7 @@
         '<div class="w-full h-2 bg-gray-100 rounded-full overflow-hidden mb-2"><div class="h-full bg-gradient-to-r from-green-500 to-emerald-500 rounded-full" style="width:' + (materialStats.total ? Math.round(materialStats.uploaded / materialStats.total * 100) : 0) + '%"></div></div>' +
         renderInlineMaterials(s) + '</div>';
       var pendingCard = n.owner ? ''
-        : '<div class="project-action-card is-warning"><span class="project-action-icon">!</span><div><p class="text-sm font-semibold text-gray-900">申请账号待补充 · 网申人员待分配</p><p class="text-xs text-gray-500 mt-1">当前卡在项目经理：补充账号并分配网申人员后，网申人员可开始预扫描与字段核对</p></div><div class="flex gap-2"><button class="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg" onclick="openAssignDrawer()">分配人员</button><button class="px-4 py-2 text-sm font-medium text-purple-600 bg-purple-50 rounded-lg" onclick="location.href=\'学生档案详情页 - 留学申请管理系统.html\'">去补充账号</button></div></div>';
+        : '<div class="project-action-card is-warning"><span class="project-action-icon">!</span><div><p class="text-sm font-semibold text-gray-900">申请账号待补充 · 网申人员待分配</p><p class="text-xs text-gray-500 mt-1">当前卡在项目经理：补充账号并分配网申人员后，网申人员可开始预扫描与字段核对</p></div><div class="flex gap-2"><button class="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg" onclick="openAssignDrawer()">分配</button><button class="px-4 py-2 text-sm font-medium text-purple-600 bg-purple-50 rounded-lg" onclick="location.href=\'学生档案详情页 - 留学申请管理系统.html\'">去补充账号</button></div></div>';
       var ownerBar = n.owner ? '<div class="flex items-center justify-between gap-4 border border-gray-100 rounded-xl px-4 py-3 mb-4"><div><p class="text-xs text-gray-400">网申负责人</p><p class="text-sm font-semibold text-gray-900 mt-0.5">' + n.owner + '</p></div><button class="px-3 py-2 text-xs font-medium text-amber-600 bg-amber-50 rounded-lg" onclick="openUrgeModal(\'网申提交\',\'' + n.owner + '\',\'网申任务\')">催办网申人员</button></div>' : '';
       return ownerBar + accountRows + pendingCard + '<div class="grid grid-cols-1 xl:grid-cols-2 gap-4">' + fieldBlock + materialBlock + '</div>';
     }
@@ -940,6 +975,7 @@
       if (!content) { return; }
       var view = getSchoolStageView(stage);
       if (view) { content.innerHTML = renderProjectStageView(view); }
+      if (window.pbsTaskReturn) window.pbsTaskReturn.refresh();
     }
 
     /* ==================== 材料清单弹窗 + 催办 ==================== */
@@ -1035,6 +1071,7 @@
       return '<div class="relative flex-1" data-sel="' + key + '">' +
         '<div class="flex items-center w-full h-9 px-3 border border-gray-300 rounded-lg cursor-pointer bg-white" onclick="togglePersonDropdown(\'' + key + '\')">' +
         personPh(key, person, defaultText) +
+        '<button type="button" id="' + key + 'Clear" class="mr-2 text-gray-400 hover:text-gray-600' + (person ? '' : ' hidden') + '" title="清除人员" onclick="event.stopPropagation();pbsClearAssignedPerson(\'' + key + '\')">×</button>' +
         '<svg class="w-4 h-4 text-gray-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg></div>' +
         '<div id="' + key + 'Dropdown" class="hidden absolute left-0 right-0 mt-1 bg-white border border-gray-200 rounded-lg shadow-lg z-20 max-h-64 overflow-y-auto"></div></div>';
     }
@@ -1070,6 +1107,7 @@
       ph.textContent = name;
       ph.classList.remove('text-gray-400');
       ph.classList.add('text-gray-900', 'font-medium');
+      var clear = document.getElementById(key + 'Clear'); if (clear) clear.classList.remove('hidden');
       document.getElementById(key + 'Dropdown').classList.add('hidden');
     }
     document.addEventListener('click', function(e) {
@@ -1080,11 +1118,7 @@
         }
       });
     });
-    /* 网申提交 DDL 变更时，套磁信完成时间同步跟随 */
-    function syncAppDdlFollowers(prefix, val) {
-      var ddlEl = document.getElementById(prefix + 'Ddl_TCX');
-      if (ddlEl) { ddlEl.value = val || ''; }
-    }
+
 
     function lockNoticeHtml(s) {
       var docPeople = s.docs.map(function(d) { return d.name + '：' + (d.owner || '—') + ' / 审核 ' + (d.reviewer || '—'); }).join('；');
@@ -1096,66 +1130,17 @@
         '<p class="text-xs text-blue-600 mt-1">项目经理不可修改；如需调整请联系机构管理员。</p></div></div></div>';
     }
     function assignmentFormHtml(s, prefix, isChange) {
-      var html = '<div class="rounded-xl border border-blue-100 bg-blue-50 px-4 py-3 mb-3"><p class="text-xs font-medium text-blue-800">项目经理仅可分配文书交付、文书审核和网申执行成员，不可分配或更换项目经理。</p><p class="text-[11px] text-blue-600 mt-1">本次分配完成后成员保持可调整状态，不会锁定。</p></div>';
-      /* 文书交付人员（按文书分配） */
-      html += '<div class="border border-gray-200 rounded-xl p-4 mb-3 bg-white">' +
-        '<div class="flex items-center gap-2 mb-1">' +
-        '<span class="w-8 h-8 rounded-lg bg-blue-100 flex items-center justify-center"><svg class="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg></span>' +
-        '<span class="text-sm font-semibold text-gray-800">文书交付人员</span>' +
-        '<span class="text-[10px] px-1.5 py-0.5 rounded bg-blue-50 text-blue-600 font-medium">按文书分配</span></div>' +
-        '<p class="text-xs text-gray-400 mb-3 pl-10">每种文书单独指定交付人员与完成时间</p>';
-      s.docs.forEach(function(d) {
-        var key = prefix + 'd_' + d.key;
-        var cur = isChange ? d.owner : null;
-        selectedPersons[key] = cur;
-        html += '<div class="border border-gray-100 rounded-lg p-3 mb-2 bg-gray-50">' +
-          '<div class="flex items-center justify-between gap-2 mb-2"><p class="text-xs font-semibold text-gray-700">' + d.name + '</p>' +
-          (isChange ? '<span class="text-[10px] text-gray-400">当前：' + (d.owner || '未分配') + '</span>' : '') + '</div>' +
-          '<div class="flex items-center gap-2">' +
-          dropdownHtml(key, cur, isChange ? '选择新交付人员' : '选择交付人员') +
-          (d.key === 'TCX'
-            ? '<input type="date" value="' + (s.applyDdl.managed || s.applyDdl.merchant) + '" id="' + prefix + 'Ddl_' + d.key + '" title="交付 DDL 跟随网申提交 DDL，无需单独设置" disabled class="w-[132px] flex-shrink-0 h-9 px-2 text-sm border border-gray-200 rounded-lg bg-gray-100 text-gray-400 cursor-not-allowed">'
-            : '<input type="date" value="' + (d.ddl || d.mall) + '" id="' + prefix + 'Ddl_' + d.key + '" title="文书完成时间" class="w-[132px] flex-shrink-0 h-9 px-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500">') +
-          '</div></div>';
-      });
-      html += '</div>';
-      /* 文书审核人员：文书完成后自动进入审核，不单独设置审核 DDL */
-      html += '<div class="border border-gray-200 rounded-xl p-4 mb-3 bg-white">' +
-        '<div class="flex items-center gap-2 mb-1">' +
-        '<span class="w-8 h-8 rounded-lg bg-green-100 flex items-center justify-center"><svg class="w-4 h-4 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg></span>' +
-        '<span class="text-sm font-semibold text-gray-800">文书审核人员</span>' +
-        '<span class="text-[10px] px-1.5 py-0.5 rounded bg-green-50 text-green-600 font-medium">按文书分配</span></div>' +
-        '<p class="text-xs text-gray-400 mb-3 pl-10">每种文书单独指定审核人员；文书完成后自动进入审核</p>';
-      s.docs.forEach(function(d) {
-        var rKey = prefix + 'Reviewer_' + d.key;
-        var cur = isChange ? d.reviewer : null;
-        selectedPersons[rKey] = cur;
-        html += '<div class="border border-gray-100 rounded-lg p-3 mb-2 bg-gray-50">' +
-          '<div class="flex items-center justify-between gap-2 mb-2"><p class="text-xs font-semibold text-gray-700">' + d.name + '</p>' +
-          '<span class="text-[10px] text-gray-500 flex-shrink-0">文书完成后自动进入审核</span></div>' +
-          (isChange ? '<p class="text-[10px] text-gray-400 mb-2">当前：' + (d.reviewer || '未分配') + '</p>' : '') +
-          dropdownHtml(rKey, cur, isChange ? '选择新 ' + d.name + ' 审核人员' : '选择 ' + d.name + ' 审核人员') +
-          '</div>';
-      });
-      html += '</div>';
-      /* 网申人员（材料准备 DDL + 网申提交 DDL 两个时间） */
-      var nKey = prefix + 'Network';
-      var curNet = isChange ? s.network.owner : null;
-      selectedPersons[nKey] = curNet;
-      html += '<div class="border border-gray-200 rounded-xl p-4 mb-3 bg-white">' +
-        '<div class="flex items-center gap-2 mb-1">' +
-        '<span class="w-8 h-8 rounded-lg bg-purple-100 flex items-center justify-center"><svg class="w-4 h-4 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9"></path></svg></span>' +
-        '<span class="text-sm font-semibold text-gray-800">网申人员</span>' +
-        (isChange ? '<span class="text-[10px] text-gray-400 ml-auto">当前：' + (s.network.owner || '未分配') + '</span>' : '') + '</div>' +
-        '<p class="text-xs text-gray-400 mb-3 pl-10">需知晓：材料准备 · 网申提交两个时间节点</p>' +
-        '<div class="mb-3">' + dropdownHtml(nKey, curNet, isChange ? '点击选择新网申人员' : '点击选择网申人员') + '</div>' +
-        '<div class="grid grid-cols-2 gap-2 mb-3">' +
-        '<div><label class="block text-xs text-gray-500 mb-1">材料准备 DDL</label><input type="date" value="' + (s.materialDdl.managed || s.materialDdl.merchant) + '" id="' + prefix + 'DdlMatNetwork" class="w-full h-9 px-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"></div>' +
-        '<div><label class="block text-xs text-gray-500 mb-1">网申提交 DDL</label><input type="date" value="' + (s.applyDdl.managed || s.applyDdl.merchant) + '" id="' + prefix + 'DdlAppNetwork" oninput="syncAppDdlFollowers(\'' + prefix + '\', this.value)" class="w-full h-9 px-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"></div>' +
-        '</div>' +
-        '<p class="text-xs text-gray-400 bg-gray-50 rounded-lg px-3 py-2">套磁信完成时间跟随上方网申提交 DDL</p></div>';
-      return html;
+      var goal = { docs: s.docs.map(function(doc) { return { key: doc.key, name: doc.name, ddl: doc.ddl || doc.mall }; }), materialDdl: s.materialDdl.managed || s.materialDdl.merchant, appDdl: s.applyDdl.managed || s.applyDdl.merchant };
+      var assignment = { docs: {}, reviewers: {}, network: s.network.owner, networkMatDdl: s.materialDdl.managed, networkDdl: s.applyDdl.managed };
+      s.docs.forEach(function(doc) { assignment.docs[doc.key] = { person: doc.owner, ddl: doc.ddl }; assignment.reviewers[doc.key] = doc.reviewer; });
+      var html = window.pbsStaffAssignmentFormHtml(goal, assignment, prefix, selectedPersons);
+      var note = document.createElement('textarea');
+      note.id = prefix + 'TaskNote'; note.rows = 4; note.maxLength = 1000;
+      note.className = 'w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 resize-none text-sm';
+      note.placeholder = '填写本次分配的任务要求或注意事项'; note.textContent = readInstitutionTaskNote();
+      return html + '<div><label for="' + note.id + '" class="block text-sm font-medium text-gray-700 mb-2">任务要求</label>' + note.outerHTML + '</div>';
     }
+
     function openAssignDrawer() {
       var s = school();
       document.getElementById('assignDrawerSchool').textContent = s.name;
@@ -1167,7 +1152,7 @@
       } else {
         body.innerHTML = assignmentFormHtml(s, 'm', false);
         footer.innerHTML = '<div class="flex items-center gap-3">' +
-          '<button class="flex-1 h-10 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium" onclick="confirmAssign()">确认分配</button>' +
+          '<button class="flex-1 h-10 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium" onclick="confirmAssign()">完成分配</button>' +
           '<button class="flex-1 h-10 bg-white border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors font-medium" onclick="closeAssignDrawer()">取消</button></div>';
       }
       document.getElementById('drawerAssign').classList.remove('hidden');
@@ -1179,16 +1164,16 @@
     }
     function assignmentReadonlyHtml(s) {
       var rows = s.docs.map(function(d) {
-        return '<div class="flex items-center justify-between py-2 border-b border-gray-50"><span class="text-sm text-gray-600">' + d.name + '</span><span class="text-sm text-gray-900 font-medium">' + (d.owner || '—') + ' · ' + (d.ddl || '—') + '</span></div>';
+        return '<div data-ddl-task="' + d.key + '" class="flex items-center justify-between py-2 border-b border-gray-50"><span class="text-sm text-gray-600">' + d.name + '</span><span class="text-sm text-gray-900 font-medium">' + (d.owner || '—') + ' · ' + (d.ddl || '—') + '</span></div>';
       }).join('');
       var revRows = s.docs.map(function(d) {
-        return '<div class="flex items-center justify-between py-2 border-b border-gray-50"><span class="text-sm text-gray-600">' + d.name + ' 审核</span><span class="text-sm text-gray-900 font-medium">' + (d.reviewer || '—') + (d.key === 'TCX' ? ' · 跟随网申提交DDL' : ' · 跟随交付DDL') + '</span></div>';
+        return '<div class="flex items-center justify-between py-2 border-b border-gray-50"><span class="text-sm text-gray-600">' + d.name + ' 审核</span><span class="text-sm text-gray-900 font-medium">' + (d.reviewer || '—') + ' · 跟随交付DDL' + '</span></div>';
       }).join('');
       return '<div class="border border-gray-200 rounded-xl p-4 mb-3 bg-white"><p class="text-sm font-semibold text-gray-800 mb-2">文书交付（按文书）</p>' + rows + '</div>' +
         '<div class="border border-gray-200 rounded-xl p-4 mb-3 bg-white"><p class="text-sm font-semibold text-gray-800 mb-2">文书审核（按文书）</p>' + revRows + '</div>' +
         '<div class="border border-gray-200 rounded-xl p-4 mb-3 bg-white"><p class="text-sm font-semibold text-gray-800 mb-2">网申</p>' +
         '<div class="flex items-center justify-between py-2"><span class="text-sm text-gray-600">网申人员</span><span class="text-sm text-gray-900 font-medium">' + (s.network.owner || '—') + '</span></div>' +
-        '<div class="flex items-center justify-between py-2 border-t border-gray-50"><span class="text-sm text-gray-600">材料准备 / 网申提交 DDL</span><span class="text-sm text-gray-900 font-medium">' + (s.materialDdl.managed || '—') + ' / ' + (s.applyDdl.managed || '—') + '</span></div></div>';
+        '<div class="flex items-center justify-between py-2 border-t border-gray-50"><span data-ddl-task="material" class="text-sm text-gray-600">材料准备 / 网申提交 DDL</span><span data-ddl-task="apply" class="text-sm text-gray-900 font-medium">' + (s.materialDdl.managed || '—') + ' / ' + (s.applyDdl.managed || '—') + '</span></div></div>';
     }
     function openChangeDrawer() {
       var s = school();
@@ -1198,13 +1183,13 @@
       if (s.locked) {
         body.innerHTML = lockNoticeHtml(s) + assignmentReadonlyHtml(s);
         footer.innerHTML = '<button class="w-full h-10 bg-white border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors font-medium" onclick="closeChangeDrawer()">关闭</button>';
-      } else if (!s.docs[0].owner) {
-        body.innerHTML = '<div class="rounded-xl border border-amber-200 bg-amber-50 px-4 py-4 text-sm text-amber-800">该院校目标尚未分配人员，请先使用「分配人员」。</div>';
+      } else if (!isSchoolStaffAssigned(s)) {
+        body.innerHTML = '<div class="rounded-xl border border-amber-200 bg-amber-50 px-4 py-4 text-sm text-amber-800">该院校目标尚未分配人员，请先使用「分配」。</div>';
         footer.innerHTML = '<button class="w-full h-10 bg-white border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors font-medium" onclick="closeChangeDrawer()">关闭</button>';
       } else {
         body.innerHTML = assignmentFormHtml(s, 'c', true);
         footer.innerHTML = '<div class="flex items-center gap-3">' +
-          '<button class="flex-1 h-10 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium" onclick="confirmChange()">确认更换</button>' +
+          '<button class="flex-1 h-10 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium" onclick="confirmChange()">完成分配</button>' +
           '<button class="flex-1 h-10 bg-white border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors font-medium" onclick="closeChangeDrawer()">取消</button></div>';
       }
       document.getElementById('drawerChange').classList.remove('hidden');
@@ -1216,44 +1201,35 @@
     }
     function collectAssignment(prefix) {
       var s = school();
-      var i, d, person;
-      for (i = 0; i < s.docs.length; i++) {
-        d = s.docs[i];
-        if (!selectedPersons[prefix + 'd_' + d.key]) { showPageToast('请选择' + d.name + '的交付人员'); return null; }
+      var result = { taskNote: distVal(prefix + 'TaskNote').trim(), docs: {}, network: selectedPersons[prefix + 'Network'] || null, matDdl: distVal(prefix + 'DdlMatNetwork'), appDdl: distVal(prefix + 'DdlAppNetwork') };
+      for (var i = 0; i < s.docs.length; i++) {
+        var doc = s.docs[i], person = selectedPersons[prefix + 'd_' + doc.key] || null, ddl = distVal(prefix + 'Ddl_' + doc.key);
+        if (person && !ddl) { showPageToast('请填写' + doc.name + '交付 DDL'); return null; }
+        result.docs[doc.key] = { person: person, ddl: ddl, reviewer: selectedPersons[prefix + 'Reviewer_' + doc.key] || null };
       }
-      for (i = 0; i < s.docs.length; i++) {
-        d = s.docs[i];
-        if (!selectedPersons[prefix + 'Reviewer_' + d.key]) { showPageToast('请选择' + d.name + '的审核人员'); return null; }
-      }
-      if (!selectedPersons[prefix + 'Network']) { showPageToast('请选择网申人员'); return null; }
-      var result = { docs: {}, network: selectedPersons[prefix + 'Network'], matDdl: distVal(prefix + 'DdlMatNetwork'), appDdl: distVal(prefix + 'DdlAppNetwork') };
-      s.docs.forEach(function(d) {
-        result.docs[d.key] = {
-          person: selectedPersons[prefix + 'd_' + d.key],
-          ddl: distVal(prefix + 'Ddl_' + d.key),
-          reviewer: selectedPersons[prefix + 'Reviewer_' + d.key]
-        };
-      });
+      if (result.network && (!result.matDdl || !result.appDdl)) { showPageToast('请填写材料准备和网申提交时间'); return null; }
       return result;
     }
+
     function applyAssignmentToSchool(assign) {
       var s = school();
       s.docs.forEach(function(d) {
         var a = assign.docs[d.key];
         d.owner = a.person;
         d.reviewer = a.reviewer;
-        d.ddl = d.key === 'TCX' ? (assign.appDdl || d.mall) : (a.ddl || d.mall);
-        if (d.status === '待分配') { d.status = '待撰写'; }
+        d.ddl = a.ddl || null;
+        if (!d.owner) d.status = '待分配'; else if (d.status === '待分配') d.status = '待撰写';
       });
       s.network.owner = assign.network;
-      s.materialDdl.managed = assign.matDdl || s.materialDdl.merchant;
-      s.applyDdl.managed = assign.appDdl || s.applyDdl.merchant;
+      s.materialDdl.managed = assign.matDdl || null;
+      s.applyDdl.managed = assign.appDdl || null;
+      if (window.pbsTaskReturn) window.pbsTaskReturn.clearScope(MY_PROJECT_CONTEXT.student, s.name, assign);
     }
     function assignmentSummaryHtml(assign) {
       var s = school();
       var docRows = s.docs.map(function(d) {
         var a = assign.docs[d.key];
-        return '<p class="text-xs text-gray-500 flex justify-between"><span>' + d.name + '</span><span class="text-gray-900 font-medium">' + a.person + ' · ' + a.ddl + '</span></p>';
+        return '<p class="text-xs text-gray-500 flex justify-between"><span>' + d.name + '</span><span class="text-gray-900 font-medium">' + (a.person || '—') + ' · ' + (a.ddl || '—') + '</span></p>';
       }).join('');
       var revSeen = {}; var revRows = '';
       s.docs.forEach(function(d) {
@@ -1261,19 +1237,19 @@
         if (rn && !revSeen[rn]) { revSeen[rn] = 1; }
       });
       revRows = s.docs.map(function(d) {
-        return '<p class="text-xs text-gray-500 flex justify-between"><span>' + d.name + ' 审核</span><span class="text-gray-900 font-medium">' + assign.docs[d.key].reviewer + (d.key === 'TCX' ? ' · 跟随网申提交DDL' : ' · 跟随交付DDL') + '</span></p>';
+        return '<p class="text-xs text-gray-500 flex justify-between"><span>' + d.name + ' 审核</span><span class="text-gray-900 font-medium">' + (assign.docs[d.key].reviewer || '—') + ' · 跟随交付DDL' + '</span></p>';
       }).join('');
       return '<div class="bg-gray-50 rounded-lg p-3"><p class="text-xs text-gray-400 mb-1">院校目标</p><p class="font-medium text-gray-900">' + s.name + '</p></div>' +
         '<div class="border border-gray-100 rounded-lg p-3"><p class="font-medium text-gray-900 mb-1.5">文书交付（按文书分配）</p><div class="space-y-1">' + docRows + '</div></div>' +
         '<div class="border border-gray-100 rounded-lg p-3"><p class="font-medium text-gray-900 mb-1.5">文书审核（按文书分配）</p><div class="space-y-1">' + revRows + '</div></div>' +
-        '<div class="border border-gray-100 rounded-lg p-3"><p class="font-medium text-gray-900 mb-1.5">网申：' + assign.network + '</p>' +
+        '<div class="border border-gray-100 rounded-lg p-3"><p class="font-medium text-gray-900 mb-1.5">网申：' + (assign.network || '—') + '</p>' +
         '<p class="text-xs text-gray-500">材料准备 DDL ' + assign.matDdl + ' ｜ 网申提交 DDL ' + assign.appDdl + '</p></div>';
     }
     function confirmAssign() {
       var assign = collectAssignment('m');
       if (!assign) { return; }
       applyAssignmentToSchool(assign);
-      persistCurrentPmStaffAssignment();
+      persistCurrentPmStaffAssignment(assign.taskNote);
       if (window.pbsRecordOperation) window.pbsRecordOperation('项目管理', '分配', '为院校目标 ' + school().name + ' 分配文书、审核与网申人员');
       if (window.pbsCreateNotification) {
         var assignedSchool = school();
@@ -1281,8 +1257,8 @@
         var deliveryPeople = {};
         var reviewPeople = {};
         assignedSchool.docs.forEach(function(doc) {
-          deliveryPeople[doc.owner] = true;
-          reviewPeople[doc.reviewer] = true;
+          if (doc.owner) deliveryPeople[doc.owner] = true;
+          if (doc.reviewer) reviewPeople[doc.reviewer] = true;
         });
         Object.keys(deliveryPeople).forEach(function(person, index) {
           window.pbsCreateNotification({ id: 'task-assigned-writer-' + Date.now() + '-' + index, kind: 'task_assigned', type: '任务派发提醒', title: assignedSchool.name + ' 文书任务已分配给你', business: MY_PROJECT_CONTEXT.student + ' · ' + assignedSchool.name + ' · 文书交付', detail: '项目经理已完成任务派发，请查看文书类型与完成时间。', recipientRoles: ['文书人员'], recipientName: person, organization: assignmentSession.org, href: '任务列表页 - 文书交付系统.html' });
@@ -1290,7 +1266,7 @@
         Object.keys(reviewPeople).forEach(function(person, index) {
           window.pbsCreateNotification({ id: 'task-assigned-review-' + Date.now() + '-' + index, kind: 'task_assigned', type: '任务派发提醒', title: assignedSchool.name + ' 文书审核任务已分配给你', business: MY_PROJECT_CONTEXT.student + ' · ' + assignedSchool.name + ' · 文书审核', detail: '请在文书交付人员提交后完成审核。', recipientRoles: ['文书审核'], recipientName: person, organization: assignmentSession.org, href: '文书审核列表页 - 留学申请管理系统.html' });
         });
-        window.pbsCreateNotification({ id: 'task-assigned-apply-' + Date.now(), kind: 'task_assigned', type: '任务派发提醒', title: assignedSchool.name + ' 网申任务已分配给你', business: MY_PROJECT_CONTEXT.student + ' · ' + assignedSchool.name + ' · 网申提交', detail: '请预扫描申请官网，并核对字段与申请材料。', recipientRoles: ['网申人员'], recipientName: assign.network, organization: assignmentSession.org, href: '网申任务列表页 - 留学申请管理系统.html' });
+        if (assign.network) window.pbsCreateNotification({ id: 'task-assigned-apply-' + Date.now(), kind: 'task_assigned', type: '任务派发提醒', title: assignedSchool.name + ' 网申任务已分配给你', business: MY_PROJECT_CONTEXT.student + ' · ' + assignedSchool.name + ' · 网申提交', detail: '请预扫描申请官网，并核对字段与申请材料。', recipientRoles: ['网申人员'], recipientName: assign.network, organization: assignmentSession.org, href: '网申任务列表页 - 留学申请管理系统.html' });
       }
       document.getElementById('assignSuccessTitle').textContent = '分配成功';
       document.getElementById('assignSummary').innerHTML = assignmentSummaryHtml(assign);
@@ -1300,7 +1276,7 @@
       var assign = collectAssignment('c');
       if (!assign) { return; }
       applyAssignmentToSchool(assign);
-      persistCurrentPmStaffAssignment();
+      persistCurrentPmStaffAssignment(assign.taskNote);
       if (window.pbsRecordOperation) window.pbsRecordOperation('项目管理', '更换', '调整院校目标 ' + school().name + ' 的文书、审核与网申人员');
       document.getElementById('assignSuccessTitle').textContent = '更换成功';
       document.getElementById('assignSummary').innerHTML = assignmentSummaryHtml(assign);
@@ -1315,16 +1291,17 @@
 
     /* ==================== 驾驶舱切换与初始化 ==================== */
     function isSchoolStaffAssigned(target) {
-      return !!(target.docs.length && target.docs.every(function(doc) { return !!doc.owner && !!doc.reviewer; }) && target.network.owner);
+      var docs = {}, reviewers = {};
+      target.docs.forEach(function(doc) { docs[doc.key] = { person: doc.owner, ddl: doc.ddl }; reviewers[doc.key] = doc.reviewer; });
+      return window.pbsProjects.goalAssignmentComplete({ docs: docs, reviewers: reviewers, network: target.network.owner, networkMatDdl: target.materialDdl.managed, networkDdl: target.applyDdl.managed }, target.docs.map(function(doc) { return doc.key; }));
     }
+
     function refreshCockpit() {
       var s = school();
       var staffAssigned = isSchoolStaffAssigned(s);
-      var allProjectStaffAssigned = Object.keys(SCHOOL_COCKPITS).every(function(schoolId) {
-        return isSchoolStaffAssigned(SCHOOL_COCKPITS[schoolId]);
-      });
+      var allProjectStaffAssigned = window.pbsProjects.assignmentComplete(MY_PROJECT_CONTEXT.projectNo);
       var projectStateLabel = document.getElementById('myProjectStateLabel');
-      if (projectStateLabel) projectStateLabel.textContent = allProjectStaffAssigned ? (MY_PROJECT_CONTEXT.state === '交付中' ? '交付中' : '人员已分配') : '人员待分配';
+      if (projectStateLabel) projectStateLabel.textContent = window.pbsProjects.statusOf(window.pbsProjects.find(MY_PROJECT_CONTEXT.projectNo));
       var assignmentBadge = document.getElementById('schoolAssignmentBadge');
       var assignButton = document.getElementById('assignStaffButton');
       var changeButton = document.getElementById('changeStaffButton');
@@ -1333,10 +1310,10 @@
         assignmentBadge.classList.toggle('hidden', staffAssigned);
       }
       if (assignButton) {
-        assignButton.textContent = s.locked ? '查看人员' : '分配人员';
-        assignButton.classList.toggle('hidden', staffAssigned && !s.locked);
+        assignButton.textContent = '分配';
+        assignButton.classList.toggle('hidden', allProjectStaffAssigned);
       }
-      if (changeButton) changeButton.classList.toggle('hidden', s.locked || !staffAssigned);
+      if (changeButton) { changeButton.textContent = '更换人员'; changeButton.classList.toggle('hidden', !allProjectStaffAssigned); }
       document.querySelectorAll('#schoolCockpitSelect option').forEach(function(schoolOption) {
         var target = SCHOOL_COCKPITS[schoolOption.value];
         if (target) schoolOption.textContent = target.name + (isSchoolStaffAssigned(target) ? '' : '（未分配）');
@@ -1382,7 +1359,7 @@
       applyMyProjectContext();
       restorePmStaffAssignments();
       var requestedSchool = MY_PROJECT_PARAMS.get('school');
-      if (!SCHOOL_COCKPITS[requestedSchool]) requestedSchool = MY_PROJECT_CONTEXT.allStaffAssigned ? 'cmu' : 'stanford';
+      if (!SCHOOL_COCKPITS[requestedSchool]) requestedSchool = Object.keys(SCHOOL_COCKPITS)[0];
       switchSchoolCockpit(requestedSchool);
       var notifBtn = document.querySelector('[data-dom-id="btn-notification"]');
       if (notifBtn) {
@@ -1392,5 +1369,5 @@
       }
     });
   </script>
-  <script src="./assets/js/pbs-app.js?v=6.5"></script>
-  </body></html>
+    <script src="./assets/js/pbs-student-profile.js?v=1.7"></script>
+</body></html>

@@ -18,7 +18,7 @@
   };
   var currentMeta = metadata[templateId] || metadata[1];
   try {
-    var storedMetadata = JSON.parse(localStorage.getItem(templateStoreKey) || '[]').find(function (item) { return Number(item.id) === Number(templateId); });
+    var storedMetadata = isNew ? null : JSON.parse(localStorage.getItem(templateStoreKey) || '[]').find(function (item) { return Number(item.id) === Number(templateId); });
     if (storedMetadata && storedMetadata.versions && storedMetadata.versions.length) {
       var storedCurrent = storedMetadata.versions[0];
       currentMeta = { name: storedMetadata.name, school: storedMetadata.school || '', college: storedMetadata.college || '', program: storedMetadata.program || '', boundPrograms: storedMetadata.boundPrograms || [], region: storedMetadata.region || '', version: String(storedCurrent.version || 'v1.0').toUpperCase(), fieldCount: storedCurrent.fields || 0, materialCount: storedCurrent.materials || 0 };
@@ -27,7 +27,8 @@
   var availableSchools = ['卡内基梅隆大学', '斯坦福大学', '哥伦比亚大学', '剑桥大学', '香港大学', '纽约大学', '波士顿大学'];
   var availablePrograms = ['计算机科学', '人工智能', '软件工程', '数据科学', '金融工程', '金融学', '中国哲学'];
   var defaultPrograms = { 1: ['计算机科学', '人工智能', '软件工程'], 2: ['计算机科学'], 3: ['金融工程'], 4: ['金融学'], 5: ['数据科学'], 6: ['中国哲学'] };
-  var boundPrograms = currentMeta.boundPrograms && currentMeta.boundPrograms.length ? currentMeta.boundPrograms.slice() : (defaultPrograms[templateId] || (currentMeta.program ? [currentMeta.program] : [])).slice();
+  var boundPrograms = Array.isArray(currentMeta.boundPrograms) ? currentMeta.boundPrograms.slice() : (defaultPrograms[templateId] || (currentMeta.program ? [currentMeta.program] : [])).slice();
+  if (isNew) boundPrograms = [];
   var activeProgramScope = 'common';
   var pages = isNew ? [{ id: 'page-1', name: '个人信息' }] : [
     { id: 'page-1', name: '个人信息' },
@@ -36,6 +37,8 @@
     { id: 'page-4', name: '项目问题' }
   ];
   var activePageId = pages[0].id;
+  var entrances = [{ id:'entry-main', name:'院校申请入口', url:'https://apply.cmu.edu', isDefault:true }];
+  var activeEntranceId = 'entry-main', entranceDraft = [], editingFields = {};
   var fields = isNew ? [] : [
     { name: 'First Name', type: '文本', required: true, note: '与护照英文名保持一致' },
     { name: 'Last Name', type: '文本', required: true, note: '与护照英文姓保持一致' },
@@ -77,17 +80,26 @@
     { version: previousVersion(currentMeta.version, 1), time: '2026-07-25 10:12', editor: '王志强', fields: Math.max(1, currentMeta.fieldCount - 2), materials: currentMeta.materialCount, change: '更新个人陈述字数限制和语言成绩送分说明。' },
     { version: previousVersion(currentMeta.version, 2), time: '2026-06-18 14:35', editor: '李雪', fields: Math.max(1, currentMeta.fieldCount - 4), materials: Math.max(1, currentMeta.materialCount - 1), change: '建立首版官网字段结构，补充本科成绩单要求。' }
   ];
+  fields.forEach(function(field,index){if (!field.id) field.id = 'field-' + index;});
   if (storedMetadata && Array.isArray(storedMetadata.versions)) {
     histories = storedMetadata.versions.map(function (item) {
-      return { version: String(item.version || 'v1.0').toUpperCase(), time: (item.updated || '2026-09-18') + ' 15:30', editor: '王志强', fields: item.fields || 0, materials: item.materials || 0, change: item.review || '保存该版本字段与材料内容。', fieldDetails: item.fieldDetails || [], pageDetails: item.pageDetails || pages };
+      return { version: String(item.version || 'v1.0').toUpperCase(), time: item.savedAt || item.updated || '', editor: '王志强', fields: item.fields || 0, materials: item.materials || 0, change: item.review || '', fieldDetails: item.fieldDetails || [], pageDetails: item.pageDetails || [], materialDetails:item.materialDetails || [], entranceDetails:item.entranceDetails || [] };
     });
   } else {
     histories.forEach(function (item, index) {
       item.fieldDetails = fields.slice(0, Math.max(4, fields.length - index * 3)).map(function (field) { return Object.assign({}, field); });
       item.pageDetails = pages.slice();
+      item.materialDetails = materials.slice(0, Math.max(0, materials.length - index));
+      item.fields = item.fieldDetails.length; item.materials = item.materialDetails.length;
     });
   }
   var selectedVersion = 0;
+  if (storedCurrent && storedCurrent.entranceDetails && storedCurrent.entranceDetails.length) entrances = storedCurrent.entranceDetails;
+  else if (isNew) entrances[0].url = '';
+  else if (templateId !== 1) entrances[0].url = '';
+  activeEntranceId = (entrances.find(function (entry) { return entry.isDefault; }) || entrances[0]).id;
+  pages.forEach(function (page) { if (!page.entranceId) page.entranceId = activeEntranceId; });
+  activePageId = (pages.find(function (page) { return page.entranceId === activeEntranceId; }) || pages[0]).id;
 
   function previousVersion(version, offset) {
     var matched = String(version).match(/V(\d+)\.(\d+)/i);
@@ -113,12 +125,17 @@
     showToast.timer = setTimeout(function () { toast.classList.remove('show'); }, 2400);
   }
   function fieldRow(item, index, order) {
-    return '<article class="field-definition" data-field-index="' + index + '"><div class="field-definition-head"><span class="field-order">' + (order + 1) + '</span><button class="text-xs text-gray-400 hover:text-red-600" onclick="removeFieldRow(' + index + ')">删除</button></div>' +
+    var editing = !!editingFields[index];
+    var head = '<article class="field-definition' + (editing ? ' is-editing' : '') + '" data-field-index="' + index + '"><div class="field-definition-head"><span class="field-order">' + (order + 1) + '</span><div class="flex gap-4"><button class="text-xs text-blue-600" onclick="toggleFieldEditing(' + index + ')">' + (editing ? '完成' : '编辑') + '</button><button class="text-xs text-gray-400 hover:text-red-600" onclick="removeFieldRow(' + index + ')">删除</button></div></div>';
+    if (!editing) return head + '<h3 class="field-read-name">' + escapeHtml(item.name) + '</h3><div class="field-read-meta"><span>' + escapeHtml(item.type) + '</span><span>' + (item.required ? '必填' : '选填') + '</span></div><p class="field-read-note">' + escapeHtml(item.note || '—') + '</p></article>';
+    return head +
       '<div class="field-control-grid"><div><label>字段名称</label><input class="input field-name" value="' + escapeHtml(item.name) + '" placeholder="请输入官网字段名称"></div>' +
-      '<div><label>字段类型</label><select class="input field-type"><option' + (item.type === '文本' ? ' selected' : '') + '>文本</option><option' + (item.type === '日期' ? ' selected' : '') + '>日期</option><option' + (item.type === '下拉' ? ' selected' : '') + '>下拉</option><option' + (item.type === '邮箱' ? ' selected' : '') + '>邮箱</option><option' + (item.type === '数字' ? ' selected' : '') + '>数字</option><option' + (item.type === '文件' ? ' selected' : '') + '>文件</option></select></div>' +
+      '<div><label>字段类型</label><select class="input field-type" onchange="updateFieldOptions(this)">' + ['文本','邮箱','日期','下拉','多行文本','电话','数字','单选','勾选','文件'].map(function(type){ return '<option' + (item.type === type ? ' selected' : '') + '>' + type + '</option>'; }).join('') + '</select></div>' +
       '<div><label>填写要求</label><select class="input field-required"><option value="1"' + (item.required ? ' selected' : '') + '>必填</option><option value="0"' + (!item.required ? ' selected' : '') + '>选填</option></select></div></div>' +
-      '<div class="field-description"><label>填写说明</label><input class="input field-note" value="' + escapeHtml(item.note) + '" placeholder="说明填写格式、取值或注意事项"></div></article>';
+      '<div class="field-description"><label>填写说明</label><input class="input field-note" value="' + escapeHtml(item.note) + '" placeholder="说明填写格式、取值或注意事项"></div><div class="field-description field-options-wrap"' + (['下拉','单选','勾选'].indexOf(item.type) < 0 ? ' hidden' : '') + '><label>可选值</label><textarea class="textarea field-options" placeholder="每行一个选项">' + escapeHtml(Array.isArray(item.options) ? item.options.join('\n') : item.options || '') + '</textarea></div></article>';
   }
+  window.updateFieldOptions = function(select) { select.closest('article').querySelector('.field-options-wrap').hidden = ['下拉','单选','勾选'].indexOf(select.value) < 0; };
+  window.toggleFieldEditing = function(index) { syncRows(); if (editingFields[index] && !fields[index].name) { showToast('请填写字段名称'); return; } editingFields[index] = !editingFields[index]; renderRows(); };
   function materialRow(item, index) {
     return '<div class="field-grid grid grid-cols-[minmax(220px,1.2fr)_120px_minmax(300px,1.6fr)_64px] gap-3 items-center px-5 py-3" data-material-index="' + index + '">' +
       '<input class="input material-name" value="' + escapeHtml(item.name) + '" placeholder="请输入材料名称">' +
@@ -130,7 +147,8 @@
     document.querySelectorAll('#fieldRows [data-field-index]').forEach(function (row) {
       var index = Number(row.dataset.fieldIndex);
       if (!fields[index]) return;
-      fields[index] = { name: row.querySelector('.field-name').value.trim(), type: row.querySelector('.field-type').value, required: row.querySelector('.field-required').value === '1', note: row.querySelector('.field-note').value.trim(), pageId: activePageId, programScope: activeProgramScope };
+      if (!row.querySelector('.field-name')) return;
+      fields[index] = Object.assign({}, fields[index], { name: row.querySelector('.field-name').value.trim(), type: row.querySelector('.field-type').value, required: row.querySelector('.field-required').value === '1', note: row.querySelector('.field-note').value.trim(), options: row.querySelector('.field-options').value.split('\n').map(function(value){return value.trim();}).filter(Boolean) });
     });
     document.querySelectorAll('#materialRows [data-material-index]').forEach(function (row, index) {
       if (!materials[index]) return;
@@ -138,12 +156,14 @@
     });
   }
   function renderPages() {
-    document.getElementById('applicationPageTabs').innerHTML = pages.map(function (page) {
+    document.getElementById('applicationPageTabs').innerHTML = pages.filter(function(page){ return page.entranceId === activeEntranceId; }).map(function (page) {
       var count = fields.filter(function (field) { return field.pageId === page.id && (field.programScope || 'common') === activeProgramScope; }).length;
       return '<button type="button" class="page-tab ' + (page.id === activePageId ? 'active' : '') + '" onclick="selectApplicationPage(\'' + page.id + '\')"><strong>' + escapeHtml(page.name) + '</strong><small>' + count + ' 个字段</small></button>';
     }).join('');
     var activePage = pages.find(function (page) { return page.id === activePageId; });
     document.getElementById('activePageName').textContent = activePage ? activePage.name : '当前页面';
+    document.getElementById('applicationPageName').value = activePage ? activePage.name : '';
+    document.getElementById('entranceTabs').innerHTML = entrances.map(function(entry,index){return '<button type="button" class="scope-tab ' + (entry.id === activeEntranceId ? 'active' : '') + '" onclick="selectEntrance(' + index + ')">' + escapeHtml(entry.name) + '</button>';}).join('');
   }
   function renderRows() {
     var visibleFields = fields.map(function (item, index) { return { item: item, index: index }; }).filter(function (entry) { return entry.item.pageId === activePageId && (entry.item.programScope || 'common') === activeProgramScope; });
@@ -155,9 +175,21 @@
     renderPages();
   }
   window.selectApplicationPage = function (pageId) { syncRows(); activePageId = pageId; renderRows(); };
-  window.addApplicationPage = function () { syncRows(); var page = { id: 'page-' + Date.now(), name: '申请页面 ' + (pages.length + 1) }; pages.push(page); activePageId = page.id; renderRows(); };
-  window.addFieldRow = function () { syncRows(); fields.push({ name: '', type: '文本', required: true, note: '', pageId: activePageId, programScope: activeProgramScope }); renderRows(); var inputs = document.querySelectorAll('.field-name'); if (inputs.length) inputs[inputs.length - 1].focus(); };
-  window.removeFieldRow = function (index) { syncRows(); fields.splice(index, 1); renderRows(); };
+  window.addApplicationPage = function () { syncRows(); var page = { id: 'page-' + Date.now(), name: '申请页面 ' + (pages.length + 1), entranceId:activeEntranceId }; pages.push(page); activePageId = page.id; renderRows(); };
+  window.renameApplicationPage = function(value) { var page = pages.find(function(item){return item.id === activePageId;}); if (page && value.trim()) page.name = value.trim(); renderPages(); };
+  window.deleteApplicationPage = function() { if (pages.filter(function(page){return page.entranceId === activeEntranceId;}).length <= 1) { showToast('每个入口至少保留一个页面'); return; } if (!confirm('删除页面及其字段？')) return; syncRows(); fields = fields.filter(function(field){return field.pageId !== activePageId;}); pages = pages.filter(function(page){return page.id !== activePageId;}); activePageId = pages.find(function(page){return page.entranceId === activeEntranceId;}).id; editingFields = {}; renderRows(); };
+  window.addFieldRow = function () { syncRows(); fields.push({ id:'field-' + Date.now(), name: '', type: '文本', required: true, note: '', pageId: activePageId, programScope: activeProgramScope }); editingFields[fields.length - 1] = true; renderRows(); var inputs = document.querySelectorAll('.field-name'); if (inputs.length) inputs[inputs.length - 1].focus(); };
+  window.removeFieldRow = function (index) { syncRows(); fields.splice(index, 1); editingFields = {}; renderRows(); };
+  window.selectEntrance = function(index) { syncRows(); activeEntranceId = entrances[index].id; var page = pages.find(function(item){return item.entranceId === activeEntranceId;}); if (!page) { page = {id:'page-' + Date.now(),name:'个人信息',entranceId:activeEntranceId}; pages.push(page); } activePageId = page.id; renderRows(); };
+  function renderEntranceRows() {
+    document.getElementById('entranceRows').innerHTML = entranceDraft.map(function(entry,index){ return '<div class="entrance-row" data-entrance-index="' + index + '"><input class="input" aria-label="入口名称" placeholder="入口名称" value="' + escapeHtml(entry.name) + '"><input class="input" aria-label="入口网址" placeholder="https://" value="' + escapeHtml(entry.url) + '"><button class="text-xs text-gray-400" onclick="removeEntranceRow(' + index + ')">删除</button><label class="entrance-default"><input type="radio" name="defaultEntrance" value="' + index + '"' + (entry.isDefault ? ' checked' : '') + '>默认入口</label></div>'; }).join('');
+  }
+  function syncEntranceRows() { document.querySelectorAll('[data-entrance-index]').forEach(function(row){ var index = Number(row.dataset.entranceIndex), inputs = row.querySelectorAll('input'); entranceDraft[index].name = inputs[0].value.trim(); entranceDraft[index].url = inputs[1].value.trim(); entranceDraft[index].isDefault = inputs[2].checked; }); }
+  window.openEntranceManager = function() { syncRows(); entranceDraft = entrances.map(function(entry){return Object.assign({}, entry);}); renderEntranceRows(); document.getElementById('entranceError').textContent = ''; document.getElementById('entranceModal').classList.add('show'); };
+  window.closeEntranceManager = function() { document.getElementById('entranceModal').classList.remove('show'); };
+  window.addEntranceRow = function() { syncEntranceRows(); entranceDraft.push({id:'entry-' + Date.now(),name:'',url:'',isDefault:false}); renderEntranceRows(); };
+  window.removeEntranceRow = function(index) { if (entranceDraft.length <= 1) { document.getElementById('entranceError').textContent = '至少保留一个申请入口'; return; } syncEntranceRows(); entranceDraft.splice(index,1); renderEntranceRows(); };
+  window.saveEntrances = function() { syncEntranceRows(); if (entranceDraft.some(function(entry){return !entry.name || (entry.url && !/^https?:\/\//i.test(entry.url));})) { document.getElementById('entranceError').textContent = '请填写入口名称和有效的网址'; return; } if (!entranceDraft.some(function(entry){return entry.isDefault;})) entranceDraft[0].isDefault = true; entrances = entranceDraft.map(function(entry){return Object.assign({},entry);}); pages.forEach(function(page){if (!entrances.some(function(entry){return entry.id === page.entranceId;})) page.entranceId = entrances[0].id;}); if (!entrances.some(function(entry){return entry.id === activeEntranceId;})) activeEntranceId = entrances[0].id; window.selectEntrance(entrances.findIndex(function(entry){return entry.id === activeEntranceId;})); closeEntranceManager(); };
   window.addMaterialRow = function () { syncRows(); materials.push({ name: '', required: true, note: '' }); renderRows(); var inputs = document.querySelectorAll('.material-name'); if (inputs.length) inputs[inputs.length - 1].focus(); };
   window.removeMaterialRow = function (index) { syncRows(); materials.splice(index, 1); renderRows(); };
   function closeSearchSelectors(exceptPanel) {
@@ -248,14 +280,15 @@
       document.getElementById('versionDetail').innerHTML = '<div class="h-full flex items-center justify-center text-sm text-gray-400">保存首个版本后可在此查看历史记录</div>';
       return;
     }
-    var previewFields = item.fieldDetails && item.fieldDetails.length ? item.fieldDetails : fields;
+    var previewFields = item.fieldDetails || [], previewPages = item.pageDetails || [];
     var previewRows = previewFields.map(function (field, index) {
-      return '<div class="grid grid-cols-[36px_minmax(150px,1fr)_100px_90px_minmax(180px,1.2fr)] gap-3 px-3 py-2.5 border-t border-gray-100 text-xs items-center"><span class="text-gray-400">' + (index + 1) + '</span><span class="font-medium text-gray-800">' + escapeHtml(field.name) + '</span><span class="text-gray-500">' + escapeHtml(field.type || '文本') + '</span><span class="text-gray-500">' + (field.required ? '必填' : '选填') + '</span><span class="text-gray-500">' + escapeHtml(field.note || '—') + '</span></div>';
-    }).join('');
+      var page = previewPages.find(function(page){return page.id === field.pageId;});
+      return '<tr><td>' + (index + 1) + '</td><td><strong>' + escapeHtml(field.name) + '</strong><div class="text-gray-400 mt-1">' + escapeHtml(page ? page.name : '') + (field.programScope && field.programScope !== 'common' ? ' · ' + escapeHtml(field.programScope) : '') + '</div></td><td>' + escapeHtml(field.type || '文本') + '</td><td>' + (field.required ? '必填' : '选填') + '</td><td>' + escapeHtml(field.note || '—') + '</td></tr>';
+    }).join('') || '<tr><td colspan="5">此版本尚未保存字段内容</td></tr>';
+    var materialPreview = (item.materialDetails || []).map(function(material){return '<tr><td>' + escapeHtml(material.name) + '</td><td>' + (material.required ? '必需' : '非必需') + '</td><td>' + escapeHtml(material.note || '—') + '</td></tr>';}).join('') || '<tr><td colspan="3">暂无材料内容</td></tr>';
     document.getElementById('versionDetail').innerHTML = '<div class="flex items-center justify-between mb-5"><div><p class="text-xl font-semibold text-gray-900">' + item.version + '</p><p class="text-sm text-gray-500 mt-1">' + item.time + ' · ' + item.editor + '</p></div>' + (selectedVersion === 0 ? '<span class="px-2.5 py-1 rounded-full bg-gray-100 text-gray-600 text-xs font-medium">当前版本</span>' : '') + '</div>' +
       '<div class="flex items-center gap-5 pb-4 mb-4 border-b border-gray-200 text-sm text-gray-600"><span>官网字段 <strong class="text-gray-900">' + item.fields + '</strong></span><span>申请材料 <strong class="text-gray-900">' + item.materials + '</strong></span></div>' +
-      '<div class="mb-4"><p class="text-sm font-semibold text-gray-800 mb-2">版本变更</p><p class="text-sm leading-6 text-gray-600">' + escapeHtml(item.change) + '</p></div>' +
-      '<div><div class="flex items-center justify-between mb-2"><p class="text-sm font-semibold text-gray-800">字段预览</p><span class="text-xs text-gray-400">当前版本保存内容</span></div><div class="border border-gray-200 rounded-lg overflow-hidden"><div class="grid grid-cols-[36px_minmax(150px,1fr)_100px_90px_minmax(180px,1.2fr)] gap-3 px-3 py-2 bg-gray-50 text-xs text-gray-500"><span>序号</span><span>字段名称</span><span>类型</span><span>要求</span><span>填写说明</span></div><div class="max-h-64 overflow-y-auto">' + previewRows + '</div></div></div>';
+      '<div><p class="text-sm font-semibold text-gray-800 mb-3">字段预览</p><div class="version-preview-scroll"><table class="version-preview-table"><thead><tr><th>序号</th><th>字段名称 / 页面</th><th>类型</th><th>要求</th><th>填写说明</th></tr></thead><tbody>' + previewRows + '</tbody></table></div></div><div class="mt-6"><p class="text-sm font-semibold text-gray-800 mb-3">申请材料</p><div class="version-preview-scroll"><table class="version-preview-table"><thead><tr><th>材料名称</th><th>要求</th><th>材料说明</th></tr></thead><tbody>' + materialPreview + '</tbody></table></div></div>';
   }
   function renderVersionList() {
     document.getElementById('versionList').innerHTML = histories.length ? histories.map(function (item, index) {
@@ -274,28 +307,31 @@
     if (!name || !school || !college) { showToast('请完整填写模板名称、绑定院校和学院'); return; }
     if (availableSchools.indexOf(school) < 0) { showToast('请从搜索结果中选择绑定院校'); return; }
     if (!fields.length || fields.some(function (item) { return !item.name; })) { showToast('请至少添加一个完整的官网字段'); return; }
-    if (!materials.length || materials.some(function (item) { return !item.name; })) { showToast('请至少添加一项完整的申请材料'); return; }
+    if (materials.some(function (item) { return !item.name; })) { showToast('请填写材料名称'); return; }
     var current = document.getElementById('currentVersion').textContent;
     var version = current === '未保存' ? 'V1.0' : (createVersion ? nextVersion(current) : current);
     document.getElementById('currentVersion').textContent = version;
-    var historyItem = { version: version, time: '2026-09-18 15:30', editor: '王志强', fields: fields.length, materials: materials.length, change: createVersion ? '另存版本并保留上一版本内容。' : '保存当前版本的字段与材料内容。', fieldDetails: fields.map(function (field) { return Object.assign({}, field); }), pageDetails: pages.slice() };
+    var savedAt = new Date().toLocaleString('sv-SE').slice(0,16);
+    var historyItem = { version: version, time: savedAt, editor: '王志强', fields: fields.length, materials: materials.length, change: '', fieldDetails: JSON.parse(JSON.stringify(fields)), pageDetails: JSON.parse(JSON.stringify(pages)), materialDetails:JSON.parse(JSON.stringify(materials)), entranceDetails:JSON.parse(JSON.stringify(entrances)) };
     if (createVersion || !histories.length) histories.unshift(historyItem); else histories[0] = historyItem;
     var stored = [];
     try { stored = JSON.parse(localStorage.getItem(templateStoreKey) || '[]'); } catch (error) { stored = []; }
     var session = window.pbsGetSession ? window.pbsGetSession() : { org: 'PBS留学总部' };
     var existing = stored.find(function (item) { return Number(item.id) === Number(savedTemplateId); });
     var versions = existing && Array.isArray(existing.versions) ? existing.versions.slice() : histories.slice(1).map(function (item) {
-      return { version: String(item.version).toLowerCase(), fields: item.fields, materials: item.materials, updated: item.time.slice(0, 10), review: '历史版本，仅供查看与复用。' };
+      return { version: String(item.version).toLowerCase(), fields: item.fields, materials: item.materials, updated: item.time.slice(0, 10), fieldDetails:item.fieldDetails, pageDetails:item.pageDetails, materialDetails:item.materialDetails, entranceDetails:item.entranceDetails };
     });
     var versionPayload = {
       version: version.toLowerCase(),
       fields: fields.length,
       materials: materials.length,
       updated: new Date().toISOString().slice(0, 10),
+      savedAt:savedAt,
       review: '请按当前申请季复核官网字段与材料要求。',
       fieldDetails: fields,
       materialDetails: materials,
-      pageDetails: pages
+      pageDetails: pages,
+      entranceDetails:entrances
     };
     if (existing && versions.length && !createVersion) versions[0] = versionPayload; else versions.unshift(versionPayload);
     stored = stored.filter(function (item) { return Number(item.id) !== Number(savedTemplateId); });
@@ -337,6 +373,7 @@
   });
   document.addEventListener('keydown', function (event) {
     if (event.key !== 'Escape') return;
+    closeEntranceManager();
     closeVersionHistory();
     closeSearchSelectors();
   });

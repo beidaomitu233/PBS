@@ -1,0 +1,48 @@
+[onclick="openPendingDrawer()"]:has(#pendingTaskBadge), #btn-pending-task, [data-dom-id="btn-pending-task"] {
+  min-height: 46.8px !important;
+  padding-left: 21px !important;
+  padding-right: 21px !important;
+  font-size: 18.2px !important;
+  gap: 10px !important;
+}
+#btn-pending-task { min-height: 52px !important; }
+[data-dom-id="btn-pending-task"] > svg { width: 20.8px !important; height: 20.8px !important; }
+.pbs-returned-row, .pbs-returned-row > td { background: #fff1f2 !important; }
+.pbs-task-dialog-mask { position: fixed; inset: 0; z-index: 11000; display: flex; align-items: center; justify-content: center; padding: 24px; background: rgba(15,23,42,.4); }
+.pbs-task-dialog { width: min(460px,100%); max-height: 85vh; overflow: auto; border-radius: 16px; background: #fff; box-shadow: 0 24px 64px rgba(15,23,42,.18); }
+.pbs-task-dialog header, .pbs-task-dialog footer { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 18px 24px; }
+.pbs-task-dialog header { border-bottom: 1px solid #edf0f4; }
+.pbs-task-dialog h3 { margin: 0; font-size: 18px; font-weight: 600; color: #172b45; }
+.pbs-task-dialog header button { border: 0; background: transparent; color: #64748b; font-size: 24px; }
+.pbs-task-dialog-body { padding: 20px 24px; }
+.pbs-task-dialog-body p { margin: 0 0 16px; color: #64748b; font-size: 13px; }
+.pbs-task-dialog label { display: block; margin: 0 0 8px; color: #334155; font-size: 14px; }
+.pbs-task-dialog textarea, .pbs-task-dialog select, .pbs-task-dialog input { box-sizing: border-box; width: 100%; padding: 10px 12px; border: 1px solid #cbd5e1; border-radius: 8px; font: inherit; font-size: 14px; }
+.pbs-task-dialog textarea { min-height: 112px; resize: vertical; }
+.pbs-task-dialog textarea:focus { outline: 2px solid #dbeafe; border-color: #2563eb; }
+.pbs-task-dialog footer { justify-content: flex-end; border-top: 1px solid #edf0f4; }
+.pbs-task-dialog footer button { padding: 9px 20px; border: 0; border-radius: 8px; background: #f1f5f9; color: #334155; font-size: 14px; cursor: pointer; }
+.pbs-task-dialog footer button[type="submit"] { background: #2563eb; color: #fff; }
+.pbs-task-dialog .pbs-task-error { margin: 8px 0 0; min-height: 20px; color: #dc2626; }
+.pbs-task-return-list { margin: 24px 0; padding: 20px; border: 1px solid #e5eaf0; border-radius: 16px; background: #fff; }
+.pbs-task-return-list h2 { margin: 0 0 16px; font-size: 16px; font-weight: 600; }
+.pbs-task-return-list table { width: 100%; border-collapse: collapse; font-size: 13px; }
+.pbs-task-return-list th, .pbs-task-return-list td { padding: 12px; text-align: left; border-bottom: 1px solid #edf0f4; }
+.pbs-task-return-list td { overflow-wrap: anywhere; }
+.pbs-task-return-list button { border: 0; background: transparent; color: #2563eb; cursor: pointer; white-space: nowrap; }
+.pbs-task-return-scroll { overflow-x: auto; }
+.pbs-profile-purpose { margin: 0 0 16px; font-size: 12px; line-height: 1.7; color: #8190a3; }
+.pbs-editor-collapse-bar { display: flex; align-items: center; justify-content: flex-end; padding: 8px 12px 0; }
+#right-sidebar .pbs-editor-collapse-bar { justify-content: flex-start; }
+.pbs-editor-collapse { display: flex; justify-content: center; align-items: center; width: 32px; height: 32px; border: 0; border-radius: 8px; background: transparent; color: #64748b; cursor: pointer; }
+.pbs-editor-collapse:hover { color: #2563eb; background: #eff6ff; }
+.pbs-editor-collapse svg { width: 20px; height: 20px; }
+#sidebar-tabs, #right-sidebar { transition: width .22s ease; }
+#sidebar-tabs.is-collapsed, #right-sidebar.is-collapsed { width: 48px !important; min-width: 48px !important; overflow: hidden; }
+#sidebar-tabs.is-collapsed > :not(.pbs-editor-collapse-bar), #right-sidebar.is-collapsed > :not(.pbs-editor-collapse-bar) { display: none !important; }
+.is-collapsed .pbs-editor-collapse-bar { padding: 8px; }
+.is-collapsed .pbs-editor-collapse svg { transform: rotate(180deg); }
+.pbs-ddl-assign { padding: 0; border: 0; background: transparent; color: #2563eb; font: inherit; cursor: pointer; }
+.pbs-ddl-assign:hover { text-decoration: underline; }
+.pbs-assignment-focus { outline: 2px solid #93c5fd; outline-offset: 4px; border-radius: 8px; }
+@media (prefers-reduced-motion: reduce) { #sidebar-tabs, #right-sidebar { transition: none; } }

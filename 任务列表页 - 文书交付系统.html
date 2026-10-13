@@ -569,6 +569,11 @@
   </div>
 
   <script>
+    function openDocumentTask(row) {
+      var school = row.cells[3].textContent.trim(), major = row.cells[4].textContent.trim();
+      var params = new URLSearchParams({ student: row.dataset.name, customer: row.dataset.customer || '', type: row.dataset.type, status: row.dataset.status, school: school, major: major, ddl: row.dataset.ddl || '', task: [row.dataset.name, school, major, row.dataset.type].join('|') });
+      location.href = '文书编辑器 - 文书交付系统.html?' + params.toString();
+    }
     document.addEventListener('DOMContentLoaded', function() {
       // 通知弹窗
       var notifBtn = document.querySelector('[data-dom-id="btn-notification"]');
@@ -581,7 +586,7 @@
       // 任务详情跳转
       document.querySelectorAll('[data-dom-id^="btn-task-detail-"]').forEach(function(el) {
         el.addEventListener('click', function() {
-      window.location.href = '文书编辑器 - 文书交付系统.html';
+          openDocumentTask(this.closest('tr'));
         });
       });
 
@@ -631,6 +636,7 @@
       2: { name: '王明', school: '斯坦福大学', major: '计算机科学', initial: '王', color: 'from-orange-500 to-red-500' }
     };
     function acceptTask(idx) {
+      if (window.pbsTaskReturn) window.pbsTaskReturn.accept('document', PENDING_TASKS[idx].name, PENDING_TASKS[idx].school);
       var card = document.getElementById('pendingTaskCard' + idx);
       if (card) card.remove();
       var info = PENDING_TASKS[idx];
@@ -665,16 +671,19 @@
         '<td class="px-5 py-4 text-sm text-gray-600">0 天</td>' +
         '<td class="px-5 py-4 whitespace-nowrap"><div class="flex items-center gap-3"><button class="text-blue-600 hover:text-blue-800 text-sm font-medium" data-dom-id="btn-task-detail-' + newIndex + '">进入文书编辑器</button><button class="text-orange-600 hover:text-orange-800 text-sm font-medium" onclick="event.stopPropagation(); showTaskToast(\'已催办该任务\', \'success\')">催办</button></div></td>';
       tbody.appendChild(tr);
-      tr.querySelector('button').addEventListener('click', function() { window.location.href = '文书编辑器 - 文书交付系统.html'; });
+      tr.querySelector('button').addEventListener('click', function() { openDocumentTask(tr); });
       if (typeof applyFilter === 'function') applyFilter();
     }
     function rejectTask(idx) {
+      var info = PENDING_TASKS[idx];
+      window.pbsTaskReturn.confirm({ kind: 'document', student: info.name, school: info.school, doc: 'PS', label: info.name + ' · ' + info.school + ' · PS', cardId: 'pendingTaskCard' + idx, page: '任务列表页 - 文书交付系统.html' }, function () {
       var card = document.getElementById('pendingTaskCard' + idx);
       if (card) card.remove();
       var info = PENDING_TASKS[idx];
       updatePendingBadge(pendingCount());
       showTaskToast('已退回任务（' + info.name + ' · ' + info.school + '）', 'reject');
       closePendingDrawer();
+      });
     }
 
     function closeRejectModal() {
@@ -715,7 +724,7 @@
     });
   </script>
   <script src="./assets/js/pbs-workbench.js?v=2.1"></script>
-  <script src="./assets/js/pbs-app.js?v=6.5"></script>
+  <script src="./assets/js/pbs-app.js?v=7.1"></script>
 
 
   

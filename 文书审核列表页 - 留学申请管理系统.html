@@ -510,6 +510,7 @@
       setTimeout(function() { toast.remove(); }, 2500);
     }
     function acceptTask() {
+      if (window.pbsTaskReturn) window.pbsTaskReturn.accept('review', '王雨桐', '哥伦比亚大学');
       // 从抽屉移除卡片、角标减1
       var card = document.getElementById('pendingTaskCard1');
       if (card) card.remove();
@@ -549,11 +550,13 @@
       applyFilter();
     }
     function rejectTask() {
+      window.pbsTaskReturn.confirm({ kind: 'review', student: '王雨桐', school: '哥伦比亚大学', doc: 'PS', label: '王雨桐 · 哥伦比亚大学 · PS 审核', cardId: 'pendingTaskCard1', page: '文书审核列表页 - 留学申请管理系统.html' }, function () {
       var card = document.getElementById('pendingTaskCard1');
       if (card) card.remove();
       updatePendingBadge(0);
       showTaskToast('已退回审核任务《哥伦比亚大学-经济学-个人陈述》，该任务已退回至文书交付团队', 'reject');
       closePendingDrawer();
+      });
     }
     /* ---------- 高级筛选 ---------- */
     function gv(id) { var el = document.getElementById(id); return el ? (el.value || '').trim() : ''; }
@@ -580,13 +583,21 @@
     }
     /* 回车快捷搜索 */
     document.addEventListener('DOMContentLoaded', function() {
+      document.querySelectorAll('tr[data-status="已完成"]').forEach(function(row) {
+        row.querySelectorAll('button').forEach(function(button) {
+          if (button.textContent.trim() === '进入审核详情页') {
+            button.textContent = '查看文书';
+            button.onclick = function() { location.href = '文书审核详情页 - 留学申请管理系统.html?readonly=1'; };
+          } else if (button.textContent.trim() === '催办') { button.remove(); }
+        });
+      });
       document.querySelectorAll('input[id^="flt-"]').forEach(function (inp) {
         inp.addEventListener('keydown', function (e) { if (e.key === 'Enter') applyFilter(); });
       });
     });
   </script>
   <script src="./assets/js/pbs-workbench.js?v=2.1"></script>
-  <script src="./assets/js/pbs-app.js?v=6.5"></script>
+  <script src="./assets/js/pbs-app.js?v=6.9"></script>
 
 
       

@@ -308,6 +308,7 @@
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
           </svg>
           <h2 class="text-base font-semibold text-gray-800">网申基础信息</h2>
+          <button type="button" class="ml-auto application-info-action" data-pbs-permission="app_fill" onclick="pbsApplication.editAccount()">编辑申请账号</button>
         </div>
         <div class="application-info-grid">
           <section class="application-info-group">
@@ -337,7 +338,7 @@
               <h3 class="application-info-group__title"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 7a4 4 0 11-8 0 4 4 0 018 0zm6 14v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"></path></svg>账号信息</h3>
             </div>
             <div class="application-info-fields">
-              <div class="application-info-field"><span class="application-info-label">网申账号</span><span class="application-info-value">zhangming_cmu</span></div>
+              <div class="application-info-field"><span class="application-info-label">网申账号</span><span id="applicationAccountText" class="application-info-value">zhangming_cmu</span></div>
               <div class="application-info-field">
                 <span class="application-info-label">网申密码</span>
                 <div class="flex items-center gap-1"><span class="application-info-value" data-field="app-pwd">********</span><span class="hidden application-info-value" data-field="app-pwd-plain">CmU2026!</span><button class="p-1 text-gray-400 hover:text-blue-600" onclick="toggleAppPwd(this)" title="显示/隐藏密码"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg></button></div>
@@ -839,19 +840,25 @@
 
   <script>
     // 时间线节点切换
-    var timelineNodeStatus = { 1: true, 2: false, 3: false, 4: false };
+    var timelineNodes = Array.from(document.querySelectorAll('.application-timeline-item')).map(function(item, index) {
+      return { name: item.querySelector('h3').textContent, date: item.querySelector('.application-timeline-date').textContent.replace(/ 截止$/, ''), note: item.querySelector('.application-timeline-note').textContent, completed: index === 0 };
+    });
+    try { timelineNodes = JSON.parse(localStorage.getItem('pbs_application_timeline_cmu')) || timelineNodes; } catch (error) {}
+    function renderApplicationTimeline() {
+      var firstPending = timelineNodes.findIndex(function(node) { return !node.completed; });
+      var host = document.querySelector('.application-timeline');
+      host.style.gridTemplateRows = 'repeat(' + timelineNodes.length + ', minmax(90px, 1fr))';
+      host.innerHTML = timelineNodes.map(function(node, index) {
+        return '<article class="application-timeline-item"><button class="application-timeline-marker '+(node.completed ? 'is-complete' : (index === firstPending ? 'is-current' : ''))+'" onclick="toggleTimelineNode('+(index+1)+')" aria-label="切换'+escapeTemplateText(node.name)+'完成状态">'+(node.completed ? '✓' : index+1)+'</button><div class="application-timeline-top"><h3 class="application-timeline-name">'+escapeTemplateText(node.name)+'</h3><span class="application-timeline-date">'+escapeTemplateText(node.date)+'</span></div><div class="application-timeline-meta">'+(node.completed ? '已完成' : (index === firstPending ? '进行中' : '未开始'))+'</div><p class="application-timeline-note">'+escapeTemplateText(node.note)+'</p></article>';
+      }).join('');
+      localStorage.setItem('pbs_application_timeline_cmu', JSON.stringify(timelineNodes));
+    }
 
     function toggleTimelineNode(nodeId) {
-      timelineNodeStatus[nodeId] = !timelineNodeStatus[nodeId];
-      var node = document.querySelector('[data-dom-id="timeline-node-' + nodeId + '"]');
+      var node = timelineNodes[nodeId - 1];
       if (!node) return;
-      if (timelineNodeStatus[nodeId]) {
-        node.className = 'application-timeline-marker is-complete';
-        node.textContent = '✓';
-      } else {
-        node.className = 'application-timeline-marker';
-        node.textContent = nodeId;
-      }
+      node.completed = !node.completed;
+      renderApplicationTimeline();
     }
 
     // 密码显示/隐藏
@@ -886,6 +893,8 @@
 
     // 进度更新弹窗
     function openProgressModal() {
+      try { var progress = JSON.parse(localStorage.getItem('pbs_application_progress_cmu')); if (progress) document.getElementById('progressStatus').value = progress.status; } catch(error) {}
+      document.getElementById('progressRemark').value = '';
       document.getElementById('progressModal').classList.remove('hidden');
     }
     function closeProgressModal() {
@@ -895,8 +904,9 @@
       var status = document.getElementById('progressStatus').value;
       var remark = document.getElementById('progressRemark').value.trim();
       if (!remark) { alert('请输入进度更新说明'); return; }
-      alert('网申进度已更新！\n状态：' + status + '\n说明：' + remark);
+      localStorage.setItem('pbs_application_progress_cmu', JSON.stringify({ status: status, remark: remark }));
       closeProgressModal();
+      alert('网申进度已更新');
     }
 
     // 材料上传弹窗
@@ -1147,12 +1157,23 @@
     function confirmEvImport() {
       var selected = evNodes.filter(function(n) { return n.checked && evFieldChecked(n.field); });
       if (!selected.length) { alert('请至少勾选一个导入节点'); return; }
-      var names = selected.map(function(n, i) { return (i + 1) + '. ' + n.name + '（' + n.date + '）'; }).join('\n');
-      alert('已从EV系统导入网申进度线！\n导入节点：' + selected.length + ' 个（' + (evAutoSort ? '按时间顺序自动排列' : '按手动调整顺序') + '）\n\n' + names + '\n\n当前进度线已按EV系统数据更新。');
+      timelineNodes = selected.map(function(node) { return { name: node.name, date: node.date, note: node.note || '', completed: false }; });
+      renderApplicationTimeline();
       closeEvImportModal();
     }
     // ===== 网申进度线：配置 =====
     function openTimelineConfig() {
+      document.getElementById('timelineNodeRows').innerHTML = '';
+      timelineNodes.forEach(function(node) {
+        addTimelineNodeRow();
+        var row = document.querySelector('#timelineNodeRows .timeline-node-row:last-child');
+        var inputs = row.querySelectorAll('input');
+        inputs[0].value = node.name;
+        inputs[1].value = /^\d{4}-\d{2}-\d{2}$/.test(node.date) ? node.date : '';
+        inputs[2].value = node.note;
+        row.dataset.date = node.date || '';
+        row.dataset.completed = node.completed ? '1' : '0';
+      });
       document.getElementById('timelineConfigModal').classList.remove('hidden');
     }
     function closeTimelineConfigModal() {
@@ -1179,8 +1200,13 @@
       btn.closest('.timeline-node-row').remove();
     }
     function saveTimelineConfig() {
-      var count = document.querySelectorAll('#timelineNodeRows .timeline-node-row').length;
-      alert('进度线配置已保存！\n当前共 ' + count + ' 个节点，页面进度线将按新配置刷新。');
+      var rows = Array.from(document.querySelectorAll('#timelineNodeRows .timeline-node-row'));
+      if (rows.some(function(row) { return !row.querySelector('input').value.trim(); })) { alert('请填写节点名称'); return; }
+      timelineNodes = rows.map(function(row) {
+        var inputs = row.querySelectorAll('input');
+        return { name: inputs[0].value.trim(), date: inputs[1].value || row.dataset.date || '', note: inputs[2].value.trim(), completed: row.dataset.completed === '1' };
+      });
+      renderApplicationTimeline();
       closeTimelineConfigModal();
     }
 
@@ -1214,7 +1240,7 @@
           boundPrograms: Array.isArray(template.boundPrograms) ? template.boundPrograms : (template.program ? [template.program] : []),
           name: template.name || '网申模板',
           versions: template.versions.map(function(version, index) {
-            return { key: String(template.id) + '-' + String(version.version || index), version: String(version.version || 'v1.0'), updated: version.updated || '—', fields: version.fields || 0, materials: version.materials || 0, gre: '按官网要求' };
+            return Object.assign({}, version, { key: String(template.id) + '-' + String(version.version || index), version: String(version.version || 'v1.0'), updated: version.updated || '—', fields: version.fields || 0, materials: version.materials || 0 });
           })
         };
         TEMPLATE_REUSE_OPTIONS = TEMPLATE_REUSE_OPTIONS.filter(function(item) { return Number(item.id) !== Number(normalized.id); });
@@ -1239,7 +1265,7 @@
     function selectReuseVersion(templateId, select) { reuseSelectedVersions[templateId] = select.value; renderTemplateReuseOptions(); }
     function renderTemplateReuseOptions() {
       var keyword=document.getElementById('templateReuseSearch').value.trim().toLowerCase();
-      var templates=TEMPLATE_REUSE_OPTIONS.filter(function(item){return !keyword || (item.school+' '+item.college+' '+item.boundPrograms.join(' ')+' '+item.name).toLowerCase().indexOf(keyword)>=0;});
+      var templates=TEMPLATE_REUSE_OPTIONS.filter(function(item){return (!window.pbsApplication || pbsApplication.matchesScope(item)) && (!keyword || (item.school+' '+item.college+' '+item.boundPrograms.join(' ')+' '+item.name).toLowerCase().indexOf(keyword)>=0);});
       templates.sort(function(a,b){return templateMatchScore(b)-templateMatchScore(a);});
       var container=document.getElementById('templateReuseResults'); container.innerHTML='';
       templates.forEach(function(template) {
@@ -1272,18 +1298,8 @@
       var selectedTemplate = TEMPLATE_REUSE_OPTIONS.find(function(item) { return Number(item.id) === Number(templateId); });
       var selected = selectedTemplate && selectedTemplate.versions.find(function(version) { return version.key === key; });
       if (!selectedTemplate || !selected) return;
-      document.getElementById('wf-address').value = '浙江省杭州市西湖区余杭塘路866号';
-      document.getElementById('wf-greScore').value = selected.gre;
-      document.getElementById('wf-address').classList.remove('border-yellow-400', 'bg-yellow-50');
-      var pending = document.getElementById('materialListPending');
-      var scanned = document.getElementById('materialListScanned');
-      var badge = document.getElementById('scanStateBadge');
-      if (pending) pending.classList.add('hidden');
-      if (scanned) scanned.classList.remove('hidden');
-      if (badge) badge.textContent = '4 / 6 已上传 · ' + selected.version;
-      document.getElementById('templateFieldSummary').innerHTML = '<span><strong>' + escapeTemplateText(selectedTemplate.school) + ' · ' + escapeTemplateText(selectedTemplate.college) + '</strong>　模板 ' + escapeTemplateText(selected.version) + '</span><span>' + selected.fields + ' 个字段 · ' + selected.materials + ' 项材料</span>';
+      if (!pbsApplication.applyTemplate(selectedTemplate, selected)) return;
       closeTemplateReuseModal();
-      alert('已复用 ' + selectedTemplate.school + ' · ' + selectedTemplate.college + ' · ' + CURRENT_APPLICATION_PROGRAM + ' ' + selected.version + '，官网字段与申请材料清单已同步更新');
     }
 
     // ===== 申请官网字段表单：保存 =====
@@ -1293,7 +1309,7 @@
     function collectWebsiteFormData() {
       var data = {};
       document.querySelectorAll('[data-wf-label]').forEach(function(el) {
-        data[el.getAttribute('data-wf-label')] = el.value;
+        data[el.id || el.getAttribute('data-wf-label')] = el.value;
       });
       return data;
     }
@@ -1323,7 +1339,7 @@
         var first = missing[0];
         var group = first.closest('details');
         if (group) group.open = true;
-        first.focus();
+        if (first.type === 'hidden') { var visibleControl = first.closest('.website-form-field').querySelector('input:not([type="hidden"]),select,textarea'); if (visibleControl) visibleControl.focus(); } else first.focus();
         var names = missing.slice(0, 3).map(function(field) {
           var label = field.closest('.website-form-field').querySelector('label');
           return label.textContent.replace('*', '').trim();
@@ -1347,8 +1363,13 @@
       try {
         var record = JSON.parse(raw);
         fields.forEach(function(field) {
-          var value = record.fields && record.fields[field.getAttribute('data-wf-label')];
-          if (value !== undefined) field.value = value;
+          var value = record.fields && (record.fields[field.id] !== undefined ? record.fields[field.id] : record.fields[field.getAttribute('data-wf-label')]);
+          if (value !== undefined) {
+            if (field.tagName === 'SELECT' && !Array.from(field.options).some(function(option){return option.value === value;})) {
+              var custom = document.createElement('option'); custom.value = value; custom.textContent = value; field.appendChild(custom);
+            }
+            field.value = value;
+          }
         });
         updateWebsiteFormSaveState(localStorage.getItem(WEBSITE_FORM_DRAFT_KEY) ? '已恢复暂存内容' : '已加载保存内容');
       } catch (error) {
@@ -1398,11 +1419,14 @@
       alert('申请结果已保存');
     }
     document.addEventListener('DOMContentLoaded', function() {
+      renderApplicationTimeline();
       renderResultImage('');
       restoreWebsiteForm();
     });
   </script>
   <script src="./assets/js/pbs-app.js?v=6.0"></script>
+  <link rel="stylesheet" href="./assets/css/pbs-application.css">
+  <script src="./assets/js/pbs-application.js"></script>
 
 
   

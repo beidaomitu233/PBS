@@ -779,6 +779,14 @@
       modeBadge.className = isEditMode
         ? 'px-2 py-0.5 rounded-full bg-blue-50 text-blue-700 text-xs'
         : 'px-2 py-0.5 rounded-full bg-green-50 text-green-700 text-xs';
+      if (params.get('caseSource')) {
+        var sourceName = params.get('caseSource'), type = params.get('docType') || 'PS';
+        document.querySelector('.template-editor-body aside input[type="text"]').value = sourceName.replace(/\.[^.]+$/, '') + '模板';
+        var typeSelect = document.querySelector('.template-editor-body aside select');
+        if (Array.from(typeSelect.options).some(function(option){return option.value === type;})) typeSelect.value = type;
+        document.querySelector('#case-source-library label .truncate').textContent = sourceName;
+        document.querySelectorAll('#case-source-library input[type="checkbox"]').forEach(function(input,index){input.checked = index === 0;});
+      }
 
       document.querySelectorAll('.case-source-tab').forEach(function(tab) {
         tab.addEventListener('click', function() {

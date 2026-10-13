@@ -43,6 +43,7 @@
             <h1>学生监控详情</h1>
           </div>
         </div>
+        <div class="pbs-detail-topbar__actions"><button class="monitor-btn secondary small" data-pbs-permission="monitor_mail_manage" onclick="pbsMonitor.openConfig()">监控配置</button></div>
       </div>
 
       <section class="monitor-detail-card" aria-label="学生院校监控详情">
@@ -69,7 +70,7 @@
                   </span>
                   <div><h3 id="monitorMailTitle">邮件监控</h3><p id="monitorMailSub">按实际接收时间倒序</p></div>
                 </div>
-                <button class="monitor-btn small" data-pbs-permission="monitor_track" onclick="pbsMonitor.syncCurrentMail()">更新邮件</button>
+                <div class="flex items-center gap-2"><button class="monitor-btn secondary small" data-pbs-permission="monitor_track" onclick="pbsMonitor.openMailAnalysis()">AI 识别</button><button class="monitor-btn small" data-pbs-permission="monitor_track" onclick="pbsMonitor.syncCurrentMail()">更新邮件</button></div>
               </header>
               <div id="monitorMailBody" class="channel-body"></div>
             </article>
@@ -113,6 +114,20 @@
     </div>
   </div>
 
+  <div id="monitorConfigModal" class="monitor-modal" aria-hidden="true" onclick="if(event.target===this)pbsMonitor.closeModal('monitorConfigModal')">
+    <form class="monitor-dialog" role="dialog" aria-modal="true" aria-labelledby="monitorConfigTitle" onsubmit="event.preventDefault();pbsMonitor.saveConfig()">
+      <div class="monitor-dialog-head"><h3 id="monitorConfigTitle">监控配置</h3><button type="button" class="monitor-close" aria-label="关闭监控配置" onclick="pbsMonitor.closeModal('monitorConfigModal')">×</button></div>
+      <div class="monitor-field"><label for="monitorMailProvider">邮箱类型</label><select id="monitorMailProvider"><option>QQ 邮箱</option><option>网易邮箱</option></select></div>
+      <div class="monitor-field"><label for="monitorMailAccount">邮箱账号</label><input id="monitorMailAccount" type="email" required autocomplete="off"></div>
+      <div class="monitor-field"><label for="monitorMailAuthorization">邮箱授权码</label><input id="monitorMailAuthorization" type="password" autocomplete="off" placeholder="请输入邮箱授权码"></div>
+      <div class="monitor-field"><label for="monitorConfigFrequency">监控频率</label><select id="monitorConfigFrequency"><option>每小时</option><option>每天</option><option>每周</option></select></div>
+      <p id="monitorConfigError" class="text-sm text-red-500" role="alert"></p>
+      <div class="monitor-dialog-actions"><button type="button" class="monitor-btn secondary" onclick="pbsMonitor.closeModal('monitorConfigModal')">取消</button><button class="monitor-btn" type="submit">保存</button></div>
+    </form>
+  </div>
+  <div id="monitorMailModal" class="monitor-modal" aria-hidden="true" onclick="if(event.target===this)pbsMonitor.closeModal('monitorMailModal')">
+    <div class="monitor-dialog is-wide" role="dialog" aria-modal="true" aria-labelledby="monitorMailModalTitle"><div class="monitor-dialog-head"><h3 id="monitorMailModalTitle">邮件内容</h3><button class="monitor-close" aria-label="关闭邮件内容" onclick="pbsMonitor.closeModal('monitorMailModal')">×</button></div><div id="monitorMailModalBody" style="line-height:1.8;color:#475569"></div><div class="monitor-dialog-actions"><button class="monitor-btn secondary" onclick="pbsMonitor.closeModal('monitorMailModal')">关闭</button></div></div>
+  </div>
   <div id="monitorToast" class="monitor-toast" role="status" aria-live="polite"></div>
   <script src="./assets/js/pbs-app.js?v=6.0"></script>
   <script src="./assets/js/pbs-monitor-v2.js?v=1.4"></script>

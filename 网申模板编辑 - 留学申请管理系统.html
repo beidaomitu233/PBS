@@ -21,7 +21,8 @@
     .field-order{display:inline-flex;width:24px;height:24px;align-items:center;justify-content:center;border-radius:7px;background:#e6ebf2;color:#64748b;font-size:11px;font-weight:700}
     .field-control-grid{display:grid;grid-template-columns:minmax(0,1fr) 110px 90px;gap:10px;align-items:end}
     .field-definition label{display:block;margin-bottom:6px;color:#64748b;font-size:11px;font-weight:600}
-    .field-description{margin-top:10px}
+    .field-description{margin-top:10px}.main .input,.modal .input{min-width:0!important;max-width:100%}.template-info-grid>div{min-width:0}
+    .field-read-name{font-size:15px;font-weight:600;color:#26364a;overflow-wrap:anywhere}.field-read-meta{display:flex;gap:16px;margin:12px 0;color:#7b8798;font-size:12px}.field-read-note{line-height:1.7;color:#66768b;font-size:13px;min-height:22px}.field-definition.is-editing{padding:18px;border-radius:12px;box-shadow:0 0 0 1px #dbe4ef}.entrance-tabs{display:flex;align-items:center;gap:8px;flex-wrap:wrap;padding:14px 20px;border-bottom:1px solid #edf0f3}.entrance-row{display:grid;grid-template-columns:1fr 1.5fr auto;gap:10px;align-items:center;padding:12px 0;border-bottom:1px solid #edf0f3}.entrance-row input{min-width:0}.entrance-default{font-size:12px;color:#64748b;display:flex;gap:8px;align-items:center}.page-manager{display:flex;align-items:center;gap:10px;padding:16px 20px 0}.page-manager .input{max-width:240px}.version-preview-table{width:100%;border-collapse:collapse;font-size:12px}.version-preview-table th,.version-preview-table td{text-align:left;padding:10px 12px;border-bottom:1px solid #edf0f4;vertical-align:top;overflow-wrap:anywhere}.version-preview-table th{color:#8290a3;font-weight:500}.version-preview-scroll{max-height:280px;overflow:auto}
     @media(max-width:1200px){.template-info-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}@media(max-width:960px){.template-info-grid{grid-template-columns:1fr}.field-definition-grid{grid-template-columns:1fr}.field-control-grid{grid-template-columns:1fr 1fr}.field-control-grid>div:first-child{grid-column:1/-1}}
   </style>
   <script src="./assets/js/pbs-app.js" defer></script>
@@ -61,8 +62,10 @@
 
       <section class="card mb-5 overflow-hidden">
         <div class="flex items-center justify-between px-5 py-4 border-b border-gray-100"><div><h2 class="text-base font-semibold text-gray-900">申请官网字段</h2><p class="text-xs text-gray-400 mt-1"><span id="activePageName">当前页面</span> · <span id="fieldCount">0</span> 个字段</p></div><div class="flex gap-2"><button class="btn" onclick="addApplicationPage()">添加页面</button><button class="btn primary" onclick="addFieldRow()">添加字段</button></div></div>
+        <div class="entrance-tabs"><div id="entranceTabs" class="flex flex-wrap gap-2 flex-1"></div><button class="btn" onclick="openEntranceManager()">管理申请入口</button></div>
         <div id="programScopeTabs" class="scope-tabs"></div>
         <div class="px-5 pt-4 pb-3 border-b border-gray-100"><div id="applicationPageTabs" class="page-tabs"></div></div>
+        <div class="page-manager"><input id="applicationPageName" class="input" aria-label="申请页面名称" onchange="renameApplicationPage(this.value)"><button class="text-xs text-gray-400 hover:text-red-600" onclick="deleteApplicationPage()">删除页面</button></div>
         <div id="fieldRows" class="field-definition-grid grid grid-cols-2 gap-x-6 px-5 pb-3"></div>
       </section>
 
@@ -87,6 +90,13 @@
     </div>
   </div>
   <div id="editorToast" class="toast" role="status"></div>
+  <div id="entranceModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="entranceModalTitle">
+    <div class="dialog" style="max-width:760px">
+      <div class="flex items-center justify-between px-6 py-4 border-b border-gray-200"><h2 id="entranceModalTitle" class="text-lg font-semibold">申请入口</h2><button class="text-2xl text-gray-400" aria-label="关闭申请入口" onclick="closeEntranceManager()">×</button></div>
+      <div class="dialog-body p-6"><div id="entranceRows"></div><button class="btn mt-4" onclick="addEntranceRow()">添加入口</button><p id="entranceError" class="text-sm text-red-500 mt-3" role="alert"></p></div>
+      <div class="flex justify-end gap-3 px-6 py-4 border-t border-gray-200"><button class="btn" onclick="closeEntranceManager()">取消</button><button class="btn primary" onclick="saveEntrances()">确定</button></div>
+    </div>
+  </div>
   <script src="./网申模板编辑 - 留学申请管理系统.js"></script>
 </body>
 </html>

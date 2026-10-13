@@ -699,12 +699,12 @@
 
         <!-- 基础信息 -->
         <div>
-          <h4 class="text-sm font-medium text-gray-700 mb-3">基础信息</h4>
-          <div class="grid grid-cols-2 gap-x-6 gap-y-3 text-sm">
-            <div class="flex justify-between border-b border-gray-50 pb-2"><span class="text-gray-400">文书类型</span><span class="text-gray-800 font-medium">PS</span></div>
-            <div class="flex justify-between border-b border-gray-50 pb-2"><span class="text-gray-400">申请层次</span><span class="text-gray-800 font-medium">硕士申请</span></div>
-            <div class="flex justify-between border-b border-gray-50 pb-2"><span class="text-gray-400">申请方向</span><span class="text-gray-800 font-medium">CS/人工智能</span></div>
-            <div class="flex justify-between border-b border-gray-50 pb-2"><span class="text-gray-400">录取院校</span><span class="text-gray-800 font-medium">卡内基梅隆大学</span></div>
+          <div class="flex items-center justify-between mb-3"><h4 class="text-sm font-medium text-gray-700">基础信息</h4><button id="caseMetadataEdit" class="text-xs text-blue-600" data-pbs-permission="case_manage" onclick="toggleCaseMetadata()">编辑</button></div>
+          <div id="caseMetadata" class="grid grid-cols-2 gap-x-6 gap-y-3 text-sm">
+            <div class="flex justify-between border-b border-gray-50 pb-2"><span class="text-gray-400">文书类型</span><span data-case-meta="type" class="text-gray-800 font-medium">PS</span></div>
+            <div class="flex justify-between border-b border-gray-50 pb-2"><span class="text-gray-400">申请层次</span><span data-case-meta="level" class="text-gray-800 font-medium">硕士申请</span></div>
+            <div class="flex justify-between border-b border-gray-50 pb-2"><span class="text-gray-400">申请方向</span><span data-case-meta="direction" class="text-gray-800 font-medium">CS/人工智能</span></div>
+            <div class="flex justify-between border-b border-gray-50 pb-2"><span class="text-gray-400">录取院校</span><span data-case-meta="school" class="text-gray-800 font-medium">卡内基梅隆大学</span></div>
             <div class="flex justify-between border-b border-gray-50 pb-2"><span class="text-gray-400">录取结果</span><span class="text-green-600 font-medium">已录取</span></div>
             <div class="flex justify-between border-b border-gray-50 pb-2"><span class="text-gray-400">来源学生</span><span class="text-gray-800 font-medium">张**（2025Fall）<span class="ml-1 text-[10px] px-1.5 py-0.5 bg-gray-100 text-gray-400 rounded">已脱敏</span></span></div>
           </div>
@@ -758,7 +758,7 @@
               <p class="text-sm font-medium text-gray-900">AI方向PS标准模板</p>
               <p class="text-xs text-gray-400 mt-0.5">本案例与其余 2 份案例共同解析生成 · 已发布</p>
             </div>
-            <button class="text-xs text-blue-600 hover:text-blue-800 font-medium flex-shrink-0" onclick="showToast(&#39;跳转至模板库编辑：AI方向PS标准模板&#39;)">查看模板 →</button>
+            <button class="text-xs text-blue-600 hover:text-blue-800 font-medium flex-shrink-0" onclick="location.href='模板库编辑 - 文书交付系统.html?mode=edit'">查看模板 →</button>
           </div>
           <p class="text-xs text-gray-400 mt-2">该模板已被 12 个文书任务引用</p>
         </div>
@@ -769,7 +769,7 @@
         <button class="text-sm text-gray-500 hover:text-red-600" onclick="openDeleteModal(&#39;张同学-CS方向-PS终稿.docx&#39;)">删除案例</button>
         <div class="flex items-center gap-3">
           <button class="px-4 py-2 text-sm bg-white border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 font-medium" onclick="showToast(&#39;已重新提交解析任务&#39;)">重新解析</button>
-          <button class="px-5 py-2 text-sm bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium flex items-center gap-1.5" onclick="showToast(&#39;跳转至模板库编辑，并带入本案例包&#39;)">
+          <button class="px-5 py-2 text-sm bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium flex items-center gap-1.5" onclick="generateCaseTemplate()">
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09z"></path></svg>
             生成模板
           </button>
@@ -965,7 +965,39 @@
     enhanceAuthorColumn();
 
     // ================= 详情抽屉 =================
-    function openDrawer() { document.getElementById('caseDrawer').classList.remove('hidden'); }
+    var currentCaseRow = null, currentCaseName = '', caseMetadataEditing = false;
+    document.querySelectorAll('tr[data-kw]').forEach(function(row) {
+      var name = row.querySelector('td:nth-child(2) p'); if (!name) return;
+      try {
+        var saved = JSON.parse(localStorage.getItem('pbs_case_metadata_' + name.textContent)); if (!saved) return;
+        Object.keys(saved).forEach(function(key) { row.dataset[key] = saved[key]; });
+        ['type','direction','level','school'].forEach(function(key,index) { row.cells[index + 2].textContent = saved[key] || '—'; });
+        row.dataset.kw = name.textContent + Object.keys(saved).map(function(key) { return saved[key]; }).join('') + row.dataset.uploader;
+      } catch(error) {}
+    });
+    function openDrawer() {
+      currentCaseRow = document.activeElement.closest('tr[data-kw]') || document.querySelector('tr[data-kw]');
+      currentCaseName = currentCaseRow.querySelector('td:nth-child(2) p').textContent;
+      try { var saved = JSON.parse(localStorage.getItem('pbs_case_metadata_' + currentCaseName)); if (saved) Object.keys(saved).forEach(function(key){currentCaseRow.dataset[key] = saved[key];}); } catch(error) {}
+      caseMetadataEditing = false; renderCaseMetadata(); document.getElementById('caseDrawer').classList.remove('hidden');
+      var filename = document.querySelector('#caseDrawer .truncate'); if (filename) filename.textContent = currentCaseName;
+    }
+    function renderCaseMetadata() {
+      document.getElementById('caseMetadataEdit').textContent = caseMetadataEditing ? '保存' : '编辑';
+      document.querySelectorAll('[data-case-meta]').forEach(function(host){var value = currentCaseRow.dataset[host.dataset.caseMeta] || ''; host.textContent = ''; if (!caseMetadataEditing) { host.textContent = value || '—'; return; } var input = document.createElement('input'); input.value = value; input.setAttribute('aria-label',host.previousElementSibling.textContent); input.style.cssText = 'width:100%;min-width:0;height:34px;border:1px solid #d9e0e9;border-radius:7px;padding:0 8px'; host.style.cssText = 'max-width:65%;min-width:0'; host.appendChild(input); });
+    }
+    function toggleCaseMetadata() {
+      if (!currentCaseRow) return;
+      if (caseMetadataEditing) {
+        var record = {}; document.querySelectorAll('[data-case-meta]').forEach(function(host){record[host.dataset.caseMeta] = host.querySelector('input').value.trim();});
+        if (!record.type || !record.level) { showToast('请填写文书类型与申请层次'); return; }
+        Object.keys(record).forEach(function(key){currentCaseRow.dataset[key] = record[key];}); localStorage.setItem('pbs_case_metadata_' + currentCaseName,JSON.stringify(record));
+        currentCaseRow.cells[2].textContent = record.type; currentCaseRow.cells[3].textContent = record.direction; currentCaseRow.cells[4].textContent = record.level; currentCaseRow.cells[5].textContent = record.school;
+        currentCaseRow.dataset.kw = currentCaseName + Object.keys(record).map(function(key){return record[key];}).join('') + currentCaseRow.dataset.uploader; showToast('案例信息已保存');
+      }
+      caseMetadataEditing = !caseMetadataEditing; renderCaseMetadata();
+    }
+    function generateCaseTemplate() { if (!currentCaseRow) return; location.href = '模板库编辑 - 文书交付系统.html?caseSource=' + encodeURIComponent(currentCaseName) + '&docType=' + encodeURIComponent(currentCaseRow.dataset.type); }
     function closeDrawer() { document.getElementById('caseDrawer').classList.add('hidden'); }
 
     // ================= 删除 =================

@@ -697,6 +697,7 @@
       setTimeout(function() { toast.remove(); }, 2500);
     }
     function acceptTask() {
+      if (window.pbsTaskReturn) window.pbsTaskReturn.accept('application', '孙梓涵', '哥伦比亚大学');
       // 从抽屉移除卡片、角标减1
       var card = document.getElementById('pendingTaskCard1');
       if (card) card.remove();
@@ -738,11 +739,13 @@
       applyFilter();
     }
     function rejectTask() {
+      window.pbsTaskReturn.confirm({ kind: 'application', student: '孙梓涵', school: '哥伦比亚大学', label: '孙梓涵 · 哥伦比亚大学 · 网申任务', cardId: 'pendingTaskCard1', page: '网申任务列表页 - 留学申请管理系统.html' }, function () {
       var card = document.getElementById('pendingTaskCard1');
       if (card) card.remove();
       updatePendingBadge(0);
       showTaskToast('已退回网申任务（孙梓涵 - 哥伦比亚大学/金融工程），该任务已退回至PM重新分配', 'reject');
       closePendingDrawer();
+      });
     }
     /* ---------- 高级筛选 ---------- */
     function gv(id) { var el = document.getElementById(id); return el ? (el.value || '').trim() : ''; }
@@ -775,7 +778,7 @@
     });
   </script>
   <script src="./assets/js/pbs-workbench.js?v=2.1"></script>
-  <script src="./assets/js/pbs-app.js?v=6.5"></script>
+  <script src="./assets/js/pbs-app.js?v=6.9"></script>
 
 
 

@@ -341,7 +341,7 @@
     ],
     '网申人员': [
       'workbench_apply',
-      'customer_view', 'customer_view_detail',
+      'customer_view', 'customer_view_detail', 'customer_edit',
       'app_view', 'app_task_handle', 'app_view_detail', 'app_fill', 'app_submit',
       'app_library_view', 'app_library_manage', 'app_library_export', 'app_template_edit_view', 'app_template_save',
       'archive_view', 'archive_view_detail'
@@ -844,6 +844,7 @@
      保证「分配 → 接收 → 执行」状态跨页面闭环。
      ============================================================ */
   var PROJECT_STORE_KEY = 'pbs_projects_v1';
+  var PROJECT_NUMBERS = { PRJ20260701001: 'PRJ-M-2607-0001', PRJ20260701002: 'PRJ-M-2607-0002', PRJ20260701005: 'PRJ-O-2607-0008', PRJ20260701008: 'PRJ-M-2607-0007', PRJ20260701012: 'PRJ-M-2607-0009', PRJ20260701018: 'PRJ-M-2607-0010' };
   var ACCOUNT_STORE_KEY = 'pbs_managed_accounts_v2';
   var ROLE_PERMS_KEY = 'pbs_role_perms_v1';
 
@@ -875,6 +876,8 @@
                  packages[], serviceStages[], projectManager, pmAccepted,
                  status, createdAt, assignedAt, acceptedAt, org } */
   window.pbsProjects = {
+    canonicalNo: function (value) { return PROJECT_NUMBERS[value] || value; },
+    legacyNo: function (value) { return Object.keys(PROJECT_NUMBERS).filter(function(key) { return PROJECT_NUMBERS[key] === value; })[0] || value; },
     all: function () { return readStore(PROJECT_STORE_KEY, []); },
     save: function (list) { writeStore(PROJECT_STORE_KEY, list); },
     /* 把已修改的单条记录合并回存储（避免 save(this.all()) 重读旧数据把改动冲掉） */
@@ -886,9 +889,12 @@
       this.save(list);
     },
     find: function (projectNo) {
+      projectNo = this.canonicalNo(projectNo);
       return this.all().filter(function (p) { return p.projectNo === projectNo; })[0] || null;
     },
     upsert: function (record) {
+      if (record.manualCreated || /^PRJ-O-/.test(record.projectNo) || record.source === '线下') record.orderNo = '';
+      if (window.pbsStudents) window.pbsStudents.attachProject(record);
       var list = this.all();
       var idx = -1;
       for (var i = 0; i < list.length; i++) { if (list[i].projectNo === record.projectNo) { idx = i; break; } }
@@ -910,6 +916,8 @@
       p.pmAccepted = false;
       p.status = normalizeProjectStatus(p);
       p.assignedAt = new Date().toISOString();
+      p.rejectedAt = '';
+      p.rejectReason = '';
       this.saveOne(p);
       window.pbsCreateNotification({
         kind: 'task_assigned', type: '新项目待接收',
@@ -943,6 +951,7 @@
       p.status = '待分配';
       p.rejectedAt = new Date().toISOString();
       p.rejectReason = reason || '';
+      p.assignedAt = '';
       this.saveOne(p);
       window.pbsCreateNotification({
         kind: 'task_assigned', type: '项目退回提醒',
@@ -955,6 +964,45 @@
         href: '项目池列表页 - 留学申请管理系统.html'
       });
       return p;
+    },
+    getAssignment: function(projectNo) {
+      var project = this.find(projectNo) || {};
+      var stored = readStore('pbs_project_assignment_v3_' + (project.projectNo || projectNo), {});
+      var goals = project.goalAssignments;
+      if (!goals) {
+        goals = Object.assign({}, stored.goalAssignments || {});
+        var pm = readStore('pbs_pm_staff_assignment_v3_' + project.projectNo, readStore('pbs_pm_staff_assignment_v3_' + this.legacyNo(project.projectNo), {}));
+        Object.keys(pm).forEach(function(id) {
+          var item = pm[id], docs = {}, reviewers = {};
+          Object.keys(item.docs || {}).forEach(function(key) { docs[key] = { person: item.docs[key].owner, ddl: item.docs[key].ddl }; reviewers[key] = item.docs[key].reviewer; });
+          goals[id] = { docs: docs, reviewers: reviewers, network: item.networkOwner, networkMatDdl: item.materialDdl, networkDdl: item.applyDdl, assignedBy: '项目经理', locked: false };
+        });
+      }
+      return { projectManager: project.projectManager || '', taskNote: project.assignmentNote !== undefined ? project.assignmentNote : stored.taskNote || '', goalAssignments: goals };
+    },
+    goalAssignmentComplete: function(goal, requiredDocs) {
+      if (!goal) return false;
+      var keys = requiredDocs || goal.requiredDocs || ['CV', 'PS', 'RL', 'RP', 'TCX'];
+      return !!(keys.length && keys.every(function(key) {
+        var doc = (goal.docs || {})[key];
+        return doc && doc.person && doc.ddl && (goal.reviewers || {})[key];
+      }) && goal.network && goal.networkMatDdl && goal.networkDdl);
+    },
+    assignmentComplete: function(project) {
+      if (typeof project === 'string') project = this.find(project);
+      if (!project || !project.projectManager || !(project.packages || []).length) return false;
+      var goals = project.goalAssignments || this.getAssignment(project.projectNo).goalAssignments, self = this;
+      return project.packages.every(function(item, index) { return self.goalAssignmentComplete(goals[item.id || 'goal-' + index]); });
+    },
+    saveAssignment: function(projectNo, goals, note) {
+      var project = this.find(projectNo);
+      if (!project) return null;
+      project.goalAssignments = goals;
+      project.assignmentNote = note;
+      project.remark = note;
+      project.assignedAt = new Date().toISOString();
+      project.allStaffAssigned = this.assignmentComplete(project);
+      return this.upsert(project);
     },
     statusOf: normalizeProjectStatus
   };
@@ -974,9 +1022,40 @@
       { projectNo: 'PRJ-M-2607-0004', customer: '赵文华', student: '赵婷', level: '硕士申请', source: '线上', projectManager: '王老师', pmAccepted: true, status: '进行中', org: 'PBS留学总部', createdAt: '2026-06-28 11:15' },
       { projectNo: 'PRJ-O-2607-0005', customer: '陈国平', student: '陈晓', level: '本科申请', source: '线下', projectManager: '', pmAccepted: false, status: '待分配', org: 'PBS留学总部', createdAt: '2026-07-08 15:05' }
     ];
+    seeds.push(
+      { projectNo: 'PRJ-M-2607-0006', customer: '李慧敏', student: '李雪', level: '硕士申请', source: '线上', projectManager: '张老师', pmAccepted: true, status: '进行中', org: 'PBS留学总部', createdAt: '2026-07-05 09:20' },
+      { projectNo: 'PRJ-M-2607-0007', customer: '陈晨', student: '陈雨桐', level: '硕士申请', source: '线上', projectManager: '张老师', pmAccepted: false, status: '待接收', org: 'PBS留学总部', createdAt: '2026-07-15 14:00' },
+      { projectNo: 'PRJ-O-2607-0008', customer: '刘洋', student: '刘晓', level: '本科申请', source: '线下', projectManager: '张老师', pmAccepted: true, status: '进行中', org: 'PBS留学总部', createdAt: '2026-07-17 11:20' },
+      { projectNo: 'PRJ-M-2607-0009', customer: '王磊', student: '王梓豪', level: '博士申请', source: '线上', projectManager: '李老师', pmAccepted: true, status: '进行中', org: 'PBS留学总部', createdAt: '2026-07-16 10:15' },
+      { projectNo: 'PRJ-M-2607-0010', customer: '赵敏', student: '赵欣怡', level: '本科申请', source: '线上', projectManager: '张老师', pmAccepted: true, status: '已结项', org: 'PBS留学总部', createdAt: '2026-07-10 08:00' }
+    );
     var added = false;
     seeds.forEach(function (seed) {
       if (!have[seed.projectNo]) { existing.push(seed); added = true; }
+    });
+    var serviceNames = ['CV','PS','RP','RL','套磁信','网申提交证明','网申结果','结项报告'];
+    existing.forEach(function(project) {
+      if (project.manualCreated || /^PRJ-O-/.test(project.projectNo) || project.source === '线下') {
+        if (project.orderNo !== '') { project.orderNo = ''; added = true; }
+      } else if (!project.orderNo) { project.orderNo = '202607' + project.projectNo.slice(-4); added = true; }
+      if (!project.manualCreated && project.source !== '线下' && (project.projectNo === 'PRJ-M-2607-0002' || project.projectNo === 'PRJ-M-2607-0006')) { if (project.orderNo !== '20260705002') { project.orderNo = '20260705002'; added = true; } }
+      if (!project.subOrderNo) { project.subOrderNo = 'SUB-' + project.projectNo; added = true; }
+      if (!project.packages || !project.packages.length) {
+        var second = ['PRJ-M-2607-0006','PRJ-O-2607-0008','PRJ-O-2607-0003'].indexOf(project.projectNo) >= 0;
+        project.packages = [{ id: second ? 'stanford' : 'cmu', school: second ? '斯坦福大学' : '卡内基梅隆大学', major: second ? '计算机科学' : '人工智能', name: second ? '院校申请套餐' : '尊享申请套餐', services: serviceNames.map(function(name) { return { name: name, price: 0 }; }) }];
+        added = true;
+      }
+      if (project.assignedAt === undefined) { project.assignedAt = project.projectManager ? project.createdAt : ''; added = true; }
+      if (project.projectNo === 'PRJ-M-2607-0002' && !project.goalAssignments && !readStore('pbs_project_assignment_v3_' + project.projectNo, null) && !readStore('pbs_pm_staff_assignment_v3_' + project.projectNo, null) && !readStore('pbs_pm_staff_assignment_v3_' + window.pbsProjects.legacyNo(project.projectNo), null)) {
+        var docs = {}, reviewers = {}, dates = { CV: '2026-10-08', PS: '2026-10-15', RL: '2026-10-12', RP: '2026-10-20', TCX: '2026-11-01' };
+        Object.keys(dates).forEach(function(key) { docs[key] = { person: key === 'RL' ? '陈老师' : '刘老师', ddl: dates[key] }; reviewers[key] = key === 'RL' || key === 'RP' ? '周老师' : '孙老师'; });
+        project.goalAssignments = { cmu: { docs: docs, reviewers: reviewers, network: '吴老师', networkMatDdl: '2026-09-25', networkDdl: '2026-11-01', assignedBy: '机构管理员', locked: true } };
+        added = true;
+      }
+      if (project.projectNo === 'PRJ-M-2607-0002') {
+        if (project.allStaffAssigned === undefined) { project.allStaffAssigned = true; added = true; }
+        if (!project.direction) project.direction = '计算机科学 · 人工智能';
+      }
     });
     if (added || !existing.length) writeStore(PROJECT_STORE_KEY, existing);
   })();
@@ -2141,16 +2220,16 @@
     ],
     '项目池列表页 - 留学申请管理系统.html': [
       { permission: 'project_create', texts: ['新增项目','新建项目','创建项目档案','确认创建','移除'] },
-      { permission: 'project_team_manage', texts: ['分配','确认分配'] }
+      { permission: 'project_team_manage', texts: ['分配','更换人员','完成分配'] }
     ],
     '项目详情页 - 留学申请管理系统.html': [
-      { permission: 'project_team_manage', texts: ['分配','确认分配','更换项目经理','确认更换','提前分配','完成本院校目标分配','按需更换','完成本院校目标更换'] }
+      { permission: 'project_team_manage', texts: ['分配','更换人员','完成分配','更换项目经理','提前分配','按需更换'] }
     ],
     '我的项目列表页 - 留学申请管理系统.html': [
       { permission: 'my_project_handle', texts: ['接收','立即接收','退回','确认退回'] }
     ],
     '我的项目详情页 - 留学申请管理系统.html': [
-      { permission: 'my_project_team_manage', texts: ['分配人员','确认分配','更换人员','确认更换'] },
+      { permission: 'my_project_team_manage', texts: ['分配','更换人员','完成分配'] },
       { permission: 'my_project_complete', texts: ['完成任务','确认完成'] }
     ],
     '院校目标详情页 - 留学申请管理系统.html': [
@@ -2457,7 +2536,7 @@
     link.href = './assets/css/pbs-advanced-filter.css?v=6.6';
     document.head.appendChild(link);
     var script = document.createElement('script');
-    script.src = './assets/js/pbs-advanced-filter.js?v=6.6';
+    script.src = './assets/js/pbs-advanced-filter.js?v=6.8';
     script.onload = function () {
       if (window.PBSAdvancedFilter) {
         window.PBSAdvancedFilter.mount({ file: file, controlSelector: FILTER_PAGE_CONTROLS[file] });
@@ -2819,6 +2898,12 @@
   });
 })();
 
+(function loadTaskReturns() {
+  var script = document.createElement('script');
+  script.src = './assets/js/pbs-task-return.js?v=1.1';
+  document.head.appendChild(script);
+})();
+
 /* 已交付文件：文书、网申、结项归档与商城提交使用同一份跨页面数据。 */
 (function loadDeliveryWorkflow() {
   var page = decodeURIComponent((location.pathname || '').split('/').pop() || '');
@@ -2827,18 +2912,19 @@
     '文书审核详情页 - 留学申请管理系统.html',
     '网申任务详情页 - 留学申请管理系统.html',
     '结项详情页 - 留学申请管理系统.html',
-    '项目详情页 - 留学申请管理系统.html'
+    '项目详情页 - 留学申请管理系统.html',
+    '我的项目详情页 - 留学申请管理系统.html'
   ];
   if (enabledPages.indexOf(page) < 0) return;
   if (!document.querySelector('link[href*="pbs-delivery.css"]')) {
     var style = document.createElement('link');
     style.rel = 'stylesheet';
-    style.href = './assets/css/pbs-delivery.css?v=1.7';
+    style.href = './assets/css/pbs-delivery.css?v=2.0';
     document.head.appendChild(style);
   }
   if (!document.querySelector('script[src*="pbs-delivery.js"]')) {
     var script = document.createElement('script');
-    script.src = './assets/js/pbs-delivery.js?v=1.7';
+  script.src = './assets/js/pbs-delivery.js?v=2.3';
     document.body.appendChild(script);
   }
 })();
@@ -2938,4 +3024,39 @@
       document.querySelectorAll('.pbs-filter-date-native').forEach(updateDateField);
     }, 0);
   }, true);
+})();
+
+(function () {
+  function esc(value) { return String(value == null ? '' : value).replace(/[&<>"']/g, function(c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
+  function section(title, color, icon, note) {
+    return '<div class="border border-gray-200 rounded-xl p-4 mb-3 bg-white"><div class="flex items-center gap-2 mb-3"><span class="w-8 h-8 rounded-lg bg-' + color + '-100 text-' + color + '-600 flex items-center justify-center">' + icon + '</span><h3 class="text-sm font-semibold text-gray-800">' + title + '</h3></div>' + (note ? '<p class="text-xs text-gray-400 mb-3">' + note + '</p>' : '');
+  }
+  window.pbsStaffAssignmentFormHtml = function(goal, assignment, prefix, selections) {
+    var docs = assignment.docs || {}, reviewers = assignment.reviewers || {};
+    var html = section('文书交付人员', 'blue', '✎', '每种文书单独指定交付人员及交付 DDL，可只填部分文书');
+    goal.docs.forEach(function(doc) {
+      var key = prefix + 'd_' + doc.key, saved = docs[doc.key] || {}, ddl = saved.ddl || doc.ddl || '', title = doc.name.replace(/×\d+/g, '');
+      selections[key] = saved.person || null;
+      html += '<div class="border border-gray-100 rounded-lg p-3 mb-2 bg-gray-50"><p class="text-xs font-medium text-gray-700 mb-2">' + esc(title) + '</p><div class="flex items-center gap-2">' + window.dropdownHtml(key, selections[key], '选择交付人员') + '<input type="date" value="' + esc(ddl) + '" id="' + prefix + 'Ddl_' + doc.key + '" title="交付 DDL" oninput="pbsSyncReviewerDdl(\'' + prefix + '\',\'' + doc.key + '\',this.value)" class="w-[132px] flex-shrink-0 h-9 px-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"></div></div>';
+    });
+    html += '</div>' + section('文书审核人员', 'green', '✓', '每种文书单独指定审核人员，可只填部分；审核 DDL 跟随对应文书交付 DDL');
+    goal.docs.forEach(function(doc) {
+      var key = prefix + 'Reviewer_' + doc.key, ddl = (docs[doc.key] || {}).ddl || doc.ddl || '', title = doc.name.replace(/×\d+/g, '');
+      selections[key] = reviewers[doc.key] || null;
+      html += '<div class="border border-gray-100 rounded-lg p-3 mb-2 bg-gray-50"><div class="flex items-center justify-between gap-2 mb-2"><p class="text-xs font-medium text-gray-700">' + esc(title) + '</p><span class="text-[10px] text-gray-500 whitespace-nowrap">交付 DDL <span id="' + prefix + 'ReviewerDdl_' + doc.key + '">' + esc(ddl || '—') + '</span></span></div>' + window.dropdownHtml(key, selections[key], '选择 ' + title + ' 审核人员') + '</div>';
+    });
+    selections[prefix + 'Network'] = assignment.network || null;
+    html += '</div>' + section('网申人员', 'purple', '◎', '材料准备 · 网申提交') + '<div class="mb-3">' + window.dropdownHtml(prefix + 'Network', assignment.network, '选择网申人员') + '</div><div class="grid grid-cols-2 gap-2"><div><label class="block text-xs text-gray-500 mb-1">材料准备 DDL</label><input type="date" value="' + esc(assignment.networkMatDdl || goal.materialDdl || '') + '" id="' + prefix + 'DdlMatNetwork" class="w-full h-9 px-2 text-sm border border-gray-300 rounded-lg"></div><div><label class="block text-xs text-gray-500 mb-1">网申提交 DDL</label><input type="date" value="' + esc(assignment.networkDdl || goal.appDdl || '') + '" id="' + prefix + 'DdlAppNetwork" class="w-full h-9 px-2 text-sm border border-gray-300 rounded-lg"></div></div></div>';
+    return html;
+  };
+  window.pbsSyncReviewerDdl = function(prefix, key, value) {
+    var node = document.getElementById(prefix + 'ReviewerDdl_' + key);
+    if (node) node.textContent = value || '—';
+  };
+  window.pbsClearAssignedPerson = function(key) {
+    window.selectedPersons[key] = null;
+    var placeholder = document.getElementById(key + 'Placeholder');
+    if (placeholder) { placeholder.textContent = /Network$/.test(key) ? '选择网申人员' : /Reviewer_/.test(key) ? '选择审核人员' : '选择交付人员'; placeholder.classList.remove('text-gray-900', 'font-medium'); placeholder.classList.add('text-gray-400'); }
+    var clear = document.getElementById(key + 'Clear'); if (clear) clear.classList.add('hidden');
+  };
 })();

@@ -231,9 +231,10 @@
 
   function renderStudentStrip() {
     var task = currentTask();
+    var config = readConfig();
     document.getElementById('monitorStudentStrip').innerHTML =
       '<div class="student-strip-main"><div><h2>' + esc(task.student) + '</h2><p>客户：' + esc(task.customer) + '　负责人：' + esc(task.owner) + '</p></div></div>' +
-      '<div class="student-strip-meta"><div><span>申请项目</span><strong>' + esc(task.project) + '</strong></div><div><span>院校数量</span><strong>' + schoolData.length + ' 所</strong></div><div><span>最后汇总</span><strong>' + esc(task.lastSync) + '</strong></div></div>';
+      '<div class="student-strip-meta"><div><span>申请项目</span><strong>' + esc(task.project) + '</strong></div><div><span>院校数量</span><strong>' + schoolData.length + ' 所</strong></div><div><span>监控频率</span><strong>' + esc(config.frequency || task.frequency) + '</strong></div><div><span>最后汇总</span><strong>' + esc(task.lastSync) + '</strong></div></div>';
   }
 
   function sortedSchools() {
@@ -279,7 +280,7 @@
       return '<article class="email-item' + (mail.urgent ? ' is-urgent' : '') + '">' +
         '<div class="email-time"><time>' + esc(mail.receivedAt) + '</time><span class="email-tag">' + esc(mail.tag) + '</span></div>' +
         '<h4>' + esc(mail.subject) + '</h4><div class="email-from">发件人：' + esc(mail.from) + '</div>' +
-        '<p class="email-preview">' + esc(mail.preview) + '</p><button class="monitor-link email-action" onclick="pbsMonitor.showToast(\'已打开邮件原文（原型演示）\')">查看邮件原文</button>' +
+        '<p class="email-preview">' + esc(mail.preview) + '</p><button class="monitor-link email-action" onclick="pbsMonitor.openMail(' + school.emails.indexOf(mail) + ')">查看邮件原文</button>' +
       '</article>';
     }).join('') + '</div>';
   }
@@ -362,6 +363,35 @@
     var school = currentSchool();
     showToast('已更新' + school.name + '的邮件');
   }
+  function readConfig() { try { return JSON.parse(localStorage.getItem('pbs_monitor_config_' + taskId)) || {}; } catch (e) { return {}; } }
+  function openConfig() {
+    var config = readConfig();
+    document.getElementById('monitorMailProvider').value = config.provider || 'QQ 邮箱';
+    document.getElementById('monitorMailAccount').value = config.account || '';
+    document.getElementById('monitorMailAuthorization').value = '';
+    document.getElementById('monitorMailAuthorization').placeholder = config.authorization ? '已配置，留空保持原授权码' : '请输入邮箱授权码';
+    document.getElementById('monitorConfigFrequency').value = config.frequency || currentTask().frequency;
+    document.getElementById('monitorConfigError').textContent = ''; modal('monitorConfigModal',true);
+  }
+  function saveConfig() {
+    var old = readConfig(), account = document.getElementById('monitorMailAccount').value.trim(), authorization = document.getElementById('monitorMailAuthorization').value.trim();
+    if (!account || (!authorization && (!old.authorization || old.account !== account))) { document.getElementById('monitorConfigError').textContent = '请填写邮箱账号与授权码'; return; }
+    var config = { provider:document.getElementById('monitorMailProvider').value, account:account, authorization:authorization || old.authorization, frequency:document.getElementById('monitorConfigFrequency').value };
+    localStorage.setItem('pbs_monitor_config_' + taskId,JSON.stringify(config)); currentTask().frequency = config.frequency;
+    modal('monitorConfigModal',false); renderStudentStrip(); showToast('监控配置已保存');
+  }
+  function openMail(index) {
+    var mail = currentSchool().emails[index]; if (!mail) return;
+    document.getElementById('monitorMailModalTitle').textContent = mail.subject;
+    document.getElementById('monitorMailModalBody').innerHTML = '<div class="text-sm text-gray-400 mb-5">发件人：' + esc(mail.from) + '<br>接收时间：' + esc(mail.receivedAt) + '</div><p>' + esc(mail.preview) + '</p>';
+    modal('monitorMailModal',true);
+  }
+  function openMailAnalysis() {
+    var school = currentSchool();
+    document.getElementById('monitorMailModalTitle').textContent = school.name + ' · 邮件识别结果';
+    document.getElementById('monitorMailModalBody').innerHTML = '<div class="mb-5"><span class="text-sm text-gray-400">申请状态</span><p class="font-semibold">' + esc(school.status) + '</p></div>' + school.emails.filter(function(mail){return mail.task;}).map(function(mail){return '<div style="padding:16px 0;border-top:1px solid #edf0f4"><strong>' + esc(mail.task.title) + '</strong><p class="text-sm text-gray-400 mt-2">截止时间：' + esc(mail.task.deadline) + '</p><p class="text-sm mt-2">' + esc(mail.preview) + '</p></div>';}).join('');
+    modal('monitorMailModal',true);
+  }
 
   function modal(id, open) {
     var el = document.getElementById(id);
@@ -427,6 +457,7 @@
 
   function initList() {
     taskId = 1;
+    taskRows.forEach(function(task){try { var config = JSON.parse(localStorage.getItem('pbs_monitor_config_' + task.id)); if (config) task.frequency = config.frequency; } catch(e) {}});
     renderList();
     ['monitorKeyword', 'monitorStatusFilter', 'monitorFrequencyFilter'].forEach(function (id) {
       var el = document.getElementById(id);
@@ -451,6 +482,10 @@
     saveSchoolStatus: saveSchoolStatus,
     completeSchoolTodos: completeSchoolTodos,
     syncCurrentMail: syncCurrentMail,
+    openConfig:openConfig,
+    saveConfig:saveConfig,
+    openMail:openMail,
+    openMailAnalysis:openMailAnalysis,
     showToast: showToast,
     openSnapshotUpload: openSnapshotUpload,
     previewSnapshot: previewSnapshot,

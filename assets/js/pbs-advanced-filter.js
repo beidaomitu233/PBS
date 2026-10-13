@@ -15,8 +15,8 @@
   var organizations = ['PBS留学总部', '上海启明留学', '北京知行教育'];
   var PAGES = {
     '学生档案列表页 - 留学申请管理系统.html': [field('申请层次', 'checks', levels), field('项目号', 'multi'), field('客户姓名', 'multi'), field('学生姓名', 'multi'), field('院校目标数', 'range', null, { min: 0, max: 10, unit: '所' })],
-    '项目池列表页 - 留学申请管理系统.html': [field('项目状态', 'checks', ['待分配', '待接收', '进行中', '已结项']), field('申请层次', 'checks', levels), field('项目号', 'multi'), field('项目经理', 'multi'), field('客户姓名', 'multi'), field('学生姓名', 'multi')],
-    '我的项目列表页 - 留学申请管理系统.html': [field('申请层次', 'checks', levels), field('项目状态', 'checks', ['待分配', '待接收', '进行中', '已结项']), field('项目经理', 'multi'), field('项目号', 'multi'), field('客户姓名', 'multi'), field('学生姓名', 'multi')],
+    '项目池列表页 - 留学申请管理系统.html': [field('项目状态', 'checks', ['待分配', '待接收', '进行中', '已结项']), field('申请层次', 'checks', levels), field('项目号', 'multi'), field('项目经理', 'multi'), field('客户姓名', 'multi'), field('学生姓名', 'multi'), field('商城订单号', 'multi'), field('分配时间', 'date'), field('订单创建时间', 'date')],
+    '我的项目列表页 - 留学申请管理系统.html': [field('申请层次', 'checks', levels), field('项目状态', 'checks', ['待分配', '待接收', '进行中', '已结项']), field('项目经理', 'multi'), field('项目号', 'multi'), field('客户姓名', 'multi'), field('学生姓名', 'multi'), field('分配时间', 'date')],
     '任务列表页 - 文书交付系统.html': [field('文书状态', 'checks', ['撰写中', '审核中', '需修改', '已完成', '待分配']), field('文书类型', 'checks', ['PS', 'CV', 'RL', 'RP', 'CL']), countdown('DDL倒计时'), field('文书交付人员', 'multi'), field('客户姓名', 'multi'), field('学生姓名', 'multi'), field('学校', 'multi'), field('专业', 'multi'), field('当前环节滞留时长', 'range', null, { min: 0, max: 30, unit: '天', aliases: ['任务停留时长'] })],
     '模板库列表 - 文书交付系统.html': [field('文书类型', 'checks', ['PS', 'CV', 'RL', 'RP', 'CL']), field('申请层次', 'checks', levels.slice(0, 3)), field('所属机构', 'checks', organizations)],
     '案例库 - 文书交付系统.html': [field('文书类型', 'checks', ['PS', 'CV', 'RL', 'RP', 'CL', '推荐信']), field('申请层次', 'checks', levels.slice(0, 3)), field('解析状态', 'checks', ['已解析', '解析中', '未解析', '解析失败', '已归档']), field('所属机构', 'checks', organizations), field('作者', 'multi', null, { dataKeys: ['uploader', 'author'] }), field('机构', 'multi', null, { dataKeys: ['org'] }), field('申请方向', 'multi', null, { dataKeys: ['direction'] }), field('录取院校', 'multi', null, { dataKeys: ['school'] }), field('来源学生', 'multi', null, { dataKeys: ['student'] }), field('关联模板', 'multi', null, { dataKeys: ['template'] })],
@@ -63,6 +63,10 @@
     return -1;
   }
   function valueOf(row, config, map) {
+    if (global.pbsProjectList) {
+      var projectKey = { '项目号': 'project', '商城订单号': 'order', '客户姓名': 'name', '学生姓名': 'student', '项目经理': 'pm', '项目状态': 'status', '申请层次': 'level', '分配时间': 'time', '订单创建时间': 'created' }[config.label];
+      if (projectKey) return row.dataset[projectKey] || '';
+    }
     var index = columnIndex(config, map);
     if (index >= 0 && row.cells && row.cells[index]) return text(row.cells[index]);
     var dataKeys = (config.dataKeys || []).concat(DATA_KEYS[config.label] || []);
@@ -379,6 +383,7 @@
       }
       badge.textContent = count;
     } else if (badge) badge.remove();
+    if (global.pbsProjectList) global.pbsProjectList.filterChanged();
   }
 
   function reset(container, configs, toggle) {
@@ -436,10 +441,29 @@
       container.querySelectorAll('.pbs-advanced-inline-extra').forEach(function (row) { row.hidden = expanded; });
     });
 
+    global.PBSAdvancedFilter.refresh = function (refreshOptions) {
+      if (refreshOptions) {
+        closeAllInlineSelects();
+        configs.forEach(function(config, index) {
+          if (config.type !== 'multi' || config.options.length) return;
+          var oldRow = container.querySelector('.pbs-advanced-inline-row[data-label="' + config.label + '"]');
+          var values = selected(oldRow);
+          var nextRow = createRow(config, rows(), headers(), index > 0);
+          nextRow.hidden = oldRow.hidden;
+          nextRow.querySelectorAll('input[type="checkbox"]').forEach(function(input) { input.checked = values.indexOf(input.value) >= 0; });
+          nextRow.querySelector('.pbs-filter-inline-select').updateButton();
+          oldRow.replaceWith(nextRow);
+        });
+      }
+      apply(container, configs, toggle);
+    };
+    global.PBSAdvancedFilter.reset = function() { reset(container, configs, toggle); };
+
     container.addEventListener('change', function (event) {
       if (event.target.closest('.pbs-advanced-inline-row')) apply(container, configs, toggle);
     });
     card.querySelectorAll('button').forEach(function (button) {
+      if (global.pbsProjectList) return;
       if (/重置/.test(text(button))) button.addEventListener('click', function () { setTimeout(function () { reset(container, configs, toggle); }, 0); });
       if (/搜索|查询/.test(text(button))) button.addEventListener('click', function () { setTimeout(function () { apply(container, configs, toggle); }, 0); });
     });

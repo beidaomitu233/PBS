@@ -621,7 +621,15 @@ body.sidebar-resizing #left-sidebar-resizer::before {
   color: #64748b;
 }
 .editor-workspace {
-  height: calc(100vh - 114px);
+  flex: 1;
+  min-height: 0;
+  align-items: stretch;
+}
+/* 三栏等高：左资料栏 / 中编辑区 / 右工具栏始终与工作区同高，超出部分各自独立滚动 */
+.editor-workspace > aside,
+.editor-workspace > main {
+  align-self: stretch;
+  min-height: 0;
 }
 .topbar-status {
   display: inline-flex;
@@ -650,6 +658,15 @@ body.sidebar-resizing #left-sidebar-resizer::before {
 /* ===== 全局细节美化 ===== */
 body {
   background: linear-gradient(160deg, #f8fafc 0%, #f1f5f9 55%, #eef4ff 100%);
+  /* 整页固定一屏：顶栏 + 工作区正好撑满视口，页面本身不出现滚动条；
+     左 / 中 / 右三栏在各自内部滚动，三栏高度始终一致 */
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+.topbar {
+  flex-shrink: 0;
 }
 .editor-paper {
   border-radius: 16px !important;
@@ -665,6 +682,71 @@ body {
 }
 .doc-type-btn {
   transition: all 0.18s ease;
+}
+/* 顶部多标签页页签栏 */
+.topbar-tabs-bar {
+  border-top: 1px solid #eef2f7;
+  background: rgba(255, 255, 255, 0.92);
+}
+.topbar-tabs-bar nav {
+  padding: 5px 20px;
+}
+/* 侧栏折叠：收起为窄轨，保留展开按钮 */
+.sidebar-collapsed {
+  width: 40px !important;
+}
+.sidebar-collapsed > *:not(.sidebar-expand-btn) {
+  display: none !important;
+}
+.sidebar-expand-btn {
+  display: none;
+  width: 100%;
+  align-items: center;
+  justify-content: center;
+  padding: 12px 0;
+  color: #94a3b8;
+}
+.sidebar-expand-btn:hover {
+  color: #64748b;
+  background: #f1f5f9;
+}
+.sidebar-collapsed .sidebar-expand-btn {
+  display: flex;
+}
+/* 状态徽标：待审核（蓝色）变体 */
+.topbar-status.is-review {
+  color: #1d4ed8;
+  background: linear-gradient(135deg, #eff6ff, #dbeafe);
+  border-color: #bfdbfe;
+}
+.topbar-status.is-review .topbar-status-dot {
+  background: #3b82f6;
+  animation-name: pulse-dot-blue;
+}
+@keyframes pulse-dot-blue {
+  0%, 100% { opacity: 1; box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.45); }
+  50% { opacity: 0.75; box-shadow: 0 0 0 5px rgba(59, 130, 246, 0); }
+}
+/* 段落标题输入框 */
+.section-title-input {
+  flex: 1;
+  min-width: 0;
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: 6px;
+  padding: 2px 6px;
+  font-size: 12px;
+  font-weight: 500;
+  color: #6b7280;
+}
+.section-title-input:hover {
+  border-color: #e5e7eb;
+}
+.section-title-input:focus {
+  outline: none;
+  border-color: #a78bfa;
+  background: #fff;
+  color: #374151;
 }
 /* 细滚动条（所有面板） */
 .overflow-y-auto::-webkit-scrollbar {
@@ -708,6 +790,131 @@ body {
 .ai-loading-dot:nth-child(1) { animation-delay: -0.32s; }
 .ai-loading-dot:nth-child(2) { animation-delay: -0.16s; }
 
+/* 状态徽标：待撰写（灰色）变体 */
+.topbar-status.is-draft {
+  color: #64748b;
+  background: linear-gradient(135deg, #f8fafc, #f1f5f9);
+  border-color: #e2e8f0;
+}
+.topbar-status.is-draft .topbar-status-dot {
+  background: #94a3b8;
+  animation: none;
+}
+
+/* 写作建议卡片：换一换按钮 */
+.btn-suggest-refresh {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  padding: 2px 8px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 500;
+  color: #6d28d9;
+  background: #f5f3ff;
+  border: 1px solid #ddd6fe;
+  transition: all 0.15s ease;
+}
+.btn-suggest-refresh:hover {
+  background: #ede9fe;
+  border-color: #c4b5fd;
+}
+.btn-suggest-refresh svg {
+  transition: transform 0.35s ease;
+}
+.btn-suggest-refresh:hover svg {
+  transform: rotate(180deg);
+}
+.ai-detail-card {
+  transition: border-color 0.2s ease, box-shadow 0.2s ease, opacity 0.18s ease;
+}
+
+/* AI建议底部悬浮：整体换一换（固定悬浮于右栏底部，不随滚动消失） */
+.ai-suggest-footer {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  padding: 14px 16px 16px;
+  background: linear-gradient(to top, #ffffff 55%, rgba(255, 255, 255, 0));
+  z-index: 20;
+}
+#panel-ai-suggest {
+  padding-bottom: 76px;
+}
+.btn-refresh-all {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  height: 38px;
+  border-radius: 12px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #fff;
+  background: linear-gradient(135deg, #7c3aed, #6d28d9);
+  box-shadow: 0 4px 14px rgba(124, 58, 237, 0.35);
+  transition: all 0.15s ease;
+}
+.btn-refresh-all:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 18px rgba(124, 58, 237, 0.45);
+}
+.btn-refresh-all:disabled {
+  opacity: 0.75;
+  cursor: default;
+  transform: none;
+}
+
+/* 例文展示 */
+.ai-example-label {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 4px;
+}
+.ai-example-label > span {
+  font-size: 10px;
+  font-weight: 600;
+  color: #7c3aed;
+  letter-spacing: 0.04em;
+}
+
+/* 待撰写空态 */
+.draft-empty-card {
+  max-width: 560px;
+  width: 100%;
+  text-align: center;
+  padding: 56px 32px;
+  background: #fff;
+  border: 1px solid #eef2f7;
+  border-radius: 16px;
+  box-shadow: 0 4px 24px rgba(15, 23, 42, 0.06);
+}
+.draft-empty-icon {
+  width: 64px;
+  height: 64px;
+  margin: 0 auto 16px;
+  border-radius: 18px;
+  background: linear-gradient(135deg, #f5f3ff, #ede9fe);
+  border: 1px solid #ddd6fe;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #7c3aed;
+}
+
+/* 模板弹窗卡片 */
+.template-option-card {
+  transition: all 0.15s ease;
+}
+.template-option-card:hover {
+  border-color: #c4b5fd;
+  box-shadow: 0 4px 14px rgba(124, 58, 237, 0.1);
+  transform: translateY(-1px);
+}
+
 </style>
   <style>
     body { font-family: var(--font-family); background: var(--color-bg-page); }
@@ -716,7 +923,22 @@ body {
     .sidebar-item:hover { background: #F3F4F6; }
   </style>
   <link rel="stylesheet" href="./assets/css/pbs-theme.css?v=6.1">
-<style>*, ::before, ::after{--tw-border-spacing-x:0;--tw-border-spacing-y:0;--tw-translate-x:0;--tw-translate-y:0;--tw-rotate:0;--tw-skew-x:0;--tw-skew-y:0;--tw-scale-x:1;--tw-scale-y:1;--tw-pan-x: ;--tw-pan-y: ;--tw-pinch-zoom: ;--tw-scroll-snap-strictness:proximity;--tw-gradient-from-position: ;--tw-gradient-via-position: ;--tw-gradient-to-position: ;--tw-ordinal: ;--tw-slashed-zero: ;--tw-numeric-figure: ;--tw-numeric-spacing: ;--tw-numeric-fraction: ;--tw-ring-inset: ;--tw-ring-offset-width:0px;--tw-ring-offset-color:#fff;--tw-ring-color:rgb(59 130 246 / 0.5);--tw-ring-offset-shadow:0 0 #0000;--tw-ring-shadow:0 0 #0000;--tw-shadow:0 0 #0000;--tw-shadow-colored:0 0 #0000;--tw-blur: ;--tw-brightness: ;--tw-contrast: ;--tw-grayscale: ;--tw-hue-rotate: ;--tw-invert: ;--tw-saturate: ;--tw-sepia: ;--tw-drop-shadow: ;--tw-backdrop-blur: ;--tw-backdrop-brightness: ;--tw-backdrop-contrast: ;--tw-backdrop-grayscale: ;--tw-backdrop-hue-rotate: ;--tw-backdrop-invert: ;--tw-backdrop-opacity: ;--tw-backdrop-saturate: ;--tw-backdrop-sepia: ;--tw-contain-size: ;--tw-contain-layout: ;--tw-contain-paint: ;--tw-contain-style: }::backdrop{--tw-border-spacing-x:0;--tw-border-spacing-y:0;--tw-translate-x:0;--tw-translate-y:0;--tw-rotate:0;--tw-skew-x:0;--tw-skew-y:0;--tw-scale-x:1;--tw-scale-y:1;--tw-pan-x: ;--tw-pan-y: ;--tw-pinch-zoom: ;--tw-scroll-snap-strictness:proximity;--tw-gradient-from-position: ;--tw-gradient-via-position: ;--tw-gradient-to-position: ;--tw-ordinal: ;--tw-slashed-zero: ;--tw-numeric-figure: ;--tw-numeric-spacing: ;--tw-numeric-fraction: ;--tw-ring-inset: ;--tw-ring-offset-width:0px;--tw-ring-offset-color:#fff;--tw-ring-color:rgb(59 130 246 / 0.5);--tw-ring-offset-shadow:0 0 #0000;--tw-ring-shadow:0 0 #0000;--tw-shadow:0 0 #0000;--tw-shadow-colored:0 0 #0000;--tw-blur: ;--tw-brightness: ;--tw-contrast: ;--tw-grayscale: ;--tw-hue-rotate: ;--tw-invert: ;--tw-saturate: ;--tw-sepia: ;--tw-drop-shadow: ;--tw-backdrop-blur: ;--tw-backdrop-brightness: ;--tw-backdrop-contrast: ;--tw-backdrop-grayscale: ;--tw-backdrop-hue-rotate: ;--tw-backdrop-invert: ;--tw-backdrop-opacity: ;--tw-backdrop-saturate: ;--tw-backdrop-sepia: ;--tw-contain-size: ;--tw-contain-layout: ;--tw-contain-paint: ;--tw-contain-style: }/* ! tailwindcss v3.4.17 | MIT License | https://tailwindcss.com */*,::after,::before{box-sizing:border-box;border-width:0;border-style:solid;border-color:#e5e7eb}::after,::before{--tw-content:''}:host,html{line-height:1.5;-webkit-text-size-adjust:100%;-moz-tab-size:4;tab-size:4;font-family:ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";font-feature-settings:normal;font-variation-settings:normal;-webkit-tap-highlight-color:transparent}body{margin:0;line-height:inherit}hr{height:0;color:inherit;border-top-width:1px}abbr:where([title]){-webkit-text-decoration:underline dotted;text-decoration:underline dotted}h1,h2,h3,h4,h5,h6{font-size:inherit;font-weight:inherit}a{color:inherit;text-decoration:inherit}b,strong{font-weight:bolder}code,kbd,pre,samp{font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;font-feature-settings:normal;font-variation-settings:normal;font-size:1em}small{font-size:80%}sub,sup{font-size:75%;line-height:0;position:relative;vertical-align:baseline}sub{bottom:-.25em}sup{top:-.5em}table{text-indent:0;border-color:inherit;border-collapse:collapse}button,input,optgroup,select,textarea{font-family:inherit;font-feature-settings:inherit;font-variation-settings:inherit;font-size:100%;font-weight:inherit;line-height:inherit;letter-spacing:inherit;color:inherit;margin:0;padding:0}button,select{text-transform:none}button,input:where([type=button]),input:where([type=reset]),input:where([type=submit]){-webkit-appearance:button;background-color:transparent;background-image:none}:-moz-focusring{outline:auto}:-moz-ui-invalid{box-shadow:none}progress{vertical-align:baseline}::-webkit-inner-spin-button,::-webkit-outer-spin-button{height:auto}[type=search]{-webkit-appearance:textfield;outline-offset:-2px}::-webkit-search-decoration{-webkit-appearance:none}::-webkit-file-upload-button{-webkit-appearance:button;font:inherit}summary{display:list-item}blockquote,dd,dl,figure,h1,h2,h3,h4,h5,h6,hr,p,pre{margin:0}fieldset{margin:0;padding:0}legend{padding:0}menu,ol,ul{list-style:none;margin:0;padding:0}dialog{padding:0}textarea{resize:vertical}input::placeholder,textarea::placeholder{opacity:1;color:#9ca3af}[role=button],button{cursor:pointer}:disabled{cursor:default}audio,canvas,embed,iframe,img,object,svg,video{display:block;vertical-align:middle}img,video{max-width:100%;height:auto}[hidden]:where(:not([hidden=until-found])){display:none}.absolute{position:absolute}.sticky{position:sticky}.top-0{top:0px}.right-0{right:0px}.top-12{top:3rem}.z-50{z-index:50}.mx-1{margin-left:0.25rem;margin-right:0.25rem}.mx-auto{margin-left:auto;margin-right:auto}.mb-1{margin-bottom:0.25rem}.mb-1\.5{margin-bottom:0.375rem}.mb-2{margin-bottom:0.5rem}.mb-3{margin-bottom:0.75rem}.mb-4{margin-bottom:1rem}.mb-6{margin-bottom:1.5rem}.mr-1{margin-right:0.25rem}.mt-0\.5{margin-top:0.125rem}.mt-1\.5{margin-top:0.375rem}.mt-2{margin-top:0.5rem}.mt-6{margin-top:1.5rem}.block{display:block}.inline-block{display:inline-block}.flex{display:flex}.inline-flex{display:inline-flex}.grid{display:grid}.hidden{display:none}.h-1\.5{height:0.375rem}.h-14{height:3.5rem}.h-3\.5{height:0.875rem}.h-4{height:1rem}.h-5{height:1.25rem}.h-6{height:1.5rem}.h-7{height:1.75rem}.h-8{height:2rem}.h-9{height:2.25rem}.h-\[calc\(100vh-56px\)\]{height:calc(100vh - 56px)}.h-10{height:2.5rem}.min-h-screen{min-height:100vh}.w-1{width:0.25rem}.w-1\.5{width:0.375rem}.w-3\.5{width:0.875rem}.w-4{width:1rem}.w-5{width:1.25rem}.w-64{width:16rem}.w-7{width:1.75rem}.w-72{width:18rem}.w-8{width:2rem}.w-full{width:100%}.w-px{width:1px}.w-10{width:2.5rem}.min-w-0{min-width:0px}.max-w-3xl{max-width:48rem}.flex-1{flex:1 1 0%}.flex-shrink-0{flex-shrink:0}.cursor-grab{cursor:grab}.cursor-pointer{cursor:pointer}.resize-none{resize:none}.grid-cols-4{grid-template-columns:repeat(4, minmax(0, 1fr))}.flex-col{flex-direction:column}.items-start{align-items:flex-start}.items-center{align-items:center}.justify-center{justify-content:center}.justify-between{justify-content:space-between}.gap-1{gap:0.25rem}.gap-1\.5{gap:0.375rem}.gap-2{gap:0.5rem}.gap-3{gap:0.75rem}.gap-4{gap:1rem}.space-x-1 > :not([hidden]) ~ :not([hidden]){--tw-space-x-reverse:0;margin-right:calc(0.25rem * var(--tw-space-x-reverse));margin-left:calc(0.25rem * calc(1 - var(--tw-space-x-reverse)))}.space-y-2 > :not([hidden]) ~ :not([hidden]){--tw-space-y-reverse:0;margin-top:calc(0.5rem * calc(1 - var(--tw-space-y-reverse)));margin-bottom:calc(0.5rem * var(--tw-space-y-reverse))}.space-y-2\.5 > :not([hidden]) ~ :not([hidden]){--tw-space-y-reverse:0;margin-top:calc(0.625rem * calc(1 - var(--tw-space-y-reverse)));margin-bottom:calc(0.625rem * var(--tw-space-y-reverse))}.space-y-3 > :not([hidden]) ~ :not([hidden]){--tw-space-y-reverse:0;margin-top:calc(0.75rem * calc(1 - var(--tw-space-y-reverse)));margin-bottom:calc(0.75rem * var(--tw-space-y-reverse))}.space-y-4 > :not([hidden]) ~ :not([hidden]){--tw-space-y-reverse:0;margin-top:calc(1rem * calc(1 - var(--tw-space-y-reverse)));margin-bottom:calc(1rem * var(--tw-space-y-reverse))}.overflow-hidden{overflow:hidden}.overflow-y-auto{overflow-y:auto}.truncate{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.rounded{border-radius:0.25rem}.rounded-2xl{border-radius:1rem}.rounded-full{border-radius:9999px}.rounded-lg{border-radius:0.5rem}.rounded-xl{border-radius:0.75rem}.border{border-width:1px}.border-b{border-bottom-width:1px}.border-l{border-left-width:1px}.border-r{border-right-width:1px}.border-t{border-top-width:1px}.border-amber-200{--tw-border-opacity:1;border-color:rgb(253 230 138 / var(--tw-border-opacity, 1))}.border-blue-100{--tw-border-opacity:1;border-color:rgb(219 234 254 / var(--tw-border-opacity, 1))}.border-emerald-100{--tw-border-opacity:1;border-color:rgb(209 250 229 / var(--tw-border-opacity, 1))}.border-gray-100{--tw-border-opacity:1;border-color:rgb(243 244 246 / var(--tw-border-opacity, 1))}.border-gray-200{--tw-border-opacity:1;border-color:rgb(229 231 235 / var(--tw-border-opacity, 1))}.border-gray-300{--tw-border-opacity:1;border-color:rgb(209 213 219 / var(--tw-border-opacity, 1))}.border-gray-50{--tw-border-opacity:1;border-color:rgb(249 250 251 / var(--tw-border-opacity, 1))}.border-purple-100{--tw-border-opacity:1;border-color:rgb(243 232 255 / var(--tw-border-opacity, 1))}.bg-amber-50{--tw-bg-opacity:1;background-color:rgb(255 251 235 / var(--tw-bg-opacity, 1))}.bg-blue-100{--tw-bg-opacity:1;background-color:rgb(219 234 254 / var(--tw-bg-opacity, 1))}.bg-blue-50{--tw-bg-opacity:1;background-color:rgb(239 246 255 / var(--tw-bg-opacity, 1))}.bg-blue-500{--tw-bg-opacity:1;background-color:rgb(59 130 246 / var(--tw-bg-opacity, 1))}.bg-blue-600{--tw-bg-opacity:1;background-color:rgb(37 99 235 / var(--tw-bg-opacity, 1))}.bg-emerald-100{--tw-bg-opacity:1;background-color:rgb(209 250 229 / var(--tw-bg-opacity, 1))}.bg-emerald-50{--tw-bg-opacity:1;background-color:rgb(236 253 245 / var(--tw-bg-opacity, 1))}.bg-gray-200{--tw-bg-opacity:1;background-color:rgb(229 231 235 / var(--tw-bg-opacity, 1))}.bg-gray-50{--tw-bg-opacity:1;background-color:rgb(249 250 251 / var(--tw-bg-opacity, 1))}.bg-green-500{--tw-bg-opacity:1;background-color:rgb(34 197 94 / var(--tw-bg-opacity, 1))}.bg-orange-400{--tw-bg-opacity:1;background-color:rgb(251 146 60 / var(--tw-bg-opacity, 1))}.bg-purple-50{--tw-bg-opacity:1;background-color:rgb(250 245 255 / var(--tw-bg-opacity, 1))}.bg-purple-500{--tw-bg-opacity:1;background-color:rgb(168 85 247 / var(--tw-bg-opacity, 1))}.bg-white{--tw-bg-opacity:1;background-color:rgb(255 255 255 / var(--tw-bg-opacity, 1))}.bg-yellow-100{--tw-bg-opacity:1;background-color:rgb(254 249 195 / var(--tw-bg-opacity, 1))}.bg-gradient-to-br{background-image:linear-gradient(to bottom right, var(--tw-gradient-stops))}.bg-gradient-to-r{background-image:linear-gradient(to right, var(--tw-gradient-stops))}.from-blue-50{--tw-gradient-from:#E8EDF1 var(--tw-gradient-from-position);--tw-gradient-to:rgb(239 246 255 / 0) var(--tw-gradient-to-position);--tw-gradient-stops:var(--tw-gradient-from), var(--tw-gradient-to)}.from-blue-500{--tw-gradient-from:#7D94A6 var(--tw-gradient-from-position);--tw-gradient-to:rgb(59 130 246 / 0) var(--tw-gradient-to-position);--tw-gradient-stops:var(--tw-gradient-from), var(--tw-gradient-to)}.from-emerald-50{--tw-gradient-from:#EAF2ED var(--tw-gradient-from-position);--tw-gradient-to:rgb(236 253 245 / 0) var(--tw-gradient-to-position);--tw-gradient-stops:var(--tw-gradient-from), var(--tw-gradient-to)}.from-emerald-500{--tw-gradient-from:#6D9A7E var(--tw-gradient-from-position);--tw-gradient-to:rgb(16 185 129 / 0) var(--tw-gradient-to-position);--tw-gradient-stops:var(--tw-gradient-from), var(--tw-gradient-to)}.from-purple-500{--tw-gradient-from:#a855f7 var(--tw-gradient-from-position);--tw-gradient-to:rgb(168 85 247 / 0) var(--tw-gradient-to-position);--tw-gradient-stops:var(--tw-gradient-from), var(--tw-gradient-to)}.to-green-50{--tw-gradient-to:#f0fdf4 var(--tw-gradient-to-position)}.to-indigo-50{--tw-gradient-to:#eef2ff var(--tw-gradient-to-position)}.to-indigo-600{--tw-gradient-to:#4f46e5 var(--tw-gradient-to-position)}.to-purple-50{--tw-gradient-to:#faf5ff var(--tw-gradient-to-position)}.to-purple-500{--tw-gradient-to:#a855f7 var(--tw-gradient-to-position)}.to-teal-600{--tw-gradient-to:#0d9488 var(--tw-gradient-to-position)}.to-violet-600{--tw-gradient-to:#7D869A var(--tw-gradient-to-position)}.object-contain{object-fit:contain}.p-1{padding:0.25rem}.p-1\.5{padding:0.375rem}.p-2\.5{padding:0.625rem}.p-3{padding:0.75rem}.p-4{padding:1rem}.p-6{padding:1.5rem}.p-8{padding:2rem}.px-1\.5{padding-left:0.375rem;padding-right:0.375rem}.px-2{padding-left:0.5rem;padding-right:0.5rem}.px-2\.5{padding-left:0.625rem;padding-right:0.625rem}.px-3{padding-left:0.75rem;padding-right:0.75rem}.px-4{padding-left:1rem;padding-right:1rem}.px-6{padding-left:1.5rem;padding-right:1.5rem}.py-0\.5{padding-top:0.125rem;padding-bottom:0.125rem}.py-1{padding-top:0.25rem;padding-bottom:0.25rem}.py-1\.5{padding-top:0.375rem;padding-bottom:0.375rem}.py-2{padding-top:0.5rem;padding-bottom:0.5rem}.py-2\.5{padding-top:0.625rem;padding-bottom:0.625rem}.px-5{padding-left:1.25rem;padding-right:1.25rem}.py-3{padding-top:0.75rem;padding-bottom:0.75rem}.pl-4{padding-left:1rem}.pt-2{padding-top:0.5rem}.pt-3{padding-top:0.75rem}.pt-4{padding-top:1rem}.text-left{text-align:left}.text-center{text-align:center}.text-base{font-size:1rem;line-height:1.5rem}.text-sm{font-size:0.875rem;line-height:1.25rem}.text-xl{font-size:1.25rem;line-height:1.75rem}.text-xs{font-size:0.75rem;line-height:1rem}.font-bold{font-weight:700}.font-medium{font-weight:500}.font-normal{font-weight:400}.font-semibold{font-weight:600}.uppercase{text-transform:uppercase}.leading-relaxed{line-height:1.625}.tracking-wider{letter-spacing:0.05em}.text-amber-500{--tw-text-opacity:1;color:rgb(245 158 11 / var(--tw-text-opacity, 1))}.text-amber-700{--tw-text-opacity:1;color:rgb(180 83 9 / var(--tw-text-opacity, 1))}.text-amber-800{--tw-text-opacity:1;color:rgb(146 64 14 / var(--tw-text-opacity, 1))}.text-blue-400{--tw-text-opacity:1;color:rgb(96 165 250 / var(--tw-text-opacity, 1))}.text-blue-500{--tw-text-opacity:1;color:rgb(59 130 246 / var(--tw-text-opacity, 1))}.text-blue-600{--tw-text-opacity:1;color:rgb(37 99 235 / var(--tw-text-opacity, 1))}.text-blue-700{--tw-text-opacity:1;color:rgb(29 78 216 / var(--tw-text-opacity, 1))}.text-blue-800{--tw-text-opacity:1;color:rgb(30 64 175 / var(--tw-text-opacity, 1))}.text-emerald-600{--tw-text-opacity:1;color:rgb(5 150 105 / var(--tw-text-opacity, 1))}.text-emerald-700{--tw-text-opacity:1;color:rgb(4 120 87 / var(--tw-text-opacity, 1))}.text-gray-400{--tw-text-opacity:1;color:rgb(156 163 175 / var(--tw-text-opacity, 1))}.text-gray-500{--tw-text-opacity:1;color:rgb(107 114 128 / var(--tw-text-opacity, 1))}.text-gray-600{--tw-text-opacity:1;color:rgb(75 85 99 / var(--tw-text-opacity, 1))}.text-gray-700{--tw-text-opacity:1;color:rgb(55 65 81 / var(--tw-text-opacity, 1))}.text-gray-800{--tw-text-opacity:1;color:rgb(31 41 55 / var(--tw-text-opacity, 1))}.text-gray-900{--tw-text-opacity:1;color:rgb(17 24 39 / var(--tw-text-opacity, 1))}.text-green-500{--tw-text-opacity:1;color:rgb(34 197 94 / var(--tw-text-opacity, 1))}.text-green-600{--tw-text-opacity:1;color:rgb(22 163 74 / var(--tw-text-opacity, 1))}.text-orange-500{--tw-text-opacity:1;color:rgb(249 115 22 / var(--tw-text-opacity, 1))}.text-orange-600{--tw-text-opacity:1;color:rgb(234 88 12 / var(--tw-text-opacity, 1))}.text-purple-500{--tw-text-opacity:1;color:rgb(168 85 247 / var(--tw-text-opacity, 1))}.text-purple-600{--tw-text-opacity:1;color:rgb(147 51 234 / var(--tw-text-opacity, 1))}.text-red-500{--tw-text-opacity:1;color:rgb(239 68 68 / var(--tw-text-opacity, 1))}.text-white{--tw-text-opacity:1;color:rgb(255 255 255 / var(--tw-text-opacity, 1))}.text-yellow-800{--tw-text-opacity:1;color:rgb(133 77 14 / var(--tw-text-opacity, 1))}.shadow-lg{--tw-shadow:0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);--tw-shadow-colored:0 10px 15px -3px var(--tw-shadow-color), 0 4px 6px -4px var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}.shadow-sm{--tw-shadow:0 1px 2px 0 rgb(0 0 0 / 0.05);--tw-shadow-colored:0 1px 2px 0 var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}.transition-colors{transition-property:color, background-color, border-color, fill, stroke, -webkit-text-decoration-color;transition-property:color, background-color, border-color, text-decoration-color, fill, stroke;transition-property:color, background-color, border-color, text-decoration-color, fill, stroke, -webkit-text-decoration-color;transition-timing-function:cubic-bezier(0.4, 0, 0.2, 1);transition-duration:150ms}.hover\:border-blue-300:hover{--tw-border-opacity:1;border-color:rgb(147 197 253 / var(--tw-border-opacity, 1))}.hover\:border-green-300:hover{--tw-border-opacity:1;border-color:rgb(134 239 172 / var(--tw-border-opacity, 1))}.hover\:bg-blue-50:hover{--tw-bg-opacity:1;background-color:rgb(239 246 255 / var(--tw-bg-opacity, 1))}.hover\:bg-blue-700:hover{--tw-bg-opacity:1;background-color:rgb(29 78 216 / var(--tw-bg-opacity, 1))}.hover\:bg-gray-100:hover{--tw-bg-opacity:1;background-color:rgb(243 244 246 / var(--tw-bg-opacity, 1))}.hover\:bg-gray-50:hover{--tw-bg-opacity:1;background-color:rgb(249 250 251 / var(--tw-bg-opacity, 1))}.hover\:text-blue-600:hover{--tw-text-opacity:1;color:rgb(37 99 235 / var(--tw-text-opacity, 1))}.hover\:text-blue-800:hover{--tw-text-opacity:1;color:rgb(30 64 175 / var(--tw-text-opacity, 1))}.hover\:text-gray-700:hover{--tw-text-opacity:1;color:rgb(55 65 81 / var(--tw-text-opacity, 1))}.hover\:text-gray-900:hover{--tw-text-opacity:1;color:rgb(17 24 39 / var(--tw-text-opacity, 1))}.hover\:text-green-600:hover{--tw-text-opacity:1;color:rgb(22 163 74 / var(--tw-text-opacity, 1))}.focus\:border-blue-500:focus{--tw-border-opacity:1;border-color:rgb(59 130 246 / var(--tw-border-opacity, 1))}.focus\:outline-none:focus{outline:2px solid transparent;outline-offset:2px}.focus\:ring-2:focus{--tw-ring-offset-shadow:var(--tw-ring-inset) 0 0 0 var(--tw-ring-offset-width) var(--tw-ring-offset-color);--tw-ring-shadow:var(--tw-ring-inset) 0 0 0 calc(2px + var(--tw-ring-offset-width)) var(--tw-ring-color);box-shadow:var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow, 0 0 #0000)}.focus\:ring-blue-500:focus{--tw-ring-opacity:1;--tw-ring-color:rgb(59 130 246 / var(--tw-ring-opacity, 1))}.active\:cursor-grabbing:active{cursor:grabbing}</style></head>
+<style>*, ::before, ::after{--tw-border-spacing-x:0;--tw-border-spacing-y:0;--tw-translate-x:0;--tw-translate-y:0;--tw-rotate:0;--tw-skew-x:0;--tw-skew-y:0;--tw-scale-x:1;--tw-scale-y:1;--tw-pan-x: ;--tw-pan-y: ;--tw-pinch-zoom: ;--tw-scroll-snap-strictness:proximity;--tw-gradient-from-position: ;--tw-gradient-via-position: ;--tw-gradient-to-position: ;--tw-ordinal: ;--tw-slashed-zero: ;--tw-numeric-figure: ;--tw-numeric-spacing: ;--tw-numeric-fraction: ;--tw-ring-inset: ;--tw-ring-offset-width:0px;--tw-ring-offset-color:#fff;--tw-ring-color:rgb(59 130 246 / 0.5);--tw-ring-offset-shadow:0 0 #0000;--tw-ring-shadow:0 0 #0000;--tw-shadow:0 0 #0000;--tw-shadow-colored:0 0 #0000;--tw-blur: ;--tw-brightness: ;--tw-contrast: ;--tw-grayscale: ;--tw-hue-rotate: ;--tw-invert: ;--tw-saturate: ;--tw-sepia: ;--tw-drop-shadow: ;--tw-backdrop-blur: ;--tw-backdrop-brightness: ;--tw-backdrop-contrast: ;--tw-backdrop-grayscale: ;--tw-backdrop-hue-rotate: ;--tw-backdrop-invert: ;--tw-backdrop-opacity: ;--tw-backdrop-saturate: ;--tw-backdrop-sepia: ;--tw-contain-size: ;--tw-contain-layout: ;--tw-contain-paint: ;--tw-contain-style: }::backdrop{--tw-border-spacing-x:0;--tw-border-spacing-y:0;--tw-translate-x:0;--tw-translate-y:0;--tw-rotate:0;--tw-skew-x:0;--tw-skew-y:0;--tw-scale-x:1;--tw-scale-y:1;--tw-pan-x: ;--tw-pan-y: ;--tw-pinch-zoom: ;--tw-scroll-snap-strictness:proximity;--tw-gradient-from-position: ;--tw-gradient-via-position: ;--tw-gradient-to-position: ;--tw-ordinal: ;--tw-slashed-zero: ;--tw-numeric-figure: ;--tw-numeric-spacing: ;--tw-numeric-fraction: ;--tw-ring-inset: ;--tw-ring-offset-width:0px;--tw-ring-offset-color:#fff;--tw-ring-color:rgb(59 130 246 / 0.5);--tw-ring-offset-shadow:0 0 #0000;--tw-ring-shadow:0 0 #0000;--tw-shadow:0 0 #0000;--tw-shadow-colored:0 0 #0000;--tw-blur: ;--tw-brightness: ;--tw-contrast: ;--tw-grayscale: ;--tw-hue-rotate: ;--tw-invert: ;--tw-saturate: ;--tw-sepia: ;--tw-drop-shadow: ;--tw-backdrop-blur: ;--tw-backdrop-brightness: ;--tw-backdrop-contrast: ;--tw-backdrop-grayscale: ;--tw-backdrop-hue-rotate: ;--tw-backdrop-invert: ;--tw-backdrop-opacity: ;--tw-backdrop-saturate: ;--tw-backdrop-sepia: ;--tw-contain-size: ;--tw-contain-layout: ;--tw-contain-paint: ;--tw-contain-style: }/* ! tailwindcss v3.4.17 | MIT License | https://tailwindcss.com */*,::after,::before{box-sizing:border-box;border-width:0;border-style:solid;border-color:#e5e7eb}::after,::before{--tw-content:''}:host,html{line-height:1.5;-webkit-text-size-adjust:100%;-moz-tab-size:4;tab-size:4;font-family:ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";font-feature-settings:normal;font-variation-settings:normal;-webkit-tap-highlight-color:transparent}body{margin:0;line-height:inherit}hr{height:0;color:inherit;border-top-width:1px}abbr:where([title]){-webkit-text-decoration:underline dotted;text-decoration:underline dotted}h1,h2,h3,h4,h5,h6{font-size:inherit;font-weight:inherit}a{color:inherit;text-decoration:inherit}b,strong{font-weight:bolder}code,kbd,pre,samp{font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;font-feature-settings:normal;font-variation-settings:normal;font-size:1em}small{font-size:80%}sub,sup{font-size:75%;line-height:0;position:relative;vertical-align:baseline}sub{bottom:-.25em}sup{top:-.5em}table{text-indent:0;border-color:inherit;border-collapse:collapse}button,input,optgroup,select,textarea{font-family:inherit;font-feature-settings:inherit;font-variation-settings:inherit;font-size:100%;font-weight:inherit;line-height:inherit;letter-spacing:inherit;color:inherit;margin:0;padding:0}button,select{text-transform:none}button,input:where([type=button]),input:where([type=reset]),input:where([type=submit]){-webkit-appearance:button;background-color:transparent;background-image:none}:-moz-focusring{outline:auto}:-moz-ui-invalid{box-shadow:none}progress{vertical-align:baseline}::-webkit-inner-spin-button,::-webkit-outer-spin-button{height:auto}[type=search]{-webkit-appearance:textfield;outline-offset:-2px}::-webkit-search-decoration{-webkit-appearance:none}::-webkit-file-upload-button{-webkit-appearance:button;font:inherit}summary{display:list-item}blockquote,dd,dl,figure,h1,h2,h3,h4,h5,h6,hr,p,pre{margin:0}fieldset{margin:0;padding:0}legend{padding:0}menu,ol,ul{list-style:none;margin:0;padding:0}dialog{padding:0}textarea{resize:vertical}input::placeholder,textarea::placeholder{opacity:1;color:#9ca3af}[role=button],button{cursor:pointer}:disabled{cursor:default}audio,canvas,embed,iframe,img,object,svg,video{display:block;vertical-align:middle}img,video{max-width:100%;height:auto}[hidden]:where(:not([hidden=until-found])){display:none}.absolute{position:absolute}.sticky{position:sticky}.top-0{top:0px}.right-0{right:0px}.top-12{top:3rem}.z-50{z-index:50}.mx-1{margin-left:0.25rem;margin-right:0.25rem}.mx-auto{margin-left:auto;margin-right:auto}.mb-1{margin-bottom:0.25rem}.mb-1\.5{margin-bottom:0.375rem}.mb-2{margin-bottom:0.5rem}.mb-3{margin-bottom:0.75rem}.mb-4{margin-bottom:1rem}.mb-6{margin-bottom:1.5rem}.mr-1{margin-right:0.25rem}.mt-0\.5{margin-top:0.125rem}.mt-1\.5{margin-top:0.375rem}.mt-2{margin-top:0.5rem}.mt-6{margin-top:1.5rem}.block{display:block}.inline-block{display:inline-block}.flex{display:flex}.inline-flex{display:inline-flex}.grid{display:grid}.hidden{display:none}.h-1\.5{height:0.375rem}.h-14{height:3.5rem}.h-3\.5{height:0.875rem}.h-4{height:1rem}.h-5{height:1.25rem}.h-6{height:1.5rem}.h-7{height:1.75rem}.h-8{height:2rem}.h-9{height:2.25rem}.h-\[calc\(100vh-56px\)\]{height:calc(100vh - 56px)}.h-10{height:2.5rem}.min-h-screen{min-height:100vh}.w-1{width:0.25rem}.w-1\.5{width:0.375rem}.w-3\.5{width:0.875rem}.w-4{width:1rem}.w-5{width:1.25rem}.w-64{width:16rem}.w-7{width:1.75rem}.w-72{width:18rem}.w-8{width:2rem}.w-full{width:100%}.w-px{width:1px}.w-10{width:2.5rem}.min-w-0{min-width:0px}.max-w-3xl{max-width:48rem}.flex-1{flex:1 1 0%}.flex-shrink-0{flex-shrink:0}.cursor-grab{cursor:grab}.cursor-pointer{cursor:pointer}.resize-none{resize:none}.grid-cols-4{grid-template-columns:repeat(4, minmax(0, 1fr))}.flex-col{flex-direction:column}.items-start{align-items:flex-start}.items-center{align-items:center}.justify-center{justify-content:center}.justify-between{justify-content:space-between}.gap-1{gap:0.25rem}.gap-1\.5{gap:0.375rem}.gap-2{gap:0.5rem}.gap-3{gap:0.75rem}.gap-4{gap:1rem}.space-x-1 > :not([hidden]) ~ :not([hidden]){--tw-space-x-reverse:0;margin-right:calc(0.25rem * var(--tw-space-x-reverse));margin-left:calc(0.25rem * calc(1 - var(--tw-space-x-reverse)))}.space-y-2 > :not([hidden]) ~ :not([hidden]){--tw-space-y-reverse:0;margin-top:calc(0.5rem * calc(1 - var(--tw-space-y-reverse)));margin-bottom:calc(0.5rem * var(--tw-space-y-reverse))}.space-y-2\.5 > :not([hidden]) ~ :not([hidden]){--tw-space-y-reverse:0;margin-top:calc(0.625rem * calc(1 - var(--tw-space-y-reverse)));margin-bottom:calc(0.625rem * var(--tw-space-y-reverse))}.space-y-3 > :not([hidden]) ~ :not([hidden]){--tw-space-y-reverse:0;margin-top:calc(0.75rem * calc(1 - var(--tw-space-y-reverse)));margin-bottom:calc(0.75rem * var(--tw-space-y-reverse))}.space-y-4 > :not([hidden]) ~ :not([hidden]){--tw-space-y-reverse:0;margin-top:calc(1rem * calc(1 - var(--tw-space-y-reverse)));margin-bottom:calc(1rem * var(--tw-space-y-reverse))}.overflow-hidden{overflow:hidden}.overflow-y-auto{overflow-y:auto}.truncate{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.rounded{border-radius:0.25rem}.rounded-2xl{border-radius:1rem}.rounded-full{border-radius:9999px}.rounded-lg{border-radius:0.5rem}.rounded-xl{border-radius:0.75rem}.border{border-width:1px}.border-b{border-bottom-width:1px}.border-l{border-left-width:1px}.border-r{border-right-width:1px}.border-t{border-top-width:1px}.border-amber-200{--tw-border-opacity:1;border-color:rgb(253 230 138 / var(--tw-border-opacity, 1))}.border-blue-100{--tw-border-opacity:1;border-color:rgb(219 234 254 / var(--tw-border-opacity, 1))}.border-emerald-100{--tw-border-opacity:1;border-color:rgb(209 250 229 / var(--tw-border-opacity, 1))}.border-gray-100{--tw-border-opacity:1;border-color:rgb(243 244 246 / var(--tw-border-opacity, 1))}.border-gray-200{--tw-border-opacity:1;border-color:rgb(229 231 235 / var(--tw-border-opacity, 1))}.border-gray-300{--tw-border-opacity:1;border-color:rgb(209 213 219 / var(--tw-border-opacity, 1))}.border-gray-50{--tw-border-opacity:1;border-color:rgb(249 250 251 / var(--tw-border-opacity, 1))}.border-purple-100{--tw-border-opacity:1;border-color:rgb(243 232 255 / var(--tw-border-opacity, 1))}.bg-amber-50{--tw-bg-opacity:1;background-color:rgb(255 251 235 / var(--tw-bg-opacity, 1))}.bg-blue-100{--tw-bg-opacity:1;background-color:rgb(219 234 254 / var(--tw-bg-opacity, 1))}.bg-blue-50{--tw-bg-opacity:1;background-color:rgb(239 246 255 / var(--tw-bg-opacity, 1))}.bg-blue-500{--tw-bg-opacity:1;background-color:rgb(59 130 246 / var(--tw-bg-opacity, 1))}.bg-blue-600{--tw-bg-opacity:1;background-color:rgb(37 99 235 / var(--tw-bg-opacity, 1))}.bg-emerald-100{--tw-bg-opacity:1;background-color:rgb(209 250 229 / var(--tw-bg-opacity, 1))}.bg-emerald-50{--tw-bg-opacity:1;background-color:rgb(236 253 245 / var(--tw-bg-opacity, 1))}.bg-gray-200{--tw-bg-opacity:1;background-color:rgb(229 231 235 / var(--tw-bg-opacity, 1))}.bg-gray-50{--tw-bg-opacity:1;background-color:rgb(249 250 251 / var(--tw-bg-opacity, 1))}.bg-green-500{--tw-bg-opacity:1;background-color:rgb(34 197 94 / var(--tw-bg-opacity, 1))}.bg-orange-400{--tw-bg-opacity:1;background-color:rgb(251 146 60 / var(--tw-bg-opacity, 1))}.bg-purple-50{--tw-bg-opacity:1;background-color:rgb(250 245 255 / var(--tw-bg-opacity, 1))}.bg-purple-500{--tw-bg-opacity:1;background-color:rgb(168 85 247 / var(--tw-bg-opacity, 1))}.bg-white{--tw-bg-opacity:1;background-color:rgb(255 255 255 / var(--tw-bg-opacity, 1))}.bg-yellow-100{--tw-bg-opacity:1;background-color:rgb(254 249 195 / var(--tw-bg-opacity, 1))}.bg-gradient-to-br{background-image:linear-gradient(to bottom right, var(--tw-gradient-stops))}.bg-gradient-to-r{background-image:linear-gradient(to right, var(--tw-gradient-stops))}.from-blue-50{--tw-gradient-from:#E8EDF1 var(--tw-gradient-from-position);--tw-gradient-to:rgb(239 246 255 / 0) var(--tw-gradient-to-position);--tw-gradient-stops:var(--tw-gradient-from), var(--tw-gradient-to)}.from-blue-500{--tw-gradient-from:#7D94A6 var(--tw-gradient-from-position);--tw-gradient-to:rgb(59 130 246 / 0) var(--tw-gradient-to-position);--tw-gradient-stops:var(--tw-gradient-from), var(--tw-gradient-to)}.from-emerald-50{--tw-gradient-from:#EAF2ED var(--tw-gradient-from-position);--tw-gradient-to:rgb(236 253 245 / 0) var(--tw-gradient-to-position);--tw-gradient-stops:var(--tw-gradient-from), var(--tw-gradient-to)}.from-emerald-500{--tw-gradient-from:#6D9A7E var(--tw-gradient-from-position);--tw-gradient-to:rgb(16 185 129 / 0) var(--tw-gradient-to-position);--tw-gradient-stops:var(--tw-gradient-from), var(--tw-gradient-to)}.from-purple-500{--tw-gradient-from:#a855f7 var(--tw-gradient-from-position);--tw-gradient-to:rgb(168 85 247 / 0) var(--tw-gradient-to-position);--tw-gradient-stops:var(--tw-gradient-from), var(--tw-gradient-to)}.to-green-50{--tw-gradient-to:#f0fdf4 var(--tw-gradient-to-position)}.to-indigo-50{--tw-gradient-to:#eef2ff var(--tw-gradient-to-position)}.to-indigo-600{--tw-gradient-to:#4f46e5 var(--tw-gradient-to-position)}.to-purple-50{--tw-gradient-to:#faf5ff var(--tw-gradient-to-position)}.to-purple-500{--tw-gradient-to:#a855f7 var(--tw-gradient-to-position)}.to-teal-600{--tw-gradient-to:#0d9488 var(--tw-gradient-to-position)}.to-violet-600{--tw-gradient-to:#7D869A var(--tw-gradient-to-position)}.object-contain{object-fit:contain}.p-1{padding:0.25rem}.p-1\.5{padding:0.375rem}.p-2\.5{padding:0.625rem}.p-3{padding:0.75rem}.p-4{padding:1rem}.p-6{padding:1.5rem}.p-8{padding:2rem}.px-1\.5{padding-left:0.375rem;padding-right:0.375rem}.px-2{padding-left:0.5rem;padding-right:0.5rem}.px-2\.5{padding-left:0.625rem;padding-right:0.625rem}.px-3{padding-left:0.75rem;padding-right:0.75rem}.px-4{padding-left:1rem;padding-right:1rem}.px-6{padding-left:1.5rem;padding-right:1.5rem}.py-0\.5{padding-top:0.125rem;padding-bottom:0.125rem}.py-1{padding-top:0.25rem;padding-bottom:0.25rem}.py-1\.5{padding-top:0.375rem;padding-bottom:0.375rem}.py-2{padding-top:0.5rem;padding-bottom:0.5rem}.py-2\.5{padding-top:0.625rem;padding-bottom:0.625rem}.px-5{padding-left:1.25rem;padding-right:1.25rem}.py-3{padding-top:0.75rem;padding-bottom:0.75rem}.pl-4{padding-left:1rem}.pt-2{padding-top:0.5rem}.pt-3{padding-top:0.75rem}.pt-4{padding-top:1rem}.text-left{text-align:left}.text-center{text-align:center}.text-base{font-size:1rem;line-height:1.5rem}.text-sm{font-size:0.875rem;line-height:1.25rem}.text-xl{font-size:1.25rem;line-height:1.75rem}.text-xs{font-size:0.75rem;line-height:1rem}.font-bold{font-weight:700}.font-medium{font-weight:500}.font-normal{font-weight:400}.font-semibold{font-weight:600}.uppercase{text-transform:uppercase}.leading-relaxed{line-height:1.625}.tracking-wider{letter-spacing:0.05em}.text-amber-500{--tw-text-opacity:1;color:rgb(245 158 11 / var(--tw-text-opacity, 1))}.text-amber-700{--tw-text-opacity:1;color:rgb(180 83 9 / var(--tw-text-opacity, 1))}.text-amber-800{--tw-text-opacity:1;color:rgb(146 64 14 / var(--tw-text-opacity, 1))}.text-blue-400{--tw-text-opacity:1;color:rgb(96 165 250 / var(--tw-text-opacity, 1))}.text-blue-500{--tw-text-opacity:1;color:rgb(59 130 246 / var(--tw-text-opacity, 1))}.text-blue-600{--tw-text-opacity:1;color:rgb(37 99 235 / var(--tw-text-opacity, 1))}.text-blue-700{--tw-text-opacity:1;color:rgb(29 78 216 / var(--tw-text-opacity, 1))}.text-blue-800{--tw-text-opacity:1;color:rgb(30 64 175 / var(--tw-text-opacity, 1))}.text-emerald-600{--tw-text-opacity:1;color:rgb(5 150 105 / var(--tw-text-opacity, 1))}.text-emerald-700{--tw-text-opacity:1;color:rgb(4 120 87 / var(--tw-text-opacity, 1))}.text-gray-400{--tw-text-opacity:1;color:rgb(156 163 175 / var(--tw-text-opacity, 1))}.text-gray-500{--tw-text-opacity:1;color:rgb(107 114 128 / var(--tw-text-opacity, 1))}.text-gray-600{--tw-text-opacity:1;color:rgb(75 85 99 / var(--tw-text-opacity, 1))}.text-gray-700{--tw-text-opacity:1;color:rgb(55 65 81 / var(--tw-text-opacity, 1))}.text-gray-800{--tw-text-opacity:1;color:rgb(31 41 55 / var(--tw-text-opacity, 1))}.text-gray-900{--tw-text-opacity:1;color:rgb(17 24 39 / var(--tw-text-opacity, 1))}.text-green-500{--tw-text-opacity:1;color:rgb(34 197 94 / var(--tw-text-opacity, 1))}.text-green-600{--tw-text-opacity:1;color:rgb(22 163 74 / var(--tw-text-opacity, 1))}.text-orange-500{--tw-text-opacity:1;color:rgb(249 115 22 / var(--tw-text-opacity, 1))}.text-orange-600{--tw-text-opacity:1;color:rgb(234 88 12 / var(--tw-text-opacity, 1))}.text-purple-500{--tw-text-opacity:1;color:rgb(168 85 247 / var(--tw-text-opacity, 1))}.text-purple-600{--tw-text-opacity:1;color:rgb(147 51 234 / var(--tw-text-opacity, 1))}.text-red-500{--tw-text-opacity:1;color:rgb(239 68 68 / var(--tw-text-opacity, 1))}.text-white{--tw-text-opacity:1;color:rgb(255 255 255 / var(--tw-text-opacity, 1))}.text-yellow-800{--tw-text-opacity:1;color:rgb(133 77 14 / var(--tw-text-opacity, 1))}.shadow-lg{--tw-shadow:0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);--tw-shadow-colored:0 10px 15px -3px var(--tw-shadow-color), 0 4px 6px -4px var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}.shadow-sm{--tw-shadow:0 1px 2px 0 rgb(0 0 0 / 0.05);--tw-shadow-colored:0 1px 2px 0 var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}.transition-colors{transition-property:color, background-color, border-color, fill, stroke, -webkit-text-decoration-color;transition-property:color, background-color, border-color, text-decoration-color, fill, stroke;transition-property:color, background-color, border-color, text-decoration-color, fill, stroke, -webkit-text-decoration-color;transition-timing-function:cubic-bezier(0.4, 0, 0.2, 1);transition-duration:150ms}.hover\:border-blue-300:hover{--tw-border-opacity:1;border-color:rgb(147 197 253 / var(--tw-border-opacity, 1))}.hover\:border-green-300:hover{--tw-border-opacity:1;border-color:rgb(134 239 172 / var(--tw-border-opacity, 1))}.hover\:bg-blue-50:hover{--tw-bg-opacity:1;background-color:rgb(239 246 255 / var(--tw-bg-opacity, 1))}.hover\:bg-blue-700:hover{--tw-bg-opacity:1;background-color:rgb(29 78 216 / var(--tw-bg-opacity, 1))}.hover\:bg-gray-100:hover{--tw-bg-opacity:1;background-color:rgb(243 244 246 / var(--tw-bg-opacity, 1))}.hover\:bg-gray-50:hover{--tw-bg-opacity:1;background-color:rgb(249 250 251 / var(--tw-bg-opacity, 1))}.hover\:text-blue-600:hover{--tw-text-opacity:1;color:rgb(37 99 235 / var(--tw-text-opacity, 1))}.hover\:text-blue-800:hover{--tw-text-opacity:1;color:rgb(30 64 175 / var(--tw-text-opacity, 1))}.hover\:text-gray-700:hover{--tw-text-opacity:1;color:rgb(55 65 81 / var(--tw-text-opacity, 1))}.hover\:text-gray-900:hover{--tw-text-opacity:1;color:rgb(17 24 39 / var(--tw-text-opacity, 1))}.hover\:text-green-600:hover{--tw-text-opacity:1;color:rgb(22 163 74 / var(--tw-text-opacity, 1))}.focus\:border-blue-500:focus{--tw-border-opacity:1;border-color:rgb(59 130 246 / var(--tw-border-opacity, 1))}.focus\:outline-none:focus{outline:2px solid transparent;outline-offset:2px}.focus\:ring-2:focus{--tw-ring-offset-shadow:var(--tw-ring-inset) 0 0 0 var(--tw-ring-offset-width) var(--tw-ring-offset-color);--tw-ring-shadow:var(--tw-ring-inset) 0 0 0 calc(2px + var(--tw-ring-offset-width)) var(--tw-ring-color);box-shadow:var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow, 0 0 #0000)}.focus\:ring-blue-500:focus{--tw-ring-opacity:1;--tw-ring-color:rgb(59 130 246 / var(--tw-ring-opacity, 1))}.active\:cursor-grabbing:active{cursor:grabbing}</style>  <style>
+    #editor-version-bar { flex-wrap: wrap; gap: 10px 16px; }
+    #editor-version-bar > div { flex-wrap: wrap; row-gap: 8px; }
+    #editor-version-bar button { white-space: nowrap; }
+    .editor-block > div:first-child { flex-wrap: wrap; }
+    .editor-block .section-title-input { flex: 1; min-width: 160px; }
+    .editor-block .editor-inline-actions { flex-wrap: wrap; }
+    @media (max-width: 1180px) {
+      #sidebar-tabs:not(.sidebar-collapsed) { width: 250px !important; }
+      #right-sidebar:not(.sidebar-collapsed) { width: 280px !important; }
+    }
+    @media (max-width: 900px) {
+      .editor-block .editor-inline-actions { width: 100%; justify-content: flex-start; }
+    }
+  </style>
+</head>
 <body class="min-h-screen bg-gray-50">
   <!-- 顶部导航栏 -->
   <div id="mobile-overlay" class="overlay"></div>
@@ -752,18 +974,12 @@ body {
           </svg>
         </button>
         <div class="topbar-doc">
-          <h1 id="header-doc-title">李雪 - 研究计划（RP）</h1>
+          <h1 id="header-doc-title">李雪 - 个人陈述（PS）</h1>
           <p>卡内基梅隆大学 · 人工智能 · 硕士</p>
         </div>
       </div>
       <div class="topbar-document-actions">
         <span class="topbar-status"><span class="topbar-status-dot"></span>撰写中</span>
-        <button class="btn btn-secondary" data-dom-id="btn-save">
-          <svg class="w-4 h-4 inline-block mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4"></path>
-          </svg>
-          保存
-        </button>
         <button class="btn btn-primary" data-dom-id="btn-submit">
           <svg class="w-4 h-4 inline-block mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
@@ -780,24 +996,23 @@ body {
       <!-- 右边缘拖拽手柄：按住可手动调整左侧边栏宽度，双击恢复默认宽度 -->
       <div id="left-sidebar-resizer" title="拖动调整宽度，双击恢复默认"></div>
       <div class="p-4 border-b border-gray-100">
-        <nav class="grid grid-cols-2 gap-1" id="left-panel-tabs">
-          <button id="tab-student-info" class="px-3 py-2 text-sm font-medium text-gray-600 hover:text-gray-900" data-dom-id="tab-student-info">
-            学生信息
+        <div class="flex items-center gap-1">
+          <nav class="grid grid-cols-2 gap-1 flex-1" id="left-panel-tabs">
+            <button id="tab-student-info" class="px-2 py-2 text-xs font-medium text-blue-700 bg-blue-50 rounded-lg" data-dom-id="tab-student-info">
+              学生信息
+            </button>
+            <button id="tab-materials" class="px-2 py-2 text-xs font-medium text-gray-600 hover:text-gray-900" data-dom-id="tab-materials">
+              资产文件
+            </button>
+          </nav>
+          <button id="btn-collapse-left" title="收起资料栏" class="p-1.5 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg flex-shrink-0">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 19l-7-7 7-7m8 14l-7-7 7-7"></path></svg>
           </button>
-          <button id="tab-goal-info" class="px-3 py-2 text-sm font-medium text-gray-600 hover:text-gray-900" data-dom-id="tab-goal-info">
-            院校目标
-          </button>
-          <button id="tab-materials" class="px-3 py-2 text-sm font-medium text-gray-600 hover:text-gray-900" data-dom-id="tab-materials">
-            资产文件
-          </button>
-          <button id="tab-version-history" class="px-3 py-2 text-sm font-medium text-blue-700 bg-blue-50 rounded-lg" data-dom-id="tab-version-history">
-            历史版本
-          </button>
-        </nav>
+        </div>
       </div>
 
-      <!-- 学生信息面板 -->
-      <div id="panel-student-info" class="flex-1 overflow-y-auto p-4 space-y-4 hidden">
+      <!-- 学生信息面板（默认展示） -->
+      <div id="panel-student-info" class="flex-1 overflow-y-auto p-4 space-y-4">
         <!-- 学生基础信息卡片 -->
         <div class="bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden">
           <div class="h-1.5 bg-gradient-to-r from-blue-500 to-indigo-600"></div>
@@ -813,7 +1028,7 @@ body {
             <div class="space-y-2.5 text-xs">
               <div class="flex items-center justify-between">
                 <span class="text-gray-400">学生姓名</span>
-                <span class="text-gray-900 font-semibold">李雪</span>
+                <span id="editorStudentName" class="text-gray-900 font-semibold">李雪</span>
               </div>
               <div class="flex items-center justify-between border-t border-gray-50 pt-2">
                 <span class="text-gray-400">性别</span>
@@ -953,7 +1168,8 @@ body {
 
         <!-- 学生经历仅来源于实践经历和工作经历 -->
         <div>
-          <div class="flex items-center justify-between mb-3"><h4 class="text-sm font-medium text-gray-700">学生经历</h4><span class="text-[11px] text-gray-400">同步自实践经历与工作经历</span></div>
+          <div class="flex items-center justify-between mb-1"><h4 class="text-sm font-medium text-gray-700">学生经历</h4><button class="flex items-center gap-1 px-2 py-1 text-[11px] font-medium text-blue-600 bg-blue-50 rounded-lg hover:bg-blue-100" onclick="copyStudentExperience()" title="复制学生经历主要内容"><svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>复制主要内容</button></div>
+          <p class="text-[11px] text-gray-400 mb-3">同步自实践经历与工作经历</p>
           <div class="space-y-3">
             <div class="flex gap-3 p-3 bg-white rounded-lg border border-gray-100 cursor-grab active:cursor-grabbing">
               <div class="w-1 bg-blue-500 rounded-full flex-shrink-0"></div>
@@ -975,8 +1191,387 @@ body {
         </div>
       </div>
 
-      <!-- 院校目标信息面板（默认隐藏）：字段信息进入页面后自动从 EV 系统同步 -->
-      <div id="panel-goal-info" data-has-content="true" class="flex-1 overflow-y-auto p-4 space-y-4 hidden">
+      <!-- 资产文件面板：文件夹样式列表，编辑时可随时查阅学生上传资料 -->
+      <div id="panel-materials" class="flex-1 overflow-y-auto p-4 hidden">
+        <div class="space-y-3">
+          <!-- 文件夹：身份材料 -->
+          <div class="border border-gray-100 rounded-xl overflow-hidden">
+            <div class="flex items-center gap-2 px-3 py-2.5 bg-gray-50 border-b border-gray-100">
+              <svg class="w-4 h-4 text-amber-500" fill="currentColor" viewBox="0 0 24 24"><path d="M3 7a2 2 0 012-2h4l2 2h8a2 2 0 012 2v8a2 2 0 01-2 2H5a2 2 0 01-2-2V7z"></path></svg>
+              <span class="text-xs font-medium text-gray-700">身份材料</span>
+              <span class="text-[10px] text-gray-400 ml-auto">1 个文件</span>
+            </div>
+            <div class="space-y-2 p-2.5">
+              <div class="flex items-center justify-between p-2.5 bg-white rounded-lg border border-gray-100 hover:border-blue-300 transition-colors">
+                <div class="flex items-center gap-2 min-w-0">
+                  <svg class="w-5 h-5 text-red-500 flex-shrink-0" fill="currentColor" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8l-6-6z"></path></svg>
+                  <span class="text-sm text-gray-700 truncate">身份证扫描件.pdf</span>
+                </div>
+                <div class="flex items-center gap-1.5 flex-shrink-0">
+                  <button class="p-1 text-gray-400 hover:text-blue-600" title="预览">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
+                  </button>
+                  <button class="p-1 text-gray-400 hover:text-green-600" title="下载">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- 文件夹：学术材料 -->
+          <div class="border border-gray-100 rounded-xl overflow-hidden">
+            <div class="flex items-center gap-2 px-3 py-2.5 bg-gray-50 border-b border-gray-100">
+              <svg class="w-4 h-4 text-amber-500" fill="currentColor" viewBox="0 0 24 24"><path d="M3 7a2 2 0 012-2h4l2 2h8a2 2 0 012 2v8a2 2 0 01-2 2H5a2 2 0 01-2-2V7z"></path></svg>
+              <span class="text-xs font-medium text-gray-700">学术材料</span>
+              <span class="text-[10px] text-gray-400 ml-auto">1 个文件</span>
+            </div>
+            <div class="space-y-2 p-2.5">
+              <div class="flex items-center justify-between p-2.5 bg-white rounded-lg border border-gray-100 hover:border-blue-300 transition-colors">
+                <div class="flex items-center gap-2 min-w-0">
+                  <svg class="w-5 h-5 text-blue-500 flex-shrink-0" fill="currentColor" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8l-6-6z"></path></svg>
+                  <span class="text-sm text-gray-700 truncate">本科成绩单（中英文）.pdf</span>
+                </div>
+                <div class="flex items-center gap-1.5 flex-shrink-0">
+                  <button class="p-1 text-gray-400 hover:text-blue-600" title="预览">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
+                  </button>
+                  <button class="p-1 text-gray-400 hover:text-green-600" title="下载">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- 文件夹：语言成绩 -->
+          <div class="border border-gray-100 rounded-xl overflow-hidden">
+            <div class="flex items-center gap-2 px-3 py-2.5 bg-gray-50 border-b border-gray-100">
+              <svg class="w-4 h-4 text-amber-500" fill="currentColor" viewBox="0 0 24 24"><path d="M3 7a2 2 0 012-2h4l2 2h8a2 2 0 012 2v8a2 2 0 01-2 2H5a2 2 0 01-2-2V7z"></path></svg>
+              <span class="text-xs font-medium text-gray-700">语言成绩</span>
+              <span class="text-[10px] text-gray-400 ml-auto">1 个文件</span>
+            </div>
+            <div class="space-y-2 p-2.5">
+              <div class="flex items-center justify-between p-2.5 bg-white rounded-lg border border-gray-100 hover:border-blue-300 transition-colors">
+                <div class="flex items-center gap-2 min-w-0">
+                  <svg class="w-5 h-5 text-green-500 flex-shrink-0" fill="currentColor" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8l-6-6z"></path></svg>
+                  <span class="text-sm text-gray-700 truncate">雅思成绩单.pdf</span>
+                </div>
+                <div class="flex items-center gap-1.5 flex-shrink-0">
+                  <button class="p-1 text-gray-400 hover:text-blue-600" title="预览">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
+                  </button>
+                  <button class="p-1 text-gray-400 hover:text-green-600" title="下载">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- 空文件夹示意：实习与获奖材料 -->
+          <div class="border border-dashed border-gray-200 rounded-xl p-4 text-center">
+            <svg class="w-6 h-6 text-gray-300 mx-auto mb-1.5" fill="currentColor" viewBox="0 0 24 24"><path d="M3 7a2 2 0 012-2h4l2 2h8a2 2 0 012 2v8a2 2 0 01-2 2H5a2 2 0 01-2-2V7z"></path></svg>
+            <p class="text-xs text-gray-400">实习与获奖材料（空文件夹）</p>
+          </div>
+        </div>
+      </div>
+      <button id="left-sidebar-expand" class="sidebar-expand-btn" title="展开资料栏">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 5l7 7-7 7m-8-14l7 7-7 7"></path></svg>
+      </button>
+    </aside>
+
+    <!-- 中央编辑区 -->
+    <main class="flex-1 flex flex-col min-w-0">
+      <!-- 文书类型切换 -->
+      <div class="bg-white border-b border-gray-200 px-6 py-2">
+        <div class="flex items-center gap-2">
+          <span class="text-xs text-gray-500">文书类型：</span>
+          <button id="btn-doc-type-ps" class="doc-type-btn px-3 py-1 text-xs font-medium bg-purple-500 text-white rounded-full cursor-pointer" data-doc-type="ps" data-dom-id="btn-doc-type-ps">PS</button>
+          <button id="btn-doc-type-cv" class="doc-type-btn px-3 py-1 text-xs font-medium text-gray-600 hover:bg-gray-100 rounded-full cursor-pointer" data-doc-type="cv">CV</button>
+          <button id="btn-doc-type-rl" class="doc-type-btn px-3 py-1 text-xs font-medium text-gray-600 hover:bg-gray-100 rounded-full cursor-pointer" data-doc-type="rl">RL</button>
+          <button id="btn-doc-type-rp" class="doc-type-btn px-3 py-1 text-xs font-medium text-gray-600 hover:bg-gray-100 rounded-full cursor-pointer" data-doc-type="rp">RP</button>
+          <button id="btn-doc-type-cl" class="doc-type-btn px-3 py-1 text-xs font-medium text-gray-600 hover:bg-gray-100 rounded-full cursor-pointer" data-doc-type="cl">email</button>
+        </div>
+      </div>
+
+      <!-- 编辑器工具栏：按功能分组 -->
+      <div id="editor-toolbar" class="bg-white border-b border-gray-200 px-6 py-2 space-y-1">
+        <div class="flex items-center gap-1 flex-wrap">
+          <!-- 文字样式 -->
+          <button class="p-1.5 text-gray-600 hover:bg-gray-100 rounded font-bold" title="加粗"><strong>B</strong></button>
+          <button class="p-1.5 text-gray-600 hover:bg-gray-100 rounded italic" title="斜体"><em>I</em></button>
+          <button class="p-1.5 text-gray-600 hover:bg-gray-100 rounded underline" title="下划线"><u>U</u></button>
+          <button class="p-1.5 text-gray-600 hover:bg-gray-100 rounded line-through" title="删除线"><s>S</s></button>
+          <button class="p-1.5 text-gray-600 hover:bg-gray-100 rounded" title="高亮">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536M9 11l4 4m-6.5-.5L4 17l-.5 3.5L7 20l2.5-2.5M13 7l4 4"></path></svg>
+          </button>
+          <div class="w-px h-5 bg-gray-200 mx-1"></div>
+          <!-- 段落结构 -->
+          <button class="px-2 py-1 text-xs text-gray-600 hover:bg-gray-100 rounded" title="正文">正文</button>
+          <button class="px-2 py-1 text-xs font-bold text-gray-600 hover:bg-gray-100 rounded" title="标题 H1">H1</button>
+          <button class="px-2 py-1 text-xs font-bold text-gray-500 hover:bg-gray-100 rounded" title="标题 H2">H2</button>
+          <button class="px-2 py-1 text-xs font-semibold text-gray-400 hover:bg-gray-100 rounded" title="标题 H3">H3</button>
+          <div class="w-px h-5 bg-gray-200 mx-1"></div>
+          <!-- 对齐 -->
+          <button class="p-1.5 text-gray-600 hover:bg-gray-100 rounded" title="左对齐">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 10h10M4 14h16M4 18h10"></path></svg>
+          </button>
+          <button class="p-1.5 text-gray-600 hover:bg-gray-100 rounded" title="居中对齐">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M7 10h10M4 14h16M7 18h10"></path></svg>
+          </button>
+          <button class="p-1.5 text-gray-600 hover:bg-gray-100 rounded" title="右对齐">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M10 10h10M4 14h16M10 18h10"></path></svg>
+          </button>
+          <button class="p-1.5 text-gray-600 hover:bg-gray-100 rounded" title="两端对齐">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 10h16M4 14h16M4 18h16"></path></svg>
+          </button>
+        </div>
+        <div class="flex items-center gap-1 flex-wrap">
+          <!-- 列表与块 -->
+          <button class="p-1.5 text-gray-600 hover:bg-gray-100 rounded" title="无序列表">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h.01M4 12h.01M4 18h.01M8 6h12M8 12h12M8 18h12"></path></svg>
+          </button>
+          <button class="p-1.5 text-gray-600 hover:bg-gray-100 rounded" title="有序列表">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 6h1v4M7 10h2M7 6l2-.5M10 18h11M10 6h11M7 14h2m0 0h.01M7 18h2m1-4h11"></path></svg>
+          </button>
+          <button class="p-1.5 text-gray-600 hover:bg-gray-100 rounded" title="引用">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h4v6a2 2 0 01-2 2H8m0-8v8m0-8L6 8m2 2V6m8 4h4v6a2 2 0 01-2 2h-2m0-8v8m0-8l-2-2m2 2V6"></path></svg>
+          </button>
+          <button class="p-1.5 text-gray-600 hover:bg-gray-100 rounded" title="分割线">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 12h16M7 8h10M7 16h10"></path></svg>
+          </button>
+          <div class="w-px h-5 bg-gray-200 mx-1"></div>
+          <!-- 其他 -->
+          <button class="p-1.5 text-gray-600 hover:bg-gray-100 rounded" title="增加缩进">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h6m-2-2l2 2-2 2M4 18h16"></path></svg>
+          </button>
+          <button class="p-1.5 text-gray-600 hover:bg-gray-100 rounded" title="减少缩进">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M8 12h6m2-2l-2 2 2 2M4 18h16"></path></svg>
+          </button>
+          <button class="p-1.5 text-gray-600 hover:bg-gray-100 rounded" title="插入链接">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 010 5.656l-3 3a4 4 0 01-5.656-5.656l1.5-1.5m8.486-3.314a4 4 0 00-5.657 0l-3 3a4 4 0 105.657 5.657l1.5-1.5"></path></svg>
+          </button>
+          <button class="p-1.5 text-gray-600 hover:bg-gray-100 rounded" title="清除格式">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 6l12 12M9 4h6M12 4v4m0 4l2.5 6M8 20h8"></path></svg>
+          </button>
+          <div class="w-px h-5 bg-gray-200 mx-1"></div>
+          <!-- 表格操作 -->
+          <button class="p-1.5 text-gray-600 hover:bg-gray-100 rounded" title="插入表格">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5h18v14H3V5zm0 5h18M9 5v14M15 5v14"></path></svg>
+          </button>
+          <button class="p-1.5 text-gray-600 hover:bg-gray-100 rounded text-xs" title="上插行">⬆</button>
+          <button class="p-1.5 text-gray-600 hover:bg-gray-100 rounded text-xs" title="下插行">⬇</button>
+          <button class="p-1.5 text-gray-600 hover:bg-gray-100 rounded text-xs" title="左插列">⬅</button>
+          <button class="p-1.5 text-gray-600 hover:bg-gray-100 rounded text-xs" title="右插列">➡</button>
+          <div class="flex-1"></div>
+          <!-- 一键整体翻译 -->
+          <div class="relative">
+            <button id="btn-translate-doc" class="flex items-center gap-1 px-2.5 py-1 text-xs font-medium text-gray-600 hover:bg-purple-50 hover:text-purple-700 rounded-lg transition-colors" title="一键整体翻译成其他语言">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5h12M9 3v2m1.5 0a18.5 18.5 0 01-4 8m1-3a10 10 0 004 4M15 13l4 8m0-8l-4 8m-2-4h8"></path></svg>
+              一键翻译
+              <svg class="w-3 h-3 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+            </button>
+            <div id="translateDocMenu" class="hidden absolute right-0 top-full mt-1 w-44 bg-white rounded-xl shadow-lg border border-gray-100 py-1.5 z-50">
+              <button class="w-full text-left px-3.5 py-2 text-xs text-gray-700 hover:bg-purple-50 hover:text-purple-700" onclick="translateDocument('英语')">翻译成 英语</button>
+              <button class="w-full text-left px-3.5 py-2 text-xs text-gray-700 hover:bg-purple-50 hover:text-purple-700" onclick="translateDocument('日语')">翻译成 日语</button>
+              <button class="w-full text-left px-3.5 py-2 text-xs text-gray-700 hover:bg-purple-50 hover:text-purple-700" onclick="translateDocument('韩语')">翻译成 韩语</button>
+              <div class="my-1 border-t border-gray-100"></div>
+              <button class="w-full text-left px-3.5 py-2 text-xs text-gray-400 hover:bg-gray-50" onclick="showToast('当前已为中文原文', 'info')">中文（原文）</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 编辑器内容 -->
+      <div id="editor-content-wrap" class="flex-1 overflow-y-auto p-6 bg-gray-50">
+        <div class="editor-paper w-full mx-auto bg-white rounded-xl shadow-sm border border-gray-100 p-8">
+          <div class="mb-6 flex items-start justify-between gap-4">
+            <div class="min-w-0">
+              <h2 id="doc-title" class="text-xl font-bold text-gray-900 mb-1">个人陈述（Personal Statement）</h2>
+              <p id="doc-subtitle" class="text-sm text-gray-500">卡内基梅隆大学 · 人工智能 · 硕士申请</p>
+            </div>
+            <div class="flex items-center gap-2 flex-shrink-0">
+              <button class="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium bg-white border border-gray-300 text-gray-700 rounded-lg hover:border-purple-300 hover:text-purple-700 hover:bg-purple-50 transition-colors" onclick="openTemplateSelect('switch')" title="更换当前套用的模板">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
+                换用模板
+              </button>
+              <button class="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium bg-white border border-gray-300 text-gray-700 rounded-lg hover:border-purple-300 hover:text-purple-700 hover:bg-purple-50 transition-colors" onclick="openCaseLibrary()" title="查看同类型文书案例">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>
+                查看案例
+              </button>
+            </div>
+          </div>
+          <div id="docTranslateBanner" class="hidden mb-4 flex items-center justify-between gap-3 px-3.5 py-2.5 rounded-xl bg-purple-50 border border-purple-100">
+            <span class="flex items-center gap-2 text-xs text-purple-700">
+              <svg class="w-4 h-4 text-purple-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5h12M9 3v2m1.5 0a18.5 18.5 0 01-4 8m1-3a10 10 0 004 4M15 13l4 8m0-8l-4 8m-2-4h8"></path></svg>
+              <span id="docTranslateBannerText">已一键翻译为英语（机器翻译预览）</span>
+            </span>
+            <span class="flex items-center gap-3 flex-shrink-0">
+              <button id="btnToggleTranslateView" class="text-xs font-medium text-purple-600 hover:text-purple-800" onclick="toggleTranslateView()">查看原文</button>
+              <button class="text-gray-400 hover:text-gray-600 text-base leading-none" onclick="closeTranslateBanner()" title="关闭">×</button>
+            </span>
+          </div>
+          <div class="flex justify-end mb-2">
+            <span id="documentAutoSaveStatus" class="inline-flex items-center gap-1.5 text-xs text-emerald-600"><span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>已自动保存</span>
+          </div>
+          <div id="editor-sections" class="editor-sections space-y-4"><div class="editor-block border border-gray-200 rounded-xl overflow-hidden"><div class="flex items-center justify-between gap-2 px-4 py-2 bg-gray-50 border-b border-gray-200"><input type="text" class="section-title-input" value="段落 1 · 研究背景与动机" aria-label="段落标题"><div class="editor-inline-actions flex items-center gap-2 flex-shrink-0"><button class="btn-send-to-ai flex items-center gap-1 px-2.5 py-1 text-xs font-medium bg-blue-600 text-white rounded-lg hover:bg-blue-700" data-section="section-1"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>帮我改写</button><button class="btn-delete-section flex items-center gap-1 px-2.5 py-1 text-xs font-medium bg-white border border-gray-300 text-gray-600 rounded-lg hover:bg-red-50 hover:text-red-600 hover:border-red-300" data-section="section-1" title="删除该段落"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6M9 7V4a1 1 0 011-1h4a1 1 0 011 1v3M4 7h16"></path></svg>删除</button></div></div><textarea class="editor-textarea w-full p-4 text-gray-700 leading-relaxed text-sm resize-none focus:outline-none" rows="4" placeholder="从左侧学生资料、院校目标或右侧模板开始撰写本段…"></textarea></div><div class="editor-block border border-gray-200 rounded-xl overflow-hidden"><div class="flex items-center justify-between gap-2 px-4 py-2 bg-gray-50 border-b border-gray-200"><input type="text" class="section-title-input" value="段落 2 · 学术与项目经历" aria-label="段落标题"><div class="editor-inline-actions flex items-center gap-2 flex-shrink-0"><button class="btn-send-to-ai flex items-center gap-1 px-2.5 py-1 text-xs font-medium bg-blue-600 text-white rounded-lg hover:bg-blue-700" data-section="section-2"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>帮我改写</button><button class="btn-delete-section flex items-center gap-1 px-2.5 py-1 text-xs font-medium bg-white border border-gray-300 text-gray-600 rounded-lg hover:bg-red-50 hover:text-red-600 hover:border-red-300" data-section="section-2" title="删除该段落"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6M9 7V4a1 1 0 011-1h4a1 1 0 011 1v3M4 7h16"></path></svg>删除</button></div></div><textarea class="editor-textarea w-full p-4 text-gray-700 leading-relaxed text-sm resize-none focus:outline-none" rows="4" placeholder="从左侧学生资料、院校目标或右侧模板开始撰写本段…"></textarea></div><div class="editor-block border border-gray-200 rounded-xl overflow-hidden"><div class="flex items-center justify-between gap-2 px-4 py-2 bg-gray-50 border-b border-gray-200"><input type="text" class="section-title-input" value="段落 3 · 职业目标与院校匹配" aria-label="段落标题"><div class="editor-inline-actions flex items-center gap-2 flex-shrink-0"><button class="btn-send-to-ai flex items-center gap-1 px-2.5 py-1 text-xs font-medium bg-blue-600 text-white rounded-lg hover:bg-blue-700" data-section="section-3"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>帮我改写</button><button class="btn-delete-section flex items-center gap-1 px-2.5 py-1 text-xs font-medium bg-white border border-gray-300 text-gray-600 rounded-lg hover:bg-red-50 hover:text-red-600 hover:border-red-300" data-section="section-3" title="删除该段落"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6M9 7V4a1 1 0 011-1h4a1 1 0 011 1v3M4 7h16"></path></svg>删除</button></div></div><textarea class="editor-textarea w-full p-4 text-gray-700 leading-relaxed text-sm resize-none focus:outline-none" rows="4" placeholder="从左侧学生资料、院校目标或右侧模板开始撰写本段…"></textarea></div></div>
+          <button id="btn-add-section" type="button" class="w-full mt-4 border-2 border-dashed border-gray-300 rounded-xl py-3 text-sm text-gray-500 hover:border-purple-400 hover:text-purple-600 transition-colors flex items-center justify-center gap-2">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
+            新增段落
+          </button>
+        </div>
+      </div>
+
+      <!-- 待撰写空态：尚未开始撰写时仅展示「选择模板」入口 -->
+      <div id="draft-empty-state" class="flex-1 hidden bg-gray-50 items-center justify-center p-6">
+        <div class="draft-empty-card animate-fade-in">
+          <div class="draft-empty-icon">
+            <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+          </div>
+          <h3 class="text-base font-semibold text-gray-900 mb-2">该文书尚未开始撰写</h3>
+          <p class="text-sm text-gray-500 leading-relaxed mb-6">建议选择一份与申请方向匹配的模板生成段落结构，<br>也可以直接进入空白编辑。</p>
+          <button class="btn btn-primary px-6 h-10 text-sm" onclick="openTemplateSelect('choose')">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 5a1 1 0 011-1h4a1 1 0 011 1v4a1 1 0 01-1 1H5a1 1 0 01-1-1V5zM14 5a1 1 0 011-1h4a1 1 0 011 1v4a1 1 0 01-1 1h-4a1 1 0 01-1-1V5zM4 15a1 1 0 011-1h4a1 1 0 011 1v4a1 1 0 01-1 1H5a1 1 0 01-1-1v-4zM14 15a1 1 0 011-1h4a1 1 0 011 1v4a1 1 0 01-1 1h-4a1 1 0 01-1-1v-4z"></path></svg>
+            选择模板
+          </button>
+          <p class="mt-4"><button class="text-xs text-gray-400 hover:text-gray-600 underline underline-offset-2" onclick="exitDraftMode()">跳过模板，直接开始编辑</button></p>
+        </div>
+      </div>
+
+      <!-- 底部版本信息卡 -->
+      <div id="editor-version-bar" class="bg-white border-t border-gray-200 px-6 py-2 flex items-center justify-between">
+        <div class="flex items-center gap-4 text-xs text-gray-500">
+          <span>当前版本: <span id="documentCurrentVersion" class="font-medium text-gray-700">v1</span></span>
+          <span>字数统计（<span id="docWordCount" class="font-medium text-gray-700">0</span> 字）</span>
+          <span>最后编辑: <span id="documentLastEdited" class="font-medium text-gray-700">—</span></span>
+          <span>编辑人: <span class="font-medium text-gray-700">陈文书</span></span>
+        </div>
+        <div class="flex items-center gap-2">
+          <button class="flex items-center gap-1.5 px-3 py-1.5 text-xs bg-white border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50" onclick="openVersionHistory()" title="查看全部历史版本">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+            历史版本
+          </button>
+          <button id="btn-save-version" class="flex items-center gap-1.5 px-3 py-1.5 text-xs bg-white border border-gray-300 text-gray-700 rounded-lg hover:border-purple-300 hover:text-purple-700 hover:bg-purple-50 transition-colors" title="将当前内容保存为新的版本快照">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v3m0 0v3m0-3h3m-3 0H9M9 3h4.586a1 1 0 01.707.293l4.414 4.414a1 1 0 01.293.707V17a2 2 0 01-2 2H7a2 2 0 01-2-2V5a2 2 0 012-2h2"></path></svg>
+            另存为新版本
+          </button>
+          <button class="flex items-center gap-1.5 px-3 py-1.5 text-xs bg-white border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50" onclick="exportDocumentToWord()">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path>
+            </svg>
+            导出 Word
+          </button>
+        </div>
+      </div>
+    </main>
+
+    <!-- 右侧边栏 -->
+    <aside id="right-sidebar" class="sidebar-right bg-white/95 border-l border-slate-200/80 flex flex-col flex-shrink-0 backdrop-blur-sm" style="width: 370px;">
+      <!-- 左边缘拖拽手柄：按住可手动调整右侧边栏宽度，双击恢复默认宽度 -->
+      <div id="right-sidebar-resizer" title="拖动调整宽度，双击恢复默认"></div>
+      <div class="p-4 border-b border-gray-100">
+        <div class="flex items-center gap-1">
+          <button id="btn-collapse-right" title="收起工具栏" class="p-1.5 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg flex-shrink-0">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 5l7 7-7 7m-8-14l7 7-7 7"></path></svg>
+          </button>
+          <nav class="flex space-x-1 flex-1" id="right-tabs">
+            <button id="tab-ai" class="flex-1 px-2 py-2 text-xs font-medium text-blue-700 bg-blue-50 rounded-lg" data-dom-id="tab-ai">
+              AI润色
+            </button>
+            <button id="tab-goal" class="flex-1 px-2 py-2 text-xs font-medium text-gray-600 hover:text-gray-900" data-dom-id="tab-goal">
+              院校目标
+            </button>
+            <button id="tab-supplement" class="flex-1 px-2 py-2 text-xs font-medium text-gray-600 hover:text-gray-900" data-dom-id="tab-supplement">
+              补充信息
+            </button>
+          </nav>
+        </div>
+      </div>
+
+      <!-- AI润色面板（默认展示）：含两个子Tab -->
+      <div id="panel-ai" class="flex-1 overflow-y-auto">
+        <!-- 子Tab导航 -->
+        <div class="px-4 pt-4 pb-3 border-b border-gray-100 bg-white">
+          <nav class="flex space-x-1" id="ai-subtabs">
+            <button id="tab-ai-suggest" class="flex-1 px-2 py-1.5 text-xs font-medium text-blue-700 bg-white rounded-lg shadow-sm transition-all">
+              写作建议
+            </button>
+            <button id="tab-ai-write" class="flex-1 px-2 py-1.5 text-xs font-medium text-slate-600 hover:text-slate-900 hover:bg-slate-50 rounded-lg transition-all">
+              帮我改写
+            </button>
+          </nav>
+        </div>
+
+        <!-- 子面板1：写作建议（按当前文书类型动态生成） -->
+        <div id="panel-ai-suggest" class="p-4 space-y-4">
+          <div id="aiSuggestContainer" class="space-y-4"></div>
+          <!-- 底部悬浮：整体换一换 -->
+          <div class="ai-suggest-footer">
+            <button id="btn-refresh-all-suggestions" type="button" class="btn-refresh-all" onclick="rotateAllAiSuggestions()">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
+              整体换一换
+            </button>
+          </div>
+        </div>
+
+        <!-- 子面板2：帮我改写（默认隐藏） -->
+        <div id="panel-ai-write" class="p-4 hidden">
+          <div class="space-y-4">
+            <!-- 段落内容显示 -->
+            <div id="ai-received-content" class="hidden p-3 bg-white rounded-xl border border-blue-100 text-sm text-gray-700 leading-relaxed">
+            </div>
+            <!-- 注意事项 -->
+            <div class="p-3 bg-amber-50 border border-amber-200 rounded-xl">
+              <div class="flex items-start gap-2">
+                <svg class="w-4 h-4 text-amber-500 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01M12 2a10 10 0 100 20 10 10 0 000-20z"></path>
+                </svg>
+                <div>
+                  <h4 class="text-xs font-medium text-amber-800 mb-1">注意事项</h4>
+                  <p class="text-xs text-amber-700 leading-relaxed">本面板所有内容（包括润色建议、语法检查、续写段落、扩写段落等）均由 AI 自动生成，仅供参考。请务必结合申请院校的具体要求和个人实际情况进行人工审核与修改，AI 生成内容不代表最终文书质量。</p>
+                </div>
+              </div>
+            </div>
+            <div class="p-3 bg-gradient-to-br from-blue-50 to-purple-50 rounded-xl">
+              <h4 class="text-sm font-medium text-gray-800 mb-2">帮我改写</h4>
+              <p class="text-xs text-gray-600 mb-3">同步段落或输入内容，由 AI 逐段改写优化</p>
+              <div class="space-y-2 mb-3">
+                <textarea id="ai-input-content" class="w-full p-2.5 text-sm border border-gray-200 rounded-lg resize-none focus:outline-none focus:ring-2 focus:ring-blue-500" rows="3" placeholder="来自编辑器的段落将显示在此处，也可直接输入"></textarea>
+                <button id="ai-request-button" class="w-full px-3 py-2 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700 flex items-center justify-center gap-2" onclick="requestAiWriting()">
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+                  基于当前内容发起请求
+                </button>
+              </div>
+              <p class="text-xs text-gray-500 mb-2">快捷请求</p>
+              <div class="space-y-2">
+                <button class="w-full text-left px-3 py-2 bg-white rounded-lg text-sm text-gray-700 hover:bg-blue-50 border border-gray-200 flex items-center gap-2" onclick="setAiWritingPrompt('润色优化')">
+                  <svg class="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path></svg>
+                  润色优化
+                </button>
+                <button class="w-full text-left px-3 py-2 bg-white rounded-lg text-sm text-gray-700 hover:bg-blue-50 border border-gray-200 flex items-center gap-2" onclick="setAiWritingPrompt('语法检查')">
+                  <svg class="w-4 h-4 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                  语法检查
+                </button>
+                <button class="w-full text-left px-3 py-2 bg-white rounded-lg text-sm text-gray-700 hover:bg-blue-50 border border-gray-200 flex items-center gap-2" onclick="setAiWritingPrompt('续写段落')">
+                  <svg class="w-4 h-4 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+                  续写段落
+                </button>
+                <button class="w-full text-left px-3 py-2 bg-white rounded-lg text-sm text-gray-700 hover:bg-blue-50 border border-gray-200 flex items-center gap-2" onclick="setAiWritingPrompt('扩写段落')">
+                  <svg class="w-4 h-4 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
+                  扩写段落
+                </button>
+              </div>
+            </div>
+            <div class="bg-gray-50 rounded-xl p-3">
+              <div class="flex items-center justify-between mb-2"><p class="text-xs font-medium text-gray-700">改写回答</p><span id="ai-writing-mode" class="text-xs text-gray-400">等待请求</span></div>
+              <div id="ai-writing-response" class="space-y-2">
+                <div class="p-3 bg-white rounded-lg border border-gray-200"><p class="text-xs text-gray-500 leading-relaxed">同步编辑器段落或输入内容后，点击“基于当前内容发起请求”。回答将按段落展示，可单独复制。</p></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 院校目标面板（默认隐藏）：字段信息进入页面后自动从 EV 系统同步，自左栏迁移至此 -->
+      <div id="panel-goal" data-has-content="true" class="flex-1 overflow-y-auto p-4 space-y-4 hidden">
         <div class="bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden">
           <div class="h-1.5 bg-gradient-to-r from-purple-500 to-violet-600"></div>
           <div class="p-4">
@@ -1007,365 +1602,6 @@ body {
         </div>
       </div>
 
-      <!-- 历史版本面板（默认隐藏） -->
-      <div id="panel-version-history" class="flex-1 overflow-y-auto p-4">
-        <div class="space-y-3">
-          <!-- 当前版本 -->
-          <div class="p-3 bg-blue-50 rounded-xl border border-blue-200">
-            <div class="flex items-center justify-between mb-2">
-              <span class="text-sm font-semibold text-blue-800">v1.2</span>
-              <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-blue-600 text-white">当前版本</span>
-            </div>
-            <p class="text-xs text-gray-500 mb-1">2026-07-17 14:32 · 张老师</p>
-            <p id="currentVersionChangeNote" class="text-xs text-gray-500 mb-2">856 字 · 修改研究经历段落</p>
-            <div class="flex items-center gap-3 text-xs">
-              <button class="text-blue-600 hover:text-blue-800 font-medium">预览</button>
-              <button class="text-gray-500 hover:text-gray-700">下载</button>
-            </div>
-          </div>
-
-          <!-- 历史版本 v1.1 -->
-          <div class="p-3 bg-white rounded-xl border border-gray-100 hover:border-blue-200 transition-colors">
-            <div class="flex items-center justify-between mb-2">
-              <span class="text-sm font-semibold text-gray-800">v1.1</span>
-              <span class="text-xs text-gray-400">历史版本</span>
-            </div>
-            <p class="text-xs text-gray-500 mb-1">2026-07-15 10:18 · 张老师</p>
-            <p class="text-xs text-gray-500 mb-2">812 字 · 补充学术准备内容</p>
-            <div class="flex items-center gap-3 text-xs">
-              <button class="text-blue-600 hover:text-blue-800 font-medium">预览</button>
-              <button class="text-gray-500 hover:text-gray-700">下载</button>
-              <button class="text-emerald-600 hover:text-emerald-700 font-medium">恢复此版本</button>
-            </div>
-          </div>
-
-          <!-- 历史版本 v1.0 -->
-          <div class="p-3 bg-white rounded-xl border border-gray-100 hover:border-blue-200 transition-colors">
-            <div class="flex items-center justify-between mb-2">
-              <span class="text-sm font-semibold text-gray-800">v1.0</span>
-              <span class="text-xs text-gray-400">历史版本</span>
-            </div>
-            <p class="text-xs text-gray-500 mb-1">2026-07-12 16:45 · 李顾问</p>
-            <p class="text-xs text-gray-500 mb-2">768 字 · 初稿</p>
-            <div class="flex items-center gap-3 text-xs">
-              <button class="text-blue-600 hover:text-blue-800 font-medium">预览</button>
-              <button class="text-gray-500 hover:text-gray-700">下载</button>
-              <button class="text-emerald-600 hover:text-emerald-700 font-medium">恢复此版本</button>
-            </div>
-          </div>
-
-          <!-- 已导出的文书文件 -->
-          <div class="pt-3 border-t border-gray-100">
-            <h4 class="text-xs font-medium text-gray-500 mb-2">已导出的文书文件</h4>
-            <div class="space-y-2">
-              <div class="flex items-center justify-between p-2.5 bg-white rounded-lg border border-gray-100 hover:border-blue-300 transition-colors">
-                <div class="flex items-center gap-2 min-w-0">
-                  <svg class="w-5 h-5 text-purple-500 flex-shrink-0" fill="currentColor" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8l-6-6z"></path></svg>
-                  <span class="text-sm text-gray-700 truncate">个人陈述v1.2.pdf</span>
-                </div>
-                <div class="flex items-center gap-1.5 flex-shrink-0">
-                  <button class="p-1 text-gray-400 hover:text-blue-600" title="预览">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
-                  </button>
-                  <button class="p-1 text-gray-400 hover:text-green-600" title="下载">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
-                  </button>
-                </div>
-              </div>
-              <div class="flex items-center justify-between p-2.5 bg-white rounded-lg border border-gray-100 hover:border-blue-300 transition-colors">
-                <div class="flex items-center gap-2 min-w-0">
-                  <svg class="w-5 h-5 text-purple-500 flex-shrink-0" fill="currentColor" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8l-6-6z"></path></svg>
-                  <span class="text-sm text-gray-700 truncate">个人陈述v1.1.pdf</span>
-                </div>
-                <div class="flex items-center gap-1.5 flex-shrink-0">
-                  <button class="p-1 text-gray-400 hover:text-blue-600" title="预览">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
-                  </button>
-                  <button class="p-1 text-gray-400 hover:text-green-600" title="下载">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
-                  </button>
-                </div>
-              </div>
-              <div class="flex items-center justify-between p-2.5 bg-white rounded-lg border border-gray-100 hover:border-blue-300 transition-colors">
-                <div class="flex items-center gap-2 min-w-0">
-                  <svg class="w-5 h-5 text-purple-500 flex-shrink-0" fill="currentColor" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8l-6-6z"></path></svg>
-                  <span class="text-sm text-gray-700 truncate">个人陈述v1.0.pdf</span>
-                </div>
-                <div class="flex items-center gap-1.5 flex-shrink-0">
-                  <button class="p-1 text-gray-400 hover:text-blue-600" title="预览">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
-                  </button>
-                  <button class="p-1 text-gray-400 hover:text-green-600" title="下载">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
-                  </button>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- 资产文件面板（默认隐藏） -->
-      <div id="panel-materials" class="flex-1 overflow-y-auto p-4 hidden">
-        <div class="space-y-4">
-          <!-- 资产文件 -->
-          <div>
-            <h4 class="text-sm font-medium text-gray-700 mb-3 flex items-center gap-2">
-              <svg class="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4"></path>
-              </svg>
-              资产文件
-            </h4>
-            <div class="space-y-2">
-              <div class="flex items-center justify-between p-2.5 bg-white rounded-lg border border-gray-100 hover:border-blue-300 transition-colors">
-                <div class="flex items-center gap-2 min-w-0">
-                  <svg class="w-5 h-5 text-red-500 flex-shrink-0" fill="currentColor" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8l-6-6z"></path></svg>
-                  <span class="text-sm text-gray-700 truncate">身份证扫描件.pdf</span>
-                </div>
-                <div class="flex items-center gap-1.5 flex-shrink-0">
-                  <button class="p-1 text-gray-400 hover:text-blue-600" title="预览">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
-                  </button>
-                  <button class="p-1 text-gray-400 hover:text-green-600" title="下载">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
-                  </button>
-                </div>
-              </div>
-              <div class="flex items-center justify-between p-2.5 bg-white rounded-lg border border-gray-100 hover:border-blue-300 transition-colors">
-                <div class="flex items-center gap-2 min-w-0">
-                  <svg class="w-5 h-5 text-blue-500 flex-shrink-0" fill="currentColor" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8l-6-6z"></path></svg>
-                  <span class="text-sm text-gray-700 truncate">本科成绩单（中英文）.pdf</span>
-                </div>
-                <div class="flex items-center gap-1.5 flex-shrink-0">
-                  <button class="p-1 text-gray-400 hover:text-blue-600" title="预览">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
-                  </button>
-                  <button class="p-1 text-gray-400 hover:text-green-600" title="下载">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
-                  </button>
-                </div>
-              </div>
-              <div class="flex items-center justify-between p-2.5 bg-white rounded-lg border border-gray-100 hover:border-blue-300 transition-colors">
-                <div class="flex items-center gap-2 min-w-0">
-                  <svg class="w-5 h-5 text-green-500 flex-shrink-0" fill="currentColor" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8l-6-6z"></path></svg>
-                  <span class="text-sm text-gray-700 truncate">雅思成绩单.pdf</span>
-                </div>
-                <div class="flex items-center gap-1.5 flex-shrink-0">
-                  <button class="p-1 text-gray-400 hover:text-blue-600" title="预览">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
-                  </button>
-                  <button class="p-1 text-gray-400 hover:text-green-600" title="下载">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
-                  </button>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </aside>
-
-    <!-- 中央编辑区 -->
-    <main class="flex-1 flex flex-col min-w-0">
-      <!-- 文书类型切换 -->
-      <div class="bg-white border-b border-gray-200 px-6 py-2">
-        <div class="flex items-center gap-2">
-          <span class="text-xs text-gray-500">文书类型：</span>
-          <button id="btn-doc-type-ps" class="doc-type-btn px-3 py-1 text-xs font-medium text-gray-600 hover:bg-gray-100 rounded-full cursor-pointer" data-doc-type="ps" data-dom-id="btn-doc-type-ps">PS</button>
-          <button id="btn-doc-type-cv" class="doc-type-btn px-3 py-1 text-xs font-medium text-gray-600 hover:bg-gray-100 rounded-full cursor-pointer" data-doc-type="cv">CV</button>
-          <button id="btn-doc-type-rl" class="doc-type-btn px-3 py-1 text-xs font-medium text-gray-600 hover:bg-gray-100 rounded-full cursor-pointer" data-doc-type="rl">RL</button>
-          <button id="btn-doc-type-rp" class="doc-type-btn px-3 py-1 text-xs font-medium bg-blue-100 text-blue-700 rounded-full cursor-pointer" data-doc-type="rp">RP</button>
-          <button id="btn-doc-type-cl" class="doc-type-btn px-3 py-1 text-xs font-medium text-gray-600 hover:bg-gray-100 rounded-full cursor-pointer" data-doc-type="cl">套磁信</button>
-        </div>
-      </div>
-
-      <!-- 编辑器工具栏 -->
-      <div class="bg-white border-b border-gray-200 px-6 py-2">
-        <div class="flex items-center gap-1">
-          <button class="p-1.5 text-gray-600 hover:bg-gray-100 rounded" title="粗体"><strong>B</strong></button>
-          <button class="p-1.5 text-gray-600 hover:bg-gray-100 rounded" title="斜体"><em>I</em></button>
-          <button class="p-1.5 text-gray-600 hover:bg-gray-100 rounded" title="下划线"><u>U</u></button>
-          <div class="w-px h-5 bg-gray-200 mx-1"></div>
-          <button class="p-1.5 text-gray-600 hover:bg-gray-100 rounded" title="无序列表">≡</button>
-          <button class="p-1.5 text-gray-600 hover:bg-gray-100 rounded" title="有序列表">#</button>
-          <div class="w-px h-5 bg-gray-200 mx-1"></div>
-          <button class="p-1.5 text-gray-600 hover:bg-gray-100 rounded" title="插入引用">"</button>
-          <button class="p-1.5 text-gray-600 hover:bg-gray-100 rounded" title="插入链接">🔗</button>
-        </div>
-      </div>
-
-      <!-- 编辑器内容 -->
-      <div class="flex-1 overflow-y-auto p-6 bg-gray-50">
-        <div class="editor-paper w-full mx-auto bg-white rounded-xl shadow-sm border border-gray-100 p-8">
-          <div class="mb-6">
-            <h2 id="doc-title" class="text-xl font-bold text-gray-900 mb-1">研究计划（Research Proposal）</h2>
-            <p id="doc-subtitle" class="text-sm text-gray-500">卡内基梅隆大学 · 人工智能 · 硕士申请</p>
-          </div>
-          <div class="flex justify-end mb-2">
-            <span id="documentAutoSaveStatus" class="inline-flex items-center gap-1.5 text-xs text-emerald-600"><span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>已自动保存</span>
-          </div>
-          <div id="editor-sections" class="editor-sections space-y-4"><div class="editor-block border border-gray-200 rounded-xl overflow-hidden"><div class="flex items-center justify-between px-4 py-2 bg-gray-50 border-b border-gray-200"><span class="text-xs font-medium text-gray-500">段落 1 · 研究背景与问题</span><button class="btn-send-to-ai flex items-center gap-1 px-2.5 py-1 text-xs font-medium bg-blue-600 text-white rounded-lg hover:bg-blue-700" data-section="section-1"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>同步至AI写作助手</button></div><textarea class="editor-textarea w-full p-4 text-gray-700 leading-relaxed text-sm resize-none focus:outline-none" rows="3" style="height: 118px;"></textarea></div><div class="editor-block border border-gray-200 rounded-xl overflow-hidden"><div class="flex items-center justify-between px-4 py-2 bg-gray-50 border-b border-gray-200"><span class="text-xs font-medium text-gray-500">段落 2 · 研究方法与技术路线</span><button class="btn-send-to-ai flex items-center gap-1 px-2.5 py-1 text-xs font-medium bg-blue-600 text-white rounded-lg hover:bg-blue-700" data-section="section-2"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>同步至AI写作助手</button></div><textarea class="editor-textarea w-full p-4 text-gray-700 leading-relaxed text-sm resize-none focus:outline-none" rows="3" style="height: 118px;"></textarea></div><div class="editor-block border border-gray-200 rounded-xl overflow-hidden"><div class="flex items-center justify-between px-4 py-2 bg-gray-50 border-b border-gray-200"><span class="text-xs font-medium text-gray-500">段落 3 · 预期成果与计划安排</span><button class="btn-send-to-ai flex items-center gap-1 px-2.5 py-1 text-xs font-medium bg-blue-600 text-white rounded-lg hover:bg-blue-700" data-section="section-3"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>同步至AI写作助手</button></div><textarea class="editor-textarea w-full p-4 text-gray-700 leading-relaxed text-sm resize-none focus:outline-none" rows="3" style="height: 118px;"></textarea></div></div>
-          <div class="flex items-center justify-between mt-6 pt-4 border-t border-gray-100">
-            <div class="text-sm text-gray-500">
-              <span class="font-medium text-gray-900">856</span> 字
-            </div>
-            <div class="flex items-center gap-4 text-xs text-gray-400">
-              <span>版本: v1.2</span>
-              <span>最后编辑: 2026-07-17 14:32</span>
-              <span>编辑人: 张老师</span>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- 底部状态栏 -->
-      <div class="bg-white border-t border-gray-200 px-6 py-2 flex items-center justify-between">
-        <div class="flex items-center gap-4 text-xs text-gray-500">
-          <span>当前版本: <span class="font-medium text-gray-700">v1.2</span></span>
-          <span>字数: <span class="font-medium text-gray-700">856</span></span>
-          <span>最后编辑: <span class="font-medium text-gray-700">2026-07-17 14:32</span></span>
-          <span>编辑人: <span class="font-medium text-gray-700">张老师</span></span>
-        </div>
-        <button class="flex items-center gap-1.5 px-3 py-1.5 text-xs bg-white border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50" onclick="exportDocumentToWord()">
-          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path>
-          </svg>
-          导出 Word
-        </button>
-      </div>
-    </main>
-
-    <!-- 右侧边栏 -->
-    <aside id="right-sidebar" class="sidebar-right bg-white/95 border-l border-slate-200/80 flex flex-col flex-shrink-0 backdrop-blur-sm" style="width: 370px;">
-      <!-- 左边缘拖拽手柄：按住可手动调整右侧边栏宽度，双击恢复默认宽度 -->
-      <div id="right-sidebar-resizer" title="拖动调整宽度，双击恢复默认"></div>
-      <div class="p-4 border-b border-gray-100">
-        <nav class="flex space-x-1" id="right-tabs">
-          <button id="tab-template" class="flex-1 px-2 py-2 text-xs font-medium text-gray-600 hover:text-gray-900" data-dom-id="tab-template">
-            模板
-          </button>
-          <button id="tab-ai" class="flex-1 px-2 py-2 text-xs font-medium text-blue-700 bg-blue-50 rounded-lg" data-dom-id="tab-ai">
-            AI修改
-          </button>
-          <button id="tab-supplement" class="flex-1 px-2 py-2 text-xs font-medium text-gray-600 hover:text-gray-900" data-dom-id="tab-supplement">
-            补充信息
-          </button>
-          <button id="tab-cases" class="flex-1 px-2 py-2 text-xs font-medium text-gray-600 hover:text-gray-900" data-dom-id="tab-cases">
-            案例库
-          </button>
-        </nav>
-      </div>
-
-      <!-- 模板库面板 -->
-      <div id="panel-template" class="flex-1 overflow-y-auto p-4 hidden">
-        <div class="mb-4">
-          <input type="text" placeholder="搜索模板..." class="smart-input">
-        </div>
-        <div class="space-y-3">
-          <div class="p-3 bg-white border border-gray-200 rounded-lg hover:border-blue-300 cursor-pointer">
-            <h4 class="text-sm font-medium text-gray-900 mb-1">AI方向PS标准模板</h4>
-            <p class="text-xs text-gray-500 mb-2">适用于CS/AI方向硕士申请</p>
-            <div class="flex items-center justify-between">
-              <span class="text-xs text-gray-400">使用 128 次</span>
-              <button class="px-2.5 py-1 text-xs bg-blue-600 text-white rounded hover:bg-blue-700" onclick="previewTemplateApplication('ai')">套用</button>
-            </div>
-          </div>
-          <div class="p-3 bg-white border border-gray-200 rounded-lg hover:border-blue-300 cursor-pointer">
-            <h4 class="text-sm font-medium text-gray-900 mb-1">转专业PS框架</h4>
-            <p class="text-xs text-gray-500 mb-2">适用于跨专业申请</p>
-            <div class="flex items-center justify-between">
-              <span class="text-xs text-gray-400">使用 56 次</span>
-              <button class="px-2.5 py-1 text-xs bg-blue-600 text-white rounded hover:bg-blue-700" onclick="previewTemplateApplication('switch')">套用</button>
-            </div>
-          </div>
-          <div class="p-3 bg-white border border-gray-200 rounded-lg hover:border-blue-300 cursor-pointer">
-            <h4 class="text-sm font-medium text-gray-900 mb-1">科研型PS模板</h4>
-            <p class="text-xs text-gray-500 mb-2">强调科研经历与学术能力</p>
-            <div class="flex items-center justify-between">
-              <span class="text-xs text-gray-400">使用 89 次</span>
-              <button class="px-2.5 py-1 text-xs bg-blue-600 text-white rounded hover:bg-blue-700" onclick="previewTemplateApplication('research')">套用</button>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- AI修改面板（默认隐藏）：含两个子Tab -->
-      <div id="panel-ai" class="flex-1 overflow-y-auto">
-        <!-- 子Tab导航 -->
-        <div class="px-4 pt-4 pb-3 border-b border-gray-100 bg-white">
-          <nav class="flex space-x-1" id="ai-subtabs">
-            <button id="tab-ai-suggest" class="flex-1 px-2 py-1.5 text-xs font-medium text-blue-700 bg-white rounded-lg shadow-sm transition-all">
-              AI建议
-            </button>
-            <button id="tab-ai-write" class="flex-1 px-2 py-1.5 text-xs font-medium text-slate-600 hover:text-slate-900 hover:bg-slate-50 rounded-lg transition-all">
-              AI写作助手
-            </button>
-          </nav>
-        </div>
-
-        <!-- 子面板1：AI建议（按当前文书类型 CV/PS/RL/RP/CL 动态生成，生成规则见《文书编辑 AI建议》与《套磁信AI提示词》提示词） -->
-        <div id="panel-ai-suggest" class="p-4 space-y-4">
-          <div id="aiSuggestContainer" class="space-y-4"></div>
-        </div>
-
-        <!-- 子面板2：AI写作助手（默认隐藏） -->
-        <div id="panel-ai-write" class="p-4 hidden">
-          <div class="space-y-4">
-            <!-- 段落内容显示 -->
-            <div id="ai-received-content" class="hidden p-3 bg-white rounded-xl border border-blue-100 text-sm text-gray-700 leading-relaxed">
-            </div>
-            <!-- 注意事项 -->
-            <div class="p-3 bg-amber-50 border border-amber-200 rounded-xl">
-              <div class="flex items-start gap-2">
-                <svg class="w-4 h-4 text-amber-500 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01M12 2a10 10 0 100 20 10 10 0 000-20z"></path>
-                </svg>
-                <div>
-                  <h4 class="text-xs font-medium text-amber-800 mb-1">注意事项</h4>
-                  <p class="text-xs text-amber-700 leading-relaxed">本面板所有内容（包括润色建议、语法检查、续写段落、扩写段落等）均由 AI 自动生成，仅供参考。请务必结合申请院校的具体要求和个人实际情况进行人工审核与修改，AI 生成内容不代表最终文书质量。</p>
-                </div>
-              </div>
-            </div>
-            <div class="p-3 bg-gradient-to-br from-blue-50 to-purple-50 rounded-xl">
-              <h4 class="text-sm font-medium text-gray-800 mb-2">AI写作助手</h4>
-              <p class="text-xs text-gray-600 mb-3">智能辅助撰写，提供句子建议、语法纠错、内容优化</p>
-              <div class="space-y-2 mb-3">
-                <textarea id="ai-input-content" class="w-full p-2.5 text-sm border border-gray-200 rounded-lg resize-none focus:outline-none focus:ring-2 focus:ring-blue-500" rows="3" placeholder="来自编辑器的段落将显示在此处，也可直接输入"></textarea>
-                <button id="ai-request-button" class="w-full px-3 py-2 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700 flex items-center justify-center gap-2" onclick="requestAiWriting()">
-                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
-                  基于当前内容发起请求
-                </button>
-              </div>
-              <p class="text-xs text-gray-500 mb-2">快捷请求</p>
-              <div class="space-y-2">
-                <button class="w-full text-left px-3 py-2 bg-white rounded-lg text-sm text-gray-700 hover:bg-blue-50 border border-gray-200 flex items-center gap-2" onclick="setAiWritingPrompt('润色优化')">
-                  <svg class="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path></svg>
-                  润色优化
-                </button>
-                <button class="w-full text-left px-3 py-2 bg-white rounded-lg text-sm text-gray-700 hover:bg-blue-50 border border-gray-200 flex items-center gap-2" onclick="setAiWritingPrompt('语法检查')">
-                  <svg class="w-4 h-4 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                  语法检查
-                </button>
-                <button class="w-full text-left px-3 py-2 bg-white rounded-lg text-sm text-gray-700 hover:bg-blue-50 border border-gray-200 flex items-center gap-2" onclick="setAiWritingPrompt('续写段落')">
-                  <svg class="w-4 h-4 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
-                  续写段落
-                </button>
-                <button class="w-full text-left px-3 py-2 bg-white rounded-lg text-sm text-gray-700 hover:bg-blue-50 border border-gray-200 flex items-center gap-2" onclick="setAiWritingPrompt('扩写段落')">
-                  <svg class="w-4 h-4 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
-                  扩写段落
-                </button>
-              </div>
-            </div>
-            <div class="bg-gray-50 rounded-xl p-3">
-              <div class="flex items-center justify-between mb-2"><p class="text-xs font-medium text-gray-700">AI写作助手回答</p><span id="ai-writing-mode" class="text-xs text-gray-400">等待请求</span></div>
-              <div id="ai-writing-response" class="space-y-2">
-                <div class="p-3 bg-white rounded-lg border border-gray-200"><p class="text-xs text-gray-500 leading-relaxed">同步编辑器段落或输入内容后，点击“基于当前内容发起请求”。回答将按段落展示，可单独复制。</p></div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
       <!-- 补充信息面板（默认隐藏，自左侧迁移至此） -->
       <div id="panel-supplement" data-has-content="true" class="flex-1 overflow-y-auto p-4 hidden">
         <div class="space-y-4">
@@ -1374,30 +1610,6 @@ body {
             <div class="flex items-center gap-3 mb-3">
               <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">当前院校目标</span>
               <h4 class="text-sm font-semibold text-gray-900">卡内基梅隆大学 · 人工智能</h4>
-            </div>
-          </div>
-
-          <!-- 课程特色 -->
-          <div class="card p-4">
-            <h4 class="text-sm font-medium text-gray-700 mb-3 flex items-center gap-2">
-              <svg class="w-4 h-4 text-orange-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
-              </svg>
-              课程特色
-            </h4>
-            <div class="space-y-2 text-xs">
-              <div class="flex items-start gap-2">
-                <span class="w-1.5 h-1.5 bg-orange-400 rounded-full mt-1.5 flex-shrink-0"></span>
-                <span class="text-gray-700">卡内基梅隆大学计算机科学学院在全美排名领先，其人工智能专业为顶尖研究方向</span>
-              </div>
-              <div class="flex items-start gap-2">
-                <span class="w-1.5 h-1.5 bg-orange-400 rounded-full mt-1.5 flex-shrink-0"></span>
-                <span class="text-gray-700">课程涵盖机器学习、自然语言处理、计算机视觉、机器人学等核心方向</span>
-              </div>
-              <div class="flex items-start gap-2">
-                <span class="w-1.5 h-1.5 bg-orange-400 rounded-full mt-1.5 flex-shrink-0"></span>
-                <span class="text-gray-700">提供丰富的实验室研究和企业合作项目机会，毕业生就业率名列前茅</span>
-              </div>
             </div>
           </div>
 
@@ -1452,8 +1664,111 @@ body {
         </div>
       </div>
 
-      <!-- 案例库面板（默认隐藏） -->
-      <div id="panel-cases" class="flex-1 overflow-y-auto p-4 hidden">
+      <button id="right-sidebar-expand" class="sidebar-expand-btn" title="展开工具栏">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 19l-7-7 7-7m8 14l-7-7 7-7"></path></svg>
+      </button>
+    </aside>
+  </div>
+
+  <!-- 选择模板 / 换用模板弹窗：内容与模板库一致，按当前文书类型过滤 -->
+  <div id="templateSelectModal" class="fixed inset-0 z-[100] hidden">
+    <div class="absolute inset-0 bg-black bg-opacity-30" onclick="closeTemplateSelect()"></div>
+    <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-white rounded-2xl shadow-2xl p-6 flex flex-col" style="width: 600px; max-width: calc(100vw - 32px); max-height: 84vh;">
+      <div class="flex items-center justify-between mb-4 flex-shrink-0">
+        <div>
+          <h3 id="templateSelectTitle" class="text-lg font-semibold text-gray-800">选择模板</h3>
+          <p class="text-xs text-gray-500 mt-1">选择一份模板生成段落结构，套用后可继续手动调整。</p>
+        </div>
+        <button class="text-gray-400 hover:text-gray-600 text-xl leading-none" onclick="closeTemplateSelect()">×</button>
+      </div>
+      <div class="overflow-y-auto flex-1 pr-1">
+        <div class="mb-3 flex items-center gap-2">
+          <input id="templateSearchInput" type="text" placeholder="搜索模板名称/标签…" class="smart-input flex-1">
+          <button class="px-3 h-9 bg-blue-600 text-white rounded-lg text-xs font-medium hover:bg-blue-700 flex-shrink-0" onclick="filterTemplateCards()">搜索</button>
+        </div>
+        <p id="templateTypeHint" class="text-xs text-gray-400 mb-3">当前文书类型：PS · 共 3 条模板</p>
+        <div id="templateList" class="space-y-3">
+          <div class="template-card template-option-card p-3 bg-white border border-gray-200 rounded-lg cursor-pointer" data-types="ps" data-name="ai方向ps标准模板 ai ps 计算机 人工智能">
+            <h4 class="text-sm font-medium text-gray-900 mb-1">AI方向PS标准模板</h4>
+            <p class="text-xs text-gray-500 mb-2">适用于CS/AI方向硕士申请</p>
+            <div class="flex items-center justify-between">
+              <span class="text-xs text-gray-400">使用 128 次</span>
+              <button class="px-3 py-1 text-xs font-medium bg-blue-600 text-white rounded-lg hover:bg-blue-700" onclick="previewTemplateApplication('ai')">套用</button>
+            </div>
+          </div>
+          <div class="template-card template-option-card p-3 bg-white border border-gray-200 rounded-lg cursor-pointer" data-types="ps,cv" data-name="转专业ps框架 转专业 跨专业 ps cv">
+            <h4 class="text-sm font-medium text-gray-900 mb-1">转专业PS框架</h4>
+            <p class="text-xs text-gray-500 mb-2">适用于跨专业申请</p>
+            <div class="flex items-center justify-between">
+              <span class="text-xs text-gray-400">使用 56 次</span>
+              <button class="px-3 py-1 text-xs font-medium bg-blue-600 text-white rounded-lg hover:bg-blue-700" onclick="previewTemplateApplication('switch')">套用</button>
+            </div>
+          </div>
+          <div class="template-card template-option-card p-3 bg-white border border-gray-200 rounded-lg cursor-pointer" data-types="ps,rl,rp" data-name="科研型ps模板 科研 学术 ps rl rp">
+            <h4 class="text-sm font-medium text-gray-900 mb-1">科研型PS模板</h4>
+            <p class="text-xs text-gray-500 mb-2">强调科研经历与学术能力</p>
+            <div class="flex items-center justify-between">
+              <span class="text-xs text-gray-400">使用 89 次</span>
+              <button class="px-3 py-1 text-xs font-medium bg-blue-600 text-white rounded-lg hover:bg-blue-700" onclick="previewTemplateApplication('research')">套用</button>
+            </div>
+          </div>
+        </div>
+        <div class="flex items-center justify-between mt-4 text-xs text-gray-500">
+          <button class="px-2.5 py-1 border border-gray-200 rounded-lg hover:bg-gray-50" onclick="showToast('已经是第一页', 'info')">‹</button>
+          <span id="templatePageInfo">1 / 1</span>
+          <button class="px-2.5 py-1 border border-gray-200 rounded-lg hover:bg-gray-50" onclick="showToast('已经是最后一页', 'info')">›</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 历史版本弹窗：内容与版本管理一致（当前版本 + 版本快照列表） -->
+  <div id="versionHistoryModal" class="fixed inset-0 z-[100] hidden">
+    <div class="absolute inset-0 bg-black bg-opacity-30" onclick="closeVersionHistory()"></div>
+    <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-white rounded-2xl shadow-2xl p-6 flex flex-col" style="width: 480px; max-width: calc(100vw - 32px); max-height: 80vh;">
+      <div class="flex items-center justify-between mb-4 flex-shrink-0">
+        <div>
+          <h3 class="text-lg font-semibold text-gray-800">历史版本</h3>
+          <p class="text-xs text-gray-500 mt-1">由「另存为新版本」累积的版本快照，可预览、下载或恢复。</p>
+        </div>
+        <button class="text-gray-400 hover:text-gray-600 text-xl leading-none" onclick="closeVersionHistory()">×</button>
+      </div>
+      <div class="overflow-y-auto flex-1 pr-1">
+        <div class="space-y-3">
+          <!-- 当前版本 -->
+          <div class="p-3 bg-blue-50 rounded-xl border border-blue-200">
+            <div class="flex items-center justify-between mb-2">
+              <span id="currentVersionLabel" class="text-sm font-semibold text-blue-800">v1</span>
+              <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-blue-600 text-white">当前版本</span>
+            </div>
+            <p class="text-xs text-gray-500 mb-1">2026-07-18 09:30 · 陈文书</p>
+            <p id="currentVersionChangeNote" class="text-xs text-gray-500 mb-2">0 字 · 初稿编辑中</p>
+            <div class="flex items-center gap-3 text-xs">
+              <button class="text-blue-600 hover:text-blue-800 font-medium" onclick="previewDocumentVersion(captureDocumentSnapshot())">预览</button>
+              <button class="text-gray-500 hover:text-gray-700" onclick="exportDocumentToWord()">下载</button>
+            </div>
+          </div>
+          <!-- 历史版本列表：由底部「另存为新版本」累积 -->
+          <div id="versionHistoryList" class="space-y-3">
+            <div id="versionHistoryEmpty" class="py-10 text-center text-xs text-gray-400 border border-dashed border-gray-200 rounded-xl leading-relaxed">暂无历史版本<br>点击底部版本栏「另存为新版本」将当前内容保存为版本快照</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 案例库弹窗：内容与案例库面板一致 -->
+  <div id="caseLibraryModal" class="fixed inset-0 z-[100] hidden">
+    <div class="absolute inset-0 bg-black bg-opacity-30" onclick="closeCaseLibrary()"></div>
+    <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-white rounded-2xl shadow-2xl p-6 flex flex-col" style="width: 560px; max-width: calc(100vw - 32px); max-height: 84vh;">
+      <div class="flex items-center justify-between mb-4 flex-shrink-0">
+        <div>
+          <h3 class="text-lg font-semibold text-gray-800">案例库</h3>
+          <p class="text-xs text-gray-500 mt-1">同院校 / 同方向的真实录取案例，仅供参考，请勿直接抄袭。</p>
+        </div>
+        <button class="text-gray-400 hover:text-gray-600 text-xl leading-none" onclick="closeCaseLibrary()">×</button>
+      </div>
+      <div class="overflow-y-auto flex-1 pr-1">
         <div class="mb-4">
           <input type="text" placeholder="搜索案例：院校 / 专业 / 背景..." class="smart-input">
         </div>
@@ -1491,7 +1806,7 @@ body {
           </div>
         </div>
       </div>
-    </aside>
+    </div>
   </div>
 
   <!-- 模板套用预览弹窗 -->
@@ -1543,7 +1858,7 @@ body {
       </div>
       <div class="px-6 py-5">
         <div class="flex items-center justify-between p-3 mb-4 bg-blue-50 border border-blue-100 rounded-xl">
-          <div><p class="text-xs text-blue-600">当前版本</p><p class="text-sm font-semibold text-blue-900 mt-0.5">v1.2 · 856 字</p></div>
+          <div><p class="text-xs text-blue-600">当前版本</p><p class="text-sm font-semibold text-blue-900 mt-0.5">v1 · <span id="submitWordCount">0</span> 字</p></div>
           <span class="text-xs font-medium text-blue-700">提交后进入审核</span>
         </div>
         <label for="submitChangeNote" class="block text-sm font-medium text-gray-700 mb-2">更改说明 <span class="text-red-500">*</span></label>
@@ -1561,15 +1876,26 @@ body {
   </div>
 
   <script>
+    var editorTaskParams = new URLSearchParams(location.search);
+    var editorStudentName = editorTaskParams.get('student') || '李雪';
+    function applyEditorTaskContext() {
+      document.getElementById('editorStudentName').textContent = editorStudentName;
+      var school = editorTaskParams.get('school'), major = editorTaskParams.get('major');
+      if (school) document.getElementById('goal-info-school').textContent = school;
+      if (major) document.getElementById('goal-info-major').textContent = major;
+      if (school || major) document.getElementById('doc-subtitle').textContent = [school, major].filter(Boolean).join(' · ');
+      document.getElementById('header-doc-title').textContent = editorStudentName + ' - 个人陈述（PS）';
+    }
     document.addEventListener('DOMContentLoaded', function() {
-      var optionalParams = new URLSearchParams(location.search);
+      applyEditorTaskContext();
+      var optionalParams = editorTaskParams;
       var noEvExample = optionalParams.get('noev') === '1';
-      var goalPanel = document.getElementById('panel-goal-info');
+      var goalPanel = document.getElementById('panel-goal');
       var supplementPanel = document.getElementById('panel-supplement');
       var hasGoalInfo = goalPanel.dataset.hasContent === 'true' && !noEvExample && optionalParams.get('emptyGoal') !== '1';
       var hasSupplementInfo = supplementPanel.dataset.hasContent === 'true' && !noEvExample && optionalParams.get('emptySupplement') !== '1';
       if (!hasGoalInfo) {
-        document.getElementById('tab-goal-info').classList.add('hidden');
+        document.getElementById('tab-goal').classList.add('hidden');
         goalPanel.classList.add('hidden');
       }
       if (!hasSupplementInfo) {
@@ -1577,35 +1903,26 @@ body {
         supplementPanel.classList.add('hidden');
       }
 
-      // 左侧面板切换
+      // 左侧面板切换（学生信息 / 资产文件）
       document.getElementById('tab-student-info').addEventListener('click', function() {
         showLeftPanel('student-info');
-      });
-      document.getElementById('tab-goal-info').addEventListener('click', function() {
-        showLeftPanel('goal-info');
       });
       document.getElementById('tab-materials').addEventListener('click', function() {
         showLeftPanel('materials');
       });
-      document.getElementById('tab-version-history').addEventListener('click', function() {
-        showLeftPanel('version-history');
-      });
 
-      // 右侧面板切换：点击标签按钮切换右侧边栏显示/隐藏
-      document.getElementById('tab-template').addEventListener('click', function() {
-        toggleRightSidebar('template');
-      });
+      // 右侧面板切换：AI润色 / 院校目标 / 补充信息
       document.getElementById('tab-ai').addEventListener('click', function() {
         toggleRightSidebar('ai');
+      });
+      document.getElementById('tab-goal').addEventListener('click', function() {
+        toggleRightSidebar('goal');
       });
       document.getElementById('tab-supplement').addEventListener('click', function() {
         toggleRightSidebar('supplement');
       });
-      document.getElementById('tab-cases').addEventListener('click', function() {
-        toggleRightSidebar('cases');
-      });
 
-      // AI修改子Tab切换
+      // AI润色子Tab切换
       document.getElementById('tab-ai-suggest').addEventListener('click', function() {
         showAiSubPanel('suggest');
       });
@@ -1618,14 +1935,6 @@ body {
       if (backBtn) {
         backBtn.addEventListener('click', function() {
       window.location.href = '任务列表页 - 文书交付系统.html';
-        });
-      }
-
-      // 保存按钮
-      var saveBtn = document.querySelector('[data-dom-id="btn-save"]');
-      if (saveBtn) {
-        saveBtn.addEventListener('click', function() {
-          if (typeof persistDocumentDraft === 'function') persistDocumentDraft();
         });
       }
 
@@ -1700,10 +2009,6 @@ body {
 
       function enhanceEditorActions(root) {
         (root || document).querySelectorAll('.btn-send-to-ai').forEach(function (aiButton) {
-          if (!aiButton.dataset.compactLabel) {
-            aiButton.dataset.compactLabel = 'true';
-            aiButton.innerHTML = '<svg class="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg><span>AI写作</span>';
-          }
           var actions = aiButton.closest('.editor-inline-actions');
           if (!actions) {
             actions = document.createElement('div');
@@ -1832,7 +2137,11 @@ body {
           cl: { title: '套磁信（Cold Email）', short: '套磁信（CL）', subtitle: '卡内基梅隆大学 · 人工智能 · 硕士申请' }
         };
         var defaults = {
-          ps: null,
+          ps: [
+            { label: '段落 1 · 研究背景与动机', content: '' },
+            { label: '段落 2 · 学术与项目经历', content: '' },
+            { label: '段落 3 · 职业目标与院校匹配', content: '' }
+          ],
           cv: [
             { label: '段落 1 · 教育背景', content: '教育背景：XX大学 计算机科学与技术专业 本科（2022.09–2026.06），GPA 3.8/4.0，专业排名前 5%。主修课程：数据结构与算法、操作系统、机器学习、深度学习、自然语言处理。' },
             { label: '段落 2 · 实习经历', content: '实习经历：百度 AI Lab NLP 算法实习生（2025.06–2025.09）。负责对话系统意图识别与槽位填充模块优化，意图识别准确率由 91.2% 提升至 94.6%，模型接入线上客服场景。' },
@@ -1857,14 +2166,17 @@ body {
             { label: '段落 5 · Call to Action', content: 'I have attached my CV and transcript for your reference. Would you be available for a 15-30 minute Zoom call in the week of September 8-12? I would greatly value your feedback on whether my background aligns with your group\'s upcoming projects.\n\nBest regards,\nLi Xue' }
           ]
         };
+        var taskTarget = [editorTaskParams.get('school'), editorTaskParams.get('major')].filter(Boolean).join(' · ');
+        if (taskTarget) Object.keys(meta).forEach(function(type) { meta[type].subtitle = taskTarget; });
         var store = {};
         var currentType = 'ps';
 
         function captureCurrent() {
           var blocks = [];
           document.querySelectorAll('#editor-sections .editor-block').forEach(function (block) {
+            var titleInput = block.querySelector('.section-title-input');
             blocks.push({
-              label: block.querySelector('span').textContent,
+              label: titleInput ? titleInput.value : '',
               content: block.querySelector('.editor-textarea').value
             });
           });
@@ -1876,12 +2188,16 @@ body {
           var html = '';
           data.forEach(function (sec, i) {
             html += '<div class="editor-block border border-gray-200 rounded-xl overflow-hidden">'
-              + '<div class="flex items-center justify-between px-4 py-2 bg-gray-50 border-b border-gray-200">'
-              + '<span class="text-xs font-medium text-gray-500">' + sec.label + '</span>'
+              + '<div class="flex items-center justify-between gap-2 px-4 py-2 bg-gray-50 border-b border-gray-200">'
+              + '<input type="text" class="section-title-input" value="' + escapeDocumentHtml(sec.label) + '" aria-label="段落标题">'
+              + '<div class="editor-inline-actions flex items-center gap-2 flex-shrink-0">'
               + '<button class="btn-send-to-ai flex items-center gap-1 px-2.5 py-1 text-xs font-medium bg-blue-600 text-white rounded-lg hover:bg-blue-700" data-section="section-' + (i + 1) + '">'
               + '<svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>'
-              + 'AI写作</button></div>'
-              + '<textarea class="editor-textarea w-full p-4 text-gray-700 leading-relaxed text-sm resize-none focus:outline-none" rows="3"></textarea>'
+              + '帮我改写</button>'
+              + '<button class="btn-delete-section flex items-center gap-1 px-2.5 py-1 text-xs font-medium bg-white border border-gray-300 text-gray-600 rounded-lg hover:bg-red-50 hover:text-red-600 hover:border-red-300" data-section="section-' + (i + 1) + '" title="删除该段落">'
+              + '<svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6M9 7V4a1 1 0 011-1h4a1 1 0 011 1v3M4 7h16"></path></svg>'
+              + '删除</button></div></div>'
+              + '<textarea class="editor-textarea w-full p-4 text-gray-700 leading-relaxed text-sm resize-none focus:outline-none" rows="4" placeholder="从左侧学生资料、院校目标或右侧模板开始撰写本段…"></textarea>'
               + '</div>';
           });
           var container = document.getElementById('editor-sections');
@@ -1914,20 +2230,26 @@ body {
 
         function switchDocType(type) {
           if (type === currentType) return;
+          clearTimeout(documentAutoSaveTimer);
+          persistDocumentDraft();
           store[currentType] = captureCurrent();
           currentType = type;
           document.getElementById('doc-title').textContent = meta[type].title;
           document.getElementById('doc-subtitle').textContent = meta[type].subtitle;
           var headerTitle = document.getElementById('header-doc-title');
-          if (headerTitle) headerTitle.textContent = '李雪 - ' + meta[type].short;
+          if (headerTitle) headerTitle.textContent = editorStudentName + ' - ' + meta[type].short;
           document.querySelectorAll('.doc-type-btn').forEach(function (btn) {
             var active = btn.getAttribute('data-doc-type') === type;
             btn.className = active
-              ? 'doc-type-btn px-3 py-1 text-xs font-medium bg-blue-100 text-blue-700 rounded-full cursor-pointer'
+              ? 'doc-type-btn px-3 py-1 text-xs font-medium bg-purple-500 text-white rounded-full cursor-pointer'
               : 'doc-type-btn px-3 py-1 text-xs font-medium text-gray-600 hover:bg-gray-100 rounded-full cursor-pointer';
           });
           renderSections(type);
+          restoreDocumentDraft();
+          applyDocumentReadOnly();
           if (typeof renderAiSuggestions === 'function') { renderAiSuggestions(type); }
+          if (typeof updateTemplatePanel === 'function') { updateTemplatePanel(type); }
+          if (typeof updateDocWordCount === 'function') { updateDocWordCount(); }
         }
 
         document.querySelectorAll('.doc-type-btn').forEach(function (btn) {
@@ -2001,15 +2323,15 @@ body {
     document.addEventListener('DOMContentLoaded', renderReferrerEmails);
 
     function showLeftPanel(panel) {
-      ['student-info', 'goal-info', 'materials', 'version-history'].forEach(function(p) {
+      ['student-info', 'materials'].forEach(function(p) {
         document.getElementById('panel-' + p).classList.toggle('hidden', p !== panel);
       });
-      ['tab-student-info', 'tab-goal-info', 'tab-materials', 'tab-version-history'].forEach(function(id) {
+      ['tab-student-info', 'tab-materials'].forEach(function(id) {
         var el = document.getElementById(id);
         if (el.id === 'tab-' + panel) {
-          el.className = 'px-3 py-2 text-sm font-medium text-blue-700 bg-blue-50 rounded-lg';
+          el.className = 'px-2 py-2 text-xs font-medium text-blue-700 bg-blue-50 rounded-lg';
         } else {
-          el.className = 'px-3 py-2 text-sm font-medium text-gray-600 hover:text-gray-900';
+          el.className = 'px-2 py-2 text-xs font-medium text-gray-600 hover:text-gray-900';
         }
       });
     }
@@ -2032,10 +2354,10 @@ body {
     function activateRightPanel(panel) {
       // 显示右侧边栏并切换到指定面板（不会因重复点击而隐藏）
       document.getElementById('right-sidebar').classList.remove('hidden');
-      ['template', 'ai', 'supplement', 'cases'].forEach(function(p) {
+      ['ai', 'goal', 'supplement'].forEach(function(p) {
         document.getElementById('panel-' + p).classList.toggle('hidden', p !== panel);
       });
-      ['tab-template', 'tab-ai', 'tab-supplement', 'tab-cases'].forEach(function(id) {
+      ['tab-ai', 'tab-goal', 'tab-supplement'].forEach(function(id) {
         var el = document.getElementById(id);
         if (el.id === 'tab-' + panel) {
           el.className = 'flex-1 px-2 py-2 text-xs font-medium text-blue-700 bg-blue-50 rounded-lg';
@@ -2046,7 +2368,7 @@ body {
     }
 
     function showAiSubPanel(sub) {
-      // AI修改面板内的子Tab切换：suggest=AI建议，write=AI写作助手
+      // AI润色面板内的子Tab切换：suggest=写作建议，write=帮我改写
       ['suggest', 'write'].forEach(function(s) {
         document.getElementById('panel-ai-' + s).classList.toggle('hidden', s !== sub);
       });
@@ -2060,7 +2382,7 @@ body {
       });
     }
   </script>
-  <script src="./assets/js/pbs-app.js?v=6.0"></script>
+  <script src="./assets/js/pbs-app.js?v=7.1"></script>
 
 
   <script>
@@ -2219,15 +2541,92 @@ var DOC_AI_GUIDE = {
   }
 };
 var AI_SUGGEST_COLORS = ['border-blue-500', 'border-purple-500', 'border-emerald-500', 'border-amber-500', 'border-pink-500', 'border-cyan-500'];
+/* ==================== 写作建议：按当前文书类型动态生成，每段含建议 + 例文，支持换一换 ==================== */
+var AI_SUGGEST_EXAMPLES = {
+  cv: [
+    '北京大学 计算机科学与技术 本科（2022.09–2026.06）· GPA 3.8/4.0（专业前 5%）· 核心课程：数据结构与算法、机器学习、深度学习、自然语言处理。',
+    '百度 AI Lab · NLP 算法实习生（2025.06–2025.09）：负责对话系统意图识别与槽位填充模块优化，意图识别准确率由 91.2% 提升至 94.6%，并接入线上客服场景。',
+    '国家奖学金（全校前 2%）· Kaggle 多模态分类挑战赛 Top 5%（1,200+ 支队伍）· 校级一等奖学金（连续两年）。',
+    'Python · PyTorch · Git · Docker；托福 105（L28 / R27 / W25 / S25）· 雅思 7.5 · GRE 330。'
+  ],
+  ps: [
+    '在大二的一门医学影像导论课上，我第一次接触到多模态数据对齐的难题——这成为后来主持医疗影像创新项目的起点，也让我确定了在人工智能方向深造的目标。',
+    '我希望回答一个问题：当每类只有不到 50 个标注样本时，模型如何仍能学到对齐的多模态表征？这个问题直接来自我的创新项目实践，也是 CMU 多个实验室正在关注的前沿方向。',
+    '机器学习（96 分）、深度学习（94 分）等课程为我的研究打下了基础；课程大作业中实现的注意力机制模型，让我对表征对齐有了直观而深入的理解。',
+    'CMU 人工智能专业提供 16/21 个月双学制，并与 Google、NVIDIA 共建联合实验室——这与我「产学研结合」的规划高度契合；我希望加入 LANGMIL 实验室继续多模态研究。',
+    '短期：系统学习鲁棒表征学习方法，第一年内参与实验室在研项目；长期：成为医疗 AI 领域的算法专家，缩短从算法到临床落地的距离。'
+  ],
+  rl: [
+    '我是北京大学计算机学院教授张明，担任李雪同学《机器学习》课程授课教师及其国家级创新项目指导老师，与其共事两年，对她的学术能力与个人品质有深入了解。',
+    '该生在创新项目中独立负责模型设计与核心实验，提出的对齐策略将小样本场景下的 F1 提升 6.3 个百分点，并主动帮助团队同学调试代码、复现基线。',
+    '基于以上事实，我毫无保留地推荐李雪同学攻读卡内基梅隆大学人工智能硕士项目。欢迎通过 zhangming@pku.edu.cn 与我联系核实。'
+  ],
+  rp: [
+    '研究问题：在每类 10/25/50 样本的三档小样本 setting 下，如何通过原型正则化提升影像-文本模态对齐的鲁棒性与 AUC 表现？',
+    '技术路线：①公开数据集与合作医院数据清洗；②CLIP 式对比学习预训练获得初始表征；③引入原型正则项抑制小样本过拟合；④在 MedMNIST 等基准上以 Acc/F1/AUC 对比 6 个基线方法。',
+    '学术成果：基准数据集上较最优基线提升 2–3 个百分点，投稿 CVPR/ICLR 各 1 篇；工程成果：可复现实验流水线；开源成果：代码与模型权重随论文公开。',
+    'M1（2026.09–12）文献综述与基线复现；M2（2027.01–05）方法设计与初步实验；M3（2027.06–09）完整实验与消融分析；M4（2027.10–12）论文撰写与投稿；全程预留 1 个月风险缓冲。',
+    '近三年文献按「方法谱系」组织：对比式方法（CLIP 系）依赖海量标注；适配式方法（Tip-Adapter 等）免训练但欠鲁棒；本研究位于两者之间，兼顾效率与鲁棒性。'
+  ],
+  cl: [
+    'Subject: Prospective MSAI Applicant – Multimodal Alignment in Low-Data Settings (Kaggle Top 5%)',
+    'Dear Prof. Smith, I am Li Xue, a second-year CS student at Tsinghua University. Your 2024 NeurIPS paper on robust multimodal alignment connects directly to the problem my current project tackles.',
+    'My project combines prototype-based regularization with cross-modal attention, improving alignment stability by 18% on a medical imaging benchmark — precisely the low-sample gap highlighted in your work.',
+    'GPA 3.9/4.0 (Top 5%); first-author paper under review at CVPR on semi-supervised multimodal learning; experienced in training models with up to 10B parameters on our lab cluster.',
+    'Would you be available for a brief 15-30 minute call during September 8-12? My CV and transcript are attached; I would greatly value your feedback on the fit with your upcoming projects.'
+  ]
+};
+/* 换一换：每一段的备选建议与备选例文（与原建议按顺序一一对应） */
+var AI_SUGGEST_VARIANTS = {
+  cv: [
+    [{ suggestion: '如排名突出可优先写排名，GPA 可同时标注百分制增强直观性；如有交换或暑研经历，应紧接教育背景呈现。', example: '北京大学 计算机科学 本科 · 专业排名 3/120（前 2.5%）· 2024 年 MIT CSAIL 暑期科研（多模态方向，4 个月）。' }],
+    [{ suggestion: '每段经历用「一句职责 + 一句量化成果」呈现，删去与申请方向无关的日常工作描述。', example: '主导对话系统意图识别优化：设计数据增强与难例挖掘策略，准确率提升 3.4pp，推理成本下降 20%，支撑日均 200 万次线上调用。' }],
+    [{ suggestion: '按含金量排序，国家级在前；为每项标注获奖比例或排名，让奖项更有分量。', example: '国家奖学金（全校前 2%）· Kaggle 多模态分类挑战赛银牌（Top 5%，1,212 支队伍）· 校级一等奖学金（连续两年）。' }],
+    [{ suggestion: '技能按「编程语言 / 框架 / 工具」分组，只写熟练且与方向相关的，避免「了解」「熟悉」式堆砌。', example: '编程语言：Python（主力）、C++；框架：PyTorch、HuggingFace Transformers；工具：Git、Weights & Biases、Docker。' }]
+  ],
+  ps: [
+    [
+      { suggestion: '以「具体问题—采取行动—获得成长」的结构重写开头：从医疗影像项目中遇到的一次真实挫折切入，说明它如何塑造申请动机，避免经历流水账。', example: '项目初期，我们的对齐模型在罕见病影像上几乎完全失效——正是这次失败让我意识到小样本鲁棒性的重要性，也坚定了我在这一方向深造的决心。' },
+      { suggestion: '动机叙述保持中立客观，硕士层次避免过于私人的细节；用一个关键转折点串联「经历 → 兴趣 → 申请」的逻辑链。', example: '从课程作业到创新项目，我逐渐把兴趣收窄到多模态表征对齐；当看到 CMU 在该方向的成果时，申请贵校成为我学术规划的自然下一步。' }
+    ],
+    [
+      { suggestion: '把研究兴趣收束为一句可清晰表述的问题，并交代它与过往经历的因果联系；避免「我对人工智能很感兴趣」这类空泛表达。', example: '我想研究：当每类只有不到 50 个标注样本时，如何学到稳健的多模态表征？这个问题源于我的创新项目，也契合贵校多个实验室的研究议程。' },
+      { suggestion: '补充 1-2 个目标方向的前沿动态引用（近 3 年顶会论文），展示你对领域现状的了解，而不只是描述自己的想法。', example: '近期 NeurIPS 上关于低样本适配的研究（如 Tip-Adapter 系列）启发了我：免训练适配虽高效，但鲁棒性仍有提升空间——这正是我的切入点。' }
+    ],
+    [{ suggestion: '不要罗列课程名称，挑选 2-3 门与申请方向强相关的课程，写清它们如何支撑你的研究兴趣。', example: '《机器学习》让我掌握表征学习的理论基础，《深度学习》课程项目中的注意力模型实践，直接为我的科研训练铺平了道路。' }],
+    [{ suggestion: '从「学校能给我什么 + 我能带来什么」的双向匹配切入，引用具体课程、实验室或校企项目，避免排名崇拜式赞美。', example: '我希望加入 LANGMIL 实验室继续多模态研究；同时，我的医疗影像项目经验也能为实验室与匹兹堡医学中心的合作带来跨学科视角。' }],
+    [{ suggestion: '短期目标细化到学期，长期目标与短期形成递进，并在结尾回扣研究兴趣与院校资源。', example: '第一年夯实鲁棒学习理论并完成实验室轮转；第二年参与校企联合项目；毕业后加入医疗 AI 团队，让算法更快走向临床。' }]
+  ],
+  rl: [
+    [{ suggestion: '开头一句话同时交代推荐人身份、与学生的关系和推荐意愿，快速建立推荐的可信度。', example: '作为李雪《机器学习》课程的授课教师和科研导师，我全程指导了她的医疗影像项目，非常愿意推荐她攻读 CMU 人工智能硕士项目。' }],
+    [{ suggestion: '用 2-3 个具体事件代替形容词：课堂表现与科研贡献各选一个带数字支撑的例子。', example: '课程方面，她的期末项目实现了班级唯一的小样本增强方案；科研方面，她负责的对齐模块将 F1 提升 6.3 个百分点，并独立完成全部消融实验。' }],
+    [{ suggestion: '结语重申推荐意愿并主动提供联系方式，方便招生官核实，体现推荐人的诚意与背书力度。', example: '李雪是我近五年指导过的最具科研潜力的本科生之一，特此强烈推荐。欢迎邮件（zhangming@pku.edu.cn）或电话与我联系核实。' }]
+  ],
+  rp: [
+    [{ suggestion: '避免「大而空」：把问题限定到具体数据 setting 与评价指标，让评审一眼看到可研究性。', example: '研究问题：在每类 10/25/50 样本的三档 setting 下，原型正则化能否稳定提升影像-文本对齐的 AUC 与鲁棒性？' }],
+    [{ suggestion: '把方法写成流水线：每一步写清输入、输出与验证指标，并说明与现有方法的本质区别。', example: '方法流水线：数据清洗（公开集 + 合作医院）→ 对比学习预训练 → 原型正则抑制过拟合 → 在 MedMNIST 上以 Acc/F1/AUC 对比 6 个基线。' }],
+    [{ suggestion: '成果按「学术 / 工程 / 开源」三类量化表述，避免无法验证的「行业领先」式承诺。', example: '学术：基准提升 ≥2pp，投稿 CVPR/ICLR 各 1 篇；工程：可复现实验流水线；开源：代码与模型权重随论文公开发布。' }],
+    [{ suggestion: '按学期拆解为 4 个里程碑，每个里程碑有明确交付物，并预留风险缓冲期。', example: 'M1 文献与复现（2026.09–12）→ M2 方法设计（2027.01–05）→ M3 完整实验（2027.06–09）→ M4 论文投稿（2027.10–12），全程预留 1 个月缓冲。' }],
+    [{ suggestion: '用「方法谱系」组织综述：对比式 → 适配式 → 生成式，指出各自在小样本 setting 下的短板，引出本研究的位置。', example: 'CLIP 系对比方法依赖海量标注；Tip-Adapter 等适配方法免训练但欠鲁棒；本研究位于两者之间，兼顾效率与鲁棒性。' }]
+  ],
+  cl: [
+    [{ suggestion: '主题 = 身份 + 亮点 + 匹配点，控制在 8-12 个英文词，避免 Inquiry 之类空泛字眼。', example: 'Subject: CMU MSAI Applicant – Low-Shot Multimodal Alignment (Kaggle Top 5%)' }],
+    [{ suggestion: '首段在两句内完成：点出教授最新论文的具体结论，再说明自己与该结论直接相关的经历。', example: 'Dear Prof. Smith, your 2024 NeurIPS work showed contrastive methods degrade sharply under 50-shot settings — my current project addresses exactly this gap.' }],
+    [{ suggestion: '用一句话说明你的项目如何延续或补全教授的工作，并用一个数字证明有效性。', example: 'By combining prototype regularization with cross-modal attention, my approach improved alignment stability by 18% in low-sample medical benchmarks.' }],
+    [{ suggestion: '只保留最有分量的 2 项证据（成绩 / 论文 / 竞赛），按与教授方向的相关度排序。', example: 'First-author paper under review at CVPR (semi-supervised multimodal learning); Kaggle multimodal challenge Top 5% out of 1,212 teams.' }],
+    [{ suggestion: '给出具体时间窗口与低姿态请求，并列出已备好的附件，降低教授的回复成本。', example: 'If convenient, could we schedule a brief 15-30 minute call during September 8-12? My CV and transcript are attached, and our benchmark code is available on request.' }]
+  ]
+};
 function renderAiSuggestions(type) {
   var guide = DOC_AI_GUIDE[type] || DOC_AI_GUIDE.rp;
   var container = document.getElementById('aiSuggestContainer');
   if (!container) return;
+  var examples = AI_SUGGEST_EXAMPLES[type] || [];
   var html =
     '<div class="p-3 bg-gradient-to-br from-indigo-50 to-blue-50 rounded-xl border border-indigo-100">' +
       '<div class="flex items-center gap-2 mb-2">' +
         '<span class="w-7 h-7 rounded-lg bg-white text-blue-600 flex items-center justify-center shadow-sm">✦</span>' +
-        '<div class="flex-1"><div class="flex items-center gap-2"><h4 class="text-sm font-semibold text-gray-800">AI填写建议</h4>' +
+        '<div class="flex-1"><div class="flex items-center gap-2"><h4 class="text-sm font-semibold text-gray-800">写作建议</h4>' +
         '<span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold bg-blue-600 text-white">当前文书：' + guide.label + '</span>' +
         '<span class="text-[10px] text-gray-400">' + guide.level + '</span></div>' +
         '<p class="text-xs text-gray-500 mt-0.5">基于学生资料、申请信息、资产文件解析结果与当前文书内容生成</p></div>' +
@@ -2253,19 +2652,74 @@ function renderAiSuggestions(type) {
           return '<span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-medium bg-amber-50 text-amber-700 border border-amber-200">' + m + '</span>';
         }).join('') + '</div>'
       : '';
-    html += '<div class="ai-detail-card border-l-4 ' + color + '">' +
-      '<div class="flex items-center justify-between mb-2"><span class="text-xs font-semibold text-gray-800">' + sg.section + '</span><span class="text-[10px] text-gray-400">建议 ' + (i + 1) + ' / ' + guide.suggestions.length + '</span></div>' +
+    var example = examples[i] || '（暂无例文）';
+    html += '<div class="ai-detail-card border-l-4 ' + color + '" data-si="' + i + '" data-v="-1">' +
+      '<div class="flex items-center justify-between mb-2 gap-2"><span class="text-xs font-semibold text-gray-800">' + sg.section + '</span>' +
+      '<span class="flex items-center gap-2 flex-shrink-0"><span class="text-[10px] text-gray-400">建议 ' + (i + 1) + ' / ' + guide.suggestions.length + '</span>' +
+      '<button class="btn-suggest-refresh" onclick="rotateAiSuggestion(this)" title="重新生成该段建议"><svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>换一换</button></span></div>' +
       '<p class="ai-copy-source text-xs text-gray-700 leading-relaxed">' + sg.suggestion + '</p>' +
+      '<div class="mt-2.5">' +
+        '<div class="ai-example-label"><span>例文展示</span><button class="text-[10px] text-gray-400 hover:text-blue-600 font-medium" onclick="copyAiExample(this)">复制例文</button></div>' +
+        '<div class="ai-sample"><p class="ai-example">' + escapeDocumentHtml(example) + '</p></div>' +
+      '</div>' +
       missing +
       '<div class="flex justify-end pt-3"><button class="text-xs text-blue-600 hover:text-blue-800 font-medium" onclick="copyAiSuggestion(this)">复制建议</button></div>' +
       '</div>';
   });
-  html += '<p class="text-[10px] text-gray-400 leading-relaxed px-1">建议输出遵循 {section, suggestion, missing_information} 结构；切换顶部文书类型（CV/PS/RL/RP/CL）可查看对应类型的填写建议。</p>';
+  html += '<p class="text-[10px] text-gray-400 leading-relaxed px-1">建议输出遵循 {section, suggestion, missing_information} 结构；切换顶部文书类型（CV/PS/RL/RP/CL）可查看对应类型的填写建议；点击每段「换一换」或底部「整体换一换」可重新生成。</p>';
   container.innerHTML = html;
 }
+/* 换一换：单段重新生成（在 原始建议 → 备选 1 → 备选 2 → … 之间循环） */
+function rotateAiSuggestion(btn, skipFade) {
+  var card = btn.closest ? btn.closest('.ai-detail-card') : null;
+  if (!card) return;
+  var type = getCurrentDocType();
+  var si = parseInt(card.getAttribute('data-si'), 10);
+  var guide = DOC_AI_GUIDE[type] || DOC_AI_GUIDE.rp;
+  var sg = guide.suggestions[si];
+  if (!sg) return;
+  var variants = ((AI_SUGGEST_VARIANTS[type] || [])[si]) || [];
+  var idx = parseInt(card.getAttribute('data-v') || '-1', 10);
+  idx = ((idx + 2) % (variants.length + 1)) - 1;
+  card.setAttribute('data-v', String(idx));
+  var data = idx === -1
+    ? { suggestion: sg.suggestion, example: (AI_SUGGEST_EXAMPLES[type] || [])[si] || '' }
+    : variants[idx];
+  var sugEl = card.querySelector('.ai-copy-source');
+  if (sugEl && data.suggestion) sugEl.textContent = data.suggestion;
+  var exEl = card.querySelector('.ai-example');
+  if (exEl && data.example) exEl.textContent = data.example;
+  if (!skipFade) {
+    card.style.opacity = '0.35';
+    setTimeout(function () { card.style.opacity = '1'; }, 200);
+  }
+}
+/* 整体换一换：全部段落建议重新生成（按钮悬浮于建议列表底部） */
+function rotateAllAiSuggestions() {
+  var btn = document.getElementById('btn-refresh-all-suggestions');
+  if (!btn || btn.disabled) return;
+  btn.disabled = true;
+  btn.innerHTML = '<span class="ai-loading-dot"></span><span class="ai-loading-dot"></span><span class="ai-loading-dot"></span>正在重新生成…';
+  setTimeout(function () {
+    document.querySelectorAll('#aiSuggestContainer .ai-detail-card').forEach(function (card, i) {
+      var refreshBtn = card.querySelector('.btn-suggest-refresh');
+      if (refreshBtn) setTimeout(function () { rotateAiSuggestion(refreshBtn, true); }, i * 90);
+    });
+    setTimeout(function () {
+      btn.disabled = false;
+      btn.innerHTML = '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>整体换一换';
+    }, 550);
+  }, 550);
+}
+function copyAiExample(button) {
+  var card = button.closest ? button.closest('.ai-detail-card') : null;
+  var source = card ? card.querySelector('.ai-example') : null;
+  if (!source) return;
+  copyTextValue(source.textContent.trim()).then(function () { showToast('例文已复制', 'success'); });
+}
 document.addEventListener('DOMContentLoaded', function() {
-  var active = document.querySelector('.doc-type-btn.bg-blue-100');
-  renderAiSuggestions(active ? active.getAttribute('data-doc-type') : 'rp');
+  var active = document.querySelector('.doc-type-btn.bg-purple-500');
+  renderAiSuggestions(active ? active.getAttribute('data-doc-type') : 'ps');
 });
 
 // 移动端菜单切换
@@ -2280,7 +2734,7 @@ document.getElementById('mobile-overlay')?.addEventListener('click', function() 
 });
 
 // 所有面板切换按钮点击后关闭移动端菜单
-document.querySelectorAll('#tab-student-info, #tab-materials, #tab-version-history').forEach(function(btn) {
+document.querySelectorAll('#tab-student-info, #tab-materials').forEach(function(btn) {
   btn.addEventListener('click', function() {
     document.getElementById('sidebar-tabs').classList.remove('open');
     document.getElementById('mobile-overlay').classList.remove('show');
@@ -2289,9 +2743,13 @@ document.querySelectorAll('#tab-student-info, #tab-materials, #tab-version-histo
 
 // 文书正文自动保存：动态段落同样通过事件委托接入
 var documentAutoSaveTimer = null;
+var documentVersionLabel = 'v1';
+var documentReadOnly = new URLSearchParams(location.search).get('readonly') === '1' || new URLSearchParams(location.search).get('status') === '已完成';
 function documentDraftKey() {
   var title = document.getElementById('doc-title');
-  return 'pbs_document_autosave_' + (title ? title.textContent.trim() : 'current');
+  var params = new URLSearchParams(location.search);
+  var context = params.get('task') || [params.get('project'), params.get('school'), params.get('student')].filter(Boolean).join('_');
+  return 'pbs_document_autosave_' + (title ? title.textContent.trim() : 'current') + (context ? '_' + context : '');
 }
 function updateDocumentAutoSaveStatus(saving) {
   var status = document.getElementById('documentAutoSaveStatus');
@@ -2300,18 +2758,45 @@ function updateDocumentAutoSaveStatus(saving) {
   status.className = 'inline-flex items-center gap-1.5 text-xs ' + (saving ? 'text-amber-500' : 'text-emerald-600');
   status.innerHTML = '<span class="w-1.5 h-1.5 rounded-full ' + (saving ? 'bg-amber-500' : 'bg-emerald-500') + '"></span>' + (saving ? '正在自动保存…' : '已自动保存');
 }
-function persistDocumentDraft() {
-  var sections = Array.from(document.querySelectorAll('#editor-sections .editor-block')).map(function(block) {
-    var label = block.querySelector('span');
-    var textarea = block.querySelector('.editor-textarea');
-    return { label: label ? label.textContent.trim() : '', content: textarea ? textarea.value : '' };
+function captureDocumentSections() {
+  return Array.from(document.querySelectorAll('#editor-sections .editor-block')).map(function(block) {
+    return { label: block.querySelector('.section-title-input').value, content: block.querySelector('.editor-textarea').value };
   });
+}
+function renderDocumentSections(sections) {
+  var container = document.getElementById('editor-sections');
+  container.innerHTML = '';
+  sections.forEach(function(section, index) {
+    var block = buildSectionBlock(index + 1);
+    block.querySelector('.section-title-input').value = section.label || '';
+    block.querySelector('.editor-textarea').value = section.content || '';
+    container.appendChild(block);
+    var textarea = block.querySelector('.editor-textarea');
+    textarea.style.height = 'auto';
+    textarea.style.height = textarea.scrollHeight + 'px';
+    textarea.addEventListener('input', function() { this.style.height = 'auto'; this.style.height = this.scrollHeight + 'px'; });
+  });
+  bindSendToAi(container);
+  if (window.enhanceEditorActions) window.enhanceEditorActions(container);
+  updateDocWordCount();
+  applyDocumentReadOnly();
+}
+function updateDocumentVersionInfo(savedAt) {
+  ['documentCurrentVersion', 'currentVersionLabel'].forEach(function(id) { var element = document.getElementById(id); if (element) element.textContent = documentVersionLabel; });
+  var edited = document.getElementById('documentLastEdited');
+  if (edited) edited.textContent = savedAt ? new Date(savedAt).toLocaleString('zh-CN', { timeZone: 'Asia/Shanghai', hour12: false }) : '—';
+}
+function persistDocumentDraft() {
+  if (documentReadOnly) return;
   try {
-    localStorage.setItem(documentDraftKey(), JSON.stringify({ sections: sections, savedAt: new Date().toISOString() }));
-  } catch (e) {}
-  updateDocumentAutoSaveStatus(false);
+    var savedAt = new Date().toISOString();
+    localStorage.setItem(documentDraftKey(), JSON.stringify({ sections: captureDocumentSections(), versionLabel: documentVersionLabel, savedAt: savedAt }));
+    updateDocumentVersionInfo(savedAt);
+    updateDocumentAutoSaveStatus(false);
+  } catch (e) { showToast('保存失败，请导出文书后重试', 'error'); }
 }
 function scheduleDocumentAutoSave() {
+  if (documentReadOnly) return;
   updateDocumentAutoSaveStatus(true);
   clearTimeout(documentAutoSaveTimer);
   documentAutoSaveTimer = setTimeout(persistDocumentDraft, 650);
@@ -2319,21 +2804,14 @@ function scheduleDocumentAutoSave() {
 function restoreDocumentDraft() {
   var saved = null;
   try { saved = JSON.parse(localStorage.getItem(documentDraftKey()) || 'null'); } catch (e) {}
+  documentVersionLabel = saved && saved.versionLabel || 'v1';
+  updateDocumentVersionInfo(saved && saved.savedAt);
   if (!saved || !Array.isArray(saved.sections)) { updateDocumentAutoSaveStatus(false); return; }
-  var textareas = document.querySelectorAll('#editor-sections .editor-textarea');
-  saved.sections.forEach(function(section, index) {
-    if (!textareas[index]) return;
-    textareas[index].value = section.content || '';
-    textareas[index].style.height = 'auto';
-    textareas[index].style.height = textareas[index].scrollHeight + 'px';
-  });
+  renderDocumentSections(saved.sections);
   updateDocumentAutoSaveStatus(false);
 }
 document.addEventListener('input', function(event) {
-  if (event.target.classList && event.target.classList.contains('editor-textarea')) scheduleDocumentAutoSave();
-});
-document.addEventListener('click', function(event) {
-  if (event.target.closest && event.target.closest('.doc-type-btn')) setTimeout(restoreDocumentDraft, 0);
+  if (event.target.classList && (event.target.classList.contains('editor-textarea') || event.target.classList.contains('section-title-input'))) scheduleDocumentAutoSave();
 });
 window.addEventListener('beforeunload', function() {
   if (documentAutoSaveTimer) { clearTimeout(documentAutoSaveTimer); persistDocumentDraft(); }
@@ -2364,15 +2842,10 @@ function escapeDocumentHtml(value) {
   });
 }
 
-function exportDocumentToWord() {
-  var title = document.getElementById('doc-title')?.textContent.trim() || '研究计划';
-  var subtitle = document.getElementById('doc-subtitle')?.textContent.trim() || '';
-  var sections = Array.from(document.querySelectorAll('#editor-sections .editor-block')).map(function(block) {
-    var rawLabel = block.querySelector('span')?.textContent.trim() || '正文';
-    var heading = rawLabel.replace(/^段落\s*\d+\s*[·・]\s*/, '');
-    var content = block.querySelector('.editor-textarea')?.value || '';
-    return { heading: heading, content: content };
-  });
+function exportDocumentToWord(snapshot) {
+  snapshot = snapshot || captureDocumentSnapshot();
+  var title = snapshot.title, subtitle = snapshot.subtitle;
+  var sections = snapshot.sections.map(function(section) { return { heading: section.label.replace(/^段落\s*\d+\s*[·・]\s*/, ''), content: section.content }; });
   var body = sections.map(function(section) {
     var paragraphs = section.content.split(/\r?\n/).map(function(line) {
       return line.trim() ? '<p>' + escapeDocumentHtml(line) + '</p>' : '<p>&nbsp;</p>';
@@ -2389,7 +2862,7 @@ function exportDocumentToWord() {
   var blob = new Blob(['\ufeff', wordHtml], { type: 'application/msword;charset=utf-8' });
   var link = document.createElement('a');
   link.href = URL.createObjectURL(blob);
-  link.download = title.replace(/[\\/:*?"<>|]/g, '_') + '.doc';
+  link.download = (title + (snapshot.label ? '_' + snapshot.label : '')).replace(/[\\/:*?"<>|]/g, '_') + '.doc';
   document.body.appendChild(link);
   link.click();
   link.remove();
@@ -2413,7 +2886,8 @@ function previewTemplateApplication(key) {
   pendingTemplateKey = key;
   document.getElementById('templateApplyTitle').textContent = '套用「' + preset.name + '」';
   var current = Array.from(document.querySelectorAll('#editor-sections .editor-block')).map(function(block) {
-    return (block.querySelector('span')?.textContent || '').replace(/^段落\s*\d+\s*[·・]\s*/, '');
+    var titleInput = block.querySelector('.section-title-input');
+    return (titleInput ? titleInput.value : '').replace(/^段落\s*\d+\s*[·・]\s*/, '');
   });
   document.getElementById('templateCurrentSections').innerHTML = current.map(function(label, index) { return templateSectionItem(index, label, false); }).join('');
   document.getElementById('templateNextSections').innerHTML = preset.sections.map(function(label, index) { return templateSectionItem(index, label, true); }).join('');
@@ -2424,14 +2898,16 @@ function closeTemplateApplication() {
   pendingTemplateKey = null;
 }
 function confirmTemplateApplication() {
+  if (documentReadOnly) return;
   var preset = templatePresets[pendingTemplateKey];
   if (!preset) return;
-  document.querySelectorAll('#editor-sections .editor-block').forEach(function(block, index) {
-    var label = block.querySelector('span');
-    if (label && preset.sections[index]) label.textContent = '段落 ' + (index + 1) + ' · ' + preset.sections[index];
-  });
+  var current = captureDocumentSections();
+  var next = preset.sections.map(function(label, index) { return { label: '段落 ' + (index + 1) + ' · ' + label, content: current[index] ? current[index].content : '' }; });
+  renderDocumentSections(next.concat(current.slice(preset.sections.length)));
   document.getElementById('templateApplyModal').classList.add('hidden');
+  document.getElementById('templateSelectModal').classList.add('hidden');
   pendingTemplateKey = null;
+  if (typeof exitDraftMode === 'function') exitDraftMode();
   if (typeof scheduleDocumentAutoSave === 'function') scheduleDocumentAutoSave();
   showToast('模板章节结构已套用，当前正文内容已保留', 'success');
 }
@@ -2495,10 +2971,14 @@ function closeCaseOriginal() {
 }
 
 function openSubmitChangeModal() {
+  if (documentReadOnly) return;
+  if (!currentDocWordCount()) { showToast('请填写文书正文后提交审核', 'error'); return; }
   var modal = document.getElementById('submitChangeModal');
   var textarea = document.getElementById('submitChangeNote');
   if (!modal || !textarea) return;
   textarea.value = '';
+  var submitCount = document.getElementById('submitWordCount');
+  if (submitCount) submitCount.textContent = String(typeof currentDocWordCount === 'function' ? currentDocWordCount() : 0);
   document.getElementById('submitChangeError')?.classList.add('hidden');
   modal.classList.remove('hidden');
   updateSubmitChangeState();
@@ -2522,6 +3002,7 @@ function updateSubmitChangeState() {
 }
 
 function confirmDocumentSubmission() {
+  if (documentReadOnly) return;
   var textarea = document.getElementById('submitChangeNote');
   var error = document.getElementById('submitChangeError');
   var note = textarea ? textarea.value.trim() : '';
@@ -2532,21 +3013,350 @@ function confirmDocumentSubmission() {
   }
   clearTimeout(documentAutoSaveTimer);
   if (typeof persistDocumentDraft === 'function') persistDocumentDraft();
-  localStorage.setItem('pbs_document_last_submit_note', note);
+  localStorage.setItem(documentDraftKey() + '_submit_note', note);
+  var wordCount = typeof currentDocWordCount === 'function' ? currentDocWordCount() : 0;
   var currentNote = document.getElementById('currentVersionChangeNote');
-  if (currentNote) currentNote.textContent = '856 字 · ' + note;
+  if (currentNote) currentNote.textContent = wordCount + ' 字 · ' + note;
   var status = document.querySelector('.topbar-status');
-  if (status) status.innerHTML = '<span class="topbar-status-dot"></span>审核中';
+  if (status) {
+    status.classList.add('is-review');
+    status.innerHTML = '<span class="topbar-status-dot"></span>待审核';
+  }
   closeSubmitChangeModal();
-  showToast('文书已提交审核，更改说明已记录', 'success');
+  showToast('文书已提交审核，当前状态：待审核', 'success');
 }
 
-// 增强保存按钮
-document.querySelector('[data-dom-id="btn-save"]')?.addEventListener('click', function() {
+// ===== 另存为新版本：当前内容保存为版本快照，累积到「历史版本」弹窗 =====
+function currentDocWordCount() {
+  return captureDocumentSections().reduce(function(count, section) { return count + section.content.replace(/\s/g, '').length; }, 0);
+}
+function updateDocWordCount() {
+  var count = currentDocWordCount();
+  var el = document.getElementById('docWordCount');
+  if (el) el.textContent = count;
+  var note = document.getElementById('currentVersionChangeNote');
+  if (note) note.textContent = count + ' 字';
+}
+function captureDocumentSnapshot() {
+  return { title: document.getElementById('doc-title').textContent.trim(), subtitle: document.getElementById('doc-subtitle').textContent.trim(), sections: captureDocumentSections(), savedAt: new Date().toISOString() };
+}
+function readDocumentVersions() {
+  try { return JSON.parse(localStorage.getItem(documentDraftKey() + '_versions') || '[]'); } catch (e) { return []; }
+}
+function renderDocumentVersions() {
+  var list = document.getElementById('versionHistoryList'), versions = readDocumentVersions();
+  list.innerHTML = versions.length ? versions.slice().reverse().map(function(version) {
+    return '<div class="p-3 bg-white rounded-xl border border-gray-100"><div class="flex items-center justify-between mb-2"><strong class="text-sm text-gray-800">' + escapeDocumentHtml(version.label) + '</strong><span class="text-xs text-gray-400">' + escapeDocumentHtml(new Date(version.savedAt).toLocaleString('zh-CN', { timeZone: 'Asia/Shanghai', hour12: false })) + '</span></div><div class="flex items-center gap-3 text-xs"><button class="text-blue-600" data-version-preview="' + version.label + '">预览</button><button class="text-gray-500" data-version-download="' + version.label + '">下载</button>' + (documentReadOnly ? '' : '<button class="text-emerald-600" data-version-restore="' + version.label + '">恢复此版本</button>') + '</div></div>';
+  }).join('') : '<div class="py-10 text-center text-xs text-gray-400">暂无历史版本</div>';
+}
+function saveDocumentAsNewVersion() {
+  if (documentReadOnly) return;
   clearTimeout(documentAutoSaveTimer);
   persistDocumentDraft();
-  showToast('文书已保存', 'success');
+  var versions = readDocumentVersions(), snapshot = captureDocumentSnapshot();
+  snapshot.label = 'v1.' + (versions.length + 1);
+  versions.push(snapshot);
+  try { localStorage.setItem(documentDraftKey() + '_versions', JSON.stringify(versions)); }
+  catch (e) { showToast('版本保存失败，请导出文书后重试', 'error'); return; }
+  documentVersionLabel = snapshot.label;
+  persistDocumentDraft();
+  renderDocumentVersions();
+  showToast('已保存版本 ' + snapshot.label, 'success');
+}
+function closeDocumentVersionPreview() {
+  var modal = document.getElementById('documentVersionPreview');
+  if (!modal) return;
+  var trigger = modal.returnFocus;
+  modal.remove();
+  if (trigger && trigger.isConnected) trigger.focus();
+}
+function previewDocumentVersion(snapshot) {
+  var modal = document.getElementById('documentVersionPreview');
+  if (!modal) {
+    modal = document.createElement('div');
+    modal.id = 'documentVersionPreview';
+    modal.className = 'fixed inset-0 z-[130] flex items-center justify-center p-6 bg-black/40';
+    modal.innerHTML = '<section class="bg-white rounded-2xl shadow-xl p-6 overflow-y-auto" role="dialog" aria-modal="true" aria-label="文书预览" style="width:760px;max-width:100%;max-height:85vh"><header class="flex justify-between items-center mb-5"><h2 class="text-lg font-semibold" data-preview-title></h2><button type="button" aria-label="关闭文书预览" class="text-2xl" data-close-preview>×</button></header><div data-preview-content></div></section>';
+    modal.returnFocus = document.activeElement;
+    modal.querySelector('[data-close-preview]').onclick = closeDocumentVersionPreview;
+    modal.onclick = function(event) { if (event.target === modal) closeDocumentVersionPreview(); };
+    document.body.appendChild(modal);
+  }
+  modal.querySelector('[data-close-preview]').focus();
+  modal.querySelector('[data-preview-title]').textContent = snapshot.title + (snapshot.label ? ' · ' + snapshot.label : '');
+  modal.querySelector('[data-preview-content]').innerHTML = snapshot.sections.map(function(section) { return '<section class="mb-6"><h3 class="font-semibold text-gray-800 mb-2">' + escapeDocumentHtml(section.label) + '</h3><p class="text-sm text-gray-700 leading-7 whitespace-pre-wrap">' + escapeDocumentHtml(section.content) + '</p></section>'; }).join('');
+}
+document.getElementById('versionHistoryList').addEventListener('click', function(event) {
+  var button = event.target.closest('[data-version-preview],[data-version-download],[data-version-restore]');
+  if (!button) return;
+  var label = button.dataset.versionPreview || button.dataset.versionDownload || button.dataset.versionRestore;
+  var snapshot = readDocumentVersions().find(function(version) { return version.label === label; });
+  if (!snapshot) return;
+  if (button.dataset.versionPreview) previewDocumentVersion(snapshot);
+  else if (button.dataset.versionDownload) exportDocumentToWord(snapshot);
+  else if (!documentReadOnly && window.confirm('恢复此版本将替换当前文书，确认恢复？')) {
+    clearTimeout(documentAutoSaveTimer);
+    documentVersionLabel = snapshot.label;
+    renderDocumentSections(snapshot.sections);
+    persistDocumentDraft();
+    closeVersionHistory();
+    showToast('已恢复版本 ' + label, 'success');
+  }
 });
+
+document.getElementById('btn-save-version')?.addEventListener('click', saveDocumentAsNewVersion);
+
+// ===== 左右侧栏折叠 / 展开 =====
+document.addEventListener('keydown', function(event) { if (event.key === 'Escape' && document.getElementById('documentVersionPreview')) { event.stopPropagation(); closeDocumentVersionPreview(); } });
+
+function setSidebarCollapsed(sidebarId, collapsed) {
+  var sb = document.getElementById(sidebarId);
+  if (!sb) return;
+  sb.classList.toggle('sidebar-collapsed', collapsed);
+  var collapseButton = document.getElementById(sidebarId === 'sidebar-tabs' ? 'btn-collapse-left' : 'btn-collapse-right');
+  collapseButton.setAttribute('aria-expanded', String(!collapsed));
+  document.getElementById(collapsed ? (sidebarId === 'sidebar-tabs' ? 'left-sidebar-expand' : 'right-sidebar-expand') : collapseButton.id).focus();
+  var resizer = document.getElementById(sidebarId === 'sidebar-tabs' ? 'left-sidebar-resizer' : 'right-sidebar-resizer');
+  if (resizer) resizer.style.display = collapsed ? 'none' : '';
+}
+document.getElementById('btn-collapse-left')?.addEventListener('click', function () { setSidebarCollapsed('sidebar-tabs', true); });
+document.getElementById('left-sidebar-expand')?.addEventListener('click', function () { setSidebarCollapsed('sidebar-tabs', false); });
+document.getElementById('btn-collapse-right')?.addEventListener('click', function () { setSidebarCollapsed('right-sidebar', true); });
+document.getElementById('right-sidebar-expand')?.addEventListener('click', function () { setSidebarCollapsed('right-sidebar', false); });
+
+// ===== 右栏模板面板：按文书类型自动过滤 + 搜索 =====
+var TEMPLATE_TYPE_LABELS = { ps: 'PS', cv: 'CV', rl: 'RL', rp: 'RP', cl: 'email' };
+function getCurrentDocType() {
+  var activeBtn = document.querySelector('.doc-type-btn.bg-purple-500');
+  return activeBtn ? activeBtn.getAttribute('data-doc-type') : 'ps';
+}
+function updateTemplatePanel(type) {
+  var searchInput = document.getElementById('templateSearchInput');
+  if (searchInput) searchInput.value = '';
+  var visible = 0;
+  document.querySelectorAll('#templateList .template-card').forEach(function (card) {
+    var types = (card.getAttribute('data-types') || '').split(',');
+    var ok = types.indexOf(type) >= 0;
+    card.classList.toggle('hidden', !ok);
+    if (ok) visible += 1;
+  });
+  var hint = document.getElementById('templateTypeHint');
+  if (hint) hint.textContent = '当前文书类型：' + (TEMPLATE_TYPE_LABELS[type] || type) + ' · 共 ' + visible + ' 条模板';
+}
+function filterTemplateCards() {
+  var kw = (document.getElementById('templateSearchInput').value || '').trim().toLowerCase();
+  var currentType = getCurrentDocType();
+  document.querySelectorAll('#templateList .template-card').forEach(function (card) {
+    var types = (card.getAttribute('data-types') || '').split(',');
+    var name = (card.getAttribute('data-name') || '').toLowerCase();
+    card.classList.toggle('hidden', types.indexOf(currentType) < 0 || (kw && name.indexOf(kw) < 0));
+  });
+}
+document.getElementById('templateSearchInput')?.addEventListener('input', filterTemplateCards);
+document.getElementById('templateSearchInput')?.addEventListener('keydown', function (e) {
+  if (e.key === 'Enter') filterTemplateCards();
+});
+
+// ===== 段落卡片：同步至 AI 写作助手绑定、新增段落、删除段落 =====
+function bindSendToAi(scope) {
+  (scope || document).querySelectorAll('.btn-send-to-ai').forEach(function (btn) {
+    if (btn.dataset.bound === '1') return;
+    btn.dataset.bound = '1';
+    btn.addEventListener('click', function () {
+      var content = this.closest('.editor-block').querySelector('.editor-textarea').value;
+      activateRightPanel('ai');
+      showAiSubPanel('write');
+      var aiInput = document.getElementById('ai-input-content');
+      if (aiInput) aiInput.value = content;
+      var aiDisplay = document.getElementById('ai-received-content');
+      if (aiDisplay) {
+        aiDisplay.textContent = content;
+        aiDisplay.classList.remove('hidden');
+      }
+    });
+  });
+}
+function buildSectionBlock(index) {
+  var block = document.createElement('div');
+  block.className = 'editor-block border border-gray-200 rounded-xl overflow-hidden';
+  block.innerHTML = '<div class="flex items-center justify-between gap-2 px-4 py-2 bg-gray-50 border-b border-gray-200">'
+    + '<input type="text" class="section-title-input" value="段落 ' + index + ' · 新段落内容" aria-label="段落标题">'
+    + '<div class="editor-inline-actions flex items-center gap-2 flex-shrink-0">'
+    + '<button class="btn-send-to-ai flex items-center gap-1 px-2.5 py-1 text-xs font-medium bg-blue-600 text-white rounded-lg hover:bg-blue-700" data-section="section-' + index + '">'
+    + '<svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>'
+    + '帮我改写</button>'
+    + '<button class="btn-delete-section flex items-center gap-1 px-2.5 py-1 text-xs font-medium bg-white border border-gray-300 text-gray-600 rounded-lg hover:bg-red-50 hover:text-red-600 hover:border-red-300" data-section="section-' + index + '" title="删除该段落">'
+    + '<svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6M9 7V4a1 1 0 011-1h4a1 1 0 011 1v3M4 7h16"></path></svg>'
+    + '删除</button></div></div>'
+    + '<textarea class="editor-textarea w-full p-4 text-gray-700 leading-relaxed text-sm resize-none focus:outline-none" rows="4" placeholder="从左侧学生资料、院校目标或右侧模板开始撰写本段…"></textarea>';
+  return block;
+}
+document.getElementById('btn-add-section')?.addEventListener('click', function () {
+  var container = document.getElementById('editor-sections');
+  var index = container.querySelectorAll('.editor-block').length + 1;
+  var block = buildSectionBlock(index);
+  container.appendChild(block);
+  bindSendToAi(block);
+  if (window.enhanceEditorActions) window.enhanceEditorActions(block);
+  var ta = block.querySelector('.editor-textarea');
+  ta.addEventListener('input', function () {
+    this.style.height = 'auto';
+    this.style.height = this.scrollHeight + 'px';
+  });
+  ta.focus();
+  updateDocWordCount();
+  if (typeof scheduleDocumentAutoSave === 'function') scheduleDocumentAutoSave();
+});
+document.getElementById('editor-sections')?.addEventListener('click', function (event) {
+  var btn = event.target.closest ? event.target.closest('.btn-delete-section') : null;
+  if (!btn) return;
+  var block = btn.closest('.editor-block');
+  if (!block) return;
+  var ta = block.querySelector('.editor-textarea');
+  if (ta && ta.value.trim() && !window.confirm('该段落已有内容，确认删除？')) return;
+  block.remove();
+  updateDocWordCount();
+  if (typeof scheduleDocumentAutoSave === 'function') scheduleDocumentAutoSave();
+});
+
+// ===== 待撰写空态：进入空白编辑器，先选择模板 =====
+var draftMode = false;
+function enterDraftMode() {
+  draftMode = true;
+  var badge = document.querySelector('.topbar-status');
+  if (badge) {
+    badge.classList.add('is-draft');
+    badge.innerHTML = '<span class="topbar-status-dot"></span>待撰写';
+  }
+  document.getElementById('editor-toolbar').classList.add('hidden');
+  document.getElementById('editor-content-wrap').classList.add('hidden');
+  document.getElementById('editor-version-bar').classList.add('hidden');
+  var empty = document.getElementById('draft-empty-state');
+  empty.classList.remove('hidden');
+  empty.classList.add('flex');
+}
+function exitDraftMode() {
+  if (!draftMode) return;
+  draftMode = false;
+  var badge = document.querySelector('.topbar-status');
+  if (badge) {
+    badge.classList.remove('is-draft');
+    badge.innerHTML = '<span class="topbar-status-dot"></span>撰写中';
+  }
+  document.getElementById('editor-toolbar').classList.remove('hidden');
+  document.getElementById('editor-content-wrap').classList.remove('hidden');
+  document.getElementById('editor-version-bar').classList.remove('hidden');
+  var empty = document.getElementById('draft-empty-state');
+  empty.classList.add('hidden');
+  empty.classList.remove('flex');
+  updateDocWordCount();
+}
+
+// ===== 选择模板 / 换用模板弹窗 =====
+function openTemplateSelect(mode) {
+  var title = document.getElementById('templateSelectTitle');
+  if (title) title.textContent = mode === 'switch' ? '换用模板' : '选择模板';
+  if (typeof updateTemplatePanel === 'function') updateTemplatePanel(getCurrentDocType());
+  document.getElementById('templateSelectModal').classList.remove('hidden');
+}
+function closeTemplateSelect() {
+  document.getElementById('templateSelectModal').classList.add('hidden');
+}
+
+// ===== 历史版本弹窗（由底部版本栏打开） =====
+function openVersionHistory() {
+  renderDocumentVersions();
+  document.getElementById('versionHistoryModal').classList.remove('hidden');
+}
+function closeVersionHistory() {
+  document.getElementById('versionHistoryModal').classList.add('hidden');
+}
+
+// ===== 案例库弹窗（由文档卡「查看案例」打开） =====
+function openCaseLibrary() {
+  document.getElementById('caseLibraryModal').classList.remove('hidden');
+}
+function closeCaseLibrary() {
+  document.getElementById('caseLibraryModal').classList.add('hidden');
+}
+
+// ===== 学生经历：复制主要内容 =====
+function copyStudentExperience() {
+  var text = '学生经历：1）中国人工智能学会 · 项目负责人（2025.09 - 至今）；2）百度 AI Lab · NLP 算法实习生（2025.01 - 2025.08）。';
+  copyTextValue(text).then(function () { showToast('学生经历主要内容已复制', 'success'); });
+}
+
+// ===== 一键整体翻译 =====
+var translateViewState = 'off';
+var translateLangName = '英语';
+function translateDocument(lang) {
+  if (documentReadOnly) return;
+  translateLangName = lang;
+  translateViewState = 'translated';
+  document.getElementById('docTranslateBannerText').textContent = '已一键翻译为' + lang + '（机器翻译预览）';
+  document.getElementById('btnToggleTranslateView').textContent = '查看原文';
+  document.getElementById('docTranslateBanner').classList.remove('hidden');
+  document.getElementById('translateDocMenu').classList.add('hidden');
+  showToast('已将全文一键翻译为' + lang, 'success');
+}
+function toggleTranslateView() {
+  if (translateViewState === 'translated') {
+    translateViewState = 'original';
+    document.getElementById('docTranslateBannerText').textContent = '当前展示：中文原文';
+    document.getElementById('btnToggleTranslateView').textContent = '返回译文';
+  } else {
+    translateViewState = 'translated';
+    document.getElementById('docTranslateBannerText').textContent = '已一键翻译为' + translateLangName + '（机器翻译预览）';
+    document.getElementById('btnToggleTranslateView').textContent = '查看原文';
+  }
+}
+function closeTranslateBanner() {
+  translateViewState = 'off';
+  document.getElementById('docTranslateBanner').classList.add('hidden');
+}
+document.getElementById('btn-translate-doc')?.addEventListener('click', function (e) {
+  e.stopPropagation();
+  document.getElementById('translateDocMenu').classList.toggle('hidden');
+});
+document.addEventListener('click', function (e) {
+  var menu = document.getElementById('translateDocMenu');
+  if (menu && !menu.classList.contains('hidden') && !(e.target.closest && (e.target.closest('#translateDocMenu') || e.target.closest('#btn-translate-doc')))) {
+    menu.classList.add('hidden');
+  }
+});
+
+// ===== 初始化：字数统计、模板类型过滤、待撰写空态 =====
+document.addEventListener('DOMContentLoaded', function () {
+  bindSendToAi(document);
+  updateDocWordCount();
+  updateTemplatePanel(getCurrentDocType());
+  var params = new URLSearchParams(location.search);
+  var type = (params.get('type') || 'ps').toLowerCase();
+  var typeButton = document.querySelector('.doc-type-btn[data-doc-type="' + type.replace(/[^a-z]/g, '') + '"]');
+  if (typeButton) typeButton.click();
+  if (params.get('status') === '待撰写' || params.get('draft') === '1') {
+    enterDraftMode();
+  }
+  // 演示深链：直接打开指定弹窗
+  var openModalParam = params.get('openModal');
+  if (openModalParam === 'template') openTemplateSelect('choose');
+  if (openModalParam === 'history') openVersionHistory();
+  if (openModalParam === 'cases') openCaseLibrary();
+});
+document.addEventListener('input', function (event) {
+  if (event.target.classList && (event.target.classList.contains('editor-textarea') || event.target.classList.contains('section-title-input'))) {
+    updateDocWordCount();
+  }
+});
+
+function applyDocumentReadOnly() {
+  if (!documentReadOnly) return;
+  document.querySelectorAll('#editor-sections input, #editor-sections textarea').forEach(function(input) { input.readOnly = true; });
+  document.querySelectorAll('#btn-add-section, #btn-save-version, #btn-translate-doc, [data-dom-id="btn-submit"], .btn-delete-section, .btn-send-to-ai, .btn-ai-write, .btn-translate').forEach(function(button) { button.disabled = true; button.classList.add('hidden'); });
+  var badge = document.querySelector('.topbar-status');
+  if (badge) badge.textContent = '已完成';
+}
+document.addEventListener('DOMContentLoaded', applyDocumentReadOnly);
 
 </script>
 

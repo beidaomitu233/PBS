@@ -246,7 +246,7 @@
           </div>
         </div>
         <div class="pbs-detail-topbar__actions">
-          <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-orange-100 text-orange-800">审核中</span>
+          <span id="reviewStatus" class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-orange-100 text-orange-800">审核中</span>
           <button class="flex items-center gap-2 px-3 py-1.5 text-sm text-gray-500 hover:text-blue-600 border border-gray-300 rounded-lg hover:border-blue-400 transition-colors">
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
             下载文书
@@ -485,6 +485,16 @@
     var _docOriginalHtml = null;
     var _displayWords = 1486;   // 页面展示的基准词数
     var _baseWords = null;      // 进入编辑时正文的实际词数
+    var reviewReadOnly = new URLSearchParams(location.search).get('readonly') === '1';
+    document.addEventListener('DOMContentLoaded', function() {
+      if (!reviewReadOnly) return;
+      document.getElementById('reviewStatus').textContent = '已完成';
+      document.getElementById('reviewStatus').className = 'text-sm font-medium text-green-700';
+      document.getElementById('reviewActionBar').parentElement.classList.add('hidden');
+      document.getElementById('annotationInput').parentElement.classList.add('hidden');
+      document.getElementById('editHistoryEmpty').textContent = '暂无修改记录';
+      document.querySelectorAll('#btnEnterEdit, [onclick="adoptAiScore()"], [onclick="modifyAiScore()"]').forEach(function(button) { button.classList.add('hidden'); });
+    });
 
     function countWords(text) {
       var cleaned = (text || '').replace(/\s+/g, ' ').trim();
@@ -494,6 +504,7 @@
       return enWords + zhChars;
     }
     function enterEditMode() {
+      if (reviewReadOnly) return;
       var doc = document.getElementById('docContent');
       _docOriginalHtml = doc.innerHTML;
       _baseWords = countWords(doc.innerText || doc.textContent || '');
@@ -592,6 +603,7 @@
       document.getElementById('rejectBox').classList.toggle('hidden');
     }
     function approveReview() {
+      if (reviewReadOnly) return;
       var bar = document.getElementById('reviewActionBar');
       var done = document.getElementById('reviewDone');
       bar.classList.add('hidden');
@@ -599,6 +611,7 @@
       done.innerHTML = '<svg class="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg><span class="text-green-700">已审核通过，文书状态更新为“已完成”</span>';
     }
     function confirmReject() {
+      if (reviewReadOnly) return;
       var reason = document.getElementById('rejectReason').value.trim();
       if (!reason) { document.getElementById('rejectReason').focus(); return; }
       var bar = document.getElementById('reviewActionBar');

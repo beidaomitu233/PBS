@@ -439,7 +439,7 @@
         <svg class="w-4 h-4 text-yellow-600 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
         </svg>
-        <p class="text-xs text-yellow-700" id="confirmWarnText">尚有 1 条院校目标结果待确认，确认结项后将默认全部结果已核实。</p>
+        <p class="text-xs text-yellow-700" id="confirmWarnText">请先确认全部院校目标结果。</p>
       </div>
       <div class="mb-5">
         <label class="block text-sm font-medium text-gray-700 mb-2">结项备注</label>
@@ -605,21 +605,23 @@
       var hint = document.getElementById('closureHint');
       if (closureDone) return;
       hint.textContent = pendingCount > 0
-        ? '尚有 ' + pendingCount + ' 条院校目标结果待确认，建议全部确认后再执行结项'
+        ? '尚有 ' + pendingCount + ' 条院校目标结果待确认'
         : '所有院校目标结果均已确认，可执行结项';
+      ['btnConfirmClosure', 'btnGenerateInternalReport', 'btnGenerateClientReport'].forEach(function(id) {
+        var button = document.getElementById(id);
+        button.disabled = pendingCount > 0;
+        button.style.opacity = pendingCount > 0 ? '.45' : '';
+        button.title = pendingCount > 0 ? '请先确认全部院校目标结果' : '';
+      });
     }
+
+    updateClosureHint();
 
     // ============ 手动确认结项 ============
     function openConfirmModal() {
-      if (closureDone) return;
+      if (closureDone || pendingCount > 0) return;
       var warn = document.getElementById('confirmWarn');
-      if (pendingCount > 0) {
-        warn.classList.remove('hidden');
-        document.getElementById('confirmWarnText').textContent =
-          '尚有 ' + pendingCount + ' 条院校目标结果待确认，确认结项后将默认全部结果已核实。';
-      } else {
-        warn.classList.add('hidden');
-      }
+      warn.classList.add('hidden');
       document.getElementById('confirmModal').classList.remove('hidden');
     }
 
@@ -628,7 +630,7 @@
     }
 
     function doConfirmClosure() {
-      if (closureDone) return;
+      if (closureDone || pendingCount > 0) return;
       closureDone = true;
       var timeStr = fmtTime(new Date());
 
@@ -636,9 +638,6 @@
       document.getElementById('statusTag').textContent = '已结项';
       document.getElementById('statusTag').className = 'inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800';
       document.getElementById('closureTimeText').textContent = timeStr;
-
-      // 未确认的结果行一并标记为已确认
-      if (pendingCount > 0) { confirmResult('SUB002'); pendingCount = 0; }
 
       // 更新操作区状态
       var btn = document.getElementById('btnConfirmClosure');
@@ -777,6 +776,7 @@
 
     // ============ 报告生成 / 在线编辑 ============
     function generateReport(type) {
+      if (pendingCount > 0) return;
       var now = new Date();
       var timeStr = fmtTime(now);
       reportSeq++;

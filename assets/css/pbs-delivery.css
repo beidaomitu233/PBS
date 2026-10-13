@@ -415,24 +415,54 @@
 }
 .pbs-payment-summary strong { display: block; color: #1f2937; font-size: 20px; }
 .pbs-payment-summary span { display: block; margin-top: 3px; color: #94a3b8; font-size: 11px; }
-.pbs-payment-nodes { display: grid; gap: 8px; }
-.pbs-payment-node {
-  display: grid;
-  grid-template-columns: minmax(150px, 1.2fr) 100px minmax(150px, 1fr) 100px 120px;
-  align-items: center;
-  gap: 12px;
-  min-height: 66px;
-  padding: 10px 12px;
-  border-radius: 10px;
-  background: #f8fafc;
+.pbs-payment-groups { display: grid; gap: 14px; }
+.pbs-payment-group {
+  overflow: hidden;
+  border: 1px solid #e5e9ef;
+  border-radius: 12px;
+  background: #fff;
 }
-.pbs-payment-node strong { display: block; color: #1f2937; font-size: 13px; }
-.pbs-payment-node small { display: block; margin-top: 3px; color: #94a3b8; font-size: 11px; }
+.pbs-payment-group-head {
+  display: flex;
+  min-height: 58px;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 11px 14px;
+  border-bottom: 1px solid #edf0f4;
+}
+.pbs-payment-group-head > div:first-child > strong { display: block; color: #1f2937; font-size: 14px; }
+.pbs-payment-group-head small { display: block; margin-top: 3px; color: #94a3b8; font-size: 11px; }
+.pbs-payment-group-payment { display: flex; align-items: center; gap: 18px; }
+.pbs-payment-group-payment > strong { color: #334155; font-size: 14px; }
+.pbs-payment-table-head,
+.pbs-payment-table-row { display: grid; align-items: center; gap: 12px; padding: 9px 14px; }
+.pbs-payment-table-head { min-height: 34px; background: #fafbfc; color: #94a3b8; font-size: 11px; }
+.pbs-payment-table-row { min-height: 48px; border-top: 1px solid #f0f2f5; }
+.pbs-payment-table-head + .pbs-payment-table-row { border-top: 0; }
+.pbs-payment-document-grid { grid-template-columns: minmax(90px, .8fr) 90px 100px 100px 84px; }
+.pbs-payment-table-row > strong,
+.pbs-payment-delivery-row > strong { color: #334155; font-size: 13px; }
+.pbs-payment-paid { display: inline-flex; align-items: center; gap: 6px; color: #64748b; font-size: 12px; }
+.pbs-payment-paid i { width: 6px; height: 6px; border-radius: 50%; background: #94a3b8; }
+.pbs-payment-paid.is-paid { color: #15803d; }
+.pbs-payment-paid.is-paid i { background: #22c55e; }
+.pbs-payment-paid.is-unpaid { color: #b45309; }
+.pbs-payment-paid.is-unpaid i { background: #f59e0b; }
 .pbs-payment-amount { color: #334155; font-size: 13px; font-weight: 700; }
-.pbs-payment-files { color: #64748b; font-size: 12px; }
 .pbs-payment-state { color: #64748b; font-size: 12px; }
 .pbs-payment-state.is-ready { color: #15803d; }
 .pbs-payment-state.is-sent { color: #2563eb; }
+.pbs-payment-deliveries { display: grid; }
+.pbs-payment-delivery-row {
+  display: grid;
+  min-height: 50px;
+  grid-template-columns: minmax(160px, 1fr) 110px 84px;
+  align-items: center;
+  gap: 12px;
+  padding: 9px 14px;
+}
+.pbs-payment-delivery-row + .pbs-payment-delivery-row { border-top: 1px solid #f0f2f5; }
 .pbs-payment-action {
   height: 34px;
   border: 0;
@@ -444,13 +474,35 @@
   cursor: pointer;
 }
 .pbs-payment-action:disabled { background: #d7dee7; color: #94a3b8; cursor: not-allowed; }
-.pbs-payment-node.is-display-only {
-  background: #f4f6f8;
+.pbs-payment-table-head,
+.pbs-payment-table-row,
+.pbs-payment-delivery-row {
+  display: grid;
+  width: 100%;
+  box-sizing: border-box;
+  grid-template-columns: minmax(0, 2.1fr) minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1fr) minmax(96px, .72fr);
+  column-gap: 16px;
+  align-items: center;
 }
-.pbs-payment-display-only {
-  color: #64748b;
-  font-size: 12px;
-  text-align: center;
+.pbs-payment-table-head > *,
+.pbs-payment-table-row > *,
+.pbs-payment-delivery-row > * { min-width: 0; }
+.pbs-payment-delivery-row > :first-child { grid-column: 1; }
+.pbs-payment-delivery-row > :nth-last-child(2) { grid-column: 4; }
+.pbs-payment-delivery-row > :last-child { grid-column: 5; }
+.pbs-payment-table-head > :last-child,
+.pbs-payment-table-row > :last-child,
+.pbs-payment-delivery-row > :last-child {
+  width: 100%;
+  max-width: 112px;
+  justify-self: start;
+}
+
+@media (max-width: 900px) {
+  .pbs-payment-table { overflow-x: auto; }
+  .pbs-payment-table-head,
+  .pbs-payment-table-row { min-width: 600px; }
+  .pbs-payment-delivery-row { grid-template-columns: minmax(130px, 1fr) 90px 76px; }
 }
 .pbs-application-flow {
   display: grid;

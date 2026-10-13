@@ -347,9 +347,10 @@
           <div id="projectTaskNoteBar" class="hidden col-span-2 border-t border-gray-100 pt-3">
             <div class="flex items-start gap-2 rounded-lg bg-gray-50 px-3 py-2.5">
               <svg class="w-4 h-4 text-blue-600 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5h2m-1 0v14m-4-8h8"></path></svg>
-              <p class="text-sm leading-5"><span class="font-semibold text-gray-700">任务说明：</span><span id="projectTaskNote" class="text-gray-600"></span></p>
+              <p class="text-sm leading-5"><span class="font-semibold text-gray-700">项目分配备注：</span><span id="projectTaskNote" class="text-gray-600"></span></p>
             </div>
           </div>
+          <div id="projectClosureNoteBar" class="hidden col-span-2 border-t border-gray-100 pt-3"><p class="text-sm leading-5"><span class="font-semibold text-gray-700">结项备注：</span><span id="projectClosureNote" class="text-gray-600 whitespace-pre-wrap"></span></p></div>
         </div>
       </section>
 
@@ -533,7 +534,7 @@
   <!-- 页面提示 Toast -->
   <div id="pageToast" class="hidden fixed top-6 left-1/2 transform -translate-x-1/2 z-[70] px-4 py-2.5 bg-red-500 text-white text-sm rounded-lg shadow-lg"></div>
 
-  <script src="./assets/js/pbs-app.js?v=7.5"></script>
+  <script src="./assets/js/pbs-app.js?v=7.6"></script>
   <script src="./assets/js/pbs-student-data.js?v=1.3"></script>
   <script>
     /* ==================== 基础数据 ==================== */
@@ -884,7 +885,7 @@
             ['结项报告', s.archive.reports],
             ['当前环节滞留时长', s.stageDurations.archive]
           ],
-          body: '<div class="project-action-card"><span class="project-action-icon">5</span><div><p class="text-sm font-semibold text-gray-900">同步结项归档最新信息</p><p class="text-xs text-gray-500 mt-1">结项状态与结项时间同步自结项归档列表；申请结果、Offer 凭证与结项报告（《项目管理结项报告》《客户项目结项报告》）同步自结项详情页；结项只影响当前院校目标</p></div><div class="flex gap-2"><button class="px-4 py-2 text-sm font-medium text-purple-600 bg-purple-50 rounded-lg" onclick="location.href=\'结项详情页 - 留学申请管理系统.html\'">结项详情页</button><button class="px-4 py-2 text-sm font-medium text-gray-600 bg-gray-100 rounded-lg" onclick="location.href=\'结项归档列表 - PBS留学CRM系统.html\'">结项归档列表</button></div></div>' +
+          body: '<div class="project-action-card"><span class="project-action-icon">5</span><div><p class="text-sm font-semibold text-gray-900">同步结项归档最新信息</p><p class="text-xs text-gray-500 mt-1">结项状态与结项时间同步自结项归档列表；申请结果、Offer 凭证与结项报告（《项目管理结项报告》《客户项目结项报告》）同步自结项详情页；结项只影响当前院校目标</p></div><div class="flex gap-2"><button class="px-4 py-2 text-sm font-medium text-purple-600 bg-purple-50 rounded-lg" onclick="openClosureDetail()">结项详情页</button><button class="px-4 py-2 text-sm font-medium text-gray-600 bg-gray-100 rounded-lg" onclick="location.href=\'结项归档列表 - PBS留学CRM系统.html\'">结项归档列表</button></div></div>' +
             '<div class="project-action-card"><span class="project-action-icon">✓</span><div><p class="text-sm font-semibold text-gray-900">该院校目标完成结果确认后可结项</p><p class="text-xs text-gray-500 mt-1">需监控阶段确认全部申请结果后发起结项</p></div><button class="px-4 py-2 text-sm font-medium text-gray-400 bg-gray-100 rounded-lg" disabled>暂不可结项</button></div>'
         }
       };
@@ -979,6 +980,9 @@
     }
 
     /* ==================== 材料清单弹窗 + 催办 ==================== */
+    function openClosureDetail() {
+      location.href = '结项详情页 - 留学申请管理系统.html?project=' + encodeURIComponent(MY_PROJECT_CONTEXT.projectNo) + '&school=' + encodeURIComponent(currentSchoolCockpit);
+    }
     function openStudentAssetUpload() {
       location.href = '学生档案详情页 - 留学申请管理系统.html?section=asset&upload=1#sec-asset';
     }
@@ -1350,6 +1354,7 @@
       var selector = document.getElementById('schoolCockpitSelect');
       if (selector) { selector.value = schoolId; }
       refreshCockpit();
+      if (window.pbsRefreshProjectNotes) window.pbsRefreshProjectNotes();
     }
     function closeNotificationModal() {
       document.getElementById('notificationModal').classList.add('hidden');

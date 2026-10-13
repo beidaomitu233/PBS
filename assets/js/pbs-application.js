@@ -44,7 +44,7 @@
       var meta = group.querySelector('.website-form-group__meta'); if (meta) meta.textContent = inputs.length + ' 个字段 · 已填 ' + count;
     });
   }
-  function adopt(input, value) { input.value = value; input.classList.remove('is-invalid'); input.dispatchEvent(new Event('change', { bubbles:true })); updateWebsiteFormSaveState('有未保存的填写内容'); stats(); }
+  function adopt(input, value) { input.value = value; clearWebsiteFieldError(input); input.dispatchEvent(new Event('change', { bubbles:true })); updateWebsiteFormSaveState('有未保存的填写内容'); stats(); }
   function enhanceFields() {
     document.querySelectorAll('.website-form-group').forEach(function (group, groupIndex) {
       var existing = group.querySelector('.application-adopt'); if (existing) existing.remove();
@@ -56,12 +56,12 @@
         input.setAttribute('aria-label', input.getAttribute('data-wf-label'));
         if (!input.dataset.enhanced) {
           input.dataset.enhanced = '1';
-          input.addEventListener('input', function () { input.classList.remove('is-invalid'); updateWebsiteFormSaveState('有未保存的填写内容'); stats(); });
-          input.addEventListener('change', stats);
+          input.addEventListener('input', function () { clearWebsiteFieldError(input); updateWebsiteFormSaveState('有未保存的填写内容'); stats(); });
+          input.addEventListener('change', function() { clearWebsiteFieldError(input); stats(); });
           if (input.tagName === 'SELECT') {
             var option = document.createElement('option'); option.value = '__manual__'; option.textContent = '手动输入其他选项'; input.appendChild(option);
             var manual = document.createElement('input'); manual.type = 'text'; manual.className = 'application-manual'; manual.placeholder = '请输入官网选项'; manual.hidden = true; manual.setAttribute('aria-label', input.getAttribute('data-wf-label') + '其他选项'); field.insertBefore(manual, input.nextSibling);
-            manual.oninput = function () { var current = input.querySelector('[data-custom-option]'); if (!current) { current = document.createElement('option'); current.dataset.customOption = '1'; input.insertBefore(current, option); } current.value = manual.value; current.textContent = manual.value || '自定义选项'; input.value = manual.value; updateWebsiteFormSaveState('有未保存的填写内容'); stats(); };
+            manual.oninput = function () { var current = input.querySelector('[data-custom-option]'); if (!current) { current = document.createElement('option'); current.dataset.customOption = '1'; input.insertBefore(current, option); } current.value = manual.value; current.textContent = manual.value || '自定义选项'; input.value = manual.value; clearWebsiteFieldError(input); updateWebsiteFormSaveState('有未保存的填写内容'); stats(); };
             input.addEventListener('change', function () { manual.hidden = input.value !== '__manual__' && !input.options[input.selectedIndex].hasAttribute('data-custom-option'); if (input.value === '__manual__') { input.value = ''; manual.hidden = false; manual.focus(); } });
           }
         }

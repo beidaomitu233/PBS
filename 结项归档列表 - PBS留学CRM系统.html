@@ -438,12 +438,31 @@
       applyFilter();
     }
 
+    function refreshArchiveClosureState() {
+      document.querySelectorAll('#archiveTbody tr[data-project]').forEach(function(row) {
+        var number = window.pbsProjects.canonicalNo(row.dataset.project), project = window.pbsProjects.find(number), record;
+        try { record = JSON.parse(localStorage.getItem('pbs_closure_' + number) || '{}'); } catch(e) { record = {}; }
+        var closedAt = project && project.closureConfirmed ? project.closureAt : record.closedAt;
+        row.dataset.project = number; row.children[1].textContent = number;
+        if (closedAt) {
+          row.dataset.status = '已结项'; row.dataset.endtime = closedAt;
+          row.children[5].innerHTML = '<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">已结项</span>';
+          row.children[6].textContent = closedAt;
+        }
+        row.dataset.kw = [number, row.dataset.name, row.dataset.student, row.dataset.level, row.dataset.status, row.dataset.endtime].join(' ');
+      });
+      applyFilter();
+    }
+
+    window.addEventListener('storage', function(event) { if (event.key === 'pbs_projects_v1' || (event.key || '').indexOf('pbs_closure_') === 0) refreshArchiveClosureState(); });
+
     document.addEventListener('DOMContentLoaded', function() {
       // 详情跳转
       document.querySelectorAll('[data-dom-id^="btn-archive-detail-"]').forEach(function(el) {
         el.addEventListener('click', function(e) {
           e.stopPropagation();
-      window.location.href = '结项详情页 - 留学申请管理系统.html';
+      var row = el.closest('tr[data-project]');
+          window.location.href = '结项详情页 - 留学申请管理系统.html' + (row ? '?project=' + encodeURIComponent(window.pbsProjects.canonicalNo(row.dataset.project)) + '&customer=' + encodeURIComponent(row.dataset.name) + '&student=' + encodeURIComponent(row.dataset.student) + '&level=' + encodeURIComponent(row.dataset.level) : '');
         });
       });
       // 回车快捷搜索
@@ -457,7 +476,7 @@
           document.getElementById('notificationModal').classList.remove('hidden');
         });
       }
-      applyFilter();
+      refreshArchiveClosureState();
     });
 
     function closeNotificationModal() {
@@ -479,7 +498,7 @@
       }
     });
   </script>
-  <script src="./assets/js/pbs-app.js?v=6.3"></script>
+  <script src="./assets/js/pbs-app.js?v=7.6"></script>
 
 
   

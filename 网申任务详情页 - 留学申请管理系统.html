@@ -1320,7 +1320,18 @@
 
     function updateWebsiteFormSaveState(text) {
       var state = document.getElementById('websiteFormSaveState');
-      if (state) state.textContent = text;
+      if (state) { state.textContent = text; state.classList.toggle('application-save-error', text.indexOf('保存失败') >= 0); }
+    }
+
+    function setWebsiteFieldInvalid(field, invalid) {
+      field.classList.toggle('is-invalid', invalid);
+      if (invalid) field.setAttribute('aria-invalid', 'true'); else field.removeAttribute('aria-invalid');
+      var wrapper = field.closest('.website-form-field');
+      if (wrapper) wrapper.classList.toggle('is-invalid', invalid);
+    }
+
+    function clearWebsiteFieldError(field) {
+      if (String(field.value || '').trim() && field.value !== '__manual__') setWebsiteFieldInvalid(field, false);
     }
 
     function saveWebsiteDraft() {
@@ -1331,11 +1342,15 @@
 
     function saveWebsiteForm() {
       var missing = Array.from(document.querySelectorAll('[data-wf-required]')).filter(function(field) {
-        field.classList.remove('is-invalid');
+        setWebsiteFieldInvalid(field, false);
         return !String(field.value || '').trim();
       });
       if (missing.length) {
-        missing.forEach(function(field) { field.classList.add('is-invalid'); });
+        missing.forEach(function(field) {
+          setWebsiteFieldInvalid(field, true);
+          var page = field.closest('details'); if (page) page.open = true;
+        });
+        updateWebsiteFormSaveState('保存失败：还有 ' + missing.length + ' 项必填内容未填写');
         var first = missing[0];
         var group = first.closest('details');
         if (group) group.open = true;
@@ -1356,7 +1371,8 @@
     function restoreWebsiteForm() {
       var fields = document.querySelectorAll('[data-wf-label]');
       fields.forEach(function(field) {
-        field.addEventListener('input', function() { field.classList.remove('is-invalid'); });
+        field.addEventListener('input', function() { clearWebsiteFieldError(field); });
+        field.addEventListener('change', function() { clearWebsiteFieldError(field); });
       });
       var raw = localStorage.getItem(WEBSITE_FORM_DRAFT_KEY) || localStorage.getItem(WEBSITE_FORM_SAVED_KEY);
       if (!raw) return;
@@ -1416,6 +1432,15 @@
       badge.textContent = result[0];
       badge.className = 'inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ' + result[1];
       if (selectedResultImageData) localStorage.setItem('pbs_offer_image_cmu', selectedResultImageData);
+      var params = new URLSearchParams(location.search), project = window.pbsProjects.find(params.get('project'));
+      if (project) {
+        var goalId = params.get('school') || (project.packages.length === 1 ? project.packages[0].id : '');
+        if (goalId) {
+          var results = Object.assign({}, project.goalResults || {});
+          results[goalId] = { result: result[0], image: selectedResultImageData, note: document.getElementById('resultOfferImageName').textContent };
+          window.pbsProjects.update(project.projectNo, { goalResults: results });
+        }
+      }
       alert('申请结果已保存');
     }
     document.addEventListener('DOMContentLoaded', function() {
@@ -1424,9 +1449,9 @@
       restoreWebsiteForm();
     });
   </script>
-  <script src="./assets/js/pbs-app.js?v=6.0"></script>
-  <link rel="stylesheet" href="./assets/css/pbs-application.css">
-  <script src="./assets/js/pbs-application.js"></script>
+  <script src="./assets/js/pbs-app.js?v=7.6"></script>
+  <link rel="stylesheet" href="./assets/css/pbs-application.css?v=1.1">
+  <script src="./assets/js/pbs-application.js?v=1.1"></script>
 
 
   

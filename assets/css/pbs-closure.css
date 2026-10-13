@@ -1,0 +1,57 @@
+.closure-report-modal { position: fixed; inset: 0; z-index: 100; display: flex; align-items: center; justify-content: center; padding: 24px; }
+.closure-report-modal.hidden { display: none; }
+.closure-report-mask { position: absolute; inset: 0; background: #0f172a66; }
+.closure-report-dialog { position: relative; display: flex; flex-direction: column; width: min(1200px, 100%); height: min(920px, calc(100dvh - 48px)); background: #fff; border-radius: 16px; box-shadow: 0 24px 72px #0f172a33; overflow: hidden; }
+.closure-report-head { flex: none; padding: 22px 32px 14px; text-align: center; }
+.closure-report-head h3 { margin: 0; font-size: 23px; font-weight: 600; color: #111827; }
+.closure-report-close { position: absolute; top: 14px; right: 20px; border: 0; background: transparent; color: #94a3b8; font-size: 28px; cursor: pointer; }
+.closure-report-logo-bar { flex: none; display: flex; align-items: center; justify-content: space-between; gap: 20px; margin: 0 32px 16px; padding: 14px 16px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; }
+.closure-report-logo-bar > div { display: flex; align-items: center; gap: 12px; }
+.closure-report-logo-bar span { font-size: 13px; color: #94a3b8; }
+.closure-report-logo-bar > div:first-child > button { border: 0; background: transparent; padding: 0; color: #374151; font-weight: 600; cursor: pointer; }
+.closure-report-actions { flex-wrap: wrap; }
+.closure-report-actions button, .closure-report-foot button { min-height: 40px; padding: 8px 18px; border: 1px solid #cbd5e1; border-radius: 8px; background: #fff; color: #2563eb; font-size: 14px; cursor: pointer; }
+.closure-report-actions button:hover, .closure-report-foot button:hover { background: #eff6ff; }
+.closure-report-workspace { display: flex; flex-direction: column; flex: 1; min-height: 0; margin: 0 32px; border: 1px solid #e2e8f0; border-radius: 12px; overflow: hidden; }
+.closure-report-toolbar { flex: none; display: flex; align-items: center; flex-wrap: wrap; gap: 3px; padding: 8px 12px; border-bottom: 1px solid #e2e8f0; background: #fff; }
+.closure-report-toolbar button, .closure-report-toolbar select { min-height: 34px; padding: 5px 9px; border: 0; border-radius: 4px; background: #fff; color: #475569; font-size: 13px; cursor: pointer; }
+.closure-report-toolbar button:hover { background: #eff6ff; color: #2563eb; }
+.closure-report-scroll { flex: 1; min-height: 0; overflow: auto; overscroll-behavior: contain; background: #f8fafc; padding: 24px; }
+.report-doc { width: 100%; max-width: 794px; min-height: 760px; margin: 0 auto; padding: 48px; background: #fff; color: #1f2937; font-family: 'Times New Roman', 'SimSun', serif; font-size: 14px; line-height: 1.8; outline: none; overflow-wrap: anywhere; }
+.report-doc .report-logo { text-align: center; margin-bottom: 20px; }
+.report-doc .report-logo img { display: inline-block; max-width: 180px; max-height: 80px; object-fit: contain; }
+.report-doc img { max-width: 100%; height: auto; }
+.report-doc h1 { margin: 12px 0; font-size: 26px; font-weight: 500; text-align: center; color: #1e3a5f; }
+.report-doc .report-sub { margin-bottom: 32px; text-align: center; font-size: 12px; color: #94a3b8; }
+.report-doc h2 { margin: 24px 0 12px; font-size: 17px; font-weight: 600; }
+.report-doc h3 { font-size: 15px; font-weight: 600; }
+.report-doc table { width: 100%; border-collapse: collapse; margin: 12px 0; font-size: 13px; }
+.report-doc td, .report-doc th { border: 1px solid #d1d5db; padding: 10px 12px; text-align: left; vertical-align: top; }
+.report-doc th { background: #f8fafc; font-weight: 600; }
+.report-doc p { margin: 8px 0; }
+.report-doc ul { list-style: disc; padding-left: 24px; }
+.report-doc ol { list-style: decimal; padding-left: 24px; }
+.report-doc .tag-pass { color: #166534; }
+.report-doc .tag-fail { color: #b91c1c; }
+.report-doc .report-footer { margin-top: 28px; padding-top: 12px; border-top: 1px solid #e2e8f0; color: #94a3b8; font-size: 12px; }
+.closure-report-foot { flex: none; display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 20px 32px; }
+.closure-report-foot > div { display: flex; gap: 12px; }
+.closure-report-foot > span { color: #64748b; font-size: 13px; }
+.closure-report-foot .primary { border-color: #2563eb; background: #2563eb; color: #fff; }
+.closure-report-foot button:disabled { opacity: .5; cursor: wait; }
+.closure-report-modal.is-fullscreen { padding: 0; }
+.closure-report-modal.is-fullscreen .closure-report-dialog { width: 100%; height: 100dvh; border-radius: 0; }
+.closure-report-modal.is-preview .closure-report-toolbar > :not(#reportPreviewButton):not(#reportFullscreenButton) { display: none; }
+.closure-project-notes { margin-top: 20px; padding-top: 16px; border-top: 1px solid #edf0f5; display: grid; gap: 14px; }
+.closure-project-notes strong { display: block; color: #374151; font-size: 13px; font-weight: 500; }
+.closure-project-notes p { margin-top: 6px; color: #64748b; font-size: 13px; line-height: 1.7; white-space: pre-wrap; }
+@media (max-width: 760px) {
+  .closure-report-modal { padding: 12px; }
+  .closure-report-dialog { height: calc(100dvh - 24px); }
+  .closure-report-logo-bar { margin: 0 16px 12px; align-items: flex-start; flex-direction: column; }
+  .closure-report-workspace { margin: 0 16px; }
+  .closure-report-scroll { padding: 12px; }
+  .report-doc { padding: 24px; }
+  .closure-report-foot { padding: 16px; }
+  .closure-report-foot button { padding: 8px 12px; }
+}

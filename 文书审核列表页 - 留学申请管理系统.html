@@ -252,15 +252,17 @@
       <!-- 审核列表表格 -->
       <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
         <div class="overflow-x-auto">
-        <table class="w-full min-w-[1150px]">
+        <table class="w-full min-w-[1400px]">
           <thead class="bg-gray-50">
-            <tr><th class="px-5 py-4 text-left text-sm font-medium text-gray-500">序号</th><th class="px-5 py-4 text-left text-sm font-medium text-gray-500">客户姓名</th><th class="px-5 py-4 text-left text-sm font-medium text-gray-500">学生姓名</th><th class="px-5 py-4 text-left text-sm font-medium text-gray-500">文书类型</th><th class="px-5 py-4 text-left text-sm font-medium text-gray-500">文书状态</th><th class="px-5 py-4 text-left text-sm font-medium text-gray-500">文书审核人员</th><th class="px-5 py-4 text-left text-sm font-medium text-gray-500">提交人</th><th class="px-5 py-4 text-left text-sm font-medium text-gray-500">提交时间</th><th class="px-5 py-4 text-left text-sm font-medium text-gray-500">DDL倒计时</th><th class="px-5 py-4 text-left text-sm font-medium text-gray-500">操作</th></tr>
+            <tr><th class="px-5 py-4 text-left text-sm font-medium text-gray-500">序号</th><th class="px-5 py-4 text-left text-sm font-medium text-gray-500">客户姓名</th><th class="px-5 py-4 text-left text-sm font-medium text-gray-500">学生姓名</th><th class="px-5 py-4 text-left text-sm font-medium text-gray-500">学校</th><th class="px-5 py-4 text-left text-sm font-medium text-gray-500">专业</th><th class="px-5 py-4 text-left text-sm font-medium text-gray-500">文书类型</th><th class="px-5 py-4 text-left text-sm font-medium text-gray-500">文书状态</th><th class="px-5 py-4 text-left text-sm font-medium text-gray-500">文书审核人员</th><th class="px-5 py-4 text-left text-sm font-medium text-gray-500">提交人</th><th class="px-5 py-4 text-left text-sm font-medium text-gray-500">提交时间</th><th class="px-5 py-4 text-left text-sm font-medium text-gray-500">DDL倒计时</th><th class="px-5 py-4 text-left text-sm font-medium text-gray-500">操作</th></tr>
           </thead>
           <tbody class="divide-y divide-gray-100" id="auditTbody">
-            <tr data-kw="1李建国李雪PS审核中王审核陈文书2026-08-17 10:30" data-customer="李建国" data-student="李雪" data-reviewer="王审核" data-type="PS" data-person="陈文书" data-time="2026-08-17 10:30" data-status="审核中" class="hover:bg-gray-50 transition-colors">
+            <tr data-kw="1李建国李雪PS审核中王审核陈文书2026-08-17 10:30 卡内基梅隆大学 人工智能" data-school="卡内基梅隆大学" data-major="人工智能" data-customer="李建国" data-student="李雪" data-reviewer="王审核" data-type="PS" data-person="陈文书" data-time="2026-08-17 10:30" data-status="审核中" class="hover:bg-gray-50 transition-colors">
               <td class="px-5 py-4 text-sm text-gray-900">1</td>
               <td class="px-5 py-4 text-sm font-medium text-gray-900">李建国</td>
               <td class="px-5 py-4 text-sm text-gray-900">李雪</td>
+              <td class="px-5 py-4 text-sm text-gray-900">卡内基梅隆大学</td>
+              <td class="px-5 py-4 text-sm text-gray-600">人工智能</td>
               <td class="px-5 py-4"><span class="inline-flex items-center px-2 py-0.5 rounded-md text-xs font-medium bg-blue-50 text-blue-700">PS</span></td>
               <td class="px-5 py-4"><span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-orange-100 text-orange-800">审核中</span></td>
               <td class="px-5 py-4 text-sm text-gray-900">王审核</td>
@@ -269,10 +271,12 @@
               <td class="px-5 py-4 text-sm text-gray-600">剩 75 天</td>
               <td class="px-5 py-4 whitespace-nowrap"><div class="flex items-center gap-3"><button class="text-blue-600 hover:text-blue-800 text-sm font-medium" onclick="location.href='文书审核详情页 - 留学申请管理系统.html'">进入审核详情页</button><button class="text-orange-600 hover:text-orange-800 text-sm font-medium" onclick="event.stopPropagation(); showTaskToast('已催办该审核任务', 'success')">催办</button></div></td>
             </tr>
-            <tr data-kw="2王建华王明CV审核中王审核周文书2026-08-16 14:20" data-customer="王建华" data-student="王明" data-reviewer="王审核" data-type="CV" data-person="周文书" data-time="2026-08-16 14:20" data-status="审核中" class="hover:bg-gray-50 transition-colors">
+            <tr data-kw="2王建华王明CV审核中王审核周文书2026-08-16 14:20 斯坦福大学 计算机科学" data-school="斯坦福大学" data-major="计算机科学" data-customer="王建华" data-student="王明" data-reviewer="王审核" data-type="CV" data-person="周文书" data-time="2026-08-16 14:20" data-status="审核中" class="hover:bg-gray-50 transition-colors">
               <td class="px-5 py-4 text-sm text-gray-900">2</td>
               <td class="px-5 py-4 text-sm font-medium text-gray-900">王建华</td>
               <td class="px-5 py-4 text-sm text-gray-900">王明</td>
+              <td class="px-5 py-4 text-sm text-gray-900">斯坦福大学</td>
+              <td class="px-5 py-4 text-sm text-gray-600">计算机科学</td>
               <td class="px-5 py-4"><span class="inline-flex items-center px-2 py-0.5 rounded-md text-xs font-medium bg-blue-50 text-blue-700">CV</span></td>
               <td class="px-5 py-4"><span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-orange-100 text-orange-800">审核中</span></td>
               <td class="px-5 py-4 text-sm text-gray-900">王审核</td>
@@ -281,10 +285,12 @@
               <td class="px-5 py-4 text-sm text-gray-600">剩 119 天</td>
               <td class="px-5 py-4 whitespace-nowrap"><div class="flex items-center gap-3"><button class="text-blue-600 hover:text-blue-800 text-sm font-medium" onclick="location.href='文书审核详情页 - 留学申请管理系统.html'">进入审核详情页</button><button class="text-orange-600 hover:text-orange-800 text-sm font-medium" onclick="event.stopPropagation(); showTaskToast('已催办该审核任务', 'success')">催办</button></div></td>
             </tr>
-            <tr data-kw="3张国庆张华RL已完成李审核吴文书2026-08-12 09:15" data-customer="张国庆" data-student="张华" data-reviewer="李审核" data-type="RL" data-person="吴文书" data-time="2026-08-12 09:15" data-status="已完成" class="hover:bg-gray-50 transition-colors">
+            <tr data-kw="3张国庆张华RL已完成李审核吴文书2026-08-12 09:15 麻省理工学院 数据科学" data-school="麻省理工学院" data-major="数据科学" data-customer="张国庆" data-student="张华" data-reviewer="李审核" data-type="RL" data-person="吴文书" data-time="2026-08-12 09:15" data-status="已完成" class="hover:bg-gray-50 transition-colors">
               <td class="px-5 py-4 text-sm text-gray-900">3</td>
               <td class="px-5 py-4 text-sm font-medium text-gray-900">张国庆</td>
               <td class="px-5 py-4 text-sm text-gray-900">张华</td>
+              <td class="px-5 py-4 text-sm text-gray-900">麻省理工学院</td>
+              <td class="px-5 py-4 text-sm text-gray-600">数据科学</td>
               <td class="px-5 py-4"><span class="inline-flex items-center px-2 py-0.5 rounded-md text-xs font-medium bg-blue-50 text-blue-700">RL</span></td>
               <td class="px-5 py-4"><span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">已完成</span></td>
               <td class="px-5 py-4 text-sm text-gray-900">李审核</td>
@@ -293,10 +299,12 @@
               <td class="px-5 py-4 text-sm text-gray-600">剩 73 天</td>
               <td class="px-5 py-4 whitespace-nowrap"><div class="flex items-center gap-3"><button class="text-blue-600 hover:text-blue-800 text-sm font-medium" onclick="location.href='文书审核详情页 - 留学申请管理系统.html'">进入审核详情页</button><button class="text-orange-600 hover:text-orange-800 text-sm font-medium" onclick="event.stopPropagation(); showTaskToast('已催办该审核任务', 'success')">催办</button></div></td>
             </tr>
-            <tr data-kw="4刘志强刘芳PS审核中李审核陈文书2026-08-18 08:40" data-customer="刘志强" data-student="刘芳" data-reviewer="李审核" data-type="PS" data-person="陈文书" data-time="2026-08-18 08:40" data-status="审核中" class="hover:bg-gray-50 transition-colors">
+            <tr data-kw="4刘志强刘芳PS审核中李审核陈文书2026-08-18 08:40 哈佛大学 公共卫生" data-school="哈佛大学" data-major="公共卫生" data-customer="刘志强" data-student="刘芳" data-reviewer="李审核" data-type="PS" data-person="陈文书" data-time="2026-08-18 08:40" data-status="审核中" class="hover:bg-gray-50 transition-colors">
               <td class="px-5 py-4 text-sm text-gray-900">4</td>
               <td class="px-5 py-4 text-sm font-medium text-gray-900">刘志强</td>
               <td class="px-5 py-4 text-sm text-gray-900">刘芳</td>
+              <td class="px-5 py-4 text-sm text-gray-900">哈佛大学</td>
+              <td class="px-5 py-4 text-sm text-gray-600">公共卫生</td>
               <td class="px-5 py-4"><span class="inline-flex items-center px-2 py-0.5 rounded-md text-xs font-medium bg-blue-50 text-blue-700">PS</span></td>
               <td class="px-5 py-4"><span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-orange-100 text-orange-800">审核中</span></td>
               <td class="px-5 py-4 text-sm text-gray-900">李审核</td>
@@ -305,10 +313,12 @@
               <td class="px-5 py-4 text-sm text-gray-600">剩 94 天</td>
               <td class="px-5 py-4 whitespace-nowrap"><div class="flex items-center gap-3"><button class="text-blue-600 hover:text-blue-800 text-sm font-medium" onclick="location.href='文书审核详情页 - 留学申请管理系统.html'">进入审核详情页</button><button class="text-orange-600 hover:text-orange-800 text-sm font-medium" onclick="event.stopPropagation(); showTaskToast('已催办该审核任务', 'success')">催办</button></div></td>
             </tr>
-            <tr data-kw="5陈国强陈磊RP已完成王审核郑文书2026-08-10 16:00" data-customer="陈国强" data-student="陈磊" data-reviewer="王审核" data-type="RP" data-person="郑文书" data-time="2026-08-10 16:00" data-status="已完成" class="hover:bg-gray-50 transition-colors">
+            <tr data-kw="5陈国强陈磊RP已完成王审核郑文书2026-08-10 16:00 剑桥大学 金融学" data-school="剑桥大学" data-major="金融学" data-customer="陈国强" data-student="陈磊" data-reviewer="王审核" data-type="RP" data-person="郑文书" data-time="2026-08-10 16:00" data-status="已完成" class="hover:bg-gray-50 transition-colors">
               <td class="px-5 py-4 text-sm text-gray-900">5</td>
               <td class="px-5 py-4 text-sm font-medium text-gray-900">陈国强</td>
               <td class="px-5 py-4 text-sm text-gray-900">陈磊</td>
+              <td class="px-5 py-4 text-sm text-gray-900">剑桥大学</td>
+              <td class="px-5 py-4 text-sm text-gray-600">金融学</td>
               <td class="px-5 py-4"><span class="inline-flex items-center px-2 py-0.5 rounded-md text-xs font-medium bg-blue-50 text-blue-700">RP</span></td>
               <td class="px-5 py-4"><span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">已完成</span></td>
               <td class="px-5 py-4 text-sm text-gray-900">王审核</td>
@@ -317,10 +327,12 @@
               <td class="px-5 py-4 text-sm text-red-600 font-medium">剩 28 天</td>
               <td class="px-5 py-4 whitespace-nowrap"><div class="flex items-center gap-3"><button class="text-blue-600 hover:text-blue-800 text-sm font-medium" onclick="location.href='文书审核详情页 - 留学申请管理系统.html'">进入审核详情页</button><button class="text-orange-600 hover:text-orange-800 text-sm font-medium" onclick="event.stopPropagation(); showTaskToast('已催办该审核任务', 'success')">催办</button></div></td>
             </tr>
-            <tr data-kw="6赵文华赵婷CV审核中王审核周文书2026-08-15 11:05" data-customer="赵文华" data-student="赵婷" data-reviewer="王审核" data-type="CV" data-person="周文书" data-time="2026-08-15 11:05" data-status="审核中" class="hover:bg-gray-50 transition-colors">
+            <tr data-kw="6赵文华赵婷CV审核中王审核周文书2026-08-15 11:05 哥伦比亚大学 经济学" data-school="哥伦比亚大学" data-major="经济学" data-customer="赵文华" data-student="赵婷" data-reviewer="王审核" data-type="CV" data-person="周文书" data-time="2026-08-15 11:05" data-status="审核中" class="hover:bg-gray-50 transition-colors">
               <td class="px-5 py-4 text-sm text-gray-900">6</td>
               <td class="px-5 py-4 text-sm font-medium text-gray-900">赵文华</td>
               <td class="px-5 py-4 text-sm text-gray-900">赵婷</td>
+              <td class="px-5 py-4 text-sm text-gray-900">哥伦比亚大学</td>
+              <td class="px-5 py-4 text-sm text-gray-600">经济学</td>
               <td class="px-5 py-4"><span class="inline-flex items-center px-2 py-0.5 rounded-md text-xs font-medium bg-blue-50 text-blue-700">CV</span></td>
               <td class="px-5 py-4"><span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-orange-100 text-orange-800">审核中</span></td>
               <td class="px-5 py-4 text-sm text-gray-900">王审核</td>
@@ -330,7 +342,7 @@
               <td class="px-5 py-4 whitespace-nowrap"><div class="flex items-center gap-3"><button class="text-blue-600 hover:text-blue-800 text-sm font-medium" onclick="location.href='文书审核详情页 - 留学申请管理系统.html'">进入审核详情页</button><button class="text-orange-600 hover:text-orange-800 text-sm font-medium" onclick="event.stopPropagation(); showTaskToast('已催办该审核任务', 'success')">催办</button></div></td>
             </tr>
             <tr id="flt-empty" class="hidden">
-              <td colspan="10" class="px-6 py-10 text-center text-sm text-gray-400">暂无符合条件的数据，请调整筛选条件</td>
+              <td colspan="12" class="px-6 py-10 text-center text-sm text-gray-400">暂无符合条件的数据，请调整筛选条件</td>
             </tr>
 </tbody>
         </table>
@@ -532,12 +544,16 @@
       tr.setAttribute('data-reviewer', '王审核');
       tr.setAttribute('data-type', 'PS');
       tr.setAttribute('data-target', '哥伦比亚大学/经济学');
+      tr.setAttribute('data-school', '哥伦比亚大学');
+      tr.setAttribute('data-major', '经济学');
       tr.setAttribute('data-person', '陈文书');
       tr.setAttribute('data-time', timeStr.replace(' ', ''));
       tr.setAttribute('data-status', '审核中');
       tr.innerHTML = '<td class="px-5 py-4 text-sm text-gray-900">' + newIndex + '</td>' +
         '<td class="px-5 py-4 text-sm font-medium text-gray-900">王建国</td>' +
         '<td class="px-5 py-4 text-sm text-gray-900">王雨桐</td>' +
+        '<td class="px-5 py-4 text-sm text-gray-900">哥伦比亚大学</td>' +
+        '<td class="px-5 py-4 text-sm text-gray-600">经济学</td>' +
         '<td class="px-5 py-4"><span class="inline-flex items-center px-2 py-0.5 rounded-md text-xs font-medium bg-blue-50 text-blue-700">PS</span></td>' +
         '<td class="px-5 py-4"><span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-orange-100 text-orange-800">审核中</span></td>' +
         '<td class="px-5 py-4 text-sm text-gray-900">王审核</td>' +
@@ -597,7 +613,7 @@
     });
   </script>
   <script src="./assets/js/pbs-workbench.js?v=2.1"></script>
-  <script src="./assets/js/pbs-app.js?v=6.9"></script>
+  <script src="./assets/js/pbs-app.js?v=7.6"></script>
 
 
       

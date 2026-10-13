@@ -2303,7 +2303,7 @@
       { permission: 'monitor_mail_manage', texts: ['编辑配置','保存配置','上传监控记录','上传截图','确认上传'] }
     ],
     '结项详情页 - 留学申请管理系统.html': [
-      { permission: 'archive_create', texts: ['查看/编辑','保存','编辑内容','插入Offer邮件图片','生成《客户项目结项报告》','生成《项目管理结项报告》'] },
+      { permission: 'archive_create', texts: ['查看/编辑','保存','生成报告','生成并导出 PDF','导出 PDF','重新生成','上传并应用母报告','恢复机构 Logo','图片上传','编辑内容','插入Offer邮件图片','生成《客户项目结项报告》','生成《项目管理结项报告》'] },
       { permission: 'archive_approve', texts: ['确认结果','确认结项','手动确认结项'] }
     ],
     '选校任务列表页 - 留学申请管理系统.html': [
@@ -3059,4 +3059,23 @@
     if (placeholder) { placeholder.textContent = /Network$/.test(key) ? '选择网申人员' : /Reviewer_/.test(key) ? '选择审核人员' : '选择交付人员'; placeholder.classList.remove('text-gray-900', 'font-medium'); placeholder.classList.add('text-gray-400'); }
     var clear = document.getElementById(key + 'Clear'); if (clear) clear.classList.add('hidden');
   };
+})();
+
+(function () {
+  function renderProjectNotes() {
+    var context = window.PROJECT_CONTEXT || window.MY_PROJECT_CONTEXT;
+    if (!context) return;
+    var project = window.pbsProjects.find(context.projectNo); if (!project) return;
+    var note = project.closureNote || '', assignment = window.pbsProjects.getAssignment(project.projectNo).taskNote;
+    if (window.MY_PROJECT_CONTEXT && window.currentSchoolCockpit) note = (project.goalClosures || {})[window.currentSchoolCockpit] ? project.goalClosures[window.currentSchoolCockpit].closureNote : note;
+    else if (!note) note = (project.packages || []).filter(function(item) { return (project.goalClosures || {})[item.id] && project.goalClosures[item.id].closureNote; }).map(function(item) { return item.school + ' · ' + project.goalClosures[item.id].closureNote; }).join('\n');
+    var text = document.getElementById('projectClosureNote'), bar = document.getElementById('projectClosureNoteBar');
+    if (text) text.textContent = note; if (bar) bar.classList.toggle('hidden', !note);
+    text = document.getElementById('projectAssignmentNote'); bar = document.getElementById('projectAssignmentNoteBar');
+    if (text) text.textContent = assignment; if (bar) bar.classList.toggle('hidden', !assignment);
+    var host = document.getElementById('projectNotes'); if (host) host.classList.toggle('hidden', !note && !assignment);
+  }
+  window.pbsRefreshProjectNotes = renderProjectNotes;
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', renderProjectNotes); else renderProjectNotes();
+  window.addEventListener('storage', function(event) { if (event.key === 'pbs_projects_v1') renderProjectNotes(); });
 })();

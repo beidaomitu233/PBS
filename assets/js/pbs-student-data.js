@@ -1,7 +1,7 @@
 (function () {
   'use strict';
   var KEY = 'pbs_student_profiles_v1';
-  function read() { try { return JSON.parse(localStorage.getItem(KEY) || '[]'); } catch(e) { return []; } }
+  function read() { try { return JSON.parse(localStorage.getItem(KEY) || '[]').map(function(profile) { profile.student = window.pbsIdentity ? pbsIdentity.normalize(profile.student) : profile.student; return profile; }); } catch(e) { return []; } }
   function save(list) { localStorage.setItem(KEY, JSON.stringify(list)); }
   function id() { return 'STU-' + Date.now().toString(36) + '-' + Math.random().toString(36).slice(2, 7); }
   function find(value) { return read().find(function(profile) { return profile.id === value; }) || null; }
@@ -50,15 +50,27 @@
   }
   function display(value, label) {
     if (value === undefined || value === null || value === '') return '—';
-    if (/密码|授权码|身份证|证件号|idcard|pwd|password/i.test(label)) return '******';
+    if (/密码|授权码|身份证号|证件号码|idcard|pwd|password/i.test(label)) return '******';
     return typeof value === 'string' ? value : JSON.stringify(value);
   }
   function commit(value, section, payload, labels, action) {
     if (!canEdit(value)) return false;
+    if (section === 'student') payload = pbsIdentity.normalize(payload);
     var list = read(), profile = list.find(function(item) { return item.id === value; });
     var before = section === 'student' || section === 'customer' ? profile[section] || {} : (profile.sections[section] || {}).values || {};
     var after = section === 'student' || section === 'customer' ? payload : payload.values;
-    var changes = Array.from(new Set(Object.keys(before).concat(Object.keys(after)))).filter(function(key) { return JSON.stringify(before[key] == null ? '' : before[key]) !== JSON.stringify(after[key] == null ? '' : after[key]); }).map(function(key) { var label = (labels || {})[key] || key; return { field: label, before: display(before[key], label), after: display(after[key], label) }; });
+    var changes = Array.from(new Set(Object.keys(before).concat(Object.keys(after)))).filter(function(key) { return !(section === 'student' && (key === 'idcard' || key === 'documents')) && JSON.stringify(before[key] == null ? '' : before[key]) !== JSON.stringify(after[key] == null ? '' : after[key]); }).map(function(key) { var label = (labels || {})[key] || key; return { field: label, before: display(before[key], label), after: display(after[key], label) }; });
+    if (section === 'student') {
+      var previousDocs = before.documents || [], nextDocs = payload.documents || [];
+      for (var i = 0; i < Math.max(previousDocs.length, nextDocs.length); i++) {
+        var a = previousDocs[i] || {}, b = nextDocs[i] || {};
+        ['type','number','country','desc'].forEach(function(key) {
+          if ((a[key] || '') === (b[key] || '')) return;
+          var label = (b.type || a.type || '身份证件') + ' · ' + ({type:'证件类型',number:'证件号码',country:'永居国家',desc:'证件说明'})[key];
+          changes.push({field:label,before:display(a[key],label),after:display(b[key],label)});
+        });
+      }
+    }
     if (!changes.length) return false;
     if (section === 'student' || section === 'customer') profile[section] = Object.assign({}, payload); else profile.sections[section] = payload;
     var session = window.pbsGetSession(), now = new Date().toISOString();

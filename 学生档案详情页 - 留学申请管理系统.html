@@ -244,8 +244,8 @@
           <div class="grid grid-cols-2 gap-x-6 gap-y-3 text-sm">
             <div><p class="text-gray-400 text-xs mb-0.5">申请层次</p><p class="font-medium text-gray-900" id="apply-level-text">本科申请</p></div>
             <div><p class="text-gray-400 text-xs mb-0.5">出生年月日</p><p id="profile-student-birth" class="font-medium text-gray-900">2008-05-12</p></div>
-            <div><p class="text-gray-400 text-xs mb-0.5">身份信息</p><p id="profile-student-identity" class="font-medium text-gray-900">大陆籍</p></div>
-            <div data-f="idcard"><p class="text-gray-400 text-xs mb-0.5">身份证号</p><p class="font-medium text-gray-900" data-v="idcard">—</p></div>
+            <div><p class="text-gray-400 text-xs mb-0.5">身份信息</p><p id="profile-student-identity" class="font-medium text-gray-900">中国大陆居民</p></div>
+            <div data-f="idcard"><p class="text-gray-400 text-xs mb-0.5">身份证件</p><p class="font-medium text-gray-900" data-v="idcard">—</p></div>
             <div><p class="text-gray-400 text-xs mb-0.5">联系电话</p><p id="profile-student-phone" class="font-medium text-gray-900">138****2222</p></div>
             <div><p class="text-gray-400 text-xs mb-0.5">申请方向</p><p class="font-medium text-gray-900"><span id="profile-student-country">美国</span> · <span id="profile-student-major">计算机科学</span></p></div>
             <div><p class="text-gray-400 text-xs mb-0.5">现居住地</p><p id="profile-student-address" class="font-medium text-gray-900">北京市朝阳区</p></div>
@@ -1433,7 +1433,8 @@
   </div>
 
   <script src="./assets/js/pbs-app.js?v=7.5"></script>
-  <script src="./assets/js/pbs-student-data.js?v=1.3"></script>
+  <script src="./assets/js/pbs-identity.js?v=1.0"></script>
+  <script src="./assets/js/pbs-student-data.js?v=1.4"></script>
   <script>
     var emailEditMode = false;
 
@@ -2151,8 +2152,7 @@
         { key:'gender', label:'性别', type:'select', options:['男','女'] },
         { key:'birth', label:'出生日期', type:'date', optional:true },
         { key:'level', label:'申请层次', type:'select', options:['本科申请','硕士申请','博士申请'], required:true },
-        { key:'identity', label:'身份信息', type:'select', options:['大陆籍','港澳台','外籍'] },
-        { key:'idcard', label:'身份证号', optional:true },
+        { key:'identity', label:'身份信息', type:'select', options:Object.keys(pbsIdentity.config), required:true },
         { key:'phone', label:'联系电话' },
         { key:'country', label:'意向国家' },
         { key:'major', label:'意向专业' },
@@ -2176,20 +2176,25 @@
       var label = field.label + (field.optional ? '<span class="ml-1 text-xs text-gray-400">选填，可后补</span>' : '') + (field.required ? '<span class="ml-1 text-red-500">*</span>' : '');
       var control = '';
       if (field.type === 'select') {
-        control = '<select data-profile-input="' + field.key + '" class="w-full h-10 px-3 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500">' + field.options.map(function (item) { return '<option' + (item === value ? ' selected' : '') + '>' + item + '</option>'; }).join('') + '</select>';
+        control = '<select data-profile-input="' + field.key + '" class="w-full h-10 px-3 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500">' + (field.key === 'identity' ? '<option value="">请选择身份信息</option>' : '') + field.options.map(function (item) { return '<option' + (item === value ? ' selected' : '') + '>' + item + '</option>'; }).join('') + '</select>';
       } else {
         control = '<input data-profile-input="' + field.key + '" type="' + (field.type || 'text') + '" value="' + escapeHtml(value === '—' ? '' : value) + '" class="w-full h-10 px-3 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500" placeholder="请输入' + field.label + '">';
       }
       return '<div><label class="block text-sm text-gray-600 mb-1.5">' + label + '</label>' + control + '</div>';
     }
     window.openProfileCardEdit = function (type) {
-      var values = readProfile(type);
+      var values = type === 'student' ? pbsIdentity.normalize(pbsStudents.find(USER_KEY).student) : readProfile(type);
       var ov = document.createElement('div');
       ov.id = 'profileEditModal';
       ov.className = 'fixed inset-0 z-[100] bg-black bg-opacity-40 flex items-center justify-center p-6';
-      ov.innerHTML = '<div class="w-full max-w-2xl bg-white rounded-2xl shadow-2xl overflow-hidden"><div class="flex items-center justify-between px-6 py-4 border-b border-gray-100"><div><h3 class="text-lg font-semibold text-gray-900">编辑' + (type === 'customer' ? '客户信息' : '学生信息') + '</h3><p class="text-xs text-gray-400 mt-1">项目号、创建时间等系统信息不可修改</p></div><button class="text-2xl text-gray-400 hover:text-gray-700" onclick="closeProfileCardEdit()">×</button></div><div class="p-6 grid grid-cols-2 gap-4">' + PROFILE_FIELDS[type].map(function (field) { return profileControl(field, values[field.key] || ''); }).join('') + '</div><div class="flex justify-end gap-3 px-6 py-4 bg-gray-50 border-t border-gray-100"><button class="px-5 h-10 border border-gray-300 text-gray-700 rounded-lg hover:bg-white" onclick="closeProfileCardEdit()">取消</button><button class="px-5 h-10 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium" onclick="saveProfileCardEdit(\'' + type + '\')">保存</button></div></div>';
+      ov.innerHTML = '<div class="w-full max-w-2xl bg-white rounded-2xl shadow-2xl overflow-hidden flex flex-col" style="max-height:90vh"><div class="flex items-center justify-between px-6 py-4 border-b border-gray-100"><div><h3 class="text-lg font-semibold text-gray-900">编辑' + (type === 'customer' ? '客户信息' : '学生信息') + '</h3><p class="text-xs text-gray-400 mt-1">项目号、创建时间等系统信息不可修改</p></div><button class="text-2xl text-gray-400 hover:text-gray-700" onclick="closeProfileCardEdit()">×</button></div><div class="p-6 grid grid-cols-2 gap-4 overflow-y-auto">' + PROFILE_FIELDS[type].map(function (field) { return profileControl(field, values[field.key] || ''); }).join('') + (type === 'student' ? '<div id="profile-document-fields" class="col-span-2"></div>' : '') + '</div><div class="flex justify-end gap-3 px-6 py-4 bg-gray-50 border-t border-gray-100"><button class="px-5 h-10 border border-gray-300 text-gray-700 rounded-lg hover:bg-white" onclick="closeProfileCardEdit()">取消</button><button class="px-5 h-10 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium" onclick="saveProfileCardEdit(\'' + type + '\')">保存</button></div></div>';
       ov.addEventListener('click', function (e) { if (e.target === ov) closeProfileCardEdit(); });
       document.body.appendChild(ov);
+      if (type === 'student') {
+        var identityInput = ov.querySelector('[data-profile-input="identity"]'), host = ov.querySelector('#profile-document-fields');
+        pbsIdentity.render(host, values.identity, values.documents);
+        identityInput.addEventListener('change', function() { pbsIdentity.render(host, this.value, !values.identity ? values.documents : []); });
+      }
     };
     window.closeProfileCardEdit = function () { var ov = document.getElementById('profileEditModal'); if (ov) ov.remove(); };
     function applyProfileValues(type, values) {
@@ -2207,8 +2212,10 @@
       document.getElementById('profile-student-birth-summary').textContent = values.birth || '待补充';
       document.getElementById('apply-level-text').textContent = values.level;
       document.getElementById('apply-level-badge').textContent = values.level;
+      values = pbsIdentity.normalize(values);
       document.getElementById('profile-student-identity').textContent = values.identity || '—';
-      document.querySelector('#studentInfoCard [data-v="idcard"]').textContent = values.idcard || '—';
+      document.querySelector('#studentInfoCard [data-v="idcard"]').textContent = pbsIdentity.summary(values.documents);
+      document.querySelector('#studentInfoCard [data-v="idcard"]').style.whiteSpace = 'pre-line';
       document.getElementById('profile-student-phone').textContent = values.phone || '—';
       document.getElementById('profile-student-country').textContent = values.country || '—';
       document.getElementById('profile-student-major').textContent = values.major || '—';
@@ -2219,10 +2226,16 @@
     window.saveProfileCardEdit = function (type) {
       var values = {};
       PROFILE_FIELDS[type].forEach(function (field) { values[field.key] = (document.querySelector('[data-profile-input="' + field.key + '"]') || {}).value || ''; });
+      if (type === 'student') {
+        var host = document.getElementById('profile-document-fields'), error = pbsIdentity.validate(host);
+        if (error) { toast(error); return; }
+        values.documents = pbsIdentity.collect(host);
+      }
       var missing = PROFILE_FIELDS[type].find(function (field) { return field.required && !values[field.key].trim(); });
       if (missing) { toast('请填写' + missing.label); return; }
       if (!window.pbsStudents.canEdit(USER_KEY)) { toast('无权编辑该学生档案'); return; }
       var labels = {}; PROFILE_FIELDS[type].forEach(function(field) { labels[field.key] = field.label; });
+      labels.documents = '身份证件';
       window.pbsStudents.commit(USER_KEY, type, values, labels, '修改' + (type === 'customer' ? '客户信息' : '学生信息'));
       applyProfileValues(type, values);
       localStorage.setItem('pbs_profile_card_' + USER_KEY + '_' + type, JSON.stringify(values));
@@ -2954,5 +2967,6 @@
 
 
     
-    <div id="pbs-toast" class="fixed bottom-6 left-1/2 -translate-x-1/2 bg-gray-900 text-white text-sm px-4 py-2 rounded-lg shadow-lg z-[999] transition-opacity" style="opacity: 0;"></div>  <script src="./assets/js/pbs-student-profile.js?v=1.7"></script>
+    <div id="pbs-toast" class="fixed bottom-6 left-1/2 -translate-x-1/2 bg-gray-900 text-white text-sm px-4 py-2 rounded-lg shadow-lg z-[999] transition-opacity" style="opacity: 0;"></div>  <script src="./assets/js/pbs-selection-data.js?v=1.0"></script>
+  <script src="./assets/js/pbs-student-profile.js?v=1.7"></script>
 </body></html>

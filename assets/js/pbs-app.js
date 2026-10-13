@@ -190,6 +190,7 @@
     { id: 'app_library_manage', label: '管理网申模板' },
     { id: 'app_library_export', label: '导出与下载模板' }
   ]);
+  definePermissionPage('网申管理', 'app_template_publish', '网申模板发布中心', '网申模板发布中心 - 留学申请管理系统.html', [{ id:'app_template_publish', label:'维护与发布平台模板' }]);
   definePermissionPage('网申管理', 'app_template_edit', '网申模板编辑', '网申模板编辑 - 留学申请管理系统.html', [
     { id: 'app_template_edit_view', label: '列表展示' },
     { id: 'app_template_save', label: '编辑并保存模板' }
@@ -286,7 +287,7 @@
      语义与旧版一一对应；机构侧角色一律不含系统管理类页面。 */
   var ROLE_DEFAULT_GRANTS = {
     '平台运维人员': [
-      'workbench_platform',
+      'workbench_platform', 'app_template_publish',
       'library_view', 'library_manage', 'library_export', 'doc_template_edit_view', 'doc_template_save',
       'case_view', 'case_manage', 'case_export',
       'app_library_view', 'app_library_manage', 'app_library_export', 'app_template_edit_view', 'app_template_save',
@@ -677,6 +678,7 @@
     { key: 'apply', label: '网申管理', icon: 'globe', roles: ['机构管理员', '网申人员', '项目经理', '平台运维人员'],
       children: [
         { label: '网申任务列表', file: '网申任务列表页 - 留学申请管理系统.html', permission: 'app_view', roles: ['机构管理员', '网申人员', '项目经理'] },
+        { label: '网申模板发布中心', file: '网申模板发布中心 - 留学申请管理系统.html', permission:'app_template_publish', roles:['平台运维人员'] },
         { label: '网申模板库', file: '网申模板库 - 留学申请管理系统.html', permission: 'app_library_view', roles: ['机构管理员', '网申人员', '项目经理', '平台运维人员'] }
       ] },
     { key: 'monitor', label: '监控管理', icon: 'eye', permission: 'monitor_view', roles: ['机构管理员', '项目经理'],
@@ -720,6 +722,7 @@
     '案例库 - 文书交付系统.html': ['机构管理员', '文书人员', '平台运维人员', '文书机构管理员'],
     '网申任务列表页 - 留学申请管理系统.html': ['机构管理员', '网申人员', '项目经理'],
     '网申任务详情页 - 留学申请管理系统.html': ['机构管理员', '网申人员', '项目经理'],
+    '网申模板发布中心 - 留学申请管理系统.html': ['平台运维人员'],
     '网申模板库 - 留学申请管理系统.html': ['机构管理员', '网申人员', '项目经理', '平台运维人员'],
     '网申模板编辑 - 留学申请管理系统.html': ['机构管理员', '网申人员', '项目经理', '平台运维人员'],
     '监控任务列表 - PBS留学CRM.html': ['机构管理员', '项目经理'],

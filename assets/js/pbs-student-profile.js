@@ -101,7 +101,7 @@
     Object.keys(sectionNames).forEach(function(section) {
       var body = document.getElementById('secbody-' + section); if (!body) return;
       if (section !== 'asset' && profile.sections[section] && profile.sections[section].html) body.innerHTML = profile.sections[section].html;
-      if (!profile.demo && !profile.sections[section]) {
+      if (!profile.demo && section !== 'student' && section !== 'customer' && !profile.sections[section]) {
         body.querySelectorAll('[id^="records-"]').forEach(function(node) { node.innerHTML = ''; });
         body.querySelectorAll('tbody').forEach(function(node) { node.innerHTML = ''; });
         body.querySelectorAll('[data-file]:not([data-uploaded-asset])').forEach(function(node) { node.remove(); });
@@ -110,6 +110,13 @@
       baseline[section] = capture(section);
     });
     if (!api.canEdit(profileId)) document.querySelectorAll('main button').forEach(function(button) { if (/编辑|删除|新增|上传|保存/.test(button.textContent + button.title)) button.hidden = true; });
+    if(window.pbsSelection) {
+      var services=pbsSelection.all().filter(function(item){return item.studentId===profileId;});
+      var serviceHost=document.getElementById('studentSelectionServices');
+      if(!serviceHost){serviceHost=document.createElement('div');serviceHost.id='studentSelectionServices';serviceHost.className='mt-4 pt-4 border-t border-gray-100 text-sm';document.getElementById('studentInfoCard').appendChild(serviceHost);}
+      serviceHost.hidden=!services.length;
+      serviceHost.innerHTML='<p class="text-xs text-gray-400 mb-2">选校服务单</p>'+services.map(function(item){return '<div class="flex items-center gap-4 py-1">'+(pbsHasPermission('school_plan')?'<a class="text-blue-600" href="选校工作台页 - 留学申请管理系统.html?service='+encodeURIComponent(item.id)+'">'+esc(item.id)+'</a>':'<span>'+esc(item.id)+'</span>')+'<span class="text-gray-500">'+esc(item.orderNo||'—')+'</span><span>'+esc(item.status)+'</span></div>';}).join('');
+    }
     renderLogs();
   }
   function syncProjectProfile() {
@@ -155,5 +162,5 @@
   }
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init); else init();
   window.addEventListener('pbs-student-updated', function(event) { if (listBody) renderList(); if (detail && event.detail === profileId) renderLogs(); syncProjectProfile(); });
-  window.addEventListener('storage', function(event) { if (event.key !== 'pbs_student_profiles_v1') return; if (listBody) renderList(); if (detail) restoreDetail(); syncProjectProfile(); });
+  window.addEventListener('storage', function(event) { if (event.key !== 'pbs_student_profiles_v1' && event.key !== 'pbs_selection_services_v1') return; if (listBody) renderList(); if (detail) restoreDetail(); syncProjectProfile(); });
 })();

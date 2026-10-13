@@ -370,8 +370,9 @@
       document.body.style.overflow = 'hidden';
     }
     function selectExistingStudent(id) {
-      var profile = window.pbsStudents.find(id), student = profile && profile.student || {};
-      var fields = { 'stu-name': 'name', 'stu-gender': 'gender', 'stu-birth': 'birth', 'stu-level': 'level', 'stu-id-type': 'identity', 'stu-idcard': 'idcard', 'stu-phone': 'phone', 'stu-country': 'country', 'stu-major': 'major', 'stu-address': 'address' };
+      var profile = window.pbsStudents.find(id), student = pbsIdentity.normalize(profile && profile.student || {});
+      pbsIdentity.render(document.getElementById('stu-doc-area'), student.identity, student.documents, !!profile);
+      var fields = { 'stu-name': 'name', 'stu-gender': 'gender', 'stu-birth': 'birth', 'stu-level': 'level', 'stu-id-type': 'identity', 'stu-phone': 'phone', 'stu-country': 'country', 'stu-major': 'major', 'stu-address': 'address' };
       Object.keys(fields).forEach(function(key) {
         var input = document.getElementById(key); if (!input) return;
         var value = student[fields[key]] || '';
@@ -384,6 +385,7 @@
       document.body.style.overflow = '';
       resetCreateForm();
       resetModalPosition();
+      document.getElementById('stu-doc-area').innerHTML = '';
     }
     /* ---------- 弹窗拖拽 ---------- */
     (function() {
@@ -673,6 +675,8 @@
       if (!stuLevel.value) { showFieldError(stuLevel, '请选择申请层次'); ok = false; }
       var stuIdType = document.getElementById('stu-id-type');
       if (!linkedStudentId && !stuIdType.value) { showFieldError(stuIdType, '请选择身份信息'); ok = false; }
+      var docError = linkedStudentId ? '' : pbsIdentity.validate(document.getElementById('stu-doc-area'));
+      if (docError) { showToast(docError); ok = false; }
       var stuPhone = document.getElementById('stu-phone');
       if (!linkedStudentId && !stuPhone.value.trim()) { showFieldError(stuPhone, '请填写学生联系电话'); ok = false; }
       var stuCountry = document.getElementById('stu-country');
@@ -739,7 +743,7 @@
         remark: '',
         manualCreated: true,
         studentId: linkedStudentId || undefined,
-        studentData: { name: stuName.value.trim(), level: stuLevel.value + '申请', gender: stuGender.value, birth: document.getElementById('stu-birth').value, identity: stuIdType.value, idcard: document.getElementById('stu-idcard').value, phone: stuPhone.value.trim(), country: stuCountry.value.trim(), major: stuMajor.value.trim(), address: document.getElementById('stu-address').value },
+        studentData: { name: stuName.value.trim(), level: stuLevel.value + '申请', gender: stuGender.value, birth: document.getElementById('stu-birth').value, identity: stuIdType.value, documents: pbsIdentity.collect(document.getElementById('stu-doc-area')), phone: stuPhone.value.trim(), country: stuCountry.value.trim(), major: stuMajor.value.trim(), address: document.getElementById('stu-address').value },
         customerData: { name: cstName.value.trim(), relation: document.getElementById('cst-relation').value, phone: cstPhone.value.trim(), wechat: cstWechat.value.trim(), source: cstSource.value.trim() },
         customer: cstName.value.trim(),
         student: stuName.value.trim(),
@@ -775,7 +779,8 @@
     }
   </script>
   <script src="./assets/js/pbs-app.js?v=7.5"></script>
-  <script src="./assets/js/pbs-student-data.js?v=1.3"></script>
+  <script src="./assets/js/pbs-identity.js?v=1.0"></script>
+  <script src="./assets/js/pbs-student-data.js?v=1.4"></script>
   <script src="./assets/js/pbs-project-list.js?v=1.4"></script>
 
 
@@ -884,17 +889,16 @@
               <div class="grid grid-cols-2 gap-3">
                 <div>
                   <label class="block text-xs text-gray-500 mb-1">身份信息 <span class="text-red-500">*</span></label>
-                  <select id="stu-id-type" class="w-full h-9 px-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm">
+                  <select onchange="pbsIdentity.render(document.getElementById('stu-doc-area'), this.value, [])" id="stu-id-type" class="w-full h-9 px-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm">
                     <option value="">请选择</option>
-                    <option>大陆籍</option>
-                    <option>港澳台</option>
-                    <option>外籍</option>
+                    <option>中国大陆居民</option>
+<option>港澳台居民</option>
+<option>外籍人士</option>
+<option>中国大陆居民（持海外永居）</option>
+<option>其他</option>
                   </select>
                 </div>
-                <div>
-                  <label class="block text-xs text-gray-500 mb-1">身份证号 <span class="text-gray-400">（选填）</span></label>
-                  <input id="stu-idcard" type="text" placeholder="可在下单后沟通补充" class="w-full h-9 px-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm">
-                </div>
+                <div id="stu-doc-area" class="col-span-2"></div>
               </div>
               <div class="grid grid-cols-2 gap-3">
                 <div>

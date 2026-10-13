@@ -14,6 +14,7 @@
     .school-card:hover { transform: translateY(-2px); }
     @media (max-width: 640px) { .school-card:hover { transform: none; } }
   </style>
+<script src="./assets/js/pbs-selection-data.js?v=1.0"></script>
 </head>
 <body class="min-h-screen text-slate-800">
   <header class="relative overflow-hidden bg-gradient-to-br from-blue-700 via-blue-700 to-indigo-800 text-white">
@@ -40,7 +41,7 @@
   <main class="relative max-w-4xl mx-auto px-4 sm:px-8 -mt-8 safe-bottom">
     <section class="bg-white rounded-2xl shadow-lg border border-slate-100 p-5 sm:p-7 mb-5">
       <div class="grid md:grid-cols-[1fr_auto] gap-6 md:items-center">
-        <div><p class="text-xs font-medium text-blue-600 mb-2">方案概览</p><h2 class="text-lg font-semibold text-slate-900 mb-3">推荐说明</h2><p class="text-sm leading-7 text-slate-600">结合 GPA 3.9、托福 105、AI 研究经历及就业方向，本方案按“1 冲刺、2 匹配、1 保底”形成梯度。重点关注计算机学科实力、课程匹配度与毕业就业资源。</p></div>
+        <div><p class="text-xs font-medium text-blue-600 mb-2">方案概览</p><h2 class="text-lg font-semibold text-slate-900 mb-3">方案推荐说明</h2><p id="sharedPlanRecommendation" class="text-sm leading-7 text-slate-600">结合 GPA 3.9、托福 105、AI 研究经历及就业方向，本方案按“1 冲刺、2 匹配、1 保底”形成梯度。重点关注计算机学科实力、课程匹配度与毕业就业资源。</p></div>
         <div class="grid grid-cols-3 gap-3 md:w-64">
           <div class="text-center px-3 py-3 bg-red-50 rounded-xl"><p class="text-xl font-semibold text-red-600">1</p><p class="text-xs text-red-500 mt-1">冲刺</p></div>
           <div class="text-center px-3 py-3 bg-blue-50 rounded-xl"><p class="text-xl font-semibold text-blue-600">2</p><p class="text-xs text-blue-500 mt-1">匹配</p></div>
@@ -136,7 +137,39 @@
       document.getElementById('schoolModal').classList.add('hidden');
       document.body.classList.remove('overflow-hidden');
     }
-    renderSchools();
+    var shareParams = new URLSearchParams(location.search), service = pbsSelection.find(shareParams.get('service'));
+    var shared = service && (service.shares || []).find(function(item) { return item.id === shareParams.get('share'); });
+    var scopedVersions = service ? JSON.parse(localStorage.getItem('pbs_selection_plan_versions_' + service.id) || '[]') : [];
+    var snapshot = shared ? shared.snapshot : shareParams.get('preview') === '1' ? scopedVersions[scopedVersions.length-1] : null;
+    if (shareParams.has('service')) {
+      var referenceSchools = schools;
+      schools = [];
+      if (snapshot) Object.keys(snapshot.zones).forEach(function(zone) {
+        (snapshot.zones[zone] || []).forEach(function(source) {
+          var school = Object.assign({}, referenceSchools.find(function(item){return item.id===source.id;}) || {}, SCHOOL_DETAILS[source.id] || {}, source);
+          school.program = school.major || school.program || '—'; school.tuitionValue = school.tuition ? (school.tuitionCcy || '') + ' ' + school.tuition : school.tuitionValue || '—';
+          school.admitPeriod = school.admitStart ? school.admitStart + ' ~ ' + (school.admitEnd || '') : school.admitPeriod || '—';
+          school.zone = {reach:'冲刺区',match:'匹配区',safe:'保底区'}[zone]; school.target = {reach:'zoneReach',match:'zoneMatch',safe:'zoneSafe'}[zone];
+          Object.keys(school).forEach(function(key) { if(typeof school[key] === 'string') school[key] = school[key].replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];}); });
+          schools.push(school);
+        });
+      });
+      document.getElementById('sharedPlanTitle').textContent = service ? service.student + '同学的专属方案' : '方案不存在';
+      if(service) { document.getElementById('sharedPlanLevel').textContent = service.level; document.getElementById('sharedPlanMajor').textContent = service.major; }
+      var reasonNode = document.getElementById('sharedPlanRecommendation');
+      if(reasonNode && snapshot) reasonNode.textContent = snapshot.recommendation;
+      if(snapshot) { ['reach','match','safe'].forEach(function(zone,index) { var total=(snapshot.zones[zone]||[]).length; document.querySelectorAll('main > section:first-child .text-xl')[index].textContent=total; var id={reach:'zoneReach',match:'zoneMatch',safe:'zoneSafe'}[zone]; document.getElementById(id).previousElementSibling.querySelector('span').textContent=total+' 所'; }); }
+      if(!snapshot) document.querySelector('main').innerHTML = '<p class="p-10 text-center text-gray-500">该选校方案暂未生成或链接无效</p>';
+    }
+    if (shared && shareParams.get('preview') !== '1') {
+      var visitor = localStorage.getItem('pbs_selection_visitor');
+      if(!visitor) { visitor = '匿名访客 ' + Math.random().toString(36).slice(2,8).toUpperCase(); localStorage.setItem('pbs_selection_visitor',visitor); }
+      function recordVisit(kind, school) { var current = pbsSelection.find(service.id); current.visits.push({id:'VISIT-'+Date.now(),at:new Date().toISOString(),visitor:visitor,version:shared.version,kind:kind,school:school||''}); pbsSelection.update(service.id,{visits:current.visits}); }
+      recordVisit('打开方案');
+      var oldSchoolDetail = openSchoolDetail;
+      openSchoolDetail = function(id) { oldSchoolDetail(id); var school = schools.find(function(item){return item.id===id;}); if(school) recordVisit('查看院校',school.name); };
+    }
+    if (!shareParams.has('service') || snapshot) renderSchools();
   </script>
 </body>
 </html>

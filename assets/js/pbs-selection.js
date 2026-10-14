@@ -40,6 +40,7 @@
     if (new URLSearchParams(location.search).get('mode') === 'catalog') return;
     var id = window.TASK_PROJECT_NO, item = api.find(id);
     if (!item || !api.visible().some(function(row){return row.id===id;})) { document.getElementById('schoolTaskContextBar').textContent = '选校服务单不存在或无权查看'; document.getElementById('schoolActionBar').hidden = true; return; }
+    workbenchCommunications = api.seedDemoHistory(id);
     var bar = document.getElementById('schoolTaskContextBar'), summary = bar.firstElementChild;
     summary.className = 'selection-task-heading';
     summary.innerHTML = '<div class="selection-task-summary"><button class="pbs-detail-back" onclick="location.href=\'选校任务列表页 - 留学申请管理系统.html\'">‹</button><strong>' + esc(item.id) + '</strong><span>' + esc(item.student) + '</span><span>' + esc(item.level) + '</span><span>' + esc(item.country) + '</span><span id="selectionStatus">' + esc(item.status) + '</span></div><div class="selection-task-actions"><button class="selection-text-button" onclick="openStudentSupplement()">学生补充信息</button><button id="closeSelectionTask" class="selection-secondary-button" onclick="completeSelectionTask()">结单</button></div>';

@@ -79,6 +79,25 @@
     visits.push({id:'VIEW-' + Date.now() + '-' + Math.random().toString(36).slice(2,6), at:new Date().toISOString(), version:version, kind:'查看方案'});
     update(id, {visits:visits});
   }
+  function seedDemoHistory(id) {
+    var store = 'pbs_selection_communications_' + id, messages = read(store), marker = 'pbs_selection_demo_history_v1_' + id;
+    var item = find(id);
+    if (!item || !/^SEL-2607-000[1-5]$/.test(id) || localStorage.getItem(marker)) return messages;
+    var examples = [
+      {id:-101,time:'2026-10-11T10:20',content:'电话确认申请需求：以美国计算机科学硕士为主，重点关注人工智能方向、科研机会和毕业后的就业资源。'},
+      {id:-102,time:'2026-10-12T11:10',content:'向学生说明冲刺、匹配和保底的院校梯度。学生希望保留卡内基梅隆大学，同时增加实践课程较多的项目作为匹配选择。'},
+      {id:-103,time:'2026-10-13T15:40',content:'学生反馈已查看 H5 方案，认可当前院校梯度，希望进一步了解伊利诺伊大学的课程安排及波士顿大学的学费。'},
+      {id:-104,time:'2026-10-13T21:00',content:'已回复课程与费用问题，学生准备与家长确认申请预算。最终下单后，再将该选校任务与学生档案中的申请订单关联。'}
+    ];
+    if (item.status === '未选校') examples = examples.slice(0,1);
+    examples.forEach(function(message) { if (!messages.some(function(row) { return row.id === message.id; })) messages.push(Object.assign({actor:item.sales},message)); });
+    save(messages,store);
+    var visits = item.visits || [];
+    (read('pbs_selection_plan_versions_'+id).length ? ['2026-10-12T14:30:00+08:00','2026-10-12T19:45:00+08:00','2026-10-13T09:10:00+08:00','2026-10-13T20:35:00+08:00'] : []).forEach(function(at,index) {
+      if (!visits.some(function(row) { return row.at === at && row.version === 'V1'; })) visits.push({id:'DEMO-VIEW-'+id+'-'+index,at:at,version:'V1',kind:'查看方案'});
+    });
+    update(id,{visits:visits}); localStorage.setItem(marker,'1'); return messages;
+  }
   function migrateBindings() {
     var list = read(), linked = bindings(), changed = false;
     list.forEach(function(item) {
@@ -104,5 +123,5 @@
     save(list);
   }
   migrateBindings();
-  window.pbsSelection = {all:function(){return read();}, find:find, update:update, orders:orders, create:create, visible:visible, candidates:candidates, bindings:bindings, bind:bind, unbind:unbind, transition:transition, recordView:recordView, seed:seed};
+  window.pbsSelection = {all:function(){return read();}, find:find, update:update, orders:orders, create:create, visible:visible, candidates:candidates, bindings:bindings, bind:bind, unbind:unbind, transition:transition, recordView:recordView, seed:seed, seedDemoHistory:seedDemoHistory};
 })();

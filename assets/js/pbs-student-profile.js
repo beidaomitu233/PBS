@@ -31,7 +31,7 @@
     if (pager) { pager.className = 'pbs-profile-list-count'; pager.textContent = '共 ' + profiles.length + ' 名学生'; }
     if (window.applyFilter) window.applyFilter();
   }
-  var sectionNames = { edu: '教育背景', lang: '语言成绩', score: '学业信息', qual: '专业资质', work: '工作经历', practice: '实践经历', honor: '荣誉', pub: '学术发表', apply: '申请记录', account: '账号管理', asset: '资产文件', student: '学生信息', customer: '客户信息' };
+  var sectionNames = { edu: '教育背景', lang: '语言成绩', score: '学业信息', qual: '专业资质', work: '工作经历', practice: '实践经历', honor: '荣誉', pub: '学术发表', apply: '申请记录', selectionBinding: '申请记录', account: '账号管理', asset: '资产文件', student: '学生信息', customer: '客户信息' };
   var baseline = {}, linkBound = false;
   function capture(section) {
     var body = document.getElementById('secbody-' + section);
@@ -50,7 +50,8 @@
       values[fieldKey + ':' + index] = value; labels[fieldKey + ':' + index] = label;
     });
     body.querySelectorAll('[data-file]').forEach(function(node) { var key = '文件:' + node.dataset.file; values[key] = node.textContent.replace(/\s+/g, ' ').trim(); labels[key] = key; });
-    return { values: values, labels: labels, html: body.innerHTML };
+    var snapshot = body.cloneNode(true), bindings = snapshot.querySelector('#studentSelectionBindings'); if (bindings) bindings.remove();
+    return { values: values, labels: labels, html: snapshot.innerHTML };
   }
   function commitSection(section, action) {
     if (!api.canEdit(profileId)) return;
@@ -110,13 +111,8 @@
       baseline[section] = capture(section);
     });
     if (!api.canEdit(profileId)) document.querySelectorAll('main button').forEach(function(button) { if (/编辑|删除|新增|上传|保存/.test(button.textContent + button.title)) button.hidden = true; });
-    if(window.pbsSelection) {
-      var services=pbsSelection.all().filter(function(item){return item.studentId===profileId;});
-      var serviceHost=document.getElementById('studentSelectionServices');
-      if(!serviceHost){serviceHost=document.createElement('div');serviceHost.id='studentSelectionServices';serviceHost.className='mt-4 pt-4 border-t border-gray-100 text-sm';document.getElementById('studentInfoCard').appendChild(serviceHost);}
-      serviceHost.hidden=!services.length;
-      serviceHost.innerHTML='<p class="text-xs text-gray-400 mb-2">选校服务单</p>'+services.map(function(item){return '<div class="flex items-center gap-4 py-1">'+(pbsHasPermission('school_plan')?'<a class="text-blue-600" href="选校工作台页 - 留学申请管理系统.html?service='+encodeURIComponent(item.id)+'">'+esc(item.id)+'</a>':'<span>'+esc(item.id)+'</span>')+'<span class="text-gray-500">'+esc(item.orderNo||'—')+'</span><span>'+esc(item.status)+'</span></div>';}).join('');
-    }
+    var oldServices = document.getElementById('studentSelectionServices'); if (oldServices) oldServices.remove();
+    if(window.pbsRenderSelectionBindings) pbsRenderSelectionBindings();
     renderLogs();
   }
   function syncProjectProfile() {

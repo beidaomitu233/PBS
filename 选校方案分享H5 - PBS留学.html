@@ -14,7 +14,7 @@
     .school-card:hover { transform: translateY(-2px); }
     @media (max-width: 640px) { .school-card:hover { transform: none; } }
   </style>
-<script src="./assets/js/pbs-selection-data.js?v=1.0"></script>
+<script src="./assets/js/pbs-selection-data.js?v=1.1"></script>
 </head>
 <body class="min-h-screen text-slate-800">
   <header class="relative overflow-hidden bg-gradient-to-br from-blue-700 via-blue-700 to-indigo-800 text-white">
@@ -161,14 +161,7 @@
       if(snapshot) { ['reach','match','safe'].forEach(function(zone,index) { var total=(snapshot.zones[zone]||[]).length; document.querySelectorAll('main > section:first-child .text-xl')[index].textContent=total; var id={reach:'zoneReach',match:'zoneMatch',safe:'zoneSafe'}[zone]; document.getElementById(id).previousElementSibling.querySelector('span').textContent=total+' 所'; }); }
       if(!snapshot) document.querySelector('main').innerHTML = '<p class="p-10 text-center text-gray-500">该选校方案暂未生成或链接无效</p>';
     }
-    if (shared && shareParams.get('preview') !== '1') {
-      var visitor = localStorage.getItem('pbs_selection_visitor');
-      if(!visitor) { visitor = '匿名访客 ' + Math.random().toString(36).slice(2,8).toUpperCase(); localStorage.setItem('pbs_selection_visitor',visitor); }
-      function recordVisit(kind, school) { var current = pbsSelection.find(service.id); current.visits.push({id:'VISIT-'+Date.now(),at:new Date().toISOString(),visitor:visitor,version:shared.version,kind:kind,school:school||''}); pbsSelection.update(service.id,{visits:current.visits}); }
-      recordVisit('打开方案');
-      var oldSchoolDetail = openSchoolDetail;
-      openSchoolDetail = function(id) { oldSchoolDetail(id); var school = schools.find(function(item){return item.id===id;}); if(school) recordVisit('查看院校',school.name); };
-    }
+    if (shared && shareParams.get('preview') !== '1') pbsSelection.recordView(service.id,shared.version);
     if (!shareParams.has('service') || snapshot) renderSchools();
   </script>
 </body>

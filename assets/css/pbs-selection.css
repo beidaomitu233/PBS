@@ -12,9 +12,15 @@
 #schoolActionBar.selection-action-bar{position:sticky;bottom:16px;margin:16px 0 0;padding:14px 20px;display:flex;align-items:center;justify-content:space-between;gap:20px;border:1px solid #e2e8f0;border-radius:12px;background:#fff;box-shadow:0 4px 18px #0f172a0a;z-index:30}
 .selection-plan-meta{gap:16px;font-size:13px;color:#64748b}
 .selection-plan-meta strong{margin-left:6px;color:#334155;font-weight:500}
-.selection-plan-meta button{border-left:1px solid #e2e8f0;padding-left:16px;color:#475569}
-.selection-plan-actions{gap:10px}
-.selection-plan-actions button{min-width:104px}
+.selection-plan-meta button{height:36px;padding:0 16px;border:1px solid #d1d5db;border-radius:8px;background:#fff;color:#374151;font-size:14px;font-weight:500;transition:background .15s,border-color .15s}
+.selection-plan-meta button:hover{background:#f9fafb;border-color:#9ca3af}
+.selection-plan-actions{gap:14px}
+.selection-plan-actions button{height:44px;min-width:120px;padding:0 24px;border-radius:8px;font-size:16px;font-weight:600;gap:9px;transition:background .15s,box-shadow .15s}
+.selection-plan-actions .selection-share-button{min-width:164px;border-color:#16a34a;background:#16a34a;color:#fff;box-shadow:0 2px 5px #16a34a1a}
+.selection-plan-actions .selection-share-button:hover{border-color:#15803d;background:#15803d}
+.selection-share-button svg{width:20px;height:20px;flex-shrink:0}
+.selection-task-actions #closeSelectionTask{height:36px;border-color:#bfdbfe;background:#eff6ff;color:#2563eb;font-weight:600}
+.selection-task-actions #closeSelectionTask:hover{border-color:#93c5fd;background:#dbeafe}
 #workbenchCommunicationTimeline{padding-left:0;border:0}
 .selection-history-message{padding:0 0 18px;margin:0 0 18px;border-bottom:1px solid #e8edf3}
 .selection-history-message:last-child{border-bottom:0;margin-bottom:0}

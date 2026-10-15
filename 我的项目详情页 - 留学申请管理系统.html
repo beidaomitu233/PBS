@@ -78,7 +78,7 @@
   </style>
   <link rel="stylesheet" href="./assets/css/pbs-theme.css?v=6.4">
   <link rel="stylesheet" href="./assets/css/pbs-student-profile.css?v=1.5">
-  <link rel="stylesheet" href="./assets/css/pbs-my-project.css?v=1.4">
+  <link rel="stylesheet" href="./assets/css/pbs-my-project.css?v=1.5">
 </head>
 <body class="min-h-screen my-project-detail">
   <!-- 顶部导航栏 -->
@@ -741,20 +741,18 @@
         setTimeout(function () { row.classList.remove('pbs-assignment-focus'); }, 2200);
       }
     }
-    function ddlSummaryCard(title, primaryLabel, primaryDate, color, extraHtml, near, task) {
+    function ddlSummaryCard(title, primaryDate, color, extraHtml, near, task) {
       return '<div class="project-ddl-card' + (near ? ' is-near' : '') + '">' +
         '<p class="project-ddl-title flex items-center gap-1.5"><span class="inline-block w-1.5 h-1.5 rounded-full" style="background:' + color + '"></span>' + title + '</p>' +
-        '<p class="project-ddl-primary"><span>' + primaryLabel + '</span><strong>' + ddlValue(primaryDate, task) + '</strong></p>' + (extraHtml || '') + '</div>';
+        (task ? '<p class="project-ddl-primary"><strong>' + ddlValue(primaryDate, task) + '</strong></p>' : '') + (extraHtml || '') + '</div>';
     }
     function documentTypeLabel(doc) { return doc.key === 'TCX' ? '套磁信' : doc.key; }
     function renderProjectDdls(s) {
-      var docs = s.docs.slice().sort(function(a, b) { return String(a.ddl || a.mall).localeCompare(String(b.ddl || b.mall)); });
-      var nextDoc = docs.find(function(d) { return d.status !== '已完成'; }) || docs[0];
       var detailRows = s.docs.map(function(d) { return '<div class="project-ddl-document"><span>' + documentTypeLabel(d) + '</span><strong>' + ddlValue(d.ddl, d.key) + '</strong></div>'; }).join('');
       var docDetails = '<div class="project-ddl-document-list">' + detailRows + '</div>';
-      return ddlSummaryCard('材料准备', '最近时限', s.materialDdl.managed, '#C9A87C', '', false, 'material') +
-        ddlSummaryCard('文书交付', '最近：' + documentTypeLabel(nextDoc), nextDoc.ddl, '#7D869A', docDetails, !!nextDoc.near, nextDoc.key) +
-        ddlSummaryCard('网申提交', '最近时限', s.applyDdl.managed, '#6D9A7E', '', false, 'apply');
+      return ddlSummaryCard('材料准备', s.materialDdl.managed, '#C9A87C', '', false, 'material') +
+        ddlSummaryCard('文书交付', null, '#7D869A', docDetails, s.docs.some(function(doc) { return doc.near && doc.status !== '已完成'; }), '') +
+        ddlSummaryCard('网申提交', s.applyDdl.managed, '#6D9A7E', '', false, 'apply');
     }
 
     /* ==================== 院校申请流程：五个阶段 ==================== */

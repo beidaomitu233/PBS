@@ -14,20 +14,19 @@
 .my-project-detail .project-school-selector label { font-size: 11px; font-weight: 400; }
 .my-project-detail .project-school-selector select { width: 300px; height: 36px; font-size: 12px; border-color: #dfe5ed; background: #fbfcfe; }
 .my-project-detail .pbs-detail-topbar__actions > button { min-height: 36px; padding: 7px 12px; font-size: 12px; }
-.my-project-detail .project-flow-ddl { grid-column: 1 / -1; min-width: 0; padding: 18px 20px; border-bottom: 1px solid #edf0f5; background: #fff; }
-.my-project-detail .project-ddl-heading { display: flex; align-items: baseline; gap: 12px; margin-bottom: 12px; }
+.my-project-detail .project-flow-ddl { grid-column: 1 / -1; min-width: 0; padding: 14px 20px; border-bottom: 1px solid #edf0f5; background: #fff; }
+.my-project-detail .project-ddl-heading { display: flex; align-items: baseline; gap: 12px; margin-bottom: 10px; }
 .my-project-detail .project-ddl-heading h2 { margin: 0; color: #26344b; font-size: 13px; font-weight: 650; }
 .my-project-detail .project-ddl-heading span { color: #919bad; font-size: 10px; line-height: 1.5; }
 .my-project-detail .project-ddl-strip { display: grid; grid-template-columns: minmax(160px, 1fr) minmax(0, 2.2fr) minmax(160px, 1fr); gap: 10px; }
 .my-project-detail .project-ddl-card { display: flex; flex-direction: column; min-width: 0; overflow: hidden; padding: 0; border: 1px solid #e7ecf3; border-radius: 9px; background: #fff; }
 .my-project-detail .project-ddl-card.is-near { border-color: #f1d9af; background: #fff; }
-.my-project-detail .project-ddl-title { flex-shrink: 0; min-height: 36px; padding: 8px 12px; border-bottom: 1px solid #edf0f4; background: #fbfcfe; color: #526077; font-size: 11px; font-weight: 600; }
-.my-project-detail .project-ddl-primary { display: flex; flex: 1; align-items: center; justify-content: space-between; gap: 10px; min-height: 44px; margin: 0; padding: 10px 12px; color: #909aaa; font-size: 10px; line-height: 1.5; }
-.my-project-detail .project-ddl-card:nth-child(2) .project-ddl-primary { flex: 0; }
-.my-project-detail .project-ddl-primary strong { flex-shrink: 0; color: #24334a; font-size: 14px; font-weight: 600; font-variant-numeric: tabular-nums; }
-.my-project-detail .project-ddl-document-list { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 8px; margin: 0 12px 12px; padding-top: 10px; border-top: 1px solid #edf0f4; color: #64748b; font-size: 10px; }
-.my-project-detail .project-ddl-document { display: grid; gap: 5px; min-width: 0; }
-.my-project-detail .project-ddl-document strong { color: #526077; font-size: 10px; font-weight: 600; white-space: nowrap; font-variant-numeric: tabular-nums; }
+.my-project-detail .project-ddl-title { flex-shrink: 0; min-height: 30px; padding: 6px 10px; border-bottom: 1px solid #edf0f4; background: #fbfcfe; color: #526077; font-size: 11px; font-weight: 600; }
+.my-project-detail .project-ddl-primary { display: flex; flex: 1; align-items: center; min-height: 36px; margin: 0; padding: 7px 10px; line-height: 1.5; }
+.my-project-detail .project-ddl-primary strong { color: #24334a; font-size: 17px; font-weight: 600; font-variant-numeric: tabular-nums; }
+.my-project-detail .project-ddl-document-list { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 8px; margin: 8px 10px 10px; color: #64748b; font-size: 11px; }
+.my-project-detail .project-ddl-document { display: grid; gap: 4px; min-width: 0; }
+.my-project-detail .project-ddl-document strong { color: #334155; font-size: 14px; font-weight: 600; white-space: nowrap; font-variant-numeric: tabular-nums; }
 .my-project-detail .project-submission-panel { display: grid; grid-template-columns: minmax(0, 1fr) auto; grid-template-rows: 44px auto; align-content: start; align-items: start; gap: 12px; min-width: 0; padding: 20px; background: #fff; }
 .my-project-detail .project-submission-panel > h2 { margin: 0; color: #26344b; font-size: 18px; font-weight: 600; }
 .my-project-detail #projectSubmissionContent[hidden], .my-project-detail #projectStageContent[hidden] { display: none; }
@@ -90,11 +89,11 @@
 @media (max-width: 1280px) {
   .my-project-detail .project-overview-meta { display: none; }
   .my-project-detail .project-school-selector select { width: 280px; }
-}
-@media (max-width: 1050px) {
   .my-project-detail .project-ddl-strip { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .my-project-detail .project-ddl-card:nth-child(2) { grid-column: 1 / -1; grid-row: 2; }
   .my-project-detail .project-ddl-card:nth-child(3) { grid-column: 2; grid-row: 1; }
+}
+@media (max-width: 1050px) {
   .my-project-detail .project-cockpit-shell { grid-template-columns: 190px minmax(0, 1fr); }
   .my-project-detail .project-student-grid { grid-template-columns: 1fr; }
 }

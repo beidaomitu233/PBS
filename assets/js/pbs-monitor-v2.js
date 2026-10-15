@@ -169,7 +169,7 @@
   }
 
   function linkedProjects(item) {
-    return window.pbsProjects ? window.pbsProjects.visible().filter(function(project) { return project.student === item.student; }) : [];
+    return window.pbsProjects ? window.pbsProjects.all().filter(function(project) { return project.student === item.student && window.pbsOrders.canView(project); }) : [];
   }
 
   function listFilters() {

@@ -1,39 +1,93 @@
 (function () {
   'use strict';
-  var accountKey = 'pbs_application_account_cmu';
-  var accountModal, lastFocus, templateScope = 'school', archiveValues = {};
+  var accountKey = 'pbs_application_account_cmu', accountsKey = 'pbs_application_accounts_cmu';
+  var accounts = [], editingAccounts = false, bindingIndex = 0, templateScope = 'school', archiveValues = {};
   function fieldKey(value) { return String(value || '').toLowerCase().replace(/[\s（）()\-_/]/g,''); }
   function esc(value) { return String(value == null ? '' : value).replace(/[&<>"']/g, function (c) { return { '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;' }[c]; }); }
-  function closeAccount() { accountModal.hidden = true; document.body.style.overflow = ''; if (lastFocus) lastFocus.focus(); }
+  var accountFields = [
+    ['level','申请层次'],['school','申请学校'],['program','申请专业'],['url','申请官网 URL'],['account','申请账号'],['password','申请密码'],['emailUrl','邮箱 URL'],['email','邮箱账号'],['authCode','邮箱授权码']
+  ];
+  function readAccounts() {
+    accounts = Array.from(document.querySelectorAll('#sec-account tbody tr')).map(function(row) {
+      var record = { bound:row.dataset.bound === 'true' };
+      accountFields.forEach(function(field,index) {
+        var cell = row.cells[index], value = cell.querySelector('.ns-editable'), link = cell.querySelector('a');
+        record[field[0]] = value && value.dataset.full || (link ? link.getAttribute('href') : cell.textContent.trim().replace('＋ 去补充',''));
+        if (record[field[0]] === '—') record[field[0]] = '';
+      }); return record;
+    });
+    try {
+      var saved = JSON.parse(localStorage.getItem(accountsKey));
+      if (Array.isArray(saved) && saved.length) accounts = saved;
+      else { var old = JSON.parse(localStorage.getItem(accountKey)); if (old && accounts[0]) Object.assign(accounts[0],old); }
+    } catch(e) {}
+    renderAccounts();
+  }
+  function renderAccounts() {
+    var canEdit = window.pbsHasPermission('app_fill');
+    document.querySelector('#sec-account tbody').innerHTML = accounts.map(function(record,index) {
+      return '<tr' + (index === 0 ? ' id="accRowCurrent" class="ns-acc-row--current"' : '') + ' data-bound="' + record.bound + '">' + accountFields.map(function(field) {
+        var key = field[0], value = record[key] || '', secret = key === 'password' || key === 'authCode', link = key === 'url' || key === 'emailUrl';
+        var content = editingAccounts ? '<input data-account-row="' + index + '" data-account-field="' + key + '" aria-label="' + esc(record.school + ' · ' + field[1]) + '" type="' + (secret ? 'password' : link ? 'url' : key === 'email' ? 'email' : 'text') + '" value="' + esc(value) + '" autocomplete="off">' : link && /^https?:\/\//i.test(value) ? '<a class="ns-acc-link" href="' + esc(value) + '" target="_blank" rel="noopener">' + esc(value.replace(/\/$/,'')) + ' ↗</a>' : esc(value ? secret ? '••••••••' : value : '—');
+        return '<td>' + content + '</td>';
+      }).join('') + '<td><button type="button" class="ns-bind-btn ' + (record.bound ? 'is-bound' : 'is-unbound') + '" data-bind-account="' + index + '"' + (editingAccounts || !canEdit ? ' disabled' : '') + '>' + (record.bound ? '已绑定' : '关联邮箱绑定') + '</button></td></tr>';
+    }).join('');
+    document.getElementById('applicationAccountsEdit').hidden = editingAccounts || !canEdit;
+    document.getElementById('applicationAccountsSave').hidden = !editingAccounts;
+    document.getElementById('applicationAccountsCancel').hidden = !editingAccounts;
+    document.querySelector('#sec-account table').classList.toggle('is-editing',editingAccounts);
+    document.querySelectorAll('[data-bind-account]').forEach(function(button) { button.onclick = function() {
+      if (!window.pbsHasPermission('app_fill')) return;
+      bindingIndex = Number(button.dataset.bindAccount); var record = accounts[bindingIndex];
+      document.getElementById('manualEmailAccount').value = record.email || '';
+      document.getElementById('manualEmailAuthCode').value = record.authCode || '';
+      var provider = document.getElementById('manualEmailUrl'); if (provider) provider.value = record.emailUrl || '';
+      openEmailBindingModal();
+    }; });
+    refreshBindBanner();
+  }
   function editAccount() {
-    lastFocus = document.activeElement;
-    if (!accountModal) {
-      accountModal = document.createElement('div'); accountModal.className = 'application-modal'; accountModal.hidden = true;
-      accountModal.innerHTML = '<form class="application-dialog" role="dialog" aria-modal="true" aria-labelledby="applicationAccountTitle"><header><h2 id="applicationAccountTitle">申请账号</h2><button type="button" aria-label="关闭">×</button></header><div class="application-dialog-body"><label>学校官网申请 URL<input name="url" type="url" placeholder="https://"></label><label>网申账号<input name="account" autocomplete="off"></label><label>网申密码<input name="password" type="password" autocomplete="off"></label><p class="application-dialog-error" hidden></p></div><footer><button type="button">取消</button><button type="submit">保存</button></footer></form>';
-      document.body.appendChild(accountModal);
-      accountModal.querySelector('header button').onclick = closeAccount;
-      accountModal.querySelector('footer button').onclick = closeAccount;
-      accountModal.addEventListener('click', function (e) { if (e.target === accountModal) closeAccount(); });
-      accountModal.querySelector('form').onsubmit = function (e) {
-        e.preventDefault(); var form = this;
-        var value = { url: form.elements.url.value.trim(), account: form.elements.account.value.trim(), password: form.elements.password.value };
-        if (value.url && !/^https?:\/\//i.test(value.url)) { form.querySelector('.application-dialog-error').hidden = false; form.querySelector('.application-dialog-error').textContent = '请输入完整的 http 或 https 地址'; return; }
-        localStorage.setItem(accountKey, JSON.stringify(value)); renderAccount(value); closeAccount();
-      };
+    if (!window.pbsHasPermission('app_fill')) return;
+    editingAccounts = true; renderAccounts(); document.querySelector('[data-account-field]').focus();
+  }
+  function cancelAccount() { editingAccounts = false; renderAccounts(); }
+  function persistAccounts() {
+    localStorage.setItem(accountsKey,JSON.stringify(accounts));
+    localStorage.setItem(accountKey,JSON.stringify(accounts[0]));
+  }
+  function saveAccount() {
+    if (!window.pbsHasPermission('app_fill')) return;
+    var inputs = Array.from(document.querySelectorAll('[data-account-field]')), invalid = inputs.find(function(input) { return !input.checkValidity(); });
+    if (invalid) { invalid.reportValidity(); return; }
+    inputs.forEach(function(input) { accounts[Number(input.dataset.accountRow)][input.dataset.accountField] = input.value.trim(); });
+    persistAccounts(); editingAccounts = false; renderAccounts(); nsToast('账号信息已保存','success');
+  }
+  function bindEmail() {
+    if (!window.pbsHasPermission('app_fill')) return;
+    var email = document.getElementById('manualEmailAccount').value.trim(), authCode = document.getElementById('manualEmailAuthCode').value, provider = document.getElementById('manualEmailUrl');
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { alert('请输入正确的邮箱账号'); return; }
+    if (!authCode) { alert('请输入邮箱授权码'); return; }
+    Object.assign(accounts[bindingIndex],{email:email,authCode:authCode,emailUrl:provider ? provider.value : '',bound:true});
+    persistAccounts(); renderAccounts(); closeEmailBindingModal(); nsToast('邮箱已绑定','success');
+  }
+  async function saveResult(result,file) {
+    if (!window.pbsHasPermission('app_submit')) return;
+    var image = file && /^image\//.test(file.type) ? await new Promise(function(resolve,reject) { var reader = new FileReader(); reader.onload = function() { resolve(reader.result); }; reader.onerror = reject; reader.readAsDataURL(file); }) : '';
+    if (image) localStorage.setItem('pbs_offer_image_cmu',image);
+    var params = new URLSearchParams(location.search), project = window.pbsProjects.find(params.get('project'));
+    if (project) {
+      var goalId = params.get('school') || (project.packages.length === 1 ? project.packages[0].id : '');
+      if (goalId) { var results = Object.assign({},project.goalResults || {}); results[goalId] = {result:result,image:image,note:document.getElementById('resultRemark').value.trim(),fileName:file ? file.name : ''}; window.pbsProjects.update(project.projectNo,{goalResults:results}); }
     }
-    var plainPassword = document.querySelector('[data-field="app-pwd-plain"]');
-    var record = { url: 'https://apply.cmu.edu', account: 'zhangming_cmu', password: plainPassword ? plainPassword.textContent : '' };
-    try { record = JSON.parse(localStorage.getItem(accountKey)) || record; } catch (error) {}
-    var form = accountModal.querySelector('form'); Object.keys(record).forEach(function (name) { if (form.elements[name]) form.elements[name].value = record[name]; });
-    form.querySelector('.application-dialog-error').hidden = true; accountModal.hidden = false; document.body.style.overflow = 'hidden'; form.elements.url.focus();
   }
-  function renderAccount(record) {
-    var account = document.getElementById('applicationAccountText'); if (account) account.textContent = record.account || '未配置';
-    var link = document.querySelector('[data-dom-id="application-url"]');
-    if (link) { link.textContent = record.url || '未配置'; if (record.url) { link.href = record.url; link.removeAttribute('aria-disabled'); } else { link.removeAttribute('href'); link.setAttribute('aria-disabled', 'true'); } link.id = 'applicationWebsiteLink'; }
-    else if (document.getElementById('applicationWebsiteLink')) { link = document.getElementById('applicationWebsiteLink'); link.textContent = record.url || '未配置'; if (record.url) link.href = record.url; else link.removeAttribute('href'); }
-    var password = document.querySelector('[data-field="app-pwd"]'), plain = document.querySelector('[data-field="app-pwd-plain"]'); if (password) { password.textContent = record.password ? '********' : '未配置'; password.classList.remove('hidden'); password.style.display = ''; } if (plain) { plain.textContent = record.password || '未配置'; plain.classList.add('hidden'); plain.style.display = ''; }
-  }
+  window.renderApplicationTimeline = function() {
+    var first = timelineNodes.findIndex(function(node) { return !node.completed; });
+    document.getElementById('nsTimeline').innerHTML = timelineNodes.map(function(node,index) {
+      var type = node.type === 'ddl' ? 'ddl' : 'ev';
+      return '<article class="ns-tl-item" data-type="' + type + '"><button data-pbs-permission="app_fill" class="ns-tl-dot ns-tl-dot--' + type + (node.completed ? ' is-done' : index === first ? ' is-current' : '') + '" data-dom-id="timeline-node-' + (index + 1) + '" onclick="toggleNsNode(' + (index + 1) + ')" aria-label="切换' + esc(node.name) + '完成状态">' + (node.completed ? '✓' : index + 1) + '</button><div class="flex items-center gap-2 flex-wrap"><h3 class="ns-tl-name">' + esc(node.name) + '</h3><span class="ns-tl-tag ns-tl-tag--' + type + '">' + (type === 'ddl' ? '系统 DDL 节点' : 'EV 系统节点') + '</span></div><div class="ns-tl-meta"><span>' + esc(node.date) + '</span><span data-node-status>' + (node.completed ? '已完成' : index === first ? '进行中' : '待开始') + '</span></div><p class="application-timeline-note">' + esc(node.note) + '</p></article>';
+    }).join('');
+    localStorage.setItem('pbs_application_timeline_cmu',JSON.stringify(timelineNodes));
+  };
   function stats() {
     var groups = document.querySelectorAll('.website-form-group'), all = document.querySelectorAll('[data-wf-label]'), filled = 0, missing = 0;
     all.forEach(function (input) { if (String(input.value || '').trim()) filled++; else if (input.hasAttribute('data-wf-required')) missing++; });
@@ -105,6 +159,10 @@
       var badge = document.getElementById('scanStateBadge'); if (badge) badge.textContent = version.materialDetails.length + ' 项材料';
     }
     localStorage.setItem('pbs_application_template_cmu', JSON.stringify({ template:{id:template.id,name:template.name,school:template.school,college:template.college}, version:version }));
+    var applied = document.getElementById('formAppliedWrap'), empty = document.getElementById('formEmptyState');
+    if (applied) applied.classList.remove('hidden'); if (empty) empty.classList.add('hidden');
+    var materialsEmpty = document.getElementById('materialsEmptyState'), progress = document.getElementById('materialProgressWrap');
+    if (materialsEmpty) materialsEmpty.classList.add('hidden'); if (progress) progress.classList.add('hidden');
     enhanceFields(); updateWebsiteFormSaveState('模板已复用，尚未保存'); return true;
   }
   function initialize() {
@@ -123,9 +181,8 @@
     TEMPLATE_REUSE_OPTIONS.forEach(function (template) { template.versions.forEach(function (version) { if (!version.fieldDetails) { version.fieldDetails = Number(template.id) === 1 ? definitions : definitions.slice(0,5); version.pageDetails = Number(template.id) === 1 ? pages : pages.slice(0,1); version.fields = version.fieldDetails.length; } if (!version.materialDetails) { version.materialDetails = materialDefinitions; version.materials = materialDefinitions.length; } }); });
     try { var reused = JSON.parse(localStorage.getItem('pbs_application_template_cmu')); if (reused && reused.version) { applyTemplate(reused.template,reused.version); restoreWebsiteForm(); document.querySelectorAll('.application-options input').forEach(function(input){ input.checked = input.closest('.application-options').previousElementSibling.value.split('、').indexOf(input.value) >= 0; }); stats(); } } catch (error) {}
     var search = document.getElementById('templateReuseSearch'); var scopes = document.createElement('div'); scopes.className = 'application-template-scope'; scopes.innerHTML = '<button type="button" aria-pressed="true">本校模板</button><button type="button" aria-pressed="false">全部院校</button>'; search.before(scopes); scopes.querySelectorAll('button').forEach(function (button,index) { button.onclick = function () { templateScope = index ? 'all' : 'school'; scopes.querySelectorAll('button').forEach(function (item) { item.setAttribute('aria-pressed', String(item === button)); }); renderTemplateReuseOptions(); }; });
-    try { var account = JSON.parse(localStorage.getItem(accountKey)); if (account) renderAccount(account); } catch (error) {}
-    document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && accountModal && !accountModal.hidden) closeAccount(); });
+    readAccounts();
   }
-  window.pbsApplication = { editAccount:editAccount, applyTemplate:applyTemplate, matchesScope:function (template) { return templateScope === 'all' || template.school === CURRENT_APPLICATION_SCHOOL; } };
+  window.pbsApplication = { editAccount:editAccount, saveAccount:saveAccount, cancelAccount:cancelAccount, bindEmail:bindEmail, saveResult:saveResult, applyTemplate:applyTemplate, matchesScope:function (template) { return templateScope === 'all' || template.school === CURRENT_APPLICATION_SCHOOL; } };
   document.addEventListener('DOMContentLoaded', initialize);
 })();

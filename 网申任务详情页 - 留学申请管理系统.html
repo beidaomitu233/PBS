@@ -1263,7 +1263,7 @@
         timelineNodes = previous.filter(function(node) { return node.type !== 'ev'; }).concat(evNodes.map(function(node) {
           var saved = previous.find(function(item) { return item.name === node.name; });
           return { name:node.name, date:node.date, note:node.note || '', completed:!!(saved && saved.completed), type:'ev' };
-        })).sort(function(a,b) { return a.date.localeCompare(b.date); });
+        }));
         renderApplicationTimeline();
         button.disabled = false; button.classList.remove('is-refreshing');
       }, 300);
@@ -1855,7 +1855,7 @@
   </script>
   <script src="./assets/js/pbs-app.js?v=7.8"></script>
   <link rel="stylesheet" href="./assets/css/pbs-application.css?v=1.3">
-  <script src="./assets/js/pbs-application.js?v=1.3"></script>
+  <script src="./assets/js/pbs-application.js?v=1.4"></script>
 
 
   

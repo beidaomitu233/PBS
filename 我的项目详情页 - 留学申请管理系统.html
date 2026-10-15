@@ -78,7 +78,7 @@
   </style>
   <link rel="stylesheet" href="./assets/css/pbs-theme.css?v=6.4">
   <link rel="stylesheet" href="./assets/css/pbs-student-profile.css?v=1.5">
-  <link rel="stylesheet" href="./assets/css/pbs-my-project.css?v=1.0">
+  <link rel="stylesheet" href="./assets/css/pbs-my-project.css?v=1.1">
 </head>
 <body class="min-h-screen my-project-detail">
   <!-- 顶部导航栏 -->
@@ -500,7 +500,7 @@
   <!-- 页面提示 Toast -->
   <div id="pageToast" class="hidden fixed top-6 left-1/2 transform -translate-x-1/2 z-[70] px-4 py-2.5 bg-red-500 text-white text-sm rounded-lg shadow-lg"></div>
 
-  <script src="./assets/js/pbs-app.js?v=7.8"></script>
+  <script src="./assets/js/pbs-app.js?v=7.9"></script>
   <script src="./assets/js/pbs-identity.js?v=1.0"></script>
   <script src="./assets/js/pbs-student-data.js?v=1.5"></script>
   <script>
@@ -749,13 +749,14 @@
         '<p class="project-ddl-title flex items-center gap-1.5"><span class="inline-block w-1.5 h-1.5 rounded-full" style="background:' + color + '"></span>' + title + '</p>' +
         '<p class="project-ddl-primary"><span>' + primaryLabel + '</span><strong>' + ddlValue(primaryDate, task) + '</strong></p>' + (extraHtml || '') + '</div>';
     }
+    function documentTypeLabel(doc) { return doc.key === 'TCX' ? '套磁信' : doc.key; }
     function renderProjectDdls(s) {
       var docs = s.docs.slice().sort(function(a, b) { return String(a.ddl || a.mall).localeCompare(String(b.ddl || b.mall)); });
       var nextDoc = docs.find(function(d) { return d.status !== '已完成'; }) || docs[0];
-      var detailRows = s.docs.map(function(d) { return '<span>' + d.name + '</span><strong>' + ddlValue(d.ddl, d.key) + '</strong>'; }).join('');
-      var docDetails = '<details class="project-ddl-more"><summary>查看全部 ' + s.docs.length + ' 项文书 DDL</summary><div>' + detailRows + '</div></details>';
+      var detailRows = s.docs.map(function(d) { return '<span>' + documentTypeLabel(d) + '</span><strong>' + ddlValue(d.ddl, d.key) + '</strong>'; }).join('');
+      var docDetails = '<div class="project-ddl-document-list">' + detailRows + '</div>';
       return ddlSummaryCard('材料准备', '最近时限', s.materialDdl.managed, '#C9A87C', '', false, 'material') +
-        ddlSummaryCard('文书交付', '最近：' + nextDoc.name, nextDoc.ddl, '#7D869A', docDetails, !!nextDoc.near, nextDoc.key) +
+        ddlSummaryCard('文书交付', '最近：' + documentTypeLabel(nextDoc), nextDoc.ddl, '#7D869A', docDetails, !!nextDoc.near, nextDoc.key) +
         ddlSummaryCard('网申提交', '最近时限', s.applyDdl.managed, '#6D9A7E', '', false, 'apply');
     }
 
@@ -780,7 +781,7 @@
           (d.owner ? '<button class="text-xs font-medium text-amber-600 hover:text-amber-700" onclick="openUrgeModal(\'文书交付\',\'' + d.owner + '\',\'' + d.name + '\')">催办交付</button>' : '<span class="text-xs text-gray-300">交付未分配</span>') +
           (d.reviewer ? '<button class="text-xs font-medium text-amber-600 hover:text-amber-700" onclick="openUrgeModal(\'文书审核\',\'' + d.reviewer + '\',\'' + d.name + '\')">催办审核</button>' : '<span class="text-xs text-gray-300">审核未分配</span>') + '</div>';
         return '<tr>' +
-          '<td><p class="font-medium text-gray-900">' + d.name + '</p></td>' +
+          '<td><p class="font-medium text-gray-900">' + documentTypeLabel(d) + '</p></td>' +
           '<td>' + owner + '</td>' +
           '<td>' + reviewer + '</td>' +
           '<td><span class="text-gray-900 font-medium">' + (ddl || '分配后显示') + '</span></td>' +

@@ -353,7 +353,8 @@
     var applicationPayment = nodeAmount(packageId, 'application');
     var paymentTotal = documents.reduce(function (sum, item) { return sum + item.amount; }, 0) + applicationPayment;
     var paidTotal = documents.reduce(function (sum, item) { return sum + (item.paid ? item.amount : 0); }, 0) + applicationPayment;
-    var html = '<div class="pbs-payment-summary"><div><strong>' + money(paidTotal) + '</strong><span>已支付金额</span></div><div style="text-align:right"><strong>' + money(paymentTotal) + '</strong><span>支付总额</span></div></div><div class="pbs-payment-groups">';
+    var paidSummary = document.body.classList.contains('my-project-detail') ? '' : '<div><strong>' + money(paidTotal) + '</strong><span>已支付金额</span></div>';
+    var html = '<div class="pbs-payment-summary">' + paidSummary + '<div style="text-align:right"><strong>' + money(paymentTotal) + '</strong><span>支付总额</span></div></div><div class="pbs-payment-groups">';
 
     html += '<section class="pbs-payment-group"><div class="pbs-payment-group-head"><div><strong>文书</strong><small>按文书类型核对支付和交付</small></div></div><div class="pbs-payment-table"><div class="pbs-payment-table-head pbs-payment-document-grid"><span>文书类型</span><span>交付状态</span><span>操作</span></div>';
     documents.forEach(function (documentItem) {

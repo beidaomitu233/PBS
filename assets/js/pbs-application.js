@@ -64,6 +64,11 @@
     }
   }
   window.renderApplicationTimeline = function() {
+    function dateValue(node) {
+      var date = String(node.date || '').match(/(\d{4})[-/年](\d{1,2})(?:[-/月](\d{1,2}))?/);
+      return date ? Date.UTC(Number(date[1]),Number(date[2]) - 1,Number(date[3] || 1)) : Infinity;
+    }
+    timelineNodes.sort(function(a,b) { return dateValue(a) - dateValue(b) || 0; });
     var first = timelineNodes.findIndex(function(node) { return !node.completed; });
     var today = new Date(); today.setHours(0,0,0,0);
     document.getElementById('nsTimeline').innerHTML = timelineNodes.map(function(node,index) {

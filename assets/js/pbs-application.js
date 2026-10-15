@@ -1,7 +1,7 @@
 (function () {
   'use strict';
   var accountKey = 'pbs_application_account_cmu', accountsKey = 'pbs_application_accounts_cmu';
-  var accounts = [], editingAccounts = false, bindingIndex = 0, templateScope = 'school', archiveValues = {};
+  var accounts = [], editingAccounts = false, templateScope = 'school', archiveValues = {};
   function fieldKey(value) { return String(value || '').toLowerCase().replace(/[\s（）()\-_/]/g,''); }
   function esc(value) { return String(value == null ? '' : value).replace(/[&<>"']/g, function (c) { return { '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;' }[c]; }); }
   var accountFields = [
@@ -30,21 +30,12 @@
         var key = field[0], value = record[key] || '', secret = key === 'password' || key === 'authCode', link = key === 'url' || key === 'emailUrl';
         var content = editingAccounts ? '<input data-account-row="' + index + '" data-account-field="' + key + '" aria-label="' + esc(record.school + ' · ' + field[1]) + '" type="' + (secret ? 'password' : link ? 'url' : key === 'email' ? 'email' : 'text') + '" value="' + esc(value) + '" autocomplete="off">' : link && /^https?:\/\//i.test(value) ? '<a class="ns-acc-link" href="' + esc(value) + '" target="_blank" rel="noopener">' + esc(value.replace(/\/$/,'')) + ' ↗</a>' : esc(value ? secret ? '••••••••' : value : '—');
         return '<td>' + content + '</td>';
-      }).join('') + '<td><button type="button" class="ns-bind-btn ' + (record.bound ? 'is-bound' : 'is-unbound') + '" data-bind-account="' + index + '"' + (editingAccounts || !canEdit ? ' disabled' : '') + '>' + (record.bound ? '已绑定' : '关联邮箱绑定') + '</button></td></tr>';
+      }).join('') + '</tr>';
     }).join('');
     document.getElementById('applicationAccountsEdit').hidden = editingAccounts || !canEdit;
     document.getElementById('applicationAccountsSave').hidden = !editingAccounts;
     document.getElementById('applicationAccountsCancel').hidden = !editingAccounts;
     document.querySelector('#sec-account table').classList.toggle('is-editing',editingAccounts);
-    document.querySelectorAll('[data-bind-account]').forEach(function(button) { button.onclick = function() {
-      if (!window.pbsHasPermission('app_fill')) return;
-      bindingIndex = Number(button.dataset.bindAccount); var record = accounts[bindingIndex];
-      document.getElementById('manualEmailAccount').value = record.email || '';
-      document.getElementById('manualEmailAuthCode').value = record.authCode || '';
-      var provider = document.getElementById('manualEmailUrl'); if (provider) provider.value = record.emailUrl || '';
-      openEmailBindingModal();
-    }; });
-    refreshBindBanner();
   }
   function editAccount() {
     if (!window.pbsHasPermission('app_fill')) return;
@@ -62,14 +53,6 @@
     inputs.forEach(function(input) { accounts[Number(input.dataset.accountRow)][input.dataset.accountField] = input.value.trim(); });
     persistAccounts(); editingAccounts = false; renderAccounts(); nsToast('账号信息已保存','success');
   }
-  function bindEmail() {
-    if (!window.pbsHasPermission('app_fill')) return;
-    var email = document.getElementById('manualEmailAccount').value.trim(), authCode = document.getElementById('manualEmailAuthCode').value, provider = document.getElementById('manualEmailUrl');
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { alert('请输入正确的邮箱账号'); return; }
-    if (!authCode) { alert('请输入邮箱授权码'); return; }
-    Object.assign(accounts[bindingIndex],{email:email,authCode:authCode,emailUrl:provider ? provider.value : '',bound:true});
-    persistAccounts(); renderAccounts(); closeEmailBindingModal(); nsToast('邮箱已绑定','success');
-  }
   async function saveResult(result,file) {
     if (!window.pbsHasPermission('app_submit')) return;
     var image = file && /^image\//.test(file.type) ? await new Promise(function(resolve,reject) { var reader = new FileReader(); reader.onload = function() { resolve(reader.result); }; reader.onerror = reject; reader.readAsDataURL(file); }) : '';
@@ -82,9 +65,12 @@
   }
   window.renderApplicationTimeline = function() {
     var first = timelineNodes.findIndex(function(node) { return !node.completed; });
+    var today = new Date(); today.setHours(0,0,0,0);
     document.getElementById('nsTimeline').innerHTML = timelineNodes.map(function(node,index) {
-      var type = node.type === 'ddl' ? 'ddl' : 'ev';
-      return '<article class="ns-tl-item" data-type="' + type + '"><button data-pbs-permission="app_fill" class="ns-tl-dot ns-tl-dot--' + type + (node.completed ? ' is-done' : index === first ? ' is-current' : '') + '" data-dom-id="timeline-node-' + (index + 1) + '" onclick="toggleNsNode(' + (index + 1) + ')" aria-label="切换' + esc(node.name) + '完成状态">' + (node.completed ? '✓' : index + 1) + '</button><div class="flex items-center gap-2 flex-wrap"><h3 class="ns-tl-name">' + esc(node.name) + '</h3><span class="ns-tl-tag ns-tl-tag--' + type + '">' + (type === 'ddl' ? '系统 DDL 节点' : 'EV 系统节点') + '</span></div><div class="ns-tl-meta"><span>' + esc(node.date) + '</span><span data-node-status>' + (node.completed ? '已完成' : index === first ? '进行中' : '待开始') + '</span></div><p class="application-timeline-note">' + esc(node.note) + '</p></article>';
+      var internal = node.type === 'ddl';
+      var days = /^\d{4}-\d{2}-\d{2}$/.test(node.date) ? Math.ceil((new Date(node.date + 'T00:00:00') - today) / 86400000) : null;
+      var countdown = !node.completed && days !== null ? '<span class="ns-tl-countdown">' + (days > 0 ? '剩 ' + days + ' 天' : days === 0 ? '今天截止' : '已过 ' + Math.abs(days) + ' 天') + '</span>' : '';
+      return '<article class="ns-tl-item' + (internal ? ' is-internal' : '') + '"><button data-pbs-permission="app_fill" class="ns-tl-dot' + (node.completed ? ' is-done' : index === first ? ' is-current' : '') + '" data-dom-id="timeline-node-' + (index + 1) + '" onclick="toggleNsNode(' + (index + 1) + ')" aria-label="切换' + esc(node.name) + '完成状态">' + (node.completed ? '✓' : index + 1) + '</button><div><h3 class="ns-tl-name">' + esc(node.name) + '</h3><div class="ns-tl-meta"><span>' + esc(node.date) + '</span>' + countdown + '<span data-node-status>' + (node.completed ? '已完成' : index === first ? '进行中' : '待开始') + '</span></div><p class="application-timeline-note">' + esc((node.note || '').replace(/^(?:内部节点|EV 节点)：/,'')) + '</p></div></article>';
     }).join('');
     localStorage.setItem('pbs_application_timeline_cmu',JSON.stringify(timelineNodes));
   };
@@ -183,6 +169,6 @@
     var search = document.getElementById('templateReuseSearch'); var scopes = document.createElement('div'); scopes.className = 'application-template-scope'; scopes.innerHTML = '<button type="button" aria-pressed="true">本校模板</button><button type="button" aria-pressed="false">全部院校</button>'; search.before(scopes); scopes.querySelectorAll('button').forEach(function (button,index) { button.onclick = function () { templateScope = index ? 'all' : 'school'; scopes.querySelectorAll('button').forEach(function (item) { item.setAttribute('aria-pressed', String(item === button)); }); renderTemplateReuseOptions(); }; });
     readAccounts();
   }
-  window.pbsApplication = { editAccount:editAccount, saveAccount:saveAccount, cancelAccount:cancelAccount, bindEmail:bindEmail, saveResult:saveResult, applyTemplate:applyTemplate, matchesScope:function (template) { return templateScope === 'all' || template.school === CURRENT_APPLICATION_SCHOOL; } };
+  window.pbsApplication = { editAccount:editAccount, saveAccount:saveAccount, cancelAccount:cancelAccount, saveResult:saveResult, applyTemplate:applyTemplate, matchesScope:function (template) { return templateScope === 'all' || template.school === CURRENT_APPLICATION_SCHOOL; } };
   document.addEventListener('DOMContentLoaded', initialize);
 })();

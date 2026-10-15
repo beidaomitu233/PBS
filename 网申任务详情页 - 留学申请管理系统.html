@@ -241,27 +241,19 @@
     .ns-badge.is-green .dot { background: #22c55e; }
     .ns-badge.is-red { background: #fef2f2; color: #dc2626; border: 1px solid #fecaca; }
     .ns-badge.is-red .dot { background: #ef4444; }
-    /* 时间线：EV 蓝 / DDL 橙 */
+    /* 网申进度时间线 */
     .ns-timeline { position: relative; padding-left: 30px; }
     .ns-timeline::before { content: ""; position: absolute; left: 9px; top: 14px; bottom: 14px; width: 2px; background: #e5eaf0; }
     .ns-tl-item { position: relative; padding: 0 0 22px 14px; }
     .ns-tl-item:last-child { padding-bottom: 0; }
     .ns-tl-dot { position: absolute; left: -28px; top: 2px; width: 18px; height: 18px; border-radius: 999px; border: 2px solid #cbd5e1; background: #fff; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 700; color: #94a3b8; cursor: pointer; transition: all .15s ease; }
-    .ns-tl-dot--ev { border-color: #93c5fd; color: #2563eb; }
-    .ns-tl-dot--ev.is-done { background: #2563eb; border-color: #2563eb; color: #fff; }
-    .ns-tl-dot--ev.is-current { border-color: #2563eb; box-shadow: 0 0 0 4px #dbeafe; }
-    .ns-tl-dot--ddl { border-color: #fbbf24; color: #d97706; }
-    .ns-tl-dot--ddl.is-done { background: #f59e0b; border-color: #f59e0b; color: #fff; }
-    .ns-tl-dot--ddl.is-current { border-color: #f59e0b; box-shadow: 0 0 0 4px #fef3c7; }
+    .ns-tl-dot { border-color: #93c5fd; color: #2563eb; }
+    .ns-tl-dot.is-done { background: #2563eb; border-color: #2563eb; color: #fff; }
+    .ns-tl-dot.is-current { border-color: #2563eb; box-shadow: 0 0 0 4px #dbeafe; }
     .ns-tl-name { font-size: 14px; font-weight: 600; color: #172033; }
-    .ns-tl-tag { font-size: 10px; padding: 1px 8px; border-radius: 999px; font-weight: 600; }
-    .ns-tl-tag--ev { background: #eff6ff; color: #2563eb; }
-    .ns-tl-tag--ddl { background: #fff7ed; color: #ea580c; }
     .ns-tl-meta { display: flex; flex-wrap: wrap; gap: 6px 16px; margin-top: 6px; font-size: 12px; color: #64748b; align-items: center; }
-    .ns-tl-countdown { font-weight: 700; color: #d97706; }
+    .ns-tl-countdown { font-weight: 700; color: inherit; }
     .ns-tl-countdown.is-urgent { color: #dc2626; font-weight: 800; }
-    .ns-tl-legend { display: flex; align-items: center; gap: 14px; font-size: 12px; color: #64748b; }
-    .ns-tl-legend i { width: 9px; height: 9px; border-radius: 999px; display: inline-block; margin-right: 5px; }
     .ns-info-btn { position: relative; display: inline-flex; margin-left: 4px; color: #94a3b8; cursor: help; font-size: 13px; font-weight: 400; }
     .ns-info-btn .ns-info-bubble { position: absolute; left: 50%; transform: translateX(-50%); top: calc(100% + 8px); width: 300px; background: #0f172a; color: #e2e8f0; font-size: 12px; line-height: 1.65; padding: 10px 12px; border-radius: 10px; display: none; z-index: 30; box-shadow: 0 10px 24px rgba(15,23,42,.18); }
     .ns-info-btn:hover .ns-info-bubble { display: block; }
@@ -323,11 +315,6 @@
     .ns-cell-edit { display: inline-flex; align-items: center; justify-content: center; width: 22px; height: 22px; border-radius: 6px; color: #cbd5e1; margin-left: 4px; vertical-align: middle; transition: all .15s ease; }
     .ns-cell-edit:hover { background: #eff6ff; color: #2563eb; }
     /* 绑定状态按钮 */
-    .ns-bind-btn { display: inline-flex; align-items: center; gap: 5px; height: 30px; padding: 0 12px; border-radius: 8px; font-size: 12px; font-weight: 600; border: 1px solid transparent; cursor: pointer; transition: all .18s ease; white-space: nowrap; }
-    .ns-bind-btn.is-unbound { background: #fef2f2; color: #dc2626; border-color: #fecaca; box-shadow: 0 2px 8px rgba(220, 38, 38, .12); }
-    .ns-bind-btn.is-unbound:hover { background: #fee2e2; transform: translateY(-1px); box-shadow: 0 4px 12px rgba(220, 38, 38, .2); }
-    .ns-bind-btn.is-bound { background: #f0fdf4; color: #16a34a; border-color: #bbf7d0; }
-    .ns-bind-btn.is-bound:hover { background: #dcfce7; }
     /* 板块级提示条 */
     .ns-banner { display: flex; align-items: center; gap: 8px; padding: 10px 14px; border-radius: 10px; font-size: 12px; font-weight: 500; }
     .ns-banner.is-warn { background: #fff7ed; border: 1px solid #fed7aa; color: #c2410c; }
@@ -447,104 +434,94 @@
               <h2 class="ns-section__title">
                 <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-8 8v2m8-2v2M9 3h6a2 2 0 012 2v6a2 2 01-2 2H9a2 2 01-2-2V5a2 2 0 012-2z"></path></svg>
                 网申进度时间线 <span class="text-sm font-normal text-gray-400">· RD 轮次</span>
-                <span class="ns-info-btn">ⓘ
-                  <span class="ns-info-bubble">整单状态与进度节点可分别调整：点击节点圆点可手动切换完成状态；「更新网申进度」仅推进当前未完成的节点，后续节点需手动点圆点处理。蓝色节点来自 EV 系统院校项目库，橙色节点为系统内置 DDL。</span>
-                </span>
               </h2>
               <div class="flex items-center gap-3 flex-wrap">
-                <span class="ns-tl-legend"><span><i style="background:#2563eb"></i>EV 系统节点</span><span><i style="background:#f59e0b"></i>系统 DDL 节点</span></span>
-                <button data-dom-id="btn-ev-import" class="flex items-center gap-1 px-3 py-1.5 text-xs text-blue-600 bg-blue-50 rounded-md hover:bg-blue-100 font-medium" onclick="openEvImport()">从 EV 系统导入</button>
+                <button data-pbs-permission="app_fill" data-dom-id="btn-timeline-refresh" class="flex items-center gap-1 px-3 py-1.5 text-xs text-blue-600 bg-blue-50 rounded-md hover:bg-blue-100 font-medium" onclick="refreshApplicationTimeline(this)"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7v5h-5M4 17v-5h5m10.1-4A8 8 0 005 7m-.1 9A8 8 0 0019 17"/></svg>刷新</button>
                 <button data-dom-id="btn-timeline-config" class="flex items-center gap-1 px-3 py-1.5 text-xs text-gray-600 bg-gray-100 rounded-md hover:bg-gray-200 font-medium" onclick="openTimelineConfig()">配置进度线</button>
               </div>
             </div>
             <div class="ns-timeline" id="nsTimeline">
-              <article class="ns-tl-item" data-type="ddl">
-                <button data-pbs-permission="app_fill" data-dom-id="timeline-node-1" class="ns-tl-dot ns-tl-dot--ddl is-current" onclick="toggleNsNode(1)" title="切换完成状态" aria-label="切换材料准备 DDL 完成状态">1</button>
+              <article class="ns-tl-item is-internal" data-type="ddl">
+                <button data-pbs-permission="app_fill" data-dom-id="timeline-node-1" class="ns-tl-dot is-current" onclick="toggleNsNode(1)" title="切换完成状态" aria-label="切换材料准备 DDL 完成状态">1</button>
                 <div class="min-w-0">
                   <div class="flex items-center gap-2 flex-wrap">
                     <h3 class="ns-tl-name">材料准备 DDL</h3>
-                    <span class="ns-tl-tag ns-tl-tag--ddl">系统 DDL 节点</span>
                   </div>
                   <div class="ns-tl-meta">
                     <span>2026-12-20</span>
                     <span class="ns-tl-countdown is-urgent">剩 2 天</span>
                     <span class="text-orange-600" data-node-status>进行中</span>
                   </div>
-                  <p class="application-timeline-note">内部节点：网申账号、文书与证明材料需在此日期前准备完毕。</p>
+                  <p class="application-timeline-note">网申账号、文书与证明材料需在此日期前准备完毕。</p>
                 </div>
               </article>
-              <article class="ns-tl-item" data-type="ddl">
-                <button data-pbs-permission="app_fill" data-dom-id="timeline-node-2" class="ns-tl-dot ns-tl-dot--ddl" onclick="toggleNsNode(2)" title="切换完成状态" aria-label="切换网申提交 DDL 完成状态">2</button>
+              <article class="ns-tl-item is-internal" data-type="ddl">
+                <button data-pbs-permission="app_fill" data-dom-id="timeline-node-2" class="ns-tl-dot" onclick="toggleNsNode(2)" title="切换完成状态" aria-label="切换网申提交 DDL 完成状态">2</button>
                 <div class="min-w-0">
                   <div class="flex items-center gap-2 flex-wrap">
                     <h3 class="ns-tl-name">网申提交 DDL</h3>
-                    <span class="ns-tl-tag ns-tl-tag--ddl">系统 DDL 节点</span>
                   </div>
                   <div class="ns-tl-meta">
                     <span>2027-01-10</span>
                     <span class="ns-tl-countdown">剩 23 天</span>
                     <span data-node-status>待开始</span>
                   </div>
-                  <p class="application-timeline-note">内部节点：需在 EV 常规申请截止前完成网申提交，预留修改缓冲。</p>
+                  <p class="application-timeline-note">需在院校申请截止前完成网申提交，预留修改缓冲。</p>
                 </div>
               </article>
               <article class="ns-tl-item" data-type="ev">
-                <button data-pbs-permission="app_fill" data-dom-id="timeline-node-3" class="ns-tl-dot ns-tl-dot--ev" onclick="toggleNsNode(3)" title="切换完成状态" aria-label="切换常规申请（RD）完成状态">3</button>
+                <button data-pbs-permission="app_fill" data-dom-id="timeline-node-3" class="ns-tl-dot" onclick="toggleNsNode(3)" title="切换完成状态" aria-label="切换常规申请（RD）完成状态">3</button>
                 <div class="min-w-0">
                   <div class="flex items-center gap-2 flex-wrap">
                     <h3 class="ns-tl-name">常规申请（RD）</h3>
-                    <span class="ns-tl-tag ns-tl-tag--ev">EV 系统节点</span>
                   </div>
                   <div class="ns-tl-meta">
                     <span>2027-01-15 截止</span>
                     <span>2026-11-02 开放</span>
                     <span data-node-status>待开始</span>
                   </div>
-                  <p class="application-timeline-note">EV 节点：网申表单与材料在院校官网提交截止。</p>
+                  <p class="application-timeline-note">网申表单与材料在院校官网提交截止。</p>
                 </div>
               </article>
               <article class="ns-tl-item" data-type="ev">
-                <button data-pbs-permission="app_fill" data-dom-id="timeline-node-4" class="ns-tl-dot ns-tl-dot--ev" onclick="toggleNsNode(4)" title="切换完成状态" aria-label="切换材料确认完成状态">4</button>
+                <button data-pbs-permission="app_fill" data-dom-id="timeline-node-4" class="ns-tl-dot" onclick="toggleNsNode(4)" title="切换完成状态" aria-label="切换材料确认完成状态">4</button>
                 <div class="min-w-0">
                   <div class="flex items-center gap-2 flex-wrap">
                     <h3 class="ns-tl-name">材料确认</h3>
-                    <span class="ns-tl-tag ns-tl-tag--ev">EV 系统节点</span>
                   </div>
                   <div class="ns-tl-meta">
                     <span>2027-01-20 – 2027-02-10</span>
                     <span data-node-status>待开始</span>
                   </div>
-                  <p class="application-timeline-note">EV 节点：院校招生办确认申请材料齐全，缺件会邮件通知补交。</p>
+                  <p class="application-timeline-note">院校招生办确认申请材料齐全，缺件会邮件通知补交。</p>
                 </div>
               </article>
               <article class="ns-tl-item" data-type="ev">
-                <button data-pbs-permission="app_fill" data-dom-id="timeline-node-5" class="ns-tl-dot ns-tl-dot--ev" onclick="toggleNsNode(5)" title="切换完成状态" aria-label="切换面试完成状态">5</button>
+                <button data-pbs-permission="app_fill" data-dom-id="timeline-node-5" class="ns-tl-dot" onclick="toggleNsNode(5)" title="切换完成状态" aria-label="切换面试完成状态">5</button>
                 <div class="min-w-0">
                   <div class="flex items-center gap-2 flex-wrap">
                     <h3 class="ns-tl-name">面试</h3>
-                    <span class="ns-tl-tag ns-tl-tag--ev">EV 系统节点</span>
                   </div>
                   <div class="ns-tl-meta">
                     <span>2027-02 至 2027-03</span>
                     <span>校友面试 / 视频面试</span>
                     <span data-node-status>待安排</span>
                   </div>
-                  <p class="application-timeline-note">EV 节点：等待申请审核结果后安排。</p>
+                  <p class="application-timeline-note">等待申请审核结果后安排。</p>
                 </div>
               </article>
               <article class="ns-tl-item" data-type="ev">
-                <button data-pbs-permission="app_fill" data-dom-id="timeline-node-6" class="ns-tl-dot ns-tl-dot--ev" onclick="toggleNsNode(6)" title="切换完成状态" aria-label="切换放榜完成状态">6</button>
+                <button data-pbs-permission="app_fill" data-dom-id="timeline-node-6" class="ns-tl-dot" onclick="toggleNsNode(6)" title="切换完成状态" aria-label="切换放榜完成状态">6</button>
                 <div class="min-w-0">
                   <div class="flex items-center gap-2 flex-wrap">
                     <h3 class="ns-tl-name">放榜</h3>
-                    <span class="ns-tl-tag ns-tl-tag--ev">EV 系统节点</span>
                   </div>
                   <div class="ns-tl-meta">
                     <span>2027-03-31 放榜</span>
                     <span>2027-09 入学</span>
                     <span data-node-status>待开始</span>
                   </div>
-                  <p class="application-timeline-note">EV 节点：录取结果公布，归档后任务进入结项流程。</p>
+                  <p class="application-timeline-note">录取结果公布，归档后任务进入结项流程。</p>
                 </div>
               </article>
             </div>
@@ -559,14 +536,10 @@
               </h2>
               <div class="ns-account-actions"><button type="button" id="applicationAccountsEdit" class="application-info-action" data-pbs-permission="app_fill" onclick="pbsApplication.editAccount()">编辑</button><button type="button" id="applicationAccountsCancel" class="ns-btn ns-btn--ghost" hidden onclick="pbsApplication.cancelAccount()">取消</button><button type="button" id="applicationAccountsSave" class="ns-btn ns-btn--primary" hidden onclick="pbsApplication.saveAccount()">保存</button></div>
             </div>
-            <div id="accBindBanner" class="ns-banner is-warn mb-4">
-              <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"></path></svg>
-              <span id="accBindBannerText">当前任务未绑定邮箱，无法监控邮箱动态，请及时点击「关联邮箱绑定」</span>
-            </div>
             <div class="overflow-x-auto">
               <table class="ns-acc-table">
                 <thead>
-                  <tr><th>申请层次</th><th>申请学校</th><th>申请专业</th><th>申请官网 URL</th><th>申请账号</th><th>申请密码</th><th>邮箱 URL</th><th>邮箱账号</th><th>邮箱授权码</th><th>操作</th></tr>
+                  <tr><th>申请层次</th><th>申请学校</th><th>申请专业</th><th>申请官网 URL</th><th>申请账号</th><th>申请密码</th><th>邮箱 URL</th><th>邮箱账号</th><th>邮箱授权码</th></tr>
                 </thead>
                 <tbody>
                   <tr class="ns-acc-row--current ns-flash" id="accRowCurrent" data-bound="false">
@@ -579,7 +552,6 @@
                     <td id="accRowEmailUrl"><span class="ns-editable" data-label="邮箱 URL" data-link="true" ><span class="ns-editable__val"><a class="ns-acc-link" href="https://mail.google.com/" target="_blank">Gmail ↗</a></span></span></td>
                     <td id="accRowEmail"><span class="ns-editable" data-label="邮箱账号" ><span class="ns-editable__val">zhangming.cmu@gmail.com</span></span></td>
                     <td><span class="ns-editable" data-label="邮箱授权码" data-masked="true" data-full="Zm@0831Auth" ><span class="ns-editable__val">••••••••</span></span></td>
-                    <td><button class="ns-bind-btn is-unbound" id="bindBtnCurrent" onclick="openEmailBindingModal()"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 010 5.656l-3 3a4 4 0 105.656-5.656l1.5-1.5m-.758-4.242a4 4 0 005.656 0l3-3a4 4 0 00-5.656-5.656l-1.5 1.5m-6.364 2.122L9 7m3 4l3 3"></path></svg>关联邮箱绑定</button></td>
                   </tr>
                   <tr data-bound="true">
                     <td>硕士申请</td>
@@ -591,7 +563,6 @@
                     <td><span class="ns-editable" data-label="邮箱 URL" data-link="true" ><span class="ns-editable__val"><a class="ns-acc-link" href="https://mail.google.com/" target="_blank">Gmail ↗</a></span></span></td>
                     <td><span class="ns-editable" data-label="邮箱账号" ><span class="ns-editable__val">zhangming.stanford@gmail.com</span></span></td>
                     <td><span class="ns-editable" data-label="邮箱授权码" data-masked="true" data-full="Stan@Auth22" ><span class="ns-editable__val">••••••••</span></span></td>
-                    <td><button class="ns-bind-btn is-bound"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>已绑定</button></td>
                   </tr>
                   <tr data-bound="false">
                     <td>硕士申请</td>
@@ -603,7 +574,6 @@
                     <td><span class="ns-editable" data-label="邮箱 URL" data-link="true" ><span class="ns-editable__val"><a class="ns-acc-link" href="https://outlook.live.com/" target="_blank">Outlook ↗</a></span></span></td>
                     <td><span class="ns-editable" data-label="邮箱账号" ><span class="ns-editable__val">zhangming_hku@outlook.com</span></span></td>
                     <td><span class="ns-editable" data-label="邮箱授权码" data-masked="true" data-full="HkuAuth#9" ><span class="ns-editable__val">••••••••</span></span></td>
-                    <td><button class="ns-bind-btn is-unbound" onclick="openEmailBindingModal()"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 010 5.656l-3 3a4 4 0 105.656-5.656l1.5-1.5m-.758-4.242a4 4 0 005.656 0l3-3a4 4 0 00-5.656-5.656l-1.5 1.5m-6.364 2.122L9 7m3 4l3 3"></path></svg>关联邮箱绑定</button></td>
                   </tr>
                 </tbody>
               </table>
@@ -998,73 +968,6 @@
     </div>
   </div>
 
-  <!-- 关联邮箱弹窗 -->
-  <div id="emailBindingModal" class="fixed inset-0 z-50 hidden">
-    <div class="absolute inset-0 bg-black bg-opacity-30" onclick="closeEmailBindingModal()"></div>
-    <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[480px] bg-white rounded-2xl shadow-2xl p-6">
-      <div class="flex items-center justify-between mb-1">
-        <h3 class="text-lg font-semibold text-gray-800">关联邮箱</h3>
-        <button class="p-1 text-gray-400 hover:text-gray-600" onclick="closeEmailBindingModal()">
-          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-          </svg>
-        </button>
-      </div>
-      <p class="text-xs text-gray-400 mb-5">绑定已有申请邮箱，系统通过 IMAP 协议读取邮件状态。</p>
-      <div id="emailManualPanel" class="space-y-4">
-        <div><label class="block text-sm font-medium text-gray-700 mb-1.5">邮箱 URL <span class="text-red-500">*</span></label><select id="manualEmailUrl" class="w-full h-10 px-3 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500"><option value="https://mail.google.com/" selected>Gmail</option><option value="https://outlook.live.com/">Outlook</option><option value="https://mail.163.com/">163 邮箱</option><option value="https://mail.qq.com/">QQ 邮箱</option></select></div>
-        <div><label class="block text-sm font-medium text-gray-700 mb-1.5">邮箱账号 <span class="text-red-500">*</span></label><input id="manualEmailAccount" type="email" class="w-full h-10 px-3 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500" placeholder="请输入已有邮箱账号"></div>
-        <div><label class="block text-sm font-medium text-gray-700 mb-1.5">邮箱授权码 <span class="text-red-500">*</span></label><input id="manualEmailAuthCode" type="password" class="w-full h-10 px-3 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500" placeholder="请输入邮箱授权码"></div>
-        <p class="text-xs text-gray-400">请先在邮箱中开启 IMAP 服务并生成授权码。</p>
-        <div class="flex items-center gap-3 pt-2"><button class="flex-1 h-10 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium" onclick="confirmManualEmailBinding()">确认绑定</button><button class="flex-1 h-10 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50" onclick="closeEmailBindingModal()">取消</button></div>
-      </div>
-    </div>
-  </div>
-
-  <!-- EV系统导入进度线弹窗 -->
-  <div id="evImportModal" class="fixed inset-0 z-50 hidden">
-    <div class="absolute inset-0 bg-black bg-opacity-30" onclick="closeEvImportModal()"></div>
-    <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[680px] max-w-[94vw] max-h-[90vh] bg-white rounded-2xl shadow-2xl p-6 flex flex-col">
-      <div class="flex items-center justify-between mb-1">
-        <h3 class="text-lg font-semibold text-gray-800">从EV系统导入进度线</h3>
-        <button class="p-1 text-gray-400 hover:text-gray-600" onclick="closeEvImportModal()">
-          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-          </svg>
-        </button>
-      </div>
-      <p class="text-xs text-gray-400 mb-4">数据来源：EV系统 · 院校项目库（卡内基梅隆大学 · 计算机科学 · 2026 Fall）。先勾选需要导入的时间字段，下方节点预览将实时联动；确认后按预览顺序生成网申进度线。</p>
-
-      <!-- ① 导入字段选择（对应EV数据库录入标准字段） -->
-      <div class="mb-4">
-        <p class="text-sm font-medium text-gray-700 mb-2">① 选择导入字段<span class="text-xs text-gray-400 font-normal ml-2">字段与EV数据库录入标准一致，取消勾选则对应节点不导入</span></p>
-        <div class="grid grid-cols-3 gap-2">
-          <label class="flex items-center gap-2 px-3 py-2 bg-gray-50 rounded-lg text-sm text-gray-700 cursor-pointer hover:bg-gray-100"><input type="checkbox" id="evf-f_open" checked class="w-4 h-4 text-blue-600 rounded" onchange="toggleEvField('f_open')">申请开始</label>
-          <label class="flex items-center gap-2 px-3 py-2 bg-gray-50 rounded-lg text-sm text-gray-700 cursor-pointer hover:bg-gray-100"><input type="checkbox" id="evf-f_deadline" checked class="w-4 h-4 text-blue-600 rounded" onchange="toggleEvField('f_deadline')">申请截止</label>
-          <label class="flex items-center gap-2 px-3 py-2 bg-gray-50 rounded-lg text-sm text-gray-700 cursor-pointer hover:bg-gray-100"><input type="checkbox" id="evf-f_milestone" checked class="w-4 h-4 text-blue-600 rounded" onchange="toggleEvField('f_milestone')">节点名称 + 节点时间</label>
-          <label class="flex items-center gap-2 px-3 py-2 bg-gray-50 rounded-lg text-sm text-gray-700 cursor-pointer hover:bg-gray-100"><input type="checkbox" id="evf-f_admit" checked class="w-4 h-4 text-blue-600 rounded" onchange="toggleEvField('f_admit')">录取开始</label>
-          <label class="flex items-center gap-2 px-3 py-2 bg-gray-50 rounded-lg text-sm text-gray-700 cursor-pointer hover:bg-gray-100"><input type="checkbox" id="evf-f_admitEnd" class="w-4 h-4 text-blue-600 rounded" onchange="toggleEvField('f_admitEnd')">录取截止</label>
-          <label class="flex items-center gap-2 px-3 py-2 bg-gray-50 rounded-lg text-sm text-gray-700 cursor-pointer hover:bg-gray-100"><input type="checkbox" id="evf-f_enroll" checked class="w-4 h-4 text-blue-600 rounded" onchange="toggleEvField('f_enroll')">入学时间</label>
-        </div>
-      </div>
-
-      <!-- ② 节点预览与导入顺序 -->
-      <div class="flex items-center justify-between mb-1.5">
-        <p class="text-sm font-medium text-gray-700">② 节点预览与导入顺序<span class="text-xs text-gray-400 font-normal ml-2">导入后覆盖当前进度线</span></p>
-        <label class="flex items-center gap-2 text-xs text-gray-600 cursor-pointer select-none">
-          <input type="checkbox" id="evAutoSortToggle" checked class="w-3.5 h-3.5 text-blue-600 rounded" onchange="toggleEvAutoSort(this.checked)">
-          自动按时间顺序排列
-        </label>
-      </div>
-      <p class="text-xs text-gray-400 mb-2" id="evSortHint">已按节点时间从早到晚自动排列；取消勾选「自动按时间顺序排列」后，可使用每行右侧的 ↑ ↓ 手动调整顺序。</p>
-      <div id="evNodeList" class="space-y-2 max-h-[240px] overflow-y-auto pr-1"></div>
-
-      <div class="flex items-center gap-3 mt-5">
-        <button class="flex-1 h-10 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium" onclick="confirmEvImport()">确认导入</button>
-        <button class="flex-1 h-10 bg-white border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors font-medium" onclick="closeEvImportModal()">取消</button>
-      </div>
-    </div>
-  </div>
   <!-- 配置进度线弹窗 -->
   <div id="timelineConfigModal" class="fixed inset-0 z-50 hidden">
     <div class="absolute inset-0 bg-black bg-opacity-30" onclick="closeTimelineConfigModal()"></div>
@@ -1344,22 +1247,6 @@
       }
     });
 
-    // ===== 关联邮箱：绑定已有邮箱 =====
-    function openEmailBindingModal() { document.getElementById('emailBindingModal').classList.remove('hidden'); }
-    function closeEmailBindingModal() {
-      document.getElementById('emailBindingModal').classList.add('hidden');
-    }
-
-    // ===== 网申进度线：从EV系统导入 =====
-    // 字段命名与EV数据库录入标准一致：申请开始 / 申请截止 / 节点名称 / 节点时间 / 录取开始 / 录取截止 / 入学时间
-    var evFieldLabels = {
-      f_open: '申请开始',
-      f_deadline: '申请截止',
-      f_milestone: '节点名称+节点时间',
-      f_admit: '录取开始',
-      f_admitEnd: '录取截止',
-      f_enroll: '入学时间'
-    };
     var evNodes = [
       { field: 'f_open',      name: '申请开放',          date: '2026-09-01', note: '申请通道开放，可开始填写网申', checked: true },
       { field: 'f_milestone', name: '早轮申请（ED/EA）',  date: '2026-11-01', note: '早轮申请提交截止', checked: true },
@@ -1368,80 +1255,18 @@
       { field: 'f_admit',     name: '录取结果公布',       date: '2027-03-15', note: '录取开始发放', checked: true },
       { field: 'f_enroll',    name: '入学报到',          date: '2027-08-28', note: '入学时间，办理注册手续', checked: true }
     ];
-    var evAutoSort = true;
-
-    function openEvImport() {
-      document.getElementById('evImportModal').classList.remove('hidden');
-      renderEvNodes();
-    }
-    function closeEvImportModal() {
-      document.getElementById('evImportModal').classList.add('hidden');
-    }
-    function evFieldChecked(fieldId) {
-      var cb = document.getElementById('evf-' + fieldId);
-      return cb ? cb.checked : true;
-    }
-    function toggleEvField(fieldId) {
-      // 字段取消勾选后，其对应节点不参与导入（置灰并取消勾选）
-      evNodes.forEach(function(n) { if (n.field === fieldId) n.checked = evFieldChecked(fieldId); });
-      renderEvNodes();
-    }
-    function toggleEvAutoSort(on) {
-      evAutoSort = on;
-      if (on) {
-        evNodes.sort(function(a, b) { return a.date < b.date ? -1 : (a.date > b.date ? 1 : 0); });
-      }
-      document.getElementById('evSortHint').textContent = on
-        ? '已按节点时间从早到晚自动排列；取消勾选「自动按时间顺序排列」后，可使用每行右侧的 ↑ ↓ 手动调整顺序。'
-        : '手动排序模式：使用每行右侧的 ↑ ↓ 调整节点顺序，确认导入时按当前顺序生成进度线。';
-      renderEvNodes();
-    }
-    function moveEvNode(idx, dir) {
-      if (evAutoSort) return; // 自动排序模式下禁用手动调整
-      var target = idx + dir;
-      if (target < 0 || target >= evNodes.length) return;
-      var t = evNodes[idx]; evNodes[idx] = evNodes[target]; evNodes[target] = t;
-      renderEvNodes();
-    }
-    function toggleEvNodeCheck(idx, checked) { evNodes[idx].checked = checked; }
-    function renderEvNodes() {
-      var list = document.getElementById('evNodeList');
-      if (!list) return;
-      var html = '';
-      evNodes.forEach(function(n, i) {
-        var fieldOn = evFieldChecked(n.field);
-        var rowCls = fieldOn ? 'bg-gray-50' : 'bg-gray-50 opacity-45';
-        var arrowCls = evAutoSort ? 'opacity-30 cursor-not-allowed' : 'hover:text-blue-600 hover:bg-blue-50';
-        html += '<div class="flex items-center gap-3 p-3 rounded-lg ' + rowCls + '">'
-          + '<input type="checkbox" class="w-4 h-4 text-blue-600 rounded flex-shrink-0" ' + ((n.checked && fieldOn) ? 'checked' : '') + (fieldOn ? '' : ' disabled') + ' onchange="toggleEvNodeCheck(' + i + ', this.checked)">'
-          + '<div class="flex-1 min-w-0">'
-          +   '<div class="flex items-center justify-between gap-2">'
-          +     '<span class="text-sm font-medium text-gray-900">' + (i + 1) + '. ' + n.name + '</span>'
-          +     '<span class="text-xs text-gray-500 flex-shrink-0">' + n.date + '</span>'
-          +   '</div>'
-          +   '<div class="flex items-center gap-2 mt-0.5">'
-          +     '<span class="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-medium bg-blue-50 text-blue-600 flex-shrink-0">EV字段：' + evFieldLabels[n.field] + '</span>'
-          +     '<span class="text-xs text-gray-400 truncate">' + n.note + '</span>'
-          +   '</div>'
-          + '</div>'
-          + '<div class="flex flex-col gap-0.5 flex-shrink-0">'
-          +   '<button class="p-0.5 text-gray-400 rounded ' + arrowCls + '" ' + (evAutoSort ? 'disabled' : '') + ' onclick="moveEvNode(' + i + ', -1)" title="上移">'
-          +     '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7"/></svg>'
-          +   '</button>'
-          +   '<button class="p-0.5 text-gray-400 rounded ' + arrowCls + '" ' + (evAutoSort ? 'disabled' : '') + ' onclick="moveEvNode(' + i + ', 1)" title="下移">'
-          +     '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>'
-          +   '</button>'
-          + '</div>'
-          + '</div>';
-      });
-      list.innerHTML = html;
-    }
-    function confirmEvImport() {
-      var selected = evNodes.filter(function(n) { return n.checked && evFieldChecked(n.field); });
-      if (!selected.length) { alert('请至少勾选一个导入节点'); return; }
-      timelineNodes = selected.map(function(node) { return { name: node.name, date: node.date, note: node.note || '', completed: false, type:'ev' }; });
-      renderApplicationTimeline();
-      closeEvImportModal();
+    function refreshApplicationTimeline(button) {
+      if (button.disabled || !pbsHasPermission('app_fill')) return;
+      button.disabled = true; button.classList.add('is-refreshing');
+      setTimeout(function() {
+        var previous = timelineNodes;
+        timelineNodes = previous.filter(function(node) { return node.type !== 'ev'; }).concat(evNodes.map(function(node) {
+          var saved = previous.find(function(item) { return item.name === node.name; });
+          return { name:node.name, date:node.date, note:node.note || '', completed:!!(saved && saved.completed), type:'ev' };
+        })).sort(function(a,b) { return a.date.localeCompare(b.date); });
+        renderApplicationTimeline();
+        button.disabled = false; button.classList.remove('is-refreshing');
+      }, 300);
     }
     // ===== 网申进度线：配置 =====
     function openTimelineConfig() {
@@ -1486,7 +1311,7 @@
       if (rows.some(function(row) { return !row.querySelector('input').value.trim(); })) { alert('请填写节点名称'); return; }
       timelineNodes = rows.map(function(row) {
         var inputs = row.querySelectorAll('input');
-        return { name: inputs[0].value.trim(), date: inputs[1].value || row.dataset.date || '', note: inputs[2].value.trim(), completed: row.dataset.completed === '1', type:row.dataset.type || 'ev' };
+        return { name: inputs[0].value.trim(), date: inputs[1].value || row.dataset.date || '', note: inputs[2].value.trim(), completed: row.dataset.completed === '1', type:row.dataset.type || 'custom' };
       });
       renderApplicationTimeline();
       closeTimelineConfigModal();
@@ -1686,7 +1511,9 @@
 
     // 时间线：点击圆点切换完成状态
     var timelineNodes = Array.from(document.querySelectorAll("#nsTimeline .ns-tl-item")).map(function(item,index) { return {name:item.querySelector("h3").textContent,date:item.querySelector(".ns-tl-meta span").textContent,note:item.querySelector(".application-timeline-note").textContent,type:item.dataset.type,completed:item.querySelector(".ns-tl-dot").classList.contains("is-done")}; });
+    var systemTimelineNodes = timelineNodes.filter(function(node) { return node.type === "ddl"; });
     try { timelineNodes = JSON.parse(localStorage.getItem("pbs_application_timeline_cmu")) || timelineNodes; } catch(e) {}
+    timelineNodes = systemTimelineNodes.map(function(node) { return Object.assign({}, timelineNodes.find(function(item) { return item.name === node.name; }) || node, { type:'ddl' }); }).concat(timelineNodes.filter(function(node) { return !systemTimelineNodes.some(function(item) { return item.name === node.name; }); }));
 
     function toggleNsNode(id) {
       var node = timelineNodes[id - 1]; if (!node) return; node.completed = !node.completed; renderApplicationTimeline();
@@ -1898,37 +1725,10 @@
     });
   </script>
   <script>
-    function confirmManualEmailBinding() { pbsApplication.bindEmail(); }
 
     function scrollToNsSection(id) {
       var el = document.getElementById(id);
       if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    }
-
-    // 关联邮箱绑定：按钮红/绿双态 + 板块级横幅联动
-    function refreshBindBanner() {
-      var row = document.getElementById('accRowCurrent');
-      var banner = document.getElementById('accBindBanner');
-      var text = document.getElementById('accBindBannerText');
-      if (!row || !banner) return;
-      var bound = row.getAttribute('data-bound') === 'true';
-      banner.className = 'ns-banner mb-4 ' + (bound ? 'is-ok' : 'is-warn');
-      if (text) text.textContent = bound
-        ? '已成功绑定邮箱，可正常监控申请动态'
-        : '当前任务未绑定邮箱，无法监控邮箱动态，请及时点击「关联邮箱绑定」';
-    }
-    function setRowBound(rowId, bound) {
-      var row = document.getElementById(rowId);
-      if (!row) return;
-      row.setAttribute('data-bound', bound ? 'true' : 'false');
-      var btn = document.getElementById('bindBtnCurrent');
-      if (btn) {
-        btn.className = 'ns-bind-btn ' + (bound ? 'is-bound' : 'is-unbound');
-        btn.innerHTML = bound
-          ? '<svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>已绑定'
-          : '<svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 010 5.656l-3 3a4 4 0 105.656-5.656l1.5-1.5m-.758-4.242a4 4 0 005.656 0l3-3a4 4 0 00-5.656-5.656l-1.5 1.5m-6.364 2.122L9 7m3 4l3 3"></path></svg>关联邮箱绑定';
-      }
-      refreshBindBanner();
     }
 
     // 上传材料：从学生档案「资产文件 / 已交付文件」选择
@@ -2050,12 +1850,12 @@
         if (wrap2) wrap2.classList.add('hidden');
         showMaterialsEmpty();
       }
-      refreshBindBanner();
+
     });
   </script>
-  <script src="./assets/js/pbs-app.js?v=7.6"></script>
-  <link rel="stylesheet" href="./assets/css/pbs-application.css?v=1.2">
-  <script src="./assets/js/pbs-application.js?v=1.2"></script>
+  <script src="./assets/js/pbs-app.js?v=7.8"></script>
+  <link rel="stylesheet" href="./assets/css/pbs-application.css?v=1.3">
+  <script src="./assets/js/pbs-application.js?v=1.3"></script>
 
 
   

@@ -231,7 +231,7 @@
     </div>
   </div>
 
-  <script src="./assets/js/pbs-app.js?v=7.6"></script>
+  <script src="./assets/js/pbs-app.js?v=7.8"></script>
   <script>
     var PBS_ACCOUNTS = [
       { u:'pmo',e:'pmo@pbs.com',phone:'13800000005',p:'pbs123456',name:'林老师',role:'PMO',org:'PBS留学总部' },
@@ -430,7 +430,7 @@
       handleLogin(null);
     }
 
-    /* 首次登录强制改密（独立于 pbs-app.js?v=7.6 的菜单入口，成功后自动进入工作台） */
+    /* 首次登录强制改密（独立于 pbs-app.js?v=7.8 的菜单入口，成功后自动进入工作台） */
     function forceChangePassword() {
       var u = sessionStorage.getItem('pbs_pending_account') || document.getElementById('username').value.trim();
       var layer = document.createElement('div');

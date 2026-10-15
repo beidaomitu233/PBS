@@ -129,7 +129,7 @@
     var values = [window.projectData.projectNo, window.projectData.customer, window.projectData.student, window.projectData.level];
     document.querySelectorAll('#basic-info .grid > div').forEach(function(node, index) { if (index < 4) node.querySelector('p').textContent = values[index]; });
     document.querySelectorAll('#confirmModal .bg-gray-50 .flex > span:last-child').forEach(function(node, index) { if (index < 3) node.textContent = [values[0], values[1] + ' / ' + values[2], values[3]][index]; });
-    scopeSchool = params.get('school') || ''; orderMode = params.get('orderReport') === '1';
+    scopeSchool = params.get('school') || ''; orderMode = !!(project && (pbsOrders.canManage(project) || params.get('orderReport') === '1' && pbsOrders.canAssignOwner(project)));
     closureKey = 'pbs_closure_' + window.projectData.projectNo + (scopeSchool ? '_' + scopeSchool : ''); reportsKey = 'pbs_closure_reports_' + window.projectData.projectNo + (scopeSchool ? '_' + scopeSchool : '');
     if (orderMode) reportsKey = 'pbs_order_closure_reports_' + pbsOrders.key(project);
     var savedClosure = scopeSchool ? project && (project.goalClosures || {})[scopeSchool] || {} : project || {};
@@ -160,7 +160,9 @@
     var table = document.querySelector('#result-confirm .result-table'), header = table.querySelector('.result-table__head').outerHTML;
     table.innerHTML = header + window.projectData.targets.map(function(target) {
       var done = state.confirmed[target.code], unavailable = target.result === '待录入';
-      return '<div class="result-table__row" role="row"><div class="result-target" role="cell"><strong>' + esc(target.school) + '</strong><span class="result-target__major">' + esc(target.major) + '</span></div><div class="result-state ' + (target.result === '录取' ? 'result-state--admitted' : target.result === '拒录' ? 'result-state--rejected' : '') + '" role="cell">' + esc(target.result) + '</div><div role="cell">' + (target.image ? '<button class="result-view-button" onclick="showClosureResultImage(\'' + esc(target.code) + '\')">查看图片</button>' : esc(target.note)) + '</div><div role="cell" class="result-confirm-actions">' + (done ? '<span class="result-confirmed-text">已确认</span>' : orderMode ? '<span class="result-pending-text">待 PMO 核验</span>' : '<span id="badge-' + esc(target.code) + '" class="result-pending-text">待确认</span><button id="btnConfirm-' + esc(target.code) + '" class="result-confirm-button"' + (unavailable ? ' disabled title="请先录入网申结果"' : '') + ' onclick="confirmResult(\'' + esc(target.code) + '\')">确认结果</button>') + '</div></div>';
+      var targetKey = target.code.split('::'), source = targetKey.length > 1 ? pbsProjects.find(targetKey[0]) : project, goalId = targetKey.length > 1 ? targetKey[1] : target.code, submission = (source.goalSubmissions || {})[goalId] || {};
+      var reviewAction = '<span class="' + (done ? 'result-confirmed-text' : 'result-pending-text') + '">' + esc(source.status === '已结项' ? '已结项' : submission.status || '待提交') + '</span>' + (submission.submittedAt ? '<button class="result-confirm-button" onclick="pbsPmoClosure.review(\'' + esc(source.projectNo) + '\',\'' + esc(goalId) + '\')">' + (pbsOrders.canManage(source) && submission.status === '待审核' ? '核验材料' : '查看材料') + '</button>' : '');
+      return '<div class="result-table__row" role="row"><div class="result-target" role="cell"><strong>' + esc(target.school) + '</strong><span class="result-target__major">' + esc(target.major) + '</span></div><div class="result-state ' + (target.result === '录取' ? 'result-state--admitted' : target.result === '拒录' ? 'result-state--rejected' : '') + '" role="cell">' + esc(target.result) + '</div><div role="cell">' + (target.image ? '<button class="result-view-button" onclick="showClosureResultImage(\'' + esc(target.code) + '\')">查看图片</button>' : esc(target.note)) + '</div><div role="cell" class="result-confirm-actions">' + (orderMode ? reviewAction : done ? '<span class="result-confirmed-text">已确认</span>' : '<span id="badge-' + esc(target.code) + '" class="result-pending-text">待确认</span><button id="btnConfirm-' + esc(target.code) + '" class="result-confirm-button"' + (unavailable ? ' disabled title="请先录入网申结果"' : '') + ' onclick="confirmResult(\'' + esc(target.code) + '\')">确认结果</button>') + '</div></div>';
     }).join('');
     window.pendingCount = window.projectData.targets.filter(function(target) { return !state.confirmed[target.code]; }).length;
     window.updateClosureHint();
@@ -193,7 +195,7 @@
   window.confirmResult = function(code) { if (!canEdit() || orderMode) return; confirmResult(code); if (closureKey) { state.confirmed = state.confirmed || {}; state.confirmed[code] = true; localStorage.setItem(closureKey, JSON.stringify(state)); var target = window.projectData.targets.find(function(item) { return item.code === code; }); if (target && project.packages.some(function(goal) { return goal.id === code; })) { var results = Object.assign({},pbsProjects.find(project.projectNo).goalResults || {}); results[code] = {result:target.result,note:target.note,image:target.image}; project = pbsProjects.update(project.projectNo,{goalResults:results}); } } };
   window.openConfirmModal = window.doConfirmClosure = function() {
     if (!project || !pbsOrders.canManage(project) || !window.pbsHasPermission('archive_approve')) return;
-    location.href = '订单项目详情页 - 留学申请管理系统.html?project=' + encodeURIComponent(project.projectNo) + '#closure';
+    window.pbsPmoClosure.confirm();
   };
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', initialize); else initialize();
 })();

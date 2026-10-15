@@ -126,9 +126,7 @@
   ]);
   definePermissionPage('PMO监控台', 'project_detail', '项目详情页', '项目详情页 - 留学申请管理系统.html', [
     { id: 'project_view_detail', label: '列表展示' },
-    { id: 'project_team_manage', label: '管理团队' }
-  ]);
-  definePermissionPage('PMO监控台', 'order_detail', '订单项目详情页', '订单项目详情页 - 留学申请管理系统.html', [
+    { id: 'project_team_manage', label: '管理团队' },
     { id:'order_view', label:'查看订单目标' }, { id:'order_assign_pm', label:'分配院校目标项目经理' }
   ]);
   definePermissionPage('PMO监控台', 'goal_detail', '院校目标详情页', '院校目标详情页 - 留学申请管理系统.html', [
@@ -717,7 +715,6 @@
     '平台运维工作台 - PBS留学CRM系统.html': ['平台运维人员'],
     '机构管理员工作台 - 留学申请管理系统.html': ['机构管理员'],
     'PMO工作台 - 留学申请管理系统.html': ['PMO'],
-    '订单项目详情页 - 留学申请管理系统.html': ['机构管理员', 'PMO'],
     '项目经理工作台 - 留学申请管理系统.html': ['项目经理'],
     '学生档案列表页 - 留学申请管理系统.html': ['机构管理员', 'PMO', '销售人员', '项目经理', '文书人员', '网申人员', '文书审核', '文书机构管理员'],
     '学生档案详情页 - 留学申请管理系统.html': ['机构管理员', 'PMO', '销售人员', '项目经理', '文书人员', '网申人员', '文书审核', '文书机构管理员'],
@@ -1175,7 +1172,7 @@
       var all = readStore(key, {}), record = all[orderKey(project)] || {};
       Object.assign(record, { pmoAccount:account.u, pmoName:account.name, assignedAt:new Date().toISOString(), assignedBy:session().name }); all[orderKey(project)] = record; writeStore(key, all);
       event(project,'分配 PMO',(project.orderNo || project.projectNo) + ' → ' + account.name);
-      window.pbsCreateNotification({kind:'task_assigned',type:'订单分配提醒',title:project.student + '的订单已分配给你',business:project.orderNo || project.projectNo,recipientName:account.name,recipientRoles:['PMO'],organization:project.org,href:'订单项目详情页 - 留学申请管理系统.html?project=' + encodeURIComponent(projectNo)});
+      window.pbsCreateNotification({kind:'task_assigned',type:'订单分配提醒',title:project.student + '的订单已分配给你',business:project.orderNo || project.projectNo,recipientName:account.name,recipientRoles:['PMO'],organization:project.org,href:'项目详情页 - 留学申请管理系统.html?project=' + encodeURIComponent(projectNo)});
       return record;
     }
     function assignGoal(projectNo, goalId, accountId) {
@@ -1221,7 +1218,7 @@
       if (payload.result && payload.result !== '待录入') { project.goalResults = Object.assign({},project.goalResults || {}); project.goalResults[goalId] = {result:payload.result,note:payload.resultNote || '',image:payload.resultImage || ''}; }
       project.goalSubmissions = Object.assign({},project.goalSubmissions || {}); project.goalSubmissions[goalId] = Object.assign({},payload,{ status:'待审核',submittedBy:session().name,submittedAt:new Date().toISOString() }); projects.upsert(project);
       event(project,'提交结项材料',projectNo + ' · ' + project.packages.find(function(goal) { return goal.id === goalId; }).school);
-      window.pbsCreateNotification({kind:'closure_review',type:'结项材料待核验',title:project.student + '的结项材料待核验',business:project.orderNo || projectNo,recipientName:state(project).pmoName,recipientRoles:['PMO'],organization:project.org,href:'订单项目详情页 - 留学申请管理系统.html?project=' + encodeURIComponent(projectNo) + '#closure'});
+      window.pbsCreateNotification({kind:'closure_review',type:'结项材料待核验',title:project.student + '的结项材料待核验',business:project.orderNo || projectNo,recipientName:state(project).pmoName,recipientRoles:['PMO'],organization:project.org,href:'结项详情页 - 留学申请管理系统.html?project=' + encodeURIComponent(projectNo) + '&orderReport=1'});
       return project.goalSubmissions[goalId];
     }
     function review(projectNo, goalId, approve, note) {
@@ -3062,12 +3059,12 @@
   if (!document.querySelector('link[href*="pbs-delivery.css"]')) {
     var style = document.createElement('link');
     style.rel = 'stylesheet';
-    style.href = './assets/css/pbs-delivery.css?v=2.0';
+    style.href = './assets/css/pbs-delivery.css?v=2.1';
     document.head.appendChild(style);
   }
   if (!document.querySelector('script[src*="pbs-delivery.js"]')) {
     var script = document.createElement('script');
-  script.src = './assets/js/pbs-delivery.js?v=2.4';
+  script.src = './assets/js/pbs-delivery.js?v=2.5';
     document.body.appendChild(script);
   }
 })();

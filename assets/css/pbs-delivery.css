@@ -440,7 +440,7 @@
 .pbs-payment-table-head { min-height: 34px; background: #fafbfc; color: #94a3b8; font-size: 11px; }
 .pbs-payment-table-row { min-height: 48px; border-top: 1px solid #f0f2f5; }
 .pbs-payment-table-head + .pbs-payment-table-row { border-top: 0; }
-.pbs-payment-document-grid { grid-template-columns: minmax(90px, .8fr) 90px 100px 100px 84px; }
+.pbs-payment-document-grid { grid-template-columns: minmax(90px, 1fr) 100px 84px; }
 .pbs-payment-table-row > strong,
 .pbs-payment-delivery-row > strong { color: #334155; font-size: 13px; }
 .pbs-payment-paid { display: inline-flex; align-items: center; gap: 6px; color: #64748b; font-size: 12px; }

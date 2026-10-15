@@ -78,7 +78,7 @@
   </style>
   <link rel="stylesheet" href="./assets/css/pbs-theme.css?v=6.4">
   <link rel="stylesheet" href="./assets/css/pbs-student-profile.css?v=1.5">
-  <link rel="stylesheet" href="./assets/css/pbs-my-project.css?v=1.3">
+  <link rel="stylesheet" href="./assets/css/pbs-my-project.css?v=1.4">
 </head>
 <body class="min-h-screen my-project-detail">
   <!-- 顶部导航栏 -->
@@ -315,18 +315,12 @@
         </div>
       </section>
 
-      <section class="project-summary-card order-1" aria-label="项目总览">
-        <div class="project-summary-content">
-          <div class="project-overview-group">
-            <section class="project-summary-ddl" aria-label="项目关键 DDL">
-              <div class="project-ddl-heading"><h2>项目关键 DDL</h2><span id="schoolCockpitMeta"></span></div>
-              <div id="projectDdlStrip" class="project-ddl-strip"></div>
-            </section>
-            <section class="project-summary-delivery" aria-label="支付与交付信息">
-              <h2>支付与交付信息</h2>
-              <div id="paymentInfo" class="text-sm"></div>
-            </section>
-          </div>
+      <!-- 院校申请流程 -->
+      <section id="schoolCockpitSection" class="order-3 mb-6">
+        <div class="project-cockpit-shell">
+          <section class="project-flow-ddl" aria-label="项目关键 DDL">
+            <div class="project-ddl-heading"><h2>项目关键 DDL</h2><span id="schoolCockpitMeta"></span></div>
+            <div id="projectDdlStrip" class="project-ddl-strip"></div>
           <div id="projectTaskNoteBar" class="hidden col-span-2 border-t border-gray-100 pt-3">
             <div class="flex items-start gap-2 rounded-lg bg-gray-50 px-3 py-2.5">
               <svg class="w-4 h-4 text-blue-600 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5h2m-1 0v14m-4-8h8"></path></svg>
@@ -334,12 +328,7 @@
             </div>
           </div>
           <div id="projectClosureNoteBar" class="hidden col-span-2 border-t border-gray-100 pt-3"><p class="text-sm leading-5"><span class="font-semibold text-gray-700">结项备注：</span><span id="projectClosureNote" class="text-gray-600 whitespace-pre-wrap"></span></p></div>
-        </div>
-      </section>
-
-      <!-- 院校申请流程 -->
-      <section id="schoolCockpitSection" class="order-3 mb-6">
-        <div class="project-cockpit-shell">
+          </section>
           <aside class="project-flow-rail">
             <p class="text-xs font-semibold text-gray-400 px-3 mb-2">院校申请流程</p>
             <button type="button" class="project-flow-button" data-project-stage="material" onclick="switchProjectStage('material',this)"><span class="project-flow-index">1</span><span class="project-flow-copy"><span class="block text-sm font-medium">材料齐备</span><span class="project-flow-meta"><span data-stage-status>—</span><span data-stage-duration>—</span></span></span></button>
@@ -347,8 +336,13 @@
             <button type="button" class="project-flow-button" data-project-stage="apply" onclick="switchProjectStage('apply',this)"><span class="project-flow-index">3</span><span class="project-flow-copy"><span class="block text-sm font-medium">网申提交</span><span class="project-flow-meta"><span data-stage-status>—</span><span data-stage-duration>—</span></span></span></button>
             <button type="button" class="project-flow-button" data-project-stage="monitor" onclick="switchProjectStage('monitor',this)"><span class="project-flow-index">4</span><span class="project-flow-copy"><span class="block text-sm font-medium">监控阶段</span><span class="project-flow-meta"><span data-stage-status>—</span><span data-stage-duration>—</span></span></span></button>
             <button type="button" class="project-flow-button" data-project-stage="archive" onclick="switchProjectStage('archive',this)"><span class="project-flow-index">5</span><span class="project-flow-copy"><span class="block text-sm font-medium">目标结项</span><span class="project-flow-meta"><span data-stage-status>—</span><span data-stage-duration>—</span></span></span></button>
+            <button type="button" class="project-flow-button project-flow-submit" data-project-stage="submission" onclick="switchProjectStage('submission',this)"><span class="project-flow-index"><svg width="15" height="15" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M12 16V4m-4 4 4-4 4 4M4 15v4a1 1 0 001 1h14a1 1 0 001-1v-4"/></svg></span><span class="project-flow-copy"><span class="block text-sm font-medium">材料提交</span></span></button>
           </aside>
           <div id="projectStageContent" class="project-flow-content" aria-live="polite"></div>
+          <section id="projectSubmissionContent" class="project-flow-content project-submission-panel" aria-label="材料提交" hidden>
+            <h2>材料提交</h2>
+            <div id="paymentInfo" class="text-sm"></div>
+          </section>
         </div>
         <p class="stage-iframe-note mt-2">每个院校目标独立推进交付，结项材料提交 PMO 核验。</p>
       </section>
@@ -756,7 +750,7 @@
     function renderProjectDdls(s) {
       var docs = s.docs.slice().sort(function(a, b) { return String(a.ddl || a.mall).localeCompare(String(b.ddl || b.mall)); });
       var nextDoc = docs.find(function(d) { return d.status !== '已完成'; }) || docs[0];
-      var detailRows = s.docs.map(function(d) { return '<span>' + documentTypeLabel(d) + '</span><strong>' + ddlValue(d.ddl, d.key) + '</strong>'; }).join('');
+      var detailRows = s.docs.map(function(d) { return '<div class="project-ddl-document"><span>' + documentTypeLabel(d) + '</span><strong>' + ddlValue(d.ddl, d.key) + '</strong></div>'; }).join('');
       var docDetails = '<div class="project-ddl-document-list">' + detailRows + '</div>';
       return ddlSummaryCard('材料准备', '最近时限', s.materialDdl.managed, '#C9A87C', '', false, 'material') +
         ddlSummaryCard('文书交付', '最近：' + documentTypeLabel(nextDoc), nextDoc.ddl, '#7D869A', docDetails, !!nextDoc.near, nextDoc.key) +
@@ -945,6 +939,13 @@
       if (button) { button.classList.add('is-active'); }
       var content = document.getElementById('projectStageContent');
       if (!content) { return; }
+      var submission = document.getElementById('projectSubmissionContent');
+      content.hidden = stage === 'submission';
+      submission.hidden = stage !== 'submission';
+      if (stage === 'submission') {
+        if (window.renderPaymentInfo) window.renderPaymentInfo();
+        return;
+      }
       var view = getSchoolStageView(stage);
       if (view) { content.innerHTML = renderProjectStageView(view); }
       if (window.pbsTaskReturn) window.pbsTaskReturn.refresh();
@@ -1329,10 +1330,13 @@
     }
     function switchSchoolCockpit(schoolId) {
       if (!SCHOOL_COCKPITS[schoolId]) { return; }
+      var active = document.querySelector('[data-project-stage].is-active');
+      var keepSubmission = active && active.dataset.projectStage === 'submission';
       currentSchoolCockpit = schoolId;
       var selector = document.getElementById('schoolCockpitSelect');
       if (selector) { selector.value = schoolId; }
       refreshCockpit();
+      if (keepSubmission) switchProjectStage('submission', document.querySelector('[data-project-stage="submission"]'));
       if (window.pbsRefreshProjectNotes) window.pbsRefreshProjectNotes();
     }
     function closeNotificationModal() {

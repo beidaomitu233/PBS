@@ -1123,6 +1123,8 @@
       if (!project || !pbsOrders.canView(project)) { document.querySelector('main').innerHTML = '<div class="bg-white rounded-xl border border-gray-100 p-6 text-sm text-gray-500">无权查看该项目</div>'; return; }
       applyProjectContext();
       syncProjectAssignmentState();
+      var requestedGoal = new URLSearchParams(location.search).get('school');
+      if (GOALS.some(function(goal) { return goal.id === requestedGoal; })) { activeGoalId = requestedGoal; chgActiveGoalId = requestedGoal; }
       var assignBtn = document.querySelector('[data-dom-id="btn-assign"]');
       if (assignBtn) assignBtn.addEventListener('click', openAssignDrawer);
 

@@ -7,9 +7,9 @@
   var key = 'pbs_task_returns_v1';
   var page = decodeURIComponent(location.pathname.split('/').pop() || '');
   function read() { try { return JSON.parse(localStorage.getItem(key) || '[]'); } catch (e) { return []; } }
-  function save(items) { localStorage.setItem(key, JSON.stringify(items)); refresh(); }
+  function save(items) { localStorage.setItem(key, JSON.stringify(items)); refresh(); window.dispatchEvent(new CustomEvent('pbs-task-return-updated')); }
   function text(value) { var el = document.createElement('span'); el.textContent = value || ''; return el.innerHTML; }
-  function identity(item) { return [item.organization, item.kind, item.student, item.school, item.doc || ''].join('|'); }
+  function identity(item) { return [item.organization,item.projectNo || '',item.goalId || '',item.kind,item.student,item.school,item.doc || ''].join('|'); }
   function close() {
     var mask = document.getElementById('pbsTaskReturnDialog');
     if (!mask) return;
@@ -46,12 +46,14 @@
       callback(reason);
       if (context.kind !== 'project') {
         var session = window.pbsGetSession ? window.pbsGetSession() : {};
-        var item = Object.assign({}, context, { reason: reason, returnedAt: new Date().toISOString(), returnedBy: session.name || '', organization: session.org || 'PBS留学总部', status: 'returned' });
-        item.id = identity(item);
-        var items = read().filter(function (row) { return row.id !== item.id; });
+        var item = Object.assign({}, context, { reason: reason, returnedAt: new Date().toISOString(), returnedBy: session.name || '', returnedAccount:session.account, organization: session.org || 'PBS留学总部', status: 'returned' });
+        var target = window.pbsOrders && pbsOrders.taskTarget(item);
+        if (target) { item.projectNo = target.project.projectNo; item.goalId = target.goal.id; }
+        item.id = identity(item) + '|' + Date.now() + '-' + Math.random().toString(36).slice(2,6);
+        var items = read();
         items.push(item);
         save(items);
-        if (window.pbsCreateNotification) window.pbsCreateNotification({ kind: 'task_assigned', type: '任务退回提醒', title: item.label + '已退回', business: item.student + ' · ' + item.school, detail: '退回原因：' + reason, level: 'danger', recipientRoles: context.kind === 'review' ? ['项目经理', '文书人员'] : ['项目经理'], organization: item.organization, href: '项目经理工作台 - 留学申请管理系统.html' });
+        if (window.pbsCreateNotification) window.pbsCreateNotification({ kind: 'task_return', type: '任务退回提醒', title: item.label + '已退回', business: item.student + ' · ' + item.school, detail: '退回原因：' + reason, level: 'danger', recipientName:target ? pbsOrders.manager(target.project,target.goal.id).name : '', recipientRoles:['项目经理'], organization:item.organization, href:'我的项目列表页 - 留学申请管理系统.html?returns=1' });
       }
       close();
     });
@@ -63,8 +65,18 @@
       var person = mask.querySelector('select').value;
       var ddl = mask.querySelector('input').value;
       if (!person || !ddl) { mask.querySelector('.pbs-task-error').textContent = '请选择接收人和完成时间'; return; }
+      var target = window.pbsOrders && pbsOrders.taskTarget(item);
+      if (target) {
+        var assignments = pbsProjects.getAssignment(target.project.projectNo), goals = {}, assignment = JSON.parse(JSON.stringify(assignments.goalAssignments[target.goal.id] || {}));
+        assignment.docs = assignment.docs || {}; assignment.reviewers = assignment.reviewers || {};
+        if (item.kind === 'application') { assignment.network = person; assignment.networkMatDdl = assignment.networkMatDdl || ddl; assignment.networkDdl = ddl; }
+        else if (item.kind === 'review') { assignment.reviewers[item.doc] = person; assignment.docs[item.doc] = Object.assign({},assignment.docs[item.doc],{ddl:ddl}); }
+        else assignment.docs[item.doc] = {person:person,ddl:ddl};
+        goals[target.goal.id] = assignment;
+        if (!pbsProjects.saveAssignment(target.project.projectNo,goals,assignments.taskNote)) { mask.querySelector('.pbs-task-error').textContent = '无权分配该院校目标'; return; }
+      }
       var items = read();
-      items.forEach(function (row) { if (row.id === item.id) { row.status = 'assigned'; row.assignee = person; row.ddl = ddl; row.assignedAt = new Date().toISOString(); } });
+      items.forEach(function (row) { if (row.id === item.id) { row.status = 'assigned'; row.assignee = person; row.ddl = ddl; row.assignedAt = new Date().toISOString(); row.assignedBy = pbsGetSession().name; } });
       save(items);
       if (window.pbsCreateNotification) window.pbsCreateNotification({ kind: 'task_assigned', type: '任务派发提醒', title: item.label + '已重新分配', business: item.student + ' · ' + item.school, detail: '完成时间：' + ddl, recipientRoles: [item.kind === 'review' ? '文书审核' : item.kind === 'application' ? '网申人员' : '文书人员'], recipientName: person, organization: item.organization, href: item.page });
       close();
@@ -81,6 +93,7 @@
     var session = window.pbsGetSession ? window.pbsGetSession() : {};
     var items = read().filter(function (item) { return !session.org || item.organization === session.org; });
     document.querySelectorAll('tr[data-project]').forEach(function (row) {
+      if (row.dataset.projectReturns === 'true') return;
       var project = window.pbsProjects && window.pbsProjects.find(row.dataset.project);
       row.classList.toggle('pbs-returned-row', !!(project && project.rejectedAt && !project.projectManager));
       if (project && project.rejectReason) row.title = '退回原因：' + project.rejectReason;
@@ -142,6 +155,20 @@
   window.pbsTaskReturn = {
     confirm: confirmReturn,
     refresh: refresh,
+    resolveProject: function(project,assignments) {
+      var items = read(), changed = false;
+      items.forEach(function(item) {
+        if (item.status !== 'returned') return;
+        var target = window.pbsOrders && pbsOrders.taskTarget(item);
+        if (!target || target.project.projectNo !== project.projectNo || !assignments[target.goal.id]) return;
+        var assignment = assignments[target.goal.id], doc = (assignment.docs || {})[item.doc] || {};
+        var person = item.kind === 'application' ? assignment.network : item.kind === 'review' ? (assignment.reviewers || {})[item.doc] : doc.person;
+        var ddl = item.kind === 'application' ? assignment.networkDdl : doc.ddl;
+        if (!person || !ddl || item.kind === 'application' && !assignment.networkMatDdl) return;
+        Object.assign(item,{status:'assigned',assignee:person,ddl:ddl,assignedAt:new Date().toISOString(),assignedBy:pbsGetSession().name}); changed = true;
+      });
+      if (changed) save(items);
+    },
     accept: function (kind, student, school) {
       var items = read();
       var session = window.pbsGetSession();

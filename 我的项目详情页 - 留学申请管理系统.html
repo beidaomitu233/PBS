@@ -1375,6 +1375,9 @@
       var requestedSchool = MY_PROJECT_PARAMS.get('school');
       if (!SCHOOL_COCKPITS[requestedSchool]) requestedSchool = Object.keys(SCHOOL_COCKPITS)[0];
       switchSchoolCockpit(requestedSchool);
+      var action = MY_PROJECT_PARAMS.get('action');
+      if (action === 'change' && pbsHasPermission('my_project_team_manage')) openChangeDrawer();
+      if (action === 'assign' && pbsHasPermission('my_project_team_manage')) openAssignDrawer();
       var notifBtn = document.querySelector('[data-dom-id="btn-notification"]');
       if (notifBtn) {
         notifBtn.addEventListener('click', function() {

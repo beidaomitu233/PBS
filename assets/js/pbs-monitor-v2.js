@@ -74,6 +74,7 @@
   var selectedSchoolId = '';
   var toastTimer = null;
   var taskId = 1;
+  var listPager;
   var monitorNow = new Date('2026-08-18T12:00:00+08:00');
   var monitorSeverity = { '无待办': 0, '待处理': 1, '紧急处理': 2, '已逾期': 3 };
 
@@ -167,30 +168,40 @@
     if (clearEl) clearEl.textContent = clearCount;
   }
 
+  function linkedProjects(item) {
+    return window.pbsProjects ? window.pbsProjects.visible().filter(function(project) { return project.student === item.student; }) : [];
+  }
+
   function listFilters() {
     var kw = (document.getElementById('monitorKeyword').value || '').toLowerCase();
     var status = document.getElementById('monitorStatusFilter').value;
     var frequency = document.getElementById('monitorFrequencyFilter').value;
     return taskRows.filter(function (item) {
-      var text = [item.customer, item.student].join(' ').toLowerCase();
+      var text = [item.customer, item.student].concat(linkedProjects(item).map(function(project) { return project.orderNo + ' ' + project.projectNo; })).join(' ').toLowerCase();
       return (!kw || text.indexOf(kw) >= 0) && (!status || item.status === status) && (!frequency || item.frequency === frequency);
     });
   }
 
-  function renderList() {
+  function renderList(resetPage) {
     var body = document.getElementById('monitorTaskRows');
     if (!body) return;
     refreshDerivedTaskStatus();
     renderSummary();
-    var rows = listFilters();
-    var count = document.getElementById('monitorResultCount');
-    if (count) count.textContent = '共 ' + rows.length + ' 个学生监控任务';
+    var filtered = listFilters();
+    if (!listPager) listPager = pbsPagination(document.getElementById('monitorPagination'), function() { renderList(false); }, 'monitorResultCount');
+    var range = listPager.range(filtered.length, resetPage !== false);
+    var rows = filtered.slice(range.start,range.end);
     if (!rows.length) {
-      body.innerHTML = '<tr><td colspan="6"><div class="monitor-empty">没有符合当前条件的监控任务</div></td></tr>';
+      body.innerHTML = '<tr><td colspan="8"><div class="monitor-empty">没有符合当前条件的监控任务</div></td></tr>';
       return;
     }
     body.innerHTML = rows.map(function (item) {
+      var projects = linkedProjects(item);
+      var orders = Array.from(new Set(projects.map(function(project) { return project.orderNo || '—'; })));
+      var shared = projects.length > 1 && orders.length === 1 && orders[0] !== '—';
       return '<tr>' +
+        '<td class="monitor-order' + (shared ? ' is-shared' : '') + '">' + (orders.length ? orders.map(esc).join('<br>') : '—') + '</td>' +
+        '<td class="monitor-project-number">' + (projects.length ? projects.map(function(project) { return esc(project.projectNo); }).join('<br>') : '—') + '</td>' +
         '<td><div class="monitor-person"><strong>' + esc(item.customer) + '</strong></div></td>' +
         '<td><div class="monitor-person"><strong>' + esc(item.student) + '</strong></div></td>' +
         '<td>' + esc(item.frequency) + '</td>' +

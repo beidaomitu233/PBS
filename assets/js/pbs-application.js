@@ -26,7 +26,7 @@
   function renderAccounts() {
     var canEdit = window.pbsHasPermission('app_fill');
     document.querySelector('#sec-account tbody').innerHTML = accounts.map(function(record,index) {
-      return '<tr' + (index === 0 ? ' id="accRowCurrent" class="ns-acc-row--current"' : '') + ' data-bound="' + record.bound + '">' + accountFields.map(function(field) {
+      return '<tr' + (index === 0 ? ' id="accRowCurrent"' : '') + ' data-bound="' + record.bound + '">' + accountFields.map(function(field) {
         var key = field[0], value = record[key] || '', secret = key === 'password' || key === 'authCode', link = key === 'url' || key === 'emailUrl';
         var content = editingAccounts ? '<input data-account-row="' + index + '" data-account-field="' + key + '" aria-label="' + esc(record.school + ' · ' + field[1]) + '" type="' + (secret ? 'password' : link ? 'url' : key === 'email' ? 'email' : 'text') + '" value="' + esc(value) + '" autocomplete="off">' : link && /^https?:\/\//i.test(value) ? '<a class="ns-acc-link" href="' + esc(value) + '" target="_blank" rel="noopener">' + esc(value.replace(/\/$/,'')) + ' ↗</a>' : esc(value ? secret ? '••••••••' : value : '—');
         return '<td>' + content + '</td>';
@@ -72,12 +72,13 @@
     var first = timelineNodes.findIndex(function(node) { return !node.completed; });
     var today = new Date(); today.setHours(0,0,0,0);
     document.getElementById('nsTimeline').innerHTML = timelineNodes.map(function(node,index) {
-      var internal = node.type === 'ddl';
+      var internal = node.type === 'ddl', current = !node.completed && index === first;
+      var stateClass = node.completed ? 'is-done' : current ? 'is-current' : 'is-upcoming';
       var days = /^\d{4}-\d{2}-\d{2}$/.test(node.date) ? Math.ceil((new Date(node.date + 'T00:00:00') - today) / 86400000) : null;
       var countdown = !node.completed && days !== null ? '<span class="ns-tl-countdown">' + (days > 0 ? '剩 ' + days + ' 天' : days === 0 ? '今天截止' : '已过 ' + Math.abs(days) + ' 天') + '</span>' : '';
-      return '<article class="ns-tl-item' + (internal ? ' is-internal' : '') + '"><button data-pbs-permission="app_fill" class="ns-tl-dot' + (node.completed ? ' is-done' : index === first ? ' is-current' : '') + '" data-dom-id="timeline-node-' + (index + 1) + '" onclick="toggleNsNode(' + (index + 1) + ')" aria-label="切换' + esc(node.name) + '完成状态">' + (node.completed ? '✓' : index + 1) + '</button><div class="ns-tl-layout"><div class="ns-tl-description"><h3 class="ns-tl-name">' + esc(node.name) + '</h3><p class="application-timeline-note">' + esc((node.note || '').replace(/^(?:内部节点|EV 节点)：/,'')) + '</p></div><div class="ns-tl-meta"><span class="ns-tl-date">' + esc(node.date || '—') + '</span><div class="ns-tl-progress">' + countdown + '<span data-node-status>' + (node.completed ? '已完成' : index === first ? '进行中' : '待开始') + '</span></div></div></div></article>';
+      return '<article class="ns-tl-item' + (internal ? ' is-internal' : '') + ' ' + stateClass + '"><button data-pbs-permission="app_fill" class="ns-tl-dot' + (node.completed ? ' is-done' : index === first ? ' is-current' : '') + '" data-dom-id="timeline-node-' + (index + 1) + '" onclick="toggleNsNode(' + (index + 1) + ')" aria-label="切换' + esc(node.name) + '完成状态">' + (node.completed ? '✓' : index + 1) + '</button><div class="ns-tl-layout"><div class="ns-tl-description"><h3 class="ns-tl-name">' + esc(node.name) + '</h3><p class="application-timeline-note">' + esc((node.note || '').replace(/^(?:内部节点|EV 节点)：/,'')) + '</p></div><div class="ns-tl-meta"><span class="ns-tl-date">' + esc(node.date || '—') + '</span><div class="ns-tl-progress">' + countdown + '<span class="ns-tl-status' + (current ? ' is-current' : '') + '" data-node-status>' + (node.completed ? '已完成' : current ? '进行中' : '待开始') + '</span></div></div></div></article>';
     }).join('');
-    localStorage.setItem('pbs_application_timeline_cmu',JSON.stringify(timelineNodes));
+    localStorage.setItem(timelineStorageKey,JSON.stringify(timelineNodes));
   };
   function stats() {
     var groups = document.querySelectorAll('.website-form-group'), all = document.querySelectorAll('[data-wf-label]'), filled = 0, missing = 0;

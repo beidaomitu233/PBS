@@ -1,0 +1,10 @@
+.pbs-pagination { display: flex; align-items: center; justify-content: space-between; gap: 20px; padding: 16px 20px; border-top: 1px solid #edf0f5; background: #fff; color: #8190a3; font-size: 13px; }
+.pbs-pagination-total { display: flex; align-items: center; gap: 6px; white-space: nowrap; }
+.pbs-pagination select { width: 64px; height: 34px; margin: 0 2px; padding: 0 8px; border: 1px solid #dfe5ed; border-radius: 7px; background: #fff; color: #64748b; font: inherit; }
+.pbs-pagination nav { display: flex; align-items: center; gap: 7px; }
+.pbs-pagination button { min-width: 34px; height: 34px; padding: 0 12px; border: 1px solid #e2e8f0; border-radius: 7px; background: #fff; color: #64748b; font: inherit; cursor: pointer; }
+.pbs-pagination button:hover:enabled { border-color: #b7cdf7; color: #2563eb; }
+.pbs-pagination button.is-current { border-color: #2563eb; background: #2563eb; color: #fff; }
+.pbs-pagination button.is-current:hover { border-color: #1d4ed8; background: #1d4ed8; color: #fff; }
+.pbs-pagination button:disabled { color: #b4bdc9; cursor: default; }
+@media (max-width: 640px) { .pbs-pagination { align-items: flex-start; flex-direction: column; gap: 12px; padding: 14px; } .pbs-pagination nav { align-self: flex-end; } }

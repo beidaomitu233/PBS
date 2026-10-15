@@ -6,7 +6,8 @@
   <title>监控任务列表 - PBS留学CRM</title>
   <script src="./assets/vendor/tailwind-runtime.js"></script>
   <link rel="stylesheet" href="./assets/css/pbs-theme.css?v=6.3">
-  <link rel="stylesheet" href="./assets/css/pbs-monitor-v2.css?v=1.4">
+  <link rel="stylesheet" href="./assets/css/pbs-monitor-v2.css?v=1.5">
+  <link rel="stylesheet" href="./assets/css/pbs-pagination.css?v=1.0">
 </head>
 <body class="min-h-screen" data-monitor-page="list">
   <header class="bg-white border-b border-gray-200 sticky top-0 z-50">
@@ -51,7 +52,7 @@
       <section class="monitor-filter" aria-label="任务筛选">
         <div class="monitor-field is-wide">
           <label for="monitorKeyword">关键词</label>
-          <input id="monitorKeyword" type="search" placeholder="搜索客户姓名或学生姓名">
+          <input id="monitorKeyword" type="search" placeholder="搜索订单号、项目号、客户或学生">
         </div>
         <div class="monitor-field">
           <label for="monitorStatusFilter">任务状态</label>
@@ -76,6 +77,8 @@
           <table class="monitor-table">
             <thead>
               <tr>
+                <th>商城订单号</th>
+                <th>项目号</th>
                 <th>客户姓名</th>
                 <th>学生姓名</th>
                 <th>监控频率</th>
@@ -87,16 +90,14 @@
             <tbody id="monitorTaskRows"></tbody>
           </table>
         </div>
-        <div class="monitor-table-foot">
-          <span id="monitorResultCount">共 5 个学生监控任务</span>
-          <span>1 / 1 页</span>
-        </div>
+        <div id="monitorPagination"></div>
       </section>
     </main>
   </div>
 
   <div id="monitorToast" class="monitor-toast" role="status" aria-live="polite"></div>
   <script src="./assets/js/pbs-app.js?v=6.0"></script>
-  <script src="./assets/js/pbs-monitor-v2.js?v=1.4"></script>
+  <script src="./assets/js/pbs-pagination.js?v=1.0"></script>
+  <script src="./assets/js/pbs-monitor-v2.js?v=1.5"></script>
 </body>
 </html>

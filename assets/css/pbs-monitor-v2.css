@@ -52,6 +52,11 @@ body[data-monitor-page="detail"] .monitor-layout { height: calc(100vh - 64px); m
 .monitor-link { padding: 0; border: 0; background: none; color: var(--monitor-blue); font-size: 13px; font-weight: 650; }
 .monitor-link:hover { color: var(--monitor-blue-dark); text-decoration: underline; }
 .monitor-table-foot { display: flex; align-items: center; justify-content: space-between; padding: 14px 16px; border-top: 1px solid #edf2f7; color: #64748b; font-size: 13px; }
+body[data-monitor-page="list"] .monitor-table { min-width: 1120px; }
+body[data-monitor-page="list"] .monitor-table th:first-child { text-align: center; }
+.monitor-table .monitor-order, .monitor-table .monitor-project-number { white-space: nowrap; line-height: 1.8; }
+.monitor-table .monitor-order { text-align: center; }
+.monitor-table .monitor-order.is-shared { background: #eff6ff; color: #26344a; }
 .monitor-empty { padding: 56px 20px; color: #94a3b8; text-align: center; }
 
 .status-pill { display: inline-flex; align-items: center; gap: 6px; padding: 5px 9px; border-radius: 999px; font-size: 12px; line-height: 1; font-weight: 700; white-space: nowrap; }

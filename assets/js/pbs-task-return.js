@@ -141,10 +141,9 @@
         else if (row.title.indexOf('退回原因：') === 0) row.removeAttribute('title');
       });
     }
-    if (page.indexOf('项目经理工作台') >= 0 || page.indexOf('我的项目详情页') >= 0) {
+    if (page.indexOf('项目经理工作台') >= 0) {
       var canAssign = window.pbsHasPermission && window.pbsHasPermission('my_project_assign_member');
-      var context = window.MY_PROJECT_CONTEXT;
-      var scoped = items.filter(function (item) { return item.status !== 'accepted' && (!context || item.student === context.student); });
+      var scoped = items.filter(function (item) { return item.status !== 'accepted'; });
       var host = document.getElementById('pbsReturnedTasks');
       if (!scoped.length) { if (host) host.remove(); return; }
       if (!host) { host = document.createElement('section'); host.id = 'pbsReturnedTasks'; host.className = 'pbs-task-return-list'; host.style.order = '3'; document.querySelector('main').appendChild(host); }

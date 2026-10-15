@@ -31,7 +31,7 @@
     if (pager) { pager.className = 'pbs-profile-list-count'; pager.textContent = '共 ' + profiles.length + ' 名学生'; }
     if (window.applyFilter) window.applyFilter();
   }
-  var sectionNames = { edu: '教育背景', lang: '语言成绩', score: '学业信息', qual: '专业资质', work: '工作经历', practice: '实践经历', honor: '荣誉', pub: '学术发表', apply: '申请记录', selectionBinding: '申请记录', account: '账号管理', asset: '资产文件', student: '学生信息', customer: '客户信息' };
+  var sectionNames = { edu: '教育背景', lang: '语言成绩', score: '学业信息', qual: '专业资质', work: '工作经历', practice: '实践经历', honor: '荣誉奖项', pub: '学术发表', apply: '申请记录', selectionBinding: '申请记录', account: '账号管理', asset: '资产文件', delivered: '交付文件', student: '学生信息', customer: '客户信息' };
   var baseline = {}, linkBound = false;
   function capture(section) {
     var body = document.getElementById('secbody-' + section);
@@ -65,34 +65,43 @@
     api.commit(profileId, section, next, Object.assign({}, previous && previous.labels, next.labels), action || '修改' + (sectionNames[section] || section));
     baseline[section] = next;
   }
+  function sectionLogs() {
+    var groups = {};
+    api.find(profileId).logs.forEach(function(log) {
+      var section = log.section === 'selectionBinding' ? 'apply' : log.section;
+      (groups[section] || (groups[section] = [])).push(log);
+    });
+    Object.keys(groups).forEach(function(section) { groups[section].sort(function(a, b) { return new Date(b.at) - new Date(a.at); }); });
+    return groups;
+  }
   function renderLogs() {
-    var profile = api.find(profileId), host = document.getElementById('pbsStudentLogs');
+    var host = document.getElementById('pbsStudentLogs'), groups = sectionLogs();
     if (!host) {
       host = document.createElement('section'); host.id = 'pbsStudentLogs'; host.className = 'pbs-student-logs scroll-mt-24'; host.dataset.section = 'logs';
       document.getElementById('sections').appendChild(host);
     }
-    host.innerHTML = '<h2>学生档案管理日志</h2><div class="pbs-profile-log-scroll"><table class="pbs-profile-log-table"><thead><tr><th>修改时间</th><th>操作人</th><th>修改明细</th></tr></thead><tbody>' + (profile.logs.length ? profile.logs.slice().reverse().map(function(log) {
-      var changes = log.changes || [], module = sectionNames[log.section] || log.section;
-      var fields = changes.slice(0, 2).map(function(change) { return fieldName(change.field); }).join('、') + (changes.length > 2 ? '等' : '');
-      return '<tr><td>' + time(log.at) + '</td><td>' + esc(log.actor) + '<small>' + esc(log.role) + '</small></td><td><div class="pbs-profile-log-summary"><p>' + esc(module + ' · ' + fields) + '</p><button type="button" data-profile-log="' + esc(log.id) + '">查看 ' + changes.length + ' 项修改</button></div></td></tr>';
-    }).join('') : '<tr><td colspan="3" class="pbs-profile-empty">暂无修改记录</td></tr>') + '</tbody></table></div>';
-    host.onclick = function(event) { var button = event.target.closest('[data-profile-log]'); if (button) openLogDetail(button.dataset.profileLog); };
+    var sections = Object.keys(groups).sort(function(a, b) { return new Date(groups[b][0].at) - new Date(groups[a][0].at); });
+    host.innerHTML = '<h2>档案变更</h2><div class="pbs-profile-log-scroll"><table class="pbs-profile-log-table"><thead><tr><th>档案板块</th><th>最近修改时间</th><th>最近操作人</th><th>修改明细</th></tr></thead><tbody>' + (sections.length ? sections.map(function(section) {
+      var latest = groups[section][0];
+      return '<tr><td>' + esc(sectionNames[section] || section) + '</td><td>' + time(latest.at) + '</td><td>' + esc(latest.actor) + '<small>' + esc(latest.role) + '</small></td><td><button class="pbs-profile-section-detail" type="button" data-profile-section="' + esc(section) + '">查看修改明细</button></td></tr>';
+    }).join('') : '<tr><td colspan="4" class="pbs-profile-empty">暂无修改记录</td></tr>') + '</tbody></table></div>';
+    host.onclick = function(event) { var button = event.target.closest('[data-profile-section]'); if (button) openLogDetail(button.dataset.profileSection); };
   }
-  function openLogDetail(logId) {
+  function openLogDetail(section) {
     if (!api.canView(profileId)) return;
-    var log = api.find(profileId).logs.find(function(item) { return item.id === logId; });
-    if (!log) return;
+    var logs = sectionLogs()[section]; if (!logs) return;
     var dialog = document.createElement('dialog');
     dialog.className = 'pbs-profile-log-dialog';
     dialog.setAttribute('aria-labelledby', 'pbsProfileLogDialogTitle');
-    dialog.innerHTML = '<div class="pbs-profile-log-panel"><header><div><h3 id="pbsProfileLogDialogTitle">' + esc((sectionNames[log.section] || log.section) + ' · 修改明细') + '</h3><p>' + esc(log.actor + ' · ' + log.role) + ' · ' + time(log.at) + '</p></div><button type="button" aria-label="关闭修改明细">×</button></header><div class="pbs-profile-log-detail-scroll"><table><thead><tr><th>字段</th><th>修改前</th><th>修改后</th></tr></thead><tbody>' + (log.changes || []).map(function(change) {
-      return '<tr><td>' + esc(fieldName(change.field)) + '</td><td>' + esc(change.before) + '</td><td>' + esc(change.after) + '</td></tr>';
+    dialog.innerHTML = '<div class="pbs-profile-log-panel"><header><h3 id="pbsProfileLogDialogTitle">' + esc((sectionNames[section] || section) + ' · 修改明细') + '</h3><button type="button" aria-label="关闭修改明细">×</button></header><div class="pbs-profile-log-detail-scroll"><table><thead><tr><th>字段</th><th>修改前</th><th>修改后</th></tr></thead><tbody>' + logs.map(function(log) {
+      return '<tr class="pbs-profile-change-time"><td colspan="3">' + time(log.at) + '<span>' + esc(log.actor + ' · ' + log.role) + '</span></td></tr>' + (log.changes || []).map(function(change) {
+        return '<tr><td>' + esc(fieldName(change.field)) + '</td><td>' + esc(change.before) + '</td><td>' + esc(change.after) + '</td></tr>';
+      }).join('');
     }).join('') + '</tbody></table></div></div>';
     dialog.querySelector('button').addEventListener('click', function() { dialog.close(); });
     dialog.addEventListener('click', function(event) { if (event.target === dialog) dialog.close(); });
     dialog.addEventListener('close', function() { dialog.remove(); });
-    document.body.appendChild(dialog);
-    dialog.showModal();
+    document.body.appendChild(dialog); dialog.showModal();
   }
   function restoreDetail() {
     var profile = api.find(profileId);

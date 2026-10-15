@@ -2927,7 +2927,7 @@
   }
   if (!document.querySelector('script[src*="pbs-delivery.js"]')) {
     var script = document.createElement('script');
-  script.src = './assets/js/pbs-delivery.js?v=2.3';
+  script.src = './assets/js/pbs-delivery.js?v=2.4';
     document.body.appendChild(script);
   }
 })();

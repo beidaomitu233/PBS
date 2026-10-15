@@ -37,7 +37,7 @@
           </div>
           <div class="mb-7">
             <h2 class="text-xl font-semibold text-slate-900">账号登录</h2>
-            <p class="text-sm text-slate-500 mt-2">使用网申人员账号登录</p>
+            <p class="text-sm text-slate-500 mt-2">使用网申人员或平台管理员账号登录</p>
           </div>
           <form onsubmit="loginPlugin(event)" class="space-y-5">
             <div>
@@ -55,16 +55,17 @@
             <button type="submit" class="w-full h-11 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium transition-colors">登录</button>
           </form>
           <div class="flex items-center gap-3 my-6"><span class="h-px bg-slate-200 flex-1"></span><span class="text-xs text-slate-400">演示快捷入口</span><span class="h-px bg-slate-200 flex-1"></span></div>
-          <button type="button" onclick="demoLogin()" class="w-full h-11 bg-blue-50 border border-blue-200 text-blue-700 rounded-lg hover:bg-blue-100 font-medium transition-colors">一键登录（演示）</button>
-          <p class="text-center text-xs text-slate-400 mt-4">演示身份：陈晨 · 网申人员</p>
+          <button type="button" onclick="demoLogin()" class="w-full h-11 bg-blue-50 border border-blue-200 text-blue-700 rounded-lg hover:bg-blue-100 font-medium transition-colors">网申人员演示登录</button>
+          <button type="button" onclick="enterAssistant('admin')" class="w-full h-11 mt-3 bg-indigo-50 border border-indigo-200 text-indigo-700 rounded-lg hover:bg-indigo-100 font-medium">平台管理员演示登录</button><p class="text-center text-xs text-slate-400 mt-4">网申账号：wangshen · 管理员账号：admin</p>
         </div>
         <p class="text-center text-xs text-slate-400 mt-6">当前页面仅用于原型演示</p>
       </div>
     </section>
   </main>
   <script>
-    function enterAssistant() {
-      localStorage.setItem('pbs_plugin_session_v1', JSON.stringify({ account: 'wangshen', name: '陈晨', role: '网申人员', org: 'PBS留学总部', demo: true }));
+    function enterAssistant(account) {
+      var admin = account === 'admin';
+      localStorage.setItem('pbs_plugin_session_v1', JSON.stringify({ account: admin ? 'admin' : 'wangshen', name: admin ? '管理员' : '陈晨', role: admin ? '超级管理员' : '网申人员', org: 'PBS留学总部', demo: true }));
       location.href = '留学申请助手.html';
     }
     function loginPlugin(event) {
@@ -72,8 +73,8 @@
       var account = document.getElementById('pluginAccount').value.trim();
       var password = document.getElementById('pluginPassword').value;
       if (!account || !password) { alert('请输入账号和密码'); return; }
-      if (account !== 'wangshen' || password !== 'pbs123456') { alert('演示账号或密码错误'); return; }
-      enterAssistant();
+      if (['wangshen', 'admin'].indexOf(account) < 0 || password !== 'pbs123456') { alert('演示账号或密码错误'); return; }
+      enterAssistant(account);
     }
     function demoLogin() { enterAssistant(); }
     function togglePassword(button) {

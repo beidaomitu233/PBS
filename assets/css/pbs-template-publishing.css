@@ -1,9 +1,8 @@
-.template-scan-dialog,.template-publishing-dialog{width:min(960px,94vw);max-height:86vh;padding:0;border:0;border-radius:16px;box-shadow:0 24px 80px #0003}
-.template-scan-dialog{width:min(720px,94vw)}
-.template-scan-dialog::backdrop,.template-publishing-dialog::backdrop{background:#0f172a66}
-.template-scan-dialog header,.template-publishing-dialog header,.template-scan-dialog footer,.template-publishing-dialog footer{padding:18px 24px;display:flex;align-items:center;justify-content:space-between;gap:12px;border-bottom:1px solid #e5e7eb}
-.template-scan-dialog footer,.template-publishing-dialog footer{border-bottom:0;border-top:1px solid #e5e7eb;justify-content:flex-end}
-.template-scan-dialog h3,.template-publishing-dialog h3{font-size:18px;font-weight:600;color:#111827}
+.template-publishing-dialog{width:min(960px,94vw);max-height:86vh;padding:0;border:0;border-radius:16px;box-shadow:0 24px 80px #0003}
+.template-publishing-dialog::backdrop{background:#0f172a66}
+.template-publishing-dialog header,.template-publishing-dialog footer{padding:18px 24px;display:flex;align-items:center;justify-content:space-between;gap:12px;border-bottom:1px solid #e5e7eb}
+.template-publishing-dialog footer{border-bottom:0;border-top:1px solid #e5e7eb;justify-content:flex-end}
+.template-publishing-dialog h3{font-size:18px;font-weight:600;color:#111827}
 .template-publishing-dialog .publishing-scroll{overflow:auto;max-height:58vh}
 .template-publishing-dialog table{width:100%;border-collapse:collapse;text-align:left;font-size:14px}
 .template-publishing-dialog th,.template-publishing-dialog td{padding:14px 20px;border-bottom:1px solid #f1f5f9;vertical-align:top}
@@ -14,4 +13,4 @@
 .publishing-tabs{display:flex;gap:28px;border-bottom:1px solid #e2e8f0;margin-bottom:24px}
 .publishing-tabs button{padding:12px 0;color:#64748b;border-bottom:2px solid transparent}
 .publishing-tabs button.active{border-color:#2563eb;color:#2563eb}
-html:has(.template-publishing-dialog[open],.template-scan-dialog[open]){overflow:hidden;scrollbar-gutter:stable}
+html:has(.template-publishing-dialog[open]){overflow:hidden;scrollbar-gutter:stable}

@@ -60,10 +60,17 @@
 
   function archive(input) {
     var records = readRecords();
+    var studentId = input.studentId || currentStudentId();
     var sourceKey = input.sourceKey || [input.school, input.node, input.name, input.version].join('-');
-    var existed = records.find(function (item) { return item.sourceKey === sourceKey; });
-    if (existed) return existed;
-    var version = input.version || nextVersion(records, input.school, input.node, input.name);
+    var existed = records.find(function (item) { return item.sourceKey === sourceKey && item.studentId === studentId; });
+    if (existed) {
+      if (input.contentHtml) existed.contentHtml = input.contentHtml;
+      if (input.fileData) existed.fileData = input.fileData;
+      writeRecords(records);
+      if (input.file) existed.fileReady = saveFile(existed.id, input.file);
+      return existed;
+    }
+    var version = input.version || nextVersion(records.filter(function(item) { return item.studentId === studentId; }), input.school, input.node, input.name);
     var record = {
       id: input.id || ('delivery-' + Date.now() + '-' + Math.random().toString(16).slice(2)),
       school: input.school || ACTIVE_SCHOOL,
@@ -74,14 +81,49 @@
       version: version,
       source: input.source,
       sourceKey: sourceKey,
+      studentId: studentId,
+      contentHtml: input.contentHtml || '',
+      fileData: input.fileData || '',
       createdAt: input.createdAt || nowText(),
       status: 'pending'
     };
     records.unshift(record);
     writeRecords(records);
+    if (input.file) record.fileReady = saveFile(record.id, input.file);
     renderArchive();
     if (typeof window.renderPaymentInfo === 'function') window.renderPaymentInfo();
     return record;
+  }
+
+  function currentStudentId() {
+    var context = window.PROJECT_CONTEXT || window.MY_PROJECT_CONTEXT || window.projectData || {};
+    var number = context.projectNo || new URLSearchParams(location.search).get('project');
+    var project = number && window.pbsProjects && pbsProjects.find(number);
+    if (project) return project.studentId;
+    if (number) return '';
+    if (window.PBS_STUDENT_ID) return window.PBS_STUDENT_ID;
+    var demo = window.pbsStudents && pbsStudents.all().find(function(profile) { return profile.demo && profile.name === '张明'; });
+    return demo ? demo.id : '';
+  }
+
+  function forStudent(id) {
+    var profile = window.pbsStudents && pbsStudents.find(id);
+    if (!profile || !pbsStudents.canView(id)) return [];
+    return readRecords().filter(function(record) { return record.studentId ? record.studentId === id : profile.demo && profile.name === '张明'; });
+  }
+
+  function saveFile(id, file) {
+    return new Promise(function(resolve, reject) {
+      var request = indexedDB.open('pbs_delivery_files_v1', 1);
+      request.onupgradeneeded = function() { request.result.createObjectStore('files', { keyPath:'id' }); };
+      request.onerror = function() { reject(request.error); };
+      request.onsuccess = function() {
+        var db = request.result, transaction = db.transaction('files', 'readwrite');
+        transaction.objectStore('files').put({ id:id, file:file });
+        transaction.oncomplete = function() { db.close(); resolve(); };
+        transaction.onerror = function() { db.close(); reject(transaction.error); };
+      };
+    });
   }
 
   function statusText(status) {
@@ -115,13 +157,13 @@
     section.id = 'sec-delivered';
     section.dataset.section = 'delivered';
     section.className = 'pbs-delivery-section bg-white rounded-xl shadow-sm border border-gray-100 scroll-mt-24';
-    section.innerHTML = '<div class="pbs-delivery-head"><div><h2 class="pbs-delivery-title"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l5 5v11a2 2 0 0 1-2 2Z"/></svg>已交付文件</h2><p class="pbs-delivery-path">档案 / 目标学校 / 已交付文件</p></div></div><div class="pbs-delivery-body"><div id="pbsDeliverySchools" class="pbs-delivery-schools"></div><div id="pbsDeliveryNodes"></div></div>';
+    section.innerHTML = '<div class="pbs-delivery-head"><div><h2 class="pbs-delivery-title"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l5 5v11a2 2 0 0 1-2 2Z"/></svg>交付文件</h2></div></div><div class="pbs-delivery-body"><div id="pbsDeliverySchools" class="pbs-delivery-schools"></div><div id="pbsDeliveryNodes"></div></div>';
     asset.parentNode.insertBefore(section, asset);
     var assetLink = document.querySelector('[data-target="sec-asset"]');
     if (assetLink) {
       var link = assetLink.cloneNode(true);
       link.dataset.target = 'sec-delivered';
-      link.textContent = '已交付文件';
+      link.textContent = '交付文件';
       link.href = '#sec-delivered';
       assetLink.parentNode.insertBefore(link, assetLink);
     }
@@ -132,7 +174,7 @@
     var schoolRoot = document.getElementById('pbsDeliverySchools');
     var nodeRoot = document.getElementById('pbsDeliveryNodes');
     if (!schoolRoot || !nodeRoot) return;
-    var records = readRecords();
+    var records = forStudent(window.PBS_STUDENT_ID);
     var schools = schoolList(records);
     if (!schools.some(function (school) { return school.name === ACTIVE_SCHOOL; })) ACTIVE_SCHOOL = schools[0].name;
     schoolRoot.innerHTML = schools.map(function (school) {
@@ -476,9 +518,10 @@
       proofFile = input.files && input.files[0] ? input.files[0] : null;
       document.getElementById('applicationProofName').textContent = proofFile ? proofFile.name : '选择提交确认页或提交回执';
     });
-    proofStage.querySelector('#archiveApplicationProof').addEventListener('click', function () {
+    proofStage.querySelector('#archiveApplicationProof').addEventListener('click', async function () {
       if (!proofFile) { window.alert('请先选择网申提交证明'); return; }
-      archive({ school: ACTIVE_SCHOOL, major: '计算机科学', node: 'application', name: '网申提交证明', fileName: proofFile.name, source: '网申任务', sourceKey: 'proof-' + proofFile.name + '-' + proofFile.lastModified });
+      var record = archive({ school: ACTIVE_SCHOOL, major: '计算机科学', node: 'application', name: '网申提交证明', fileName: proofFile.name, file: proofFile, source: '网申任务', sourceKey: 'proof-' + proofFile.name + '-' + proofFile.lastModified });
+      try { await record.fileReady; } catch(error) { window.alert('原文件保存失败，请重新归档'); return; }
       document.getElementById('applicationProofStageState').textContent = '已归档 · 等待结果';
       document.getElementById('applicationProofStageState').classList.add('is-done');
       proofStage.classList.remove('is-current');
@@ -517,7 +560,7 @@
         if (!result || !result.value) return saveResult.apply(this, arguments);
         if (!window.selectedResultImageData) { window.alert('请上传网申结果文件'); return; }
         saveResult.apply(this, arguments);
-        archive({ school: ACTIVE_SCHOOL, major: '计算机科学', node: 'application', name: '网申结果', fileName: (document.getElementById('resultOfferImageName') || {}).textContent || '网申结果图片.png', source: '网申任务', sourceKey: 'result-' + result.value + '-' + nowText().slice(0, 10) });
+        archive({ school: ACTIVE_SCHOOL, major: '计算机科学', node: 'application', name: '网申结果', fileData: window.selectedResultImageData, fileName: (document.getElementById('resultOfferImageName') || {}).textContent || '网申结果图片.png', source: '网申任务', sourceKey: 'result-' + result.value + '-' + nowText().slice(0, 10) });
         var stageState = document.getElementById('applicationResultStageState');
         if (stageState) { stageState.textContent = '结果已归档'; stageState.classList.add('is-done'); }
       };
@@ -531,7 +574,7 @@
         saveReport.apply(this, arguments);
         var store = window.reportStore || {};
         var report = store[window.currentReportId];
-        if (report) archive({ school: ACTIVE_SCHOOL, major: '计算机科学', node: 'closure', name: report.title, fileName: 'CMU-' + report.title + '.pdf', source: '结项管理', sourceKey: 'report-' + report.id });
+        if (report) archive({ school: ACTIVE_SCHOOL, major: '计算机科学', node: 'closure', name: report.title, contentHtml: report.content || '', fileName: 'CMU-' + report.title + '.pdf', source: '结项管理', sourceKey: 'report-' + report.id });
       };
       window.saveReport.__deliveryWrapped = true;
       var reportSaveButton = document.querySelector('button[onclick*="saveReport"]');
@@ -559,11 +602,17 @@
 
   window.PBSDelivery = {
     archive: archive,
+    forStudent: forStudent,
     openSubmit: openSubmit,
     renderArchive: renderArchive,
     renderPayment: renderPaymentNodes
   };
 
-  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
+  if (!window.pbsStudents && window.pbsProjects) {
+    var dependency = document.createElement('script');
+    dependency.src = new URL('pbs-student-data.js?v=1.4', document.currentScript.src).href;
+    dependency.onload = function() { if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init); else init(); };
+    document.body.appendChild(dependency);
+  } else if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
   else init();
 })();

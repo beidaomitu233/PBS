@@ -34,14 +34,15 @@
     document.querySelectorAll('[data-publishing-tab]').forEach(function(button){button.classList.toggle('active',button.dataset.publishingTab===tab);});
     var publications=api.publications();
     if(tab==='draft'){
-      document.getElementById('publishingHead').innerHTML='<tr>'+['模板名称','院校 / 学院','来源机构','版本','发布状态','操作'].map(function(label){return '<th>'+label+'</th>';}).join('')+'</tr>';
-      body.innerHTML=api.drafts().filter(function(item){return !kw||(item.name+item.school+item.college+(item.sourceOrg||'')).toLowerCase().includes(kw);}).map(function(item){var published=publications.some(function(pub){return pub.templateId===item.id&&pub.version===item.versions[0].version;});return '<tr><td>'+esc(item.name)+'</td><td>'+esc(item.school)+'<small>'+esc(item.college)+'</small></td><td>'+esc(item.sourceOrg||'平台')+'</td><td>'+esc(item.versions[0].version)+'</td><td>'+(published?'已发布':'未发布')+'</td><td class="whitespace-nowrap"><a class="text-blue-600 mr-4" href="网申模板编辑 - 留学申请管理系统.html?center=1&id='+item.id+'">编辑</a><button class="text-blue-600" onclick="openPublishTemplate('+item.id+')">发布</button></td></tr>';}).join('');
+      document.getElementById('publishingHead').innerHTML='<tr>'+['模板名称','院校 / 学院','来源机构','版本','扫描状态','发布状态','操作'].map(function(label){return '<th>'+label+'</th>';}).join('')+'</tr>';
+      body.innerHTML=api.drafts().filter(function(item){return !kw||(item.name+item.school+item.college+(item.sourceOrg||'')).toLowerCase().includes(kw);}).map(function(item){var published=publications.some(function(pub){return pub.templateId===item.id&&pub.version===item.versions[0].version;});return '<tr><td>'+esc(item.name)+'</td><td>'+esc(item.school)+'<small>'+esc(item.college)+'</small></td><td>'+esc(item.sourceOrg||'平台')+'</td><td>'+esc(item.versions[0].version)+'</td><td>'+esc(pbsTemplateScan.status(item.id))+'</td><td>'+(published?'已发布':'未发布')+'</td><td class="whitespace-nowrap"><a class="text-blue-600 mr-4" href="网申模板编辑 - 留学申请管理系统.html?center=1&id='+item.id+'">编辑</a><button class="text-blue-600" onclick="openPublishTemplate('+item.id+')">发布</button></td></tr>';}).join('');
     }else{
       document.getElementById('publishingHead').innerHTML='<tr>'+['模板名称','院校 / 学院','版本','发布范围','发布时间','操作'].map(function(label){return '<th>'+label+'</th>';}).join('')+'</tr>';
       body.innerHTML=publications.slice().reverse().filter(function(item){return!kw||(item.snapshot.name+item.snapshot.school+item.version).toLowerCase().includes(kw);}).map(function(item){return '<tr><td>'+esc(item.snapshot.name)+'</td><td>'+esc(item.snapshot.school)+'<small>'+esc(item.snapshot.college)+'</small></td><td>'+esc(item.version)+'</td><td>'+esc(item.scope.includes('*')?'全部机构':item.scope.join('、'))+'</td><td>'+time(item.at)+'</td><td><button class="text-blue-600" data-publication="'+item.id+'">查看</button></td></tr>';}).join('');
     }
-    if(!body.innerHTML)body.innerHTML='<tr><td colspan="6" class="text-center text-gray-400 py-12">暂无模板</td></tr>';
+    if(!body.innerHTML)body.innerHTML='<tr><td colspan="'+(tab==='draft'?7:6)+'" class="text-center text-gray-400 py-12">暂无模板</td></tr>';
   }
+  window.addEventListener('storage', function(event) { if (event.key === api.platformKey || window.pbsTemplateScan && event.key === pbsTemplateScan.key) renderCenter(); });
   document.addEventListener('DOMContentLoaded',function(){
     if(document.getElementById('publishingRows')){
       if(!api.isPublisher()){document.querySelector('main').innerHTML='<p class="p-8 text-gray-500">无权访问网申模板发布中心</p>';return;}

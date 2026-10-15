@@ -26,19 +26,19 @@
 .pbs-student-logs th, .pbs-student-logs td { padding: 14px 20px; font-size: 13px; border-bottom: 1px solid #edf0f5; vertical-align: top; text-align: left; }
 .pbs-student-logs th { background: #f8fafc; color: #64748b; font-weight: 500; white-space: nowrap; }
 .pbs-profile-log-table { table-layout: fixed; min-width: 640px; }
-.pbs-profile-log-table th:nth-child(1) { width: 170px; }
-.pbs-profile-log-table th:nth-child(2) { width: 116px; }
-.pbs-profile-log-summary { display: flex; align-items: center; justify-content: space-between; gap: 20px; min-height: 36px; }
-.pbs-profile-log-summary p { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: #475569; }
-.pbs-profile-log-summary button { flex-shrink: 0; border: 0; background: transparent; padding: 4px 0; font-size: 13px; color: #2563eb; white-space: nowrap; cursor: pointer; }
-.pbs-profile-log-summary button:hover { text-decoration: underline; }
+.pbs-profile-log-table th:nth-child(1) { width: 20%; }
+.pbs-profile-log-table th:nth-child(2) { width: 30%; }
+.pbs-profile-log-table th:nth-child(3) { width: 25%; }
+.pbs-profile-section-detail { color: #2563eb; cursor: pointer; background: transparent; border: 0; }
+.pbs-profile-section-detail:hover { text-decoration: underline; }
+.pbs-profile-log-panel .pbs-profile-change-time td { background: #eff6ff; color: #334155; padding: 12px 20px; }
+.pbs-profile-change-time span { float: right; font-weight: 400; color: #64748b; }
 html:has(.pbs-profile-log-dialog[open]) { overflow: hidden; scrollbar-gutter: stable; }
 .pbs-profile-log-dialog { width: min(960px, calc(100vw - 48px)); max-width: none; max-height: calc(100dvh - 64px); margin: auto; padding: 0; border: 0; border-radius: 14px; background: #fff; color: #1f2937; box-shadow: 0 24px 72px #0f172a33; }
 .pbs-profile-log-dialog::backdrop { background: #0f172a66; }
 .pbs-profile-log-panel { display: flex; flex-direction: column; max-height: calc(100dvh - 64px); }
 .pbs-profile-log-panel header { display: flex; flex-shrink: 0; align-items: flex-start; justify-content: space-between; gap: 24px; padding: 20px 24px; border-bottom: 1px solid #edf0f5; }
 .pbs-profile-log-panel h3 { font-size: 18px; font-weight: 600; }
-.pbs-profile-log-panel header p { margin-top: 8px; font-size: 13px; color: #64748b; }
 .pbs-profile-log-panel header button { width: 32px; height: 32px; flex-shrink: 0; border: 0; border-radius: 6px; background: transparent; color: #64748b; font-size: 24px; cursor: pointer; }
 .pbs-profile-log-panel header button:hover { background: #f1f5f9; }
 .pbs-profile-log-detail-scroll { min-height: 0; overflow: auto; overscroll-behavior: contain; scrollbar-gutter: stable; }
@@ -50,3 +50,14 @@ html:has(.pbs-profile-log-dialog[open]) { overflow: hidden; scrollbar-gutter: st
 .pbs-profile-log-panel td:first-child { font-weight: 500; color: #475569; }
 .pbs-profile-log-panel td:nth-child(2) { color: #64748b; background: #fafbfc; }
 .pbs-profile-log-panel td:nth-child(3) { color: #1f2937; }
+.pbs-export-paper { width: 700px; padding: 0; margin: 0; background: #fff; font: 12px/1.7 "Microsoft YaHei", sans-serif; color: #1f2937; }
+.pbs-export-paper * { max-width: 100% !important; color: #1f2937 !important; background-color: transparent !important; background-image: none !important; box-shadow: none !important; }
+.pbs-export-paper > div, .pbs-export-paper > section { margin: 0 0 20px; padding: 14px 0; border: 0; border-bottom: 1px solid #dbe2ea; border-radius: 0; }
+.pbs-export-paper h1 { margin-bottom: 20px; font-size: 24px; font-weight: 600; }
+.pbs-export-paper h2 { margin-bottom: 12px; padding: 0; font-size: 17px; font-weight: 600; }
+.pbs-export-paper h3 { margin: 14px 0 8px; font-size: 12px; font-weight: 600; }
+.pbs-export-paper table { width: 100%; table-layout: fixed; border-collapse: collapse; }
+.pbs-export-paper th, .pbs-export-paper td { padding: 7px 9px; border: 1px solid #dbe2ea; vertical-align: top; text-align: left; white-space: normal !important; overflow-wrap: anywhere; font-size: 11px; }
+.pbs-export-paper th { background: #f8fafc !important; }
+.pbs-export-paper [data-v] { white-space: pre-wrap; overflow-wrap: anywhere; }
+.pbs-export-paper .overflow-x-auto, .pbs-export-paper .overflow-y-auto { overflow: visible !important; max-height: none !important; }

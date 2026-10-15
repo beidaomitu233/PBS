@@ -25,6 +25,7 @@
       currentMeta = { name: storedMetadata.name, school: storedMetadata.school || '', college: storedMetadata.college || '', program: storedMetadata.program || '', boundPrograms: storedMetadata.boundPrograms || [], region: storedMetadata.region || '', version: String(storedCurrent.version || 'v1.0').toUpperCase(), fieldCount: storedCurrent.fields || 0, materialCount: storedCurrent.materials || 0 };
     }
   } catch (error) {}
+  var scanResultsAvailable = false, loadedScanTime = storedMetadata && storedMetadata.scannedAt || '';
   var availableSchools = ['卡内基梅隆大学', '斯坦福大学', '哥伦比亚大学', '剑桥大学', '香港大学', '纽约大学', '波士顿大学'];
   var availablePrograms = ['计算机科学', '人工智能', '软件工程', '数据科学', '金融工程', '金融学', '中国哲学'];
   var defaultPrograms = { 1: ['计算机科学', '人工智能', '软件工程'], 2: ['计算机科学'], 3: ['金融工程'], 4: ['金融学'], 5: ['数据科学'], 6: ['中国哲学'] };
@@ -300,7 +301,8 @@
   window.selectHistoryVersion = function (index) { selectedVersion = index; renderVersionList(); };
   window.openVersionHistory = function () { selectedVersion = 0; renderVersionList(); document.getElementById('versionModal').classList.add('show'); };
   window.closeVersionHistory = function () { document.getElementById('versionModal').classList.remove('show'); };
-  function persistTemplate(createVersion) {
+  function persistTemplate(createVersion, forScan) {
+    if (scanResultsAvailable) { showToast('请先加载插件保存的扫描结果'); return false; }
     if (centerMode && !pbsTemplatePublishing.isPublisher()) { showToast('无权维护平台模板'); return false; }
     syncRows();
     var name = document.getElementById('templateName').value.trim();
@@ -308,7 +310,7 @@
     var college = document.getElementById('templateCollege').value.trim();
     if (!name || !school || !college) { showToast('请完整填写模板名称、绑定院校和学院'); return; }
     if (availableSchools.indexOf(school) < 0) { showToast('请从搜索结果中选择绑定院校'); return; }
-    if (!fields.length || fields.some(function (item) { return !item.name; })) { showToast('请至少添加一个完整的官网字段'); return; }
+    if ((!forScan && !fields.length) || fields.some(function (item) { return !item.name; })) { showToast('请至少添加一个完整的官网字段'); return; }
     if (materials.some(function (item) { return !item.name; })) { showToast('请填写材料名称'); return; }
     var current = document.getElementById('currentVersion').textContent;
     var version = current === '未保存' ? 'V1.0' : (createVersion ? nextVersion(current) : current);
@@ -337,7 +339,7 @@
     };
     if (existing && versions.length && !createVersion) versions[0] = versionPayload; else versions.unshift(versionPayload);
     stored = stored.filter(function (item) { return Number(item.id) !== Number(savedTemplateId); });
-    stored.push({ id: savedTemplateId, name: name, school: school, college: college, boundPrograms: boundPrograms, program: boundPrograms[0] || '', region: currentMeta.region || '', org: centerMode ? '平台' : existing && existing.org || session.org || 'PBS留学总部', versions: versions, publicationId: existing && existing.publicationId, sourcePlatformTemplateId: existing && existing.sourcePlatformTemplateId, sourceVersion: existing && existing.sourceVersion, sourceTemplateId: existing && existing.sourceTemplateId, sourceOrg: existing && existing.sourceOrg });
+    stored.push({ id: savedTemplateId, name: name, school: school, college: college, boundPrograms: boundPrograms, program: boundPrograms[0] || '', region: currentMeta.region || '', scannedAt: existing && existing.scannedAt, org: centerMode ? '平台' : existing && existing.org || session.org || 'PBS留学总部', versions: versions, publicationId: existing && existing.publicationId, sourcePlatformTemplateId: existing && existing.sourcePlatformTemplateId, sourceVersion: existing && existing.sourceVersion, sourceTemplateId: existing && existing.sourceTemplateId, sourceOrg: existing && existing.sourceOrg });
     localStorage.setItem(templateStoreKey, JSON.stringify(stored));
     showToast(createVersion ? version + ' 已另存为新版本' : version + ' 已保存');
     return true;
@@ -382,35 +384,32 @@
     closeSearchSelectors();
   });
   window.scanTemplatePage = function() {
-    if(!centerMode || !pbsTemplatePublishing.isPublisher()) return;
-    var dialog = document.createElement('dialog'); dialog.className = 'template-scan-dialog';
-    dialog.innerHTML = '<header><h3>扫描网申页面</h3><button data-close aria-label="关闭">×</button></header><div class="p-5 space-y-4"><label class="block text-sm">申请页面网址<input data-url type="url" class="input w-full mt-2" placeholder="https://apply.example.edu"></label><label class="block text-sm">页面 HTML<textarea data-html rows="9" class="input w-full mt-2 font-mono text-xs" placeholder="粘贴申请页面的 HTML，或上传 HTML 文件"></textarea></label><input data-file type="file" accept=".html,.htm"><p data-error class="text-sm text-red-500"></p></div><footer><button data-close class="btn">取消</button><button data-scan class="btn primary">扫描并添加字段</button></footer>';
-    dialog.addEventListener('click',function(event){if(event.target.closest('[data-close]'))dialog.close();});dialog.onclose=function(){dialog.remove();};
-    dialog.querySelector('[data-file]').onchange=async function(){if(this.files[0])dialog.querySelector('[data-html]').value=await this.files[0].text();};
-    dialog.querySelector('[data-scan]').onclick=function(){
-      var url=dialog.querySelector('[data-url]').value.trim(), html=dialog.querySelector('[data-html]').value.trim(), error=dialog.querySelector('[data-error]');
-      if(!/^https?:\/\//i.test(url) || !html){error.textContent='请填写有效网址并提供页面 HTML';return;}
-      var doc=new DOMParser().parseFromString(html,'text/html'), labels=Array.from(doc.querySelectorAll('label'));
-      var scanned=Array.from(doc.querySelectorAll('input,select,textarea')).filter(function(input){return !['submit','button','hidden','reset','image'].includes(input.type);}).map(function(input,index){
-        var label=labels.find(function(label){return label.htmlFor && label.htmlFor===input.id;}) || input.closest('label');
-        var name=(label && label.textContent.trim()) || input.getAttribute('aria-label') || input.name || input.placeholder || input.id;
-        return {id:'scan-'+Date.now()+'-'+index,name:name,type:input.tagName==='SELECT'?'下拉':input.type==='date'?'日期':input.type==='number'?'数字':input.type==='email'?'邮箱':'文本',required:input.required || input.getAttribute('aria-required')==='true',note:input.placeholder || '',programScope:activeProgramScope};
-      }).filter(function(field){return field.name;});
-      if(!scanned.length){error.textContent='未识别到表单字段，请检查页面 HTML';return;}
-      syncRows();var page={id:'page-scan-'+Date.now(),name:doc.title || '申请页面',entranceId:activeEntranceId,url:url};
-      if(isNew && fields.length===0)pages=[];pages.push(page);scanned.forEach(function(field){field.pageId=page.id;fields.push(field);});activePageId=page.id;
-      var entrance=entrances.find(function(item){return item.id===activeEntranceId;});if(entrance && !entrance.url)entrance.url=url;
-      renderRows();dialog.close();showToast('已扫描 '+scanned.length+' 个字段，请检查后保存');
-    };
-    document.body.appendChild(dialog);dialog.showModal();
+    if (scanResultsAvailable) { location.reload(); return; }
+    if (!centerMode || !pbsTemplatePublishing.isPublisher() || !persistTemplate(false, true)) return;
+    var result = pbsTemplateScan.request(savedTemplateId);
+    if (result.error) { showToast(result.error); return; }
+    showToast('已加入待扫描任务，请在插件中使用管理员账号扫描');
+    var button = document.querySelector('[data-template-scan]');
+    if (button) button.textContent = result.status;
   };
+  window.addEventListener('storage', function(event) {
+    if (!centerMode || event.key !== templateStoreKey) return;
+    var template = JSON.parse(event.newValue || '[]').find(function(item) { return item.id === savedTemplateId; });
+    if (template && template.scannedAt && template.scannedAt !== loadedScanTime) {
+      scanResultsAvailable = true;
+      var button = document.querySelector('[data-template-scan]'); if (button) button.textContent = '加载扫描结果';
+      showToast('插件已保存扫描结果，请点击加载扫描结果');
+    }
+  });
   initialize();
   document.addEventListener('DOMContentLoaded',function(){
     if(!centerMode)return;
     if(!pbsTemplatePublishing.isPublisher()){location.replace('网申模板库 - 留学申请管理系统.html');return;}
     document.getElementById('pageTitle').textContent=isNew?'新建平台网申模板':'编辑平台网申模板';
     document.querySelector('.pbs-detail-back').href='网申模板发布中心 - 留学申请管理系统.html';
-    document.querySelector('.pbs-detail-topbar__actions').insertAdjacentHTML('afterbegin','<button class="btn" onclick="scanTemplatePage()">扫描页面</button>');
+    document.querySelector('.pbs-detail-topbar__actions').insertAdjacentHTML('afterbegin','<button class="btn" data-template-scan onclick="scanTemplatePage()">扫描页面</button>');
+    var scanStatus = pbsTemplateScan.status(savedTemplateId);
+    if (scanStatus === '待扫描' || scanStatus === '待确认') document.querySelector('[data-template-scan]').textContent = scanStatus;
     document.querySelector('.pbs-detail-topbar__actions').insertAdjacentHTML('beforeend','<button class="btn primary" onclick="if(saveTemplate())location.href=\'网申模板发布中心 - 留学申请管理系统.html?publish=\'+getTemplateDraftId()">发布</button>');
   });
 })();

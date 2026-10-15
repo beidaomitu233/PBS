@@ -62,7 +62,7 @@
     report.content = editor().innerHTML; report.logo = window.reportLogoSrc; report.time = window.fmtTime(new Date()); report.saved = true;
     try { localStorage.setItem(reportsKey, JSON.stringify(window.reportStore)); } catch(e) { report.saved = false; message('报告未保存，请缩小上传图片后重试'); return false; }
     window.renderReportList(); message('报告已生成');
-    if (window.PBSDelivery && window.projectData.targets.length) window.PBSDelivery.archive({ school: window.projectData.targets[0].school, major: window.projectData.targets[0].major, node: 'closure', name: report.title, fileName: report.title + '.pdf', source: '结项管理', sourceKey: 'report-' + report.id });
+    if (window.PBSDelivery && window.projectData.targets.length) window.PBSDelivery.archive({ school: window.projectData.targets[0].school, major: window.projectData.targets[0].major, node: 'closure', name: report.title, contentHtml: report.content || '', fileName: report.title + '.pdf', source: '结项管理', sourceKey: 'report-' + report.id });
     return true;
   };
   window.saveReport.__deliveryWrapped = true;

@@ -1,6 +1,8 @@
 .pbs-project-table-scroll { overflow: auto; max-width: 100%; }
 .pbs-project-table { width: 100%; border-collapse: separate; border-spacing: 0; min-width: 1080px; }
-.pbs-project-table.is-pool { min-width: 1430px; }
+.pbs-project-table.is-pool { min-width: 1510px; }
+.pbs-project-table .project-pmo { min-width: 90px; text-align: center; }
+.pbs-project-table .project-pmo-shared { background: #f5f9ff; border-bottom-color: #dbeafe; }
 .pbs-project-table th, .pbs-project-table td { padding: 15px 16px; text-align: left; vertical-align: middle; font-size: 13px; border-bottom: 1px solid #edf0f5; }
 .pbs-project-table th { font-weight: 500; color: #7d899d; background: #f8fafc; white-space: nowrap; }
 .pbs-project-table td { color: #25344a; background: #fff; white-space: nowrap; }

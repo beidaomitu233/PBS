@@ -498,7 +498,7 @@
       todoCount: 10,
       todoGroups: [
         { title: '需要我处理', color: WB_RED, items: [
-          wbT(WB_RED, '待分配', WB_RED, '为张明的本科申请项目分配项目经理', '客户：张建国 · 学生：张明 · 本科申请 · PRJ-M-2607-0001', '进入项目池 2 小时', WB_RED, { l: '去分配', href: '项目详情页 - 留学申请管理系统.html' })
+          wbT(WB_RED, '待分配', WB_RED, '为张明的本科申请订单分配 PMO', '客户：张建国 · 学生：张明 · 本科申请 · PRJ-M-2607-0001', '进入项目池 2 小时', WB_RED, { l: '去分配', href: '项目详情页 - 留学申请管理系统.html' })
         ]},
         { title: '近期跟进', color: WB_AMBER, items: [
           wbT(WB_AMBER, null, null, '跟进斯坦福推荐信审核进度', '孙老师 · 文书审核 · 当前环节已停留 18 小时', '停留超时 18 小时', WB_AMBER, { l: '催办', urge: ['跟进斯坦福推荐信审核进度', '孙老师', '审核人员'], cls: 'ghost' })
@@ -740,7 +740,7 @@
       { l: '存在待办', v: '3', n: '监控结果需要处理' },
       { l: '紧急或逾期', v: '2', n: '优先跟进监控异常' },
       { l: '无待办', v: '2', n: '监控状态正常' },
-      { l: '待结项', v: '2', n: '等待项目经理审批' }
+      { l: '待结项', v: '2', n: '等待 PMO 核验' }
     ];
     WB_ROLES.pm.cards = [
       { m: '学生档案', c: '查看本人项目学生', href: '学生档案列表页 - 留学申请管理系统.html' },
@@ -748,7 +748,7 @@
       { m: '文书任务', c: '5 项文书交付任务', href: '任务列表页 - 文书交付系统.html' },
       { m: '网申任务', c: '5 项网申任务', href: '网申任务列表页 - 留学申请管理系统.html' },
       { m: '监控任务', c: '3 项监控待办', href: '监控任务列表 - PBS留学CRM.html' },
-      { m: '结项归档', c: '2 个项目待审批', href: '结项归档列表 - PBS留学CRM系统.html' }
+      { m: '结项归档', c: '2 个院校目标待提交材料', href: '结项归档列表 - PBS留学CRM系统.html' }
     ];
     WB_ROLES.pm.todoCount = 3;
     WB_ROLES.pm.todoGroups = [
@@ -801,7 +801,7 @@
     setStatLinks('pm', ['我的项目列表页 - 留学申请管理系统.html', '任务列表页 - 文书交付系统.html', '网申任务列表页 - 留学申请管理系统.html', '监控任务列表 - PBS留学CRM.html', '监控任务列表 - PBS留学CRM.html', '监控任务列表 - PBS留学CRM.html', '监控任务列表 - PBS留学CRM.html', '结项归档列表 - PBS留学CRM系统.html']);
     setBoardLinks('pm', ['我的项目列表页 - 留学申请管理系统.html', '任务列表页 - 文书交付系统.html', '网申任务列表页 - 留学申请管理系统.html', '监控任务列表 - PBS留学CRM.html', '结项归档列表 - PBS留学CRM系统.html']);
     WB_ROLES.pm.tagline = '跟进本人项目的文书、网申与监控节点';
-    roleMeta('pm', '本人项目、文书任务、网申任务、监控结果与结项审批', '项目推进总览', '聚合本人负责项目的交付任务与服务风险。', '项目文书与网申 DDL');
+    roleMeta('pm', '本人院校目标、交付任务、监控结果与结项材料', '项目推进总览', '聚合本人负责项目的交付任务与服务风险。', '项目文书与网申 DDL');
 
     setStatLinks('writer', ['任务列表页 - 文书交付系统.html', '任务列表页 - 文书交付系统.html', '任务列表页 - 文书交付系统.html', '任务列表页 - 文书交付系统.html']);
     setBoardLinks('writer', ['任务列表页 - 文书交付系统.html', '任务列表页 - 文书交付系统.html', '任务列表页 - 文书交付系统.html', '任务列表页 - 文书交付系统.html']);
@@ -879,7 +879,7 @@
       { l: '文书模板', v: '6', n: '本机构可用模板' },
       { l: '文书案例', v: '128', n: '本机构可用案例' },
       { l: '网申模板', v: '18', n: '覆盖 12 所院校' },
-      { l: '待结项', v: '3', n: '等待机构归档确认' }
+      { l: '待结项', v: '3', n: '等待 PMO 核验结项' }
     ];
     WB_ROLES.orgadmin.cards = [
       { m: '学生档案', c: '126 名学生', href: '学生档案列表页 - 留学申请管理系统.html' },
@@ -911,7 +911,7 @@
       { title: '学生与项目', color: WB_CYAN, items: [
         wbB('学生档案', '126', '本机构学生总数'),
         wbB('项目池', '89', '本机构项目总数'),
-        wbB('待分配项目', '3', '等待分配项目经理'),
+        wbB('待分配项目', '3', '等待分配 PMO'),
         wbB('进行中项目', '45', '项目交付推进中')
       ]},
       { title: '文书交付', color: WB_BLUE, items: [
@@ -1213,7 +1213,25 @@
     wbRenderCal(role);
   }
 
+  function renderPmoWorkbench(host) {
+    function esc(value) { return String(value || '').replace(/[&<>"']/g,function(c) { return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]; }); }
+    var orders = window.pbsOrders.all().filter(function(order) { return pbsGetSession().role === '超级管理员' || pbsOrders.canManage(order.project); });
+    var targets = orders.flatMap(function(order) { return order.targets; }), active = orders.filter(function(order) { return order.status !== '已结项'; });
+    var stats = [['在管订单',active.length],['待分配目标',targets.filter(function(target) { return target.project.status !== '已结项' && !target.manager.name; }).length],['待接收目标',targets.filter(function(target) { return target.project.status !== '已结项' && target.manager.name && !target.manager.accepted; }).length],['待核验目标',targets.filter(function(target) { return target.submission.status === '待审核'; }).length],['待结项订单',orders.filter(function(order) { return order.status === '待结项'; }).length],['已结项订单',orders.length-active.length]];
+    var groups = [{title:'分配与接收',color:'#6366f1',filter:function(order) { return order.status === '待分配经理' || order.status === '待接收'; }},{title:'交付进行中',color:'#2563eb',filter:function(order) { return (order.status === '进行中' || order.status === '待补充材料') && order.targets.every(function(target) { return target.manager.accepted; }); }},{title:'结项核验',color:'#d97706',filter:function(order) { return order.status === '待核验' || order.status === '待结项'; }},{title:'已结项',color:'#16a34a',filter:function(order) { return order.status === '已结项'; }}];
+    var date = new Date().toLocaleDateString('zh-CN',{timeZone:'Asia/Shanghai'});
+    host.innerHTML = '<div class="wb-shell"><div class="wb-head"><h1 class="wb-title">PMO 工作台</h1><div class="wb-date">' + date + '</div></div><div class="wb-stats" style="grid-template-columns:repeat(3,minmax(0,1fr))">' + stats.map(function(stat) { return '<div class="wb-stat-wrap"><div class="wb-stat"><div class="l">' + stat[0] + '</div><div class="v">' + stat[1] + '</div></div></div>'; }).join('') + '</div><section class="wb-board-section"><div class="wb-board-section-h"><h2 class="wb-board-section-t">订单看板</h2><input id="pmoWorkbenchSearch" placeholder="搜索订单、学生或项目经理" aria-label="搜索订单" style="width:260px;padding:9px 12px;border:1px solid #dbe2ea;border-radius:9px;font-size:13px"></div><div class="wb-boards" style="grid-template-columns:repeat(auto-fit,minmax(230px,1fr))">' + groups.map(function(group,index) {
+      var items = orders.filter(group.filter);
+      return '<div class="wb-board-col" style="height:510px;border-top:3px solid ' + group.color + '"><div class="wb-board-h"><h3 class="wb-board-t">' + group.title + '</h3><span class="wb-board-c" data-pmo-count="' + index + '">' + items.length + '</span></div><div class="wb-board-list">' + items.map(function(order) {
+        var p = order.project, names = Array.from(new Set(order.targets.map(function(target) { return target.manager.name; }).filter(Boolean)));
+        return '<a data-pmo-card="' + index + '" data-keyword="' + esc([p.student,p.orderNo,p.projectNo,names.join(' ')].join(' ').toLowerCase()) + '" href="订单项目详情页 - 留学申请管理系统.html?project=' + encodeURIComponent(p.projectNo) + '" class="wb-bitem" style="display:block;margin-bottom:12px;border:1px solid #e2e8f0;border-radius:11px;padding:16px;background:#fff"><div class="wb-bitem-body"><div class="nm">' + esc(p.student) + ' · ' + esc(p.level) + '</div><div class="mt" style="margin:8px 0">' + esc(p.orderNo || p.projectNo) + '</div><div class="mt">' + order.targets.length + ' 个院校目标 · ' + esc(names.join('、') || '待分配经理') + '</div><div class="mt" style="margin-top:10px;color:' + group.color + '">' + esc(order.status) + '</div></div></a>';
+      }).join('') + '<p data-pmo-empty="' + index + '" style="padding:28px 0;color:#94a3b8;text-align:center"' + (items.length ? ' hidden' : '') + '>暂无订单</p></div></div>';
+    }).join('') + '</div></section></div>';
+    host.querySelector('#pmoWorkbenchSearch').oninput = function() { var keyword = this.value.trim().toLowerCase(); host.querySelectorAll('[data-pmo-card]').forEach(function(card) { card.hidden = card.dataset.keyword.indexOf(keyword) < 0; card.style.display = card.hidden ? 'none' : 'block'; }); groups.forEach(function(group,index) { var count = Array.from(host.querySelectorAll('[data-pmo-card="' + index + '"]')).filter(function(card) { return !card.hidden; }).length; host.querySelector('[data-pmo-count="' + index + '"]').textContent = count; host.querySelector('[data-pmo-empty="' + index + '"]').hidden = !!count; }); };
+    if (!host.dataset.pmoBound) { host.dataset.pmoBound = '1'; window.addEventListener('storage',function(event) { if (host.isConnected && ['pbs_projects_v1','pbs_order_management_v1'].indexOf(event.key) >= 0) renderPmoWorkbench(host); }); }
+  }
   function wbRenderRole(role, host) {
+    if (role === 'pmo') { renderPmoWorkbench(host); return; }
     var R = WB_ROLES[role];
     if (!R) return;
     var messageCount = 0;
@@ -1347,8 +1365,9 @@
   }
 
   /* ================= 角色 ↔ 工作台视角映射 ================= */
-  var WB_KEY_ORDER = ['platform', 'orgadmin', 'salesmanager', 'sales', 'pm', 'writer', 'audit', 'apply', 'docadmin'];
+  var WB_KEY_ORDER = ['platform', 'orgadmin', 'pmo', 'salesmanager', 'sales', 'pm', 'writer', 'audit', 'apply', 'docadmin'];
   var WB_ROLE_KEY = {
+    'PMO': 'pmo',
     '项目经理': 'pm',
     '文书人员': 'writer',
     '销售人员': 'sales',
@@ -1360,6 +1379,7 @@
     '文书机构管理员': 'docadmin'
   };
   var WB_KEY_LABEL = {
+    pmo: 'PMO',
     pm: '项目经理', writer: '文书人员',
     salesmanager: '销售人员管理员', sales: '销售人员', apply: '网申人员', audit: '文书审核',
     platform: '平台运维人员', orgadmin: '机构管理员', docadmin: '文书机构管理员'
@@ -1380,7 +1400,7 @@
         : { y: 2026, m: 8, sel: WB_TODAY };
     }
     wbRenderRole(active, panel);
-    wbRenderCal(active);
+    if (active !== 'pmo') wbRenderCal(active);
     ensureUrgeModal();
   }
 

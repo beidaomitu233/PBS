@@ -231,9 +231,11 @@
     </div>
   </div>
 
-  <script src="./assets/js/pbs-app.js?v=6.5"></script>
+  <script src="./assets/js/pbs-app.js?v=7.6"></script>
   <script>
     var PBS_ACCOUNTS = [
+      { u:'pmo',e:'pmo@pbs.com',phone:'13800000005',p:'pbs123456',name:'林老师',role:'PMO',org:'PBS留学总部' },
+      { u:'pm',e:'pm@pbs.com',phone:'13800000006',p:'pbs123456',name:'张老师',role:'项目经理',org:'PBS留学总部' },
       { u: 'test',     e: 'test@pbs.com',     phone: '13800000000', p: 'pbs123456', name: '测试账号', role: '超级管理员',     org: 'PBS留学总部' },
       { u: 'ops',      e: 'ops@pbs.com',      phone: '13800000001', p: 'pbs123456', name: '王运维',   role: '平台运维人员',   org: 'PBS留学总部' },
       { u: 'orgadmin', e: 'orgadmin@pbs.com', phone: '13800000002', p: 'pbs123456', name: '王志强',   role: '机构管理员',     org: 'PBS留学总部' },
@@ -275,6 +277,7 @@
       '超级管理员': '管理员工作台 - 留学申请管理系统.html',
       '平台运维人员': '平台运维工作台 - PBS留学CRM系统.html',
       '机构管理员': '机构管理员工作台 - 留学申请管理系统.html',
+      'PMO': 'PMO工作台 - 留学申请管理系统.html',
       '销售人员管理员': '选校任务列表页 - 留学申请管理系统.html#workbench',
       '销售人员': '选校任务列表页 - 留学申请管理系统.html#workbench',
       '项目经理': '项目经理工作台 - 留学申请管理系统.html',
@@ -284,6 +287,7 @@
       '文书机构管理员': '任务列表页 - 文书交付系统.html#workbench'
     };
     var ROLE_COLORS = {
+      'PMO': 'from-indigo-500 to-blue-600',
       '超级管理员': 'from-yellow-500 to-amber-600',
       '机构管理员': 'from-blue-500 to-indigo-500',
       '销售人员管理员': 'from-violet-500 to-purple-600',
@@ -426,7 +430,7 @@
       handleLogin(null);
     }
 
-    /* 首次登录强制改密（独立于 pbs-app.js 的菜单入口，成功后自动进入工作台） */
+    /* 首次登录强制改密（独立于 pbs-app.js?v=7.6 的菜单入口，成功后自动进入工作台） */
     function forceChangePassword() {
       var u = sessionStorage.getItem('pbs_pending_account') || document.getElementById('username').value.trim();
       var layer = document.createElement('div');

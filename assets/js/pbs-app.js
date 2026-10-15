@@ -9,7 +9,7 @@
   var PREVIEW_ROLE_KEY = 'pbs_role_preview_v51';
 
   /* ---------------- 角色定义 ---------------- */
-  var ROLES = ['超级管理员', '平台运维人员', '机构管理员', '销售人员管理员', '销售人员', '项目经理',
+  var ROLES = ['超级管理员', '平台运维人员', '机构管理员', 'PMO', '销售人员管理员', '销售人员', '项目经理',
     '文书人员', '网申人员', '文书审核', '文书机构管理员'];
 
   /* 角色严格隔离：多角色账号按实际被授予的角色取权限并集，不再通过管理岗位自动继承执行岗位。 */
@@ -44,6 +44,7 @@
     '超级管理员': '管理员工作台 - 留学申请管理系统.html',
     '平台运维人员': '平台运维工作台 - PBS留学CRM系统.html',
     '机构管理员': '机构管理员工作台 - 留学申请管理系统.html',
+    'PMO': 'PMO工作台 - 留学申请管理系统.html',
     '销售人员管理员': '选校任务列表页 - 留学申请管理系统.html#workbench',
     '销售人员': '选校任务列表页 - 留学申请管理系统.html#workbench',
     '项目经理': '项目经理工作台 - 留学申请管理系统.html',
@@ -57,6 +58,7 @@
   var WORKBENCH_ROLE_PERMISSION = {
     '平台运维人员': 'workbench_platform',
     '机构管理员': 'workbench_org_admin',
+    'PMO': 'workbench_pmo',
     '销售人员管理员': 'workbench_sales_manager',
     '销售人员': 'workbench_sales',
     '项目经理': 'workbench_pm',
@@ -66,7 +68,7 @@
     '文书机构管理员': 'workbench_docadmin'
   };
   var WORKBENCH_KEY_PERMISSION = {
-    pm: 'workbench_pm', writer: 'workbench_writer',
+    pmo: 'workbench_pmo', pm: 'workbench_pm', writer: 'workbench_writer',
     salesmanager: 'workbench_sales_manager', sales: 'workbench_sales', apply: 'workbench_apply', audit: 'workbench_audit',
     platform: 'workbench_platform', orgadmin: 'workbench_org_admin',
     docadmin: 'workbench_docadmin'
@@ -88,6 +90,7 @@
 
   definePermissionPage('工作台', 'wb_home', '工作台首页', '', [
     { id: 'workbench_platform', label: '平台运维工作台', desc: '可见平台运维视角' },
+    { id: 'workbench_pmo', label: 'PMO工作台', desc: '订单目标统筹与结项核验' },
     { id: 'workbench_org_admin', label: '机构管理员工作台', desc: '可见机构运营视角' },
     { id: 'workbench_sales_manager', label: '销售人员管理员工作台', desc: '可见选校团队管理视角' },
     { id: 'workbench_pm', label: '项目经理工作台', desc: '可见项目经理视角' },
@@ -111,18 +114,22 @@
   /* ToB SaaS 边界：角色权限 / 操作日志 / AI / 视频只属于平台运维侧。
      所有机构业务角色均不得持有这些页面的权限项，也看不到对应菜单与页面。 */
   var PLATFORM_ONLY_SYSTEM_ROLES = [
-    '机构管理员', '销售人员管理员', '销售人员', '项目经理', '文书人员',
+    '机构管理员', 'PMO', '销售人员管理员', '销售人员', '项目经理', '文书人员',
     '网申人员', '文书审核', '文书机构管理员'
   ];
   var PLATFORM_ONLY_PAGE_GROUPS = ['role_perm', 'op_log', 'ai_admin', 'video_admin'];
 
   definePermissionPage('PMO监控台', 'project_pool', '项目池列表页', '项目池列表页 - 留学申请管理系统.html', [
     { id: 'project_view', label: '列表展示' },
+    { id: 'order_assign_pmo', label: '分配订单 PMO' },
     { id: 'project_create', label: '新建线下项目', desc: '创建线下项目档案及购买服务' }
   ]);
   definePermissionPage('PMO监控台', 'project_detail', '项目详情页', '项目详情页 - 留学申请管理系统.html', [
     { id: 'project_view_detail', label: '列表展示' },
     { id: 'project_team_manage', label: '管理团队' }
+  ]);
+  definePermissionPage('PMO监控台', 'order_detail', '订单项目详情页', '订单项目详情页 - 留学申请管理系统.html', [
+    { id:'order_view', label:'查看订单目标' }, { id:'order_assign_pm', label:'分配院校目标项目经理' }
   ]);
   definePermissionPage('PMO监控台', 'goal_detail', '院校目标详情页', '院校目标详情页 - 留学申请管理系统.html', [
     { id: 'goal_view', label: '列表展示' },
@@ -217,7 +224,8 @@
   ]);
   definePermissionPage('结项归档', 'archive_detail', '结项详情页', '结项详情页 - 留学申请管理系统.html', [
     { id: 'archive_view_detail', label: '列表展示' },
-    { id: 'archive_create', label: '编制结项' },
+    { id: 'archive_create', label: '编制结项材料' },
+    { id: 'archive_submit', label: '提交结项材料' },
     { id: 'archive_approve', label: '确认结项' }
   ]);
 
@@ -299,7 +307,7 @@
     '机构管理员': [
       'workbench_org_admin',
       'customer_view', 'customer_view_detail',
-      'project_view', 'project_create', 'project_view_detail', 'project_team_manage',
+      'project_view', 'project_create', 'project_view_detail', 'project_team_manage', 'order_assign_pmo', 'order_view',
       'goal_view', 'goal_team_manage',
       'doc_view', 'doc_editor_view',
       'library_view', 'doc_template_edit_view', 'case_view',
@@ -329,7 +337,7 @@
       'app_view', 'app_view_detail', 'app_library_view', 'app_template_edit_view',
       'monitor_view', 'monitor_track', 'monitor_detail_view',
       'monitor_site_view', 'monitor_site_manage', 'monitor_mail_view', 'monitor_mail_manage',
-      'archive_view', 'archive_view_detail', 'archive_create', 'archive_approve'
+      'archive_view', 'archive_view_detail', 'archive_create', 'archive_submit'
     ],
     '文书人员': [
       'workbench_writer',
@@ -366,6 +374,7 @@
   };
 
   /* 角色权限页尚未保存配置时使用的默认权限；保存后完全以页面配置为准。 */
+  ROLE_DEFAULT_GRANTS.PMO = ROLE_DEFAULT_GRANTS['机构管理员'].filter(function(id) { return id !== 'workbench_org_admin' && id !== 'order_assign_pmo'; }).concat(['workbench_pmo','order_assign_pm','customer_edit','archive_create','archive_approve','my_project_view','my_project_view_detail','my_project_team_manage']);
   var DEFAULT_ROLE_PERMISSIONS = {};
   Object.keys(ROLE_DEFAULT_GRANTS).forEach(function (role) {
     DEFAULT_ROLE_PERMISSIONS[role] = permissionGroupIds(ROLE_DEFAULT_GRANTS[role]);
@@ -373,8 +382,8 @@
 
   var PLATFORM_FORBIDDEN_PERMISSIONS = ['monitor_view', 'monitor_track', 'monitor_detail_view', 'monitor_site_view', 'monitor_site_manage', 'monitor_mail_view', 'monitor_mail_manage'];
   var REQUIRED_ROLE_PERMISSIONS = {
-    '机构管理员': ['customer_view', 'project_view', 'doc_view', 'doc_editor_view', 'library_view', 'doc_template_edit_view', 'case_view', 'app_view', 'app_view_detail', 'app_library_view', 'app_template_edit_view', 'monitor_view', 'archive_view', 'archive_view_detail'],
-    '项目经理': ['my_project_view', 'doc_view', 'doc_editor_view', 'app_view', 'app_view_detail', 'monitor_view', 'archive_view', 'archive_view_detail']
+    '机构管理员': ['customer_view', 'project_view', 'order_assign_pmo', 'order_view', 'doc_view', 'doc_editor_view', 'library_view', 'doc_template_edit_view', 'case_view', 'app_view', 'app_view_detail', 'app_library_view', 'app_template_edit_view', 'monitor_view', 'archive_view', 'archive_view_detail'],
+    '项目经理': ['my_project_view', 'doc_view', 'doc_editor_view', 'app_view', 'app_view_detail', 'monitor_view', 'archive_view', 'archive_view_detail', 'archive_submit']
   };
 
   /* 旧权限项 id → 新权限项 id：用于迁移 localStorage 中已保存的历史配置，
@@ -661,38 +670,38 @@
   var MENUS = [
     { key: 'workbench', label: '工作台首页', icon: 'home', roles: ROLES.slice(), single: true },
     { key: 'student', label: '学生档案', icon: 'idcard', permission: 'customer_view',
-      roles: ['机构管理员', '销售人员', '项目经理', '文书人员', '网申人员', '文书审核', '文书机构管理员'],
+      roles: ['机构管理员', 'PMO', '销售人员', '项目经理', '文书人员', '网申人员', '文书审核', '文书机构管理员'],
       children: [{ label: '学生档案列表', file: '学生档案列表页 - 留学申请管理系统.html' }] },
-    { key: 'pmo', label: 'PMO监控台', icon: 'folder', permission: 'project_view', roles: ['机构管理员'],
+    { key: 'pmo', label: 'PMO监控台', icon: 'folder', permission: 'project_view', roles: ['机构管理员', 'PMO'],
       children: [
         { label: '项目池列表', file: '项目池列表页 - 留学申请管理系统.html' }] },
     { key: 'project', label: '项目管理', icon: 'folder', permission: 'my_project_view', roles: ['项目经理'],
       children: [
-        { label: '项目池列表', file: '项目池列表页 - 留学申请管理系统.html', permission: 'project_view', roles: ['机构管理员'] },
+        { label: '项目池列表', file: '项目池列表页 - 留学申请管理系统.html', permission: 'project_view', roles: ['机构管理员', 'PMO'] },
         { label: '我的项目列表', file: '我的项目列表页 - 留学申请管理系统.html', permission: 'my_project_view' }] },
-    { key: 'doc', label: '文书交付', icon: 'doc', roles: ['机构管理员', '项目经理', '文书人员', '平台运维人员', '文书机构管理员'],
+    { key: 'doc', label: '文书交付', icon: 'doc', roles: ['机构管理员', 'PMO', '项目经理', '文书人员', '平台运维人员', '文书机构管理员'],
       children: [
-        { label: '任务列表', file: '任务列表页 - 文书交付系统.html', permission: 'doc_view', roles: ['机构管理员', '项目经理', '文书人员', '文书机构管理员'] },
-        { label: '模板库', file: '模板库列表 - 文书交付系统.html', permission: 'library_view', roles: ['机构管理员', '文书人员', '平台运维人员', '文书机构管理员'] },
-        { label: '案例库', file: '案例库 - 文书交付系统.html', permission: 'case_view', roles: ['机构管理员', '文书人员', '平台运维人员', '文书机构管理员'] }] },
-    { key: 'apply', label: '网申管理', icon: 'globe', roles: ['机构管理员', '网申人员', '项目经理', '平台运维人员'],
+        { label: '任务列表', file: '任务列表页 - 文书交付系统.html', permission: 'doc_view', roles: ['机构管理员', 'PMO', '项目经理', '文书人员', '文书机构管理员'] },
+        { label: '模板库', file: '模板库列表 - 文书交付系统.html', permission: 'library_view', roles: ['机构管理员', 'PMO', '文书人员', '平台运维人员', '文书机构管理员'] },
+        { label: '案例库', file: '案例库 - 文书交付系统.html', permission: 'case_view', roles: ['机构管理员', 'PMO', '文书人员', '平台运维人员', '文书机构管理员'] }] },
+    { key: 'apply', label: '网申管理', icon: 'globe', roles: ['机构管理员', 'PMO', '网申人员', '项目经理', '平台运维人员'],
       children: [
-        { label: '网申任务列表', file: '网申任务列表页 - 留学申请管理系统.html', permission: 'app_view', roles: ['机构管理员', '网申人员', '项目经理'] },
+        { label: '网申任务列表', file: '网申任务列表页 - 留学申请管理系统.html', permission: 'app_view', roles: ['机构管理员', 'PMO', '网申人员', '项目经理'] },
         { label: '网申模板发布中心', file: '网申模板发布中心 - 留学申请管理系统.html', permission:'app_template_publish', roles:['平台运维人员'] },
-        { label: '网申模板库', file: '网申模板库 - 留学申请管理系统.html', permission: 'app_library_view', roles: ['机构管理员', '网申人员', '项目经理', '平台运维人员'] }
+        { label: '网申模板库', file: '网申模板库 - 留学申请管理系统.html', permission: 'app_library_view', roles: ['机构管理员', 'PMO', '网申人员', '项目经理', '平台运维人员'] }
       ] },
-    { key: 'monitor', label: '监控管理', icon: 'eye', permission: 'monitor_view', roles: ['机构管理员', '项目经理'],
+    { key: 'monitor', label: '监控管理', icon: 'eye', permission: 'monitor_view', roles: ['机构管理员', 'PMO', '项目经理'],
       children: [{ label: '监控任务列表', file: '监控任务列表 - PBS留学CRM.html' }] },
-    { key: 'archive', label: '结项归档', icon: 'archive', permission: 'archive_view', roles: ['机构管理员', '项目经理', '文书人员', '网申人员'],
+    { key: 'archive', label: '结项归档', icon: 'archive', permission: 'archive_view', roles: ['机构管理员', 'PMO', '项目经理', '文书人员', '网申人员'],
       children: [{ label: '结项归档列表', file: '结项归档列表 - PBS留学CRM系统.html' }] },
     { key: 'review', label: '文书审核', icon: 'shield', permission: 'doc_review', roles: ['文书审核', '文书机构管理员'],
       children: [{ label: '文书审核列表', file: '文书审核列表页 - 留学申请管理系统.html' }] },
-    { key: 'school', label: '选校管理', icon: 'map', permission: ['school_task','school_plan'], roles: ['机构管理员', '销售人员管理员', '销售人员'],
+    { key: 'school', label: '选校管理', icon: 'map', permission: ['school_task','school_plan'], roles: ['机构管理员', 'PMO', '销售人员管理员', '销售人员'],
       children: [
-        { label: '选校任务列表', file: '选校任务列表页 - 留学申请管理系统.html', permission: 'school_task', roles: ['机构管理员', '销售人员管理员', '销售人员'] },
+        { label: '选校任务列表', file: '选校任务列表页 - 留学申请管理系统.html', permission: 'school_task', roles: ['机构管理员', 'PMO', '销售人员管理员', '销售人员'] },
         { label: '院校列表', file: '选校工作台页 - 留学申请管理系统.html', href: '选校工作台页 - 留学申请管理系统.html?mode=catalog', permission: 'school_plan', roles: ['销售人员'] }] },
     { key: 'organization', label: '机构管理', icon: 'users', permission: 'sys_org', roles: ['平台运维人员'], single: true, file: '机构管理 - PBS留学CRM系统.html' },
-    { key: 'personnel', label: '机构成员管理', icon: 'idcard', permission: 'personnel_view', roles: ['机构管理员', '文书机构管理员'], single: true, file: '人员管理 - PBS留学CRM系统.html' },
+    { key: 'personnel', label: '机构成员管理', icon: 'idcard', permission: 'personnel_view', roles: ['机构管理员', 'PMO', '文书机构管理员'], single: true, file: '人员管理 - PBS留学CRM系统.html' },
     /* 系统管理属于 SaaS 平台侧职责：仅平台运维人员可见，机构侧角色（含机构管理员）一律不暴露。 */
     { key: 'usermgmt', label: '系统管理', icon: 'users', roles: ['平台运维人员'],
       children: [
@@ -707,30 +716,32 @@
     '管理员工作台 - 留学申请管理系统.html': ROLES.slice(),
     '平台运维工作台 - PBS留学CRM系统.html': ['平台运维人员'],
     '机构管理员工作台 - 留学申请管理系统.html': ['机构管理员'],
+    'PMO工作台 - 留学申请管理系统.html': ['PMO'],
+    '订单项目详情页 - 留学申请管理系统.html': ['机构管理员', 'PMO'],
     '项目经理工作台 - 留学申请管理系统.html': ['项目经理'],
-    '学生档案列表页 - 留学申请管理系统.html': ['机构管理员', '销售人员', '项目经理', '文书人员', '网申人员', '文书审核', '文书机构管理员'],
-    '学生档案详情页 - 留学申请管理系统.html': ['机构管理员', '销售人员', '项目经理', '文书人员', '网申人员', '文书审核', '文书机构管理员'],
-    '项目池列表页 - 留学申请管理系统.html': ['机构管理员'],
-    '项目详情页 - 留学申请管理系统.html': ['机构管理员'],
-    'PMO看板 - 留学申请管理系统.html': ['机构管理员'],
+    '学生档案列表页 - 留学申请管理系统.html': ['机构管理员', 'PMO', '销售人员', '项目经理', '文书人员', '网申人员', '文书审核', '文书机构管理员'],
+    '学生档案详情页 - 留学申请管理系统.html': ['机构管理员', 'PMO', '销售人员', '项目经理', '文书人员', '网申人员', '文书审核', '文书机构管理员'],
+    '项目池列表页 - 留学申请管理系统.html': ['机构管理员', 'PMO'],
+    '项目详情页 - 留学申请管理系统.html': ['机构管理员', 'PMO'],
+    'PMO看板 - 留学申请管理系统.html': ['机构管理员', 'PMO'],
     '我的项目列表页 - 留学申请管理系统.html': ['项目经理'],
     '我的项目详情页 - 留学申请管理系统.html': ['项目经理'],
-    '任务列表页 - 文书交付系统.html': ['机构管理员', '项目经理', '文书人员', '文书机构管理员'],
-    '文书编辑器 - 文书交付系统.html': ['机构管理员', '项目经理', '文书人员', '文书机构管理员'],
-    '模板库列表 - 文书交付系统.html': ['机构管理员', '文书人员', '平台运维人员', '文书机构管理员'],
-    '模板库编辑 - 文书交付系统.html': ['机构管理员', '文书人员', '平台运维人员', '文书机构管理员'],
-    '案例库 - 文书交付系统.html': ['机构管理员', '文书人员', '平台运维人员', '文书机构管理员'],
-    '网申任务列表页 - 留学申请管理系统.html': ['机构管理员', '网申人员', '项目经理'],
-    '网申任务详情页 - 留学申请管理系统.html': ['机构管理员', '网申人员', '项目经理'],
+    '任务列表页 - 文书交付系统.html': ['机构管理员', 'PMO', '项目经理', '文书人员', '文书机构管理员'],
+    '文书编辑器 - 文书交付系统.html': ['机构管理员', 'PMO', '项目经理', '文书人员', '文书机构管理员'],
+    '模板库列表 - 文书交付系统.html': ['机构管理员', 'PMO', '文书人员', '平台运维人员', '文书机构管理员'],
+    '模板库编辑 - 文书交付系统.html': ['机构管理员', 'PMO', '文书人员', '平台运维人员', '文书机构管理员'],
+    '案例库 - 文书交付系统.html': ['机构管理员', 'PMO', '文书人员', '平台运维人员', '文书机构管理员'],
+    '网申任务列表页 - 留学申请管理系统.html': ['机构管理员', 'PMO', '网申人员', '项目经理'],
+    '网申任务详情页 - 留学申请管理系统.html': ['机构管理员', 'PMO', '网申人员', '项目经理'],
     '网申模板发布中心 - 留学申请管理系统.html': ['平台运维人员'],
-    '网申模板库 - 留学申请管理系统.html': ['机构管理员', '网申人员', '项目经理', '平台运维人员'],
-    '网申模板编辑 - 留学申请管理系统.html': ['机构管理员', '网申人员', '项目经理', '平台运维人员'],
-    '监控任务列表 - PBS留学CRM.html': ['机构管理员', '项目经理'],
-    '监控详情页 - 留学申请管理系统.html': ['机构管理员', '项目经理'],
-    '监控详情页（官网） - 留学申请管理系统.html': ['机构管理员', '项目经理'],
-    '监控详情页（邮件） - 留学申请管理系统.html': ['机构管理员', '项目经理'],
-    '结项归档列表 - PBS留学CRM系统.html': ['机构管理员', '项目经理', '文书人员', '网申人员'],
-    '结项详情页 - 留学申请管理系统.html': ['机构管理员', '项目经理', '文书人员', '网申人员'],
+    '网申模板库 - 留学申请管理系统.html': ['机构管理员', 'PMO', '网申人员', '项目经理', '平台运维人员'],
+    '网申模板编辑 - 留学申请管理系统.html': ['机构管理员', 'PMO', '网申人员', '项目经理', '平台运维人员'],
+    '监控任务列表 - PBS留学CRM.html': ['机构管理员', 'PMO', '项目经理'],
+    '监控详情页 - 留学申请管理系统.html': ['机构管理员', 'PMO', '项目经理'],
+    '监控详情页（官网） - 留学申请管理系统.html': ['机构管理员', 'PMO', '项目经理'],
+    '监控详情页（邮件） - 留学申请管理系统.html': ['机构管理员', 'PMO', '项目经理'],
+    '结项归档列表 - PBS留学CRM系统.html': ['机构管理员', 'PMO', '项目经理', '文书人员', '网申人员'],
+    '结项详情页 - 留学申请管理系统.html': ['机构管理员', 'PMO', '项目经理', '文书人员', '网申人员'],
     '用户管理 - 留学申请管理系统.html': ['平台运维人员'],
     '机构管理 - PBS留学CRM系统.html': ['平台运维人员'],
     '人员管理 - PBS留学CRM系统.html': ['平台运维人员', '机构管理员', '文书机构管理员'],
@@ -747,6 +758,11 @@
     '选校方案未生成 - 留学申请管理系统.html': ['销售人员', '机构管理员'],
     '院校目标详情页 - 留学申请管理系统.html': ['项目经理', '机构管理员']
   };
+
+  Object.keys(PAGE_PERMS).forEach(function(file) { if (file !== '机构管理员工作台 - 留学申请管理系统.html' && PAGE_PERMS[file].indexOf('机构管理员') >= 0 && PAGE_PERMS[file].indexOf('PMO') < 0) PAGE_PERMS[file].push('PMO'); });
+  PAGE_PERMS['我的项目列表页 - 留学申请管理系统.html'].push('PMO');
+  PAGE_PERMS['我的项目详情页 - 留学申请管理系统.html'].push('PMO');
+
 
   /* 页面 → 权限点映射：角色权限管理页保存的配置通过此表驱动页面访问。
      未配置权限的角色按 PAGE_PERMS 默认角色放行；一旦在角色权限页保存过该角色的配置，
@@ -852,17 +868,7 @@
   var ROLE_PERMS_KEY = 'pbs_role_perms_v1';
 
   /* 系统内置角色：不可删除/改名，权限可配置但保留默认兜底 */
-  var SYSTEM_ROLES = ['超级管理员', '平台运维人员', '机构管理员', '文书机构管理员'];
-
-  /* 项目状态机：待分配(未分配PM) → 待接收(PM已分配) → 进行中(PM已接收) → 已结项 */
-  function normalizeProjectStatus(project) {
-    if (!project) return '待分配';
-    var explicit = project.status;
-    if (explicit === '已结项') return explicit;
-    if (!project.projectManager) return '待分配';
-    if (project.pmAccepted) return '进行中';
-    return '待接收';
-  }
+  var SYSTEM_ROLES = ['超级管理员', '平台运维人员', '机构管理员', 'PMO', '文书机构管理员'];
 
   function readStore(key, fallback) {
     try {
@@ -911,63 +917,6 @@
       if (!p) return null;
       return this.upsert(Object.assign({}, p, patch));
     },
-    /* 分配项目经理：状态 待分配 → 待接收，并通知项目经理 */
-    assignPM: function (projectNo, pmName, operatorOrg) {
-      var p = this.find(projectNo);
-      if (!p) return null;
-      p.projectManager = pmName;
-      p.pmAccepted = false;
-      p.status = normalizeProjectStatus(p);
-      p.assignedAt = new Date().toISOString();
-      p.rejectedAt = '';
-      p.rejectReason = '';
-      this.saveOne(p);
-      window.pbsCreateNotification({
-        kind: 'task_assigned', type: '新项目待接收',
-        title: '项目 ' + projectNo + ' 已分配给你，等待接收',
-        business: projectNo + ' · ' + (p.customer || '') + ' / ' + (p.student || ''),
-        detail: '机构管理员已完成项目经理分配，请及时接收项目并开始任务分发。',
-        level: 'primary',
-        recipientName: pmName,
-        recipientRoles: ['项目经理'],
-        organization: p.org || operatorOrg || '',
-        href: '我的项目列表页 - 留学申请管理系统.html'
-      });
-      return p;
-    },
-    /* 项目经理接收：待接收 → 进行中 */
-    acceptPM: function (projectNo) {
-      var p = this.find(projectNo);
-      if (!p) return null;
-      p.pmAccepted = true;
-      p.status = normalizeProjectStatus(p);
-      p.acceptedAt = new Date().toISOString();
-      this.saveOne(p);
-      return p;
-    },
-    /* 项目经理退回后重新进入待分配，并通知机构管理员 */
-    rejectPM: function (projectNo, reason) {
-      var p = this.find(projectNo);
-      if (!p) return null;
-      p.pmAccepted = false;
-      p.projectManager = '';
-      p.status = '待分配';
-      p.rejectedAt = new Date().toISOString();
-      p.rejectReason = reason || '';
-      p.assignedAt = '';
-      this.saveOne(p);
-      window.pbsCreateNotification({
-        kind: 'task_assigned', type: '项目退回提醒',
-        title: '项目 ' + projectNo + ' 被项目经理退回',
-        business: projectNo + ' · ' + (p.customer || '') + ' / ' + (p.student || ''),
-        detail: reason ? ('退回原因：' + reason) : '请重新为项目分配项目经理。',
-        level: 'danger',
-        recipientRoles: ['机构管理员'],
-        organization: p.org || '',
-        href: '项目池列表页 - 留学申请管理系统.html'
-      });
-      return p;
-    },
     getAssignment: function(projectNo) {
       var project = this.find(projectNo) || {};
       var stored = readStore('pbs_project_assignment_v3_' + (project.projectNo || projectNo), {});
@@ -1006,8 +955,7 @@
       project.assignedAt = new Date().toISOString();
       project.allStaffAssigned = this.assignmentComplete(project);
       return this.upsert(project);
-    },
-    statusOf: normalizeProjectStatus
+    }
   };
 
   /* ---------- 账号共享存储（登录页与人员管理页共用同一份） ---------- */
@@ -1127,6 +1075,144 @@
       return dateValue < Date.now();
     }
   };
+
+  (function initializeOrderManagement() {
+    var key = 'pbs_order_management_v1', projects = window.pbsProjects;
+    function session() { return window.pbsGetSession(); }
+    function org(value) { return value === 'PBS留学' ? 'PBS留学总部' : value; }
+    function sameOrg(project) { return session().role === '超级管理员' || org(session().org) === org(project.org); }
+    function name(role) {
+      var current = session();
+      if (current.account !== 'demo_admin' && current.account !== 'test') return current.name;
+      return role === 'PMO' ? '林老师' : '张老师';
+    }
+    function orderKey(project) { return org(project.org || 'PBS留学总部') + '::' + (project.orderNo ? 'ORDER:' + project.orderNo : 'PROJECT:' + project.projectNo); }
+    function state(project) { return readStore(key, {})[orderKey(project)] || {}; }
+    function members(project) { var id = orderKey(project); return projects.all().filter(function(item) { return orderKey(item) === id; }); }
+    function manager(project, goalId) {
+      var saved = project.goalManagers && project.goalManagers[goalId];
+      return saved || { name:project.projectManager || '', accepted:!!project.pmAccepted, assignedAt:project.assignedAt || '', rejectReason:project.rejectReason || '' };
+    }
+    function canManage(project) { var owner = state(project), preview = ['demo_admin','test'].indexOf(session().account) >= 0; return sameOrg(project) && session().role === 'PMO' && !!owner.pmoName && (owner.pmoAccount ? owner.pmoAccount === session().account || preview && owner.pmoName === name('PMO') : owner.pmoName === name('PMO')); }
+    function canAssignOwner(project) { return sameOrg(project) && ['机构管理员','超级管理员'].indexOf(session().role) >= 0 && window.pbsHasPermission('order_assign_pmo'); }
+    function canHandleGoal(project, goalId, accepted) { var pm = manager(project, goalId), preview = ['demo_admin','test'].indexOf(session().account) >= 0; return sameOrg(project) && session().role === '项目经理' && (pm.account ? pm.account === session().account || preview && pm.name === name('项目经理') : pm.name === name('项目经理')) && (!accepted || pm.accepted); }
+    function canReadGoal(project,goalId) {
+      if (!sameOrg(project)) return false;
+      if (canAssignOwner(project) || canManage(project) || canHandleGoal(project,goalId)) return true;
+      var assignment = projects.getAssignment(project.projectNo).goalAssignments[goalId] || {}, role = session().role, person = session().name;
+      if (role === '网申人员') return assignment.network === person;
+      if (role === '文书人员') return Object.keys(assignment.docs || {}).some(function(id) { return assignment.docs[id].person === person; });
+      if (role === '文书审核') return Object.keys(assignment.reviewers || {}).some(function(id) { return assignment.reviewers[id] === person; });
+      return false;
+    }
+    function canView(project) { return sameOrg(project) && (canAssignOwner(project) || canManage(project) || (project.packages || []).some(function(goal) { return canReadGoal(project, goal.id); })); }
+    function event(project, type, detail) {
+      var all = readStore(key, {}), id = orderKey(project), record = all[id] || {};
+      record.events = record.events || []; record.events.unshift({ id:'EVT-' + Date.now() + '-' + Math.random().toString(36).slice(2,6), type:type, detail:detail, actor:session().name, at:new Date().toISOString() });
+      all[id] = record; writeStore(key, all);
+      if (window.pbsRecordOperation) window.pbsRecordOperation('订单管理', type, detail);
+      window.dispatchEvent(new CustomEvent('pbs-order-updated', { detail:id }));
+    }
+    function sync(project) {
+      var names = [], allAccepted = true;
+      (project.packages || []).forEach(function(goal) { var pm = manager(project, goal.id); if (pm.name && names.indexOf(pm.name) < 0) names.push(pm.name); if (!pm.name || !pm.accepted) allAccepted = false; });
+      project.projectManager = names.join('、'); project.pmAccepted = allAccepted;
+      if (project.status !== '已结项') project.status = status(project);
+      projects.upsert(project); return project;
+    }
+    function status(project) {
+      if (!project || project.status === '已结项') return project ? project.status : '待分配';
+      var goals = project.packages || [], assigned = goals.map(function(goal) { return manager(project, goal.id); });
+      if (assigned.some(function(pm) { return pm.name && pm.accepted; })) return '进行中';
+      return assigned.some(function(pm) { return pm.name; }) ? '待接收' : '待分配';
+    }
+    function candidates(role, project) { return window.pbsAccounts.all().filter(function(account) { return (account.roles || [account.role]).indexOf(role) >= 0 && org(account.org) === org(project.org) && account.status !== '停用' && account.status !== '停职' && account.accountStatus !== '停用' && account.accountStatus !== '禁用'; }); }
+    function assignOwner(projectNo, accountId) {
+      var project = projects.find(projectNo); if (!project || !canAssignOwner(project)) return { error:'仅机构管理员可分配 PMO' };
+      if (members(project).every(function(item) { return item.status === '已结项'; })) return { error:'订单已结项' };
+      var account = candidates('PMO', project).find(function(item) { return item.u === accountId; }); if (!account) return { error:'请选择本机构在职 PMO' };
+      var all = readStore(key, {}), record = all[orderKey(project)] || {};
+      Object.assign(record, { pmoAccount:account.u, pmoName:account.name, assignedAt:new Date().toISOString(), assignedBy:session().name }); all[orderKey(project)] = record; writeStore(key, all);
+      event(project,'分配 PMO',(project.orderNo || project.projectNo) + ' → ' + account.name);
+      window.pbsCreateNotification({kind:'task_assigned',type:'订单分配提醒',title:project.student + '的订单已分配给你',business:project.orderNo || project.projectNo,recipientName:account.name,recipientRoles:['PMO'],organization:project.org,href:'订单项目详情页 - 留学申请管理系统.html?project=' + encodeURIComponent(projectNo)});
+      return record;
+    }
+    function assignGoal(projectNo, goalId, accountId) {
+      var project = projects.find(projectNo), goal = project && (project.packages || []).find(function(item) { return item.id === goalId; });
+      if (!goal || !canManage(project) || !window.pbsHasPermission('order_assign_pm')) return { error:'仅订单 PMO 可分配院校目标项目经理' };
+      if (project.status === '已结项') return { error:'项目已结项' };
+      var account = candidates('项目经理',project).find(function(item) { return item.u === accountId || item.name === accountId; }); if (!account) return { error:'请选择本机构在职项目经理' };
+      var previous = manager(project, goalId); if (previous.account ? previous.account === account.u : previous.name === account.name) return project;
+      project.goalManagers = Object.assign({},project.goalManagers || {});
+      (project.packages || []).forEach(function(item) { if (!project.goalManagers[item.id]) project.goalManagers[item.id] = manager(project,item.id); });
+      project.goalManagers[goalId] = { account:account.u, name:account.name, accepted:false, assignedAt:new Date().toISOString(), assignedBy:session().name };
+      if (project.goalSubmissions && project.goalSubmissions[goalId]) project.goalSubmissions[goalId].status = '待提交';
+      project.assignedAt = new Date().toISOString(); sync(project);
+      event(project,'分配项目经理',project.projectNo + ' · ' + goal.school + ' → ' + account.name);
+      window.pbsCreateNotification({kind:'task_assigned',type:'院校目标待接收',title:project.student + ' · ' + goal.school + '已分配给你',business:project.projectNo,recipientName:account.name,recipientRoles:['项目经理'],organization:project.org,detail:'PMO 已分配院校目标，请接收后维护档案并分配交付任务。',href:'我的项目列表页 - 留学申请管理系统.html'});
+      return project;
+    }
+    function handleGoal(projectNo, goalId, reason) {
+      var project = projects.find(projectNo); if (!project || project.status === '已结项') return null;
+      var goals = (project.packages || []).filter(function(goal) { return (!goalId || goal.id === goalId) && canHandleGoal(project,goal.id); }); if (!goals.length) return null;
+      if (reason !== undefined && !String(reason).trim()) return null;
+      project.goalManagers = Object.assign({},project.goalManagers || {});
+      (project.packages || []).forEach(function(goal) { if (!project.goalManagers[goal.id]) project.goalManagers[goal.id] = manager(project,goal.id); });
+      goals.forEach(function(goal) { var pm = project.goalManagers[goal.id]; if (reason !== undefined) { Object.assign(pm,{ name:'',account:'',accepted:false,rejectReason:reason,returnedAt:new Date().toISOString() }); } else { pm.accepted = true; pm.acceptedAt = new Date().toISOString(); } });
+      sync(project); event(project,reason === undefined ? '接收院校目标' : '退回院校目标',projectNo + ' · ' + goals.map(function(goal) { return goal.school; }).join('、') + (reason ? ' · ' + reason : ''));
+      if (reason !== undefined) window.pbsCreateNotification({kind:'task_return',type:'院校目标退回',title:project.student + '的院校目标被退回',business:projectNo,detail:reason,recipientName:state(project).pmoName,recipientRoles:['PMO'],organization:project.org,href:'订单项目详情页 - 留学申请管理系统.html?project=' + encodeURIComponent(projectNo)});
+      return project;
+    }
+    function submit(projectNo, goalId, payload) {
+      var project = projects.find(projectNo); if (!project || !(project.packages || []).some(function(goal) { return goal.id === goalId; }) || !canHandleGoal(project,goalId,true) || !window.pbsHasPermission('archive_submit') || project.status === '已结项') return { error:'仅已接收该院校目标的项目经理可提交材料' };
+      if (!state(project).pmoName) return { error:'请先由机构管理员分配 PMO' };
+      if (!payload.deliveryConfirmed) return { error:'请先确认院校目标交付完整' };
+      var closure = readStore('pbs_closure_' + projectNo + '_' + goalId,readStore('pbs_closure_' + projectNo,{}));
+      if (!(closure.confirmed || {})[goalId]) return { error:'请先核对并确认院校结果' };
+      if (!payload.note && !(payload.attachments || []).length && !Object.keys(readStore('pbs_closure_reports_' + projectNo + '_' + goalId,{})).length) return { error:'请填写结项说明或提供结项材料' };
+      var previous = (project.goalSubmissions || {})[goalId]; if (previous && ['待审核','已通过'].indexOf(previous.status) >= 0) return { error:'该院校目标已提交核验' };
+      if (payload.result && payload.result !== '待录入') { project.goalResults = Object.assign({},project.goalResults || {}); project.goalResults[goalId] = {result:payload.result,note:payload.resultNote || '',image:payload.resultImage || ''}; }
+      project.goalSubmissions = Object.assign({},project.goalSubmissions || {}); project.goalSubmissions[goalId] = Object.assign({},payload,{ status:'待审核',submittedBy:session().name,submittedAt:new Date().toISOString() }); projects.upsert(project);
+      event(project,'提交结项材料',projectNo + ' · ' + project.packages.find(function(goal) { return goal.id === goalId; }).school);
+      window.pbsCreateNotification({kind:'closure_review',type:'结项材料待核验',title:project.student + '的结项材料待核验',business:project.orderNo || projectNo,recipientName:state(project).pmoName,recipientRoles:['PMO'],organization:project.org,href:'订单项目详情页 - 留学申请管理系统.html?project=' + encodeURIComponent(projectNo) + '#closure'});
+      return project.goalSubmissions[goalId];
+    }
+    function review(projectNo, goalId, approve, note) {
+      var project = projects.find(projectNo); if (!project || !canManage(project) || !window.pbsHasPermission('archive_approve')) return { error:'仅订单 PMO 可核验结项材料' };
+      var submission = (project.goalSubmissions || {})[goalId]; if (!submission || submission.status !== '待审核') return { error:'没有待核验的材料' };
+      if (!approve && !String(note || '').trim()) return { error:'请填写退回原因' };
+      Object.assign(submission,{status:approve ? '已通过' : '退回补充',reviewNote:note || '',reviewedBy:session().name,reviewedAt:new Date().toISOString()}); projects.upsert(project);
+      event(project,approve ? '核验通过' : '退回补充',projectNo + ' · ' + project.packages.find(function(goal) { return goal.id === goalId; }).school + (note ? ' · ' + note : ''));
+      window.pbsCreateNotification({kind:'closure_review',type:approve ? '材料核验通过' : '结项材料退回',title:project.student + '的结项材料' + (approve ? '核验通过' : '需补充'),business:projectNo,detail:note || '',recipientName:manager(project,goalId).name,recipientRoles:['项目经理'],organization:project.org,href:'结项详情页 - 留学申请管理系统.html?project=' + encodeURIComponent(projectNo) + '&school=' + encodeURIComponent(goalId)});
+      return submission;
+    }
+    function close(projectNo, note) {
+      var project = projects.find(projectNo); if (!project || !canManage(project) || !window.pbsHasPermission('archive_approve')) return { error:'仅订单 PMO 可确认结项' };
+      var list = members(project), targets = list.flatMap(function(item) { return (item.packages || []).map(function(goal) { return {project:item,goal:goal}; }); });
+      if (!targets.length || targets.some(function(item) { return item.project.status !== '已结项' && ((item.project.goalSubmissions || {})[item.goal.id] || {}).status !== '已通过'; })) return { error:'请先完成订单全部院校目标的材料核验' };
+      if (list.every(function(item) { return item.status === '已结项'; })) return { error:'订单已结项' };
+      var at = new Date().toISOString(), all = readStore(key,{}), record = state(project);
+      Object.assign(record,{closureStatus:'已结项',closureNote:note || '',closedAt:at,closedBy:session().name}); all[orderKey(project)] = record; writeStore(key,all);
+      list.forEach(function(item) { item.goalClosures = Object.assign({},item.goalClosures || {}); (item.packages || []).forEach(function(goal) { item.goalClosures[goal.id] = {closureNote:note || '',closureAt:at,closedBy:session().name}; }); Object.assign(item,{status:'已结项',closureConfirmed:true,closureAt:at,closureNote:note || ''}); projects.upsert(item); });
+      event(project,'确认结项',(project.orderNo || projectNo) + (note ? ' · ' + note : '')); return record;
+    }
+    function all() {
+      var groups = {};
+      projects.all().forEach(function(project) { var id = orderKey(project); if (!groups[id]) groups[id] = {id:id,project:project,projects:[],owner:state(project)}; groups[id].projects.push(project); });
+      return Object.keys(groups).map(function(id) { var order = groups[id]; order.targets = order.projects.flatMap(function(project) { return (project.packages || []).map(function(goal) { return {project:project,goal:goal,manager:manager(project,goal.id),submission:(project.goalSubmissions || {})[goal.id] || {status:'待提交'}}; }); }); order.status = order.projects.every(function(project) { return project.status === '已结项'; }) ? '已结项' : !order.owner.pmoName ? '待分配 PMO' : order.targets.some(function(target) { return !target.manager.name; }) ? '待分配经理' : order.targets.some(function(target) { return !target.manager.accepted; }) ? '待接收' : order.targets.some(function(target) { return target.submission.status === '待审核'; }) ? '待核验' : order.targets.length && order.targets.every(function(target) { return target.submission.status === '已通过'; }) ? '待结项' : order.targets.some(function(target) { return target.submission.status === '退回补充'; }) ? '待补充材料' : '进行中'; return order; });
+    }
+    window.pbsOrders = {key:orderKey,state:state,members:members,manager:manager,name:name,canManage:canManage,canAssignOwner:canAssignOwner,canHandleGoal:canHandleGoal,canReadGoal:canReadGoal,canView:canView,candidates:candidates,assignOwner:assignOwner,assignGoal:assignGoal,submit:submit,review:review,close:close,all:all};
+    projects.statusOf = status;
+    projects.assignPM = function(projectNo, pmName, operatorOrg, goalId) { var project = this.find(projectNo); if (!project || !canManage(project)) return null; var goals = (project.packages || []).filter(function(goal) { return !goalId || goal.id === goalId; }); var result; goals.forEach(function(goal) { result = assignGoal(projectNo,goal.id,pmName); }); return result && !result.error ? this.find(projectNo) : null; };
+    projects.acceptPM = function(projectNo,goalId) { return handleGoal(projectNo,goalId); };
+    projects.rejectPM = function(projectNo,reason,goalId) { return handleGoal(projectNo,goalId,reason); };
+    var saveAssignment = projects.saveAssignment;
+    projects.saveAssignment = function(projectNo,goals,note) { var project = this.find(projectNo); if (!project || project.status === '已结项') return null; var allowed = (project.packages || []).filter(function(goal) { return manager(project,goal.id).accepted && (canManage(project) || canHandleGoal(project,goal.id,true)); }); if (!allowed.length) return null; var merged = Object.assign({},this.getAssignment(projectNo).goalAssignments); allowed.forEach(function(goal) { if (goals[goal.id]) merged[goal.id] = goals[goal.id]; }); return saveAssignment.call(this,projectNo,merged,note); };
+    [{u:'pmo',name:'林老师',role:'PMO',phone:'13800000005'},{u:'pm',name:'张老师',role:'项目经理',phone:'13800000006'},{u:'pm_wang',name:'王老师',role:'项目经理',phone:'13800000007'},{u:'pm_li',name:'李老师',role:'项目经理',phone:'13800000008'}].forEach(function(account) { if (!window.pbsAccounts.find(account.u)) window.pbsAccounts.upsert(Object.assign({},account,{roles:[account.role],org:'PBS留学总部',status:'正常',accountStatus:'启用',accountExpiry:'长期有效',phash:window.pbsAccounts.hashPassword('pbs123456')})); });
+    var seeded = readStore(key,{}), changed = false;
+    projects.all().forEach(function(project) { var id = orderKey(project); if (seeded[id] || project.manualCreated || !/^PRJ-[MO]-2607-/.test(project.projectNo)) return; seeded[id] = {events:[]}; if (['PRJ-M-2607-0000','PRJ-O-2607-0005'].indexOf(project.projectNo) < 0) Object.assign(seeded[id],{pmoAccount:'pmo',pmoName:'林老师',assignedBy:'王志强',assignedAt:'2026-10-15T01:00:00.000Z'}); changed = true; });
+    if (changed) writeStore(key,seeded);
+  })();
 
   function currentFile() {
     var f = location.pathname.split('/').pop() || 'index.html';
@@ -2124,9 +2210,10 @@
   /* ---------------- 角色工作台（多角色视角 × 工作台可见权限） ---------------- */
   /* 工作台宿主页：always=独立工作台页；param=列表页以 #workbench（兼容 ?view=workbench）承载工作台视角 */
   var WORKBENCH_HOSTS = {
-    '管理员工作台 - 留学申请管理系统.html': { always: true, keys: ['platform', 'orgadmin', 'salesmanager', 'sales', 'pm', 'writer', 'audit', 'apply', 'docadmin'] },
+    '管理员工作台 - 留学申请管理系统.html': { always: true, keys: ['platform', 'orgadmin', 'pmo', 'salesmanager', 'sales', 'pm', 'writer', 'audit', 'apply', 'docadmin'] },
     '平台运维工作台 - PBS留学CRM系统.html': { always: true, keys: ['platform'], permission: 'workbench_platform' },
     '机构管理员工作台 - 留学申请管理系统.html': { always: true, keys: ['orgadmin'], permission: 'workbench_org_admin' },
+    'PMO工作台 - 留学申请管理系统.html': { always:true, keys:['pmo'], permission:'workbench_pmo' },
     '项目经理工作台 - 留学申请管理系统.html': { always: true, keys: ['pm'] },
     '任务列表页 - 文书交付系统.html': { param: true, keys: ['writer', 'docadmin'] },
     '选校任务列表页 - 留学申请管理系统.html': { param: true, keys: ['salesmanager', 'sales'] },
@@ -2166,6 +2253,7 @@
     if (role !== '平台运维人员' && role !== '超级管理员') {
       PLATFORM_ONLY_PAGE_GROUPS.forEach(function (groupId) { value[groupId] = []; });
     }
+    if (role !== 'PMO') Object.keys(value).forEach(function(group) { value[group] = (value[group] || []).filter(function(id) { return id !== 'archive_approve'; }); });
     return value;
   }
   function savedRolePerms() {
@@ -2179,6 +2267,7 @@
   }
   /* 角色是否拥有指定权限点（读取角色权限管理页保存的配置） */
   function roleHasPermission(role, permIds) {
+    if (role !== 'PMO' && permIds && permIds.indexOf('archive_approve') >= 0) { permIds = permIds.filter(function(id) { return id !== 'archive_approve'; }); if (!permIds.length) return false; }
     if (!permIds || !permIds.length) return true;
     if (role === '超级管理员') return true;
     if (role === '平台运维人员') {
@@ -2307,7 +2396,9 @@
     ],
     '结项详情页 - 留学申请管理系统.html': [
       { permission: 'archive_create', texts: ['查看/编辑','保存','生成报告','生成并导出 PDF','导出 PDF','重新生成','上传并应用母报告','恢复机构 Logo','图片上传','编辑内容','插入Offer邮件图片','生成《客户项目结项报告》','生成《项目管理结项报告》'] },
-      { permission: 'archive_approve', texts: ['确认结果','确认结项','手动确认结项'] }
+      { permission: 'archive_create', texts: ['确认结果'] },
+      { permission: 'archive_submit', texts: ['提交结项材料'] },
+      { permission: 'archive_approve', texts: ['确认结项','手动确认结项'] }
     ],
     '选校任务列表页 - 留学申请管理系统.html': [
       { permission: 'school_task_manage', texts: ['新建任务','确认创建'] },

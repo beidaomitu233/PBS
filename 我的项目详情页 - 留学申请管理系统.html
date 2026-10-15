@@ -367,7 +367,7 @@
           </aside>
           <div id="projectStageContent" class="project-flow-content" aria-live="polite"></div>
         </div>
-        <p class="stage-iframe-note mt-2">每个院校目标独立推进材料、文书、网申、监控与结项流程。</p>
+        <p class="stage-iframe-note mt-2">每个院校目标独立推进交付，结项材料提交 PMO 核验。</p>
       </section>
 
       <section class="order-4 mb-6 bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden" aria-label="支付与交付信息">
@@ -536,7 +536,7 @@
 
   <script src="./assets/js/pbs-app.js?v=7.6"></script>
   <script src="./assets/js/pbs-identity.js?v=1.0"></script>
-  <script src="./assets/js/pbs-student-data.js?v=1.4"></script>
+  <script src="./assets/js/pbs-student-data.js?v=1.5"></script>
   <script>
     /* ==================== 基础数据 ==================== */
     var TEAM = [
@@ -567,7 +567,7 @@
         direction: sharedMyProject.direction || (sharedMyProject.packages || []).map(function(item) { return item.school + ' · ' + item.major; }).join('；') || '待定方向',
         state: window.pbsProjects.statusOf(sharedMyProject),
         allStaffAssigned: !!sharedMyProject.allStaffAssigned,
-        packages: sharedMyProject.packages || []
+        packages: (sharedMyProject.packages || []).filter(function(goal) { return pbsGetSession().role !== '项目经理' || pbsOrders.canHandleGoal(sharedMyProject,goal.id,true); })
       });
     }
     var PM_STAFF_ASSIGNMENT_KEY = 'pbs_pm_staff_assignment_v3_' + MY_PROJECT_CONTEXT.projectNo;
@@ -886,8 +886,8 @@
             ['结项报告', s.archive.reports],
             ['当前环节滞留时长', s.stageDurations.archive]
           ],
-          body: '<div class="project-action-card"><span class="project-action-icon">5</span><div><p class="text-sm font-semibold text-gray-900">同步结项归档最新信息</p><p class="text-xs text-gray-500 mt-1">结项状态与结项时间同步自结项归档列表；申请结果、Offer 凭证与结项报告（《项目管理结项报告》《客户项目结项报告》）同步自结项详情页；结项只影响当前院校目标</p></div><div class="flex gap-2"><button class="px-4 py-2 text-sm font-medium text-purple-600 bg-purple-50 rounded-lg" onclick="openClosureDetail()">结项详情页</button><button class="px-4 py-2 text-sm font-medium text-gray-600 bg-gray-100 rounded-lg" onclick="location.href=\'结项归档列表 - PBS留学CRM系统.html\'">结项归档列表</button></div></div>' +
-            '<div class="project-action-card"><span class="project-action-icon">✓</span><div><p class="text-sm font-semibold text-gray-900">该院校目标完成结果确认后可结项</p><p class="text-xs text-gray-500 mt-1">需监控阶段确认全部申请结果后发起结项</p></div><button class="px-4 py-2 text-sm font-medium text-gray-400 bg-gray-100 rounded-lg" disabled>暂不可结项</button></div>'
+          body: '<div class="project-action-card"><span class="project-action-icon">5</span><div><p class="text-sm font-semibold text-gray-900">同步结项归档最新信息</p><p class="text-xs text-gray-500 mt-1">结项状态与结项时间同步自结项归档列表；申请结果、Offer 凭证与结项报告（《项目管理结项报告》《客户项目结项报告》）同步自结项详情页；全部院校目标核验通过后由 PMO 确认订单结项</p></div><div class="flex gap-2"><button class="px-4 py-2 text-sm font-medium text-purple-600 bg-purple-50 rounded-lg" onclick="openClosureDetail()">结项详情页</button><button class="px-4 py-2 text-sm font-medium text-gray-600 bg-gray-100 rounded-lg" onclick="location.href=\'结项归档列表 - PBS留学CRM系统.html\'">结项归档列表</button></div></div>' +
+            '<div class="project-action-card"><span class="project-action-icon">✓</span><div><p class="text-sm font-semibold text-gray-900">院校目标完成后提交结项材料</p><p class="text-xs text-gray-500 mt-1">项目经理核对结果与交付材料，提交 PMO 核验</p></div><button class="px-4 py-2 text-sm font-medium text-gray-400 bg-gray-100 rounded-lg" disabled>由 PMO 确认结项</button></div>'
         }
       };
       return views[stage];
@@ -1147,6 +1147,8 @@
     }
 
     function openAssignDrawer() {
+      var ownedProject = pbsProjects.find(MY_PROJECT_CONTEXT.projectNo);
+      if (!ownedProject || ownedProject.status === '已结项' || !pbsOrders.manager(ownedProject,currentSchoolCockpit).accepted || !(pbsOrders.canManage(ownedProject) || pbsOrders.canHandleGoal(ownedProject,currentSchoolCockpit,true))) { if (window.showToast) showToast('请先由院校目标项目经理接收'); return; }
       var s = school();
       document.getElementById('assignDrawerSchool').textContent = s.name;
       var body = document.getElementById('assignDrawerBody');
@@ -1181,6 +1183,8 @@
         '<div class="flex items-center justify-between py-2 border-t border-gray-50"><span data-ddl-task="material" class="text-sm text-gray-600">材料准备 / 网申提交 DDL</span><span data-ddl-task="apply" class="text-sm text-gray-900 font-medium">' + (s.materialDdl.managed || '—') + ' / ' + (s.applyDdl.managed || '—') + '</span></div></div>';
     }
     function openChangeDrawer() {
+      var ownedProject = pbsProjects.find(MY_PROJECT_CONTEXT.projectNo);
+      if (!ownedProject || ownedProject.status === '已结项' || !pbsOrders.manager(ownedProject,currentSchoolCockpit).accepted || !(pbsOrders.canManage(ownedProject) || pbsOrders.canHandleGoal(ownedProject,currentSchoolCockpit,true))) { if (window.showToast) showToast('请先由院校目标项目经理接收'); return; }
       var s = school();
       document.getElementById('changeDrawerSchool').textContent = s.name;
       var body = document.getElementById('changeDrawerBody');
@@ -1251,6 +1255,8 @@
         '<p class="text-xs text-gray-500">材料准备 DDL ' + assign.matDdl + ' ｜ 网申提交 DDL ' + assign.appDdl + '</p></div>';
     }
     function confirmAssign() {
+      var ownedProject = pbsProjects.find(MY_PROJECT_CONTEXT.projectNo);
+      if (!ownedProject || ownedProject.status === '已结项' || !pbsOrders.manager(ownedProject,currentSchoolCockpit).accepted || !(pbsOrders.canManage(ownedProject) || pbsOrders.canHandleGoal(ownedProject,currentSchoolCockpit,true))) { if (window.showToast) showToast('请先由院校目标项目经理接收'); return; }
       var assign = collectAssignment('m');
       if (!assign) { return; }
       applyAssignmentToSchool(assign);
@@ -1278,6 +1284,8 @@
       document.getElementById('assignSuccessModal').classList.remove('hidden');
     }
     function confirmChange() {
+      var ownedProject = pbsProjects.find(MY_PROJECT_CONTEXT.projectNo);
+      if (!ownedProject || ownedProject.status === '已结项' || !pbsOrders.manager(ownedProject,currentSchoolCockpit).accepted || !(pbsOrders.canManage(ownedProject) || pbsOrders.canHandleGoal(ownedProject,currentSchoolCockpit,true))) { if (window.showToast) showToast('请先由院校目标项目经理接收'); return; }
       var assign = collectAssignment('c');
       if (!assign) { return; }
       applyAssignmentToSchool(assign);
@@ -1376,4 +1384,6 @@
     });
   </script>
     <script src="./assets/js/pbs-student-profile.js?v=1.7"></script>
+<link rel="stylesheet" href="./assets/css/pbs-pmo.css?v=1.0">
+<script src="./assets/js/pbs-pmo-ui.js?v=1.0"></script>
 </body></html>

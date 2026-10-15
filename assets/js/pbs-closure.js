@@ -1,13 +1,13 @@
 (function () {
   'use strict';
-  var project, closureKey, reportsKey, scopeSchool = '', state = {}, selection = null;
+  var project, closureKey, reportsKey, orderMode = false, scopeSchool = '', state = {}, selection = null;
   var defaultLogo = localStorage.getItem('pbs_organization_report_logo') || '';
   function esc(value) { return String(value == null ? '' : value).replace(/[&<>"']/g, function(c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
   function read(key, fallback) { try { return JSON.parse(localStorage.getItem(key)) || fallback; } catch(e) { return fallback; } }
   function editor() { return document.getElementById('reportEditor'); }
   function current() { return window.reportStore[window.currentReportId]; }
   function message(text) { document.getElementById('reportEditorState').textContent = text; }
-  function canEdit() { return window.pbsHasPermission('archive_create'); }
+  function canEdit() { return !!(project && project.status !== '已结项' && window.pbsHasPermission('archive_create') && (pbsOrders.canManage(project) || !orderMode && (project.packages || []).some(function(goal) { return (!scopeSchool || goal.id === scopeSchool) && pbsOrders.canHandleGoal(project,goal.id,true); }))); }
   function dirty() { var report = current(); if (report) report.saved = false; message('有未生成的修改'); }
   function setLogo(src) {
     window.reportLogoSrc = src || '';
@@ -68,7 +68,7 @@
   window.saveReport.__deliveryWrapped = true;
   window.exportReportPdf = async function(id) {
     if (id && id !== window.currentReportId) window.openReportEditor(id);
-    if (!window.saveReport()) return;
+    if (canEdit()) { if (!window.saveReport()) return; } else if (!current() || !current().saved) return;
     var report = current(), button = document.getElementById('reportPdfButton');
     button.disabled = true; button.textContent = '正在导出…';
     var paper = editor().cloneNode(true); paper.removeAttribute('id'); paper.removeAttribute('contenteditable'); paper.style.cssText = 'width:186mm;max-width:none;min-height:0;margin:0;padding:0;background:#fff;';
@@ -129,12 +129,14 @@
     var values = [window.projectData.projectNo, window.projectData.customer, window.projectData.student, window.projectData.level];
     document.querySelectorAll('#basic-info .grid > div').forEach(function(node, index) { if (index < 4) node.querySelector('p').textContent = values[index]; });
     document.querySelectorAll('#confirmModal .bg-gray-50 .flex > span:last-child').forEach(function(node, index) { if (index < 3) node.textContent = [values[0], values[1] + ' / ' + values[2], values[3]][index]; });
-    scopeSchool = params.get('school') || '';
+    scopeSchool = params.get('school') || ''; orderMode = params.get('orderReport') === '1';
     closureKey = 'pbs_closure_' + window.projectData.projectNo + (scopeSchool ? '_' + scopeSchool : ''); reportsKey = 'pbs_closure_reports_' + window.projectData.projectNo + (scopeSchool ? '_' + scopeSchool : '');
+    if (orderMode) reportsKey = 'pbs_order_closure_reports_' + pbsOrders.key(project);
     var savedClosure = scopeSchool ? project && (project.goalClosures || {})[scopeSchool] || {} : project || {};
     state = Object.assign({ note: savedClosure.closureNote || '', closedAt: savedClosure.closureAt || '' }, read(closureKey, {})); window.reportStore = read(reportsKey, {});
     if (project && project.packages && project.packages.length) renderTargetResults();
     renderProjectNotes(); restoreClosure(); window.renderReportList();
+    var reportId = params.get('report'); if (reportId && window.reportStore[reportId]) window.openReportEditor(reportId);
     editor().addEventListener('input', dirty);
     document.addEventListener('selectionchange', function() { var range = window.getSelection(); if (range.rangeCount && editor().contains(range.anchorNode)) selection = range.getRangeAt(0).cloneRange(); });
     document.querySelectorAll('#reportToolbar [data-command]').forEach(function(button) { button.addEventListener('mousedown', function(event) { event.preventDefault(); }); button.onclick = function() { window.reportFormat(button.dataset.command); }; });
@@ -143,20 +145,22 @@
   function renderTargetResults() {
     var examples = window.projectData.targets, demo = !project.manualCreated && /^PRJ-[MO]-2607-/.test(project.projectNo);
     var selectedSchool = new URLSearchParams(location.search).get('school');
-    var packages = project.packages.filter(function(item) { return !selectedSchool || item.id === selectedSchool; });
-    if (!packages.length) packages = project.packages;
+    var packages = project.packages.filter(function(item) { return (!selectedSchool || item.id === selectedSchool) && (pbsOrders.canManage(project) || pbsOrders.canAssignOwner(project) || pbsOrders.canReadGoal(project,item.id)); });
+    if (orderMode && pbsOrders.canView(project)) packages = pbsOrders.members(project).flatMap(function(owner) { return owner.packages.map(function(goal) { return Object.assign({},goal,{sourceProject:owner,sourceGoal:goal.id,id:owner.projectNo + '::' + goal.id}); }); });
     state.confirmed = state.confirmed || {};
     window.projectData.targets = packages.map(function(item, index) {
       var example = demo ? examples[index % examples.length] : null;
-      var saved = (project.goalResults || {})[item.id] || {};
+      var source = item.sourceProject || project, goalId = item.sourceGoal || item.id;
+      var saved = (source.goalResults || {})[goalId] || {};
       var target = { code: item.id || 'SUB' + (index + 1), school: item.school, major: item.major, result: saved.result || item.result || example && example.result || '待录入', note: saved.note || item.resultNote || example && example.note || '—', image: saved.image || '' };
+      if (orderMode) state.confirmed[target.code] = source.status === '已结项' || ((source.goalSubmissions || {})[goalId] || {}).status === '已通过';
       if (state.confirmed[target.code] === undefined && example) state.confirmed[target.code] = index !== 1;
       return target;
     });
     var table = document.querySelector('#result-confirm .result-table'), header = table.querySelector('.result-table__head').outerHTML;
     table.innerHTML = header + window.projectData.targets.map(function(target) {
       var done = state.confirmed[target.code], unavailable = target.result === '待录入';
-      return '<div class="result-table__row" role="row"><div class="result-target" role="cell"><strong>' + esc(target.school) + '</strong><span class="result-target__major">' + esc(target.major) + '</span></div><div class="result-state ' + (target.result === '录取' ? 'result-state--admitted' : target.result === '拒录' ? 'result-state--rejected' : '') + '" role="cell">' + esc(target.result) + '</div><div role="cell">' + (target.image ? '<button class="result-view-button" onclick="showClosureResultImage(\'' + esc(target.code) + '\')">查看图片</button>' : esc(target.note)) + '</div><div role="cell" class="result-confirm-actions">' + (done ? '<span class="result-confirmed-text">已确认</span>' : '<span id="badge-' + esc(target.code) + '" class="result-pending-text">待确认</span><button id="btnConfirm-' + esc(target.code) + '" class="result-confirm-button"' + (unavailable ? ' disabled title="请先录入网申结果"' : '') + ' onclick="confirmResult(\'' + esc(target.code) + '\')">确认结果</button>') + '</div></div>';
+      return '<div class="result-table__row" role="row"><div class="result-target" role="cell"><strong>' + esc(target.school) + '</strong><span class="result-target__major">' + esc(target.major) + '</span></div><div class="result-state ' + (target.result === '录取' ? 'result-state--admitted' : target.result === '拒录' ? 'result-state--rejected' : '') + '" role="cell">' + esc(target.result) + '</div><div role="cell">' + (target.image ? '<button class="result-view-button" onclick="showClosureResultImage(\'' + esc(target.code) + '\')">查看图片</button>' : esc(target.note)) + '</div><div role="cell" class="result-confirm-actions">' + (done ? '<span class="result-confirmed-text">已确认</span>' : orderMode ? '<span class="result-pending-text">待 PMO 核验</span>' : '<span id="badge-' + esc(target.code) + '" class="result-pending-text">待确认</span><button id="btnConfirm-' + esc(target.code) + '" class="result-confirm-button"' + (unavailable ? ' disabled title="请先录入网申结果"' : '') + ' onclick="confirmResult(\'' + esc(target.code) + '\')">确认结果</button>') + '</div></div>';
     }).join('');
     window.pendingCount = window.projectData.targets.filter(function(target) { return !state.confirmed[target.code]; }).length;
     window.updateClosureHint();
@@ -186,22 +190,10 @@
     document.getElementById('closureHint').textContent = '项目已于 ' + state.closedAt + ' 完成结项';
   }
   var confirmResult = window.confirmResult;
-  window.confirmResult = function(code) { confirmResult(code); if (closureKey) { state.confirmed = state.confirmed || {}; state.confirmed[code] = true; localStorage.setItem(closureKey, JSON.stringify(state)); } };
-  var confirmClosure = window.doConfirmClosure;
-  window.doConfirmClosure = function() {
-    if (window.closureDone || window.pendingCount > 0) return;
-    state.note = document.getElementById('closureRemark').value.trim(); state.closedAt = window.fmtTime(new Date());
-    localStorage.setItem(closureKey, JSON.stringify(state));
-    if (project) {
-      var patch = {};
-      if (scopeSchool) {
-        patch.goalClosures = Object.assign({}, project.goalClosures || {});
-        patch.goalClosures[scopeSchool] = { closureNote: state.note, closureAt: state.closedAt };
-        if (project.packages.every(function(item) { return patch.goalClosures[item.id] && patch.goalClosures[item.id].closureAt; })) Object.assign(patch, { closureAt: state.closedAt, closureConfirmed: true, status: '已结项' });
-      } else Object.assign(patch, { closureNote: state.note, closureAt: state.closedAt, closureConfirmed: true, status: '已结项' });
-      project = window.pbsProjects.update(project.projectNo, patch);
-    }
-    confirmClosure(); renderProjectNotes();
+  window.confirmResult = function(code) { if (!canEdit() || orderMode) return; confirmResult(code); if (closureKey) { state.confirmed = state.confirmed || {}; state.confirmed[code] = true; localStorage.setItem(closureKey, JSON.stringify(state)); var target = window.projectData.targets.find(function(item) { return item.code === code; }); if (target && project.packages.some(function(goal) { return goal.id === code; })) { var results = Object.assign({},pbsProjects.find(project.projectNo).goalResults || {}); results[code] = {result:target.result,note:target.note,image:target.image}; project = pbsProjects.update(project.projectNo,{goalResults:results}); } } };
+  window.openConfirmModal = window.doConfirmClosure = function() {
+    if (!project || !pbsOrders.canManage(project) || !window.pbsHasPermission('archive_approve')) return;
+    location.href = '订单项目详情页 - 留学申请管理系统.html?project=' + encodeURIComponent(project.projectNo) + '#closure';
   };
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', initialize); else initialize();
 })();

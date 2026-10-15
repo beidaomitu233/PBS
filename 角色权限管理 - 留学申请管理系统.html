@@ -418,8 +418,8 @@
 
   <script>
     // ==================== 数据定义 ====================
-    /* 权限树以 assets/js/pbs-app.js 中的 PERMISSION_TREE 为唯一来源（按「页面 → 权限项」组织），
-       这里只做消费，避免两处定义漂移。pbs-app.js 以 defer 加载，故渲染放在 DOMContentLoaded 之后。 */
+    /* 权限树以 assets/js/pbs-app.js?v=7.6 中的 PERMISSION_TREE 为唯一来源（按「页面 → 权限项」组织），
+       这里只做消费，避免两处定义漂移。pbs-app.js?v=7.6 以 defer 加载，故渲染放在 DOMContentLoaded 之后。 */
     var permissionModules = [];        // 扁平的页面分组列表（每个页面一个分组）
     var permissionSections = [];       // 按业务模块归并后的分区，用于分区渲染
     function loadPermissionTree() {
@@ -436,13 +436,14 @@
       });
       return permissionModules.length > 0;
     }
-    /* 角色元数据；默认权限统一取自 pbs-app.js 的 DEFAULT_ROLE_PERMISSIONS，
+    /* 角色元数据；默认权限统一取自 pbs-app.js?v=7.6 的 DEFAULT_ROLE_PERMISSIONS，
        避免与全站 RBAC 出现两份不一致的默认值。 */
     var ROLE_META = [
+      { id:4,name:'PMO',description:'统筹订单全部院校目标、分配项目经理并核验结项',creator:'系统初始',createTime:'2026-10-15' },
       { id: 1, name: '平台运维人员', description: '负责平台账号、机构、系统配置与运维', creator: '系统初始', createTime: '2025-01-01' },
       { id: 2, name: '机构管理员', description: '负责本机构项目分配、成员管理与全局监控', creator: '系统初始', createTime: '2025-01-01' },
       { id: 3, name: '销售人员', description: '负责客户跟进、选校任务与选校方案', creator: '管理员', createTime: '2025-03-01' },
-      { id: 5, name: '项目经理', description: '负责项目全流程管理、成员分配与任务推进', creator: '管理员', createTime: '2025-01-15' },
+      { id: 5, name: '项目经理', description: '负责院校目标、交付成员分配与结项材料提交', creator: '管理员', createTime: '2025-01-15' },
       { id: 6, name: '文书人员', description: '负责接收任务并完成文书撰写交付', creator: '管理员', createTime: '2025-02-01' },
       { id: 7, name: '网申人员', description: '负责接收任务并完成网申填写与提交', creator: '管理员', createTime: '2025-02-01' },
       { id: 8, name: '文书审核', description: '负责接收审核任务并通过或退回文书', creator: '管理员', createTime: '2025-02-10' },
@@ -492,7 +493,7 @@
       '文书人员': 'workbench_writer', '网申人员': 'workbench_apply', '文书审核': 'workbench_audit',
       '文书机构管理员': 'workbench_docadmin'
     };
-    // 保存全部角色的权限配置，供 pbs-app.js 在各页面校验（工作台可见、页面权限点等）
+    // 保存全部角色的权限配置，供 pbs-app.js?v=7.6 在各页面校验（工作台可见、页面权限点等）
     // 机构隔离：机构管理员只能保存本机构的权限副本；平台运维人员保存平台默认配置。
     function currentPermsScope() {
       var session = window.pbsGetSession ? window.pbsGetSession() : null;
@@ -545,7 +546,7 @@
       try { localStorage.setItem(CUSTOM_ROLES_KEY, JSON.stringify(scoped)); } catch (e) {}
     }
     /* 页面加载时回读已保存的权限配置（优先本机构副本，其次平台默认）。
-       旧版按业务模块保存的配置由 pbs-app.js 的迁移逻辑统一归一化到「页面 → 权限项」结构，
+       旧版按业务模块保存的配置由 pbs-app.js?v=7.6 的迁移逻辑统一归一化到「页面 → 权限项」结构，
        这里只补一条历史兼容：旧的通用 workbench_view 折算成该角色自己的工作台。 */
     function migratePermissions(role, source) {
       var flat = [];
@@ -1005,11 +1006,11 @@
       document.getElementById('notificationModal').classList.add('hidden');
     }
 
-    // 初始化：先从 pbs-app.js 载入权限树，再构建角色默认权限并回读已保存配置
+    // 初始化：先从 pbs-app.js?v=7.6 载入权限树，再构建角色默认权限并回读已保存配置
     document.addEventListener('DOMContentLoaded', function() {
       if (!loadPermissionTree()) {
         document.getElementById('permissionConfigAreaV2').innerHTML =
-          '<div class="text-sm text-red-500 text-center py-10">权限树加载失败：未找到 assets/js/pbs-app.js 中的 PERMISSION_TREE</div>';
+          '<div class="text-sm text-red-500 text-center py-10">权限树加载失败：未找到 assets/js/pbs-app.js?v=7.6 中的 PERMISSION_TREE</div>';
         return;
       }
       buildDefaultRoles();
@@ -1035,7 +1036,7 @@
       }
     });
   </script>
-  <script src="./assets/js/pbs-app.js?v=6.0"></script>
+  <script src="./assets/js/pbs-app.js?v=7.6"></script>
 
 
 

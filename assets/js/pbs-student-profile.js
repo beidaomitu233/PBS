@@ -6,8 +6,8 @@
   function fieldName(value) { return String(value || '').replace(/^(?:\s*(?:·\s*)?记录\s*\d+\s*(?:·\s*)?)+/, '').trim(); }
   function url(id, section) { return '学生档案详情页 - 留学申请管理系统.html?studentId=' + encodeURIComponent(id) + (section ? '&section=' + section + (section === 'asset' ? '&upload=1' : '') : ''); }
   function projectHtml(project) {
-    var role = window.pbsGetSession().role, canOpen = ['超级管理员', '机构管理员', '项目经理'].indexOf(role) >= 0;
-    var page = role === '项目经理' ? '我的项目详情页 - 留学申请管理系统.html' : '项目详情页 - 留学申请管理系统.html';
+    var role = window.pbsGetSession().role, canOpen = ['超级管理员', '机构管理员', 'PMO', '项目经理'].indexOf(role) >= 0;
+    var page = role === 'PMO' ? '订单项目详情页 - 留学申请管理系统.html' : role === '项目经理' ? '我的项目详情页 - 留学申请管理系统.html' : '项目详情页 - 留学申请管理系统.html';
     var title = canOpen ? '<a href="' + page + '?project=' + encodeURIComponent(project.projectNo) + '">' + esc(project.projectNo) + '</a>' : esc(project.projectNo);
     return '<div class="pbs-profile-project"><div>' + title + '</div></div>';
   }

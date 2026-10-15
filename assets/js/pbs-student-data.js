@@ -13,9 +13,11 @@
     if (!window.pbsHasPermission('customer_view')) return false;
     var org = session.org === 'PBS留学' ? 'PBS留学总部' : session.org;
     if (profile.org && org && profile.org !== org && session.role !== '平台运维人员') return false;
+    if (session.role === 'PMO') return projects(value).some(function(project) { return window.pbsOrders && pbsOrders.canManage(project); });
     if (session.role === '机构管理员' || session.role === '平台运维人员' || session.role === '销售人员') return true;
     var name = session.account === 'demo_admin' ? '张老师' : session.name;
     return projects(value).some(function(project) {
+      if (window.pbsOrders && (project.packages || []).some(function(goal) { return pbsOrders.canHandleGoal(project,goal.id); })) return true;
       if (project.projectManager === name) return true;
       var goals = window.pbsProjects.getAssignment(project.projectNo).goalAssignments;
       return Object.keys(goals).some(function(key) {

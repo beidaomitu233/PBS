@@ -227,6 +227,7 @@
             <select id="flt-role" class="w-36 h-10 px-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
               <option value="">全部</option>
               <option>机构管理员</option>
+              <option>PMO</option>
               <option>项目经理</option>
               <option>文书人员</option>
               <option>网申人员</option>
@@ -553,6 +554,7 @@
     }
 
     var ROLE_COLORS = {
+      'PMO': 'bg-indigo-100 text-indigo-700',
       '机构管理员': 'bg-blue-100 text-blue-700',
       '销售人员': 'bg-pink-100 text-pink-700',
       '项目经理': 'bg-emerald-100 text-emerald-700',
@@ -562,10 +564,10 @@
     };
     /* 创建成员时按当前管理角色隔离可分配范围；平台运维账号不属于机构成员。
        机构管理员可自行授予/回收「机构管理员」角色，换人接管不需要平台运维介入。 */
-    var INSTITUTION_ROLES = ['机构管理员', '项目经理', '文书人员', '网申人员', '文书审核', '销售人员', '文书机构管理员'];
+    var INSTITUTION_ROLES = ['机构管理员', 'PMO', '项目经理', '文书人员', '网申人员', '文书审核', '销售人员', '文书机构管理员'];
     function assignableRoles() {
       if (currentPersonnelRole === '超级管理员' || currentPersonnelRole === '平台运维人员') return INSTITUTION_ROLES.slice();
-      if (currentPersonnelRole === '机构管理员') return ['机构管理员', '项目经理', '文书人员', '网申人员', '文书审核', '销售人员', '文书机构管理员'];
+      if (currentPersonnelRole === '机构管理员' || currentPersonnelRole === 'PMO') return ['机构管理员', 'PMO', '项目经理', '文书人员', '网申人员', '文书审核', '销售人员', '文书机构管理员'];
       if (currentPersonnelRole === '文书机构管理员') return ['文书人员', '文书审核'];
       return [];
     }
@@ -960,7 +962,7 @@ closeAddUser();
       }
     });
   </script>
-  <script src="./assets/js/pbs-app.js?v=6.3"></script>
+  <script src="./assets/js/pbs-app.js?v=7.6"></script>
 
 
 

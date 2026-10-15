@@ -748,12 +748,12 @@
         customer: cstName.value.trim(),
         student: stuName.value.trim(),
         level: stuLevel.value + '申请',
-        status: projectManager ? '进行中' : '待分配',
-        pmAccepted: !!projectManager,
+        status: '待分配',
+        pmAccepted: false,
         org: getPoolSession().org,
         createdBy: getPoolSession().name,
-        assignedAt: projectManager ? createdAt : '',
-        projectManager: projectManager,
+        assignedAt: '',
+        projectManager: '',
         source: '线下',
         sourceChannel: cstSource.value.trim(),
         serviceStages: packages.reduce(function(all, item) { item.services.forEach(function(service) { if (all.indexOf(service.name) < 0) all.push(service.name); }); return all; }, []),
@@ -778,10 +778,10 @@
       document.getElementById('notificationModal').classList.add('hidden');
     }
   </script>
-  <script src="./assets/js/pbs-app.js?v=7.5"></script>
+  <script src="./assets/js/pbs-app.js?v=7.6"></script>
   <script src="./assets/js/pbs-identity.js?v=1.0"></script>
-  <script src="./assets/js/pbs-student-data.js?v=1.4"></script>
-  <script src="./assets/js/pbs-project-list.js?v=1.4"></script>
+  <script src="./assets/js/pbs-student-data.js?v=1.5"></script>
+  <script src="./assets/js/pbs-project-list.js?v=1.5"></script>
 
 
 
@@ -964,4 +964,6 @@
   </div>
   
     
-    </body></html>
+    <link rel="stylesheet" href="./assets/css/pbs-pmo.css?v=1.0">
+<script src="./assets/js/pbs-pmo-ui.js?v=1.0"></script>
+</body></html>

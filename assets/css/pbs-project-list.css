@@ -1,5 +1,5 @@
 .pbs-project-table-scroll { overflow: auto; max-width: 100%; }
-.pbs-project-table { width: 100%; border-collapse: separate; border-spacing: 0; min-width: 1080px; }
+.pbs-project-table { width: 100%; border-collapse: separate; border-spacing: 0; min-width: 1170px; }
 .pbs-project-table.is-pool { min-width: 1510px; }
 .pbs-project-table .project-pmo { min-width: 90px; text-align: center; }
 .pbs-project-table .project-pmo-shared { background: #f5f9ff; border-bottom-color: #dbeafe; }

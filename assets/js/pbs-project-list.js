@@ -27,8 +27,8 @@
   function render() {
     var records = scoped().map(function(p) { if (!pool && session().role === '项目经理') return Object.assign({},p,{projectManager:managerName(),packages:(p.packages || []).filter(function(goal) { return pbsOrders.canHandleGoal(p,goal.id,true); })}); return p; }).filter(function(p) { return pool || p.packages.length; });
     if (pool) records.sort(function(a,b) { return String(a.orderNo || a.projectNo).localeCompare(String(b.orderNo || b.projectNo)) || a.projectNo.localeCompare(b.projectNo); });
-    var headings = pool ? ['序号','商城订单号','PMO','项目号','客户姓名','学生姓名','申请层次','项目状态','项目经理','分配时间','备注','订单创建时间','操作'] : ['序号','项目号','客户姓名','学生姓名','申请层次','项目状态','项目经理','分配时间','备注','操作'];
-    table.querySelector('thead tr').innerHTML = headings.map(function(label,index) { return '<th' + (label === '商城订单号' ? ' class="project-order-heading"' : index === headings.length-1 ? ' class="project-actions"' : '') + '>' + label + '</th>'; }).join('');
+    var headings = pool ? ['序号','商城订单号','PMO','项目号','客户姓名','学生姓名','申请层次','项目状态','项目经理','分配时间','备注','订单创建时间','操作'] : ['序号','项目号','客户姓名','学生姓名','申请层次','项目状态','PMO','项目经理','分配时间','备注','操作'];
+    table.querySelector('thead tr').innerHTML = headings.map(function(label,index) { return '<th' + (label === '商城订单号' ? ' class="project-order-heading"' : label === 'PMO' ? ' class="project-pmo"' : index === headings.length-1 ? ' class="project-actions"' : '') + '>' + label + '</th>'; }).join('');
     tbody.innerHTML = records.map(function(p) {
       var state = status(p), actions = button('查看详情','view');
       var remark = window.pbsProjects.getAssignment(p.projectNo).taskNote || '';
@@ -42,7 +42,7 @@
       if (!pool && state !== '已结项' && session().role !== '项目经理' && window.pbsHasPermission('my_project_urge')) actions += button('催办','urge');
       return '<tr data-project="' + esc(p.projectNo) + '" data-order="' + esc(p.orderNo) + '" data-kw="' + esc([p.projectNo,p.orderNo,p.customer,p.student,p.level,p.projectManager,pbsOrders.state(p).pmoName,remark,p.rejectReason,p.source,state].join(' ')) + '" data-name="' + esc(p.customer) + '" data-applicant="' + esc(p.student) + '" data-student="' + esc(p.student) + '" data-level="' + esc(p.level) + '" data-status="' + state + '" data-pm="' + esc(p.projectManager) + '" data-created="' + time(p.createdAt) + '" data-time="' + time(p.assignedAt) + '" class="' + (p.rejectedAt && !p.projectManager ? 'pbs-returned-row' : '') + '">'
         + cell('','project-row-index') + (pool ? '<td class="project-order">' + esc(p.orderNo || '—') + '</td>' + cell(pbsOrders.state(p).pmoName,'project-pmo') : '') + cell(p.projectNo,'project-number') + cell(p.customer) + cell(p.student) + cell(p.level)
-        + '<td><span class="project-state" data-status="' + state + '">' + state + '</span></td>' + cell(p.projectManager) + cell(time(p.assignedAt),'project-number')
+        + '<td><span class="project-state" data-status="' + state + '">' + state + '</span></td>' + (!pool ? cell(pbsOrders.state(p).pmoName,'project-pmo') : '') + cell(p.projectManager) + cell(time(p.assignedAt),'project-number')
         + '<td class="project-remark" title="' + esc(remark) + '">' + esc(remark || '—') + '</td>' + (pool ? cell(time(p.createdAt),'project-number') : '') + '<td class="project-actions"><div>' + actions + '</div></td></tr>';
     }).join('') + '<tr id="flt-empty" class="hidden"><td colspan="' + headings.length + '" style="text-align:center;padding:48px;color:#94a3b8">暂无符合条件的项目</td></tr>';
     page = 1; keyword(); updatePendingBadge();

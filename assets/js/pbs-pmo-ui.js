@@ -66,7 +66,7 @@
     dialog.querySelector('[data-confirm]').onclick = function() { var result = api.close(order.project.projectNo,dialog.querySelector('textarea').value.trim()); if (error(dialog,result)) return; dialog.close(); renderDetail(); toast('订单全部院校目标已结项'); };
   }
   function renderOwnerCard() {
-    var context = window.PROJECT_CONTEXT || window.MY_PROJECT_CONTEXT; if (!context) return;
+    var context = window.MY_PROJECT_CONTEXT; if (!context) return;
     var project = pbsProjects.find(context.projectNo); if (!project) return;
     if (!api.canView(project)) { document.querySelector('main').innerHTML = '<p class="pmo-empty">无权查看该项目</p>'; return; }
     if (window.MY_PROJECT_CONTEXT && pbsGetSession().role === '项目经理' && !(project.packages || []).some(function(goal) { return api.canHandleGoal(project,goal.id,true); })) { document.querySelector('main').innerHTML = '<p class="pmo-empty">请先在我的项目中接收院校目标</p>'; return; }
@@ -85,12 +85,6 @@
     var owner = api.state(project);
     host.innerHTML = '<div class="pmo-card-head"><h2>订单 PMO · ' + esc(owner.pmoName || '待分配') + '</h2><div class="pmo-actions">' + (api.canAssignOwner(project) && project.status !== '已结项' ? '<button class="pmo-btn" data-owner>' + (owner.pmoName ? '更换 PMO' : '分配 PMO') + '</button>' : '') + (api.canManage(project) || api.canAssignOwner(project) ? '<a class="pmo-link" href="' + url(project.projectNo) + '">订单目标与结项</a>' : '') + '</div></div>';
     var button = host.querySelector('[data-owner]'); if (button) button.onclick = function() { window.pbsOpenPmoAssignment(project.projectNo); };
-    if (window.PROJECT_CONTEXT) {
-      if (window.closeAssignDrawer) window.closeAssignDrawer();
-      if (window.closeChangeDrawer) window.closeChangeDrawer();
-      document.querySelectorAll('[data-dom-id="btn-assign"],[data-dom-id="btn-change-pm"]').forEach(function(node) { node.hidden = true; node.classList.add('hidden'); });
-      window.openAssignDrawer = window.openChangeDrawer = window.openChangePMDrawer = function() { if (api.canAssignOwner(project)) window.pbsOpenPmoAssignment(project.projectNo); else if (api.canManage(project)) location.href = url(project.projectNo) + '#assign'; };
-    }
   }
   function mountClosureSubmission() {
     if (!window.projectData || !document.getElementById('btnConfirmClosure')) return;

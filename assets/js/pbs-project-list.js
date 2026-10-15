@@ -21,7 +21,7 @@
     if (String(value).indexOf('T') >= 0) return new Date(value).toLocaleString('sv-SE', { timeZone: 'Asia/Shanghai', hour12: false }).slice(0, 16);
     return String(value).slice(0, 16);
   }
-  function open(projectNo, action) { location.href = (pool && session().role !== '项目经理' ? '订单项目详情页 - 留学申请管理系统.html' : '我的项目详情页 - 留学申请管理系统.html') + '?project=' + encodeURIComponent(projectNo) + (action ? '&action=' + action : ''); }
+  function open(projectNo, action) { location.href = (pool && session().role !== '项目经理' ? '项目详情页 - 留学申请管理系统.html' : '我的项目详情页 - 留学申请管理系统.html') + '?project=' + encodeURIComponent(projectNo) + (action ? '&action=' + action : ''); }
   function cell(value, cls) { return '<td' + (cls ? ' class="' + cls + '"' : '') + '>' + esc(value || '—') + '</td>'; }
   function button(label, action) { return '<button type="button" data-project-action="' + action + '">' + label + '</button>'; }
   function render() {
@@ -32,10 +32,10 @@
     tbody.innerHTML = records.map(function(p) {
       var state = status(p), actions = button('查看详情','view');
       var remark = window.pbsProjects.getAssignment(p.projectNo).taskNote || '';
-      var fullyAssigned = window.pbsProjects.assignmentComplete(p);
+      var fullyAssigned = window.pbsProjects.assignmentComplete(p) && !!pbsOrders.state(p).pmoName && (p.packages || []).every(function(goal) { return !!pbsOrders.manager(p,goal.id).name; });
       if (pool && state !== '已结项') {
         var owner = pbsOrders.state(p);
-        if (pbsOrders.canAssignOwner(p)) actions += button(owner.pmoName ? '更换 PMO' : '分配 PMO','owner');
+        if (pbsOrders.canAssignOwner(p)) actions += button(fullyAssigned ? '更换人员' : '分配',fullyAssigned ? 'change' : 'assign');
         else if (pbsOrders.canManage(p)) actions += button(fullyAssigned ? '更换人员' : '分配','assign');
         if (owner.pmoName) actions += button('催办','urge');
       }
@@ -101,7 +101,7 @@
     var wrap=document.createElement('div'); wrap.className='pbs-project-table-scroll'; table.before(wrap); wrap.appendChild(table); table.className='pbs-project-table'+(pool?' is-pool':'');
     var oldPager=wrap.nextElementSibling; pager=document.createElement('div'); pager.className='pbs-project-pager'; pager.innerHTML='<div>共 <span data-project-count>0</span> 条记录，每页<select aria-label="每页条数"><option>10</option><option selected>20</option><option>50</option></select>条</div><nav aria-label="项目列表分页"></nav>'; oldPager.replaceWith(pager);
     pager.querySelector('select').onchange=function(){size=Number(this.value);paginate(true);}; pager.onclick=function(e){var button=e.target.closest('[data-project-page]');if(!button||button.disabled)return;var value=button.dataset.projectPage;page=value==='next'?page+1:value==='prev'?page-1:Number(value);paginate(false);};
-    tbody.onclick=function(e){var button=e.target.closest('[data-project-action]'),row=e.target.closest('tr[data-project]');if(!row||!button)return;var p=window.pbsProjects.find(row.dataset.project),action=button.dataset.projectAction;if(action==='owner'){window.pbsOpenPmoAssignment(p.projectNo);return;}if(action==='urge')urge(p);else open(p.projectNo,action==='view'?'':action);};
+    tbody.onclick=function(e){var button=e.target.closest('[data-project-action]'),row=e.target.closest('tr[data-project]');if(!row||!button)return;var p=window.pbsProjects.find(row.dataset.project),action=button.dataset.projectAction;if(action==='urge')urge(p);else open(p.projectNo,action==='view'?'':action);};
     var list=document.getElementById('pendingTaskList'); if(list) list.onclick=function(e){var button=e.target.closest('[data-pending-action]');if(!button)return;var card=button.closest('[data-pending-project]'),id=card.dataset.pendingProject,goalId=card.dataset.pendingGoal;if(button.dataset.pendingAction==='accept'){window.pbsProjects.acceptPM(id,goalId);if(window.pbsRecordOperation)window.pbsRecordOperation('项目管理','接收','接收项目 '+id);render();renderPending();}else window.pbsTaskReturn.confirm({kind:'project',label:id},function(reason){window.pbsProjects.rejectPM(id,reason.trim(),goalId);if(window.pbsRecordOperation)window.pbsRecordOperation('项目管理','退回','退回项目 '+id+'：'+reason.trim());render();renderPending();});};
     document.getElementById('flt-kw').addEventListener('keydown', function(e) { if (e.key === 'Enter') window.applyFilter(); });
     document.getElementById('flt-kw').addEventListener('input', function() { if (!this.value) keyword(); });

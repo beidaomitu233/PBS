@@ -351,11 +351,8 @@
           </div>
           <select id="assignmentPmo" class="w-full h-10 px-4 border border-gray-300 rounded-lg bg-white text-sm"><option value="">请选择 PMO</option></select>
         </div>
-        <div class="flex items-center justify-between mb-3">
-          <h3 class="text-sm font-medium text-gray-700">院校目标</h3>
-          <span id="goalProgress" class="text-xs text-gray-500"></span>
-        </div>
-        <div id="goalTabs" class="space-y-2 mb-4"></div>
+
+
         <!-- 项目分配信息 -->
         <!-- 院校目标项目经理 -->
         <div class="border border-gray-200 rounded-xl p-4 mb-4">
@@ -365,6 +362,7 @@
             </span>
             <span id="assignmentManagerTitle" class="text-sm font-semibold text-gray-800">项目经理</span>
           </div>
+          <select id="assignmentGoal" hidden class="w-full h-9 px-3 border border-gray-300 rounded-lg bg-white text-sm mb-3" aria-label="分配院校目标" onchange="switchGoal(this.value)"></select>
           <div class="relative mb-3" data-sel="pm">
             <div class="flex items-center w-full h-10 px-4 border border-gray-300 rounded-lg cursor-pointer bg-white" onclick="togglePersonDropdown(&#39;pm&#39;)">
               <span class="text-gray-400 text-sm flex-1" id="pmPlaceholder">请选择项目经理</span>
@@ -434,19 +432,7 @@
             <div class="flex justify-between"><span class="text-gray-500">当前项目经理</span><span id="currentProjectManager" class="text-gray-900 font-medium">张老师</span></div>
             <div class="flex justify-between"><span class="text-gray-500">申请层次</span><span class="text-gray-900">本科申请</span></div>
             <div class="flex justify-between"><span class="text-gray-500">当前状态</span><span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">已分配</span></div>
-            <div>
-              <span class="text-gray-500">院校目标（2个）</span>
-              <div class="mt-2 space-y-2">
-                <div class="bg-white rounded-lg border border-gray-200 p-2.5">
-                  <p class="text-gray-900 font-medium text-xs">1. 卡内基梅隆大学 · 计算机科学</p>
-                  <p class="text-xs text-gray-500 mt-0.5">尊享套餐：选校规划 + 文书 + 网申 + 面试辅导</p>
-                </div>
-                <div class="bg-white rounded-lg border border-gray-200 p-2.5">
-                  <p class="text-gray-900 font-medium text-xs">2. 帝国理工学院 · 金融工程</p>
-                  <p class="text-xs text-gray-500 mt-0.5">标准套餐：文书 + 网申</p>
-                </div>
-              </div>
-            </div>
+
           </div>
         </div>
         <div class="border border-gray-200 rounded-xl p-4 mb-4">
@@ -456,11 +442,8 @@
           </div>
           <select id="changeAssignmentPmo" class="w-full h-10 px-4 border border-gray-300 rounded-lg bg-white text-sm"><option value="">请选择 PMO</option></select>
         </div>
-        <div class="flex items-center justify-between mb-3">
-          <h3 class="text-sm font-medium text-gray-700">院校目标</h3>
-          <span id="chgGoalProgress" class="text-xs text-gray-500"></span>
-        </div>
-        <div id="chgGoalTabs" class="space-y-2 mb-4"></div>
+
+
         <!-- 卡片一：项目经理 -->
         <div class="border border-gray-200 rounded-xl p-4 mb-4">
           <div class="flex items-center gap-2 mb-1">
@@ -470,6 +453,7 @@
             <span id="changeManagerTitle" class="text-sm font-semibold text-gray-800">项目经理</span>
           </div>
           <p id="currentManagerSummary" class="text-xs text-gray-400 mb-3 pl-10">当前：张老师</p>
+          <select id="changeGoal" hidden class="w-full h-9 px-3 border border-gray-300 rounded-lg bg-white text-sm mb-3" aria-label="更换院校目标人员" onchange="switchChgGoal(this.value)"></select>
           <div class="relative mb-3" data-sel="chgPm">
             <div class="flex items-center w-full h-10 px-4 border border-gray-300 rounded-lg cursor-pointer bg-white" onclick="togglePersonDropdown(&#39;chgPm&#39;)">
               <span class="text-gray-400 text-sm flex-1" id="chgPmPlaceholder">点击选择新项目经理</span>
@@ -609,7 +593,7 @@
     </div>
   </div>
 
-  <script src="./assets/js/pbs-app.js?v=7.8"></script>
+  <script src="./assets/js/pbs-app.js?v=8.1"></script>
   <script src="./assets/js/pbs-identity.js?v=1.0"></script>
   <script src="./assets/js/pbs-student-data.js?v=1.5"></script>
   <script>
@@ -749,23 +733,12 @@
       for (var i = 0; i < GOALS.length; i++) { if (GOALS[i].id === id) { return GOALS[i]; } }
       return null;
     }
-    function goalDoneCount(store) {
-      var n = 0;
-      GOALS.forEach(function(g) { if (window.pbsProjects.goalAssignmentComplete(store[g.id], g.docs.map(function(doc) { return doc.key; }))) { n++; } });
-      return n;
-    }
-
     /* ==================== 分配抽屉：按院校目标逐个分配 ==================== */
-    function renderGoalTabs() {
-      var html = '';
-      GOALS.forEach(function(goal) {
-        var complete = window.pbsProjects.goalAssignmentComplete(goalAssign[goal.id], goal.docs.map(function(doc) { return doc.key; }));
-        var active = goal.id === activeGoalId;
-        html += '<button type="button" class="w-full text-left rounded-lg px-3 py-2.5 border transition-colors ' + (active ? 'border-blue-500 bg-blue-50' : 'border-gray-200 bg-white hover:border-gray-300') + '" onclick="switchGoal(\'' + goal.id + '\')">' +
-          '<span class="flex items-center justify-between gap-3"><span class="text-xs font-medium text-gray-900">' + escapeHtml(goal.name) + '</span><span class="text-[10px] whitespace-nowrap ' + (complete ? 'text-green-600' : 'text-gray-400') + '">' + (complete ? '填写完整' : '待完善') + '</span></span></button>';
-      });
-      document.getElementById('goalTabs').innerHTML = html;
-      document.getElementById('goalProgress').textContent = goalDoneCount(goalAssign) + '/' + GOALS.length + ' 填写完整';
+    function renderGoalSelector() {
+      var select = document.getElementById('assignmentGoal');
+      select.innerHTML = GOALS.map(function(goal) { return '<option value="' + escapeHtml(goal.id) + '">' + escapeHtml(goal.name) + '</option>'; }).join('');
+      select.value = activeGoalId;
+      select.hidden = GOALS.length < 2;
     }
 
     function personPh(key, person, defaultText) {
@@ -816,20 +789,15 @@
       if (id === activeGoalId) { return; }
       saveActiveGoalDraft();
       activeGoalId = id;
-      renderGoalTabs();
+      renderGoalSelector();
       renderGoalPanel();
     }
 
-    function renderChgGoalTabs() {
-      var html = '';
-      GOALS.forEach(function(goal) {
-        var complete = window.pbsProjects.goalAssignmentComplete(chgGoalAssign[goal.id], goal.docs.map(function(doc) { return doc.key; }));
-        var active = goal.id === chgActiveGoalId;
-        html += '<button type="button" class="w-full text-left rounded-lg px-3 py-2.5 border transition-colors ' + (active ? 'border-blue-500 bg-blue-50' : 'border-gray-200 bg-white hover:border-gray-300') + '" onclick="switchChgGoal(\'' + goal.id + '\')">' +
-          '<span class="flex items-center justify-between gap-3"><span class="text-xs font-medium text-gray-900">' + escapeHtml(goal.name) + '</span><span class="text-[10px] whitespace-nowrap ' + (complete ? 'text-green-600' : 'text-gray-400') + '">' + (complete ? '填写完整' : '待完善') + '</span></span></button>';
-      });
-      document.getElementById('chgGoalTabs').innerHTML = html;
-      document.getElementById('chgGoalProgress').textContent = goalDoneCount(chgGoalAssign) + '/' + GOALS.length + ' 填写完整';
+    function renderChangeGoalSelector() {
+      var select = document.getElementById('changeGoal');
+      select.innerHTML = GOALS.map(function(goal) { return '<option value="' + escapeHtml(goal.id) + '">' + escapeHtml(goal.name) + '</option>'; }).join('');
+      select.value = chgActiveGoalId;
+      select.hidden = GOALS.length < 2;
     }
 
     function renderChgGoalPanel() {
@@ -865,7 +833,7 @@
       if (id === chgActiveGoalId) { return; }
       saveChgActiveGoalDraft();
       chgActiveGoalId = id;
-      renderChgGoalTabs();
+      renderChangeGoalSelector();
       renderChgGoalPanel();
     }
 
@@ -875,7 +843,7 @@
       goalAssign = JSON.parse(JSON.stringify(assignment.goalAssignments));
       goalManagers = readGoalManagers();
       populatePmoSelect('assignmentPmo');
-      renderGoalTabs(); renderGoalPanel();
+      renderGoalSelector(); renderGoalPanel();
       document.getElementById('assignmentTaskNote').value = assignment.taskNote || '';
       updateAssignmentTaskNoteCount();
       document.getElementById('drawerAssign').classList.remove('hidden');
@@ -894,7 +862,7 @@
       populatePmoSelect('changeAssignmentPmo');
       document.getElementById('changeAssignmentTaskNote').value = assignment.taskNote || '';
       chgActiveGoalId = GOALS[0].id;
-      renderChgGoalTabs(); renderChgGoalPanel();
+      renderChangeGoalSelector(); renderChgGoalPanel();
       document.getElementById('drawerChange').classList.remove('hidden');
       document.body.style.overflow = 'hidden';
     }

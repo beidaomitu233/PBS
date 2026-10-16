@@ -34,7 +34,6 @@
     tbody.innerHTML = records.map(function(p) {
       var state = status(p), actions = p.returnOnly ? '' : button('查看详情','view');
       var remark = window.pbsProjects.getAssignment(p.projectNo).taskNote || '';
-      var pendingReturns = p.returnItems.filter(function(item) { return item.pending; }), firstReturn = pendingReturns[0];
       var fullyAssigned = window.pbsProjects.assignmentComplete(p) && !!pbsOrders.state(p).pmoName && (p.packages || []).every(function(goal) { return !!pbsOrders.manager(p,goal.id).name; });
       if (pool && state !== '已结项') {
         var owner = pbsOrders.state(p);
@@ -43,7 +42,7 @@
         if (owner.pmoName) actions += button('催办','urge');
       }
       if (!pool && state !== '已结项' && session().role !== '项目经理' && window.pbsHasPermission('my_project_urge')) actions += button('催办','urge');
-      return '<tr data-project-returns="true" data-has-return="' + !!firstReturn + '" data-project="' + esc(p.projectNo) + '" data-order="' + esc(p.orderNo) + '" data-kw="' + esc([p.projectNo,p.orderNo,p.customer,p.student,p.level,p.projectManager,pbsOrders.state(p).pmoName,remark,p.returnItems.map(function(item) { return [item.reason,item.returnedBy,item.school].join(' '); }).join(' '),p.source,state].join(' ')) + '" data-name="' + esc(p.customer) + '" data-applicant="' + esc(p.student) + '" data-student="' + esc(p.student) + '" data-level="' + esc(p.level) + '" data-status="' + state + '" data-pm="' + esc(p.projectManager) + '" data-created="' + time(p.createdAt) + '" data-time="' + time(p.assignedAt) + '">'
+      return '<tr data-project-returns="true" data-project="' + esc(p.projectNo) + '" data-order="' + esc(p.orderNo) + '" data-kw="' + esc([p.projectNo,p.orderNo,p.customer,p.student,p.level,p.projectManager,pbsOrders.state(p).pmoName,remark,p.returnItems.map(function(item) { return [item.reason,item.returnedBy,item.school].join(' '); }).join(' '),p.source,state].join(' ')) + '" data-name="' + esc(p.customer) + '" data-applicant="' + esc(p.student) + '" data-student="' + esc(p.student) + '" data-level="' + esc(p.level) + '" data-status="' + state + '" data-pm="' + esc(p.projectManager) + '" data-created="' + time(p.createdAt) + '" data-time="' + time(p.assignedAt) + '">'
         + cell('','project-row-index') + (pool ? '<td class="project-order">' + esc(p.orderNo || '—') + '</td>' + cell(pbsOrders.state(p).pmoName,'project-pmo') : '') + cell(p.projectNo,'project-number') + cell(p.customer) + cell(p.student) + cell(p.level)
         + '<td><span class="project-state" data-status="' + state + '">' + state + '</span></td>' + (!pool ? cell(pbsOrders.state(p).pmoName,'project-pmo') : '') + cell(p.projectManager) + cell(time(p.assignedAt),'project-number')
         + '<td class="project-remark" title="' + esc(remark) + '">' + esc(remark || '—') + '</td>' + (pool ? cell(time(p.createdAt),'project-number') : '') + '<td class="project-actions"><div>' + actions + '</div></td></tr>';
@@ -54,13 +53,12 @@
   }
   function keyword() {
     var input = document.getElementById('flt-kw'), value = input ? input.value.trim().toLowerCase() : '';
-    var onlyReturns = document.getElementById('projectReturnOnly');
-    tbody.querySelectorAll('tr[data-project]').forEach(function(row) { row.classList.toggle('pbs-project-keyword-hidden',row.dataset.kw.toLowerCase().indexOf(value) < 0); row.classList.toggle('pbs-project-return-hidden',!!(onlyReturns && onlyReturns.checked && row.dataset.hasReturn !== 'true')); });
+    tbody.querySelectorAll('tr[data-project]').forEach(function(row) { row.classList.toggle('pbs-project-keyword-hidden',row.dataset.kw.toLowerCase().indexOf(value) < 0); });
     paginate(true);
   }
   function paginate(resetPage) {
     if (!pager) return; if (resetPage) page = 1;
-    var all = Array.from(tbody.querySelectorAll('tr[data-project]')), matches = all.filter(function(row) { return !row.classList.contains('pbs-project-keyword-hidden') && !row.classList.contains('pbs-project-return-hidden') && !row.classList.contains('pbs-advanced-filter-hidden'); });
+    var all = Array.from(tbody.querySelectorAll('tr[data-project]')), matches = all.filter(function(row) { return !row.classList.contains('pbs-project-keyword-hidden') && !row.classList.contains('pbs-advanced-filter-hidden'); });
     var pages = Math.max(1,Math.ceil(matches.length/size)); page = Math.min(page,pages);
     all.forEach(function(row) { row.classList.add('pbs-project-page-hidden'); var pmo = row.querySelector('.project-pmo'); if(pmo) { pmo.rowSpan=1; pmo.style.display=''; pmo.classList.remove('project-pmo-shared'); } var order = row.querySelector('.project-order'); if (order) { order.rowSpan = 1; order.style.display = ''; order.textContent = row.dataset.order || '—'; order.classList.remove('project-order-shared'); } });
     var visible = matches.slice((page-1)*size,page*size), orderGroups = {};
@@ -109,15 +107,13 @@
     var list=document.getElementById('pendingTaskList'); if(list) list.onclick=function(e){var button=e.target.closest('[data-pending-action]');if(!button)return;var card=button.closest('[data-pending-project]'),id=card.dataset.pendingProject,goalId=card.dataset.pendingGoal;if(button.dataset.pendingAction==='accept'){window.pbsProjects.acceptPM(id,goalId);if(window.pbsRecordOperation)window.pbsRecordOperation('项目管理','接收','接收项目 '+id);render();renderPending();}else window.pbsTaskReturn.confirm({kind:'project',label:id},function(reason){window.pbsProjects.rejectPM(id,reason.trim(),goalId);if(window.pbsRecordOperation)window.pbsRecordOperation('项目管理','退回','退回项目 '+id+'：'+reason.trim());render();renderPending();});};
     document.getElementById('flt-kw').addEventListener('keydown', function(e) { if (e.key === 'Enter') window.applyFilter(); });
     document.getElementById('flt-kw').addEventListener('input', function() { if (!this.value) keyword(); });
-    var search = document.querySelector('button[onclick="applyFilter()"]');
-    if (search) { var filter = document.createElement('label'); filter.className = 'project-return-filter'; filter.innerHTML = '<input id="projectReturnOnly" type="checkbox">仅看退回'; search.before(filter); var checkbox = filter.querySelector('input'); checkbox.checked = new URLSearchParams(location.search).get('returns') === '1'; checkbox.onchange = keyword; }
     document.addEventListener('keydown', function(e) { if (e.key === 'Escape' && document.getElementById('pendingDrawerMask') && !document.getElementById('pendingDrawerMask').classList.contains('hidden') && !document.getElementById('pbsTaskReturnDialog')) closePending(); });
     render();
   }
   window.pbsProjectList={render:render,filterChanged:function(){paginate(true);},managerName:managerName};
   window.updatePendingBadge=updatePendingBadge;
   window.applyFilter = function() { keyword(); if(window.PBSAdvancedFilter && window.PBSAdvancedFilter.refresh) window.PBSAdvancedFilter.refresh(); };
-  window.resetFilter = function() { document.getElementById('flt-kw').value = ''; var checkbox = document.getElementById('projectReturnOnly'); if(checkbox)checkbox.checked=false; keyword(); if(window.PBSAdvancedFilter && window.PBSAdvancedFilter.reset) window.PBSAdvancedFilter.reset(); };
+  window.resetFilter = function() { document.getElementById('flt-kw').value = ''; keyword(); if(window.PBSAdvancedFilter && window.PBSAdvancedFilter.reset) window.PBSAdvancedFilter.reset(); };
   window.openPendingDrawer=openPending; window.closePendingDrawer=closePending;
   window.openPoolProjectDetail=function(id){open(id);}; window.openMyProjectDetail=function(id){open(id);};
   window.renderOfflineProjects=render; window.renderOfflineMyProjects=render; window.configurePoolRoleView=function(){}; window.syncStaticRowsFromStore=render; window.renderOrderReferences=function(){};

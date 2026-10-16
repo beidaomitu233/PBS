@@ -3059,7 +3059,7 @@
   if (!document.querySelector('link[href*="pbs-delivery.css"]')) {
     var style = document.createElement('link');
     style.rel = 'stylesheet';
-    style.href = './assets/css/pbs-delivery.css?v=2.1';
+    style.href = './assets/css/pbs-delivery.css?v=2.2';
     document.head.appendChild(style);
   }
   if (!document.querySelector('script[src*="pbs-delivery.js"]')) {

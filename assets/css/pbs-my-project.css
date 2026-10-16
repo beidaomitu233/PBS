@@ -27,8 +27,8 @@
 .my-project-detail .project-ddl-document-list { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 8px; margin: 8px 10px 10px; color: #64748b; font-size: 11px; }
 .my-project-detail .project-ddl-document { display: grid; gap: 4px; min-width: 0; }
 .my-project-detail .project-ddl-document strong { color: #334155; font-size: 14px; font-weight: 600; white-space: nowrap; font-variant-numeric: tabular-nums; }
-.my-project-detail .project-submission-panel { display: grid; grid-template-columns: minmax(0, 1fr) auto; grid-template-rows: 44px auto; align-content: start; align-items: start; gap: 12px; min-width: 0; padding: 20px; background: #fff; }
-.my-project-detail .project-submission-panel > h2 { margin: 0; color: #26344b; font-size: 18px; font-weight: 600; }
+.my-project-detail .project-submission-panel { display: grid; grid-template-columns: minmax(0, 1fr) auto; grid-template-rows: 36px auto; align-content: start; align-items: start; gap: 10px; min-width: 0; padding: 16px; background: #fff; }
+.my-project-detail .project-submission-panel > h2 { margin: 0; color: #26344b; font-size: 16px; font-weight: 600; }
 .my-project-detail #projectSubmissionContent[hidden], .my-project-detail #projectStageContent[hidden] { display: none; }
 .my-project-detail #paymentInfo { display: contents; }
 .my-project-detail #paymentInfo .pbs-payment-summary { grid-column: 2; grid-row: 1; justify-content: flex-end; gap: 20px; margin: 0; padding: 0; border-radius: 0; background: transparent; }
@@ -42,9 +42,10 @@
 .my-project-detail #paymentInfo .pbs-payment-group-payment > strong { font-size: 11px; font-weight: 500; }
 .my-project-detail #paymentInfo .pbs-payment-paid { font-size: 10px; }
 .my-project-detail #paymentInfo .pbs-payment-paid i { display: none; }
-.my-project-detail #paymentInfo .pbs-payment-table-head, .my-project-detail #paymentInfo .pbs-payment-table-row, .my-project-detail #paymentInfo .pbs-payment-delivery-row { min-width: 0; grid-template-columns: minmax(0, 1fr) 100px 84px; gap: 12px; padding: 5px 12px; }
+.my-project-detail #paymentInfo .pbs-payment-table-head, .my-project-detail #paymentInfo .pbs-payment-table-row, .my-project-detail #paymentInfo .pbs-payment-delivery-row { min-width: 0; grid-template-columns: minmax(0, 1fr) 80px 72px; gap: 10px; padding: 4px 10px; }
 .my-project-detail #paymentInfo .pbs-payment-table-head { min-height: 26px; color: #9aa4b3; font-size: 10px; background: #fff; }
-.my-project-detail #paymentInfo .pbs-payment-table-row, .my-project-detail #paymentInfo .pbs-payment-delivery-row { min-height: 44px; }
+.my-project-detail #paymentInfo .pbs-payment-table-row, .my-project-detail #paymentInfo .pbs-payment-delivery-row { min-height: 38px; }
+.my-project-detail #paymentInfo .pbs-payment-action { height: 28px; max-width: 72px; border-radius: 6px; font-size: 11px; }
 .my-project-detail #paymentInfo .pbs-payment-table-row > strong, .my-project-detail #paymentInfo .pbs-payment-delivery-row > strong { font-size: 11px; font-weight: 500; line-height: 1.5; }
 .my-project-detail #paymentInfo .pbs-payment-state { grid-row: auto; font-size: 10px; }
 .my-project-detail #paymentInfo .pbs-payment-delivery-row > :nth-last-child(2) { grid-column: 2; }

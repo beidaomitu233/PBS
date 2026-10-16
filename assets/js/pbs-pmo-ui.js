@@ -74,12 +74,14 @@
   function renderArchive() {
     var body = document.getElementById('archiveTbody'); if (!body) return;
     var orders = api.all().filter(function(order) {
-      return order.projects.some(function(project) { return api.canView(project); }) &&
-        (order.status === '已结项' || order.targets.some(function(target) { return api.canReadGoal(target.project,target.goal.id) && !!target.submission.submittedAt; }));
+      return order.projects.some(function(project) { return api.canView(project); });
+    }).sort(function(a,b) {
+      return String(a.project.orderNo || a.project.projectNo).localeCompare(String(b.project.orderNo || b.project.projectNo));
     });
     body.innerHTML = orders.map(function(order,index) {
-      var projects = order.projects.filter(function(project) { return api.canView(project); });
+      var projects = order.projects.filter(function(project) { return api.canView(project); }).sort(function(a,b) { return a.projectNo.localeCompare(b.projectNo); });
       var p = projects[0], span = ' rowspan="' + projects.length + '"';
+      var closureStatus = order.status === '已结项' ? '已结项' : '待结项';
       var canOrder = api.canAssignOwner(p) || api.canManage(p);
       var own = order.targets.find(function(target) { return api.canReadGoal(target.project,target.goal.id); });
       var href = canOrder ? orderClosureUrl(p.projectNo) : own ? closureUrl(own.project.projectNo,own.goal.id) : '';
@@ -90,14 +92,14 @@
         var attributes = ' data-archive-order="' + esc(order.id) + '"';
         if (first) attributes += ' data-project="' + esc(p.projectNo) + '" data-name="' + esc(p.customer) + '" data-student="' + esc(p.student) +
           '" data-level="' + esc(p.level) + '" data-levels="' + esc(projects.map(function(item) { return item.level; }).join('|')) +
-          '" data-endtime="' + esc(closedAt || '') + '" data-status="' + (order.status === '已结项' ? '已结项' : '待结项') +
-          '" data-kw="' + esc([keyword,p.orderNo,order.owner.pmoName,order.status].join(' ')) + '"';
+          '" data-endtime="' + esc(closedAt || '') + '" data-status="' + closureStatus +
+          '" data-kw="' + esc([keyword,p.orderNo,order.owner.pmoName,closureStatus].join(' ')) + '"';
         var row = '<tr' + attributes + '>';
         if (first) row += '<td' + span + '>' + (index + 1) + '</td><td' + span + ' class="archive-order' + (p.orderNo && projects.length > 1 ? ' is-shared' : '') + '"><strong>' + esc(p.orderNo || '—') + '</strong>' + (p.orderNo && projects.length > 1 ? '<small>共 ' + projects.length + ' 个子订单</small>' : '') + '</td>';
         row += '<td class="archive-project-number">' + esc(project.projectNo) + '</td>';
         if (first) row += '<td' + span + '>' + esc(p.student) + '</td><td' + span + '>' + esc(order.owner.pmoName || '—') + '</td>';
         row += '<td>' + (project.packages || []).filter(function(goal) { return api.canReadGoal(project,goal.id); }).length + '</td>';
-        if (first) row += '<td' + span + '>' + esc(order.status) + '</td><td' + span + '>' + esc(time(closedAt)) + '</td><td' + span + '><a class="pmo-link" href="' + href + '">' + (canOrder ? '查看详情' : '查看材料') + '</a></td>';
+        if (first) row += '<td' + span + '>' + closureStatus + '</td><td' + span + '>' + esc(time(closedAt)) + '</td><td' + span + '><a class="pmo-link" href="' + href + '">' + (canOrder ? '查看详情' : '查看材料') + '</a></td>';
         return row + '</tr>';
       }).join('');
     }).join('') + '<tr id="flt-empty" class="hidden"><td colspan="9" class="pmo-empty">暂无符合条件的结项记录</td></tr>';

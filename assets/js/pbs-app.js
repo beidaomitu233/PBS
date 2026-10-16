@@ -3064,7 +3064,7 @@
   }
   if (!document.querySelector('script[src*="pbs-delivery.js"]')) {
     var script = document.createElement('script');
-  script.src = './assets/js/pbs-delivery.js?v=2.6';
+  script.src = './assets/js/pbs-delivery.js?v=2.7';
     document.body.appendChild(script);
   }
 })();

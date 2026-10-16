@@ -13,13 +13,13 @@
 .website-form-field input.is-invalid, .website-form-field select.is-invalid, .website-form-field textarea.is-invalid { background: #fff1f2; border-color: #ef4444; }
 .application-save-error { color: #dc2626 !important; font-weight: 500; }
 .ns-anchor { width: 208px; top: 96px; }
-.ns-anchor-card { padding: 16px; border: 1px solid #f0f2f5; border-radius: 12px; background: #fff; box-shadow: 0 1px 2px #0f172a0a; }
+.ns-anchor-card { padding: 16px; border: 1px solid #f0f2f5; border-radius: 12px; background: #fff; box-shadow: var(--pbs-shadow-card); }
 .ns-anchor-card > p { margin: 0 8px 12px; color: #9ca3af; font-size: 12px; font-weight: 500; }
 .ns-anchor nav { gap: 4px; }
 .ns-anchor a { padding: 10px 12px; border-radius: 8px; color: #4b5563; font-size: 14px; font-weight: 400; }
 .ns-anchor a::before { display: none; }
 .ns-anchor a.active { background: #eff6ff; color: #1d4ed8; font-weight: 500; }
-.ns-section { scroll-margin-top: 88px; }
+.ns-section { scroll-margin-top: 88px; box-shadow: var(--pbs-shadow-card); }
 .ns-account-actions { display: flex; gap: 10px; align-items: center; }
 .ns-account-actions [hidden] { display: none !important; }
 .ns-acc-table { min-width: 1160px; }

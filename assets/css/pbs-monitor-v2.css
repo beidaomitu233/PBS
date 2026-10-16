@@ -20,12 +20,12 @@ body[data-monitor-page="detail"] .monitor-layout { height: calc(100vh - 64px); m
 .monitor-back:hover { border-color: #94a3b8; background: #f8fafc; }
 
 .monitor-summary { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 14px; margin-bottom: 18px; }
-.monitor-summary-card { padding: 18px 20px; border: 1px solid #e2e8f0; border-radius: 14px; background: #fff; box-shadow: 0 2px 10px rgba(15, 39, 66, .035); }
+.monitor-summary-card { padding: 18px 20px; border: 1px solid #e2e8f0; border-radius: 14px; background: #fff; box-shadow: var(--pbs-shadow-card); }
 .monitor-summary-card span { display: block; color: var(--monitor-muted); font-size: 13px; }
 .monitor-summary-card strong { display: block; margin-top: 5px; color: var(--monitor-ink); font-size: 25px; line-height: 1.2; }
 .monitor-summary-card small { display: block; margin-top: 5px; color: #94a3b8; font-size: 12px; }
 
-.monitor-filter { display: flex; align-items: flex-end; flex-wrap: wrap; gap: 12px; margin-bottom: 18px; padding: 18px; border: 1px solid #e2e8f0; border-radius: 14px; background: #fff; }
+.monitor-filter { display: flex; align-items: flex-end; flex-wrap: wrap; gap: 12px; margin-bottom: 18px; padding: 18px; border: 1px solid #e2e8f0; border-radius: 14px; background: #fff; box-shadow: var(--pbs-shadow-card); }
 .monitor-field { min-width: 154px; }
 .monitor-field.is-wide { min-width: 270px; flex: 1; }
 .monitor-field label { display: block; margin-bottom: 7px; color: #475569; font-size: 13px; font-weight: 600; }
@@ -39,7 +39,7 @@ body[data-monitor-page="detail"] .monitor-layout { height: calc(100vh - 64px); m
 .monitor-btn.secondary:hover { background: #f8fafc; }
 .monitor-btn.small { height: 34px; flex-shrink: 0; padding: 0 12px; font-size: 13px; white-space: nowrap; }
 
-.monitor-table-card { overflow: hidden; border: 1px solid #dfe7f0; border-radius: 14px; background: #fff; box-shadow: 0 3px 12px rgba(15, 39, 66, .035); }
+.monitor-table-card { overflow: hidden; border: 1px solid #dfe7f0; border-radius: 14px; background: #fff; box-shadow: var(--pbs-shadow-card); }
 .monitor-table-wrap { overflow-x: auto; }
 .monitor-table { width: 100%; min-width: 980px; border-collapse: collapse; }
 .monitor-table th { padding: 13px 16px; background: #f8fafc; color: #64748b; text-align: left; font-size: 12px; font-weight: 650; white-space: nowrap; }
@@ -91,7 +91,7 @@ body[data-monitor-page="list"] .monitor-table th:first-child { text-align: cente
   border: 1px solid #dce5ef;
   border-radius: 14px;
   background: #fff;
-  box-shadow: 0 2px 10px rgba(15, 39, 66, .045);
+  box-shadow: var(--pbs-shadow-card);
 }
 .detail-page .student-strip {
   margin: 0 0 14px;

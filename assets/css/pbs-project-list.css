@@ -35,17 +35,20 @@
 .pbs-project-pager button { padding: 7px 11px; border: 1px solid #e1e7ef; border-radius: 7px; background: #fff; color: #475569; cursor: pointer; }
 .pbs-project-pager button:disabled { opacity: .4; cursor: not-allowed; }
 .pbs-project-pager button[aria-current] { color: #fff; background: #2563eb; border-color: #2563eb; }
-.project-pending-card { padding: 18px; background: #fff; border: 1px solid #e2e8f0; border-radius: 12px; }
-.project-pending-card strong { display: block; margin-bottom: 12px; }
-.project-pending-heading { display: flex; flex-wrap: wrap; align-items: baseline; gap: 6px 12px; margin-bottom: 14px; }
-.project-pending-heading strong { margin: 0; }
-.project-pending-heading > span { color: #64748b; font-size: 12px; }
-.project-pending-card dl { display: grid; grid-template-columns: 80px 1fr; gap: 10px; font-size: 13px; margin-bottom: 18px; }
-.project-pending-card dt { color: #94a3b8; }
-.project-pending-card dd { margin: 0; overflow-wrap: anywhere; }
+.project-pending-card { padding: 16px; background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 12px; }
+.project-pending-heading { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; }
+.project-pending-heading h3 { margin: 0; color: #1f2937; font-size: 14px; font-weight: 600; }
+.project-pending-icon { display: flex; align-items: center; justify-content: center; flex-shrink: 0; width: 36px; height: 36px; border-radius: 50%; background: #dbeafe; color: #2563eb; }
+.project-pending-card dl { display: grid; grid-template-columns: 70px minmax(0,1fr); gap: 8px 12px; font-size: 14px; line-height: 1.5; margin: 0 0 16px; }
+.project-pending-card dt { color: #6b7280; }
+.project-pending-card dd { margin: 0; text-align: right; color: #111827; overflow-wrap: anywhere; }
 .project-pending-card footer { display: flex; gap: 12px; }
-.project-pending-card button { flex: 1; height: 46px; border: 0; border-radius: 9px; background: #2563eb; color: #fff; font-weight: 600; cursor: pointer; }
-.project-pending-card footer button + button { background: #f1f5f9; color: #b91c1c; }
+.project-pending-card button { flex: 1; height: 36px; border: 1px solid transparent; border-radius: 8px; background: #2563eb; color: #fff; font-size: 14px; font-weight: 500; cursor: pointer; transition: background-color .15s; }
+.project-pending-card button:hover { background: #1d4ed8; }
+.project-pending-card [data-pending-action="accept"] { background: #16a34a; }
+.project-pending-card [data-pending-action="accept"]:hover { background: #15803d; }
+.project-pending-card [data-pending-action="return"] { background: #fff; border-color: #fca5a5; color: #dc2626; }
+.project-pending-card [data-pending-action="return"]:hover { background: #fef2f2; }
 @media (max-width: 700px) {
   .pbs-project-pager { align-items: flex-start; flex-direction: column; }
   .pbs-project-pager nav { justify-content: flex-start; }

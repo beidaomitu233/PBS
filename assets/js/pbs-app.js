@@ -1278,20 +1278,24 @@
     var seeded = readStore(key,{}), changed = false;
     projects.all().forEach(function(project) { var id = orderKey(project); if (seeded[id] || project.manualCreated || !/^PRJ-[MO]-2607-/.test(project.projectNo)) return; seeded[id] = {events:[]}; if (['PRJ-M-2607-0000','PRJ-O-2607-0005'].indexOf(project.projectNo) < 0) Object.assign(seeded[id],{pmoAccount:'pmo',pmoName:'林老师',assignedBy:'王志强',assignedAt:'2026-10-15T01:00:00.000Z'}); changed = true; });
     if (changed) writeStore(key,seeded);
-    if (!readStore('pbs_assignment_examples_v1',false)) {
+    if (!readStore('pbs_assignment_examples_v2',false)) {
       var examples = [
         {no:'0020',student:'林悦',customer:'林建华',school:'曼彻斯特大学',major:'商业分析',stage:'ownerPending'},
         {no:'0021',student:'陈思远',customer:'陈国安',school:'悉尼大学',major:'金融学',stage:'ownerReturned',reason:'当前负责项目已满，请重新安排 PMO。'},
         {no:'0022',student:'周子涵',customer:'周明',school:'爱丁堡大学',major:'数据科学',stage:'managerPending'},
         {no:'0023',student:'许嘉宁',customer:'许文清',school:'伦敦大学学院',major:'教育学',stage:'managerReturned',reason:'申请方向不在本人负责范围，请安排教育学方向的项目经理。'},
         {no:'0024',student:'沈若溪',customer:'沈国平',school:'香港大学',major:'传媒学',stage:'documentReturned',reason:'本周任务已排满，无法在截止日期前完成，请重新分配文书人员。'},
-        {no:'0025',student:'顾奕辰',customer:'顾海涛',school:'新加坡国立大学',major:'计算机科学',stage:'applicationReturned',reason:'该院校申请系统需要专门操作经验，请重新分配网申人员。'}
+        {no:'0025',student:'顾奕辰',customer:'顾海涛',school:'新加坡国立大学',major:'计算机科学',stage:'applicationReturned',reason:'该院校申请系统需要专门操作经验，请重新分配网申人员。'},
+        {no:'0026',student:'苏晴',customer:'苏文斌',school:'格拉斯哥大学',major:'市场营销',stage:'ownerPending'},
+        {no:'0027',student:'陆星宇',customer:'陆建国',school:'莫纳什大学',major:'会计学',stage:'ownerReturned',reason:'近期无法兼顾该订单，请重新分配负责 PMO。'},
+        {no:'0028',student:'唐可欣',customer:'唐志远',school:'布里斯托大学',major:'经济学',stage:'managerPending'},
+        {no:'0029',student:'程浩然',customer:'程明华',school:'南洋理工大学',major:'电子工程',stage:'managerReturned',reason:'当前申请季负责目标较多，请安排其他项目经理。'}
       ];
       var orders = readStore(key,{}), taskReturns = readStore('pbs_task_returns_v1',[]);
       examples.forEach(function(example,index) {
         var projectNo = 'PRJ-M-2610-' + example.no;
         if (projects.find(projectNo)) return;
-        var at = '2026-10-16T0' + (index + 1) + ':00:00.000Z', goalId = 'goal-' + example.no;
+        var at = '2026-10-16T' + String(index % 6 + 1).padStart(2,'0') + ':00:00.000Z', goalId = 'goal-' + example.no;
         var goal = {id:goalId,school:example.school,major:example.major,name:'留学申请套餐',services:[{name:'文书服务',price:12000},{name:'网申服务',price:8000}]};
         var project = {projectNo:projectNo,orderNo:'20261016' + example.no,customer:example.customer,student:example.student,level:'硕士申请',source:'线上',org:'PBS留学总部',createdAt:'2026-10-16 09:00',assignedAt:at,packages:[goal],projectManager:'',pmAccepted:false,status:'待分配',goalManagers:{},goalAssignments:{}};
         var owner = {pmoAccount:'pmo',pmoName:'林老师',pmoAccepted:example.stage !== 'ownerPending',assignedBy:'王志强',assignedAt:at,events:[]};
@@ -1313,7 +1317,7 @@
         project.status = /Pending$/.test(example.stage) ? '待接收' : project.pmAccepted ? '进行中' : '待分配';
         projects.upsert(project); orders[orderKey(project)] = owner;
       });
-      writeStore(key,orders); writeStore('pbs_task_returns_v1',taskReturns); writeStore('pbs_assignment_examples_v1',true);
+      writeStore(key,orders); writeStore('pbs_task_returns_v1',taskReturns); writeStore('pbs_assignment_examples_v2',true);
     }
   })();
 

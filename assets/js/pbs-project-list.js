@@ -78,6 +78,7 @@
       if (!seenOrders[orderId]) {
         seenOrders[orderId] = true;
         if (pbsOrders.canManage(project) && owner.pmoAccepted === false) records.push(Object.assign({},project,{pendingType:'accept',pendingScope:'owner',packages:pbsOrders.members(project).flatMap(function(item) { return item.packages || []; }),assignedAt:owner.assignedAt}));
+        if (pbsOrders.canAssignOwner(project) && owner.pmoName && owner.pmoAccepted === false) records.push(Object.assign({},project,{pendingType:'waiting',pendingScope:'owner',pendingRecipient:owner.pmoName,packages:pbsOrders.members(project).flatMap(function(item) { return item.packages || []; }),assignedAt:owner.assignedAt}));
         var ownerReturn = (owner.returnHistory || []).slice().reverse().find(function(item) { return !item.handledAt; });
         if (ownerReturn && pbsOrders.canAssignOwner(project)) records.push(Object.assign({},project,{pendingType:'assign',pendingScope:'owner',pendingReturn:ownerReturn,assignedAt:ownerReturn.returnedAt}));
       }
@@ -96,6 +97,7 @@
       (project.packages || []).forEach(function(goal) {
         var manager = pbsOrders.manager(project,goal.id);
         if (pbsOrders.canHandleGoal(project,goal.id) && !manager.accepted) records.push(Object.assign({},project,{pendingType:'accept',pendingGoal:goal.id,packages:[goal],assignedAt:manager.assignedAt}));
+        if (pbsOrders.canManage(project) && manager.name && !manager.accepted) records.push(Object.assign({},project,{pendingType:'waiting',pendingGoal:goal.id,pendingRecipient:manager.name,packages:[goal],assignedAt:manager.assignedAt}));
       });
       return records;
     });
@@ -107,17 +109,19 @@
     var records = pending(), list=document.getElementById('pendingTaskList'), empty=document.getElementById('pendingTaskEmpty'); if(!list) return;
     list.classList.toggle('hidden',!records.length); empty.classList.toggle('hidden',!!records.length);
     list.innerHTML=records.map(function(p) {
-      var returned = p.pendingType === 'assign', item = p.pendingReturn;
+      var returned = p.pendingType === 'assign', waiting = p.pendingType === 'waiting', item = p.pendingReturn;
       var task = returned ? (item.doc ? item.doc + ' · ' : '') + ({owner:'PMO 分配',manager:'项目经理分配',document:'文书交付',review:'文书审核',application:'网申任务'}[item.kind]) : '';
-      return '<section class="project-pending-card" data-pending-project="' + esc(p.projectNo) + '" data-pending-goal="' + esc(p.pendingGoal || '') + '" data-pending-scope="' + (p.pendingScope || 'goal') + '" data-pending-type="' + p.pendingType + '"><div class="project-pending-heading"><strong>' + esc(p.student) + ' · ' + esc(p.level) + '</strong><span>' + (returned ? '分配被退回' : '待接收') + '</span></div><dl><dt>项目号</dt><dd>' + esc(p.projectNo) + '</dd><dt>客户姓名</dt><dd>' + esc(p.customer) + '</dd><dt>院校目标</dt><dd>' + esc(p.packages.map(function(goal){return goal.school+' · '+goal.major;}).join('；')) + '</dd>' +
-        (returned ? '<dt>任务</dt><dd>' + esc(task) + '</dd><dt>退回原因</dt><dd>' + esc(item.reason || '—') + '</dd>' : '') + '<dt>' + (returned ? '退回时间' : '分配时间') + '</dt><dd>' + time(p.assignedAt) + '</dd></dl><footer>' +
-        (returned ? '<button type="button" data-pending-action="assign">分配</button>' : '<button type="button" data-pending-action="accept">接收</button><button type="button" data-pending-action="return">退回</button>') + '</footer></section>';
+      var icon = '<span class="project-pending-icon"><svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8zM14 2v6h6M8 13h8M8 17h5"/></svg></span>';
+      return '<section class="project-pending-card" data-pending-project="' + esc(p.projectNo) + '" data-pending-goal="' + esc(p.pendingGoal || '') + '" data-pending-scope="' + (p.pendingScope || 'goal') + '" data-pending-type="' + p.pendingType + '"><div class="project-pending-heading">' + icon + '<h3>' + (returned ? '分配被退回' : waiting ? '分配待接收' : '新任务待签收') + '</h3></div><dl><dt>学生姓名</dt><dd>' + esc(p.student) + '</dd><dt>项目号</dt><dd>' + esc(p.projectNo) + '</dd><dt>院校目标</dt><dd>' + esc(p.packages.map(function(goal){return goal.school+' · '+goal.major;}).join('；')) + '</dd><dt>申请层次</dt><dd>' + esc(p.level) + '</dd>' +
+        (waiting ? '<dt>接收人员</dt><dd>' + esc(p.pendingRecipient) + '</dd>' : '') + (returned ? '<dt>任务</dt><dd>' + esc(task) + '</dd><dt>退回原因</dt><dd>' + esc(item.reason || '—') + '</dd>' : '') + '<dt>' + (returned ? '退回时间' : '分配时间') + '</dt><dd>' + time(p.assignedAt) + '</dd></dl><footer>' +
+        (returned ? '<button type="button" data-pending-action="assign">分配</button>' : waiting ? '<button type="button" data-pending-action="urge">催办</button>' : '<button type="button" data-pending-action="accept">接收</button><button type="button" data-pending-action="return">退回</button>') + '</footer></section>';
     }).join(''); updatePendingBadge();
   }
   function handlePendingAction(e) {
     var button = e.target.closest('[data-pending-action]'); if (!button) return;
     var card = button.closest('[data-pending-project]'), id = card.dataset.pendingProject, goalId = card.dataset.pendingGoal, ownerTask = card.dataset.pendingScope === 'owner';
     if (button.dataset.pendingAction === 'assign') { closePending(); open(id,'assign',goalId); return; }
+    if (button.dataset.pendingAction === 'urge') { urge(pbsProjects.find(id),goalId); return; }
     if (button.dataset.pendingAction === 'accept') {
       if (ownerTask) pbsOrders.acceptOwner(id); else window.pbsProjects.acceptPM(id,goalId);
       if (window.pbsRecordOperation) window.pbsRecordOperation('项目管理','接收','接收项目 '+id);
@@ -143,11 +147,12 @@
     document.getElementById('pendingDrawer').classList.add('translate-x-full');
     if (pendingTrigger && pendingTrigger.isConnected) pendingTrigger.focus();
   }
-  function urge(project) {
+  function urge(project,goalId) {
     var owner = pbsOrders.state(project), institutional = pbsOrders.canAssignOwner(project);
-    if (window.openUrgeModal) { window.openUrgeModal(project.student + ' · ' + project.projectNo,institutional ? owner.pmoName : project.projectManager,institutional ? 'PMO' : '项目经理'); return; }
-    window.pbsCreateNotification({kind:'task_urge',type:'项目催办提醒',title:project.student+'的项目收到催办',business:project.projectNo,recipientName:project.projectManager,recipientRoles:['项目经理'],organization:project.org,href:'我的项目详情页 - 留学申请管理系统.html?project='+encodeURIComponent(project.projectNo)});
-    if(window.showToast) window.showToast('已向 '+project.projectManager+' 发送项目催办');
+    var recipient = institutional ? owner.pmoName : goalId ? pbsOrders.manager(project,goalId).name : project.projectManager, role = institutional ? 'PMO' : '项目经理';
+    if (window.openUrgeModal) { window.openUrgeModal(project.student + ' · ' + project.projectNo,recipient,role); return; }
+    window.pbsCreateNotification({kind:'task_urge',type:'项目催办提醒',title:project.student+'的项目收到催办',business:project.projectNo,recipientName:recipient,recipientRoles:[role],organization:project.org,href:(institutional ? '项目详情页 - 留学申请管理系统.html' : '我的项目详情页 - 留学申请管理系统.html')+'?project='+encodeURIComponent(project.projectNo)});
+    if(window.showToast) window.showToast('已向 '+recipient+' 发送项目催办');
   }
   function init() {
     var imported; try { imported=JSON.parse(localStorage.getItem('pbs_offline_projects_v1')||'[]'); } catch(e){imported=[];}

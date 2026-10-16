@@ -5,15 +5,17 @@
   var table = tbody.closest('table'), page = 1, size = 20, pager, pendingTrigger;
   function esc(value) { return String(value == null ? '' : value).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];}); }
   function session() { return window.pbsGetSession(); }
+  function managerView() { var s = session(); return s.role === '项目经理' && (s.roles || [s.role]).length === 1; }
   function managerName() { return window.pbsOrders.name('项目经理'); }
-  function returnedByMe(item) { var s = session(); return item.kind === 'manager' && (item.returnedAccount ? item.returnedAccount === s.account : item.returnedBy === managerName() || item.returnedBy === s.name); }
-  function returnsFor(project) { return pbsOrders.returns(project).filter(function(item) { return pool || session().role !== '项目经理' || pbsOrders.canHandleGoal(project,item.goalId,true) || returnedByMe(item); }); }
+  function returnedByMe(item) { var s = session(); return (s.roles || [s.role]).indexOf('项目经理') >= 0 && item.kind === 'manager' && (item.returnedAccount ? item.returnedAccount === s.account : item.returnedBy === managerName() || item.returnedBy === s.name); }
+  function returnsFor(project) { return pbsOrders.returns(project).filter(function(item) { return pool || !managerView() || pbsOrders.canHandleGoal(project,item.goalId,true) || returnedByMe(item); }); }
   function scoped() {
     var s = session();
     return window.pbsProjects.all().filter(function(p) {
       if (s.org && p.org && p.org !== (s.org === 'PBS留学' ? 'PBS留学总部' : s.org) && s.role !== '超级管理员' && s.role !== '平台运维人员') return false;
-      if (s.role === 'PMO') return pbsOrders.canManage(p);
-      if (s.role === '项目经理') return (p.packages || []).some(function(goal) { return pbsOrders.canHandleGoal(p,goal.id); }) || pbsOrders.returns(p).some(returnedByMe);
+      if (pbsOrders.canAssignOwner(p)) return true;
+      var roles = s.roles || [s.role];
+      if (roles.indexOf('PMO') >= 0 || roles.indexOf('项目经理') >= 0) return pbsOrders.canManage(p) || (p.packages || []).some(function(goal) { return pbsOrders.canHandleGoal(p,goal.id); }) || pbsOrders.returns(p).some(returnedByMe);
       return pool || pbsOrders.canAssignOwner(p) || !!p.projectManager;
     });
   }
@@ -23,11 +25,11 @@
     if (String(value).indexOf('T') >= 0) return new Date(value).toLocaleString('sv-SE', { timeZone: 'Asia/Shanghai', hour12: false }).slice(0, 16);
     return String(value).slice(0, 16);
   }
-  function open(projectNo, action, goalId) { var project = pbsProjects.find(projectNo), allocation = action === 'assign' && (pbsOrders.canAssignOwner(project) || pbsOrders.canManage(project)); location.href = (allocation || pool && session().role !== '项目经理' ? '项目详情页 - 留学申请管理系统.html' : '我的项目详情页 - 留学申请管理系统.html') + '?project=' + encodeURIComponent(projectNo) + (goalId ? '&school=' + encodeURIComponent(goalId) : '') + (action ? '&action=' + action : ''); }
+  function open(projectNo, action, goalId, taskKind, doc) { var deliveryTask = ['document','review','application'].indexOf(taskKind) >= 0; location.href = (!deliveryTask && (pool || taskKind === 'owner' || taskKind === 'manager') ? '项目详情页 - 留学申请管理系统.html' : '我的项目详情页 - 留学申请管理系统.html') + '?project=' + encodeURIComponent(projectNo) + (goalId ? '&school=' + encodeURIComponent(goalId) : '') + (action ? '&action=' + action : '') + (taskKind ? '&task=' + encodeURIComponent(taskKind) : '') + (doc ? '&doc=' + encodeURIComponent(doc) : ''); }
   function cell(value, cls) { return '<td' + (cls ? ' class="' + cls + '"' : '') + '>' + esc(value || '—') + '</td>'; }
   function button(label, action) { return '<button type="button" data-project-action="' + action + '">' + label + '</button>'; }
   function render() {
-    var records = scoped().map(function(p) { var returns = returnsFor(p); if (!pool && session().role === '项目经理') { var assigned = (p.packages || []).filter(function(goal) { return pbsOrders.canHandleGoal(p,goal.id); }); return Object.assign({},p,{projectManager:assigned.length ? managerName() : '',packages:assigned,returnOnly:!assigned.length,returnItems:returns}); } return Object.assign({},p,{returnItems:returns}); }).filter(function(p) { return pool || p.packages.length || p.returnItems.length; });
+    var records = scoped().map(function(p) { var returns = returnsFor(p); if (!pool && managerView()) { var assigned = (p.packages || []).filter(function(goal) { return pbsOrders.canHandleGoal(p,goal.id); }); return Object.assign({},p,{projectManager:assigned.length ? managerName() : '',packages:assigned,returnOnly:!assigned.length,returnItems:returns}); } return Object.assign({},p,{returnItems:returns}); }).filter(function(p) { return pool || p.packages.length || p.returnItems.length; });
     if (pool) records.sort(function(a,b) { return String(a.orderNo || a.projectNo).localeCompare(String(b.orderNo || b.projectNo)) || a.projectNo.localeCompare(b.projectNo); });
     var headings = pool ? ['序号','商城订单号','PMO','项目号','客户姓名','学生姓名','申请层次','项目状态','项目经理','分配时间','备注','订单创建时间','操作'] : ['序号','项目号','客户姓名','学生姓名','申请层次','项目状态','PMO','项目经理','分配时间','备注','操作'];
     table.querySelector('thead tr').innerHTML = headings.map(function(label,index) { return '<th' + (label === '商城订单号' ? ' class="project-order-heading"' : label === 'PMO' ? ' class="project-pmo"' : index === headings.length-1 ? ' class="project-actions"' : '') + '>' + label + '</th>'; }).join('');
@@ -75,7 +77,7 @@
     return scoped().flatMap(function(project) {
       if (project.status === '已结项') return [];
       var seen = {}, records = [], owner = pbsOrders.state(project), orderId = pbsOrders.key(project);
-      if (!seenOrders[orderId]) {
+      if (pool && !seenOrders[orderId]) {
         seenOrders[orderId] = true;
         if (pbsOrders.canManage(project) && owner.pmoAccepted === false) records.push(Object.assign({},project,{pendingType:'accept',pendingScope:'owner',packages:pbsOrders.members(project).flatMap(function(item) { return item.packages || []; }),assignedAt:owner.assignedAt}));
         var ownerReturn = (owner.returnHistory || []).slice().reverse().find(function(item) { return !item.handledAt; });
@@ -85,8 +87,8 @@
         if (!item.pending) return;
         var goal = (project.packages || []).find(function(goal) { return goal.id === item.goalId; });
         if (!goal) return;
-        var allowed = item.kind === 'manager'
-          ? pbsOrders.canManage(project)
+        var allowed = pool
+          ? item.kind === 'manager' && pbsOrders.canManage(project)
           : ['document','review','application'].indexOf(item.kind) >= 0 && pbsOrders.canHandleGoal(project,goal.id,true) && pbsHasPermission('my_project_team_manage');
         var key = [goal.id,item.kind,item.doc || ''].join('|');
         if (!allowed || seen[key]) return;
@@ -95,34 +97,67 @@
       });
       (project.packages || []).forEach(function(goal) {
         var manager = pbsOrders.manager(project,goal.id);
-        if (pbsOrders.canHandleGoal(project,goal.id) && !manager.accepted) records.push(Object.assign({},project,{pendingType:'accept',pendingGoal:goal.id,packages:[goal],assignedAt:manager.assignedAt}));
+        if (!pool && pbsOrders.canHandleGoal(project,goal.id) && !manager.accepted) records.push(Object.assign({},project,{pendingType:'accept',pendingGoal:goal.id,packages:[goal],assignedAt:manager.assignedAt}));
       });
       return records;
-    });
+    }).sort(function(a,b) { return String(b.assignedAt || '').localeCompare(String(a.assignedAt || '')); });
   }
   function updatePendingBadge() {
     var count = pending().length; ['pendingTaskBadge','pendingDrawerCount'].forEach(function(id) { var el=document.getElementById(id); if(el) { el.textContent=count; if(id==='pendingTaskBadge') el.classList.toggle('hidden',!count); } });
   }
+  function taskPeople(project) {
+    var owner = pbsOrders.state(project), manager = project.pendingGoal ? pbsOrders.manager(project,project.pendingGoal) : {};
+    var item = project.pendingReturn, sender, recipient, senderRole, recipientRole;
+    if (item) {
+      sender = item.returnedBy;
+      recipient = item.returnedTo || (item.kind === 'owner' ? owner.assignedBy || '机构管理员' : item.kind === 'manager' ? owner.pmoName || manager.assignedBy || 'PMO' : manager.name || '项目经理');
+      senderRole = {owner:'PMO',manager:'项目经理',document:'文书人员',review:'文书审核',application:'网申人员'}[item.kind];
+      recipientRole = item.kind === 'owner' ? '机构管理员' : item.kind === 'manager' ? 'PMO' : '项目经理';
+    } else if (project.pendingScope === 'owner') {
+      sender = owner.assignedBy || '机构管理员'; recipient = owner.pmoName;
+    } else {
+      sender = manager.assignedBy || owner.pmoName || 'PMO'; recipient = manager.name;
+    }
+    return {sender:sender || '—',recipient:recipient || '—',senderRole:senderRole,recipientRole:recipientRole};
+  }
   function renderPending() {
     var records = pending(), list=document.getElementById('pendingTaskList'), empty=document.getElementById('pendingTaskEmpty'); if(!list) return;
     list.classList.toggle('hidden',!records.length); empty.classList.toggle('hidden',!!records.length);
-    list.innerHTML=records.map(function(p) {
-      var returned = p.pendingType === 'assign', item = p.pendingReturn;
-      var task = returned ? (item.doc ? item.doc + ' · ' : '') + ({owner:'PMO 分配',manager:'项目经理分配',document:'文书交付',review:'文书审核',application:'网申任务'}[item.kind]) : '';
-      var icon = '<div class="w-9 h-9 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0"><svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8zM14 2v6h6M8 13h8M8 17h5"/></svg></div>';
-      function field(label,value) { return '<div class="flex justify-between items-start gap-3"><dt class="flex-shrink-0">' + label + '</dt><dd class="text-gray-900 text-right min-w-0 break-words">' + esc(value) + '</dd></div>'; }
-      var fields = field('学生姓名',p.student) + field('院校目标',p.packages.map(function(goal){return goal.school+' · '+goal.major;}).join('；')) + field('申请层次',p.level);
-      if (returned) fields += field('任务',task) + field('退回原因',item.reason || '—');
-      fields += field(returned ? '退回时间' : '分配时间',time(p.assignedAt));
-      var primary = 'flex-1 h-9 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm font-medium';
-      return '<section class="project-pending-card border border-blue-200 bg-blue-50 rounded-xl p-4" data-pending-project="' + esc(p.projectNo) + '" data-pending-goal="' + esc(p.pendingGoal || '') + '" data-pending-scope="' + (p.pendingScope || 'goal') + '" data-pending-type="' + p.pendingType + '"><div class="flex items-center gap-3 mb-3">' + icon + '<h3 class="text-sm font-semibold text-gray-800">' + (returned ? '分配被退回' : '新任务待签收') + '</h3></div><dl class="space-y-1.5 text-sm text-gray-500 mb-4">' + fields + '</dl><footer class="flex items-center gap-2">' +
-        (returned ? '<button type="button" class="' + primary + '" data-pending-action="assign">分配</button>' : '<button type="button" class="flex-1 h-9 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors text-sm font-medium" data-pending-action="accept">接收</button><button type="button" class="flex-1 h-9 bg-white border border-red-300 text-red-600 rounded-lg hover:bg-red-50 transition-colors text-sm font-medium" data-pending-action="return">退回</button>') + '</footer></section>';
-    }).join(''); updatePendingBadge();
+    list.innerHTML=records.map(function(p,index) {
+      var returned = p.pendingType === 'assign', item = p.pendingReturn, people = taskPeople(p);
+      var task = returned ? ({owner:'PMO 分配',manager:'项目经理分配',document:'文书交付',review:'文书审核',application:'网申任务'}[item.kind]) : p.pendingScope === 'owner' ? 'PMO 分配' : '院校目标分配';
+      var icon = '<div class="project-pending-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8zM14 2v6h6M8 13h8M8 17h5"/></svg></div>';
+      var heading = '<h3>' + (returned ? '分配被退回' : '待接收任务') + '</h3>';
+      function field(label,value) { return '<div class="project-pending-field"><dt>' + label + '</dt><dd>' + esc(value) + '</dd></div>'; }
+      var fields = field('学生姓名',p.student) + field('院校目标',p.packages.map(function(goal){return goal.school+' · '+goal.major;}).join('；')) + field('任务类型',task);
+      if (returned && item.doc) fields += field('文书类型',item.doc);
+      fields += field('申请层次',p.level);
+      if (returned) fields += field('退回时间',time(p.assignedAt));
+      var returnDetail = '';
+      if (returned) {
+        var reasonId = 'projectPendingReason-' + index;
+        var direction = '<span class="project-pending-direction" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M4 12h16m-6-6 6 6-6 6"/></svg></span>';
+        returnDetail = '<div class="project-pending-return"><div class="project-pending-people" role="group" aria-label="退回人员"><div><span>退回人</span><strong>' + esc(people.sender) + '</strong><small>' + esc(people.senderRole) + '</small></div>' + direction + '<div><span>退回给</span><strong>' + esc(people.recipient) + '</strong><small>' + esc(people.recipientRole) + '</small></div></div><div class="project-pending-reason"><div class="project-pending-reason-heading"><span>退回原因</span><button type="button" class="project-pending-reason-toggle" data-pending-action="toggle-reason" aria-expanded="false" aria-controls="' + reasonId + '" hidden>展开</button></div><p id="' + reasonId + '" data-pending-reason>' + esc(item.reason || '—') + '</p></div></div>';
+      } else {
+        fields += field('分配关系',people.sender + ' → ' + people.recipient) + field('分配时间',time(p.assignedAt));
+      }
+      return '<section class="project-pending-card" data-pending-project="' + esc(p.projectNo) + '" data-pending-goal="' + esc(p.pendingGoal || '') + '" data-pending-scope="' + (p.pendingScope || 'goal') + '" data-pending-type="' + p.pendingType + '" data-pending-kind="' + esc(returned ? item.kind : '') + '" data-pending-doc="' + esc(returned ? item.doc || '' : '') + '"><header>' + icon + heading + '</header><dl>' + fields + '</dl>' + returnDetail + '<footer>' +
+        (returned ? '<button type="button" data-pending-action="assign">分配</button>' : '<button type="button" data-pending-action="accept">接收</button><button type="button" data-pending-action="return">退回</button>') + '</footer></section>';
+    }).join('');
+    list.querySelectorAll('[data-pending-reason]').forEach(function(reason) {
+      reason.parentElement.querySelector('[data-pending-action="toggle-reason"]').hidden = reason.scrollHeight <= reason.clientHeight + 1;
+    });
+    updatePendingBadge();
   }
   function handlePendingAction(e) {
     var button = e.target.closest('[data-pending-action]'); if (!button) return;
     var card = button.closest('[data-pending-project]'), id = card.dataset.pendingProject, goalId = card.dataset.pendingGoal, ownerTask = card.dataset.pendingScope === 'owner';
-    if (button.dataset.pendingAction === 'assign') { closePending(); open(id,'assign',goalId); return; }
+    if (button.dataset.pendingAction === 'toggle-reason') {
+      var expanded = button.getAttribute('aria-expanded') !== 'true';
+      card.querySelector('[data-pending-reason]').classList.toggle('is-expanded',expanded);
+      button.setAttribute('aria-expanded',String(expanded)); button.textContent = expanded ? '收起' : '展开'; return;
+    }
+    if (button.dataset.pendingAction === 'assign') { closePending(); open(id,'assign',goalId,card.dataset.pendingKind,card.dataset.pendingDoc); return; }
     if (button.dataset.pendingAction === 'accept') {
       if (ownerTask) pbsOrders.acceptOwner(id); else window.pbsProjects.acceptPM(id,goalId);
       if (window.pbsRecordOperation) window.pbsRecordOperation('项目管理','接收','接收项目 '+id);
@@ -167,6 +202,7 @@
     document.getElementById('flt-kw').addEventListener('input', function() { if (!this.value) keyword(); });
     document.addEventListener('keydown', function(e) { if (e.key === 'Escape' && document.getElementById('pendingDrawerMask') && !document.getElementById('pendingDrawerMask').classList.contains('hidden') && !document.getElementById('pbsTaskReturnDialog')) closePending(); });
     render();
+    if (new URLSearchParams(location.search).get('returns') === '1') openPending();
   }
   window.pbsProjectList={render:render,filterChanged:function(){paginate(true);},managerName:managerName};
   window.updatePendingBadge=updatePendingBadge;

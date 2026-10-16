@@ -48,7 +48,7 @@
         var session = window.pbsGetSession ? window.pbsGetSession() : {};
         var item = Object.assign({}, context, { reason: reason, returnedAt: new Date().toISOString(), returnedBy: session.name || '', returnedAccount:session.account, organization: session.org || 'PBS留学总部', status: 'returned' });
         var target = window.pbsOrders && pbsOrders.taskTarget(item);
-        if (target) { item.projectNo = target.project.projectNo; item.goalId = target.goal.id; }
+        if (target) { item.projectNo = target.project.projectNo; item.goalId = target.goal.id; item.returnedTo = pbsOrders.manager(target.project,target.goal.id).name; }
         item.id = identity(item) + '|' + Date.now() + '-' + Math.random().toString(36).slice(2,6);
         var items = read();
         items.push(item);

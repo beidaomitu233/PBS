@@ -1076,6 +1076,8 @@
   (function initializeOrderManagement() {
     var key = 'pbs_order_management_v1', projects = window.pbsProjects;
     function session() { return window.pbsGetSession(); }
+    function hasRole(role) { var current = session(); return (current.roles || [current.role]).indexOf(role) >= 0; }
+    function allAdminRoles() { return session().previewRole === 'all' && hasRole('超级管理员'); }
     function org(value) { return value === 'PBS留学' ? 'PBS留学总部' : value; }
     function sameOrg(project) { return session().role === '超级管理员' || org(session().org) === org(project.org); }
     function name(role) {
@@ -1090,9 +1092,9 @@
       var saved = project.goalManagers && project.goalManagers[goalId];
       return saved || { name:project.projectManager || '', accepted:!!project.pmAccepted, assignedAt:project.assignedAt || '', rejectReason:project.rejectReason || '', returnedAt:project.rejectedAt || '', returnedBy:project.rejectedBy || '', returnedAccount:project.rejectedAccount || '' };
     }
-    function canManage(project) { var owner = state(project), preview = ['demo_admin','test'].indexOf(session().account) >= 0; return sameOrg(project) && session().role === 'PMO' && !!owner.pmoName && (owner.pmoAccount ? owner.pmoAccount === session().account || preview && owner.pmoName === name('PMO') : owner.pmoName === name('PMO')); }
-    function canAssignOwner(project) { return sameOrg(project) && ['机构管理员','超级管理员'].indexOf(session().role) >= 0 && window.pbsHasPermission('order_assign_pmo'); }
-    function canHandleGoal(project, goalId, accepted) { var pm = manager(project, goalId), preview = ['demo_admin','test'].indexOf(session().account) >= 0; return sameOrg(project) && session().role === '项目经理' && (pm.account ? pm.account === session().account || preview && pm.name === name('项目经理') : pm.name === name('项目经理')) && (!accepted || pm.accepted); }
+    function canManage(project) { var owner = state(project), preview = ['demo_admin','test'].indexOf(session().account) >= 0; return sameOrg(project) && hasRole('PMO') && !!owner.pmoName && (allAdminRoles() || (owner.pmoAccount ? owner.pmoAccount === session().account || preview && owner.pmoName === name('PMO') : owner.pmoName === name('PMO'))); }
+    function canAssignOwner(project) { return sameOrg(project) && (hasRole('机构管理员') || hasRole('超级管理员')) && window.pbsHasPermission('order_assign_pmo'); }
+    function canHandleGoal(project, goalId, accepted) { var pm = manager(project, goalId), preview = ['demo_admin','test'].indexOf(session().account) >= 0; return sameOrg(project) && hasRole('项目经理') && !!pm.name && (allAdminRoles() || (pm.account ? pm.account === session().account || preview && pm.name === name('项目经理') : pm.name === name('项目经理'))) && (!accepted || pm.accepted); }
     function canReadGoal(project,goalId) {
       if (!sameOrg(project)) return false;
       if (canAssignOwner(project) || canManage(project) || canHandleGoal(project,goalId)) return true;
@@ -1133,7 +1135,7 @@
       }).sort(function(a,b) { return Number(b.pending) - Number(a.pending) || String(b.returnedAt).localeCompare(String(a.returnedAt)); });
     }
     function recordReturn(project,kind,goalId,reason,at) {
-      project.returnHistory = (project.returnHistory || []).concat({id:'RET-' + Date.now() + '-' + Math.random().toString(36).slice(2,7),kind:kind,goalId:goalId,reason:reason,returnedBy:name(session().role),returnedAccount:session().account,returnedAt:at});
+      project.returnHistory = (project.returnHistory || []).concat({id:'RET-' + Date.now() + '-' + Math.random().toString(36).slice(2,7),kind:kind,goalId:goalId,reason:reason,returnedBy:name(session().role),returnedAccount:session().account,returnedTo:kind === 'manager' ? state(project).pmoName : manager(project,goalId).name,returnedAt:at});
     }
     function resolveReturns(project,kind,goalId,action) {
       var records = returnRecords(project).filter(function(item) { return item.kind === kind && item.goalId === goalId; });
@@ -1186,7 +1188,7 @@
       var all = readStore(key,{}), record = state(project), at = new Date().toISOString();
       if (reason === undefined) Object.assign(record,{pmoAccepted:true,acceptedAt:at});
       else {
-        record.returnHistory = (record.returnHistory || []).concat({id:'OWNER-RET-' + Date.now(),kind:'owner',reason:String(reason).trim(),returnedBy:name('PMO'),returnedAccount:session().account,returnedAt:at});
+        record.returnHistory = (record.returnHistory || []).concat({id:'OWNER-RET-' + Date.now(),kind:'owner',reason:String(reason).trim(),returnedBy:name('PMO'),returnedAccount:session().account,returnedTo:record.assignedBy || '机构管理员',returnedAt:at});
         Object.assign(record,{pmoAccount:'',pmoName:'',pmoAccepted:false});
       }
       all[orderKey(project)] = record; writeStore(key,all);
@@ -1274,11 +1276,11 @@
     projects.rejectPM = function(projectNo,reason,goalId) { return handleGoal(projectNo,goalId,reason); };
     var saveAssignment = projects.saveAssignment;
     projects.saveAssignment = function(projectNo,goals,note) { var project = this.find(projectNo); if (!project || project.status === '已结项') return null; var allowed = (project.packages || []).filter(function(goal) { return manager(project,goal.id).accepted && (canManage(project) || canHandleGoal(project,goal.id,true)); }); if (!allowed.length) return null; var merged = Object.assign({},this.getAssignment(projectNo).goalAssignments), changed = {}; allowed.forEach(function(goal) { if (goals[goal.id]) { merged[goal.id] = goals[goal.id]; changed[goal.id] = goals[goal.id]; } }); var result = saveAssignment.call(this,projectNo,merged,note); if (result && window.pbsTaskReturn) pbsTaskReturn.resolveProject(result,changed); return result; };
-    [{u:'pmo',name:'林老师',role:'PMO',phone:'13800000005'},{u:'pm',name:'张老师',role:'项目经理',phone:'13800000006'},{u:'pm_wang',name:'王老师',role:'项目经理',phone:'13800000007'},{u:'pm_li',name:'李老师',role:'项目经理',phone:'13800000008'}].forEach(function(account) { if (!window.pbsAccounts.find(account.u)) window.pbsAccounts.upsert(Object.assign({},account,{roles:[account.role],org:'PBS留学总部',status:'正常',accountStatus:'启用',accountExpiry:'长期有效',phash:window.pbsAccounts.hashPassword('pbs123456')})); });
+    [{u:'pmo',name:'林老师',role:'PMO',phone:'13800000005'},{u:'pmo_zhou',name:'周老师',role:'PMO',phone:'13800000009'},{u:'pm',name:'张老师',role:'项目经理',phone:'13800000006'},{u:'pm_wang',name:'王老师',role:'项目经理',phone:'13800000007'},{u:'pm_li',name:'李老师',role:'项目经理',phone:'13800000008'}].forEach(function(account) { if (!window.pbsAccounts.find(account.u)) window.pbsAccounts.upsert(Object.assign({},account,{roles:[account.role],org:'PBS留学总部',status:'正常',accountStatus:'启用',accountExpiry:'长期有效',phash:window.pbsAccounts.hashPassword('pbs123456')})); });
     var seeded = readStore(key,{}), changed = false;
     projects.all().forEach(function(project) { var id = orderKey(project); if (seeded[id] || project.manualCreated || !/^PRJ-[MO]-2607-/.test(project.projectNo)) return; seeded[id] = {events:[]}; if (['PRJ-M-2607-0000','PRJ-O-2607-0005'].indexOf(project.projectNo) < 0) Object.assign(seeded[id],{pmoAccount:'pmo',pmoName:'林老师',assignedBy:'王志强',assignedAt:'2026-10-15T01:00:00.000Z'}); changed = true; });
     if (changed) writeStore(key,seeded);
-    if (!readStore('pbs_assignment_examples_v2',false)) {
+    if (!readStore('pbs_assignment_examples_v4',false)) {
       var examples = [
         {no:'0020',student:'林悦',customer:'林建华',school:'曼彻斯特大学',major:'商业分析',stage:'ownerPending'},
         {no:'0021',student:'陈思远',customer:'陈国安',school:'悉尼大学',major:'金融学',stage:'ownerReturned',reason:'当前负责项目已满，请重新安排 PMO。'},
@@ -1289,35 +1291,49 @@
         {no:'0026',student:'苏晴',customer:'苏文斌',school:'格拉斯哥大学',major:'市场营销',stage:'ownerPending'},
         {no:'0027',student:'陆星宇',customer:'陆建国',school:'莫纳什大学',major:'会计学',stage:'ownerReturned',reason:'近期无法兼顾该订单，请重新分配负责 PMO。'},
         {no:'0028',student:'唐可欣',customer:'唐志远',school:'布里斯托大学',major:'经济学',stage:'managerPending'},
-        {no:'0029',student:'程浩然',customer:'程明华',school:'南洋理工大学',major:'电子工程',stage:'managerReturned',reason:'当前申请季负责目标较多，请安排其他项目经理。'}
+        {no:'0029',student:'程浩然',customer:'程明华',school:'南洋理工大学',major:'电子工程',stage:'managerReturned',reason:'当前申请季负责目标较多，请安排其他项目经理。'},
+        {no:'0030',student:'陈书瑶',customer:'陈志华',school:'香港中文大学',major:'金融学',level:'硕士申请',stage:'ownerReturned',at:'2026-10-16T03:10:00.000Z',reason:'当前负责订单已满，请重新分配 PMO。'},
+        {no:'0031',student:'陆景行',customer:'陆文远',school:'多伦多大学',major:'计算机科学',level:'本科申请',stage:'managerReturned',at:'2026-10-16T03:20:00.000Z',reason:'该目标需要加拿大本科申请经验，请安排对应项目经理。'},
+        {no:'0032',student:'叶知夏',customer:'叶明轩',school:'香港大学',major:'社会学',level:'博士申请',stage:'documentReturned',doc:'RP',at:'2026-10-16T03:35:00.000Z',reason:'研究计划方向超出本人专长，请安排社会学方向文书人员。'},
+        {no:'0033',student:'贺予安',customer:'贺志诚',school:'伦敦大学学院',major:'经济学',level:'本科申请',stage:'reviewReturned',doc:'CV',at:'2026-10-16T03:45:00.000Z',reason:'本周审核排期已满，无法按期完成，请重新分配审核人员。'},
+        {no:'0034',student:'蒋亦辰',customer:'蒋国栋',school:'南洋理工大学',major:'人工智能',level:'硕士申请',stage:'applicationReturned',at:'2026-10-16T03:55:00.000Z',reason:'近期无法跟进该院校申请系统，请重新分配网申人员。'},
+        {no:'0035',student:'宋清越',customer:'宋志明',school:'墨尔本大学',major:'生物医学',level:'博士申请',stage:'ownerPending',pmoAccount:'pmo_zhou',pmoName:'周老师',at:'2026-10-16T04:10:00.000Z'},
+        {no:'0036',student:'林以宁',customer:'林国华',school:'帝国理工学院',major:'商业分析',level:'硕士申请',stage:'managerPending',pmAccount:'pm_wang',pmName:'王老师',at:'2026-10-16T04:20:00.000Z'},
+        {no:'0037',student:'许墨言',customer:'许建平',school:'新加坡国立大学',major:'机械工程',level:'博士申请',stage:'managerReturned',pmAccount:'pm_li',pmName:'李老师',at:'2026-10-16T04:30:00.000Z',reason:'该研究方向需要专门指导经验，请重新分配项目经理。'},
+        {no:'0038',student:'唐语桐',customer:'唐国安',school:'爱丁堡大学',major:'心理学',level:'本科申请',stage:'documentReturned',doc:'RL',pmAccount:'pm_wang',pmName:'王老师',at:'2026-10-16T04:40:00.000Z',reason:'推荐信交付排期冲突，请安排其他文书人员。'},
+        {no:'0039',student:'顾书涵',customer:'顾文涛',school:'悉尼大学',major:'公共卫生',level:'硕士申请',stage:'reviewReturned',doc:'PS',pmAccount:'pm_li',pmName:'李老师',at:'2026-10-16T04:50:00.000Z',reason:'该专业审核需要相关背景，请重新分配审核人员。'},
+        {no:'0040',student:'周予墨',customer:'周明远',school:'曼彻斯特大学',major:'电子工程',level:'硕士申请',stage:'applicationReturned',pmAccount:'pm_wang',pmName:'王老师',at:'2026-10-16T05:00:00.000Z',reason:'网申提交时间与其他任务冲突，请重新分配网申人员。'}
       ];
       var orders = readStore(key,{}), taskReturns = readStore('pbs_task_returns_v1',[]);
       examples.forEach(function(example,index) {
         var projectNo = 'PRJ-M-2610-' + example.no;
         if (projects.find(projectNo)) return;
-        var at = '2026-10-16T' + String(index % 6 + 1).padStart(2,'0') + ':00:00.000Z', goalId = 'goal-' + example.no;
+        var at = example.at || '2026-10-16T' + String(index % 6 + 1).padStart(2,'0') + ':00:00.000Z', goalId = 'goal-' + example.no;
         var goal = {id:goalId,school:example.school,major:example.major,name:'留学申请套餐',services:[{name:'文书服务',price:12000},{name:'网申服务',price:8000}]};
-        var project = {projectNo:projectNo,orderNo:'20261016' + example.no,customer:example.customer,student:example.student,level:'硕士申请',source:'线上',org:'PBS留学总部',createdAt:'2026-10-16 09:00',assignedAt:at,packages:[goal],projectManager:'',pmAccepted:false,status:'待分配',goalManagers:{},goalAssignments:{}};
-        var owner = {pmoAccount:'pmo',pmoName:'林老师',pmoAccepted:example.stage !== 'ownerPending',assignedBy:'王志强',assignedAt:at,events:[]};
+        var project = {projectNo:projectNo,orderNo:'20261016' + example.no,customer:example.customer,student:example.student,level:example.level || '硕士申请',source:'线上',org:'PBS留学总部',createdAt:'2026-10-16 09:00',assignedAt:at,packages:[goal],projectManager:'',pmAccepted:false,status:'待分配',goalManagers:{},goalAssignments:{}};
+        var owner = {pmoAccount:example.pmoAccount || 'pmo',pmoName:example.pmoName || '林老师',pmoAccepted:example.stage !== 'ownerPending',assignedBy:'王志强',assignedAt:at,events:[]};
         if (example.stage === 'ownerReturned') Object.assign(owner,{pmoAccount:'',pmoName:'',pmoAccepted:false,returnHistory:[{id:'OWNER-RET-' + projectNo,kind:'owner',reason:example.reason,returnedBy:'林老师',returnedAccount:'pmo',returnedAt:at}]});
         if (example.stage === 'managerPending' || /Returned$/.test(example.stage) && example.stage !== 'ownerReturned') {
           var accepted = example.stage !== 'managerPending' && example.stage !== 'managerReturned';
-          project.goalManagers[goalId] = {account:'pm',name:'张老师',accepted:accepted,assignedAt:at,assignedBy:'林老师'};
-          project.projectManager = '张老师'; project.pmAccepted = accepted;
+          project.goalManagers[goalId] = {account:example.pmAccount || 'pm',name:example.pmName || '张老师',accepted:accepted,assignedAt:at,assignedBy:owner.pmoName};
+          project.projectManager = example.pmName || '张老师'; project.pmAccepted = accepted;
         }
         if (example.stage === 'managerReturned') {
-          project.goalManagers[goalId] = {account:'',name:'',accepted:false,assignedAt:at,assignedBy:'林老师',rejectReason:example.reason,returnedBy:'张老师',returnedAccount:'pm',returnedAt:at};
+          project.goalManagers[goalId] = {account:'',name:'',accepted:false,assignedAt:at,assignedBy:owner.pmoName,rejectReason:example.reason,returnedBy:example.pmName || '张老师',returnedAccount:example.pmAccount || 'pm',returnedAt:at};
           project.projectManager = '';
-          project.returnHistory = [{id:'MANAGER-RET-' + projectNo,kind:'manager',goalId:goalId,reason:example.reason,returnedBy:'张老师',returnedAccount:'pm',returnedAt:at}];
+          project.returnHistory = [{id:'MANAGER-RET-' + projectNo,kind:'manager',goalId:goalId,reason:example.reason,returnedBy:example.pmName || '张老师',returnedAccount:example.pmAccount || 'pm',returnedAt:at}];
         }
-        if (example.stage === 'documentReturned' || example.stage === 'applicationReturned') {
-          project.goalAssignments[goalId] = {docs:{PS:{person:'刘老师',ddl:'2026-10-25'}},reviewers:{PS:'孙老师'},network:'吴老师',networkMatDdl:'2026-10-28',networkDdl:'2026-11-01'};
-          taskReturns.push({id:'TASK-RET-' + projectNo,kind:example.stage === 'documentReturned' ? 'document' : 'application',projectNo:projectNo,goalId:goalId,student:example.student,school:example.school,doc:example.stage === 'documentReturned' ? 'PS' : '',organization:project.org,status:'returned',reason:example.reason,returnedBy:example.stage === 'documentReturned' ? '刘老师' : '吴老师',returnedAt:at});
+        if (['documentReturned','reviewReturned','applicationReturned'].indexOf(example.stage) >= 0) {
+          var doc = example.doc || 'PS', assignment = {docs:{},reviewers:{},network:'吴老师',networkMatDdl:'2026-10-28',networkDdl:'2026-11-01'};
+          assignment.docs[doc] = {person:'刘老师',ddl:'2026-10-25'}; assignment.reviewers[doc] = '孙老师';
+          project.goalAssignments[goalId] = assignment;
+          var kind = example.stage === 'documentReturned' ? 'document' : example.stage === 'reviewReturned' ? 'review' : 'application';
+          taskReturns.push({id:'TASK-RET-' + projectNo,kind:kind,projectNo:projectNo,goalId:goalId,student:example.student,school:example.school,doc:kind === 'application' ? '' : doc,organization:project.org,status:'returned',reason:example.reason,returnedBy:kind === 'document' ? '刘老师' : kind === 'review' ? '孙老师' : '吴老师',returnedAt:at});
         }
         project.status = /Pending$/.test(example.stage) ? '待接收' : project.pmAccepted ? '进行中' : '待分配';
         projects.upsert(project); orders[orderKey(project)] = owner;
       });
-      writeStore(key,orders); writeStore('pbs_task_returns_v1',taskReturns); writeStore('pbs_assignment_examples_v2',true);
+      writeStore(key,orders); writeStore('pbs_task_returns_v1',taskReturns); writeStore('pbs_assignment_examples_v4',true);
     }
   })();
 
@@ -3101,7 +3117,7 @@
 
 (function loadTaskReturns() {
   var script = document.createElement('script');
-  script.src = './assets/js/pbs-task-return.js?v=1.4';
+  script.src = './assets/js/pbs-task-return.js?v=1.5';
   document.head.appendChild(script);
 })();
 
@@ -3264,6 +3280,22 @@
   window.pbsSyncReviewerDdl = function(prefix, key, value) {
     var node = document.getElementById(prefix + 'ReviewerDdl_' + key);
     if (node) node.textContent = value || '—';
+  };
+  window.pbsFocusPendingAssignment = function(prefix) {
+    var params = new URLSearchParams(location.search), kind = params.get('task'), doc = params.get('doc');
+    var drawer = document.getElementById('drawerAssign'), target;
+    if (!drawer || drawer.classList.contains('hidden')) return;
+    if (kind === 'owner') target = document.getElementById('assignmentPmo');
+    else {
+      var key = kind === 'manager' ? 'pm' : kind === 'document' ? prefix + 'd_' + doc : kind === 'review' ? prefix + 'Reviewer_' + doc : kind === 'application' ? prefix + 'Network' : '';
+      target = Array.from(drawer.querySelectorAll('[data-sel]')).find(function(node) { return node.dataset.sel === key; });
+    }
+    if (!target) return;
+    var row = target.closest('.border.rounded-lg') || target.closest('.border.rounded-xl') || target;
+    row.scrollIntoView({block:'center'}); row.classList.add('pbs-assignment-focus');
+    var control = target.matches('select') ? target : target.querySelector('[onclick]');
+    if (control && !control.disabled) { control.tabIndex = 0; control.focus({preventScroll:true}); }
+    setTimeout(function() { row.classList.remove('pbs-assignment-focus'); },2200);
   };
   window.pbsClearAssignedPerson = function(key) {
     window.selectedPersons[key] = null;

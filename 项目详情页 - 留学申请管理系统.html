@@ -1087,7 +1087,7 @@
       var changeBtn = document.querySelector('[data-dom-id="btn-change-pm"]');
       if (changeBtn) changeBtn.addEventListener('click', openChangePMDrawer);
       var action = new URLSearchParams(location.search).get('action');
-      if (action === 'assign') openAssignDrawer();
+      if (action === 'assign') { openAssignDrawer(); pbsFocusPendingAssignment('g'); }
       if (action === 'change') openChangePMDrawer();
 
       var notifBtn = document.querySelector('[data-dom-id="btn-notification"]');

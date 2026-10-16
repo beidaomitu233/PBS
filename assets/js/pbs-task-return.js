@@ -2,7 +2,7 @@
   'use strict';
   var style = document.createElement('link');
   style.rel = 'stylesheet';
-  style.href = './assets/css/pbs-task-return.css?v=1.0';
+  style.href = './assets/css/pbs-task-return.css?v=1.1';
   document.head.appendChild(style);
   var key = 'pbs_task_returns_v1';
   var page = decodeURIComponent(location.pathname.split('/').pop() || '');
@@ -95,7 +95,6 @@
     document.querySelectorAll('tr[data-project]').forEach(function (row) {
       if (row.dataset.projectReturns === 'true') return;
       var project = window.pbsProjects && window.pbsProjects.find(row.dataset.project);
-      row.classList.toggle('pbs-returned-row', !!(project && project.rejectedAt && !project.projectManager));
       if (project && project.rejectReason) row.title = '退回原因：' + project.rejectReason;
       else if (row.title.indexOf('退回原因：') === 0) row.removeAttribute('title');
     });
@@ -115,7 +114,6 @@
           if (!reasonCell) { reasonCell = document.createElement('td'); reasonCell.dataset.returnReason = 'true'; reasonCell.className = 'px-5 py-4 text-sm text-gray-500'; reasonCell.style.cssText = 'min-width:140px;max-width:240px;white-space:normal;overflow-wrap:anywhere'; row.children[6].after(reasonCell); }
           reasonCell.textContent = returned ? returned.reason : '—';
         }
-        row.classList.toggle('pbs-returned-row', !!returned);
         if (returned) row.title = '退回原因：' + returned.reason;
         else if (row.title.indexOf('退回原因：') === 0) row.removeAttribute('title');
       });
@@ -136,7 +134,6 @@
     if (projectContext && schoolContext) {
       document.querySelectorAll('#projectStageContent tbody tr').forEach(function (row) {
         var returned = items.find(function (item) { return item.status === 'returned' && item.student === projectContext.student && schoolContext.name.indexOf(item.school) >= 0 && (!item.doc || row.textContent.indexOf(item.doc) >= 0); });
-        row.classList.toggle('pbs-returned-row', !!returned);
         if (returned) row.title = '退回原因：' + returned.reason;
         else if (row.title.indexOf('退回原因：') === 0) row.removeAttribute('title');
       });
@@ -147,7 +144,7 @@
       var host = document.getElementById('pbsReturnedTasks');
       if (!scoped.length) { if (host) host.remove(); return; }
       if (!host) { host = document.createElement('section'); host.id = 'pbsReturnedTasks'; host.className = 'pbs-task-return-list'; host.style.order = '3'; document.querySelector('main').appendChild(host); }
-      host.innerHTML = '<h2>任务分配</h2><div class="pbs-task-return-scroll"><table><thead><tr><th>任务</th><th>退回原因</th><th>状态</th><th>操作</th></tr></thead><tbody>' + scoped.map(function (item) { return '<tr class="' + (item.status === 'returned' ? 'pbs-returned-row' : '') + '"><td>' + text(item.label) + '</td><td>' + text(item.reason) + '</td><td>' + (item.status === 'returned' ? '已退回' : '待接收') + '</td><td>' + (item.status === 'returned' && canAssign ? '<button type="button" data-reassign="' + text(item.id) + '">重新分配</button>' : text(item.assignee)) + '</td></tr>'; }).join('') + '</tbody></table></div>';
+      host.innerHTML = '<h2>任务分配</h2><div class="pbs-task-return-scroll"><table><thead><tr><th>任务</th><th>退回原因</th><th>状态</th><th>操作</th></tr></thead><tbody>' + scoped.map(function (item) { return '<tr><td>' + text(item.label) + '</td><td>' + text(item.reason) + '</td><td>' + (item.status === 'returned' ? '已退回' : '待接收') + '</td><td>' + (item.status === 'returned' && canAssign ? '<button type="button" data-reassign="' + text(item.id) + '">重新分配</button>' : text(item.assignee)) + '</td></tr>'; }).join('') + '</tbody></table></div>';
       host.querySelectorAll('[data-reassign]').forEach(function (button) { button.onclick = function () { reassign(items.find(function (item) { return item.id === button.dataset.reassign; })); }; });
     }
   }

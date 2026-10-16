@@ -3040,7 +3040,7 @@
 
 (function loadTaskReturns() {
   var script = document.createElement('script');
-  script.src = './assets/js/pbs-task-return.js?v=1.3';
+  script.src = './assets/js/pbs-task-return.js?v=1.4';
   document.head.appendChild(script);
 })();
 

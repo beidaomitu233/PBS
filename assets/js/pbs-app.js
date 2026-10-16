@@ -1160,6 +1160,7 @@
     }
     function status(project) {
       if (!project || project.status === '已结项') return project ? project.status : '待分配';
+      if (state(project).pmoAccepted === false && state(project).pmoName) return '待接收';
       var goals = project.packages || [], assigned = goals.map(function(goal) { return manager(project, goal.id); });
       if (assigned.some(function(pm) { return pm.name && pm.accepted; })) return '进行中';
       return assigned.some(function(pm) { return pm.name; }) ? '待接收' : '待分配';
@@ -1170,14 +1171,33 @@
       if (members(project).every(function(item) { return item.status === '已结项'; })) return { error:'订单已结项' };
       var account = candidates('PMO', project).find(function(item) { return item.u === accountId; }); if (!account) return { error:'请选择本机构在职 PMO' };
       var all = readStore(key, {}), record = all[orderKey(project)] || {};
-      Object.assign(record, { pmoAccount:account.u, pmoName:account.name, assignedAt:new Date().toISOString(), assignedBy:session().name }); all[orderKey(project)] = record; writeStore(key, all);
+      if (record.pmoAccount === account.u) return record;
+      var at = new Date().toISOString();
+      (record.returnHistory || []).forEach(function(item) { if (!item.handledAt) Object.assign(item,{handledAt:at,handledBy:session().name}); });
+      Object.assign(record, { pmoAccount:account.u, pmoName:account.name, pmoAccepted:false, acceptedAt:'', assignedAt:at, assignedBy:session().name }); all[orderKey(project)] = record; writeStore(key, all);
       event(project,'分配 PMO',(project.orderNo || project.projectNo) + ' → ' + account.name);
       window.pbsCreateNotification({kind:'task_assigned',type:'订单分配提醒',title:project.student + '的订单已分配给你',business:project.orderNo || project.projectNo,recipientName:account.name,recipientRoles:['PMO'],organization:project.org,href:'项目详情页 - 留学申请管理系统.html?project=' + encodeURIComponent(projectNo)});
+      return record;
+    }
+    function handleOwner(projectNo, reason) {
+      var project = projects.find(projectNo);
+      if (!project || !canManage(project) || state(project).pmoAccepted !== false || members(project).every(function(item) { return item.status === '已结项'; })) return null;
+      if (reason !== undefined && !String(reason).trim()) return null;
+      var all = readStore(key,{}), record = state(project), at = new Date().toISOString();
+      if (reason === undefined) Object.assign(record,{pmoAccepted:true,acceptedAt:at});
+      else {
+        record.returnHistory = (record.returnHistory || []).concat({id:'OWNER-RET-' + Date.now(),kind:'owner',reason:String(reason).trim(),returnedBy:name('PMO'),returnedAccount:session().account,returnedAt:at});
+        Object.assign(record,{pmoAccount:'',pmoName:'',pmoAccepted:false});
+      }
+      all[orderKey(project)] = record; writeStore(key,all);
+      event(project,reason === undefined ? '接收订单' : '退回订单',(project.orderNo || projectNo) + (reason ? ' · ' + reason : ''));
+      if (reason !== undefined) window.pbsCreateNotification({kind:'task_return',type:'PMO 分配退回',title:project.student + '的订单分配被退回',business:project.orderNo || projectNo,detail:reason,recipientRoles:['机构管理员'],organization:project.org,href:'项目池列表页 - 留学申请管理系统.html'});
       return record;
     }
     function assignGoal(projectNo, goalId, accountId) {
       var project = projects.find(projectNo), goal = project && (project.packages || []).find(function(item) { return item.id === goalId; });
       if (!goal || !canManage(project) || !window.pbsHasPermission('order_assign_pm')) return { error:'仅订单 PMO 可分配院校目标项目经理' };
+      if (state(project).pmoAccepted === false) return { error:'请先在待处理任务中接收订单' };
       if (project.status === '已结项') return { error:'项目已结项' };
       var account = candidates('项目经理',project).find(function(item) { return item.u === accountId || item.name === accountId; }); if (!account) return { error:'请选择本机构在职项目经理' };
       var previous = manager(project, goalId); if (previous.account ? previous.account === account.u : previous.name === account.name) return project;
@@ -1245,9 +1265,9 @@
     function all() {
       var groups = {};
       projects.all().forEach(function(project) { var id = orderKey(project); if (!groups[id]) groups[id] = {id:id,project:project,projects:[],owner:state(project)}; groups[id].projects.push(project); });
-      return Object.keys(groups).map(function(id) { var order = groups[id]; order.targets = order.projects.flatMap(function(project) { return (project.packages || []).map(function(goal) { return {project:project,goal:goal,manager:manager(project,goal.id),submission:(project.goalSubmissions || {})[goal.id] || {status:'待提交'}}; }); }); order.status = order.projects.every(function(project) { return project.status === '已结项'; }) ? '已结项' : !order.owner.pmoName ? '待分配 PMO' : order.targets.some(function(target) { return !target.manager.name; }) ? '待分配经理' : order.targets.some(function(target) { return !target.manager.accepted; }) ? '待接收' : order.targets.some(function(target) { return target.submission.status === '待审核'; }) ? '待核验' : order.targets.length && order.targets.every(function(target) { return target.submission.status === '已通过'; }) ? '待结项' : order.targets.some(function(target) { return target.submission.status === '退回补充'; }) ? '待补充材料' : '进行中'; return order; });
+      return Object.keys(groups).map(function(id) { var order = groups[id]; order.targets = order.projects.flatMap(function(project) { return (project.packages || []).map(function(goal) { return {project:project,goal:goal,manager:manager(project,goal.id),submission:(project.goalSubmissions || {})[goal.id] || {status:'待提交'}}; }); }); order.status = order.projects.every(function(project) { return project.status === '已结项'; }) ? '已结项' : !order.owner.pmoName ? '待分配 PMO' : order.owner.pmoAccepted === false ? '待接收' : order.targets.some(function(target) { return !target.manager.name; }) ? '待分配经理' : order.targets.some(function(target) { return !target.manager.accepted; }) ? '待接收' : order.targets.some(function(target) { return target.submission.status === '待审核'; }) ? '待核验' : order.targets.length && order.targets.every(function(target) { return target.submission.status === '已通过'; }) ? '待结项' : order.targets.some(function(target) { return target.submission.status === '退回补充'; }) ? '待补充材料' : '进行中'; return order; });
     }
-    window.pbsOrders = {key:orderKey,state:state,members:members,manager:manager,name:name,canManage:canManage,canAssignOwner:canAssignOwner,canHandleGoal:canHandleGoal,canReadGoal:canReadGoal,canView:canView,candidates:candidates,assignOwner:assignOwner,assignGoal:assignGoal,submit:submit,review:review,close:close,all:all,returns:returnRecords,taskTarget:taskTarget};
+    window.pbsOrders = {key:orderKey,state:state,members:members,manager:manager,name:name,canManage:canManage,canAssignOwner:canAssignOwner,canHandleGoal:canHandleGoal,canReadGoal:canReadGoal,canView:canView,candidates:candidates,assignOwner:assignOwner,acceptOwner:function(projectNo) { return handleOwner(projectNo); },rejectOwner:function(projectNo,reason) { return handleOwner(projectNo,reason); },assignGoal:assignGoal,submit:submit,review:review,close:close,all:all,returns:returnRecords,taskTarget:taskTarget};
     projects.statusOf = status;
     projects.assignPM = function(projectNo, pmName, operatorOrg, goalId) { var project = this.find(projectNo); if (!project || !canManage(project)) return null; var goals = (project.packages || []).filter(function(goal) { return !goalId || goal.id === goalId; }); var result; goals.forEach(function(goal) { result = assignGoal(projectNo,goal.id,pmName); }); return result && !result.error ? this.find(projectNo) : null; };
     projects.acceptPM = function(projectNo,goalId) { return handleGoal(projectNo,goalId); };
@@ -1258,6 +1278,43 @@
     var seeded = readStore(key,{}), changed = false;
     projects.all().forEach(function(project) { var id = orderKey(project); if (seeded[id] || project.manualCreated || !/^PRJ-[MO]-2607-/.test(project.projectNo)) return; seeded[id] = {events:[]}; if (['PRJ-M-2607-0000','PRJ-O-2607-0005'].indexOf(project.projectNo) < 0) Object.assign(seeded[id],{pmoAccount:'pmo',pmoName:'林老师',assignedBy:'王志强',assignedAt:'2026-10-15T01:00:00.000Z'}); changed = true; });
     if (changed) writeStore(key,seeded);
+    if (!readStore('pbs_assignment_examples_v1',false)) {
+      var examples = [
+        {no:'0020',student:'林悦',customer:'林建华',school:'曼彻斯特大学',major:'商业分析',stage:'ownerPending'},
+        {no:'0021',student:'陈思远',customer:'陈国安',school:'悉尼大学',major:'金融学',stage:'ownerReturned',reason:'当前负责项目已满，请重新安排 PMO。'},
+        {no:'0022',student:'周子涵',customer:'周明',school:'爱丁堡大学',major:'数据科学',stage:'managerPending'},
+        {no:'0023',student:'许嘉宁',customer:'许文清',school:'伦敦大学学院',major:'教育学',stage:'managerReturned',reason:'申请方向不在本人负责范围，请安排教育学方向的项目经理。'},
+        {no:'0024',student:'沈若溪',customer:'沈国平',school:'香港大学',major:'传媒学',stage:'documentReturned',reason:'本周任务已排满，无法在截止日期前完成，请重新分配文书人员。'},
+        {no:'0025',student:'顾奕辰',customer:'顾海涛',school:'新加坡国立大学',major:'计算机科学',stage:'applicationReturned',reason:'该院校申请系统需要专门操作经验，请重新分配网申人员。'}
+      ];
+      var orders = readStore(key,{}), taskReturns = readStore('pbs_task_returns_v1',[]);
+      examples.forEach(function(example,index) {
+        var projectNo = 'PRJ-M-2610-' + example.no;
+        if (projects.find(projectNo)) return;
+        var at = '2026-10-16T0' + (index + 1) + ':00:00.000Z', goalId = 'goal-' + example.no;
+        var goal = {id:goalId,school:example.school,major:example.major,name:'留学申请套餐',services:[{name:'文书服务',price:12000},{name:'网申服务',price:8000}]};
+        var project = {projectNo:projectNo,orderNo:'20261016' + example.no,customer:example.customer,student:example.student,level:'硕士申请',source:'线上',org:'PBS留学总部',createdAt:'2026-10-16 09:00',assignedAt:at,packages:[goal],projectManager:'',pmAccepted:false,status:'待分配',goalManagers:{},goalAssignments:{}};
+        var owner = {pmoAccount:'pmo',pmoName:'林老师',pmoAccepted:example.stage !== 'ownerPending',assignedBy:'王志强',assignedAt:at,events:[]};
+        if (example.stage === 'ownerReturned') Object.assign(owner,{pmoAccount:'',pmoName:'',pmoAccepted:false,returnHistory:[{id:'OWNER-RET-' + projectNo,kind:'owner',reason:example.reason,returnedBy:'林老师',returnedAccount:'pmo',returnedAt:at}]});
+        if (example.stage === 'managerPending' || /Returned$/.test(example.stage) && example.stage !== 'ownerReturned') {
+          var accepted = example.stage !== 'managerPending' && example.stage !== 'managerReturned';
+          project.goalManagers[goalId] = {account:'pm',name:'张老师',accepted:accepted,assignedAt:at,assignedBy:'林老师'};
+          project.projectManager = '张老师'; project.pmAccepted = accepted;
+        }
+        if (example.stage === 'managerReturned') {
+          project.goalManagers[goalId] = {account:'',name:'',accepted:false,assignedAt:at,assignedBy:'林老师',rejectReason:example.reason,returnedBy:'张老师',returnedAccount:'pm',returnedAt:at};
+          project.projectManager = '';
+          project.returnHistory = [{id:'MANAGER-RET-' + projectNo,kind:'manager',goalId:goalId,reason:example.reason,returnedBy:'张老师',returnedAccount:'pm',returnedAt:at}];
+        }
+        if (example.stage === 'documentReturned' || example.stage === 'applicationReturned') {
+          project.goalAssignments[goalId] = {docs:{PS:{person:'刘老师',ddl:'2026-10-25'}},reviewers:{PS:'孙老师'},network:'吴老师',networkMatDdl:'2026-10-28',networkDdl:'2026-11-01'};
+          taskReturns.push({id:'TASK-RET-' + projectNo,kind:example.stage === 'documentReturned' ? 'document' : 'application',projectNo:projectNo,goalId:goalId,student:example.student,school:example.school,doc:example.stage === 'documentReturned' ? 'PS' : '',organization:project.org,status:'returned',reason:example.reason,returnedBy:example.stage === 'documentReturned' ? '刘老师' : '吴老师',returnedAt:at});
+        }
+        project.status = /Pending$/.test(example.stage) ? '待接收' : project.pmAccepted ? '进行中' : '待分配';
+        projects.upsert(project); orders[orderKey(project)] = owner;
+      });
+      writeStore(key,orders); writeStore('pbs_task_returns_v1',taskReturns); writeStore('pbs_assignment_examples_v1',true);
+    }
   })();
 
   function currentFile() {

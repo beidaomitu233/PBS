@@ -14,7 +14,7 @@
       if (s.org && p.org && p.org !== (s.org === 'PBS留学' ? 'PBS留学总部' : s.org) && s.role !== '超级管理员' && s.role !== '平台运维人员') return false;
       if (s.role === 'PMO') return pbsOrders.canManage(p);
       if (s.role === '项目经理') return (p.packages || []).some(function(goal) { return pbsOrders.canHandleGoal(p,goal.id); }) || pbsOrders.returns(p).some(returnedByMe);
-      return pool || !!p.projectManager;
+      return pool || pbsOrders.canAssignOwner(p) || !!p.projectManager;
     });
   }
   function status(p) { return window.pbsProjects.statusOf(p); }
@@ -23,11 +23,11 @@
     if (String(value).indexOf('T') >= 0) return new Date(value).toLocaleString('sv-SE', { timeZone: 'Asia/Shanghai', hour12: false }).slice(0, 16);
     return String(value).slice(0, 16);
   }
-  function open(projectNo, action, goalId) { location.href = (pool && session().role !== '项目经理' ? '项目详情页 - 留学申请管理系统.html' : '我的项目详情页 - 留学申请管理系统.html') + '?project=' + encodeURIComponent(projectNo) + (goalId ? '&school=' + encodeURIComponent(goalId) : '') + (action ? '&action=' + action : ''); }
+  function open(projectNo, action, goalId) { var project = pbsProjects.find(projectNo), allocation = action === 'assign' && (pbsOrders.canAssignOwner(project) || pbsOrders.canManage(project)); location.href = (allocation || pool && session().role !== '项目经理' ? '项目详情页 - 留学申请管理系统.html' : '我的项目详情页 - 留学申请管理系统.html') + '?project=' + encodeURIComponent(projectNo) + (goalId ? '&school=' + encodeURIComponent(goalId) : '') + (action ? '&action=' + action : ''); }
   function cell(value, cls) { return '<td' + (cls ? ' class="' + cls + '"' : '') + '>' + esc(value || '—') + '</td>'; }
   function button(label, action) { return '<button type="button" data-project-action="' + action + '">' + label + '</button>'; }
   function render() {
-    var records = scoped().map(function(p) { var returns = returnsFor(p); if (!pool && session().role === '项目经理') { var accepted = (p.packages || []).filter(function(goal) { return pbsOrders.canHandleGoal(p,goal.id,true); }); return Object.assign({},p,{projectManager:accepted.length ? managerName() : '',packages:accepted,returnOnly:!accepted.length,returnItems:returns}); } return Object.assign({},p,{returnItems:returns}); }).filter(function(p) { return pool || p.packages.length || p.returnItems.length; });
+    var records = scoped().map(function(p) { var returns = returnsFor(p); if (!pool && session().role === '项目经理') { var assigned = (p.packages || []).filter(function(goal) { return pbsOrders.canHandleGoal(p,goal.id); }); return Object.assign({},p,{projectManager:assigned.length ? managerName() : '',packages:assigned,returnOnly:!assigned.length,returnItems:returns}); } return Object.assign({},p,{returnItems:returns}); }).filter(function(p) { return pool || p.packages.length || p.returnItems.length; });
     if (pool) records.sort(function(a,b) { return String(a.orderNo || a.projectNo).localeCompare(String(b.orderNo || b.projectNo)) || a.projectNo.localeCompare(b.projectNo); });
     var headings = pool ? ['序号','商城订单号','PMO','项目号','客户姓名','学生姓名','申请层次','项目状态','项目经理','分配时间','备注','订单创建时间','操作'] : ['序号','项目号','客户姓名','学生姓名','申请层次','项目状态','PMO','项目经理','分配时间','备注','操作'];
     table.querySelector('thead tr').innerHTML = headings.map(function(label,index) { return '<th' + (label === '商城订单号' ? ' class="project-order-heading"' : label === 'PMO' ? ' class="project-pmo"' : index === headings.length-1 ? ' class="project-actions"' : '') + '>' + label + '</th>'; }).join('');
@@ -71,16 +71,23 @@
     pager.querySelector('nav').innerHTML = '<button type="button" data-project-page="prev" ' + (page===1?'disabled':'') + '>上一页</button>' + Array.from({length:pages},function(_,i){return '<button type="button" data-project-page="' + (i+1) + '" ' + (page===i+1?'aria-current="page"':'') + '>' + (i+1) + '</button>';}).join('') + '<button type="button" data-project-page="next" ' + (page===pages?'disabled':'') + '>下一页</button>';
   }
   function pending() {
+    var seenOrders = {};
     return scoped().flatMap(function(project) {
       if (project.status === '已结项') return [];
-      var seen = {}, records = [];
+      var seen = {}, records = [], owner = pbsOrders.state(project), orderId = pbsOrders.key(project);
+      if (!seenOrders[orderId]) {
+        seenOrders[orderId] = true;
+        if (pbsOrders.canManage(project) && owner.pmoAccepted === false) records.push(Object.assign({},project,{pendingType:'accept',pendingScope:'owner',packages:pbsOrders.members(project).flatMap(function(item) { return item.packages || []; }),assignedAt:owner.assignedAt}));
+        var ownerReturn = (owner.returnHistory || []).slice().reverse().find(function(item) { return !item.handledAt; });
+        if (ownerReturn && pbsOrders.canAssignOwner(project)) records.push(Object.assign({},project,{pendingType:'assign',pendingScope:'owner',pendingReturn:ownerReturn,assignedAt:ownerReturn.returnedAt}));
+      }
       pbsOrders.returns(project).forEach(function(item) {
         if (!item.pending) return;
         var goal = (project.packages || []).find(function(goal) { return goal.id === item.goalId; });
         if (!goal) return;
         var allowed = item.kind === 'manager'
-          ? pool && (pbsOrders.canManage(project) || pbsOrders.canAssignOwner(project))
-          : !pool && ['document','review','application'].indexOf(item.kind) >= 0 && pbsOrders.canHandleGoal(project,goal.id,true) && pbsHasPermission('my_project_team_manage');
+          ? pbsOrders.canManage(project)
+          : ['document','review','application'].indexOf(item.kind) >= 0 && pbsOrders.canHandleGoal(project,goal.id,true) && pbsHasPermission('my_project_team_manage');
         var key = [goal.id,item.kind,item.doc || ''].join('|');
         if (!allowed || seen[key]) return;
         seen[key] = true;
@@ -101,23 +108,23 @@
     list.classList.toggle('hidden',!records.length); empty.classList.toggle('hidden',!!records.length);
     list.innerHTML=records.map(function(p) {
       var returned = p.pendingType === 'assign', item = p.pendingReturn;
-      var task = returned ? (item.doc ? item.doc + ' · ' : '') + ({manager:'项目经理分配',document:'文书交付',review:'文书审核',application:'网申任务'}[item.kind]) : '';
-      return '<section class="project-pending-card" data-pending-project="' + esc(p.projectNo) + '" data-pending-goal="' + esc(p.pendingGoal) + '" data-pending-type="' + p.pendingType + '"><div class="project-pending-heading"><strong>' + esc(p.student) + ' · ' + esc(p.level) + '</strong><span>' + (returned ? '分配被退回' : '待接收') + '</span></div><dl><dt>项目号</dt><dd>' + esc(p.projectNo) + '</dd><dt>客户姓名</dt><dd>' + esc(p.customer) + '</dd><dt>院校目标</dt><dd>' + esc(p.packages.map(function(goal){return goal.school+' · '+goal.major;}).join('；')) + '</dd>' +
+      var task = returned ? (item.doc ? item.doc + ' · ' : '') + ({owner:'PMO 分配',manager:'项目经理分配',document:'文书交付',review:'文书审核',application:'网申任务'}[item.kind]) : '';
+      return '<section class="project-pending-card" data-pending-project="' + esc(p.projectNo) + '" data-pending-goal="' + esc(p.pendingGoal || '') + '" data-pending-scope="' + (p.pendingScope || 'goal') + '" data-pending-type="' + p.pendingType + '"><div class="project-pending-heading"><strong>' + esc(p.student) + ' · ' + esc(p.level) + '</strong><span>' + (returned ? '分配被退回' : '待接收') + '</span></div><dl><dt>项目号</dt><dd>' + esc(p.projectNo) + '</dd><dt>客户姓名</dt><dd>' + esc(p.customer) + '</dd><dt>院校目标</dt><dd>' + esc(p.packages.map(function(goal){return goal.school+' · '+goal.major;}).join('；')) + '</dd>' +
         (returned ? '<dt>任务</dt><dd>' + esc(task) + '</dd><dt>退回原因</dt><dd>' + esc(item.reason || '—') + '</dd>' : '') + '<dt>' + (returned ? '退回时间' : '分配时间') + '</dt><dd>' + time(p.assignedAt) + '</dd></dl><footer>' +
         (returned ? '<button type="button" data-pending-action="assign">分配</button>' : '<button type="button" data-pending-action="accept">接收</button><button type="button" data-pending-action="return">退回</button>') + '</footer></section>';
     }).join(''); updatePendingBadge();
   }
   function handlePendingAction(e) {
     var button = e.target.closest('[data-pending-action]'); if (!button) return;
-    var card = button.closest('[data-pending-project]'), id = card.dataset.pendingProject, goalId = card.dataset.pendingGoal;
+    var card = button.closest('[data-pending-project]'), id = card.dataset.pendingProject, goalId = card.dataset.pendingGoal, ownerTask = card.dataset.pendingScope === 'owner';
     if (button.dataset.pendingAction === 'assign') { closePending(); open(id,'assign',goalId); return; }
     if (button.dataset.pendingAction === 'accept') {
-      window.pbsProjects.acceptPM(id,goalId);
+      if (ownerTask) pbsOrders.acceptOwner(id); else window.pbsProjects.acceptPM(id,goalId);
       if (window.pbsRecordOperation) window.pbsRecordOperation('项目管理','接收','接收项目 '+id);
       render(); return;
     }
     window.pbsTaskReturn.confirm({kind:'project',label:id},function(reason) {
-      window.pbsProjects.rejectPM(id,reason.trim(),goalId);
+      if (ownerTask) pbsOrders.rejectOwner(id,reason.trim()); else window.pbsProjects.rejectPM(id,reason.trim(),goalId);
       if (window.pbsRecordOperation) window.pbsRecordOperation('项目管理','退回','退回项目 '+id+'：'+reason.trim());
       render();
     });

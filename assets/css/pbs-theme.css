@@ -57,6 +57,32 @@ body {
 .divide-gray-100 > * + * { border-color: #F1F3F5 !important; }
 .divide-gray-200 > * + * { border-color: var(--pbs-border) !important; }
 
+/* ---------- 一级页面：纯白卡片与列表 ---------- */
+.pbs-primary-page main :is(
+  .bg-white.rounded-lg, .bg-white.rounded-xl, .bg-white.rounded-2xl,
+  .pbs-filter-card, .card,
+  .monitor-summary-card, .monitor-filter, .monitor-table-card,
+  .pm-cockpit-hero, .pm-panel, .pm-kpi-card,
+  .wb-stat, .wb-panel, .wb-board-col, .wb-team-shell,
+  .dashboard-panel, .metric-card, .kpi-card,
+  .role-workspace-card, .permission-panel,
+  .video-panel, .video-workspace-card, .prototype-card
+):not(button, input, select, textarea, label, .shadow-md, .shadow-lg, .shadow-xl, .shadow-2xl) {
+  background: #FFFFFF !important;
+  box-shadow: var(--pbs-shadow-card) !important;
+}
+.pbs-primary-page main thead,
+.pbs-primary-page main thead tr,
+.pbs-primary-page main thead th,
+.pbs-primary-page main tfoot,
+.pbs-primary-page main tfoot td,
+.pbs-primary-page main .pbs-pagination,
+.pbs-primary-page main .monitor-table-foot,
+.pbs-primary-page main :is(.bg-white.rounded-xl, .bg-white.rounded-2xl, .card) > .bg-gray-50 {
+  background: #FFFFFF !important;
+}
+.pbs-primary-page main thead th { border-bottom: 1px solid #EDF0F4; }
+
 /* ---------- 标题排版 ---------- */
 h1 { letter-spacing: -0.01em; color: var(--pbs-ink); }
 h2, h3 { color: var(--pbs-ink); }

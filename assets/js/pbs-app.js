@@ -3171,6 +3171,17 @@
   function section(title, color, icon, note) {
     return '<div class="border border-gray-200 rounded-xl p-4 mb-3 bg-white"><div class="flex items-center gap-2 mb-3"><span class="w-8 h-8 rounded-lg bg-' + color + '-100 text-' + color + '-600 flex items-center justify-center">' + icon + '</span><h3 class="text-sm font-semibold text-gray-800">' + title + '</h3></div>' + (note ? '<p class="text-xs text-gray-400 mb-3">' + note + '</p>' : '');
   }
+  window.pbsProjectAssignmentInfoHtml = function(project, goalId) {
+    var manager = window.pbsOrders.manager(project, goalId);
+    var purchases = Array.from(new Set((project.packages || []).map(function(item) { return item.name; }).filter(Boolean))).join(' + ');
+    var fields = [
+      ['学生姓名', project.student], ['项目号', project.projectNo], ['购买项目', purchases || project.level],
+      ['当前项目经理', manager.name], ['申请层次', project.level], ['当前状态', window.pbsProjects.statusOf(project)]
+    ];
+    return '<section class="bg-gray-50 rounded-xl p-4 mb-4"><h3 class="text-sm font-medium text-gray-700 mb-3">项目信息</h3><dl class="space-y-2 text-sm">' + fields.map(function(field) {
+      return '<div class="flex items-baseline justify-between gap-4"><dt class="text-gray-500 flex-shrink-0">' + field[0] + '</dt><dd class="text-gray-900 text-right break-words min-w-0">' + esc(field[1] || '—') + '</dd></div>';
+    }).join('') + '</dl></section>';
+  };
   window.pbsStaffAssignmentFormHtml = function(goal, assignment, prefix, selections) {
     var docs = assignment.docs || {}, reviewers = assignment.reviewers || {};
     var html = section('文书交付人员', 'blue', '✎', '每种文书单独指定交付人员及交付 DDL，可只填部分文书');

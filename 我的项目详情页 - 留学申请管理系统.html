@@ -497,7 +497,7 @@
   <!-- 页面提示 Toast -->
   <div id="pageToast" class="hidden fixed top-6 left-1/2 transform -translate-x-1/2 z-[70] px-4 py-2.5 bg-red-500 text-white text-sm rounded-lg shadow-lg"></div>
 
-  <script src="./assets/js/pbs-app.js?v=8.1"></script>
+  <script src="./assets/js/pbs-app.js?v=8.2"></script>
   <script src="./assets/js/pbs-identity.js?v=1.0"></script>
   <script src="./assets/js/pbs-student-data.js?v=1.5"></script>
   <script>
@@ -1119,14 +1119,15 @@
       var ownedProject = pbsProjects.find(MY_PROJECT_CONTEXT.projectNo);
       if (!ownedProject || ownedProject.status === '已结项' || !pbsOrders.manager(ownedProject,currentSchoolCockpit).accepted || !(pbsOrders.canManage(ownedProject) || pbsOrders.canHandleGoal(ownedProject,currentSchoolCockpit,true))) { if (window.showToast) showToast('请先由院校目标项目经理接收'); return; }
       var s = school();
+      var info = pbsProjectAssignmentInfoHtml(ownedProject,currentSchoolCockpit);
       document.getElementById('assignDrawerSchool').textContent = s.name;
       var body = document.getElementById('assignDrawerBody');
       var footer = document.getElementById('assignDrawerFooter');
       if (s.locked) {
-        body.innerHTML = lockNoticeHtml(s) + assignmentReadonlyHtml(s);
+        body.innerHTML = info + lockNoticeHtml(s) + assignmentReadonlyHtml(s);
         footer.innerHTML = '<button class="w-full h-10 bg-white border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors font-medium" onclick="closeAssignDrawer()">关闭</button>';
       } else {
-        body.innerHTML = assignmentFormHtml(s, 'm', false);
+        body.innerHTML = info + assignmentFormHtml(s, 'm', false);
         footer.innerHTML = '<div class="flex items-center gap-3">' +
           '<button class="flex-1 h-10 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium" onclick="confirmAssign()">完成分配</button>' +
           '<button class="flex-1 h-10 bg-white border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors font-medium" onclick="closeAssignDrawer()">取消</button></div>';
@@ -1155,17 +1156,18 @@
       var ownedProject = pbsProjects.find(MY_PROJECT_CONTEXT.projectNo);
       if (!ownedProject || ownedProject.status === '已结项' || !pbsOrders.manager(ownedProject,currentSchoolCockpit).accepted || !(pbsOrders.canManage(ownedProject) || pbsOrders.canHandleGoal(ownedProject,currentSchoolCockpit,true))) { if (window.showToast) showToast('请先由院校目标项目经理接收'); return; }
       var s = school();
+      var info = pbsProjectAssignmentInfoHtml(ownedProject,currentSchoolCockpit);
       document.getElementById('changeDrawerSchool').textContent = s.name;
       var body = document.getElementById('changeDrawerBody');
       var footer = document.getElementById('changeDrawerFooter');
       if (s.locked) {
-        body.innerHTML = lockNoticeHtml(s) + assignmentReadonlyHtml(s);
+        body.innerHTML = info + lockNoticeHtml(s) + assignmentReadonlyHtml(s);
         footer.innerHTML = '<button class="w-full h-10 bg-white border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors font-medium" onclick="closeChangeDrawer()">关闭</button>';
       } else if (!isSchoolStaffAssigned(s)) {
-        body.innerHTML = '<div class="rounded-xl border border-amber-200 bg-amber-50 px-4 py-4 text-sm text-amber-800">该院校目标尚未分配人员，请先使用「分配」。</div>';
+        body.innerHTML = info + '<div class="rounded-xl border border-amber-200 bg-amber-50 px-4 py-4 text-sm text-amber-800">该院校目标尚未分配人员，请先使用「分配」。</div>';
         footer.innerHTML = '<button class="w-full h-10 bg-white border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors font-medium" onclick="closeChangeDrawer()">关闭</button>';
       } else {
-        body.innerHTML = assignmentFormHtml(s, 'c', true);
+        body.innerHTML = info + assignmentFormHtml(s, 'c', true);
         footer.innerHTML = '<div class="flex items-center gap-3">' +
           '<button class="flex-1 h-10 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium" onclick="confirmChange()">完成分配</button>' +
           '<button class="flex-1 h-10 bg-white border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors font-medium" onclick="closeChangeDrawer()">取消</button></div>';

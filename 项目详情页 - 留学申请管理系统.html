@@ -344,6 +344,7 @@
       </div>
       <!-- 主体（可滚动） -->
       <div class="flex-1 overflow-y-auto px-6 py-5">
+        <div id="assignProjectInfo"></div>
         <div class="border border-gray-200 rounded-xl p-4 mb-4">
           <div class="flex items-center gap-2 mb-3">
             <span class="w-8 h-8 rounded-lg bg-indigo-100 flex items-center justify-center"><svg class="w-4 h-4 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5.121 17.804A13.937 13.937 0 0112 16c2.5 0 4.847.655 6.879 1.804M15 10a3 3 0 11-6 0 3 3 0 016 0zm6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg></span>
@@ -423,18 +424,7 @@
       <!-- 主体（可滚动） -->
       <div class="flex-1 overflow-y-auto px-6 py-5">
         <!-- 项目摘要卡片（只读） -->
-        <div class="bg-gray-50 rounded-xl p-4 mb-5">
-          <h3 class="text-sm font-medium text-gray-700 mb-3">项目信息</h3>
-          <div class="space-y-2 text-sm">
-            <div class="flex justify-between"><span class="text-gray-500">学生姓名</span><span class="text-gray-900 font-medium">张明</span></div>
-            <div class="flex justify-between"><span class="text-gray-500">项目号</span><span class="text-gray-900">PRJ20260701001</span></div>
-            <div class="flex justify-between"><span class="text-gray-500">购买项目</span><span class="text-gray-900">美国本科申请 + 英国本科申请</span></div>
-            <div class="flex justify-between"><span class="text-gray-500">当前项目经理</span><span id="currentProjectManager" class="text-gray-900 font-medium">张老师</span></div>
-            <div class="flex justify-between"><span class="text-gray-500">申请层次</span><span class="text-gray-900">本科申请</span></div>
-            <div class="flex justify-between"><span class="text-gray-500">当前状态</span><span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">已分配</span></div>
-
-          </div>
-        </div>
+        <div id="changeProjectInfo"></div>
         <div class="border border-gray-200 rounded-xl p-4 mb-4">
           <div class="flex items-center gap-2 mb-3">
             <span class="w-8 h-8 rounded-lg bg-indigo-100 flex items-center justify-center"><svg class="w-4 h-4 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5.121 17.804A13.937 13.937 0 0112 16c2.5 0 4.847.655 6.879 1.804M15 10a3 3 0 11-6 0 3 3 0 016 0zm6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg></span>
@@ -593,7 +583,7 @@
     </div>
   </div>
 
-  <script src="./assets/js/pbs-app.js?v=8.1"></script>
+  <script src="./assets/js/pbs-app.js?v=8.2"></script>
   <script src="./assets/js/pbs-identity.js?v=1.0"></script>
   <script src="./assets/js/pbs-student-data.js?v=1.5"></script>
   <script>
@@ -856,7 +846,6 @@
     function openChangePMDrawer() {
       if (!canOpenAssignment()) return;
       var assignment = readProjectAssignment();
-      document.getElementById('currentProjectManager').textContent = assignment.projectManager || '—';
       chgGoalAssign = JSON.parse(JSON.stringify(assignment.goalAssignments || {}));
       changeGoalManagers = readGoalManagers();
       populatePmoSelect('changeAssignmentPmo');
@@ -963,6 +952,7 @@
     }
     function refreshGoalManager(changing) {
       var project = pbsProjects.find(PROJECT_CONTEXT.projectNo), goalId = changing ? chgActiveGoalId : activeGoalId, drafts = changing ? changeGoalManagers : goalManagers, key = changing ? 'chgPm' : 'pm', manager = pbsOrders.manager(project,goalId), editable = pbsOrders.canManage(project) && pbsHasPermission('order_assign_pm');
+      document.getElementById(changing ? 'changeProjectInfo' : 'assignProjectInfo').innerHTML = pbsProjectAssignmentInfoHtml(project,goalId);
       selectedPersons[key] = drafts[goalId] || null;
       var placeholder = document.getElementById(key + 'Placeholder'); placeholder.textContent = drafts[goalId] || '请选择项目经理';
       placeholder.classList.toggle('text-gray-400',!drafts[goalId]); placeholder.classList.toggle('text-gray-900',!!drafts[goalId]);
@@ -1023,8 +1013,6 @@
         statusBadge.classList.toggle('text-green-800', accepted);
       });
       if (assigned) {
-        var pmEl = document.getElementById('currentProjectManager');
-        if (pmEl) pmEl.textContent = assignment.projectManager;
         var summaryEl = document.getElementById('currentManagerSummary');
         if (summaryEl) summaryEl.textContent = '当前：' + assignment.projectManager + (accepted ? ' ｜ 已接收项目' : ' ｜ 等待项目经理接收') ;
       }

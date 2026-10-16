@@ -134,7 +134,7 @@
 /* 卡片样式 */
 .card {
   background: white;
-  border-radius: 12px;
+  border-radius: 8px;
   border: 1px solid rgba(0,0,0,0.04);
   box-shadow: 0 1px 3px rgba(0,0,0,0.04), 0 4px 12px rgba(0,0,0,0.02);
   transition: all 0.2s ease;
@@ -422,13 +422,13 @@ body.sidebar-resizing #left-sidebar-resizer::before {
 .ai-detail-card {
   background: #ffffff;
   border: 1px solid #e2e8f0;
-  border-radius: 12px;
+  border-radius: 6px;
   padding: 14px;
   transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
 .ai-detail-card:hover {
-  border-color: #c7d2fe;
-  box-shadow: 0 4px 14px rgba(99, 102, 241, 0.07);
+  border-color: #cbd5e1;
+  box-shadow: var(--pbs-shadow-card);
 }
 .ai-label {
   display: block;
@@ -442,9 +442,9 @@ body.sidebar-resizing #left-sidebar-resizer::before {
   font-size: 12px;
   color: #6b7280;
   line-height: 1.6;
-  background: #f8fafc;
-  border-left: 3px solid #c7d2fe;
-  border-radius: 0 8px 8px 0;
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 6px;
   padding: 6px 10px;
 }
 .ai-list {
@@ -669,11 +669,12 @@ body {
   flex-shrink: 0;
 }
 .editor-paper {
-  border-radius: 16px !important;
+  border-radius: 8px !important;
   border-color: #eef2f7 !important;
   box-shadow: 0 4px 24px rgba(15, 23, 42, 0.06) !important;
 }
 .editor-block {
+  border-radius: 6px;
   transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
 .editor-block:hover {
@@ -889,7 +890,7 @@ body {
   padding: 56px 32px;
   background: #fff;
   border: 1px solid #eef2f7;
-  border-radius: 16px;
+  border-radius: 8px;
   box-shadow: 0 4px 24px rgba(15, 23, 42, 0.06);
 }
 .draft-empty-icon {
@@ -1412,7 +1413,7 @@ body {
           <div class="flex justify-end mb-2">
             <span id="documentAutoSaveStatus" class="inline-flex items-center gap-1.5 text-xs text-emerald-600"><span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>已自动保存</span>
           </div>
-          <div id="editor-sections" class="editor-sections space-y-4"><div class="editor-block border border-gray-200 rounded-xl overflow-hidden"><div class="flex items-center justify-between gap-2 px-4 py-2 bg-gray-50 border-b border-gray-200"><input type="text" class="section-title-input" value="段落 1 · 研究背景与动机" aria-label="段落标题"><div class="editor-inline-actions flex items-center gap-2 flex-shrink-0"><button class="btn-send-to-ai flex items-center gap-1 px-2.5 py-1 text-xs font-medium bg-blue-600 text-white rounded-lg hover:bg-blue-700" data-section="section-1"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>帮我改写</button><button class="btn-delete-section flex items-center gap-1 px-2.5 py-1 text-xs font-medium bg-white border border-gray-300 text-gray-600 rounded-lg hover:bg-red-50 hover:text-red-600 hover:border-red-300" data-section="section-1" title="删除该段落"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6M9 7V4a1 1 0 011-1h4a1 1 0 011 1v3M4 7h16"></path></svg>删除</button></div></div><textarea class="editor-textarea w-full p-4 text-gray-700 leading-relaxed text-sm resize-none focus:outline-none" rows="4" placeholder="从左侧学生资料、院校目标或右侧模板开始撰写本段…"></textarea></div><div class="editor-block border border-gray-200 rounded-xl overflow-hidden"><div class="flex items-center justify-between gap-2 px-4 py-2 bg-gray-50 border-b border-gray-200"><input type="text" class="section-title-input" value="段落 2 · 学术与项目经历" aria-label="段落标题"><div class="editor-inline-actions flex items-center gap-2 flex-shrink-0"><button class="btn-send-to-ai flex items-center gap-1 px-2.5 py-1 text-xs font-medium bg-blue-600 text-white rounded-lg hover:bg-blue-700" data-section="section-2"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>帮我改写</button><button class="btn-delete-section flex items-center gap-1 px-2.5 py-1 text-xs font-medium bg-white border border-gray-300 text-gray-600 rounded-lg hover:bg-red-50 hover:text-red-600 hover:border-red-300" data-section="section-2" title="删除该段落"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6M9 7V4a1 1 0 011-1h4a1 1 0 011 1v3M4 7h16"></path></svg>删除</button></div></div><textarea class="editor-textarea w-full p-4 text-gray-700 leading-relaxed text-sm resize-none focus:outline-none" rows="4" placeholder="从左侧学生资料、院校目标或右侧模板开始撰写本段…"></textarea></div><div class="editor-block border border-gray-200 rounded-xl overflow-hidden"><div class="flex items-center justify-between gap-2 px-4 py-2 bg-gray-50 border-b border-gray-200"><input type="text" class="section-title-input" value="段落 3 · 职业目标与院校匹配" aria-label="段落标题"><div class="editor-inline-actions flex items-center gap-2 flex-shrink-0"><button class="btn-send-to-ai flex items-center gap-1 px-2.5 py-1 text-xs font-medium bg-blue-600 text-white rounded-lg hover:bg-blue-700" data-section="section-3"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>帮我改写</button><button class="btn-delete-section flex items-center gap-1 px-2.5 py-1 text-xs font-medium bg-white border border-gray-300 text-gray-600 rounded-lg hover:bg-red-50 hover:text-red-600 hover:border-red-300" data-section="section-3" title="删除该段落"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6M9 7V4a1 1 0 011-1h4a1 1 0 011 1v3M4 7h16"></path></svg>删除</button></div></div><textarea class="editor-textarea w-full p-4 text-gray-700 leading-relaxed text-sm resize-none focus:outline-none" rows="4" placeholder="从左侧学生资料、院校目标或右侧模板开始撰写本段…"></textarea></div></div>
+          <div id="editor-sections" class="editor-sections space-y-4"><div class="editor-block border border-gray-200 rounded-md overflow-hidden"><div class="flex items-center justify-between gap-2 px-4 py-2 bg-gray-50 border-b border-gray-200"><input type="text" class="section-title-input" value="段落 1 · 研究背景与动机" aria-label="段落标题"><div class="editor-inline-actions flex items-center gap-2 flex-shrink-0"><button class="btn-send-to-ai flex items-center gap-1 px-2.5 py-1 text-xs font-medium bg-blue-600 text-white rounded-lg hover:bg-blue-700" data-section="section-1"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>帮我改写</button><button class="btn-delete-section flex items-center gap-1 px-2.5 py-1 text-xs font-medium bg-white border border-gray-300 text-gray-600 rounded-lg hover:bg-red-50 hover:text-red-600 hover:border-red-300" data-section="section-1" title="删除该段落"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6M9 7V4a1 1 0 011-1h4a1 1 0 011 1v3M4 7h16"></path></svg>删除</button></div></div><textarea class="editor-textarea w-full p-4 text-gray-700 leading-relaxed text-sm resize-none focus:outline-none" rows="4" placeholder="从左侧学生资料、院校目标或右侧模板开始撰写本段…"></textarea></div><div class="editor-block border border-gray-200 rounded-md overflow-hidden"><div class="flex items-center justify-between gap-2 px-4 py-2 bg-gray-50 border-b border-gray-200"><input type="text" class="section-title-input" value="段落 2 · 学术与项目经历" aria-label="段落标题"><div class="editor-inline-actions flex items-center gap-2 flex-shrink-0"><button class="btn-send-to-ai flex items-center gap-1 px-2.5 py-1 text-xs font-medium bg-blue-600 text-white rounded-lg hover:bg-blue-700" data-section="section-2"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>帮我改写</button><button class="btn-delete-section flex items-center gap-1 px-2.5 py-1 text-xs font-medium bg-white border border-gray-300 text-gray-600 rounded-lg hover:bg-red-50 hover:text-red-600 hover:border-red-300" data-section="section-2" title="删除该段落"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6M9 7V4a1 1 0 011-1h4a1 1 0 011 1v3M4 7h16"></path></svg>删除</button></div></div><textarea class="editor-textarea w-full p-4 text-gray-700 leading-relaxed text-sm resize-none focus:outline-none" rows="4" placeholder="从左侧学生资料、院校目标或右侧模板开始撰写本段…"></textarea></div><div class="editor-block border border-gray-200 rounded-md overflow-hidden"><div class="flex items-center justify-between gap-2 px-4 py-2 bg-gray-50 border-b border-gray-200"><input type="text" class="section-title-input" value="段落 3 · 职业目标与院校匹配" aria-label="段落标题"><div class="editor-inline-actions flex items-center gap-2 flex-shrink-0"><button class="btn-send-to-ai flex items-center gap-1 px-2.5 py-1 text-xs font-medium bg-blue-600 text-white rounded-lg hover:bg-blue-700" data-section="section-3"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>帮我改写</button><button class="btn-delete-section flex items-center gap-1 px-2.5 py-1 text-xs font-medium bg-white border border-gray-300 text-gray-600 rounded-lg hover:bg-red-50 hover:text-red-600 hover:border-red-300" data-section="section-3" title="删除该段落"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6M9 7V4a1 1 0 011-1h4a1 1 0 011 1v3M4 7h16"></path></svg>删除</button></div></div><textarea class="editor-textarea w-full p-4 text-gray-700 leading-relaxed text-sm resize-none focus:outline-none" rows="4" placeholder="从左侧学生资料、院校目标或右侧模板开始撰写本段…"></textarea></div></div>
           <button id="btn-add-section" type="button" class="w-full mt-4 border-2 border-dashed border-gray-300 rounded-xl py-3 text-sm text-gray-500 hover:border-purple-400 hover:text-purple-600 transition-colors flex items-center justify-center gap-2">
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
             新增段落
@@ -2200,7 +2201,7 @@ body {
           var data = store[type] || defaults[type] || [];
           var html = '';
           data.forEach(function (sec, i) {
-            html += '<div class="editor-block border border-gray-200 rounded-xl overflow-hidden">'
+            html += '<div class="editor-block border border-gray-200 rounded-md overflow-hidden">'
               + '<div class="flex items-center justify-between gap-2 px-4 py-2 bg-gray-50 border-b border-gray-200">'
               + '<input type="text" class="section-title-input" value="' + escapeDocumentHtml(sec.label) + '" aria-label="段落标题">'
               + '<div class="editor-inline-actions flex items-center gap-2 flex-shrink-0">'
@@ -2553,7 +2554,6 @@ var DOC_AI_GUIDE = {
     ]
   }
 };
-var AI_SUGGEST_COLORS = ['border-blue-500', 'border-purple-500', 'border-emerald-500', 'border-amber-500', 'border-pink-500', 'border-cyan-500'];
 /* ==================== 写作建议：按当前文书类型动态生成，每段含建议 + 例文，支持换一换 ==================== */
 var AI_SUGGEST_EXAMPLES = {
   cv: [
@@ -2659,14 +2659,13 @@ function renderAiSuggestions(type) {
       '</div>' +
     '</div>';
   guide.suggestions.forEach(function(sg, i) {
-    var color = AI_SUGGEST_COLORS[i % AI_SUGGEST_COLORS.length];
     var missing = (sg.missing && sg.missing.length)
       ? '<div class="mt-2 flex flex-wrap items-center gap-1.5"><span class="text-[10px] text-amber-600 font-medium">建议补充：</span>' + sg.missing.map(function(m) {
           return '<span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-medium bg-amber-50 text-amber-700 border border-amber-200">' + m + '</span>';
         }).join('') + '</div>'
       : '';
     var example = examples[i] || '（暂无例文）';
-    html += '<div class="ai-detail-card border-l-4 ' + color + '" data-si="' + i + '" data-v="-1">' +
+    html += '<div class="ai-detail-card" data-si="' + i + '" data-v="-1">' +
       '<div class="flex items-center justify-between mb-2 gap-2"><span class="text-xs font-semibold text-gray-800">' + sg.section + '</span>' +
       '<span class="flex items-center gap-2 flex-shrink-0"><span class="text-[10px] text-gray-400">建议 ' + (i + 1) + ' / ' + guide.suggestions.length + '</span>' +
       '<button class="btn-suggest-refresh" onclick="rotateAiSuggestion(this)" title="重新生成该段建议"><svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>换一换</button></span></div>' +
@@ -3191,7 +3190,7 @@ function bindSendToAi(scope) {
 }
 function buildSectionBlock(index) {
   var block = document.createElement('div');
-  block.className = 'editor-block border border-gray-200 rounded-xl overflow-hidden';
+  block.className = 'editor-block border border-gray-200 rounded-md overflow-hidden';
   block.innerHTML = '<div class="flex items-center justify-between gap-2 px-4 py-2 bg-gray-50 border-b border-gray-200">'
     + '<input type="text" class="section-title-input" value="段落 ' + index + ' · 新段落内容" aria-label="段落标题">'
     + '<div class="editor-inline-actions flex items-center gap-2 flex-shrink-0">'

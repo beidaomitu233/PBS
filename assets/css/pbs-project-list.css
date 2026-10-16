@@ -37,12 +37,15 @@
 .pbs-project-pager button[aria-current] { color: #fff; background: #2563eb; border-color: #2563eb; }
 .project-pending-card { padding: 18px; background: #fff; border: 1px solid #e2e8f0; border-radius: 12px; }
 .project-pending-card strong { display: block; margin-bottom: 12px; }
+.project-pending-heading { display: flex; flex-wrap: wrap; align-items: baseline; gap: 6px 12px; margin-bottom: 14px; }
+.project-pending-heading strong { margin: 0; }
+.project-pending-heading > span { color: #64748b; font-size: 12px; }
 .project-pending-card dl { display: grid; grid-template-columns: 80px 1fr; gap: 10px; font-size: 13px; margin-bottom: 18px; }
 .project-pending-card dt { color: #94a3b8; }
 .project-pending-card dd { margin: 0; overflow-wrap: anywhere; }
 .project-pending-card footer { display: flex; gap: 12px; }
 .project-pending-card button { flex: 1; height: 46px; border: 0; border-radius: 9px; background: #2563eb; color: #fff; font-weight: 600; cursor: pointer; }
-.project-pending-card button:last-child { background: #f1f5f9; color: #b91c1c; }
+.project-pending-card footer button + button { background: #f1f5f9; color: #b91c1c; }
 @media (max-width: 700px) {
   .pbs-project-pager { align-items: flex-start; flex-direction: column; }
   .pbs-project-pager nav { justify-content: flex-start; }

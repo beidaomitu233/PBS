@@ -43,6 +43,17 @@ body:has(.pmo-main){margin:0;background:#f5f7fb;font-family:"Microsoft YaHei",sa
 .pmo-event{display:grid;grid-template-columns:155px 85px 1fr;gap:18px;padding:16px 0;border-bottom:1px solid #edf0f5;font-size:13px}
 .pmo-event time{color:#94a3b8}
 .pmo-empty{padding:30px;text-align:center;color:#94a3b8;font-size:13px}
+.pbs-archive-table{width:100%;min-width:1080px;border-collapse:separate;border-spacing:0}
+.pbs-archive-table th,.pbs-archive-table td{padding:15px 20px;border-bottom:1px solid #edf0f5;vertical-align:middle;font-size:13px;white-space:nowrap}
+.pbs-archive-table th{color:#7d899d;font-weight:500;text-align:left}
+.pbs-archive-table td{color:#25344a}
+.pbs-archive-table th:nth-child(2),.pbs-archive-table .archive-order{text-align:center}
+.pbs-archive-table .archive-order{min-width:150px;border-right:1px solid #edf0f5}
+.pbs-archive-table .archive-order strong{display:block;font-weight:500;font-variant-numeric:tabular-nums}
+.pbs-archive-table .archive-order.is-shared{background:#eff6ff;border-color:#dbeafe;box-shadow:inset 0 0 0 1px #dbeafe}
+.pbs-archive-table .archive-order.is-shared strong{font-weight:600}
+.pbs-archive-table .archive-order small{display:block;margin-top:6px;color:#3b82f6;font-size:12px}
+.pbs-archive-table .archive-project-number{font-variant-numeric:tabular-nums}
 .pmo-dialog{width:min(760px,calc(100vw - 40px));max-width:none;max-height:86vh;margin:auto;padding:0;border:0;border-radius:15px;box-shadow:0 24px 70px #0f172a33;color:#1f2937}
 .pmo-dialog::backdrop{background:#0f172a66}
 .pmo-dialog header,.pmo-dialog footer{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:18px 24px;border-bottom:1px solid #edf0f5}

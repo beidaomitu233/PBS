@@ -6,7 +6,7 @@
   <title>监控任务列表 - PBS留学CRM</title>
   <script src="./assets/vendor/tailwind-runtime.js"></script>
   <link rel="stylesheet" href="./assets/css/pbs-theme.css?v=6.7">
-  <link rel="stylesheet" href="./assets/css/pbs-monitor-v2.css?v=1.6">
+  <link rel="stylesheet" href="./assets/css/pbs-monitor-v2.css?v=1.7">
   <link rel="stylesheet" href="./assets/css/pbs-pagination.css?v=1.0">
 </head>
 <body class="min-h-screen pbs-primary-page" data-monitor-page="list">
@@ -43,10 +43,9 @@
       </div>
 
       <section class="monitor-summary" aria-label="监控概览">
-        <div class="monitor-summary-card"><span>学生监控任务</span><strong>5</strong><small>每名学生仅保留 1 条记录</small></div>
-        <div class="monitor-summary-card"><span>存在待办</span><strong id="monitorActionCount">3</strong><small>至少有一项未关闭任务</small></div>
-        <div class="monitor-summary-card"><span>紧急或逾期</span><strong id="monitorUrgentCount">2</strong><small>需要优先进入详情处理</small></div>
-        <div class="monitor-summary-card"><span>无待办</span><strong id="monitorClearCount">2</strong><small>当前无需人工操作</small></div>
+        <div class="monitor-summary-card"><span>学生监控任务</span><strong id="monitorTaskCount">5</strong></div>
+        <div class="monitor-summary-card"><span>存在待办</span><strong id="monitorActionCount">3</strong></div>
+        <div class="monitor-summary-card"><span>紧急或逾期</span><strong id="monitorUrgentCount">2</strong></div>
       </section>
 
       <section class="monitor-filter" aria-label="任务筛选">
@@ -98,6 +97,6 @@
   <div id="monitorToast" class="monitor-toast" role="status" aria-live="polite"></div>
   <script src="./assets/js/pbs-app.js?v=7.9"></script>
   <script src="./assets/js/pbs-pagination.js?v=1.0"></script>
-  <script src="./assets/js/pbs-monitor-v2.js?v=1.6"></script>
+  <script src="./assets/js/pbs-monitor-v2.js?v=1.7"></script>
 </body>
 </html>

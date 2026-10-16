@@ -159,13 +159,12 @@
   function renderSummary() {
     var actionCount = taskRows.filter(function (item) { return item.status !== '无待办'; }).length;
     var urgentCount = taskRows.filter(function (item) { return item.status === '紧急处理' || item.status === '已逾期'; }).length;
-    var clearCount = taskRows.filter(function (item) { return item.status === '无待办'; }).length;
+    var totalEl = document.getElementById('monitorTaskCount');
     var actionEl = document.getElementById('monitorActionCount');
     var urgentEl = document.getElementById('monitorUrgentCount');
-    var clearEl = document.getElementById('monitorClearCount');
+    if (totalEl) totalEl.textContent = taskRows.length;
     if (actionEl) actionEl.textContent = actionCount;
     if (urgentEl) urgentEl.textContent = urgentCount;
-    if (clearEl) clearEl.textContent = clearCount;
   }
 
   function linkedProjects(item) {

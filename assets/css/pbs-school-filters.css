@@ -12,7 +12,7 @@
 .sc-supplement{display:inline-flex;align-items:center;gap:6px;height:34px;padding:0 11px;border-radius:7px;background:#eff6ff;color:#2563eb;font-size:12px;white-space:nowrap}
 .sc-supplement svg{width:16px;height:16px}
 .sc-workbench #taskNoteText{font-size:13px;line-height:1.8}
-.sc-workbench #schoolWorkspace{display:grid;grid-template-columns:minmax(0,34fr) minmax(0,38fr) minmax(0,28fr);grid-template-rows:minmax(0,1fr);height:clamp(440px,calc(100dvh - 430px),680px)!important;min-height:0!important;gap:16px;margin-bottom:16px}
+.sc-workbench #schoolWorkspace{display:grid;grid-template-columns:minmax(0,34fr) minmax(0,38fr) minmax(0,28fr);grid-template-rows:minmax(0,1fr);height:calc(100dvh - 270px)!important;min-height:600px!important;gap:16px;margin-bottom:16px}
 .sc-workbench #schoolWorkspace>div{min-width:0;min-height:0;height:100%;overflow:hidden}
 .sc-workbench #schoolLibraryColumn{flex:0 0 34%;overflow:hidden}
 .sc-workbench #schoolDetailColumn{flex:1 1 38%;min-width:0}
@@ -114,6 +114,6 @@
 .sc-period-dialog .sc-error{padding:12px 0 0}
 #scFilters button:focus-visible,#scFilters summary:focus-visible,.sc-period-dialog button:focus-visible{outline:2px solid #93c5fd;outline-offset:3px}
 @media(max-width:1300px){.sc-task-heading{gap:12px}.sc-task-meta{gap:10px 14px}.sc-null{margin-left:0}}
-@media(max-width:1100px){.sc-workbench #schoolWorkspace{grid-template-columns:minmax(0,44fr) minmax(0,56fr);grid-template-rows:minmax(0,480px) minmax(0,400px);height:896px!important}.sc-workbench #schoolZoneColumn{grid-column:1/-1}}
-@media(max-width:850px){.sc-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.sc-task-heading .selection-task-actions{margin-left:auto}.sc-tabs{gap:20px}.sc-null{flex-basis:100%;padding-top:2px}#scScores{grid-template-columns:1fr}.sc-workbench #schoolWorkspace{display:block;height:auto!important}.sc-workbench #schoolWorkspace>div{width:100%;height:480px;margin-bottom:16px}}
+@media(max-width:1100px){.sc-workbench #schoolWorkspace{grid-template-columns:minmax(0,44fr) minmax(0,56fr);grid-template-rows:repeat(2,minmax(0,600px));height:1216px!important}.sc-workbench #schoolZoneColumn{grid-column:1/-1}}
+@media(max-width:850px){.sc-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.sc-task-heading .selection-task-actions{margin-left:auto}.sc-tabs{gap:20px}.sc-null{flex-basis:100%;padding-top:2px}#scScores{grid-template-columns:1fr}.sc-workbench #schoolWorkspace{display:block;height:auto!important}.sc-workbench #schoolWorkspace>div{width:100%;height:600px;margin-bottom:16px}}
 @media(max-width:600px){#scFilters{padding:16px 14px 0}.sc-grid,.sc-grid.two{grid-template-columns:1fr}.sc-tabs{gap:20px}.sc-tabs button{font-size:12px}.sc-salary{grid-column:auto}.sc-query-row{gap:8px}.sc-query-row>.sc-btn{padding:0 12px}.sc-task-meta{flex-basis:100%}.sc-filter-heading>div{gap:14px}.sc-score-row{grid-template-columns:100px minmax(0,1fr) 28px}}

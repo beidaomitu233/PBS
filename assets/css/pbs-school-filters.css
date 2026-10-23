@@ -23,10 +23,14 @@
 .sc-workbench #schoolActionBar.selection-action-bar{position:relative;bottom:auto;margin:0;z-index:20}
 .sc-detail-empty{padding:70px 20px;text-align:center;font-size:13px;color:#94a3b8}
 .sc-workbench #schoolDetailColumn button:disabled{opacity:.45;cursor:default}
-.sc-library-heading{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:16px;border-bottom:1px solid #edf0f5}
+.sc-library-heading{display:flex;align-items:center;justify-content:space-between;flex-shrink:0;gap:12px;padding:16px;border-bottom:1px solid #edf0f5}
 .sc-library-heading h2{font-size:15px;font-weight:600;color:#243247}
 .sc-library-heading h2 span{margin-left:8px;font-size:12px;color:#94a3b8;font-weight:400}
 .sc-library-heading>span{font-size:12px;color:#94a3b8}
+.sc-program-name{font-size:14px;font-weight:600;line-height:1.5;color:#1f2937;overflow-wrap:anywhere}
+.sc-school-name{margin-top:4px;font-size:13px;line-height:1.5;color:#475569;overflow-wrap:anywhere}
+.sc-workbench #schoolList [data-school]>div:first-child{flex-direction:column;align-items:stretch}
+.sc-workbench #schoolList .school-list-actions{align-self:flex-end}
 #scFilters{position:relative;margin-bottom:20px;padding:20px 22px 0;background:#fff;border:1px solid #e9edf3;border-radius:12px;box-shadow:0 1px 3px #0f172a04;color:#334155;font-size:13px}
 #scFilters [hidden]{display:none!important}
 #scFilters button,#scFilters input,#scFilters select,#scFilters textarea,.sc-period-dialog button,.sc-period-dialog input{font:inherit}

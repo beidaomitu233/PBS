@@ -397,19 +397,6 @@
             <h1 class="pbs-detail-topbar__title">网申任务详情</h1>
           </div>
         </div>
-        <div class="pbs-detail-topbar__actions">
-          <button data-dom-id="btn-reuse-template" class="flex items-center gap-2 px-4 py-2 bg-blue-50 text-blue-600 rounded-lg hover:bg-blue-100 transition-colors font-medium" onclick="openTemplateReuseModal()">
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v6h6M20 20v-6h-6M5.07 15A7 7 0 0017 18.93M18.93 9A7 7 0 007 5.07"></path></svg>
-            复用模板
-          </button>
-          <button data-dom-id="btn-update-progress" class="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium" onclick="openProgressModal()">
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
-            </svg>
-            更新网申进度
-          </button>
-
-        </div>
       </div>
 
       <div class="ns-layout">
@@ -501,9 +488,9 @@
                 申请材料清单
               </h2>
               <div class="flex items-center gap-4 flex-wrap">
-                <button data-dom-id="btn-reuse-template" class="ns-btn ns-btn--outline ns-btn--sm" onclick="openTemplateReuseModal()">
-                  <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v6h6M20 20v-6h-6M5.07 15A7 7 0 0017 18.93M18.93 9A7 7 0 007 5.07"></path></svg>
-                  复用模板
+                <button data-dom-id="btn-reuse-template" class="flex items-center gap-2 px-4 py-2 bg-blue-50 text-blue-600 rounded-lg hover:bg-blue-100 transition-colors font-medium" onclick="openTemplateReuseModal()">
+                  <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v6h6M20 20v-6h-6M5.07 15A7 7 0 0017 18.93M18.93 9A7 7 0 007 5.07"></path></svg>
+                  复用网申模板
                 </button>
                 <span class="ns-plugin-links"><a href="javascript:void(0)" onclick="openPluginDocModal()">插件下载</a><a href="javascript:void(0)" onclick="openPluginDocModal()">使用说明</a></span>
                 <span id="scanStateBadge" class="text-xs text-gray-400">4 / 6 已上传</span>

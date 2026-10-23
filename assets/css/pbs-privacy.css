@@ -1,0 +1,65 @@
+.pbs-dialog { box-sizing: border-box; width: min(560px,calc(100vw - 32px)); max-height: calc(100dvh - 48px); padding: 0; border: 0; border-radius: 14px; background: #fff; color: #1f2937; font: 14px/1.6 "Microsoft YaHei","PingFang SC",sans-serif; box-shadow: 0 24px 70px #0f172a33; }
+.pbs-dialog::backdrop { background: #0f172a66; }
+.pbs-dialog * { box-sizing: border-box; }
+.pbs-dialog header { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 20px 24px; border-bottom: 1px solid #edf0f5; }
+.pbs-dialog h2 { margin: 0; font-size: 18px; font-weight: 600; }
+.pbs-dialog-close { display: grid; place-items: center; flex: none; width: 30px; height: 30px; padding: 0; border: 0; border-radius: 6px; background: transparent; color: #8490a2; cursor: pointer; }
+.pbs-dialog-close:hover { background: #f1f5f9; color: #334155; }
+.pbs-dialog-close svg { width: 18px; height: 18px; }
+.pbs-dialog-body { padding: 24px; }
+.pbs-dialog footer { display: flex; align-items: center; justify-content: flex-end; gap: 12px; padding: 16px 24px; border-top: 1px solid #edf0f5; }
+.pbs-dialog button { font: inherit; cursor: pointer; }
+.pbs-dialog button:disabled { opacity: .5; cursor: not-allowed; }
+.pbs-dialog button:focus-visible,.pbs-upload-zone:focus-visible { outline: 3px solid #93c5fd; outline-offset: 3px; }
+.pbs-dialog-btn { min-height: 38px; padding: 7px 20px; border: 1px solid #dce2eb; border-radius: 8px; background: #fff; color: #475569; }
+.pbs-dialog-btn:hover { background: #f8fafc; }
+.pbs-dialog-btn.primary { border-color: #2563eb; background: #2563eb; color: #fff; }
+.pbs-dialog-btn.primary:hover { background: #1d4ed8; }
+.pbs-upload-zone { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; min-height: 192px; padding: 28px; border: 1px dashed #bdd0ed; border-radius: 10px; background: #f8fbff; text-align: center; cursor: pointer; }
+.pbs-upload-zone:hover,.pbs-upload-zone.is-dragging { border-color: #2563eb; background: #eff6ff; }
+.pbs-upload-zone svg { width: 36px; height: 36px; margin-bottom: 5px; color: #5b8def; }
+.pbs-upload-zone strong { font-size: 14px; font-weight: 500; color: #2563eb; }
+.pbs-upload-zone span { font-size: 12px; color: #94a3b8; }
+.pbs-privacy-file { display: grid; grid-template-columns: 44px minmax(0,1fr) auto; align-items: center; gap: 14px; padding: 18px; border: 1px solid #e5eaf1; border-radius: 10px; }
+.pbs-pdf-icon { display: grid; place-items: center; flex: none; width: 44px; height: 52px; border-radius: 7px; background: #fff1f2; color: #e44b58; font-size: 12px; font-weight: 700; }
+.pbs-privacy-file-info { flex: 1; min-width: 0; }
+.pbs-privacy-file-name { display: block; max-width: 100%; padding: 0; border: 0; background: transparent; text-align: left; overflow-wrap: anywhere; color: #2563eb; font-weight: 500; }
+.pbs-privacy-file-info p { margin: 5px 0 0; color: #94a3b8; font-size: 12px; }
+.pbs-privacy-file-actions { display: flex; align-items: center; gap: 8px; }
+.pbs-dialog .pbs-privacy-action { display: inline-flex; align-items: center; justify-content: center; gap: 5px; height: 34px; padding: 0 10px; border: 1px solid #dbe7ff; border-radius: 6px; background: #eff6ff; color: #2563eb; font-size: 12px; white-space: nowrap; transition: background .15s,border-color .15s; }
+.pbs-privacy-action svg { width: 15px; height: 15px; flex: none; }
+.pbs-privacy-action:hover { border-color: #b6ceff; background: #e3eeff; }
+.pbs-privacy-error { min-height: 20px; margin: 12px 0 0; color: #dc2626; font-size: 12px; }
+.pbs-privacy-error:empty { display: none; }
+.pbs-privacy-status { margin: 12px 0 0; color: #64748b; font-size: 12px; }
+.pbs-privacy-status:empty { display: none; }
+.pbs-privacy-empty { display: grid; place-content: center; min-height: 220px; gap: 10px; text-align: center; color: #94a3b8; }
+.pbs-privacy-empty svg { width: 36px; height: 36px; margin: auto; color: #b2bdcc; }
+.pbs-privacy-viewer { width: min(960px,calc(100vw - 32px)); }
+.pbs-privacy-viewer .pbs-dialog-body { padding: 0; }
+.pbs-policy-reading { height: min(65dvh,680px); padding: 24px; overflow-y: auto; overscroll-behavior: contain; background: #f5f7fb; }
+.pbs-policy-paper { max-width: 760px; margin: auto; padding: 36px 40px; background: #fff; border: 1px solid #e9edf3; border-radius: 6px; }
+.pbs-policy-paper h3 { margin: 0 0 10px; color: #172333; font-size: 28px; font-weight: 600; }
+.pbs-policy-paper .pbs-policy-meta { margin: 0 0 24px; color: #94a3b8; font-size: 12px; }
+.pbs-policy-paper .pbs-policy-notice { padding: 12px 16px; background: #eff6ff; color: #5c7dac; font-size: 12px; }
+.pbs-policy-paper h4 { margin: 24px 0 8px; color: #273549; font-size: 15px; font-weight: 600; }
+.pbs-policy-paper p { margin: 0; color: #64748b; font-size: 14px; line-height: 1.9; }
+.pbs-privacy-toast { position: fixed; z-index: 12000; top: 24px; left: 50%; transform: translateX(-50%); padding: 12px 22px; border: 1px solid #dcfce7; border-radius: 9px; background: #f0fdf4; color: #15803d; font: 14px/1.5 "Microsoft YaHei",sans-serif; box-shadow: 0 6px 20px #0f172a12; }
+
+/* 协议管理弹窗：按区块分别上传《用户政策》与《隐私协议》 */
+.pbs-privacy-manager { width: min(680px,calc(100vw - 32px)); }
+.pbs-privacy-manager .pbs-dialog-body { display: grid; gap: 16px; }
+.pbs-policy-block { padding: 16px; border: 1px solid #e5eaf1; border-radius: 12px; background: #fbfcfe; }
+.pbs-policy-block-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; margin-bottom: 12px; }
+.pbs-policy-block-titles { min-width: 0; }
+.pbs-policy-block-titles h3 { margin: 0; color: #1f2937; font-size: 15px; font-weight: 600; }
+.pbs-policy-block-titles p { margin: 4px 0 0; color: #94a3b8; font-size: 12px; line-height: 1.6; }
+.pbs-policy-state { flex: none; padding: 3px 10px; border-radius: 999px; font-size: 12px; white-space: nowrap; }
+.pbs-policy-state.is-uploaded { background: #dcfce7; color: #15803d; }
+.pbs-policy-state.is-empty { background: #f1f5f9; color: #94a3b8; }
+.pbs-policy-block .pbs-upload-zone { min-height: 120px; padding: 20px; }
+.pbs-policy-block .pbs-upload-zone svg { width: 28px; height: 28px; margin-bottom: 2px; }
+.pbs-policy-block .pbs-privacy-file { padding: 14px; background: #fff; }
+.pbs-policy-block .pbs-privacy-status,.pbs-policy-block .pbs-privacy-error { margin: 10px 0 0; }
+
+@media(max-width:520px) { .pbs-dialog header,.pbs-dialog-body { padding: 18px; } .pbs-dialog footer { padding: 14px 18px; } .pbs-policy-reading { padding: 12px; } .pbs-policy-paper { padding: 24px; } .pbs-privacy-file { grid-template-columns: 44px minmax(0,1fr); } .pbs-privacy-file-actions { grid-column: 2; justify-self: end; } .pbs-policy-block-head { flex-direction: column; gap: 8px; } }

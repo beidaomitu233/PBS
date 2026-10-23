@@ -6,12 +6,14 @@
   <title>机构管理 - PBS留学CRM系统</title>
   <script src="./assets/vendor/tailwind-runtime.js"></script>
   <link rel="stylesheet" href="./assets/css/pbs-theme.css?v=6.7">
+  <link rel="stylesheet" href="./assets/css/pbs-organizations.css?v=1.0">
+  <link rel="stylesheet" href="./assets/css/pbs-privacy.css?v=1.5">
   <style>
     body { font-family: "Microsoft YaHei", "PingFang SC", sans-serif; }
     #pbs-sidebar { min-height: calc(100vh - 56px); }
   </style>
 </head>
-<body class="bg-gray-50 text-gray-800 min-h-screen pbs-primary-page">
+<body class="bg-gray-50 text-gray-800 min-h-screen pbs-primary-page pbs-organization-page">
   <header class="h-14 bg-white border-b border-gray-200 sticky top-0 z-40">
     <div class="h-full px-6 flex items-center justify-between">
       <div class="flex items-center gap-3">
@@ -31,88 +33,28 @@
   <div class="flex">
     <aside id="pbs-sidebar" class="w-56 bg-white border-r border-gray-200 flex flex-col flex-shrink-0"></aside>
     <main class="flex-1 min-w-0 p-6">
-      <div class="flex items-center justify-between mb-6">
-        <div>
-          <h1 class="text-2xl font-semibold text-gray-900">机构管理</h1>
-          <p class="text-sm text-gray-400 mt-1">查看平台内机构及其 PBS 成员规模</p>
-        </div>
+      <div class="org-heading"><h1>机构管理</h1><button type="button" class="org-btn" onclick="pbsPrivacy.manage()" data-pbs-permission="sys_org"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M12 3l7 3v5c0 4.5-3 8.4-7 10-4-1.6-7-5.5-7-10V6l7-3z"/><path d="m9 12 2 2 4-4"/></svg>协议配置</button></div>
+      <div class="org-stats">
+        <div class="org-stat"><p>机构总数</p><strong id="organizationTotal">44</strong></div>
+        <div class="org-stat"><p>已有成员机构</p><strong id="organizationStaffed">7</strong></div>
+        <div class="org-stat"><p>暂无成员机构</p><strong id="organizationEmpty">37</strong></div>
       </div>
-
-      <div class="grid grid-cols-3 gap-4 mb-6">
-        <div class="bg-white rounded-xl border border-gray-100 shadow-sm p-5"><p class="text-sm text-gray-500">机构总数</p><p id="organizationTotal" class="text-2xl font-semibold text-gray-900 mt-2">0</p></div>
-        <div class="bg-white rounded-xl border border-gray-100 shadow-sm p-5"><p class="text-sm text-gray-500">已有成员机构</p><p id="organizationStaffed" class="text-2xl font-semibold text-gray-900 mt-2">0</p></div>
-        <div class="bg-white rounded-xl border border-gray-100 shadow-sm p-5"><p class="text-sm text-gray-500">暂无成员机构</p><p id="organizationEmpty" class="text-2xl font-semibold text-gray-900 mt-2">0</p></div>
-      </div>
-
-      <div class="bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden">
-        <div class="p-5 border-b border-gray-100 flex items-end gap-3">
-          <div class="w-80">
-            <label class="block text-sm text-gray-600 mb-2" for="organizationSearch">关键词搜索</label>
-            <input id="organizationSearch" type="search" class="w-full h-10 px-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="输入机构名称" oninput="renderOrganizations()">
-          </div>
-          <button type="button" class="h-10 px-5 bg-white border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50" onclick="resetOrganizationSearch()">重置</button>
-        </div>
-        <div class="overflow-x-auto">
-          <table class="w-full">
-            <thead class="bg-gray-50">
-              <tr>
-                <th class="px-5 py-4 text-left text-sm font-medium text-gray-500">机构名称</th>
-                <th class="px-5 py-4 text-left text-sm font-medium text-gray-500">创建时间</th>
-                <th class="px-5 py-4 text-left text-sm font-medium text-gray-500">机构成员</th>
-                <th class="px-5 py-4 text-left text-sm font-medium text-gray-500">操作</th>
-              </tr>
-            </thead>
-            <tbody id="organizationTableBody" class="divide-y divide-gray-100"></tbody>
-          </table>
-        </div>
-        <div id="organizationEmptyState" class="hidden py-14 text-center text-sm text-gray-400">未找到匹配的机构</div>
-      </div>
+      <section class="org-list" aria-label="机构列表">
+        <form class="org-search" onsubmit="searchOrganizations(event)">
+          <div><label for="organizationSearch">关键词搜索</label><input id="organizationSearch" type="search" placeholder="输入机构名称"></div>
+          <button type="submit" class="org-btn primary">搜索</button><button type="button" class="org-btn" onclick="resetOrganizationSearch()">重置</button>
+        </form>
+        <div class="org-table-wrap"><table class="org-table"><thead><tr><th>LOGO</th><th>机构名称</th><th>创建时间</th><th>机构成员</th><th>状态</th><th>操作</th></tr></thead><tbody id="organizationTableBody"></tbody></table></div>
+        <div id="organizationEmptyState" class="org-empty hidden">未找到匹配的机构</div>
+        <div class="org-pagination"><span id="organizationResultCount"></span><nav id="organizationPagination" aria-label="机构列表分页"></nav></div>
+      </section>
     </main>
   </div>
 
-  <script src="./assets/js/pbs-organization-data.js"></script>
-  <script>
-    var organizations = (window.PBS_ORGANIZATIONS || []).slice();
-    var memberCounts = { 'PBS留学总部': 2, '上海启明留学': 2, '北京知行教育': 1, '广州远航教育': 0, '深圳新途教育': 0 };
+  <script src="./assets/js/pbs-organization-data.js?v=1.1"></script>
 
-    function escapeHtml(value) {
-      var element = document.createElement('div');
-      element.textContent = value == null ? '' : String(value);
-      return element.innerHTML;
-    }
-    function organizationAvatar(organization) {
-      if (organization.avatar) {
-        return '<span class="pbs-organization-avatar"><img src="' + escapeHtml(organization.avatar) + '" alt="' + escapeHtml(organization.name) + '机构头像"></span>';
-      }
-      return '<span class="pbs-organization-avatar" aria-label="' + escapeHtml(organization.name) + '机构头像">' + escapeHtml(organization.name.slice(0, 2)) + '</span>';
-    }
-    function renderOrganizations() {
-      var keyword = document.getElementById('organizationSearch').value.trim().toLowerCase();
-      var rows = organizations.filter(function (organization) { return !keyword || organization.name.toLowerCase().indexOf(keyword) >= 0; });
-      var staffed = organizations.filter(function (organization) { return (memberCounts[organization.name] || 0) > 0; }).length;
-      document.getElementById('organizationTotal').textContent = organizations.length;
-      document.getElementById('organizationStaffed').textContent = staffed;
-      document.getElementById('organizationEmpty').textContent = organizations.length - staffed;
-      document.getElementById('organizationTableBody').innerHTML = rows.map(function (organization) {
-        var count = memberCounts[organization.name] || 0;
-        return '<tr class="hover:bg-gray-50 transition-colors">' +
-          '<td class="px-5 py-4 text-sm font-medium text-gray-900"><div class="pbs-organization-cell">' + organizationAvatar(organization) + '<span>' + escapeHtml(organization.name) + '</span></div></td>' +
-          '<td class="px-5 py-4 text-sm text-gray-600">' + escapeHtml(organization.createdAt) + '</td>' +
-          '<td class="px-5 py-4"><span class="inline-flex px-2.5 py-1 rounded-full text-xs font-medium ' + (count ? 'bg-blue-50 text-blue-700' : 'bg-gray-100 text-gray-500') + '">' + count + ' 人</span></td>' +
-          '<td class="px-5 py-4"><button type="button" class="text-sm text-blue-600 hover:text-blue-800 font-medium" onclick="openOrganizationMembers(\'' + organization.id + '\')">查看成员</button></td>' +
-          '</tr>';
-      }).join('');
-      document.getElementById('organizationEmptyState').classList.toggle('hidden', rows.length > 0);
-    }
-    function resetOrganizationSearch() {
-      document.getElementById('organizationSearch').value = '';
-      renderOrganizations();
-    }
-    function openOrganizationMembers(id) {
-      location.href = '人员管理 - PBS留学CRM系统.html?org=' + encodeURIComponent(id);
-    }
-    document.addEventListener('DOMContentLoaded', renderOrganizations);
-  </script>
-  <script src="./assets/js/pbs-app.js?v=6.0"></script>
+  <script src="./assets/js/pbs-app.js?v=8.8"></script>
+  <script src="./assets/js/pbs-privacy.js?v=1.6"></script>
+  <script src="./assets/js/pbs-organizations.js?v=1.0"></script>
 </body>
 </html>

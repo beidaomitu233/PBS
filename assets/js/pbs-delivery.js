@@ -334,7 +334,7 @@
   }
 
   function deliveryButton(nodeId, recordName, meta) {
-    return '<button class="pbs-payment-action" data-submit-node="' + nodeId + '" data-submit-name="' + (recordName || '') + '" ' + (meta.available ? '' : 'disabled') + '>' + (meta.state === '已交付' ? '已交付' : '交付') + '</button>';
+    return '<button class="pbs-payment-action" data-pbs-permission="' + (document.body.classList.contains('my-project-detail') ? 'my_project_deliver' : 'project_deliver') + '" data-submit-node="' + nodeId + '" data-submit-name="' + (recordName || '') + '" ' + (meta.available ? '' : 'disabled') + '>' + (meta.state === '已交付' ? '已交付' : '交付') + '</button>';
   }
 
   function deliveryRow(label, nodeId, recordName, files, extraClass) {
@@ -351,13 +351,13 @@
     var packageRecords = records.filter(function (item) { return item.school === school; });
     var documents = documentPayments[packageId] || documentPayments.cmu;
     var applicationPayment = nodeAmount(packageId, 'application');
-    var paymentTotal = documents.reduce(function (sum, item) { return sum + item.amount; }, 0) + applicationPayment;
+    var paymentTotal = documents.reduce(function (sum, item) { return sum + item.amount; }, 0) + applicationPayment + nodeAmount(packageId, 'closure');
     var paidTotal = documents.reduce(function (sum, item) { return sum + (item.paid ? item.amount : 0); }, 0) + applicationPayment;
     var myProject = document.body.classList.contains('my-project-detail');
     var paidSummary = myProject ? '' : '<div><strong>' + money(paidTotal) + '</strong><span>已支付金额</span></div>';
     var html = '<div class="pbs-payment-summary">' + paidSummary + '<div style="text-align:right"><strong>' + money(paymentTotal) + '</strong><span>支付总额</span></div></div><div class="pbs-payment-groups">';
 
-    html += '<section class="pbs-payment-group"><div class="pbs-payment-group-head"><div><strong>文书</strong><small>按文书类型核对支付和交付</small></div></div><div class="pbs-payment-table"><div class="pbs-payment-table-head pbs-payment-document-grid"><span>文书类型</span><span>交付状态</span><span>操作</span></div>';
+    html += '<section class="pbs-payment-group"><div class="pbs-payment-group-head"><div><strong>文书</strong></div><div class="pbs-payment-group-payment"><span>总金额</span><strong>¥' + documents.reduce(function(sum,item) { return sum + item.amount; },0).toLocaleString('zh-CN') + '</strong></div></div><div class="pbs-payment-table"><div class="pbs-payment-table-head pbs-payment-document-grid"><span>文书类型</span><span>交付状态</span><span>操作</span></div>';
     documents.forEach(function (documentItem) {
       var files = packageRecords.filter(function (item) { return item.node === 'document' && item.name === documentItem.recordName; });
       var meta = deliveryMeta(files);
@@ -367,11 +367,11 @@
 
     var proofFiles = packageRecords.filter(function (item) { return item.node === 'application' && item.name === '网申提交证明'; });
     var resultFiles = packageRecords.filter(function (item) { return item.node === 'application' && item.name === '网申结果'; });
-    html += '<section class="pbs-payment-group"><div class="pbs-payment-group-head"><div><strong>网申</strong><small>支付一次，按业务进度分两次交付</small></div><div class="pbs-payment-group-payment"><span class="pbs-payment-paid is-paid"><i></i>已支付</span><strong>' + money(applicationPayment) + '</strong></div></div><div class="pbs-payment-deliveries">' + deliveryRow('网申提交证明', 'application', '网申提交证明', proofFiles) + deliveryRow('网申结果', 'application', '网申结果', resultFiles) + '</div></section>';
+    html += '<section class="pbs-payment-group"><div class="pbs-payment-group-head"><div><strong>网申</strong></div><div class="pbs-payment-group-payment"><span>总金额</span><strong>' + money(applicationPayment) + '</strong></div></div><div class="pbs-payment-table-head"><span>节点</span><span>交付状态</span><span>操作</span></div><div class="pbs-payment-deliveries">' + deliveryRow('网申提交证明', 'application', '网申提交证明', proofFiles) + deliveryRow('网申结果', 'application', '网申结果', resultFiles) + '</div></section>';
 
     if (!myProject) {
       var closureFiles = packageRecords.filter(function (item) { return item.node === 'closure'; });
-      html += '<section class="pbs-payment-group"><div class="pbs-payment-group-head"><div><strong>结项</strong><small>项目完成后提交结项报告</small></div></div><div class="pbs-payment-deliveries">' + deliveryRow('结项报告', 'closure', '', closureFiles) + '</div></section>';
+      html += '<section class="pbs-payment-group"><div class="pbs-payment-group-head"><div><strong>结项</strong></div><div class="pbs-payment-group-payment"><span>总金额</span><strong>¥' + nodeAmount(packageId, 'closure').toLocaleString('zh-CN') + '</strong></div></div><div class="pbs-payment-table-head"><span>节点</span><span>交付状态</span><span>操作</span></div><div class="pbs-payment-deliveries">' + deliveryRow('结项报告', 'closure', '', closureFiles) + '</div></section>';
     }
     html += '</div>';
     root.innerHTML = html;

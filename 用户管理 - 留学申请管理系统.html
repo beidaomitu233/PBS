@@ -3,7 +3,7 @@
 <html lang="zh-CN" class="light" data-theme="light"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>用户管理 - 留学申请管理系统</title>
+  <title>平台人员管理 - 留学申请管理系统</title>
   <script src="./assets/vendor/tailwind-runtime.js"></script>
   <style data-vd-inlined-stylesheet="../colors_and_type.css">
 /* PBS留学CRM系统 - 企业级设计规范 */
@@ -255,7 +255,7 @@
       <!-- 页面标题栏 -->
       <div class="flex items-center justify-between mb-6">
         <div>
-          <h1 class="text-2xl font-semibold text-gray-800">用户管理</h1>
+          <h1 class="text-2xl font-semibold text-gray-800">平台人员管理</h1>
           <p class="text-sm text-gray-500 mt-1">管理系统用户的账号信息与权限配置</p>
         </div>
         <div class="flex items-center gap-3">
@@ -440,15 +440,20 @@
   <script>
     // ===================== 模拟数据 =====================
     // 全部角色（每个用户可配置多个角色）
-    var ALL_ROLES = ['机构管理员', '项目经理', '文书人员', '网申人员', '文书审核', '销售人员', '平台运维人员'];
+    window.pbsPlatformPersonnelPage = true;
+    var ALL_ROLES = ['超级管理员', '平台运维人员'];
     var mockUsers = [
-      { id: 1, username: '张明', phone: '138****1234', account: 'zhangming', roles: ['机构管理员', '平台运维人员'], org: 'PBS留学总部', registerTime: '2026-01-15 09:30', status: 'normal' },
-      { id: 2, username: '李雪', phone: '139****5678', account: 'lixue', roles: ['项目经理', '网申人员'], org: 'PBS北京分公司', registerTime: '2026-02-20 14:00', status: 'normal' },
-      { id: 3, username: '王伟', phone: '136****9012', account: 'wangwei', roles: ['网申人员'], org: 'PBS上海分公司', registerTime: '2026-03-10 10:30', status: 'disabled' },
-      { id: 4, username: '陈晨', phone: '137****3456', account: 'chenchen', roles: ['文书人员', '文书审核'], org: 'PBS广州分公司', registerTime: '2026-04-05 16:20', status: 'normal' },
-      { id:5, username: '刘洋', phone: '135****7890', account: 'liuyang', roles: ['项目经理', '销售人员'], org: 'PBS北京分公司', registerTime: '2026-05-12 11:00', status: 'disabled' }
+      {id:1,username:'超级管理员',phone:'138****0001',account:'admin',roles:['超级管理员'],org:'PBS平台',registerTime:'2026-01-15 09:30',status:'normal'},
+      {id:2,username:'平台运维',phone:'138****0002',account:'platform',roles:['平台运维人员'],org:'PBS平台',registerTime:'2026-02-20 14:00',status:'normal'}
     ];
-
+    function canManagePlatformUser(user,permission) {
+      if (!window.pbsHasPermission(permission))return false;
+      var session=window.pbsGetSession(), roles=session.userRoles || session.roles || [session.role];
+      return !user || user.roles.indexOf('超级管理员')<0 || roles.indexOf('超级管理员')>=0;
+    }
+    function persistPlatformUser(user) {
+      window.pbsAccounts.upsert({u:user.account,name:user.username,phone:user.phone,roles:user.roles.slice(),role:user.roles[0],org:'PBS平台',status:user.status==='normal'?'正常':'停用',accountStatus:user.status==='normal'?'启用':'停用',createdAt:user.registerTime});
+    }
     var filteredUsers = [];
     var currentPage = 1;
     var pageSize = 10;
@@ -480,7 +485,7 @@
       var checked = user.status === 'normal' ? 'checked' : '';
       var statusText = user.status === 'normal' ? '正常' : '停用';
       return '<label class="inline-flex items-center cursor-pointer" onclick="event.stopPropagation()">' +
-        '<input type="checkbox" class="sr-only peer" ' + checked + ' onchange="toggleUserStatus(this, ' + user.id + ')">' +
+        '<input type="checkbox" class="sr-only peer" ' + checked + (user.roles.indexOf('超级管理员')>=0?' disabled':'') + ' onchange="toggleUserStatus(this, ' + user.id + ')">' +
         '<div class="relative w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[\'\'] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>' +
         '<span class="ml-2 text-xs text-gray-600">' + statusText + '</span>' +
         '</label>';
@@ -542,7 +547,9 @@
     function toggleUserStatus(checkbox, userId) {
       var user = mockUsers.find(function(u) { return u.id === userId; });
       if (!user) return;
+      if (!canManagePlatformUser(user,'platform_personnel_edit') || user.roles.indexOf('超级管理员')>=0) {checkbox.checked=user.status==='normal';return;}
       user.status = checkbox.checked ? 'normal' : 'disabled';
+      persistPlatformUser(user);
       var action = user.status === 'normal' ? '已启用' : '已停用';
       applyFilters();
       showToast('用户 "' + user.username + '" ' + action, user.status === 'normal' ? 'success' : 'warning');
@@ -552,8 +559,10 @@
     function deleteUser(userId) {
       var user = mockUsers.find(function(u) { return u.id === userId; });
       if (!user) return;
+      if (!canManagePlatformUser(user,'platform_personnel_delete') || user.roles.indexOf('超级管理员')>=0)return;
       if (!confirm('确认删除用户 "' + user.username + '" 吗？删除后无法恢复。')) return;
       mockUsers = mockUsers.filter(function(u) { return u.id !== userId; });
+      window.pbsAccounts.remove(user.account);
       applyFilters();
       showToast('用户 "' + user.username + '" 已删除', 'success');
     }
@@ -561,6 +570,7 @@
     // ===================== 编辑用户（可配置多个角色） =====================
     var editingUserId = null;
     function openEditUser(userId) {
+      if (!canManagePlatformUser(mockUsers.find(function(u) { return u.id===userId; }),'platform_personnel_edit'))return;
       var user = mockUsers.find(function(u) { return u.id === userId; });
       if (!user) return;
       editingUserId = userId;
@@ -585,6 +595,7 @@
     function saveEditUser() {
       var user = mockUsers.find(function(u) { return u.id === editingUserId; });
       if (!user) { closeEditUser(); return; }
+      if (!canManagePlatformUser(user,'platform_personnel_edit'))return;
       var checkedRoles = [];
       document.querySelectorAll('#edit-roles input[type="checkbox"]:checked').forEach(function(el) {
         checkedRoles.push(el.value);
@@ -593,11 +604,15 @@
         showToast('请至少为用户选择一个角色', 'error');
         return;
       }
+      var session=window.pbsGetSession(), identities=session.userRoles || session.roles || [session.role];
+      if (checkedRoles.indexOf('超级管理员')>=0 && identities.indexOf('超级管理员')<0)return;
+      if (user.roles.indexOf('超级管理员')>=0 && checkedRoles.indexOf('超级管理员')<0)return;
       var name = gv('edit-username');
       if (name) user.username = name;
       user.phone = gv('edit-phone') || user.phone;
       user.org = gv('edit-org') || user.org;
       user.roles = checkedRoles;
+      persistPlatformUser(user);
       closeEditUser();
       applyFilters();
       showToast('用户 "' + user.username + '" 已更新，共配置 ' + checkedRoles.length + ' 个角色', 'success');
@@ -694,8 +709,7 @@
           '<td class="text-center">' +
             '<div class="flex items-center justify-center gap-2">' +
               '<button class="text-blue-600 hover:text-blue-800 text-sm font-medium px-2 py-1 rounded hover:bg-blue-50 transition-colors" onclick="openEditUser(' + user.id + ')">编辑</button>' +
-              '<span class="text-gray-300">|</span>' +
-              '<button class="text-red-600 hover:text-red-800 text-sm font-medium px-2 py-1 rounded hover:bg-red-50 transition-colors" onclick="deleteUser(' + user.id + ')">删除</button>' +
+              (user.roles.indexOf('超级管理员')>=0?'':'<span class="text-gray-300">|</span><button class="text-red-600 hover:text-red-800 text-sm font-medium px-2 py-1 rounded hover:bg-red-50 transition-colors" onclick="deleteUser(' + user.id + ')">删除</button>') +
             '</div>' +
           '</td>' +
         '</tr>';
@@ -743,6 +757,13 @@
 
     // ===================== 初始化 =====================
     document.addEventListener('DOMContentLoaded', function() {
+      var saved=window.pbsAccounts.all().filter(function(account) {return (account.roles || [account.role]).some(function(role) {return ALL_ROLES.indexOf(role)>=0;});});
+      document.getElementById('flt-role').innerHTML='<option value="">全部角色</option>'+ALL_ROLES.map(function(role) {return '<option>'+role+'</option>';}).join('');
+      saved.forEach(function(account) {
+        var user={id:mockUsers.length+1,username:account.name,phone:account.phone || '—',account:account.u,roles:account.roles || [account.role],org:'PBS平台',registerTime:account.createdAt || '2026-10-26 09:00',status:account.accountStatus==='停用' || account.status==='停用'?'disabled':'normal'};
+        var index=mockUsers.findIndex(function(item) {return item.account===user.account;});
+        if (index>=0) {user.id=mockUsers[index].id;mockUsers[index]=user;}else mockUsers.push(user);
+      });
       applyFilters();
     });
 
@@ -755,7 +776,7 @@
       });
     });
   </script>
-  <script src="./assets/js/pbs-app.js?v=6.3"></script>
+  <script src="./assets/js/pbs-app.js?v=8.2"></script>
 
 
 

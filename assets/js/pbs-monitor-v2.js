@@ -328,9 +328,9 @@
       '<div class="school-focus-title"><h2>' + esc(school.name) + ' · 独立监控工作区</h2><p>当前流程：' + esc(school.milestone) + ' · 申请官网：' + esc(officialUrlFor(school).replace(/^https?:\/\//, '')) + '</p></div>' +
       '<div class="school-status-editor"><label for="schoolOverallStatus">学校申请状态</label><select id="schoolOverallStatus" class="monitor-select">' +
       statusOptions.map(function (status) { return '<option' + (status === school.status ? ' selected' : '') + '>' + status + '</option>'; }).join('') +
-      '</select><button class="monitor-btn small" data-pbs-permission="monitor_site_manage" onclick="pbsMonitor.saveSchoolStatus()">保存状态</button>' +
-      (hasPending ? '<button class="monitor-btn secondary small" data-pbs-permission="monitor_track" onclick="pbsMonitor.completeSchoolTodos()">本校待办全部完成</button>' : '') + '</div>';
-    document.getElementById('schoolOverallStatus').setAttribute('data-pbs-permission', 'monitor_site_manage');
+      '</select><button class="monitor-btn small" data-pbs-permission="monitor_detail_edit" onclick="pbsMonitor.saveSchoolStatus()">保存状态</button>' +
+      (hasPending ? '<button class="monitor-btn secondary small" data-pbs-permission="monitor_detail_edit" onclick="pbsMonitor.completeSchoolTodos()">本校待办全部完成</button>' : '') + '</div>';
+    document.getElementById('schoolOverallStatus').setAttribute('data-pbs-permission', 'monitor_detail_edit');
     document.getElementById('schoolOverallStatus').setAttribute('data-pbs-permission-mode', 'disable');
     document.getElementById('monitorMailBody').innerHTML = renderEmails(school);
     document.getElementById('monitorOfficialBody').innerHTML = renderOfficial(school);
@@ -348,7 +348,10 @@
     renderSchoolDetail();
   }
 
+  function canModify() { return !!(window.pbsHasPermission && window.pbsHasPermission('monitor_detail_edit')); }
+
   function saveSchoolStatus() {
+    if (!canModify()) return;
     var school = currentSchool();
     var select = document.getElementById('schoolOverallStatus');
     school.status = select.value;
@@ -359,6 +362,7 @@
   }
 
   function completeSchoolTodos() {
+    if (!canModify()) return;
     var school = currentSchool();
     workItemsFor(school).forEach(function (item) {
       if (workItemState(school, item) === 'pending') saveWorkItemState(school, item, 'completed');
@@ -370,11 +374,13 @@
   }
 
   function syncCurrentMail() {
+    if (!canModify()) return;
     var school = currentSchool();
     showToast('已更新' + school.name + '的邮件');
   }
   function readConfig() { try { return JSON.parse(localStorage.getItem('pbs_monitor_config_' + taskId)) || {}; } catch (e) { return {}; } }
   function openConfig() {
+    if (!canModify()) return;
     var config = readConfig();
     document.getElementById('monitorMailProvider').value = config.provider || 'QQ 邮箱';
     document.getElementById('monitorMailAccount').value = config.account || '';
@@ -384,6 +390,7 @@
     document.getElementById('monitorConfigError').textContent = ''; modal('monitorConfigModal',true);
   }
   function saveConfig() {
+    if (!canModify()) return;
     var old = readConfig(), account = document.getElementById('monitorMailAccount').value.trim(), authorization = document.getElementById('monitorMailAuthorization').value.trim();
     if (!account || (!authorization && (!old.authorization || old.account !== account))) { document.getElementById('monitorConfigError').textContent = '请填写邮箱账号与授权码'; return; }
     var config = { provider:document.getElementById('monitorMailProvider').value, account:account, authorization:authorization || old.authorization, frequency:document.getElementById('monitorConfigFrequency').value };
@@ -411,6 +418,7 @@
   }
 
   function openSnapshotUpload() {
+    if (!canModify()) return;
     document.getElementById('snapshotFile').value = '';
     document.getElementById('snapshotPage').value = '';
     document.getElementById('snapshotFileName').textContent = '点击选择 PNG / JPG 截图';
@@ -419,6 +427,7 @@
   }
 
   function previewSnapshot(input) {
+    if (!canModify()) return;
     if (!input.files || !input.files[0]) return;
     document.getElementById('snapshotFileName').textContent = input.files[0].name;
     var reader = new FileReader();
@@ -429,6 +438,7 @@
   }
 
   function submitSnapshot() {
+    if (!canModify()) return;
     var input = document.getElementById('snapshotFile');
     if (!input.files || !input.files[0]) { showToast('请先选择截图文件'); return; }
     var pageInput = document.getElementById('snapshotPage');

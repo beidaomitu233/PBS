@@ -87,7 +87,7 @@
     if (onAgree) dialog.querySelector('[data-agree]').onclick = function () { onAgree(policyKey); dialog.close(); };
   }
 
-  function canManage() { return !window.pbsHasPermission || window.pbsHasPermission('sys_org'); }
+  function canManage() { return !window.pbsHasPermission || window.pbsHasPermission('sys_org_edit'); }
 
   /* 管理弹窗：按区块分别上传《用户政策》与《隐私协议》 */
   function manage() {

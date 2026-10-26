@@ -639,3 +639,8 @@
   .pbs-application-fields { grid-template-columns: 1fr; }
   .pbs-application-fields .col-span-3 { grid-column: auto; }
 }
+
+.pbs-payment-group-head { background: #f8fafc; min-height: 48px; }
+.pbs-payment-group-payment { gap: 10px; white-space: nowrap; }
+.pbs-payment-group-payment > span { color: #94a3b8; font-size: 12px; }
+.pbs-payment-group-payment > strong { font-variant-numeric: tabular-nums; font-size: 15px; color: #1f2937; }

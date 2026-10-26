@@ -566,11 +566,16 @@
        机构管理员可自行授予/回收「机构管理员」角色，换人接管不需要平台运维介入。 */
     var INSTITUTION_ROLES = ['机构管理员', 'PMO', '项目经理', '文书人员', '网申人员', '文书审核', '销售人员', '文书机构管理员'];
     function assignableRoles() {
-      if (currentPersonnelRole === '超级管理员' || currentPersonnelRole === '平台运维人员') return INSTITUTION_ROLES.slice();
-      if (currentPersonnelRole === '机构管理员' || currentPersonnelRole === 'PMO') return ['机构管理员', 'PMO', '项目经理', '文书人员', '网申人员', '文书审核', '销售人员', '文书机构管理员'];
-      if (currentPersonnelRole === '文书机构管理员') return ['文书人员', '文书审核'];
-      return [];
+      var session = window.pbsGetSession ? window.pbsGetSession() : {};
+      var scope = 'org::' + (personnelScopeOrg || session.org || '当前机构');
+      var roles = INSTITUTION_ROLES.concat(['销售人员管理员']);
+      var custom = {}, metadata = {};
+      try { custom = JSON.parse(localStorage.getItem('pbs_custom_roles_v1') || '{}'); metadata = JSON.parse(localStorage.getItem('pbs_role_metadata_v1') || '{}'); } catch(e) {}
+      (custom[scope] || []).concat(custom.default || []).forEach(function(role) { if (role.status !== '停用' && roles.indexOf(role.name)<0) roles.push(role.name); });
+      var statuses = Object.assign({}, metadata.default || {}, metadata[scope] || {});
+      return roles.filter(function(role) { return !statuses[role] || statuses[role].status !== '停用'; });
     }
+
     function canManagePerson(person) {
       var allowed = assignableRoles();
       if (currentPersonnelRole === '超级管理员' || currentPersonnelRole === '平台运维人员') return true;
@@ -962,7 +967,7 @@ closeAddUser();
       }
     });
   </script>
-  <script src="./assets/js/pbs-app.js?v=7.8"></script>
+  <script src="./assets/js/pbs-app.js?v=8.2"></script>
 
 
 

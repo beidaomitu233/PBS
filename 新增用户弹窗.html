@@ -39,7 +39,7 @@
       <div class="flex justify-end gap-3 pt-2"><button type="button" class="px-5 h-10 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50" onclick="closeModal()">取消</button><button type="submit" class="px-5 h-10 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium">确认创建</button></div>
     </form>
   </div>
-  <script src="./assets/js/pbs-app.js?v=6.0"></script>
+  <script src="./assets/js/pbs-app.js?v=8.2"></script>
   <script>
     var ASSIGNABLE_ROLES = ['机构管理员', '销售人员', '项目经理', '文书人员', '网申人员', '文书审核', '文书机构管理员'];
     (function initRoles() {
@@ -54,6 +54,7 @@
           '文书机构管理员': ['文书人员', '文书审核']
         };
         roles = defaults[currentRole] || [];
+        if (parent.pbsPlatformPersonnelPage) roles=['平台运维人员'];
       } catch (e) {}
       document.getElementById('roleOptions').innerHTML = roles.map(function (role) {
         return '<label class="flex items-center gap-2 px-3 py-2 border border-gray-200 rounded-lg text-sm text-gray-700 cursor-pointer hover:border-blue-400"><input type="checkbox" value="' + role + '" class="accent-blue-600">' + role + '</label>';
@@ -67,6 +68,11 @@
           orgSelect.value = org;
         }
       } catch (e) {}
+      if (parent.pbsPlatformPersonnelPage) {
+        document.querySelector('h1').textContent='新增平台人员';
+        var platformOrg=document.getElementById('userOrg');
+        platformOrg.innerHTML='<option value="PBS平台">PBS平台</option>';
+      }
     })();
     function closeModal() { parent.postMessage('pbs:close', '*'); }
     function showError(msg) {
@@ -76,6 +82,7 @@
     }
     function submitUser(event) {
       event.preventDefault();
+      if (parent.pbsPlatformPersonnelPage && !parent.pbsHasPermission('platform_personnel_create'))return;
       var name = document.getElementById('userName').value.trim();
       var phone = document.getElementById('userPhone').value.trim();
       var account = document.getElementById('userAccount').value.trim();

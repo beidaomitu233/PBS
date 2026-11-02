@@ -11,6 +11,8 @@
   var categories=['文科','理科','工科','商科','艺术','医科'];
   var schoolAliases={cmu:'CMU Carnegie Mellon University 卡梅 卡内基梅隆',uiuc:'UIUC University of Illinois Urbana Champaign 伊利诺伊 香槟',gatech:'Georgia Tech Georgia Institute of Technology 佐治亚理工',nyu:'NYU New York University 纽大',bu:'BU Boston University 波大',nus:'NUS National University of Singapore 新国立',hku:'HKU University of Hong Kong 港大'};
   var extras={
+    "EUDE00016-B00030":{"category": "文科", "discipline": "政治学", "direction": "政治理论", "careers": []},
+    "EUFR00008-M00074":{"category": "工科", "discipline": "计算机科学与技术", "direction": "计算机科学", "careers": []},
     cmu:{category:'工科',discipline:'计算机科学与技术',direction:'人工智能',careers:['互联网 / 科技','金融'],softRank:80},
     uiuc:{category:'工科',discipline:'计算机科学与技术',direction:'软件工程',careers:['互联网 / 科技','咨询'],softRank:52},
     gatech:{category:'工科',discipline:'计算机科学与技术',direction:'人工智能',careers:['互联网 / 科技','制造业'],softRank:151},
@@ -45,7 +47,7 @@
     return text.split(expression).map(function(part,index){return index%2?'<mark>'+esc(part)+'</mark>':esc(part);}).join('');
   }
   function clearResultSearch(){state.resultQuery='';document.getElementById('scResultQuery').value='';apply(true);document.getElementById('scResultQuery').focus();}
-  function sortValue(record){return state.resultSort==='fee'?record.tuition:state.resultSort==='deadline'?Date.parse(record.end)||Infinity:record.rank;}
+  function sortValue(record){var value=state.resultSort==='fee'?record.tuition:state.resultSort==='deadline'?Date.parse(record.end)||Infinity:record.rank;return unknown(value)?Infinity:value;}
   function addProgramExamples(){
     var examples={
       cmu:[['machine-learning','机器学习（MSML）','人工智能'],['software','软件工程（MSE）','软件工程'],['robotics','机器人学（MSR）','机器人'],['security','信息安全（MSIS）','网络安全'],['hci','人机交互（MHCI）','人机交互'],['language','语言技术（MLT）','自然语言处理']],
@@ -74,12 +76,12 @@
   function makeRecords(){
     return Array.from(document.querySelectorAll('#schoolList [data-school]')).map(function(card){
       var d=card.dataset,info=window.SCHOOL_INFO[d.school] || {},extra=extras[d.institution || d.school] || {};
-      var record=Object.assign({id:d.school,card:card,name:info.name,country:d.country,continent:['美国','加拿大'].indexOf(d.country)>=0?'北美洲':['英国','德国','法国'].indexOf(d.country)>=0?'欧洲':['澳大利亚','新西兰'].indexOf(d.country)>=0?'大洋洲':'亚洲',stage:/BS|学士|本科/.test(d.degree)?'本科':'硕士',years:Math.max.apply(null,(d.duration.match(/[\d.]+/g)||[0]).map(Number)),rank:Number(d.rank),language:info.language,tuition:Number(d.tuition),start:info.appStart,end:info.appDeadline,keyword:[d.kw,info.name,info.major,info.degree,info.intro].join(' ').toLowerCase(),scores:{'雅思':d.ielts,'新托福':d.toefl,'GPA':d.gpa},careers:[],employers:[]},extra);
+      var record=Object.assign({id:d.school,card:card,name:info.name,country:d.country,continent:['美国','加拿大'].indexOf(d.country)>=0?'北美洲':['英国','德国','法国'].indexOf(d.country)>=0?'欧洲':['澳大利亚','新西兰'].indexOf(d.country)>=0?'大洋洲':'亚洲',stage:/BS|学士|本科/.test(d.degree)?'本科':'硕士',years:Math.max.apply(null,(d.duration.match(/[\d.]+/g)||[0]).map(Number)),rank:d.rank?Number(d.rank):null,language:info.language,tuition:Number(d.tuition),start:info.appStart,end:info.appDeadline,keyword:[d.kw,info.name,info.major,info.degree,info.intro].join(' ').toLowerCase(),scores:{'雅思':d.ielts,'新托福':d.toefl,'GPA':d.gpa},careers:[],employers:[]},extra);
       record.schoolId=d.institution || d.school;
       if(d.direction) record.direction=d.direction;
-      record.tuition=window.pbsSelectionMoney.tuition(info)/10000;
-      record.life=window.pbsSelectionMoney.living(info)/10000;
-      record.total=window.pbsSelectionMoney.total(info)/10000;
+      record.tuition=info.tuition?window.pbsSelectionMoney.tuition(info)/10000:null;
+      record.life=info.living?window.pbsSelectionMoney.living(info)/10000:null;
+      record.total=info.tuition && info.living?window.pbsSelectionMoney.total(info)/10000:null;
       record.searchText=normalize([info.name,info.major,info.degree,record.category,record.discipline,record.direction,schoolAliases[record.schoolId] || ''].join(' '));
       var aliases={Google:'谷歌',Microsoft:'微软',Amazon:'亚马逊',HSBC:'汇丰'};
       record.employers=(info.employers || '').split(/[、,，]/).map(function(name){name=name.trim();return aliases[name] || name;}).filter(Boolean);
@@ -102,7 +104,7 @@
       record.card.className='sc-program-card';
       record.card.setAttribute('tabindex','0');record.card.setAttribute('role','button');
       record.card.setAttribute('aria-label',info.major+'，查看专业详情');
-      record.card.innerHTML='<p class="sc-program-name">'+esc(info.major)+'</p><p class="sc-program-meta">'+esc(info.duration)+' · '+esc(info.degree)+'</p><p class="sc-program-meta sc-program-fee">'+esc(info.tuitionCcy)+' '+esc(info.tuition)+'<span class="sc-program-conversion">'+esc(pbsSelectionMoney.format(pbsSelectionMoney.tuition(info)))+'</span></p><div class="sc-program-footer"><p class="sc-program-meta">申请截止 '+esc(info.appDeadline)+'</p><div class="school-list-actions"></div></div>';
+      record.card.innerHTML='<p class="sc-program-name">'+esc(info.major)+'</p><p class="sc-program-meta">'+esc(info.duration)+' · '+esc(info.degree)+'</p><p class="sc-program-meta sc-program-fee">'+(info.tuition?esc(info.tuitionCcy)+' '+esc(info.tuition)+'<span class="sc-program-conversion">'+esc(pbsSelectionMoney.format(pbsSelectionMoney.tuition(info)))+'</span>':'学费未收录')+'</p><div class="sc-program-footer"><p class="sc-program-meta">申请截止 '+esc(info.appDeadline)+'</p><div class="school-list-actions"></div></div>';
       window.renderSchoolListActions(record.card,record.id,record.card.dataset.listState || 'ready');
       group.element.querySelector('.sc-program-items').appendChild(record.card);group.records.push(record);
     });
@@ -260,7 +262,7 @@
     if(!selected(r.category,state.categories) || !selected(r.discipline,state.disciplines) || !selected(r.direction,state.directions) || !selected(r.language,state.languages)) return false;
     if(state.board && state.rank){var rank=state.board==='qs'?r.rank:r.softRank,range=state.rank.split('-').map(Number);if(!accepts(rank,function(v){return v>=range[0] && v<=range[1];})) return false;}
     if(!state.scores.every(function(row){if(row.value==='') return true;return accepts(r.scores[row.type],function(value){return row.type==='A-Level'?grade(value)<=grade(row.value):parseFloat(value)<=Number(row.value);});})) return false;
-    var fee=state.feeType==='firstLife'?r.tuition+r.life:state.feeType==='total'?r.total:r.tuition;
+    var fee=state.feeType==='firstLife'?(r.tuition===null || r.life===null?null:r.tuition+r.life):state.feeType==='total'?r.total:r.tuition;
     if((state.feeMin!=='' || state.feeMax!=='') && !accepts(fee,function(v){return (state.feeMin==='' || v>=Number(state.feeMin)) && (state.feeMax==='' || v<=Number(state.feeMax)*1.1);})) return false;
     if(state.period && !accepts(r.start && r.end,function(){return r.start<=periodDate(state.period.end,true) && r.end>=periodDate(state.period.start,false);})) return false;
     if(!any(r.careers,state.careers) || !any(r.employers,state.employers)) return false;

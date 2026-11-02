@@ -30,7 +30,7 @@
         ids.forEach(function(id) { var input = document.getElementById(id); if (!input.value.trim()) { showFieldError(input, '请填写' + ({'stu-name':'学生姓名','stu-level':'申请层次','stu-country':'意向国家','stu-major':'意向专业'})[id]); ok = false; } });
         if (!ok) return;
         var level = document.getElementById('stu-level').value;
-        api.create({student:document.getElementById('stu-name').value.trim(), level:level.includes('申请')?level:level+'申请', gender:document.getElementById('stu-gender').value, birth:document.getElementById('stu-birth').value, phone:document.getElementById('stu-phone').value.trim(), address:document.getElementById('stu-address').value.trim(), country:document.getElementById('stu-country').value.trim(), major:document.getElementById('stu-major').value.trim(), note:document.getElementById('order-remark').value.trim()});
+        api.create({student:document.getElementById('stu-name').value.trim(), level:level.includes('申请')?level:level+'申请', gender:document.getElementById('stu-gender').value, birth:document.getElementById('stu-birth').value, phone:document.getElementById('stu-phone').value.trim(), address:document.getElementById('stu-address').value.trim(), country:document.getElementById('stu-country').value.trim(), major:document.getElementById('stu-major').value.trim(), supplement:document.getElementById('stu-supplement')?.value.trim() || '', note:document.getElementById('order-remark').value.trim()});
         closeCreateModal(); renderList(); toast('选校任务已创建');
       };
     }

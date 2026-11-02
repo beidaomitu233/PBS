@@ -53,6 +53,39 @@
       if (!count && !empty) { empty = document.createElement('p'); empty.className = 'selection-zone-empty'; empty.textContent = '拖拽院校至此或点击「加入清单」'; list.appendChild(empty); }
       if (count && empty) empty.remove();
     });
+    document.querySelectorAll('#selectedSchoolZones [data-school-item]').forEach(function(card){
+      card.draggable=true;
+      if(card.querySelector('.selection-drag-handle'))return;
+      var handle=document.createElement('span');handle.className='selection-drag-handle';handle.title='拖拽调整分区';
+      handle.innerHTML='<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><circle cx="8" cy="5" r="1.6"/><circle cx="16" cy="5" r="1.6"/><circle cx="8" cy="12" r="1.6"/><circle cx="16" cy="12" r="1.6"/><circle cx="8" cy="19" r="1.6"/><circle cx="16" cy="19" r="1.6"/></svg>';
+      card.firstElementChild.prepend(handle);
+    });
+  }
+  function enableZoneDragging(){
+    var board=document.getElementById('selectedSchoolZones');
+    function clear(){board.classList.remove('is-dragging');board.querySelectorAll('.is-drop-target,.is-dragged').forEach(function(element){element.classList.remove('is-drop-target','is-dragged');});}
+    board.addEventListener('dragstart',function(event){
+      var card=event.target.closest('[data-school-item]');if(!card)return;
+      if(event.target.closest('button,input,textarea,a')){event.preventDefault();return;}
+      event.dataTransfer.setData('text/plain',card.dataset.schoolItem);event.dataTransfer.effectAllowed='move';board.classList.add('is-dragging');card.classList.add('is-dragged');
+    });
+    board.addEventListener('dragover',function(event){
+      var target=event.target.closest('[data-selection-zone]');if(!target)return;
+      event.preventDefault();event.stopPropagation();event.dataTransfer.dropEffect='move';
+      board.querySelectorAll('.is-drop-target').forEach(function(element){if(element!==target)element.classList.remove('is-drop-target');});
+      target.classList.add('is-drop-target');
+      var zone=target.dataset.selectionZone;if(target.classList.contains('is-collapsed'))setExpanded(zone,true);
+      var list=document.getElementById('zone-'+zone),rect=list.getBoundingClientRect();
+      if(event.clientY<rect.top+45)list.scrollTop-=16;else if(event.clientY>rect.bottom-45)list.scrollTop+=16;
+    },true);
+    board.addEventListener('dragleave',function(event){var target=event.target.closest('[data-selection-zone]');if(target && !target.contains(event.relatedTarget))target.classList.remove('is-drop-target');});
+    board.addEventListener('drop',function(event){
+      var target=event.target.closest('[data-selection-zone]');if(!target)return;
+      event.preventDefault();event.stopPropagation();var id=event.dataTransfer.getData('text/plain');
+      if(window.SCHOOL_INFO[id])window.addToZone(target.dataset.selectionZone,id);
+      clear();
+    },true);
+    board.addEventListener('dragend',clear);
   }
   function init() {
     if (!document.getElementById('selectedSchoolZones')) return;
@@ -77,7 +110,7 @@
       event.preventDefault(); card.classList.toggle('is-reason-expanded'); text.setAttribute('aria-expanded',String(card.classList.contains('is-reason-expanded')));
     }
     document.addEventListener('click',toggleReason); document.addEventListener('keydown',toggleReason);
-    updateToggle(); refresh();
+    enableZoneDragging();updateToggle(); refresh();
   }
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded',init); else init();
 })();

@@ -83,6 +83,14 @@ html:has(.selection-binding-dialog[open],.selection-share-dialog[open],.selectio
 .selection-zone-list>[data-school-item]+[data-school-item]{margin-top:12px}
 .selection-zone-list>[data-school-item]{border-radius:10px;padding:14px}
 .selection-zone-empty{padding:20px 0;text-align:center;color:#94a3b8;font-size:12px;line-height:1.8}
+.selection-drag-handle{display:inline-flex;flex-shrink:0;margin:2px 0 0 -5px;color:#a7b4c6;cursor:grab}
+.selection-drag-handle svg{width:15px;height:18px}
+.selection-zone-list [data-school-item][draggable=true]{cursor:grab}
+.selection-zone-list [data-school-item].is-dragged{opacity:.45;cursor:grabbing}
+.selection-zones.is-dragging .selection-zone{border-style:dashed}
+.selection-zone.is-drop-target{border-color:var(--zone-text);box-shadow:inset 0 0 0 1px var(--zone-text)}
+.selection-zone.is-drop-target .selection-zone-empty{color:var(--zone-text)}
+.selection-zone-list>[data-school-item]>div:first-child>.min-w-0{flex:1}
 .selection-zone-list .reason-text{cursor:pointer}
 .selection-zone-list [data-school-item].is-reason-expanded .reason-text{display:block;-webkit-line-clamp:unset;white-space:pre-wrap}
 .selection-zone-list .reason-text:focus-visible{outline:2px solid #93c5fd;outline-offset:3px;border-radius:3px}

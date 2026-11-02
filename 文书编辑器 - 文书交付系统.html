@@ -881,28 +881,21 @@ body {
   letter-spacing: 0.04em;
 }
 
-/* 待撰写空态 */
-.draft-empty-card {
-  max-width: 560px;
-  width: 100%;
-  text-align: center;
-  padding: 56px 32px;
-  background: #fff;
-  border: 1px solid #eef2f7;
-  border-radius: 16px;
-  box-shadow: 0 4px 24px rgba(15, 23, 42, 0.06);
-}
-.draft-empty-icon {
-  width: 64px;
-  height: 64px;
-  margin: 0 auto 16px;
-  border-radius: 18px;
-  background: linear-gradient(135deg, #f5f3ff, #ede9fe);
-  border: 1px solid #ddd6fe;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: #7c3aed;
+.document-template-guide { display:flex; align-items:center; justify-content:space-between; gap:24px; width:100%; box-sizing:border-box; margin:24px 0 0; padding:26px 28px; border:1px solid #cfe0fa; border-radius:14px; background:#f0f6ff; color:#2563eb; text-align:left; cursor:pointer; transition:background .18s,border-color .18s,box-shadow .18s; }
+.document-template-guide[hidden] { display:none; }
+.document-template-guide:hover { background:#e8f1ff; border-color:#93baff; box-shadow:0 4px 18px #2563eb0a; }
+.document-template-guide:focus-visible { outline:2px solid #2563eb; outline-offset:4px; }
+.document-template-guide-main { display:flex; align-items:center; gap:18px; min-width:0; }
+.document-template-guide-main > svg { width:32px; height:32px; padding:12px; box-sizing:content-box; flex-shrink:0; border-radius:14px; background:#dfeaff; }
+.document-template-guide-copy { display:flex; flex-direction:column; gap:6px; }
+.document-template-guide strong { font-size:16px; font-weight:600; color:#1e40af; }
+.document-template-guide small { font-size:13px; line-height:1.7; color:#6b7f9c; }
+.document-template-guide-action { display:inline-flex; align-items:center; gap:8px; flex-shrink:0; padding:10px 16px; border:1px solid #c9dcff; border-radius:8px; background:#fff; font-size:13px; font-weight:600; }
+.document-template-guide-action svg { width:16px; height:16px; }
+@media (max-width:640px) {
+  .document-template-guide { flex-wrap:wrap; gap:18px; padding:20px; }
+  .document-template-guide-main { gap:12px; }
+  .document-template-guide-action { margin-left:68px; }
 }
 
 /* 模板弹窗卡片 */
@@ -1391,9 +1384,9 @@ body {
               <p id="doc-subtitle" class="text-sm text-gray-500">卡内基梅隆大学 · 人工智能 · 硕士申请</p>
             </div>
             <div class="flex items-center gap-2 flex-shrink-0">
-              <button class="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium bg-white border border-gray-300 text-gray-700 rounded-lg hover:border-purple-300 hover:text-purple-700 hover:bg-purple-50 transition-colors" onclick="openTemplateSelect('switch')" title="更换当前套用的模板">
+              <button id="editorTemplateToolbar" data-pbs-permission="doc_edit" class="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium bg-white border border-gray-300 text-gray-700 rounded-lg hover:border-purple-300 hover:text-purple-700 hover:bg-purple-50 transition-colors" onclick="openTemplateSelect('switch')" title="替换模板">
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
-                使用模板
+                替换模板
               </button>
               <button class="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium bg-white border border-gray-300 text-gray-700 rounded-lg hover:border-purple-300 hover:text-purple-700 hover:bg-purple-50 transition-colors" onclick="openCaseLibrary()" title="查看同类型文书案例">
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>
@@ -1415,6 +1408,13 @@ body {
             <span id="documentAutoSaveStatus" class="inline-flex items-center gap-1.5 text-xs text-emerald-600"><span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>已自动保存</span>
           </div>
           <div id="editor-sections" class="editor-sections space-y-4"><div class="editor-block border border-gray-200 rounded-md overflow-hidden"><div class="flex items-center justify-between gap-2 px-4 py-2 bg-gray-50 border-b border-gray-200"><input type="text" class="section-title-input" value="段落 1 · 研究背景与动机" aria-label="段落标题"><div class="editor-inline-actions flex items-center gap-2 flex-shrink-0"><button class="btn-send-to-ai flex items-center gap-1 px-2.5 py-1 text-xs font-medium bg-blue-600 text-white rounded-lg hover:bg-blue-700" data-section="section-1"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>帮我改写</button><button class="btn-delete-section flex items-center gap-1 px-2.5 py-1 text-xs font-medium bg-white border border-gray-300 text-gray-600 rounded-lg hover:bg-red-50 hover:text-red-600 hover:border-red-300" data-section="section-1" title="删除该段落"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6M9 7V4a1 1 0 011-1h4a1 1 0 011 1v3M4 7h16"></path></svg>删除</button></div></div><textarea class="editor-textarea w-full p-4 text-gray-700 leading-relaxed text-sm resize-none focus:outline-none" rows="4" placeholder="从左侧学生资料、院校目标或右侧模板开始撰写本段…"></textarea></div><div class="editor-block border border-gray-200 rounded-md overflow-hidden"><div class="flex items-center justify-between gap-2 px-4 py-2 bg-gray-50 border-b border-gray-200"><input type="text" class="section-title-input" value="段落 2 · 学术与项目经历" aria-label="段落标题"><div class="editor-inline-actions flex items-center gap-2 flex-shrink-0"><button class="btn-send-to-ai flex items-center gap-1 px-2.5 py-1 text-xs font-medium bg-blue-600 text-white rounded-lg hover:bg-blue-700" data-section="section-2"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>帮我改写</button><button class="btn-delete-section flex items-center gap-1 px-2.5 py-1 text-xs font-medium bg-white border border-gray-300 text-gray-600 rounded-lg hover:bg-red-50 hover:text-red-600 hover:border-red-300" data-section="section-2" title="删除该段落"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6M9 7V4a1 1 0 011-1h4a1 1 0 011 1v3M4 7h16"></path></svg>删除</button></div></div><textarea class="editor-textarea w-full p-4 text-gray-700 leading-relaxed text-sm resize-none focus:outline-none" rows="4" placeholder="从左侧学生资料、院校目标或右侧模板开始撰写本段…"></textarea></div><div class="editor-block border border-gray-200 rounded-md overflow-hidden"><div class="flex items-center justify-between gap-2 px-4 py-2 bg-gray-50 border-b border-gray-200"><input type="text" class="section-title-input" value="段落 3 · 职业目标与院校匹配" aria-label="段落标题"><div class="editor-inline-actions flex items-center gap-2 flex-shrink-0"><button class="btn-send-to-ai flex items-center gap-1 px-2.5 py-1 text-xs font-medium bg-blue-600 text-white rounded-lg hover:bg-blue-700" data-section="section-3"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>帮我改写</button><button class="btn-delete-section flex items-center gap-1 px-2.5 py-1 text-xs font-medium bg-white border border-gray-300 text-gray-600 rounded-lg hover:bg-red-50 hover:text-red-600 hover:border-red-300" data-section="section-3" title="删除该段落"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6M9 7V4a1 1 0 011-1h4a1 1 0 011 1v3M4 7h16"></path></svg>删除</button></div></div><textarea class="editor-textarea w-full p-4 text-gray-700 leading-relaxed text-sm resize-none focus:outline-none" rows="4" placeholder="从左侧学生资料、院校目标或右侧模板开始撰写本段…"></textarea></div></div>
+          <button id="documentTemplateGuide" type="button" class="document-template-guide" data-pbs-permission="doc_edit" onclick="openTemplateSelect('choose')" hidden>
+            <span class="document-template-guide-main">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9l-6-6Z"/><path stroke-linecap="round" stroke-linejoin="round" d="M14 3v6h6M8 13h8M8 17h5"/></svg>
+              <span class="document-template-guide-copy"><strong>使用模板，开始撰写</strong><small>选择适合当前文书的模板，快速建立段落结构</small></span>
+            </span>
+            <span class="document-template-guide-action">选择模板<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M4 12h16m-6-6 6 6-6 6"/></svg></span>
+          </button>
           <button id="btn-add-section" type="button" class="w-full mt-4 border-2 border-dashed border-gray-300 rounded-xl py-3 text-sm text-gray-500 hover:border-purple-400 hover:text-purple-600 transition-colors flex items-center justify-center gap-2">
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
             新增段落
@@ -1422,21 +1422,6 @@ body {
         </div>
       </div>
 
-      <!-- 待撰写空态：尚未开始撰写时仅展示「选择模板」入口 -->
-      <div id="draft-empty-state" class="flex-1 hidden bg-gray-50 items-center justify-center p-6">
-        <div class="draft-empty-card animate-fade-in">
-          <div class="draft-empty-icon">
-            <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
-          </div>
-          <h3 class="text-base font-semibold text-gray-900 mb-2">该文书尚未开始撰写</h3>
-          <p class="text-sm text-gray-500 leading-relaxed mb-6">建议选择一份与申请方向匹配的模板生成段落结构，<br>也可以直接进入空白编辑。</p>
-          <button class="btn btn-primary px-6 h-10 text-sm" onclick="openTemplateSelect('choose')">
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 5a1 1 0 011-1h4a1 1 0 011 1v4a1 1 0 01-1 1H5a1 1 0 01-1-1V5zM14 5a1 1 0 011-1h4a1 1 0 011 1v4a1 1 0 01-1 1h-4a1 1 0 01-1-1V5zM4 15a1 1 0 011-1h4a1 1 0 011 1v4a1 1 0 01-1 1H5a1 1 0 01-1-1v-4zM14 15a1 1 0 011-1h4a1 1 0 011 1v4a1 1 0 01-1 1h-4a1 1 0 01-1-1v-4z"></path></svg>
-            选择模板
-          </button>
-          <p class="mt-4"><button class="text-xs text-gray-400 hover:text-gray-600 underline underline-offset-2" onclick="exitDraftMode()">跳过模板，直接开始编辑</button></p>
-        </div>
-      </div>
 
       <!-- 底部版本信息卡 -->
       <div id="editor-version-bar" class="bg-white border-t border-gray-200 px-6 py-2 flex items-center justify-between">
@@ -1690,7 +1675,7 @@ body {
         </div>
         <p id="templateTypeHint" class="text-xs text-gray-400 mb-3">当前文书类型：PS · 共 3 条模板</p>
         <div id="templateList" class="space-y-3">
-          <div class="template-card template-option-card p-3 bg-white border border-gray-200 rounded-lg cursor-pointer" data-types="ps" data-name="ai方向ps标准模板 ai ps 计算机 人工智能">
+          <div class="template-card template-option-card p-3 bg-white border border-gray-200 rounded-lg cursor-pointer" data-template-key="ai" data-types="ps" data-name="ai方向ps标准模板 ai ps 计算机 人工智能">
             <h4 class="text-sm font-medium text-gray-900 mb-1">AI方向PS标准模板</h4>
             <p class="text-xs text-gray-500 mb-2">适用于CS/AI方向硕士申请</p>
             <div class="flex items-center justify-between">
@@ -1698,7 +1683,7 @@ body {
               <button class="px-3 py-1 text-xs font-medium bg-blue-600 text-white rounded-lg hover:bg-blue-700" onclick="previewTemplateApplication('ai')">套用</button>
             </div>
           </div>
-          <div class="template-card template-option-card p-3 bg-white border border-gray-200 rounded-lg cursor-pointer" data-types="ps,cv" data-name="转专业ps框架 转专业 跨专业 ps cv">
+          <div class="template-card template-option-card p-3 bg-white border border-gray-200 rounded-lg cursor-pointer" data-template-key="switch" data-types="ps,cv" data-name="转专业ps框架 转专业 跨专业 ps cv">
             <h4 class="text-sm font-medium text-gray-900 mb-1">转专业PS框架</h4>
             <p class="text-xs text-gray-500 mb-2">适用于跨专业申请</p>
             <div class="flex items-center justify-between">
@@ -1706,7 +1691,7 @@ body {
               <button class="px-3 py-1 text-xs font-medium bg-blue-600 text-white rounded-lg hover:bg-blue-700" onclick="previewTemplateApplication('switch')">套用</button>
             </div>
           </div>
-          <div class="template-card template-option-card p-3 bg-white border border-gray-200 rounded-lg cursor-pointer" data-types="ps,rl,rp" data-name="科研型ps模板 科研 学术 ps rl rp">
+          <div class="template-card template-option-card p-3 bg-white border border-gray-200 rounded-lg cursor-pointer" data-template-key="research" data-types="ps,rl,rp" data-name="科研型ps模板 科研 学术 ps rl rp">
             <h4 class="text-sm font-medium text-gray-900 mb-1">科研型PS模板</h4>
             <p class="text-xs text-gray-500 mb-2">强调科研经历与学术能力</p>
             <div class="flex items-center justify-between">
@@ -1811,16 +1796,24 @@ body {
     </div>
   </div>
 
-  <!-- 模板套用预览弹窗 -->
-  <div id="templateApplyModal" class="fixed inset-0 z-[100] hidden">
+  <!-- 模板套用弹窗 -->
+  <div id="templateApplyModal" role="dialog" aria-modal="true" aria-labelledby="templateApplyTitle" class="fixed inset-0 z-[100] hidden">
     <div class="absolute inset-0 bg-black bg-opacity-30" onclick="closeTemplateApplication()"></div>
     <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-white rounded-2xl shadow-2xl p-6" style="width: 520px; max-width: calc(100vw - 32px);">
-      <div class="flex items-center justify-between mb-4"><div><h3 id="templateApplyTitle" class="text-lg font-semibold text-gray-800">套用模板</h3><p class="text-xs text-gray-500 mt-1">套用后仅更新章节结构，当前正文按顺序保留。</p></div><button class="text-gray-400 hover:text-gray-600 text-xl" onclick="closeTemplateApplication()">×</button></div>
-      <div class="grid grid-cols-2 gap-4">
+      <div class="flex items-center justify-between mb-5"><h3 id="templateApplyTitle" class="text-lg font-semibold text-gray-800">套用模板</h3><button class="text-gray-400 hover:text-gray-600 text-xl" aria-label="关闭" onclick="closeTemplateApplication()">×</button></div>
+      <div id="templateReplacementFields" class="hidden">
+        <div class="flex items-start gap-3 p-4 mb-5 rounded-xl border border-amber-100 bg-amber-50 text-amber-800">
+          <svg class="w-5 h-5 flex-shrink-0 mt-0.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="m10.3 4.9-7.6 13A2 2 0 0 0 4.4 21h15.2a2 2 0 0 0 1.7-3.1l-7.6-13a2 2 0 0 0-3.4 0Z M12 9v4m0 4h.01"/></svg>
+          <p class="text-sm leading-6">替换模板会导致已编辑内容被覆盖，请先另存为新版本后再覆盖。</p>
+        </div>
+        <label for="templateReplacementSelect" class="block text-sm font-medium text-gray-700 mb-2">新模板</label>
+        <select id="templateReplacementSelect" class="w-full h-11 px-3 border border-gray-300 rounded-lg bg-white text-sm text-gray-700 focus:outline-none focus:border-blue-500" onchange="pendingTemplateKey=this.value; document.getElementById('templateApplyConfirm').disabled=!this.value;"></select>
+      </div>
+      <div id="templateApplicationPreview" class="grid grid-cols-2 gap-4">
         <div class="p-3 bg-gray-50 rounded-xl"><p class="text-xs font-medium text-gray-500 mb-2">当前结构</p><div id="templateCurrentSections" class="space-y-2"></div></div>
         <div class="p-3 bg-blue-50 rounded-xl border border-blue-100"><p class="text-xs font-medium text-blue-700 mb-2">套用后结构</p><div id="templateNextSections" class="space-y-2"></div></div>
       </div>
-      <div class="flex justify-end gap-3 mt-6"><button class="px-4 h-9 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 text-sm" onclick="closeTemplateApplication()">取消</button><button class="px-4 h-9 bg-blue-600 text-white rounded-lg hover:bg-blue-700 text-sm font-medium" onclick="confirmTemplateApplication()">确认套用</button></div>
+      <div class="flex justify-end gap-3 mt-6"><button class="px-4 h-9 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 text-sm" onclick="closeTemplateApplication()">取消</button><button id="templateApplyConfirm" class="px-4 h-9 bg-blue-600 text-white rounded-lg hover:bg-blue-700 text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed" onclick="confirmTemplateApplication()">确认套用</button></div>
     </div>
   </div>
 
@@ -2891,15 +2884,26 @@ var templatePresets = {
   research: { name: '科研型PS模板', sections: ['研究问题与学术兴趣', '研究方法与阶段成果', '拟研究方向与项目匹配'] }
 };
 var pendingTemplateKey = null;
+var templateApplicationMode = 'choose';
 
 function templateSectionItem(index, label, active) {
   return '<div class="flex items-center gap-2 text-xs ' + (active ? 'text-blue-800' : 'text-gray-700') + '"><span class="w-5 h-5 rounded-full ' + (active ? 'bg-white text-blue-600' : 'bg-white text-gray-500') + ' flex items-center justify-center font-medium">' + (index + 1) + '</span><span>' + escapeDocumentHtml(label) + '</span></div>';
 }
 function previewTemplateApplication(key) {
+  if (documentReadOnly) return;
   var preset = templatePresets[key];
   if (!preset) return;
+  if (document.querySelector('#editor-sections .editor-block')) {
+    openTemplateReplacement(key);
+    return;
+  }
+  templateApplicationMode = 'choose';
   pendingTemplateKey = key;
   document.getElementById('templateApplyTitle').textContent = '套用「' + preset.name + '」';
+  document.getElementById('templateReplacementFields').classList.add('hidden');
+  document.getElementById('templateApplicationPreview').classList.remove('hidden');
+  document.getElementById('templateApplyConfirm').textContent = '确认套用';
+  document.getElementById('templateApplyConfirm').disabled = false;
   var current = Array.from(document.querySelectorAll('#editor-sections .editor-block')).map(function(block) {
     var titleInput = block.querySelector('.section-title-input');
     return (titleInput ? titleInput.value : '').replace(/^段落\s*\d+\s*[·・]\s*/, '');
@@ -2907,6 +2911,35 @@ function previewTemplateApplication(key) {
   document.getElementById('templateCurrentSections').innerHTML = current.map(function(label, index) { return templateSectionItem(index, label, false); }).join('');
   document.getElementById('templateNextSections').innerHTML = preset.sections.map(function(label, index) { return templateSectionItem(index, label, true); }).join('');
   document.getElementById('templateApplyModal').classList.remove('hidden');
+}
+function openTemplateReplacement(key) {
+  if (documentReadOnly) return;
+  templateApplicationMode = 'replace';
+  pendingTemplateKey = null;
+  var select = document.getElementById('templateReplacementSelect');
+  select.innerHTML = '<option value="" disabled selected>请选择模板</option>';
+  var type = getCurrentDocType();
+  document.querySelectorAll('#templateList .template-card').forEach(function(card) {
+    var templateKey = card.getAttribute('data-template-key');
+    if ((card.getAttribute('data-types') || '').split(',').indexOf(type) === -1 || !templatePresets[templateKey]) return;
+    var option = document.createElement('option');
+    option.value = templateKey;
+    option.textContent = templatePresets[templateKey].name;
+    select.appendChild(option);
+  });
+  if (key && Array.from(select.options).some(function(option) { return option.value === key; })) {
+    select.value = key;
+    pendingTemplateKey = key;
+  }
+  if (select.options.length === 1) select.options[0].textContent = '暂无可用模板';
+  document.getElementById('templateApplyTitle').textContent = '替换模板';
+  document.getElementById('templateReplacementFields').classList.remove('hidden');
+  document.getElementById('templateApplicationPreview').classList.add('hidden');
+  document.getElementById('templateApplyConfirm').textContent = '确定';
+  document.getElementById('templateApplyConfirm').disabled = !pendingTemplateKey;
+  document.getElementById('templateSelectModal').classList.add('hidden');
+  document.getElementById('templateApplyModal').classList.remove('hidden');
+  select.focus();
 }
 function closeTemplateApplication() {
   document.getElementById('templateApplyModal')?.classList.add('hidden');
@@ -2916,15 +2949,15 @@ function confirmTemplateApplication() {
   if (documentReadOnly) return;
   var preset = templatePresets[pendingTemplateKey];
   if (!preset) return;
-  var current = captureDocumentSections();
-  var next = preset.sections.map(function(label, index) { return { label: '段落 ' + (index + 1) + ' · ' + label, content: current[index] ? current[index].content : '' }; });
-  renderDocumentSections(next.concat(current.slice(preset.sections.length)));
+  var replacing = templateApplicationMode === 'replace';
+  var next = preset.sections.map(function(label, index) { return { label: '段落 ' + (index + 1) + ' · ' + label, content: '' }; });
+  renderDocumentSections(next);
   document.getElementById('templateApplyModal').classList.add('hidden');
   document.getElementById('templateSelectModal').classList.add('hidden');
   pendingTemplateKey = null;
   if (typeof exitDraftMode === 'function') exitDraftMode();
   if (typeof scheduleDocumentAutoSave === 'function') scheduleDocumentAutoSave();
-  showToast('模板章节结构已套用，当前正文内容已保留', 'success');
+  showToast(replacing ? '模板已替换，当前内容已覆盖' : '模板已套用', 'success');
 }
 
 function copyTextValue(value) {
@@ -3046,6 +3079,7 @@ function currentDocWordCount() {
   return captureDocumentSections().reduce(function(count, section) { return count + section.content.replace(/\s/g, '').length; }, 0);
 }
 function updateDocWordCount() {
+  updateDocumentEmptyState();
   var count = currentDocWordCount();
   var el = document.getElementById('docWordCount');
   if (el) el.textContent = count;
@@ -3211,6 +3245,7 @@ document.getElementById('btn-add-section')?.addEventListener('click', function (
   var index = container.querySelectorAll('.editor-block').length + 1;
   var block = buildSectionBlock(index);
   container.appendChild(block);
+  if (draftMode) exitDraftMode();
   bindSendToAi(block);
   if (window.enhanceEditorActions) window.enhanceEditorActions(block);
   var ta = block.querySelector('.editor-textarea');
@@ -3236,6 +3271,13 @@ document.getElementById('editor-sections')?.addEventListener('click', function (
 
 // ===== 待撰写空态：进入空白编辑器，先选择模板 =====
 var draftMode = false;
+function updateDocumentEmptyState() {
+  var empty=!document.querySelector('#editor-sections .editor-block');
+  var guide=document.getElementById('documentTemplateGuide');
+  if (guide) guide.hidden=!empty || documentReadOnly;
+  var toolbar=document.getElementById('editorTemplateToolbar');
+  if (toolbar) toolbar.classList.toggle('hidden',empty && !documentReadOnly);
+}
 function enterDraftMode() {
   draftMode = true;
   var badge = document.querySelector('.topbar-status');
@@ -3243,12 +3285,10 @@ function enterDraftMode() {
     badge.classList.add('is-draft');
     badge.innerHTML = '<span class="topbar-status-dot"></span>待撰写';
   }
-  document.getElementById('editor-toolbar').classList.add('hidden');
-  document.getElementById('editor-content-wrap').classList.add('hidden');
-  document.getElementById('editor-version-bar').classList.add('hidden');
-  var empty = document.getElementById('draft-empty-state');
-  empty.classList.remove('hidden');
-  empty.classList.add('flex');
+  var saved=null;
+  try { saved=JSON.parse(localStorage.getItem(documentDraftKey()) || 'null'); } catch(e) {}
+  if (!saved || !Array.isArray(saved.sections)) document.getElementById('editor-sections').replaceChildren();
+  updateDocWordCount();
 }
 function exitDraftMode() {
   if (!draftMode) return;
@@ -3261,16 +3301,18 @@ function exitDraftMode() {
   document.getElementById('editor-toolbar').classList.remove('hidden');
   document.getElementById('editor-content-wrap').classList.remove('hidden');
   document.getElementById('editor-version-bar').classList.remove('hidden');
-  var empty = document.getElementById('draft-empty-state');
-  empty.classList.add('hidden');
-  empty.classList.remove('flex');
   updateDocWordCount();
 }
 
-// ===== 选择模板 / 使用模板弹窗 =====
+// ===== 模板选择与替换 =====
 function openTemplateSelect(mode) {
+  if (documentReadOnly) return;
+  if (mode === 'switch') {
+    openTemplateReplacement();
+    return;
+  }
   var title = document.getElementById('templateSelectTitle');
-  if (title) title.textContent = mode === 'switch' ? '使用模板' : '选择模板';
+  if (title) title.textContent = '选择模板';
   if (typeof updateTemplatePanel === 'function') updateTemplatePanel(getCurrentDocType());
   document.getElementById('templateSelectModal').classList.remove('hidden');
 }

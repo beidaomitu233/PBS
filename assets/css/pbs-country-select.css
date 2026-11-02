@@ -1,0 +1,15 @@
+.pbs-country-select{width:100%;font-size:13px;color:#334155;min-width:0}
+.pbs-country-select .ts-control{min-height:36px;padding:7px 11px;border:1px solid #dce3ed;border-radius:7px;box-shadow:none;background:#fff;gap:4px;align-items:center}
+.pbs-country-select.focus .ts-control{border-color:#83a9f6;box-shadow:0 0 0 2px #2563eb0a}
+.pbs-country-select .ts-control input{font:inherit!important;min-height:20px;padding:0!important;box-shadow:none!important;border:0!important}
+.pbs-country-select.multi .ts-control>div{margin:0;background:#eff6ff;border:0;color:#2563eb;border-radius:4px;padding:3px 7px}
+.pbs-country-select.multi .ts-control .remove{border-left:0;color:#7799c4}
+.pbs-country-select .ts-dropdown{border:1px solid #e3e9f2;border-radius:8px;box-shadow:0 10px 28px #0f172a14;font:inherit;overflow:hidden}
+.pbs-country-select .ts-dropdown-content{max-height:240px}
+.pbs-country-select .ts-dropdown .option{padding:9px 11px}
+.pbs-country-select .ts-dropdown .active{background:#eff6ff;color:#2563eb}
+.pbs-country-option{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.pbs-country-option small{font-size:11px;color:#94a3b8;text-align:right}
+.pbs-country-select.single .ts-control:after{border-color:#8ca0bb transparent transparent}
+.pbs-country-select.single .ts-control,.pbs-country-select.single .ts-control input{background:#fff;background-image:none}
+.pbs-country-select .clear-button{color:#94a3b8;font-size:17px}

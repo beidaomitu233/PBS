@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="zh-CN" class="light" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>监控详情页 - 留学申请管理系统</title>
+  <script src="./assets/vendor/tailwind-runtime.js"></script>
+  <link rel="stylesheet" href="./assets/css/pbs-theme.css?v=6.3">
+  <link rel="stylesheet" href="./assets/css/pbs-monitor-v2.css?v=1.4">
+</head>
+<body class="min-h-screen" data-monitor-page="detail">
+  <header class="bg-white border-b border-gray-200 sticky top-0 z-50">
+    <div class="h-16 flex items-center justify-between px-6">
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 bg-white overflow-hidden">
+          <img src="./PRD参考文件/导航栏图标参考.jpg" alt="PBS" class="w-full h-full object-contain">
+        </div>
+        <span class="text-xl font-semibold text-gray-800">留学申请管理系统</span>
+      </div>
+      <div class="flex items-center gap-5">
+        <button class="relative p-2 text-gray-500 hover:text-gray-700" data-dom-id="btn-notification" aria-label="通知消息">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.4-1.4A2 2 0 0118 14.2V11a6 6 0 00-4-5.7V5a2 2 0 10-4 0v.3A6 6 0 006 11v3.2a2 2 0 01-.6 1.4L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/></svg>
+          <span class="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full"></span>
+        </button>
+        <div class="flex items-center gap-3 pl-5 border-l border-gray-200 relative" id="userMenuContainer">
+          <span class="pbs-role-badge hidden sm:inline-block text-xs px-2.5 py-1 bg-blue-50 text-blue-700 rounded-full font-medium">超级管理员</span>
+          <div class="w-8 h-8 bg-gradient-to-br from-blue-500 to-purple-500 rounded-full flex items-center justify-center cursor-pointer" onclick="toggleUserMenu()"><span class="text-white text-sm font-medium">测</span></div>
+          <span class="text-sm text-gray-700">测试账号</span>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <div class="monitor-layout">
+    <aside id="pbs-sidebar" class="bg-white border-r border-gray-200 min-h-screen"></aside>
+    <main class="monitor-main detail-page">
+      <div class="monitor-page-head compact pbs-detail-topbar">
+        <div class="pbs-detail-topbar__main">
+          <button class="pbs-detail-back" onclick="window.location.href='监控任务列表 - PBS留学CRM.html'" type="button" aria-label="返回监控任务列表" title="返回监控任务列表">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
+          </button>
+          <div class="pbs-detail-topbar__copy">
+            <h1>学生监控详情</h1>
+          </div>
+        </div>
+      </div>
+
+      <section class="monitor-detail-card" aria-label="学生院校监控详情">
+        <section id="monitorStudentStrip" class="student-strip" aria-label="学生监控任务信息"></section>
+
+        <section class="monitor-master-detail" aria-label="院校监控工作区">
+          <aside class="school-rail" aria-labelledby="schoolSectionTitle">
+            <div class="school-rail-head">
+              <div><h2 id="schoolSectionTitle">申请院校</h2><p>按最新邮件时间排序</p></div>
+              <span>6</span>
+            </div>
+            <div id="monitorSchoolGrid" class="school-list"></div>
+          </aside>
+
+          <div class="school-workspace">
+            <section id="monitorSchoolDetailHead" class="school-detail-head" aria-label="当前学校与状态设置"></section>
+
+            <section class="channel-grid" aria-label="当前学校独立监控内容">
+            <article class="channel-panel">
+              <header class="channel-panel-head">
+                <div class="channel-title">
+                  <span class="channel-icon">
+                    <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.9 5.3a2 2 0 002.2 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+                  </span>
+                  <div><h3 id="monitorMailTitle">邮件监控</h3><p id="monitorMailSub">按实际接收时间倒序</p></div>
+                </div>
+                <button class="monitor-btn small" data-pbs-permission="monitor_track" onclick="pbsMonitor.syncCurrentMail()">更新邮件</button>
+              </header>
+              <div id="monitorMailBody" class="channel-body"></div>
+            </article>
+
+            <article class="channel-panel">
+              <header class="channel-panel-head">
+                <div class="channel-title">
+                  <span class="channel-icon">
+                    <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9c2 0 3-4 3-9s-1-9-3-9-3 4-3 9 1 9 3 9z"/></svg>
+                  </span>
+                  <div><h3 id="monitorOfficialTitle">官网监控</h3><p id="monitorOfficialSub">申请系统页面与快照</p></div>
+                </div>
+                <div class="flex items-center gap-2"><button class="monitor-btn secondary small" onclick="pbsMonitor.openOfficialSite()">打开官网</button><button class="monitor-btn small" data-pbs-permission="monitor_site_manage" onclick="pbsMonitor.openSnapshotUpload()">上传截图</button></div>
+              </header>
+              <div id="monitorOfficialBody" class="channel-body"></div>
+            </article>
+            </section>
+          </div>
+        </section>
+      </section>
+    </main>
+  </div>
+
+  <div id="monitorSnapshotModal" class="monitor-modal" aria-hidden="true" onclick="if(event.target===this)pbsMonitor.closeModal('monitorSnapshotModal')">
+    <div class="monitor-dialog" role="dialog" aria-modal="true" aria-labelledby="snapshotModalTitle">
+      <div class="monitor-dialog-head"><h3 id="snapshotModalTitle">上传申请系统快照</h3><button class="monitor-close" onclick="pbsMonitor.closeModal('monitorSnapshotModal')">×</button></div>
+      <div class="monitor-field"><label for="snapshotPage">截图类型</label><input id="snapshotPage" list="snapshotPagePresets" placeholder="可输入自定义类型，如：押金支付页、面试安排页"><datalist id="snapshotPagePresets"><option value="申请状态页"></option><option value="材料清单页"></option><option value="录取结果页"></option></datalist><small class="monitor-hint">可直接输入，也可从下拉建议中选择</small></div>
+      <label class="monitor-upload">
+        <input id="snapshotFile" type="file" accept="image/png,image/jpeg" onchange="pbsMonitor.previewSnapshot(this)">
+        <span><strong id="snapshotFileName">点击选择 PNG / JPG 截图</strong><br><small>上传后归档到当前院校，不影响其他院校快照</small></span>
+        <span id="snapshotUploadPreview"></span>
+      </label>
+      <div class="monitor-dialog-actions"><button class="monitor-btn secondary" onclick="pbsMonitor.closeModal('monitorSnapshotModal')">取消</button><button class="monitor-btn" data-pbs-permission="monitor_site_manage" onclick="pbsMonitor.submitSnapshot()">确认上传</button></div>
+    </div>
+  </div>
+
+  <div id="monitorSnapshotViewer" class="monitor-modal" aria-hidden="true" onclick="if(event.target===this)pbsMonitor.closeModal('monitorSnapshotViewer')">
+    <div class="monitor-dialog is-wide" role="dialog" aria-modal="true" aria-labelledby="snapshotViewerTitle">
+      <div class="monitor-dialog-head"><h3 id="snapshotViewerTitle">申请系统快照</h3><button class="monitor-close" onclick="pbsMonitor.closeModal('monitorSnapshotViewer')">×</button></div>
+      <div id="snapshotViewerBody" class="snapshot-viewer"></div>
+    </div>
+  </div>
+
+  <div id="monitorToast" class="monitor-toast" role="status" aria-live="polite"></div>
+  <script src="./assets/js/pbs-app.js?v=6.0"></script>
+  <script src="./assets/js/pbs-monitor-v2.js?v=1.4"></script>
+</body>
+</html>

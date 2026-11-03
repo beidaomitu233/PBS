@@ -1,0 +1,1271 @@
+﻿<!DOCTYPE html>
+<!-- saved from url=(0181)file:///C:/Users/yushe/Documents/kimi/workspace/PBS%E5%8E%9F%E5%9E%8B/%E6%A8%A1%E6%9D%BF%E5%BA%93%E7%BC%96%E8%BE%91%20-%20%E6%96%87%E4%B9%A6%E4%BA%A4%E4%BB%98%E7%B3%BB%E7%BB%9F.html -->
+<html lang="zh-CN" class="light" data-theme="light"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>模板库编辑 - 文书交付系统</title>
+  <script src="./assets/vendor/tailwind-runtime.js"></script>
+  <style data-vd-inlined-stylesheet="../colors_and_type.css">
+/* PBS留学CRM系统 - 企业级设计规范 */
+:root {
+  /* 主色调 - 专业蓝 */
+  --color-primary: #6B829A;
+  --color-primary-light: #7D94A6;
+  --color-primary-dark: #556B7D;
+  --color-primary-bg: #E8EDF1;
+  
+  /* 辅助色 */
+  --color-success: #6D9A7E;
+  --color-success-light: #DDECE2;
+  --color-warning: #C9A87C;
+  --color-warning-light: #F5EBDA;
+  --color-error: #B36B64;
+  --color-error-light: #F3DDD9;
+  --color-info: #06B6D4;
+  --color-info-light: #CFFAFE;
+  
+  /* 中性色 */
+  --color-gray-50: #F9FAFB;
+  --color-gray-100: #F3F4F6;
+  --color-gray-200: #E5E7EB;
+  --color-gray-300: #D1D5DB;
+  --color-gray-400: #9CA3AF;
+  --color-gray-500: #6B7280;
+  --color-gray-600: #4B5563;
+  --color-gray-700: #374151;
+  --color-gray-800: #1F2937;
+  --color-gray-900: #111827;
+  
+  /* 文字色 */
+  --color-text-primary: #1F2937;
+  --color-text-secondary: #6B7280;
+  --color-text-tertiary: #9CA3AF;
+  --color-text-inverse: #FFFFFF;
+  
+  /* 边框色 */
+  --color-border: #E5E7EB;
+  --color-border-light: #F3F4F6;
+  
+  /* 背景色 */
+  --color-bg-page: #F9FAFB;
+  --color-bg-card: #FFFFFF;
+  --color-bg-hover: #F3F4F6;
+  --color-bg-active: #EEF2FF;
+  
+  /* 阴影 */
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  
+  /* 圆角 */
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-xl: 16px;
+  --radius-full: 9999px;
+  
+  /* 间距 */
+  --spacing-xs: 4px;
+  --spacing-sm: 8px;
+  --spacing-md: 16px;
+  --spacing-lg: 24px;
+  --spacing-xl: 32px;
+  --spacing-2xl: 48px;
+  
+  /* 字体 */
+  --font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif;
+  --font-family-mono: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+  
+  /* 字号 */
+  --font-size-xs: 12px;
+  --font-size-sm: 14px;
+  --font-size-base: 16px;
+  --font-size-lg: 18px;
+  --font-size-xl: 20px;
+  --font-size-2xl: 24px;
+  --font-size-3xl: 30px;
+  
+  /* 行高 */
+  --line-height-tight: 1.25;
+  --line-height-normal: 1.5;
+  --line-height-relaxed: 1.75;
+  
+  /* 过渡 */
+  --transition-fast: 150ms ease;
+  --transition-normal: 200ms ease;
+  --transition-slow: 300ms ease;
+}
+
+/* 暗色主题 */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-bg-page: #111827;
+    --color-bg-card: #1F2937;
+    --color-bg-hover: #374151;
+    --color-bg-active: #312E81;
+    --color-text-primary: #F9FAFB;
+    --color-text-secondary: #D1D5DB;
+    --color-text-tertiary: #9CA3AF;
+    --color-border: #374151;
+    --color-border-light: #4B5563;
+  }
+}
+
+</style>
+  <style>
+    body { font-family: var(--font-family); background: var(--color-bg-page); }
+    .editor-content { min-height: 300px; outline: none; }
+    .template-editor-actionbar { padding:16px 20px 0; background:#F5F7FA; }
+    .template-editor-actionbar .pbs-detail-topbar { margin:0; }
+    .template-editor-body { height:calc(100vh - 148px); }
+  </style>
+  <link rel="stylesheet" href="./assets/css/pbs-theme.css?v=6.1">
+<style>*, ::before, ::after{--tw-border-spacing-x:0;--tw-border-spacing-y:0;--tw-translate-x:0;--tw-translate-y:0;--tw-rotate:0;--tw-skew-x:0;--tw-skew-y:0;--tw-scale-x:1;--tw-scale-y:1;--tw-pan-x: ;--tw-pan-y: ;--tw-pinch-zoom: ;--tw-scroll-snap-strictness:proximity;--tw-gradient-from-position: ;--tw-gradient-via-position: ;--tw-gradient-to-position: ;--tw-ordinal: ;--tw-slashed-zero: ;--tw-numeric-figure: ;--tw-numeric-spacing: ;--tw-numeric-fraction: ;--tw-ring-inset: ;--tw-ring-offset-width:0px;--tw-ring-offset-color:#fff;--tw-ring-color:rgb(59 130 246 / 0.5);--tw-ring-offset-shadow:0 0 #0000;--tw-ring-shadow:0 0 #0000;--tw-shadow:0 0 #0000;--tw-shadow-colored:0 0 #0000;--tw-blur: ;--tw-brightness: ;--tw-contrast: ;--tw-grayscale: ;--tw-hue-rotate: ;--tw-invert: ;--tw-saturate: ;--tw-sepia: ;--tw-drop-shadow: ;--tw-backdrop-blur: ;--tw-backdrop-brightness: ;--tw-backdrop-contrast: ;--tw-backdrop-grayscale: ;--tw-backdrop-hue-rotate: ;--tw-backdrop-invert: ;--tw-backdrop-opacity: ;--tw-backdrop-saturate: ;--tw-backdrop-sepia: ;--tw-contain-size: ;--tw-contain-layout: ;--tw-contain-paint: ;--tw-contain-style: }::backdrop{--tw-border-spacing-x:0;--tw-border-spacing-y:0;--tw-translate-x:0;--tw-translate-y:0;--tw-rotate:0;--tw-skew-x:0;--tw-skew-y:0;--tw-scale-x:1;--tw-scale-y:1;--tw-pan-x: ;--tw-pan-y: ;--tw-pinch-zoom: ;--tw-scroll-snap-strictness:proximity;--tw-gradient-from-position: ;--tw-gradient-via-position: ;--tw-gradient-to-position: ;--tw-ordinal: ;--tw-slashed-zero: ;--tw-numeric-figure: ;--tw-numeric-spacing: ;--tw-numeric-fraction: ;--tw-ring-inset: ;--tw-ring-offset-width:0px;--tw-ring-offset-color:#fff;--tw-ring-color:rgb(59 130 246 / 0.5);--tw-ring-offset-shadow:0 0 #0000;--tw-ring-shadow:0 0 #0000;--tw-shadow:0 0 #0000;--tw-shadow-colored:0 0 #0000;--tw-blur: ;--tw-brightness: ;--tw-contrast: ;--tw-grayscale: ;--tw-hue-rotate: ;--tw-invert: ;--tw-saturate: ;--tw-sepia: ;--tw-drop-shadow: ;--tw-backdrop-blur: ;--tw-backdrop-brightness: ;--tw-backdrop-contrast: ;--tw-backdrop-grayscale: ;--tw-backdrop-hue-rotate: ;--tw-backdrop-invert: ;--tw-backdrop-opacity: ;--tw-backdrop-saturate: ;--tw-backdrop-sepia: ;--tw-contain-size: ;--tw-contain-layout: ;--tw-contain-paint: ;--tw-contain-style: }/* ! tailwindcss v3.4.17 | MIT License | https://tailwindcss.com */*,::after,::before{box-sizing:border-box;border-width:0;border-style:solid;border-color:#e5e7eb}::after,::before{--tw-content:''}:host,html{line-height:1.5;-webkit-text-size-adjust:100%;-moz-tab-size:4;tab-size:4;font-family:ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";font-feature-settings:normal;font-variation-settings:normal;-webkit-tap-highlight-color:transparent}body{margin:0;line-height:inherit}hr{height:0;color:inherit;border-top-width:1px}abbr:where([title]){-webkit-text-decoration:underline dotted;text-decoration:underline dotted}h1,h2,h3,h4,h5,h6{font-size:inherit;font-weight:inherit}a{color:inherit;text-decoration:inherit}b,strong{font-weight:bolder}code,kbd,pre,samp{font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;font-feature-settings:normal;font-variation-settings:normal;font-size:1em}small{font-size:80%}sub,sup{font-size:75%;line-height:0;position:relative;vertical-align:baseline}sub{bottom:-.25em}sup{top:-.5em}table{text-indent:0;border-color:inherit;border-collapse:collapse}button,input,optgroup,select,textarea{font-family:inherit;font-feature-settings:inherit;font-variation-settings:inherit;font-size:100%;font-weight:inherit;line-height:inherit;letter-spacing:inherit;color:inherit;margin:0;padding:0}button,select{text-transform:none}button,input:where([type=button]),input:where([type=reset]),input:where([type=submit]){-webkit-appearance:button;background-color:transparent;background-image:none}:-moz-focusring{outline:auto}:-moz-ui-invalid{box-shadow:none}progress{vertical-align:baseline}::-webkit-inner-spin-button,::-webkit-outer-spin-button{height:auto}[type=search]{-webkit-appearance:textfield;outline-offset:-2px}::-webkit-search-decoration{-webkit-appearance:none}::-webkit-file-upload-button{-webkit-appearance:button;font:inherit}summary{display:list-item}blockquote,dd,dl,figure,h1,h2,h3,h4,h5,h6,hr,p,pre{margin:0}fieldset{margin:0;padding:0}legend{padding:0}menu,ol,ul{list-style:none;margin:0;padding:0}dialog{padding:0}textarea{resize:vertical}input::placeholder,textarea::placeholder{opacity:1;color:#9ca3af}[role=button],button{cursor:pointer}:disabled{cursor:default}audio,canvas,embed,iframe,img,object,svg,video{display:block;vertical-align:middle}img,video{max-width:100%;height:auto}[hidden]:where(:not([hidden=until-found])){display:none}.fixed{position:fixed}.absolute{position:absolute}.relative{position:relative}.sticky{position:sticky}.inset-0{inset:0px}.left-1\/2{left:50%}.right-3{right:0.75rem}.top-0{top:0px}.top-1\/2{top:50%}.right-0{right:0px}.top-12{top:3rem}.z-50{z-index:50}.mx-1{margin-left:0.25rem;margin-right:0.25rem}.mx-auto{margin-left:auto;margin-right:auto}.mb-1{margin-bottom:0.25rem}.mb-2{margin-bottom:0.5rem}.mb-4{margin-bottom:1rem}.mb-6{margin-bottom:1.5rem}.mr-1{margin-right:0.25rem}.mt-2{margin-top:0.5rem}.mt-4{margin-top:1rem}.mt-auto{margin-top:auto}.mt-0\.5{margin-top:0.125rem}.block{display:block}.inline-block{display:inline-block}.flex{display:flex}.inline-flex{display:inline-flex}.hidden{display:none}.h-10{height:2.5rem}.h-14{height:3.5rem}.h-3{height:0.75rem}.h-4{height:1rem}.h-5{height:1.25rem}.h-6{height:1.5rem}.h-7{height:1.75rem}.h-8{height:2rem}.h-\[calc\(100vh-56px\)\]{height:calc(100vh - 56px)}.max-h-\[80vh\]{max-height:80vh}.min-h-screen{min-height:100vh}.w-3{width:0.75rem}.w-4{width:1rem}.w-5{width:1.25rem}.w-6{width:1.5rem}.w-7{width:1.75rem}.w-72{width:18rem}.w-8{width:2rem}.w-80{width:20rem}.w-\[800px\]{width:800px}.w-full{width:100%}.w-px{width:1px}.w-10{width:2.5rem}.w-64{width:16rem}.min-w-0{min-width:0px}.max-w-2xl{max-width:42rem}.max-w-3xl{max-width:48rem}.flex-1{flex:1 1 0%}.flex-shrink-0{flex-shrink:0}.-translate-x-1\/2{--tw-translate-x:-50%;transform:translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))}.-translate-y-1\/2{--tw-translate-y:-50%;transform:translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))}.cursor-pointer{cursor:pointer}.resize-none{resize:none}.flex-col{flex-direction:column}.flex-wrap{flex-wrap:wrap}.items-center{align-items:center}.justify-center{justify-content:center}.justify-between{justify-content:space-between}.gap-1{gap:0.25rem}.gap-2{gap:0.5rem}.gap-3{gap:0.75rem}.gap-4{gap:1rem}.space-y-1 > :not([hidden]) ~ :not([hidden]){--tw-space-y-reverse:0;margin-top:calc(0.25rem * calc(1 - var(--tw-space-y-reverse)));margin-bottom:calc(0.25rem * var(--tw-space-y-reverse))}.space-y-2 > :not([hidden]) ~ :not([hidden]){--tw-space-y-reverse:0;margin-top:calc(0.5rem * calc(1 - var(--tw-space-y-reverse)));margin-bottom:calc(0.5rem * var(--tw-space-y-reverse))}.space-y-3 > :not([hidden]) ~ :not([hidden]){--tw-space-y-reverse:0;margin-top:calc(0.75rem * calc(1 - var(--tw-space-y-reverse)));margin-bottom:calc(0.75rem * var(--tw-space-y-reverse))}.space-y-4 > :not([hidden]) ~ :not([hidden]){--tw-space-y-reverse:0;margin-top:calc(1rem * calc(1 - var(--tw-space-y-reverse)));margin-bottom:calc(1rem * var(--tw-space-y-reverse))}.space-y-6 > :not([hidden]) ~ :not([hidden]){--tw-space-y-reverse:0;margin-top:calc(1.5rem * calc(1 - var(--tw-space-y-reverse)));margin-bottom:calc(1.5rem * var(--tw-space-y-reverse))}.overflow-hidden{overflow:hidden}.overflow-y-auto{overflow-y:auto}.rounded{border-radius:0.25rem}.rounded-2xl{border-radius:1rem}.rounded-full{border-radius:9999px}.rounded-lg{border-radius:0.5rem}.rounded-xl{border-radius:0.75rem}.border{border-width:1px}.border-2{border-width:2px}.border-b{border-bottom-width:1px}.border-l{border-left-width:1px}.border-r{border-right-width:1px}.border-t{border-top-width:1px}.border-dashed{border-style:dashed}.border-blue-200{--tw-border-opacity:1;border-color:rgb(191 219 254 / var(--tw-border-opacity, 1))}.border-gray-100{--tw-border-opacity:1;border-color:rgb(243 244 246 / var(--tw-border-opacity, 1))}.border-gray-200{--tw-border-opacity:1;border-color:rgb(229 231 235 / var(--tw-border-opacity, 1))}.border-gray-300{--tw-border-opacity:1;border-color:rgb(209 213 219 / var(--tw-border-opacity, 1))}.bg-gray-50{--tw-bg-opacity:1;background-color:rgb(249 250 251 / var(--tw-bg-opacity, 1))}.bg-black{--tw-bg-opacity:1;background-color:rgb(0 0 0 / var(--tw-bg-opacity, 1))}.bg-blue-100{--tw-bg-opacity:1;background-color:rgb(219 234 254 / var(--tw-bg-opacity, 1))}.bg-blue-50{--tw-bg-opacity:1;background-color:rgb(239 246 255 / var(--tw-bg-opacity, 1))}.bg-blue-600{--tw-bg-opacity:1;background-color:rgb(37 99 235 / var(--tw-bg-opacity, 1))}.bg-gray-100{--tw-bg-opacity:1;background-color:rgb(243 244 246 / var(--tw-bg-opacity, 1))}.bg-gray-200{--tw-bg-opacity:1;background-color:rgb(229 231 235 / var(--tw-bg-opacity, 1))}.bg-transparent{background-color:transparent}.bg-white{--tw-bg-opacity:1;background-color:rgb(255 255 255 / var(--tw-bg-opacity, 1))}.bg-opacity-30{--tw-bg-opacity:0.3}.bg-gradient-to-br{background-image:linear-gradient(to bottom right, var(--tw-gradient-stops))}.from-blue-500{--tw-gradient-from:#7D94A6 var(--tw-gradient-from-position);--tw-gradient-to:rgb(59 130 246 / 0) var(--tw-gradient-to-position);--tw-gradient-stops:var(--tw-gradient-from), var(--tw-gradient-to)}.to-purple-500{--tw-gradient-to:#a855f7 var(--tw-gradient-to-position)}.object-contain{object-fit:contain}.p-1{padding:0.25rem}.p-1\.5{padding:0.375rem}.p-2{padding:0.5rem}.p-4{padding:1rem}.p-5{padding:1.25rem}.p-6{padding:1.5rem}.p-8{padding:2rem}.px-2{padding-left:0.5rem;padding-right:0.5rem}.px-2\.5{padding-left:0.625rem;padding-right:0.625rem}.px-3{padding-left:0.75rem;padding-right:0.75rem}.px-4{padding-left:1rem;padding-right:1rem}.px-6{padding-left:1.5rem;padding-right:1.5rem}.py-1{padding-top:0.25rem;padding-bottom:0.25rem}.py-1\.5{padding-top:0.375rem;padding-bottom:0.375rem}.py-2{padding-top:0.5rem;padding-bottom:0.5rem}.py-3{padding-top:0.75rem;padding-bottom:0.75rem}.py-4{padding-top:1rem;padding-bottom:1rem}.px-5{padding-left:1.25rem;padding-right:1.25rem}.py-2\.5{padding-top:0.625rem;padding-bottom:0.625rem}.pl-4{padding-left:1rem}.pt-4{padding-top:1rem}.text-base{font-size:1rem;line-height:1.5rem}.text-lg{font-size:1.125rem;line-height:1.75rem}.text-sm{font-size:0.875rem;line-height:1.25rem}.text-xl{font-size:1.25rem;line-height:1.75rem}.text-xs{font-size:0.75rem;line-height:1rem}.font-bold{font-weight:700}.font-medium{font-weight:500}.font-semibold{font-weight:600}.leading-relaxed{line-height:1.625}.text-blue-500{--tw-text-opacity:1;color:rgb(59 130 246 / var(--tw-text-opacity, 1))}.text-blue-600{--tw-text-opacity:1;color:rgb(37 99 235 / var(--tw-text-opacity, 1))}.text-blue-700{--tw-text-opacity:1;color:rgb(29 78 216 / var(--tw-text-opacity, 1))}.text-gray-400{--tw-text-opacity:1;color:rgb(156 163 175 / var(--tw-text-opacity, 1))}.text-gray-500{--tw-text-opacity:1;color:rgb(107 114 128 / var(--tw-text-opacity, 1))}.text-gray-600{--tw-text-opacity:1;color:rgb(75 85 99 / var(--tw-text-opacity, 1))}.text-gray-700{--tw-text-opacity:1;color:rgb(55 65 81 / var(--tw-text-opacity, 1))}.text-gray-800{--tw-text-opacity:1;color:rgb(31 41 55 / var(--tw-text-opacity, 1))}.text-gray-900{--tw-text-opacity:1;color:rgb(17 24 39 / var(--tw-text-opacity, 1))}.text-red-500{--tw-text-opacity:1;color:rgb(239 68 68 / var(--tw-text-opacity, 1))}.text-white{--tw-text-opacity:1;color:rgb(255 255 255 / var(--tw-text-opacity, 1))}.shadow-2xl{--tw-shadow:0 25px 50px -12px rgb(0 0 0 / 0.25);--tw-shadow-colored:0 25px 50px -12px var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}.shadow-sm{--tw-shadow:0 1px 2px 0 rgb(0 0 0 / 0.05);--tw-shadow-colored:0 1px 2px 0 var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}.shadow-lg{--tw-shadow:0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);--tw-shadow-colored:0 10px 15px -3px var(--tw-shadow-color), 0 4px 6px -4px var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}.transition-colors{transition-property:color, background-color, border-color, fill, stroke, -webkit-text-decoration-color;transition-property:color, background-color, border-color, text-decoration-color, fill, stroke;transition-property:color, background-color, border-color, text-decoration-color, fill, stroke, -webkit-text-decoration-color;transition-timing-function:cubic-bezier(0.4, 0, 0.2, 1);transition-duration:150ms}.hover\:border-blue-400:hover{--tw-border-opacity:1;border-color:rgb(96 165 250 / var(--tw-border-opacity, 1))}.hover\:border-gray-400:hover{--tw-border-opacity:1;border-color:rgb(156 163 175 / var(--tw-border-opacity, 1))}.hover\:bg-blue-100:hover{--tw-bg-opacity:1;background-color:rgb(219 234 254 / var(--tw-bg-opacity, 1))}.hover\:bg-blue-700:hover{--tw-bg-opacity:1;background-color:rgb(29 78 216 / var(--tw-bg-opacity, 1))}.hover\:bg-gray-100:hover{--tw-bg-opacity:1;background-color:rgb(243 244 246 / var(--tw-bg-opacity, 1))}.hover\:bg-gray-200:hover{--tw-bg-opacity:1;background-color:rgb(229 231 235 / var(--tw-bg-opacity, 1))}.hover\:bg-gray-50:hover{--tw-bg-opacity:1;background-color:rgb(249 250 251 / var(--tw-bg-opacity, 1))}.hover\:text-blue-600:hover{--tw-text-opacity:1;color:rgb(37 99 235 / var(--tw-text-opacity, 1))}.hover\:text-gray-600:hover{--tw-text-opacity:1;color:rgb(75 85 99 / var(--tw-text-opacity, 1))}.hover\:text-gray-700:hover{--tw-text-opacity:1;color:rgb(55 65 81 / var(--tw-text-opacity, 1))}.hover\:text-gray-900:hover{--tw-text-opacity:1;color:rgb(17 24 39 / var(--tw-text-opacity, 1))}.hover\:text-red-500:hover{--tw-text-opacity:1;color:rgb(239 68 68 / var(--tw-text-opacity, 1))}.focus\:border-blue-500:focus{--tw-border-opacity:1;border-color:rgb(59 130 246 / var(--tw-border-opacity, 1))}.focus\:outline-none:focus{outline:2px solid transparent;outline-offset:2px}.focus\:ring-2:focus{--tw-ring-offset-shadow:var(--tw-ring-inset) 0 0 0 var(--tw-ring-offset-width) var(--tw-ring-offset-color);--tw-ring-shadow:var(--tw-ring-inset) 0 0 0 calc(2px + var(--tw-ring-offset-width)) var(--tw-ring-color);box-shadow:var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow, 0 0 #0000)}.focus\:ring-blue-500:focus{--tw-ring-opacity:1;--tw-ring-color:rgb(59 130 246 / var(--tw-ring-opacity, 1))}</style><style>*, ::before, ::after{--tw-border-spacing-x:0;--tw-border-spacing-y:0;--tw-translate-x:0;--tw-translate-y:0;--tw-rotate:0;--tw-skew-x:0;--tw-skew-y:0;--tw-scale-x:1;--tw-scale-y:1;--tw-pan-x: ;--tw-pan-y: ;--tw-pinch-zoom: ;--tw-scroll-snap-strictness:proximity;--tw-gradient-from-position: ;--tw-gradient-via-position: ;--tw-gradient-to-position: ;--tw-ordinal: ;--tw-slashed-zero: ;--tw-numeric-figure: ;--tw-numeric-spacing: ;--tw-numeric-fraction: ;--tw-ring-inset: ;--tw-ring-offset-width:0px;--tw-ring-offset-color:#fff;--tw-ring-color:rgb(59 130 246 / 0.5);--tw-ring-offset-shadow:0 0 #0000;--tw-ring-shadow:0 0 #0000;--tw-shadow:0 0 #0000;--tw-shadow-colored:0 0 #0000;--tw-blur: ;--tw-brightness: ;--tw-contrast: ;--tw-grayscale: ;--tw-hue-rotate: ;--tw-invert: ;--tw-saturate: ;--tw-sepia: ;--tw-drop-shadow: ;--tw-backdrop-blur: ;--tw-backdrop-brightness: ;--tw-backdrop-contrast: ;--tw-backdrop-grayscale: ;--tw-backdrop-hue-rotate: ;--tw-backdrop-invert: ;--tw-backdrop-opacity: ;--tw-backdrop-saturate: ;--tw-backdrop-sepia: ;--tw-contain-size: ;--tw-contain-layout: ;--tw-contain-paint: ;--tw-contain-style: }::backdrop{--tw-border-spacing-x:0;--tw-border-spacing-y:0;--tw-translate-x:0;--tw-translate-y:0;--tw-rotate:0;--tw-skew-x:0;--tw-skew-y:0;--tw-scale-x:1;--tw-scale-y:1;--tw-pan-x: ;--tw-pan-y: ;--tw-pinch-zoom: ;--tw-scroll-snap-strictness:proximity;--tw-gradient-from-position: ;--tw-gradient-via-position: ;--tw-gradient-to-position: ;--tw-ordinal: ;--tw-slashed-zero: ;--tw-numeric-figure: ;--tw-numeric-spacing: ;--tw-numeric-fraction: ;--tw-ring-inset: ;--tw-ring-offset-width:0px;--tw-ring-offset-color:#fff;--tw-ring-color:rgb(59 130 246 / 0.5);--tw-ring-offset-shadow:0 0 #0000;--tw-ring-shadow:0 0 #0000;--tw-shadow:0 0 #0000;--tw-shadow-colored:0 0 #0000;--tw-blur: ;--tw-brightness: ;--tw-contrast: ;--tw-grayscale: ;--tw-hue-rotate: ;--tw-invert: ;--tw-saturate: ;--tw-sepia: ;--tw-drop-shadow: ;--tw-backdrop-blur: ;--tw-backdrop-brightness: ;--tw-backdrop-contrast: ;--tw-backdrop-grayscale: ;--tw-backdrop-hue-rotate: ;--tw-backdrop-invert: ;--tw-backdrop-opacity: ;--tw-backdrop-saturate: ;--tw-backdrop-sepia: ;--tw-contain-size: ;--tw-contain-layout: ;--tw-contain-paint: ;--tw-contain-style: }/* ! tailwindcss v3.4.17 | MIT License | https://tailwindcss.com */*,::after,::before{box-sizing:border-box;border-width:0;border-style:solid;border-color:#e5e7eb}::after,::before{--tw-content:''}:host,html{line-height:1.5;-webkit-text-size-adjust:100%;-moz-tab-size:4;tab-size:4;font-family:ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";font-feature-settings:normal;font-variation-settings:normal;-webkit-tap-highlight-color:transparent}body{margin:0;line-height:inherit}hr{height:0;color:inherit;border-top-width:1px}abbr:where([title]){-webkit-text-decoration:underline dotted;text-decoration:underline dotted}h1,h2,h3,h4,h5,h6{font-size:inherit;font-weight:inherit}a{color:inherit;text-decoration:inherit}b,strong{font-weight:bolder}code,kbd,pre,samp{font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;font-feature-settings:normal;font-variation-settings:normal;font-size:1em}small{font-size:80%}sub,sup{font-size:75%;line-height:0;position:relative;vertical-align:baseline}sub{bottom:-.25em}sup{top:-.5em}table{text-indent:0;border-color:inherit;border-collapse:collapse}button,input,optgroup,select,textarea{font-family:inherit;font-feature-settings:inherit;font-variation-settings:inherit;font-size:100%;font-weight:inherit;line-height:inherit;letter-spacing:inherit;color:inherit;margin:0;padding:0}button,select{text-transform:none}button,input:where([type=button]),input:where([type=reset]),input:where([type=submit]){-webkit-appearance:button;background-color:transparent;background-image:none}:-moz-focusring{outline:auto}:-moz-ui-invalid{box-shadow:none}progress{vertical-align:baseline}::-webkit-inner-spin-button,::-webkit-outer-spin-button{height:auto}[type=search]{-webkit-appearance:textfield;outline-offset:-2px}::-webkit-search-decoration{-webkit-appearance:none}::-webkit-file-upload-button{-webkit-appearance:button;font:inherit}summary{display:list-item}blockquote,dd,dl,figure,h1,h2,h3,h4,h5,h6,hr,p,pre{margin:0}fieldset{margin:0;padding:0}legend{padding:0}menu,ol,ul{list-style:none;margin:0;padding:0}dialog{padding:0}textarea{resize:vertical}input::placeholder,textarea::placeholder{opacity:1;color:#9ca3af}[role=button],button{cursor:pointer}:disabled{cursor:default}audio,canvas,embed,iframe,img,object,svg,video{display:block;vertical-align:middle}img,video{max-width:100%;height:auto}[hidden]:where(:not([hidden=until-found])){display:none}.fixed{position:fixed}.absolute{position:absolute}.relative{position:relative}.sticky{position:sticky}.inset-0{inset:0px}.left-1\/2{left:50%}.right-0{right:0px}.right-3{right:0.75rem}.top-0{top:0px}.top-1\/2{top:50%}.top-12{top:3rem}.top-20{top:5rem}.z-50{z-index:50}.z-\[60\]{z-index:60}.mx-1{margin-left:0.25rem;margin-right:0.25rem}.mx-auto{margin-left:auto;margin-right:auto}.mb-1{margin-bottom:0.25rem}.mb-2{margin-bottom:0.5rem}.mb-3{margin-bottom:0.75rem}.mb-4{margin-bottom:1rem}.mb-5{margin-bottom:1.25rem}.mb-6{margin-bottom:1.5rem}.ml-auto{margin-left:auto}.mr-1{margin-right:0.25rem}.mt-0\.5{margin-top:0.125rem}.mt-1{margin-top:0.25rem}.mt-1\.5{margin-top:0.375rem}.mt-2{margin-top:0.5rem}.mt-2\.5{margin-top:0.625rem}.mt-4{margin-top:1rem}.mt-5{margin-top:1.25rem}.mt-auto{margin-top:auto}.mr-2{margin-right:0.5rem}.block{display:block}.inline-block{display:inline-block}.flex{display:flex}.inline-flex{display:inline-flex}.hidden{display:none}.h-10{height:2.5rem}.h-14{height:3.5rem}.h-2{height:0.5rem}.h-3{height:0.75rem}.h-4{height:1rem}.h-5{height:1.25rem}.h-6{height:1.5rem}.h-7{height:1.75rem}.h-8{height:2rem}.h-\[calc\(100vh-56px\)\]{height:calc(100vh - 56px)}.h-full{height:100%}.h-px{height:1px}.h-3\.5{height:0.875rem}.max-h-72{max-height:18rem}.max-h-\[80vh\]{max-height:80vh}.max-h-\[86vh\]{max-height:86vh}.min-h-screen{min-height:100vh}.w-10{width:2.5rem}.w-14{width:3.5rem}.w-3{width:0.75rem}.w-4{width:1rem}.w-5{width:1.25rem}.w-6{width:1.5rem}.w-64{width:16rem}.w-7{width:1.75rem}.w-72{width:18rem}.w-8{width:2rem}.w-80{width:20rem}.w-\[800px\]{width:800px}.w-\[880px\]{width:880px}.w-full{width:100%}.w-px{width:1px}.w-3\.5{width:0.875rem}.min-w-0{min-width:0px}.max-w-2xl{max-width:42rem}.max-w-3xl{max-width:48rem}.max-w-\[95vw\]{max-width:95vw}.max-w-md{max-width:28rem}.flex-1{flex:1 1 0%}.flex-shrink-0{flex-shrink:0}.-translate-x-1\/2{--tw-translate-x:-50%;transform:translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))}.-translate-y-1\/2{--tw-translate-y:-50%;transform:translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))}@keyframes spin{to{transform:rotate(360deg)}}.animate-spin{animation:spin 1s linear infinite}.cursor-pointer{cursor:pointer}.resize-none{resize:none}.flex-col{flex-direction:column}.flex-wrap{flex-wrap:wrap}.items-start{align-items:flex-start}.items-center{align-items:center}.justify-center{justify-content:center}.justify-between{justify-content:space-between}.gap-1{gap:0.25rem}.gap-1\.5{gap:0.375rem}.gap-2{gap:0.5rem}.gap-3{gap:0.75rem}.gap-4{gap:1rem}.gap-5{gap:1.25rem}.gap-x-6{column-gap:1.5rem}.gap-y-2{row-gap:0.5rem}.space-y-1 > :not([hidden]) ~ :not([hidden]){--tw-space-y-reverse:0;margin-top:calc(0.25rem * calc(1 - var(--tw-space-y-reverse)));margin-bottom:calc(0.25rem * var(--tw-space-y-reverse))}.space-y-1\.5 > :not([hidden]) ~ :not([hidden]){--tw-space-y-reverse:0;margin-top:calc(0.375rem * calc(1 - var(--tw-space-y-reverse)));margin-bottom:calc(0.375rem * var(--tw-space-y-reverse))}.space-y-2 > :not([hidden]) ~ :not([hidden]){--tw-space-y-reverse:0;margin-top:calc(0.5rem * calc(1 - var(--tw-space-y-reverse)));margin-bottom:calc(0.5rem * var(--tw-space-y-reverse))}.space-y-3 > :not([hidden]) ~ :not([hidden]){--tw-space-y-reverse:0;margin-top:calc(0.75rem * calc(1 - var(--tw-space-y-reverse)));margin-bottom:calc(0.75rem * var(--tw-space-y-reverse))}.space-y-4 > :not([hidden]) ~ :not([hidden]){--tw-space-y-reverse:0;margin-top:calc(1rem * calc(1 - var(--tw-space-y-reverse)));margin-bottom:calc(1rem * var(--tw-space-y-reverse))}.space-y-6 > :not([hidden]) ~ :not([hidden]){--tw-space-y-reverse:0;margin-top:calc(1.5rem * calc(1 - var(--tw-space-y-reverse)));margin-bottom:calc(1.5rem * var(--tw-space-y-reverse))}.overflow-hidden{overflow:hidden}.overflow-y-auto{overflow-y:auto}.truncate{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.rounded{border-radius:0.25rem}.rounded-2xl{border-radius:1rem}.rounded-full{border-radius:9999px}.rounded-lg{border-radius:0.5rem}.rounded-xl{border-radius:0.75rem}.rounded-b-2xl{border-bottom-right-radius:1rem;border-bottom-left-radius:1rem}.border{border-width:1px}.border-2{border-width:2px}.border-b{border-bottom-width:1px}.border-l{border-left-width:1px}.border-r{border-right-width:1px}.border-t{border-top-width:1px}.border-dashed{border-style:dashed}.border-blue-100{--tw-border-opacity:1;border-color:rgb(219 234 254 / var(--tw-border-opacity, 1))}.border-blue-200{--tw-border-opacity:1;border-color:rgb(191 219 254 / var(--tw-border-opacity, 1))}.border-blue-300{--tw-border-opacity:1;border-color:rgb(147 197 253 / var(--tw-border-opacity, 1))}.border-gray-100{--tw-border-opacity:1;border-color:rgb(243 244 246 / var(--tw-border-opacity, 1))}.border-gray-200{--tw-border-opacity:1;border-color:rgb(229 231 235 / var(--tw-border-opacity, 1))}.border-gray-300{--tw-border-opacity:1;border-color:rgb(209 213 219 / var(--tw-border-opacity, 1))}.bg-black{--tw-bg-opacity:1;background-color:rgb(0 0 0 / var(--tw-bg-opacity, 1))}.bg-blue-100{--tw-bg-opacity:1;background-color:rgb(219 234 254 / var(--tw-bg-opacity, 1))}.bg-blue-50{--tw-bg-opacity:1;background-color:rgb(239 246 255 / var(--tw-bg-opacity, 1))}.bg-blue-600{--tw-bg-opacity:1;background-color:rgb(37 99 235 / var(--tw-bg-opacity, 1))}.bg-gray-100{--tw-bg-opacity:1;background-color:rgb(243 244 246 / var(--tw-bg-opacity, 1))}.bg-gray-200{--tw-bg-opacity:1;background-color:rgb(229 231 235 / var(--tw-bg-opacity, 1))}.bg-gray-50{--tw-bg-opacity:1;background-color:rgb(249 250 251 / var(--tw-bg-opacity, 1))}.bg-gray-900{--tw-bg-opacity:1;background-color:rgb(17 24 39 / var(--tw-bg-opacity, 1))}.bg-green-50{--tw-bg-opacity:1;background-color:rgb(240 253 244 / var(--tw-bg-opacity, 1))}.bg-red-100{--tw-bg-opacity:1;background-color:rgb(254 226 226 / var(--tw-bg-opacity, 1))}.bg-transparent{background-color:transparent}.bg-white{--tw-bg-opacity:1;background-color:rgb(255 255 255 / var(--tw-bg-opacity, 1))}.bg-yellow-50{--tw-bg-opacity:1;background-color:rgb(254 252 232 / var(--tw-bg-opacity, 1))}.bg-opacity-30{--tw-bg-opacity:0.3}.bg-gradient-to-br{background-image:linear-gradient(to bottom right, var(--tw-gradient-stops))}.from-blue-500{--tw-gradient-from:#7D94A6 var(--tw-gradient-from-position);--tw-gradient-to:rgb(59 130 246 / 0) var(--tw-gradient-to-position);--tw-gradient-stops:var(--tw-gradient-from), var(--tw-gradient-to)}.to-purple-500{--tw-gradient-to:#a855f7 var(--tw-gradient-to-position)}.object-contain{object-fit:contain}.p-1{padding:0.25rem}.p-1\.5{padding:0.375rem}.p-2{padding:0.5rem}.p-3{padding:0.75rem}.p-4{padding:1rem}.p-5{padding:1.25rem}.p-6{padding:1.5rem}.p-8{padding:2rem}.px-2{padding-left:0.5rem;padding-right:0.5rem}.px-2\.5{padding-left:0.625rem;padding-right:0.625rem}.px-3{padding-left:0.75rem;padding-right:0.75rem}.px-4{padding-left:1rem;padding-right:1rem}.px-5{padding-left:1.25rem;padding-right:1.25rem}.px-6{padding-left:1.5rem;padding-right:1.5rem}.py-0\.5{padding-top:0.125rem;padding-bottom:0.125rem}.py-1{padding-top:0.25rem;padding-bottom:0.25rem}.py-1\.5{padding-top:0.375rem;padding-bottom:0.375rem}.py-2{padding-top:0.5rem;padding-bottom:0.5rem}.py-2\.5{padding-top:0.625rem;padding-bottom:0.625rem}.py-3{padding-top:0.75rem;padding-bottom:0.75rem}.py-4{padding-top:1rem;padding-bottom:1rem}.py-8{padding-top:2rem;padding-bottom:2rem}.px-1\.5{padding-left:0.375rem;padding-right:0.375rem}.pl-4{padding-left:1rem}.pt-2\.5{padding-top:0.625rem}.pt-4{padding-top:1rem}.text-center{text-align:center}.text-\[11px\]{font-size:11px}.text-base{font-size:1rem;line-height:1.5rem}.text-lg{font-size:1.125rem;line-height:1.75rem}.text-sm{font-size:0.875rem;line-height:1.25rem}.text-xl{font-size:1.25rem;line-height:1.75rem}.text-xs{font-size:0.75rem;line-height:1rem}.text-\[10px\]{font-size:10px}.font-bold{font-weight:700}.font-medium{font-weight:500}.font-normal{font-weight:400}.font-semibold{font-weight:600}.leading-relaxed{line-height:1.625}.text-blue-500{--tw-text-opacity:1;color:rgb(59 130 246 / var(--tw-text-opacity, 1))}.text-blue-600{--tw-text-opacity:1;color:rgb(37 99 235 / var(--tw-text-opacity, 1))}.text-blue-700{--tw-text-opacity:1;color:rgb(29 78 216 / var(--tw-text-opacity, 1))}.text-blue-800{--tw-text-opacity:1;color:rgb(30 64 175 / var(--tw-text-opacity, 1))}.text-gray-300{--tw-text-opacity:1;color:rgb(209 213 219 / var(--tw-text-opacity, 1))}.text-gray-400{--tw-text-opacity:1;color:rgb(156 163 175 / var(--tw-text-opacity, 1))}.text-gray-500{--tw-text-opacity:1;color:rgb(107 114 128 / var(--tw-text-opacity, 1))}.text-gray-600{--tw-text-opacity:1;color:rgb(75 85 99 / var(--tw-text-opacity, 1))}.text-gray-700{--tw-text-opacity:1;color:rgb(55 65 81 / var(--tw-text-opacity, 1))}.text-gray-800{--tw-text-opacity:1;color:rgb(31 41 55 / var(--tw-text-opacity, 1))}.text-gray-900{--tw-text-opacity:1;color:rgb(17 24 39 / var(--tw-text-opacity, 1))}.text-green-400{--tw-text-opacity:1;color:rgb(74 222 128 / var(--tw-text-opacity, 1))}.text-green-600{--tw-text-opacity:1;color:rgb(22 163 74 / var(--tw-text-opacity, 1))}.text-red-500{--tw-text-opacity:1;color:rgb(239 68 68 / var(--tw-text-opacity, 1))}.text-white{--tw-text-opacity:1;color:rgb(255 255 255 / var(--tw-text-opacity, 1))}.text-yellow-600{--tw-text-opacity:1;color:rgb(202 138 4 / var(--tw-text-opacity, 1))}.text-green-500{--tw-text-opacity:1;color:rgb(34 197 94 / var(--tw-text-opacity, 1))}.opacity-25{opacity:0.25}.opacity-40{opacity:0.4}.opacity-75{opacity:0.75}.shadow-2xl{--tw-shadow:0 25px 50px -12px rgb(0 0 0 / 0.25);--tw-shadow-colored:0 25px 50px -12px var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}.shadow-lg{--tw-shadow:0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);--tw-shadow-colored:0 10px 15px -3px var(--tw-shadow-color), 0 4px 6px -4px var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}.shadow-sm{--tw-shadow:0 1px 2px 0 rgb(0 0 0 / 0.05);--tw-shadow-colored:0 1px 2px 0 var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}.transition-all{transition-property:all;transition-timing-function:cubic-bezier(0.4, 0, 0.2, 1);transition-duration:150ms}.transition-colors{transition-property:color, background-color, border-color, fill, stroke, -webkit-text-decoration-color;transition-property:color, background-color, border-color, text-decoration-color, fill, stroke;transition-property:color, background-color, border-color, text-decoration-color, fill, stroke, -webkit-text-decoration-color;transition-timing-function:cubic-bezier(0.4, 0, 0.2, 1);transition-duration:150ms}.duration-500{transition-duration:500ms}.hover\:border-blue-300:hover{--tw-border-opacity:1;border-color:rgb(147 197 253 / var(--tw-border-opacity, 1))}.hover\:border-blue-400:hover{--tw-border-opacity:1;border-color:rgb(96 165 250 / var(--tw-border-opacity, 1))}.hover\:border-gray-400:hover{--tw-border-opacity:1;border-color:rgb(156 163 175 / var(--tw-border-opacity, 1))}.hover\:bg-blue-100:hover{--tw-bg-opacity:1;background-color:rgb(219 234 254 / var(--tw-bg-opacity, 1))}.hover\:bg-blue-50:hover{--tw-bg-opacity:1;background-color:rgb(239 246 255 / var(--tw-bg-opacity, 1))}.hover\:bg-blue-50\/30:hover{background-color:rgb(239 246 255 / 0.3)}.hover\:bg-blue-50\/40:hover{background-color:rgb(239 246 255 / 0.4)}.hover\:bg-blue-50\/50:hover{background-color:rgb(239 246 255 / 0.5)}.hover\:bg-blue-700:hover{--tw-bg-opacity:1;background-color:rgb(29 78 216 / var(--tw-bg-opacity, 1))}.hover\:bg-gray-100:hover{--tw-bg-opacity:1;background-color:rgb(243 244 246 / var(--tw-bg-opacity, 1))}.hover\:bg-gray-200:hover{--tw-bg-opacity:1;background-color:rgb(229 231 235 / var(--tw-bg-opacity, 1))}.hover\:bg-gray-50:hover{--tw-bg-opacity:1;background-color:rgb(249 250 251 / var(--tw-bg-opacity, 1))}.hover\:text-blue-600:hover{--tw-text-opacity:1;color:rgb(37 99 235 / var(--tw-text-opacity, 1))}.hover\:text-blue-700:hover{--tw-text-opacity:1;color:rgb(29 78 216 / var(--tw-text-opacity, 1))}.hover\:text-gray-600:hover{--tw-text-opacity:1;color:rgb(75 85 99 / var(--tw-text-opacity, 1))}.hover\:text-gray-700:hover{--tw-text-opacity:1;color:rgb(55 65 81 / var(--tw-text-opacity, 1))}.hover\:text-gray-900:hover{--tw-text-opacity:1;color:rgb(17 24 39 / var(--tw-text-opacity, 1))}.hover\:text-red-500:hover{--tw-text-opacity:1;color:rgb(239 68 68 / var(--tw-text-opacity, 1))}.focus\:border-blue-500:focus{--tw-border-opacity:1;border-color:rgb(59 130 246 / var(--tw-border-opacity, 1))}.focus\:outline-none:focus{outline:2px solid transparent;outline-offset:2px}.focus\:ring-2:focus{--tw-ring-offset-shadow:var(--tw-ring-inset) 0 0 0 var(--tw-ring-offset-width) var(--tw-ring-offset-color);--tw-ring-shadow:var(--tw-ring-inset) 0 0 0 calc(2px + var(--tw-ring-offset-width)) var(--tw-ring-color);box-shadow:var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow, 0 0 #0000)}.focus\:ring-blue-500:focus{--tw-ring-opacity:1;--tw-ring-color:rgb(59 130 246 / var(--tw-ring-opacity, 1))}</style></head>
+<body class="min-h-screen bg-gray-50">
+  <!-- 顶部导航栏 -->
+  <header class="bg-white border-b border-gray-200 sticky top-0 z-50">
+    <div class="h-14 flex items-center justify-between px-4">
+      <div class="flex items-center gap-3">
+        <div class="w-8 h-8 rounded-lg overflow-hidden bg-white flex items-center justify-center flex-shrink-0"><img src="./PRD参考文件/导航栏图标参考.jpg" alt="PBS" class="w-full h-full object-contain"></div>
+        <span class="text-base font-semibold text-gray-800">留学申请管理系统</span>
+      </div>
+      <span class="text-sm text-gray-700">王志强</span>
+    </div>
+  </header>
+
+  <div class="template-editor-actionbar">
+    <div class="pbs-detail-topbar">
+      <div class="pbs-detail-topbar__main">
+        <button class="pbs-detail-back" data-dom-id="btn-back-template-library" type="button" aria-label="返回模板库" title="返回模板库">
+          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+        </button>
+        <div class="pbs-detail-topbar__copy">
+          <div class="flex items-center gap-2"><h1 id="template-page-title" class="pbs-detail-topbar__title">新建模板</h1><span id="template-mode-badge" class="px-2 py-0.5 rounded-full bg-green-50 text-green-700 text-xs">新建</span></div>
+        </div>
+      </div>
+      <div class="pbs-detail-topbar__actions">
+        <button class="px-4 py-1.5 text-sm bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 font-medium" data-dom-id="btn-preview">
+          <svg class="w-4 h-4 inline-block mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>预览
+        </button>
+        <button class="px-4 py-1.5 text-sm bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium" data-dom-id="btn-save">保存</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="template-editor-body flex">
+    <!-- 左侧：模板基础信息 -->
+    <aside class="w-80 bg-white border-r border-gray-200 flex flex-col flex-shrink-0 overflow-y-auto">
+      <div class="p-5 border-b border-gray-100">
+        <h3 class="text-sm font-medium text-gray-700 mb-4">模板基础信息</h3>
+        <div class="space-y-4">
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2">模板名称 <span class="text-red-500">*</span></label>
+            <input type="text" value="AI方向PS标准模板" class="w-full h-10 px-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm">
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2">文书类型 <span class="text-red-500">*</span></label>
+            <select class="w-full h-10 px-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm">
+              <option>PS</option>
+              <option>CV</option>
+              <option>RP</option>
+              <option>推荐信</option>
+              <option>CL</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2">申请层次 <span class="text-red-500">*</span></label>
+            <div class="flex flex-wrap gap-2">
+              <label class="flex items-center gap-2 px-3 py-1.5 bg-blue-50 border border-blue-200 rounded-lg cursor-pointer">
+                <input type="checkbox" checked="" class="rounded border-gray-300 text-blue-600">
+                <span class="text-sm text-blue-700">硕士申请</span>
+              </label>
+              <label class="flex items-center gap-2 px-3 py-1.5 bg-gray-50 border border-gray-200 rounded-lg cursor-pointer hover:bg-gray-100">
+                <input type="checkbox" class="rounded border-gray-300 text-blue-600">
+                <span class="text-sm text-gray-700">博士申请</span>
+              </label>
+              <label class="flex items-center gap-2 px-3 py-1.5 bg-gray-50 border border-gray-200 rounded-lg cursor-pointer hover:bg-gray-100">
+                <input type="checkbox" class="rounded border-gray-300 text-blue-600">
+                <span class="text-sm text-gray-700">本科申请</span>
+              </label>
+              <label class="flex items-center gap-2 px-3 py-1.5 bg-gray-50 border border-gray-200 rounded-lg cursor-pointer hover:bg-gray-100">
+                <input type="checkbox" class="rounded border-gray-300 text-blue-600">
+                <span class="text-sm text-gray-700">本硕连读申请</span>
+              </label>
+            </div>
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2">标签</label>
+            <div class="flex flex-wrap gap-2">
+              <span class="inline-flex items-center gap-1 px-2.5 py-1 bg-blue-100 text-blue-700 rounded-full text-xs font-medium">
+                AI方向
+                <svg class="w-3 h-3 cursor-pointer" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+              </span>
+              <span class="inline-flex items-center gap-1 px-2.5 py-1 bg-blue-100 text-blue-700 rounded-full text-xs font-medium">
+                CS
+                <svg class="w-3 h-3 cursor-pointer" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+              </span>
+              <button class="inline-flex items-center gap-1 px-2.5 py-1 border border-dashed border-gray-300 rounded-full text-xs text-gray-500 hover:text-gray-700 hover:border-gray-400">
+                + 添加标签
+              </button>
+            </div>
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2">模板描述</label>
+            <textarea rows="3" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm resize-none" placeholder="描述模板的用途、特点和适用场景...">适用于CS/AI方向硕士申请，包含完整的PS写作框架，强调科研经历与学术能力展示。</textarea>
+          </div>
+
+          <!-- 结构与约束（对齐四类文书结构标准：字数 / 导出格式 / 绑定提示词） -->
+          <div class="pt-4 border-t border-gray-100">
+            <h4 class="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-3">结构与约束</h4>
+            <div class="space-y-3">
+              <div>
+                <label class="block text-xs text-gray-500 mb-1.5">字数限制</label>
+                <div class="flex items-center gap-2">
+                  <input type="number" value="500" class="w-20 h-8 px-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                  <span class="text-xs text-gray-400">至</span>
+                  <input type="number" value="1000" class="w-20 h-8 px-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                  <span class="text-xs text-gray-400">字</span>
+                </div>
+                <p class="text-[11px] text-gray-400 mt-1">PS 硕士层次建议 500-1000 字；院校官方规定优先</p>
+              </div>
+              <div>
+                <label class="block text-xs text-gray-500 mb-1.5">导出格式（Word）</label>
+                <select class="w-full h-8 px-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white">
+                  <option>PS 散文版 · 无小标题（Times New Roman 12pt · 双倍行距）</option>
+                  <option>CV 美式本科版 · 条目式（TNR 11pt · 姓名居中）</option>
+                  <option>CV 学术版 · 长格式（TNR 12pt · 1英寸边距 · 引用格式）</option>
+                  <option>RP 学术排版 · 含摘要/关键词/参考文献</option>
+                  <option>RL 信函版 · 含落款签名块</option>
+                  <option>CL 邮件版 · 150-200词四段结构</option>
+                </select>
+              </div>
+              <div>
+                <label class="block text-xs text-gray-500 mb-1.5">绑定 AI 提示词</label>
+                <div class="flex items-center justify-between p-2.5 bg-purple-50 border border-purple-100 rounded-lg">
+                  <div class="min-w-0">
+                    <p class="text-xs font-medium text-purple-800 truncate">AI 建议 · 文书编辑（含 PS/CV/RP/RL/套磁信结构标准）</p>
+                    <p class="text-[11px] text-purple-400 mt-0.5">在「AI 管理 · 提示词配置」中维护</p>
+                  </div>
+                  <a href="AI管理 - 留学申请管理系统.html" class="text-xs text-purple-600 hover:text-purple-800 font-medium flex-shrink-0 ml-2">查看 →</a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 案例来源 -->
+      <div class="p-5 border-b border-gray-100">
+        <h3 class="text-sm font-medium text-gray-700 mb-3">案例来源</h3>
+        <div class="grid grid-cols-2 gap-2 mb-3">
+          <button type="button" class="case-source-tab h-9 rounded-lg border border-blue-500 bg-blue-50 text-blue-700 text-xs font-medium" data-source="library">选择已上传案例</button>
+          <button type="button" class="case-source-tab h-9 rounded-lg border border-gray-200 bg-white text-gray-600 text-xs font-medium" data-source="upload">当前卡片上传</button>
+        </div>
+        <div id="case-source-library" class="space-y-2">
+          <label class="flex items-start gap-2 p-2.5 rounded-lg border border-blue-200 bg-blue-50 cursor-pointer">
+            <input type="checkbox" checked class="mt-0.5 rounded border-gray-300 text-blue-600">
+            <span class="min-w-0"><span class="block text-xs font-medium text-gray-800 truncate">张同学-CS方向-PS终稿.docx</span><span class="block text-[11px] text-gray-400 mt-0.5">硕士 · PS</span></span>
+          </label>
+          <label class="flex items-start gap-2 p-2.5 rounded-lg border border-gray-200 bg-white cursor-pointer">
+            <input type="checkbox" class="mt-0.5 rounded border-gray-300 text-blue-600">
+            <span class="min-w-0"><span class="block text-xs font-medium text-gray-800 truncate">李同学-AI方向-PS录取版.pdf</span><span class="block text-[11px] text-gray-400 mt-0.5">硕士 · PS</span></span>
+          </label>
+        </div>
+        <div class="mt-3" id="case-library-parse">
+          <button type="button" id="btn-ai-parse-library" class="w-full h-9 rounded-lg bg-blue-600 text-white text-xs font-medium hover:bg-blue-700 flex items-center justify-center gap-1.5">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09zM18.259 8.715L18 9.75l-.259-1.035a3.375 3.375 0 00-2.455-2.456L14.25 6l1.036-.259a3.375 3.375 0 002.455-2.456L18 2.25l.259 1.035a3.375 3.375 0 002.456 2.456L21.75 6l-1.035.259a3.375 3.375 0 00-2.456 2.456z"></path></svg>
+            AI解析案例包
+          </button>
+          <p class="text-[11px] text-gray-400 mt-1.5">勾选上方已上传案例后点击解析，弹窗内无需重新上传</p>
+          <p id="case-parse-status" class="text-[11px] text-emerald-600 mt-1 hidden"></p>
+        </div>
+        <div id="case-source-upload" class="hidden">
+          <label for="case-source-file" class="block border-2 border-dashed border-gray-300 rounded-xl p-4 text-center cursor-pointer hover:border-blue-400 hover:bg-blue-50/40">
+            <svg class="w-7 h-7 mx-auto text-gray-300 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M12 12v9m0-9l-3 3m3-3l3 3"></path></svg>
+            <span class="block text-xs font-medium text-gray-700">点击上传案例文件</span>
+            <span class="block text-[11px] text-gray-400 mt-1">DOC、DOCX、PDF</span>
+          </label>
+          <input id="case-source-file" type="file" class="hidden" accept=".doc,.docx,.pdf" multiple>
+          <div id="case-source-upload-list" class="mt-2 space-y-1"></div>
+        </div>
+      </div>
+
+      <!-- 底部状态栏 -->
+      <div class="p-5 mt-auto border-t border-gray-100">
+        <div class="text-xs text-gray-500 space-y-1">
+          <div class="flex justify-between">
+            <span>当前版本</span>
+            <span class="font-medium text-gray-700">v1.0</span>
+          </div>
+          <div class="flex justify-between">
+            <span>创建人</span>
+            <span class="font-medium text-gray-700">张老师</span>
+          </div>
+          <div class="flex justify-between">
+            <span>最后编辑时间</span>
+            <span class="font-medium text-gray-700">2026-07-17 15:30</span>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- 中央：模板内容编辑区 -->
+    <main class="flex-1 flex flex-col min-w-0">
+      <!-- 工具栏 -->
+      <div class="bg-white border-b border-gray-200 px-6 py-2">
+        <div class="flex items-center gap-1">
+          <button class="p-1.5 text-gray-600 hover:bg-gray-100 rounded" title="粗体"><strong>B</strong></button>
+          <button class="p-1.5 text-gray-600 hover:bg-gray-100 rounded" title="斜体"><em>I</em></button>
+          <button class="p-1.5 text-gray-600 hover:bg-gray-100 rounded" title="下划线"><u>U</u></button>
+          <div class="w-px h-5 bg-gray-200 mx-1"></div>
+          <button class="p-1.5 text-gray-600 hover:bg-gray-100 rounded" title="插入变量">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 20l4-16m2 0l4 16M6 9h14M4 15h14"></path>
+            </svg>
+          </button>
+          <button class="p-1.5 text-gray-600 hover:bg-gray-100 rounded" title="插入表格">⊞</button>
+          <div class="w-px h-5 bg-gray-200 mx-1"></div>
+          <button class="px-2 py-1 text-xs bg-blue-50 text-blue-600 rounded hover:bg-blue-100">H1</button>
+          <button class="px-2 py-1 text-xs bg-gray-50 text-gray-600 rounded hover:bg-gray-100">H2</button>
+          <button class="px-2 py-1 text-xs bg-gray-50 text-gray-600 rounded hover:bg-gray-100">H3</button>
+        </div>
+      </div>
+
+      <!-- 编辑器内容 -->
+      <div class="flex-1 overflow-y-auto p-6 bg-gray-50">
+        <div class="max-w-3xl mx-auto bg-white rounded-xl shadow-sm border border-gray-100 p-8">
+          <div class="mb-6">
+            <h2 class="text-xl font-bold text-gray-900 mb-1">AI方向PS标准模板</h2>
+            <p class="text-sm text-gray-500">适用于CS/AI方向硕士申请</p>
+          </div>
+          <div id="section-container" class="space-y-6"><div class="section-block border border-gray-200 rounded-xl overflow-hidden" data-section="9"><div class="flex items-center justify-between px-4 py-2 bg-gray-50 border-b border-gray-200"><input type="text" value="一、背景与动机" class="section-title flex-1 bg-transparent text-sm font-bold text-gray-900 focus:outline-none" placeholder="输入段落标题..."><span class="text-[10px] px-1.5 py-0.5 bg-blue-50 text-blue-500 rounded mr-2">案例解析</span><button class="btn-delete-section p-1 text-gray-400 hover:text-red-500" title="删除段落"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg></button></div><textarea class="section-content w-full p-4 text-gray-700 leading-relaxed text-sm resize-none focus:outline-none" rows="5" placeholder="输入段落内容..." style="height: 146px;">作为一名[专业名称]专业的学生，我对[申请方向]领域的兴趣始于[兴趣起源事件]。在[课程/项目]中，我首次接触到[技术/概念]，并被其解决实际问题的能力所吸引，由此确立了深入该方向研究的目标。</textarea></div><div class="section-block border border-gray-200 rounded-xl overflow-hidden" data-section="10"><div class="flex items-center justify-between px-4 py-2 bg-gray-50 border-b border-gray-200"><input type="text" value="二、学术准备" class="section-title flex-1 bg-transparent text-sm font-bold text-gray-900 focus:outline-none" placeholder="输入段落标题..."><span class="text-[10px] px-1.5 py-0.5 bg-blue-50 text-blue-500 rounded mr-2">案例解析</span><button class="btn-delete-section p-1 text-gray-400 hover:text-red-500" title="删除段落"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg></button></div><textarea class="section-content w-full p-4 text-gray-700 leading-relaxed text-sm resize-none focus:outline-none" rows="5" placeholder="输入段落内容..." style="height: 146px;">在[本科院校]就读期间，我系统学习了[专业名称]的核心课程，包括[核心课程]等。我的GPA为[GPA]，专业排名[专业排名]，为后续的深入研究打下了坚实基础。</textarea></div><div class="section-block border border-gray-200 rounded-xl overflow-hidden" data-section="11"><div class="flex items-center justify-between px-4 py-2 bg-gray-50 border-b border-gray-200"><input type="text" value="三、研究经历" class="section-title flex-1 bg-transparent text-sm font-bold text-gray-900 focus:outline-none" placeholder="输入段落标题..."><span class="text-[10px] px-1.5 py-0.5 bg-blue-50 text-blue-500 rounded mr-2">案例解析</span><button class="btn-delete-section p-1 text-gray-400 hover:text-red-500" title="删除段落"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg></button></div><textarea class="section-content w-full p-4 text-gray-700 leading-relaxed text-sm resize-none focus:outline-none" rows="5" placeholder="输入段落内容..." style="height: 146px;">我主持的[项目名称]，旨在[项目目标]。在该项目中，我负责[工作内容]，通过[关键技术/方法]，最终成果[项目成果]。</textarea></div><div class="section-block border border-gray-200 rounded-xl overflow-hidden" data-section="12"><div class="flex items-center justify-between px-4 py-2 bg-gray-50 border-b border-gray-200"><input type="text" value="四、实习/实践经历" class="section-title flex-1 bg-transparent text-sm font-bold text-gray-900 focus:outline-none" placeholder="输入段落标题..."><span class="text-[10px] px-1.5 py-0.5 bg-blue-50 text-blue-500 rounded mr-2">案例解析</span><button class="btn-delete-section p-1 text-gray-400 hover:text-red-500" title="删除段落"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg></button></div><textarea class="section-content w-full p-4 text-gray-700 leading-relaxed text-sm resize-none focus:outline-none" rows="5" placeholder="输入段落内容..." style="height: 146px;">在[实习公司]担任[实习岗位]期间，我参与了[工作内容]，通过[具体行动]实现了[实习成果]，进一步锻炼了工程实践与团队协作能力。</textarea></div><div class="section-block border border-gray-200 rounded-xl overflow-hidden" data-section="13"><div class="flex items-center justify-between px-4 py-2 bg-gray-50 border-b border-gray-200"><input type="text" value="五、职业规划与动机升华" class="section-title flex-1 bg-transparent text-sm font-bold text-gray-900 focus:outline-none" placeholder="输入段落标题..."><span class="text-[10px] px-1.5 py-0.5 bg-blue-50 text-blue-500 rounded mr-2">案例解析</span><button class="btn-delete-section p-1 text-gray-400 hover:text-red-500" title="删除段落"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg></button></div><textarea class="section-content w-full p-4 text-gray-700 leading-relaxed text-sm resize-none focus:outline-none" rows="5" placeholder="输入段落内容..." style="height: 146px;">未来，我希望在[目标院校]的[申请方向]项目中深造。短期目标是[短期目标]，长期致力于[长期目标]，将所学应用于[应用领域]的实际问题。</textarea></div></div>
+          <!-- 添加段落按钮 -->
+          <button id="btn-add-section" class="mt-4 w-full flex items-center justify-center gap-2 px-4 py-3 border-2 border-dashed border-gray-300 rounded-xl text-sm text-gray-500 hover:text-blue-600 hover:border-blue-400 transition-colors">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
+            增加段落
+          </button>
+        </div>
+      </div>
+    </main>
+
+    <!-- 右侧：模板变量设置 -->
+    <aside class="w-72 bg-white border-l border-gray-200 flex flex-col flex-shrink-0 overflow-y-auto">
+      <div class="p-4 border-b border-gray-100">
+        <h3 class="text-sm font-medium text-gray-800">学生档案可引用变量</h3>
+        <p class="text-xs text-gray-400 mt-1">与学生档案详情页 11 个板块一致，蓝色表示已引用</p>
+      </div>
+      <div class="flex-1 p-4 space-y-3">
+        <!-- 板块一：教育背景信息 -->
+        <div class="variable-group rounded-xl border border-gray-200 overflow-hidden">
+          <button type="button" class="variable-group-toggle w-full flex items-center justify-between px-3 py-2.5 bg-gray-50 text-sm font-medium text-gray-700" aria-expanded="true"><span>教育背景信息</span><svg class="w-4 h-4 transition-transform rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg></button>
+          <div class="variable-group-body p-3 flex flex-wrap gap-2">
+            <button class="variable-tag px-2.5 py-1.5 rounded-lg bg-gray-100 text-gray-500 text-xs" data-used="false">[就读学校]</button>
+            <button class="variable-tag px-2.5 py-1.5 rounded-lg bg-gray-100 text-gray-500 text-xs" data-used="false">[所在院系]</button>
+            <button class="variable-tag px-2.5 py-1.5 rounded-lg bg-blue-100 text-blue-700 text-xs font-medium" data-used="true">[专业名称]</button>
+            <button class="variable-tag px-2.5 py-1.5 rounded-lg bg-blue-100 text-blue-700 text-xs font-medium" data-used="true">[GPA]</button>
+            <button class="variable-tag px-2.5 py-1.5 rounded-lg bg-gray-100 text-gray-500 text-xs" data-used="false">[学制]</button>
+            <button class="variable-tag px-2.5 py-1.5 rounded-lg bg-gray-100 text-gray-500 text-xs" data-used="false">[所获学位]</button>
+            <button class="variable-tag px-2.5 py-1.5 rounded-lg bg-gray-100 text-gray-500 text-xs" data-used="false">[起止时间]</button>
+            <button class="variable-tag px-2.5 py-1.5 rounded-lg bg-gray-100 text-gray-500 text-xs" data-used="false">[学校地址]</button>
+          </div>
+        </div>
+        <!-- 板块二：语言成绩 -->
+        <div class="variable-group rounded-xl border border-gray-200 overflow-hidden">
+          <button type="button" class="variable-group-toggle w-full flex items-center justify-between px-3 py-2.5 bg-gray-50 text-sm font-medium text-gray-700" aria-expanded="false"><span>语言成绩</span><svg class="w-4 h-4 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg></button>
+          <div class="variable-group-body hidden p-3 flex flex-wrap gap-2">
+            <button class="variable-tag px-2.5 py-1.5 rounded-lg bg-gray-100 text-gray-500 text-xs" data-used="false">[雅思总分]</button>
+            <button class="variable-tag px-2.5 py-1.5 rounded-lg bg-gray-100 text-gray-500 text-xs" data-used="false">[雅思听力]</button>
+            <button class="variable-tag px-2.5 py-1.5 rounded-lg bg-gray-100 text-gray-500 text-xs" data-used="false">[雅思阅读]</button>
+            <button class="variable-tag px-2.5 py-1.5 rounded-lg bg-gray-100 text-gray-500 text-xs" data-used="false">[雅思写作]</button>
+            <button class="variable-tag px-2.5 py-1.5 rounded-lg bg-gray-100 text-gray-500 text-xs" data-used="false">[雅思口语]</button>
+            <button class="variable-tag px-2.5 py-1.5 rounded-lg bg-gray-100 text-gray-500 text-xs" data-used="false">[托福总分]</button>
+            <button class="variable-tag px-2.5 py-1.5 rounded-lg bg-gray-100 text-gray-500 text-xs" data-used="false">[托福听力]</button>
+            <button class="variable-tag px-2.5 py-1.5 rounded-lg bg-gray-100 text-gray-500 text-xs" data-used="false">[托福阅读]</button>
+            <button class="variable-tag px-2.5 py-1.5 rounded-lg bg-gray-100 text-gray-500 text-xs" data-used="false">[托福写作]</button>
+            <button class="variable-tag px-2.5 py-1.5 rounded-lg bg-gray-100 text-gray-500 text-xs" data-used="false">[托福口语]</button>
+          </div>
+        </div>
+        <!-- 板块三：学业信息 -->
+        <div class="variable-group rounded-xl border border-gray-200 overflow-hidden">
+          <button type="button" class="variable-group-toggle w-full flex items-center justify-between px-3 py-2.5 bg-gray-50 text-sm font-medium text-gray-700" aria-expanded="false"><span>学业信息</span><svg class="w-4 h-4 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg></button>
+          <div class="variable-group-body hidden p-3 flex flex-wrap gap-2">
+            <button class="variable-tag px-2.5 py-1.5 rounded-lg bg-gray-100 text-gray-500 text-xs" data-used="false">[SAT]</button>
+            <button class="variable-tag px-2.5 py-1.5 rounded-lg bg-gray-100 text-gray-500 text-xs" data-used="false">[AP]</button>
+            <button class="variable-tag px-2.5 py-1.5 rounded-lg bg-gray-100 text-gray-500 text-xs" data-used="false">[A-Level]</button>
+            <button class="variable-tag px-2.5 py-1.5 rounded-lg bg-gray-100 text-gray-500 text-xs" data-used="false">[IB]</button>
+            <button class="variable-tag px-2.5 py-1.5 rounded-lg bg-gray-100 text-gray-500 text-xs" data-used="false">[论文数量]</button>
+            <button class="variable-tag px-2.5 py-1.5 rounded-lg bg-gray-100 text-gray-500 text-xs" data-used="false">[论文题目]</button>
+            <button class="variable-tag px-2.5 py-1.5 rounded-lg bg-gray-100 text-gray-500 text-xs" data-used="false">[期刊]</button>
+            <button class="variable-tag px-2.5 py-1.5 rounded-lg bg-gray-100 text-gray-500 text-xs" data-used="false">[发表时间]</button>
+            <button class="variable-tag px-2.5 py-1.5 rounded-lg bg-gray-100 text-gray-500 text-xs" data-used="false">[指导教师]</button>
+            <button class="variable-tag px-2.5 py-1.5 rounded-lg bg-gray-100 text-gray-500 text-xs" data-used="false">[专利数量]</button>
+            <button class="variable-tag px-2.5 py-1.5 rounded-lg bg-gray-100 text-gray-500 text-xs" data-used="false">[专利名称]</button>
+            <button class="variable-tag px-2.5 py-1.5 rounded-lg bg-gray-100 text-gray-500 text-xs" data-used="false">[专利时间]</button>
+            <button class="variable-tag px-2.5 py-1.5 rounded-lg bg-gray-100 text-gray-500 text-xs" data-used="false">[学业备注]</button>
+          </div>
+        </div>
+        <!-- 板块四：专业资质 -->
+        <div class="variable-group rounded-xl border border-gray-200 overflow-hidden">
+          <button type="button" class="variable-group-toggle w-full flex items-center justify-between px-3 py-2.5 bg-gray-50 text-sm font-medium text-gray-700" aria-expanded="false"><span>专业资质</span><svg class="w-4 h-4 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg></button>
+          <div class="variable-group-body hidden p-3 flex flex-wrap gap-2">
+            <button class="variable-tag px-2.5 py-1.5 rounded-lg bg-gray-100 text-gray-500 text-xs" data-used="false">[资质名称]</button>
+            <button class="variable-tag px-2.5 py-1.5 rounded-lg bg-gray-100 text-gray-500 text-xs" data-used="false">[颁发机构]</button>
+            <button class="variable-tag px-2.5 py-1.5 rounded-lg bg-gray-100 text-gray-500 text-xs" data-used="false">[获得时间]</button>
+            <button class="variable-tag px-2.5 py-1.5 rounded-lg bg-gray-100 text-gray-500 text-xs" data-used="false">[证书编号]</button>
+            <button class="variable-tag px-2.5 py-1.5 rounded-lg bg-gray-100 text-gray-500 text-xs" data-used="false">[有效期至]</button>
+          </div>
+        </div>
+        <!-- 板块五：工作经历 -->
+        <div class="variable-group rounded-xl border border-gray-200 overflow-hidden">
+          <button type="button" class="variable-group-toggle w-full flex items-center justify-between px-3 py-2.5 bg-gray-50 text-sm font-medium text-gray-700" aria-expanded="false"><span>工作经历</span><svg class="w-4 h-4 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg></button>
+          <div class="variable-group-body hidden p-3 flex flex-wrap gap-2">
+            <button class="variable-tag px-2.5 py-1.5 rounded-lg bg-gray-100 text-gray-500 text-xs" data-used="false">[公司名称]</button>
+            <button class="variable-tag px-2.5 py-1.5 rounded-lg bg-gray-100 text-gray-500 text-xs" data-used="false">[职位]</button>
+            <button class="variable-tag px-2.5 py-1.5 rounded-lg bg-gray-100 text-gray-500 text-xs" data-used="false">[入职时间]</button>
+            <button class="variable-tag px-2.5 py-1.5 rounded-lg bg-gray-100 text-gray-500 text-xs" data-used="false">[离职时间]</button>
+            <button class="variable-tag px-2.5 py-1.5 rounded-lg bg-gray-100 text-gray-500 text-xs" data-used="false">[工作描述]</button>
+            <button class="variable-tag px-2.5 py-1.5 rounded-lg bg-gray-100 text-gray-500 text-xs" data-used="false">[证明人]</button>
+          </div>
+        </div>
+        <!-- 板块六：实践经历 -->
+        <div class="variable-group rounded-xl border border-gray-200 overflow-hidden">
+          <button type="button" class="variable-group-toggle w-full flex items-center justify-between px-3 py-2.5 bg-gray-50 text-sm font-medium text-gray-700" aria-expanded="false"><span>实践经历</span><svg class="w-4 h-4 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg></button>
+          <div class="variable-group-body hidden p-3 flex flex-wrap gap-2">
+            <button class="variable-tag px-2.5 py-1.5 rounded-lg bg-gray-100 text-gray-500 text-xs" data-used="false">[组织/项目]</button>
+            <button class="variable-tag px-2.5 py-1.5 rounded-lg bg-gray-100 text-gray-500 text-xs" data-used="false">[担任角色]</button>
+            <button class="variable-tag px-2.5 py-1.5 rounded-lg bg-gray-100 text-gray-500 text-xs" data-used="false">[开始时间]</button>
+            <button class="variable-tag px-2.5 py-1.5 rounded-lg bg-gray-100 text-gray-500 text-xs" data-used="false">[结束时间]</button>
+            <button class="variable-tag px-2.5 py-1.5 rounded-lg bg-gray-100 text-gray-500 text-xs" data-used="false">[活动内容]</button>
+            <button class="variable-tag px-2.5 py-1.5 rounded-lg bg-gray-100 text-gray-500 text-xs" data-used="false">[收获]</button>
+          </div>
+        </div>
+        <!-- 板块七：荣誉 -->
+        <div class="variable-group rounded-xl border border-gray-200 overflow-hidden">
+          <button type="button" class="variable-group-toggle w-full flex items-center justify-between px-3 py-2.5 bg-gray-50 text-sm font-medium text-gray-700" aria-expanded="false"><span>荣誉</span><svg class="w-4 h-4 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg></button>
+          <div class="variable-group-body hidden p-3 flex flex-wrap gap-2">
+            <button class="variable-tag px-2.5 py-1.5 rounded-lg bg-gray-100 text-gray-500 text-xs" data-used="false">[荣誉名称]</button>
+            <button class="variable-tag px-2.5 py-1.5 rounded-lg bg-gray-100 text-gray-500 text-xs" data-used="false">[颁奖机构]</button>
+            <button class="variable-tag px-2.5 py-1.5 rounded-lg bg-gray-100 text-gray-500 text-xs" data-used="false">[获奖时间]</button>
+            <button class="variable-tag px-2.5 py-1.5 rounded-lg bg-gray-100 text-gray-500 text-xs" data-used="false">[荣誉级别]</button>
+            <button class="variable-tag px-2.5 py-1.5 rounded-lg bg-gray-100 text-gray-500 text-xs" data-used="false">[荣誉备注]</button>
+          </div>
+        </div>
+        <!-- 板块八：学术发表 -->
+        <div class="variable-group rounded-xl border border-gray-200 overflow-hidden">
+          <button type="button" class="variable-group-toggle w-full flex items-center justify-between px-3 py-2.5 bg-gray-50 text-sm font-medium text-gray-700" aria-expanded="false"><span>学术发表</span><svg class="w-4 h-4 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg></button>
+          <div class="variable-group-body hidden p-3 flex flex-wrap gap-2">
+            <button class="variable-tag px-2.5 py-1.5 rounded-lg bg-gray-100 text-gray-500 text-xs" data-used="false">[论文标题]</button>
+            <button class="variable-tag px-2.5 py-1.5 rounded-lg bg-gray-100 text-gray-500 text-xs" data-used="false">[期刊/会议]</button>
+            <button class="variable-tag px-2.5 py-1.5 rounded-lg bg-gray-100 text-gray-500 text-xs" data-used="false">[发表日期]</button>
+            <button class="variable-tag px-2.5 py-1.5 rounded-lg bg-gray-100 text-gray-500 text-xs" data-used="false">[作者排序]</button>
+            <button class="variable-tag px-2.5 py-1.5 rounded-lg bg-gray-100 text-gray-500 text-xs" data-used="false">[DOI]</button>
+            <button class="variable-tag px-2.5 py-1.5 rounded-lg bg-gray-100 text-gray-500 text-xs" data-used="false">[期刊级别]</button>
+          </div>
+        </div>
+        <!-- 板块九：申请记录 -->
+        <div class="variable-group rounded-xl border border-gray-200 overflow-hidden">
+          <button type="button" class="variable-group-toggle w-full flex items-center justify-between px-3 py-2.5 bg-gray-50 text-sm font-medium text-gray-700" aria-expanded="false"><span>申请记录</span><svg class="w-4 h-4 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg></button>
+          <div class="variable-group-body hidden p-3 flex flex-wrap gap-2">
+            <button class="variable-tag px-2.5 py-1.5 rounded-lg bg-gray-100 text-gray-500 text-xs" data-used="false">[申请学校]</button>
+            <button class="variable-tag px-2.5 py-1.5 rounded-lg bg-gray-100 text-gray-500 text-xs" data-used="false">[申请专业]</button>
+            <button class="variable-tag px-2.5 py-1.5 rounded-lg bg-gray-100 text-gray-500 text-xs" data-used="false">[申请轮次]</button>
+            <button class="variable-tag px-2.5 py-1.5 rounded-lg bg-gray-100 text-gray-500 text-xs" data-used="false">[学生状态]</button>
+            <button class="variable-tag px-2.5 py-1.5 rounded-lg bg-gray-100 text-gray-500 text-xs" data-used="false">[申请时间]</button>
+            <button class="variable-tag px-2.5 py-1.5 rounded-lg bg-gray-100 text-gray-500 text-xs" data-used="false">[申请结果]</button>
+          </div>
+        </div>
+        <!-- 板块十：账号管理列表 -->
+        <div class="variable-group rounded-xl border border-gray-200 overflow-hidden">
+          <button type="button" class="variable-group-toggle w-full flex items-center justify-between px-3 py-2.5 bg-gray-50 text-sm font-medium text-gray-700" aria-expanded="false"><span>账号管理列表</span><svg class="w-4 h-4 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg></button>
+          <div class="variable-group-body hidden p-3 flex flex-wrap gap-2">
+            <button class="variable-tag px-2.5 py-1.5 rounded-lg bg-gray-100 text-gray-500 text-xs" data-used="false">[申请层次]</button>
+            <button class="variable-tag px-2.5 py-1.5 rounded-lg bg-gray-100 text-gray-500 text-xs" data-used="false">[申请官网URL]</button>
+            <button class="variable-tag px-2.5 py-1.5 rounded-lg bg-gray-100 text-gray-500 text-xs" data-used="false">[申请账号]</button>
+            <button class="variable-tag px-2.5 py-1.5 rounded-lg bg-gray-100 text-gray-500 text-xs" data-used="false">[申请密码]</button>
+            <button class="variable-tag px-2.5 py-1.5 rounded-lg bg-gray-100 text-gray-500 text-xs" data-used="false">[邮箱URL]</button>
+            <button class="variable-tag px-2.5 py-1.5 rounded-lg bg-gray-100 text-gray-500 text-xs" data-used="false">[邮箱账号]</button>
+            <button class="variable-tag px-2.5 py-1.5 rounded-lg bg-gray-100 text-gray-500 text-xs" data-used="false">[邮箱密码]</button>
+          </div>
+        </div>
+        <!-- 板块十一：资产文件 -->
+        <div class="variable-group rounded-xl border border-gray-200 overflow-hidden">
+          <button type="button" class="variable-group-toggle w-full flex items-center justify-between px-3 py-2.5 bg-gray-50 text-sm font-medium text-gray-700" aria-expanded="false"><span>资产文件</span><svg class="w-4 h-4 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg></button>
+          <div class="variable-group-body hidden p-3 flex flex-wrap gap-2">
+            <button class="variable-tag px-2.5 py-1.5 rounded-lg bg-gray-100 text-gray-500 text-xs" data-used="false">[文件名称]</button>
+            <button class="variable-tag px-2.5 py-1.5 rounded-lg bg-gray-100 text-gray-500 text-xs" data-used="false">[文件大小]</button>
+            <button class="variable-tag px-2.5 py-1.5 rounded-lg bg-gray-100 text-gray-500 text-xs" data-used="false">[上传时间]</button>
+          </div>
+        </div>
+      </div>
+    </aside>
+  </div>
+
+  <!-- 预览弹窗 -->
+  <div id="previewModal" class="fixed inset-0 z-50 hidden">
+    <div class="absolute inset-0 bg-black bg-opacity-30" onclick="closePreviewModal()"></div>
+    <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] max-h-[80vh] bg-white rounded-2xl shadow-2xl flex flex-col">
+      <div class="flex items-center justify-between px-6 py-4 border-b border-gray-200">
+        <h3 class="text-lg font-semibold text-gray-800">模板预览</h3>
+        <button class="p-1 text-gray-400 hover:text-gray-600" onclick="closePreviewModal()">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+        </button>
+      </div>
+      <div class="flex-1 overflow-y-auto p-8">
+        <div class="max-w-2xl mx-auto">
+          <h2 class="text-xl font-bold text-gray-900 mb-1">个人陈述（Personal Statement）</h2>
+          <p class="text-sm text-gray-500 mb-6">AI方向PS标准模板预览</p>
+          <p class="text-gray-700 leading-relaxed mb-4">作为一名计算机科学专业的学生，我对人工智能领域的兴趣始于大学二年级参与的机器学习课程项目...</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- AI解析文书案例包弹窗：从「选择已上传案例」进入时跳过上传步骤，直接智能解析 -->
+  <div id="caseParseModal" class="fixed inset-0 z-50 hidden">
+    <div class="absolute inset-0 bg-black bg-opacity-30" onclick="closeCaseParseModal()"></div>
+    <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[880px] max-w-[95vw] max-h-[86vh] bg-white rounded-2xl shadow-2xl flex flex-col">
+      <!-- 弹窗头部 -->
+      <div class="flex items-center justify-between px-6 py-4 border-b border-gray-200">
+        <div class="flex items-center gap-2">
+          <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09zM18.259 8.715L18 9.75l-.259-1.035a3.375 3.375 0 00-2.455-2.456L14.25 6l1.036-.259a3.375 3.375 0 002.455-2.456L18 2.25l.259 1.035a3.375 3.375 0 002.456 2.456L21.75 6l-1.035.259a3.375 3.375 0 00-2.456 2.456z"></path>
+          </svg>
+          <h3 class="text-lg font-semibold text-gray-800">解析文书案例包</h3>
+          <span class="text-xs text-gray-400" id="caseParseSubtitle">上传过往文书案例，AI 自动解析生成模板草稿</span>
+        </div>
+        <button class="p-1 text-gray-400 hover:text-gray-600" onclick="closeCaseParseModal()">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+        </button>
+      </div>
+      <!-- 步骤条 -->
+      <div class="px-6 py-3 border-b border-gray-100 bg-gray-50">
+        <div class="flex items-center gap-2 text-xs">
+          <span class="case-step-item flex items-center gap-1.5 font-medium text-blue-600" data-step="1">
+            <span class="case-step-dot w-5 h-5 rounded-full bg-blue-600 text-white flex items-center justify-center text-[11px]">✓</span>
+            上传案例包
+          </span>
+          <span class="flex-1 h-px bg-gray-200 mx-1"></span>
+          <span class="case-step-item flex items-center gap-1.5 font-medium text-blue-600" data-step="2">
+            <span class="case-step-dot w-5 h-5 rounded-full bg-blue-600 text-white flex items-center justify-center text-[11px]">✓</span>
+            智能解析
+          </span>
+          <span class="flex-1 h-px bg-gray-200 mx-1"></span>
+          <span class="case-step-item flex items-center gap-1.5 font-medium text-blue-600" data-step="3">
+            <span class="case-step-dot w-5 h-5 rounded-full bg-blue-600 text-white flex items-center justify-center text-[11px]">3</span>
+            确认生成
+          </span>
+        </div>
+      </div>
+
+      <!-- 步骤1：上传案例包 -->
+      <div id="case-step-1" class="flex-1 overflow-y-auto p-6 hidden">
+        <!-- 上传区 -->
+        <div id="case-dropzone" class="border-2 border-dashed border-gray-300 rounded-xl p-8 text-center cursor-pointer hover:border-blue-400 hover:bg-blue-50/40 transition-colors">
+          <svg class="w-10 h-10 mx-auto text-gray-300 mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path>
+          </svg>
+          <p class="text-sm font-medium text-gray-700">点击或拖拽上传文书案例包</p>
+          <p class="text-xs text-gray-400 mt-1.5">支持 .docx / .pdf / .zip 打包上传，单个文件不超过 50MB，最多 10 份文书</p>
+          <input type="file" id="case-file-input" class="hidden" multiple="" accept=".doc,.docx,.pdf,.zip">
+        </div>
+        <!-- 已上传文件列表 -->
+        <div class="mt-4">
+          <div class="flex items-center justify-between mb-2">
+            <label class="text-sm font-medium text-gray-700">已上传案例 <span class="text-gray-400 font-normal" id="case-file-count">(3)</span></label>
+            <button class="text-xs text-blue-600 hover:text-blue-700" id="btn-add-more-files">继续添加</button>
+          </div>
+          <div class="space-y-2" id="case-file-list">
+            <div class="case-file-item flex items-center justify-between p-3 bg-gray-50 rounded-lg border border-gray-100">
+              <div class="flex items-center gap-3 min-w-0">
+                <div class="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                  <svg class="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                </div>
+                <div class="min-w-0">
+                  <p class="text-sm text-gray-800 truncate">张同学-CS方向-PS终稿.docx</p>
+                  <p class="text-xs text-gray-400">186 KB · 硕士申请</p>
+                </div>
+              </div>
+              <div class="flex items-center gap-3 flex-shrink-0">
+                <span class="text-xs px-2 py-0.5 bg-green-50 text-green-600 rounded-full">已就绪</span>
+                <svg class="btn-remove-file w-4 h-4 text-gray-400 cursor-pointer hover:text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+              </div>
+            </div>
+            <div class="case-file-item flex items-center justify-between p-3 bg-gray-50 rounded-lg border border-gray-100">
+              <div class="flex items-center gap-3 min-w-0">
+                <div class="w-8 h-8 bg-red-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                  <svg class="w-4 h-4 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                </div>
+                <div class="min-w-0">
+                  <p class="text-sm text-gray-800 truncate">李同学-AI方向-PS录取版.pdf</p>
+                  <p class="text-xs text-gray-400">342 KB · 硕士申请</p>
+                </div>
+              </div>
+              <div class="flex items-center gap-3 flex-shrink-0">
+                <span class="text-xs px-2 py-0.5 bg-green-50 text-green-600 rounded-full">已就绪</span>
+                <svg class="btn-remove-file w-4 h-4 text-gray-400 cursor-pointer hover:text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+              </div>
+            </div>
+            <div class="case-file-item flex items-center justify-between p-3 bg-gray-50 rounded-lg border border-gray-100">
+              <div class="flex items-center gap-3 min-w-0">
+                <div class="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                  <svg class="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                </div>
+                <div class="min-w-0">
+                  <p class="text-sm text-gray-800 truncate">王同学-数据科学-PS终稿.docx</p>
+                  <p class="text-xs text-gray-400">205 KB · 硕士申请</p>
+                </div>
+              </div>
+              <div class="flex items-center gap-3 flex-shrink-0">
+                <span class="text-xs px-2 py-0.5 bg-green-50 text-green-600 rounded-full">已就绪</span>
+                <svg class="btn-remove-file w-4 h-4 text-gray-400 cursor-pointer hover:text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- 解析选项 -->
+        <div class="mt-5 bg-gray-50 rounded-xl p-4 border border-gray-100">
+          <label class="text-sm font-medium text-gray-700">解析选项</label>
+          <div class="flex flex-wrap gap-x-6 gap-y-2 mt-2.5">
+            <label class="flex items-center gap-2 cursor-pointer">
+              <input type="checkbox" checked="" class="rounded border-gray-300 text-blue-600" id="opt-structure">
+              <span class="text-sm text-gray-700">识别文章结构，拆分段落框架</span>
+            </label>
+            <label class="flex items-center gap-2 cursor-pointer">
+              <input type="checkbox" checked="" class="rounded border-gray-300 text-blue-600" id="opt-variable">
+              <span class="text-sm text-gray-700">提取个性化内容，生成变量占位符</span>
+            </label>
+            <label class="flex items-center gap-2 cursor-pointer">
+              <input type="checkbox" class="rounded border-gray-300 text-blue-600" id="opt-style">
+              <span class="text-sm text-gray-700">分析写作风格与常用句式</span>
+            </label>
+          </div>
+          <p class="text-xs text-gray-400 mt-2.5">多份文书将交叉比对，提取共性结构作为模板框架，个性化信息自动替换为变量</p>
+        </div>
+      </div>
+
+      <!-- 步骤2：智能解析中 -->
+      <div id="case-step-2" class="flex-1 overflow-y-auto p-6 hidden">
+        <div class="max-w-md mx-auto py-8">
+          <div class="flex items-center justify-center mb-6">
+            <div class="w-14 h-14 rounded-full bg-blue-50 flex items-center justify-center">
+              <svg class="w-7 h-7 text-blue-600 animate-spin" fill="none" viewBox="0 0 24 24">
+                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+              </svg>
+            </div>
+          </div>
+          <p class="text-center text-sm font-medium text-gray-800 mb-1">AI 正在解析 <span id="parsing-file-count">3</span> 份文书案例...</p>
+          <p class="text-center text-xs text-gray-400 mb-6">交叉比对多份文书，提取共性结构与变量</p>
+          <!-- 进度条 -->
+          <div class="w-full h-2 bg-gray-100 rounded-full overflow-hidden mb-6">
+            <div id="parse-progress-bar" class="h-full bg-blue-600 rounded-full transition-all duration-500" style="width: 100%;"></div>
+          </div>
+          <!-- 解析步骤 -->
+          <div class="space-y-3" id="parse-task-list">
+            <div class="parse-task flex items-center gap-3" data-task="1">
+              <span class="task-icon w-5 h-5 flex items-center justify-center"><svg class="w-4 h-4 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg></span>
+              <span class="task-label text-sm text-gray-700">读取并解析文档内容</span>
+              <span class="task-status text-xs ml-auto text-green-500">完成</span>
+            </div>
+            <div class="parse-task flex items-center gap-3" data-task="2">
+              <span class="task-icon w-5 h-5 flex items-center justify-center"><svg class="w-4 h-4 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg></span>
+              <span class="task-label text-sm text-gray-700">识别文章结构与段落框架</span>
+              <span class="task-status text-xs ml-auto text-green-500">完成</span>
+            </div>
+            <div class="parse-task flex items-center gap-3" data-task="3">
+              <span class="task-icon w-5 h-5 flex items-center justify-center"><svg class="w-4 h-4 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg></span>
+              <span class="task-label text-sm text-gray-700">提取个性化内容，生成变量占位符</span>
+              <span class="task-status text-xs ml-auto text-green-500">完成</span>
+            </div>
+            <div class="parse-task flex items-center gap-3" data-task="4">
+              <span class="task-icon w-5 h-5 flex items-center justify-center"><svg class="w-4 h-4 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg></span>
+              <span class="task-label text-sm text-gray-700">交叉比对多份文书，合成模板草稿</span>
+              <span class="task-status text-xs ml-auto text-green-500">完成</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 步骤3：解析结果确认 -->
+      <div id="case-step-3" class="flex-1 overflow-y-auto p-6">
+        <!-- 建议模板信息 -->
+        <div class="bg-blue-50 border border-blue-100 rounded-xl p-4 mb-5">
+          <div class="flex items-start gap-3">
+            <svg class="w-5 h-5 text-blue-600 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+            </svg>
+            <div class="text-sm flex-1">
+              <p class="font-medium text-blue-800">基于 3 份文书案例，建议生成：<span class="font-bold">CS/AI 方向 PS 模板（硕士申请）</span></p>
+              <p class="text-blue-600 text-xs mt-1">识别到 6 个共性段落、12 个可变量化内容。勾选需要纳入模板的段落后点击「应用到编辑器」。</p>
+            </div>
+          </div>
+        </div>
+        <div class="flex gap-5">
+          <!-- 左：识别到的段落结构 -->
+          <div class="flex-1 min-w-0">
+            <div class="flex items-center justify-between mb-2">
+              <label class="text-sm font-medium text-gray-700">识别到的段落结构</label>
+              <span class="text-xs text-gray-400">已选 <span id="selected-section-count">5</span>/6</span>
+            </div>
+            <div class="space-y-2" id="parsed-section-list">
+              <label class="parsed-section flex items-center gap-3 p-3 border border-gray-200 rounded-lg cursor-pointer hover:border-blue-300 hover:bg-blue-50/30">
+                <input type="checkbox" checked="" class="parsed-section-check rounded border-gray-300 text-blue-600">
+                <div class="flex-1 min-w-0">
+                  <p class="text-sm font-medium text-gray-800">一、背景与动机</p>
+                  <p class="text-xs text-gray-400 truncate">兴趣起源、关键事件触发 — 3/3 份文书均包含</p>
+                </div>
+                <span class="text-xs px-2 py-0.5 bg-green-50 text-green-600 rounded-full flex-shrink-0">置信度 98%</span>
+              </label>
+              <label class="parsed-section flex items-center gap-3 p-3 border border-gray-200 rounded-lg cursor-pointer hover:border-blue-300 hover:bg-blue-50/30">
+                <input type="checkbox" checked="" class="parsed-section-check rounded border-gray-300 text-blue-600">
+                <div class="flex-1 min-w-0">
+                  <p class="text-sm font-medium text-gray-800">二、学术准备</p>
+                  <p class="text-xs text-gray-400 truncate">核心课程、GPA、专业排名 — 3/3 份文书均包含</p>
+                </div>
+                <span class="text-xs px-2 py-0.5 bg-green-50 text-green-600 rounded-full flex-shrink-0">置信度 96%</span>
+              </label>
+              <label class="parsed-section flex items-center gap-3 p-3 border border-gray-200 rounded-lg cursor-pointer hover:border-blue-300 hover:bg-blue-50/30">
+                <input type="checkbox" checked="" class="parsed-section-check rounded border-gray-300 text-blue-600">
+                <div class="flex-1 min-w-0">
+                  <p class="text-sm font-medium text-gray-800">三、研究经历</p>
+                  <p class="text-xs text-gray-400 truncate">项目目标、个人职责、成果产出 — 3/3 份文书均包含</p>
+                </div>
+                <span class="text-xs px-2 py-0.5 bg-green-50 text-green-600 rounded-full flex-shrink-0">置信度 95%</span>
+              </label>
+              <label class="parsed-section flex items-center gap-3 p-3 border border-gray-200 rounded-lg cursor-pointer hover:border-blue-300 hover:bg-blue-50/30">
+                <input type="checkbox" checked="" class="parsed-section-check rounded border-gray-300 text-blue-600">
+                <div class="flex-1 min-w-0">
+                  <p class="text-sm font-medium text-gray-800">四、实习/实践经历</p>
+                  <p class="text-xs text-gray-400 truncate">公司与岗位、工作内容、能力提升 — 2/3 份文书包含</p>
+                </div>
+                <span class="text-xs px-2 py-0.5 bg-yellow-50 text-yellow-600 rounded-full flex-shrink-0">置信度 82%</span>
+              </label>
+              <label class="parsed-section flex items-center gap-3 p-3 border border-gray-200 rounded-lg cursor-pointer hover:border-blue-300 hover:bg-blue-50/30">
+                <input type="checkbox" checked="" class="parsed-section-check rounded border-gray-300 text-blue-600">
+                <div class="flex-1 min-w-0">
+                  <p class="text-sm font-medium text-gray-800">五、职业规划与动机升华</p>
+                  <p class="text-xs text-gray-400 truncate">短期/长期目标、院校匹配度 — 3/3 份文书均包含</p>
+                </div>
+                <span class="text-xs px-2 py-0.5 bg-green-50 text-green-600 rounded-full flex-shrink-0">置信度 93%</span>
+              </label>
+              <label class="parsed-section flex items-center gap-3 p-3 border border-gray-200 rounded-lg cursor-pointer hover:border-blue-300 hover:bg-blue-50/30">
+                <input type="checkbox" class="parsed-section-check rounded border-gray-300 text-blue-600">
+                <div class="flex-1 min-w-0">
+                  <p class="text-sm font-medium text-gray-800">六、课外领导力经历</p>
+                  <p class="text-xs text-gray-400 truncate">社团与竞赛经历 — 仅 1/3 份文书包含</p>
+                </div>
+                <span class="text-xs px-2 py-0.5 bg-gray-100 text-gray-500 rounded-full flex-shrink-0">置信度 61%</span>
+              </label>
+            </div>
+          </div>
+          <!-- 右：提取的变量 -->
+          <div class="w-64 flex-shrink-0">
+            <label class="text-sm font-medium text-gray-700 block mb-2">提取的变量 <span class="text-gray-400 font-normal">(12)</span></label>
+            <div class="border border-gray-200 rounded-lg p-3 space-y-1.5 max-h-72 overflow-y-auto">
+              <div class="flex items-center justify-between text-sm"><span class="text-blue-700">[学生姓名]</span><span class="text-xs text-gray-400">文本</span></div>
+              <div class="flex items-center justify-between text-sm"><span class="text-blue-700">[申请方向]</span><span class="text-xs text-gray-400">文本</span></div>
+              <div class="flex items-center justify-between text-sm"><span class="text-blue-700">[本科院校]</span><span class="text-xs text-gray-400">文本</span></div>
+              <div class="flex items-center justify-between text-sm"><span class="text-blue-700">[专业名称]</span><span class="text-xs text-gray-400">文本</span></div>
+              <div class="flex items-center justify-between text-sm"><span class="text-blue-700">[GPA]</span><span class="text-xs text-gray-400">数字</span></div>
+              <div class="flex items-center justify-between text-sm"><span class="text-blue-700">[专业排名]</span><span class="text-xs text-gray-400">文本</span></div>
+              <div class="flex items-center justify-between text-sm"><span class="text-blue-700">[核心课程]</span><span class="text-xs text-gray-400">文本</span></div>
+              <div class="flex items-center justify-between text-sm"><span class="text-blue-700">[项目名称]</span><span class="text-xs text-gray-400">文本</span></div>
+              <div class="flex items-center justify-between text-sm"><span class="text-blue-700">[项目成果]</span><span class="text-xs text-gray-400">文本</span></div>
+              <div class="flex items-center justify-between text-sm"><span class="text-blue-700">[实习公司]</span><span class="text-xs text-gray-400">文本</span></div>
+              <div class="flex items-center justify-between text-sm"><span class="text-blue-700">[实习岗位]</span><span class="text-xs text-gray-400">文本</span></div>
+              <div class="flex items-center justify-between text-sm"><span class="text-blue-700">[目标院校]</span><span class="text-xs text-gray-400">文本</span></div>
+            </div>
+            <p class="text-xs text-gray-400 mt-2">应用后自动同步至右侧「模板变量」面板，可继续编辑</p>
+          </div>
+        </div>
+
+        <!-- 解析结果补充维度：亮点句 + 可复用句式（对齐案例库四维解析） -->
+        <div class="grid grid-cols-2 gap-5 mt-5 pt-5 border-t border-gray-100">
+          <!-- 亮点句 -->
+          <div>
+            <label class="text-sm font-medium text-gray-700 block mb-2">亮点句摘录 <span class="text-gray-400 font-normal">(3)</span></label>
+            <div class="space-y-2 max-h-44 overflow-y-auto pr-1">
+              <label class="flex items-start gap-2.5 p-2.5 border border-amber-100 bg-amber-50/40 rounded-lg cursor-pointer">
+                <input type="checkbox" checked class="mt-0.5 rounded border-gray-300 text-blue-600 flex-shrink-0">
+                <span class="text-xs text-gray-700 leading-5">“模型效果不仅取决于算法，更取决于对数据质量与场景的理解……”<span class="block text-[10px] text-amber-600 mt-1">出自：背景与动机 · 动机真实不空泛</span></span>
+              </label>
+              <label class="flex items-start gap-2.5 p-2.5 border border-amber-100 bg-amber-50/40 rounded-lg cursor-pointer">
+                <input type="checkbox" checked class="mt-0.5 rounded border-gray-300 text-blue-600 flex-shrink-0">
+                <span class="text-xs text-gray-700 leading-5">“首轮实验 F1 不升反降。我回溯了 300 条误分类样本……修正后 F1 提升 4.2 个点。”<span class="block text-[10px] text-amber-600 mt-1">出自：研究经历 · 失败复盘+量化成果</span></span>
+              </label>
+              <label class="flex items-start gap-2.5 p-2.5 border border-amber-100 bg-amber-50/40 rounded-lg cursor-pointer">
+                <input type="checkbox" class="mt-0.5 rounded border-gray-300 text-blue-600 flex-shrink-0">
+                <span class="text-xs text-gray-700 leading-5">“我希望让语言技术进入教育资源稀缺的课堂，这与贵校实验室的研究脉络直接相关。”<span class="block text-[10px] text-amber-600 mt-1">出自：择校理由 · 契合论证具体</span></span>
+              </label>
+            </div>
+          </div>
+          <!-- 可复用句式 -->
+          <div>
+            <label class="text-sm font-medium text-gray-700 block mb-2">可复用句式 <span class="text-gray-400 font-normal">(2) · 已脱敏</span></label>
+            <div class="space-y-2 max-h-44 overflow-y-auto pr-1">
+              <label class="flex items-start gap-2.5 p-2.5 border border-gray-200 rounded-lg cursor-pointer hover:border-blue-300">
+                <input type="checkbox" checked class="mt-0.5 rounded border-gray-300 text-blue-600 flex-shrink-0">
+                <span class="text-xs text-gray-700 leading-5 font-mono">“在 [课程/项目] 中，我首次将 [技术方法] 应用于 [真实场景]，并发现 [关键认识]……”<span class="block text-[10px] text-gray-400 mt-1">适用：开头段 · 经历→动机转化</span></span>
+              </label>
+              <label class="flex items-start gap-2.5 p-2.5 border border-gray-200 rounded-lg cursor-pointer hover:border-blue-300">
+                <input type="checkbox" checked class="mt-0.5 rounded border-gray-300 text-blue-600 flex-shrink-0">
+                <span class="text-xs text-gray-700 leading-5 font-mono">“首轮实验未达预期。我回溯 [数量] 条数据，定位 [根因]，通过 [方法] 将 [指标] 提升 [幅度]。”<span class="block text-[10px] text-gray-400 mt-1">适用：研究段 · 失败复盘句式</span></span>
+              </label>
+            </div>
+            <p class="text-[11px] text-gray-400 mt-2">勾选的亮点句与句式将随模板一并保存，供文书老师写作参考</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- 弹窗底部按钮 -->
+      <div class="flex items-center justify-between px-6 py-4 border-t border-gray-200 bg-gray-50 rounded-b-2xl">
+        <div class="text-xs text-gray-400" id="case-modal-footer-hint">案例内容仅用于模板结构提取，不会明文外发</div>
+        <div class="flex items-center gap-3">
+          <button class="px-4 py-2 text-sm bg-white border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 font-medium" onclick="closeCaseParseModal()">取消</button>
+          <button id="btn-case-reupload" class="px-4 py-2 text-sm bg-white border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 font-medium">重新上传</button>
+          <button id="btn-start-parse" class="px-5 py-2 text-sm bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium flex items-center gap-1.5 hidden">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+            开始解析
+          </button>
+          <button id="btn-apply-template" class="px-5 py-2 text-sm bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium flex items-center gap-1.5">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+            应用到编辑器
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 提示 Toast -->
+  <div id="case-toast" class="fixed top-20 left-1/2 -translate-x-1/2 z-[60] hidden">
+    <div class="flex items-center gap-2 px-4 py-2.5 bg-gray-900 text-white text-sm rounded-lg shadow-lg">
+      <svg class="w-4 h-4 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+      <span id="case-toast-text">已从 3 份文书案例生成模板草稿（5 个段落），请检查后保存</span>
+    </div>
+  </div>
+
+  <script>
+    var sectionCounter = 3; // 当前段落数
+
+    document.addEventListener('DOMContentLoaded', function() {
+      var params = new URLSearchParams(window.location.search);
+      var isEditMode = params.get('mode') === 'edit';
+      var pageTitle = document.getElementById('template-page-title');
+      var modeBadge = document.getElementById('template-mode-badge');
+      pageTitle.textContent = isEditMode ? '修改模板' : '新建模板';
+      modeBadge.textContent = isEditMode ? '修改' : '新建';
+      modeBadge.className = isEditMode
+        ? 'px-2 py-0.5 rounded-full bg-blue-50 text-blue-700 text-xs'
+        : 'px-2 py-0.5 rounded-full bg-green-50 text-green-700 text-xs';
+
+      document.querySelectorAll('.case-source-tab').forEach(function(tab) {
+        tab.addEventListener('click', function() {
+          var source = tab.dataset.source;
+          document.getElementById('case-source-library').classList.toggle('hidden', source !== 'library');
+          document.getElementById('case-source-upload').classList.toggle('hidden', source !== 'upload');
+          document.querySelectorAll('.case-source-tab').forEach(function(item) {
+            var active = item === tab;
+            item.className = 'case-source-tab h-9 rounded-lg border text-xs font-medium ' + (active
+              ? 'border-blue-500 bg-blue-50 text-blue-700'
+              : 'border-gray-200 bg-white text-gray-600');
+          });
+        });
+      });
+
+      var caseSourceFile = document.getElementById('case-source-file');
+      caseSourceFile.addEventListener('change', function() {
+        var list = document.getElementById('case-source-upload-list');
+        list.innerHTML = '';
+        Array.prototype.forEach.call(caseSourceFile.files, function(file) {
+          var row = document.createElement('div');
+          row.className = 'flex items-center justify-between px-2.5 py-2 rounded-lg bg-blue-50 text-xs';
+          row.innerHTML = '<span class="text-blue-700 truncate">' + file.name + '</span><span class="text-blue-500">已选择</span>';
+          list.appendChild(row);
+        });
+      });
+
+      document.querySelectorAll('.variable-group-toggle').forEach(function(button) {
+        button.addEventListener('click', function() {
+          var body = button.nextElementSibling;
+          var expanded = button.getAttribute('aria-expanded') === 'true';
+          button.setAttribute('aria-expanded', String(!expanded));
+          body.classList.toggle('hidden', expanded);
+          button.querySelector('svg').classList.toggle('rotate-180', !expanded);
+        });
+      });
+      document.querySelectorAll('.variable-tag').forEach(function(tag) {
+        tag.addEventListener('click', function() {
+          var used = tag.dataset.used === 'true';
+          tag.dataset.used = String(!used);
+          tag.className = 'variable-tag px-2.5 py-1.5 rounded-lg text-xs ' + (!used
+            ? 'bg-blue-100 text-blue-700 font-medium'
+            : 'bg-gray-100 text-gray-500');
+        });
+      });
+
+      // 返回按钮
+      var backBtn = document.querySelector('[data-dom-id="btn-back-template-library"]');
+      if (backBtn) {
+        backBtn.addEventListener('click', function() {
+      window.location.href = '模板库列表 - 文书交付系统.html';
+        });
+      }
+
+      // 保存按钮
+      var saveBtn = document.querySelector('[data-dom-id="btn-save"]');
+      if (saveBtn) {
+        saveBtn.addEventListener('click', function() {
+          alert(isEditMode ? '模板修改已保存' : '新模板已保存');
+        });
+      }
+
+      // 发布按钮
+      var publishBtn = document.querySelector('[data-dom-id="btn-publish"]');
+      if (publishBtn) {
+        publishBtn.addEventListener('click', function() {
+          if (confirm('确认发布此模板？发布后其他人员将可以使用此模板。')) {
+            alert('模板已发布');
+          }
+        });
+      }
+
+      // ================= 案例包解析 =================
+      var caseModal = document.getElementById('caseParseModal');
+      var fileInput = document.getElementById('case-file-input');
+      var fileList = document.getElementById('case-file-list');
+
+      function updateFileCount() {
+        var n = fileList.querySelectorAll('.case-file-item').length;
+        document.getElementById('case-file-count').textContent = '(' + n + ')';
+        document.getElementById('parsing-file-count').textContent = n;
+      }
+
+      function bindRemoveFile(scope) {
+        scope.querySelectorAll('.btn-remove-file').forEach(function(btn) {
+          btn.addEventListener('click', function(e) {
+            e.stopPropagation();
+            btn.closest('.case-file-item').remove();
+            updateFileCount();
+          });
+        });
+      }
+      bindRemoveFile(document);
+
+      // 打开弹窗入口：顶部按钮 + 左侧栏按钮/空状态卡片
+      ['btn-upload-case-pack', 'btn-open-case-modal-side', 'case-pack-empty', 'btn-reparse'].forEach(function(key) {
+        var el = document.querySelector('[data-dom-id="' + key + '"]') || document.getElementById(key);
+        if (el) {
+          el.addEventListener('click', function() {
+            window.__caseParseMode = 'upload';
+            document.getElementById('caseParseSubtitle').textContent = '上传过往文书案例，AI 自动解析生成模板草稿';
+            caseModal.classList.remove('hidden');
+            gotoCaseStep(1);
+          });
+        }
+      });
+
+      // 从「选择已上传案例」发起 AI 解析：无需在弹窗内上传/重新上传案例包，直接进入智能解析
+      var btnAiParseLibrary = document.getElementById('btn-ai-parse-library');
+      if (btnAiParseLibrary) {
+        btnAiParseLibrary.addEventListener('click', function() {
+          var checked = document.querySelectorAll('#case-source-library input[type="checkbox"]:checked');
+          if (!checked.length) { alert('请先勾选至少 1 份已上传案例'); return; }
+          window.__caseParseMode = 'library';
+          document.getElementById('caseParseSubtitle').textContent = '基于 ' + checked.length + ' 份已选案例，AI 自动解析生成模板草稿（无需重新上传）';
+          document.getElementById('parsing-file-count').textContent = checked.length;
+          caseModal.classList.remove('hidden');
+          gotoCaseStep(2);
+          runParseAnimation();
+        });
+      }
+
+      // 上传交互
+      var dropzone = document.getElementById('case-dropzone');
+      dropzone.addEventListener('click', function() { fileInput.click(); });
+      document.getElementById('btn-add-more-files').addEventListener('click', function() { fileInput.click(); });
+      fileInput.addEventListener('change', function() {
+        Array.prototype.forEach.call(this.files, function(f) {
+          var isPdf = /\.pdf$/i.test(f.name);
+          var item = document.createElement('div');
+          item.className = 'case-file-item flex items-center justify-between p-3 bg-gray-50 rounded-lg border border-gray-100';
+          item.innerHTML = '<div class="flex items-center gap-3 min-w-0">' +
+            '<div class="w-8 h-8 ' + (isPdf ? 'bg-red-100' : 'bg-blue-100') + ' rounded-lg flex items-center justify-center flex-shrink-0">' +
+            '<svg class="w-4 h-4 ' + (isPdf ? 'text-red-500' : 'text-blue-600') + '" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg></div>' +
+            '<div class="min-w-0"><p class="text-sm text-gray-800 truncate">' + f.name + '</p>' +
+            '<p class="text-xs text-gray-400">' + Math.max(1, Math.round(f.size / 1024)) + ' KB</p></div></div>' +
+            '<div class="flex items-center gap-3 flex-shrink-0"><span class="text-xs px-2 py-0.5 bg-green-50 text-green-600 rounded-full">已就绪</span>' +
+            '<svg class="btn-remove-file w-4 h-4 text-gray-400 cursor-pointer hover:text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg></div>';
+          fileList.appendChild(item);
+          bindRemoveFile(item);
+        });
+        updateFileCount();
+        this.value = '';
+      });
+      ['dragover', 'drop'].forEach(function(evt) {
+        dropzone.addEventListener(evt, function(e) {
+          e.preventDefault();
+          dropzone.classList.toggle('border-blue-400', evt === 'dragover');
+          if (evt === 'drop' && e.dataTransfer.files.length) {
+            fileInput.files = e.dataTransfer.files;
+            fileInput.dispatchEvent(new Event('change'));
+          }
+        });
+      });
+
+      // 步骤切换
+      var stepFooterBtns = { 1: ['btn-start-parse'], 2: [], 3: ['btn-case-reupload', 'btn-apply-template'] };
+      function gotoCaseStep(step) {
+        [1, 2, 3].forEach(function(s) {
+          document.getElementById('case-step-' + s).classList.toggle('hidden', s !== step);
+          var item = document.querySelector('.case-step-item[data-step="' + s + '"]');
+          var dot = item.querySelector('.case-step-dot');
+          if (s <= step) {
+            item.classList.add('font-medium', 'text-blue-600');
+            item.classList.remove('text-gray-400');
+            dot.className = 'case-step-dot w-5 h-5 rounded-full bg-blue-600 text-white flex items-center justify-center text-[11px]';
+            dot.textContent = s < step ? '✓' : s;
+          } else {
+            item.classList.remove('font-medium', 'text-blue-600');
+            item.classList.add('text-gray-400');
+            dot.className = 'case-step-dot w-5 h-5 rounded-full bg-gray-200 text-gray-500 flex items-center justify-center text-[11px]';
+            dot.textContent = s;
+          }
+        });
+        ['btn-start-parse', 'btn-case-reupload', 'btn-apply-template'].forEach(function(id) {
+          document.getElementById(id).classList.toggle('hidden', stepFooterBtns[step].indexOf(id) === -1);
+        });
+        /* 已选案例解析模式：弹窗内不提供重新上传 */
+        if (window.__caseParseMode === 'library') {
+          document.getElementById('btn-case-reupload').classList.add('hidden');
+        }
+      }
+
+      // 解析进度模拟
+      var parseTimers = [];
+      var CHECK_ICON = '<svg class="w-4 h-4 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>';
+      var SPIN_ICON = '<svg class="w-4 h-4 text-blue-500 animate-spin" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path></svg>';
+
+      function runParseAnimation() {
+        parseTimers.forEach(clearTimeout);
+        parseTimers = [];
+        var tasks = document.querySelectorAll('.parse-task');
+        tasks.forEach(function(t, i) {
+          t.classList.toggle('opacity-40', i > 0);
+          t.querySelector('.task-icon').innerHTML = i === 0 ? SPIN_ICON : '<span class="w-4 h-4 rounded-full border-2 border-gray-300"></span>';
+          var st = t.querySelector('.task-status');
+          st.textContent = i === 0 ? '进行中' : '等待';
+          st.className = 'task-status text-xs ml-auto ' + (i === 0 ? 'text-blue-500' : 'text-gray-400');
+        });
+        document.getElementById('parse-progress-bar').style.width = '8%';
+        var stepDelay = 1100;
+        tasks.forEach(function(t, i) {
+          parseTimers.push(setTimeout(function() {
+            t.querySelector('.task-icon').innerHTML = CHECK_ICON;
+            var st = t.querySelector('.task-status');
+            st.textContent = '完成';
+            st.className = 'task-status text-xs ml-auto text-green-500';
+            document.getElementById('parse-progress-bar').style.width = (8 + (i + 1) * 23) + '%';
+            var next = tasks[i + 1];
+            if (next) {
+              next.classList.remove('opacity-40');
+              next.querySelector('.task-icon').innerHTML = SPIN_ICON;
+              var nst = next.querySelector('.task-status');
+              nst.textContent = '进行中';
+              nst.className = 'task-status text-xs ml-auto text-blue-500';
+            } else {
+              parseTimers.push(setTimeout(function() { gotoCaseStep(3); }, 500));
+            }
+          }, stepDelay * (i + 1)));
+        });
+      }
+
+      document.getElementById('btn-start-parse').addEventListener('click', function() {
+        if (fileList.querySelectorAll('.case-file-item').length === 0) {
+          alert('请先上传至少 1 份文书案例');
+          return;
+        }
+        gotoCaseStep(2);
+        runParseAnimation();
+      });
+      document.getElementById('btn-case-reupload').addEventListener('click', function() { gotoCaseStep(1); });
+
+      // 已选段落计数
+      document.querySelectorAll('.parsed-section-check').forEach(function(cb) {
+        cb.addEventListener('change', function() {
+          var n = document.querySelectorAll('.parsed-section-check:checked').length;
+          document.getElementById('selected-section-count').textContent = n;
+        });
+      });
+
+      // 解析结果 → 应用到编辑器
+      var PARSED_SECTIONS = [
+        { title: '一、背景与动机', content: '作为一名[专业名称]专业的学生，我对[申请方向]领域的兴趣始于[兴趣起源事件]。在[课程/项目]中，我首次接触到[技术/概念]，并被其解决实际问题的能力所吸引，由此确立了深入该方向研究的目标。' },
+        { title: '二、学术准备', content: '在[本科院校]就读期间，我系统学习了[专业名称]的核心课程，包括[核心课程]等。我的GPA为[GPA]，专业排名[专业排名]，为后续的深入研究打下了坚实基础。' },
+        { title: '三、研究经历', content: '我主持的[项目名称]，旨在[项目目标]。在该项目中，我负责[工作内容]，通过[关键技术/方法]，最终成果[项目成果]。' },
+        { title: '四、实习/实践经历', content: '在[实习公司]担任[实习岗位]期间，我参与了[工作内容]，通过[具体行动]实现了[实习成果]，进一步锻炼了工程实践与团队协作能力。' },
+        { title: '五、职业规划与动机升华', content: '未来，我希望在[目标院校]的[申请方向]项目中深造。短期目标是[短期目标]，长期致力于[长期目标]，将所学应用于[应用领域]的实际问题。' },
+        { title: '六、课外领导力经历', content: '在[社团/竞赛名称]中，我担任[担任角色]，组织[活动名称]，带领团队取得[团队成果]，培养了领导力与跨团队沟通能力。' }
+      ];
+      var PARSED_VARIABLES = [
+        ['学生姓名', '文本'], ['申请方向', '文本'], ['本科院校', '文本'], ['专业名称', '文本'],
+        ['GPA', '数字'], ['专业排名', '文本'], ['核心课程', '文本'], ['项目名称', '文本'],
+        ['项目成果', '文本'], ['实习公司', '文本'], ['实习岗位', '文本'], ['目标院校', '文本']
+      ];
+
+      document.getElementById('btn-apply-template').addEventListener('click', function() {
+        var checked = [];
+        document.querySelectorAll('.parsed-section-check').forEach(function(cb, i) {
+          if (cb.checked) checked.push(i);
+        });
+        if (!checked.length) {
+          alert('请至少勾选 1 个段落');
+          return;
+        }
+        // 重建编辑区段落
+        var container = document.getElementById('section-container');
+        container.innerHTML = '';
+        checked.forEach(function(idx) {
+          var sec = PARSED_SECTIONS[idx];
+          sectionCounter++;
+          var block = document.createElement('div');
+          block.className = 'section-block border border-gray-200 rounded-xl overflow-hidden';
+          block.setAttribute('data-section', sectionCounter);
+          block.innerHTML = '<div class="flex items-center justify-between px-4 py-2 bg-gray-50 border-b border-gray-200">' +
+            '<input type="text" value="' + sec.title + '" class="section-title flex-1 bg-transparent text-sm font-bold text-gray-900 focus:outline-none" placeholder="输入段落标题...">' +
+            '<span class="text-[10px] px-1.5 py-0.5 bg-blue-50 text-blue-500 rounded mr-2">案例解析</span>' +
+            '<button class="btn-delete-section p-1 text-gray-400 hover:text-red-500" title="删除段落">' +
+            '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg></button></div>' +
+            '<textarea class="section-content w-full p-4 text-gray-700 leading-relaxed text-sm resize-none focus:outline-none" rows="5" placeholder="输入段落内容...">' + sec.content + '</textarea>';
+          container.appendChild(block);
+          refreshSectionNumbers();
+          var ta = block.querySelector('.section-content');
+          ta.addEventListener('input', function() {
+            this.style.height = 'auto';
+            this.style.height = this.scrollHeight + 'px';
+          });
+          ta.style.height = 'auto';
+          ta.style.height = ta.scrollHeight + 'px';
+        });
+        // 刷新右侧「学生档案可引用变量」面板：解析变量命中学生档案字段的，标记为已引用（蓝色）
+        var markedVars = 0;
+        PARSED_VARIABLES.forEach(function(v) {
+          document.querySelectorAll('.variable-tag').forEach(function(tag) {
+            if (tag.textContent.trim() === '[' + v[0] + ']') {
+              tag.dataset.used = 'true';
+              tag.className = 'variable-tag px-2.5 py-1.5 rounded-lg text-xs bg-blue-100 text-blue-700 font-medium';
+              markedVars++;
+            }
+          });
+        });
+        // 更新左侧「案例来源」卡片的解析状态
+        var fileNames = Array.prototype.map.call(fileList.querySelectorAll('.case-file-item'), function(item) {
+          return item.querySelector('p').textContent;
+        });
+        var parseStatus = document.getElementById('case-parse-status');
+        if (parseStatus) {
+          parseStatus.textContent = '已完成 AI 解析：' + fileNames.length + ' 份案例 → ' + checked.length + ' 个段落应用到编辑器，命中 ' + markedVars + ' 个档案变量';
+          parseStatus.classList.remove('hidden');
+        }
+        closeCaseParseModal();
+        showCaseToast('已从 ' + fileNames.length + ' 份文书案例生成模板草稿（' + checked.length + ' 个段落），请检查后保存');
+      });
+
+      function showCaseToast(text) {
+        document.getElementById('case-toast-text').textContent = text;
+        var toast = document.getElementById('case-toast');
+        toast.classList.remove('hidden');
+        setTimeout(function() { toast.classList.add('hidden'); }, 3500);
+      }
+      // ================= 案例包解析 END =================
+
+      // 预览按钮
+      var previewBtn = document.querySelector('[data-dom-id="btn-preview"]');
+      if (previewBtn) {
+        previewBtn.addEventListener('click', function() {
+          document.getElementById('previewModal').classList.remove('hidden');
+        });
+      }
+
+      // 增加段落
+      var addSectionBtn = document.getElementById('btn-add-section');
+      if (addSectionBtn) {
+        addSectionBtn.addEventListener('click', function() {
+          sectionCounter++;
+          var newSection = document.createElement('div');
+          newSection.className = 'section-block border border-gray-200 rounded-xl overflow-hidden';
+          newSection.setAttribute('data-section', sectionCounter);
+          newSection.innerHTML = '<div class="flex items-center justify-between px-4 py-2 bg-gray-50 border-b border-gray-200">' +
+            '<input type="text" class="section-title flex-1 bg-transparent text-sm font-bold text-gray-900 focus:outline-none" placeholder="输入段落标题...">' +
+            '<button class="btn-delete-section p-1 text-gray-400 hover:text-red-500" title="删除段落">' +
+            '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg></button></div>' +
+            '<textarea class="section-content w-full p-4 text-gray-700 leading-relaxed text-sm resize-none focus:outline-none" rows="5" placeholder="输入段落内容..."></textarea>';
+          document.getElementById('section-container').appendChild(newSection);
+          refreshSectionNumbers();
+          // 绑定新段落的删除按钮
+          newSection.querySelector('.btn-delete-section').addEventListener('click', function() {
+            newSection.remove();
+          });
+          // 绑定 textarea 自动高度
+          var textarea = newSection.querySelector('.section-content');
+          textarea.addEventListener('input', function() {
+            this.style.height = 'auto';
+            this.style.height = this.scrollHeight + 'px';
+          });
+        });
+      }
+
+      // 删除段落（事件委托）
+      document.getElementById('section-container').addEventListener('click', function(e) {
+        var delBtn = e.target.closest('.btn-delete-section');
+        if (delBtn) {
+          var block = delBtn.closest('.section-block');
+          if (block && document.querySelectorAll('.section-block').length > 1) {
+            block.remove();
+            refreshSectionNumbers();
+          }
+        }
+      });
+
+      // 段落顺序编号：为每个段落块头部注入序号徽标并刷新（体现结构标准的「段落顺序」）
+      function refreshSectionNumbers() {
+        var blocks = document.querySelectorAll('#section-container .section-block');
+        blocks.forEach(function(block, i) {
+          var header = block.querySelector('.flex.items-center.justify-between');
+          if (!header) return;
+          var badge = header.querySelector('.section-order-badge');
+          if (!badge) {
+            badge = document.createElement('span');
+            badge.className = 'section-order-badge flex-shrink-0 w-5 h-5 mr-2 rounded-full bg-gray-200 text-gray-500 text-[11px] font-semibold flex items-center justify-center';
+            header.insertBefore(badge, header.firstChild);
+          }
+          badge.textContent = (i + 1);
+        });
+      }
+      refreshSectionNumbers();
+
+      // textarea 自动高度调整
+      document.querySelectorAll('.section-content').forEach(function(textarea) {
+        textarea.addEventListener('input', function() {
+          this.style.height = 'auto';
+          this.style.height = this.scrollHeight + 'px';
+        });
+        // 初始化高度
+        textarea.style.height = 'auto';
+        textarea.style.height = textarea.scrollHeight + 'px';
+      });
+    });
+
+    function closePreviewModal() {
+      document.getElementById('previewModal').classList.add('hidden');
+    }
+
+    function closeCaseParseModal() {
+      document.getElementById('caseParseModal').classList.add('hidden');
+    }
+  </script>
+  <script src="./assets/js/pbs-app.js?v=6.0"></script>
+
+
+      
+    </body></html>

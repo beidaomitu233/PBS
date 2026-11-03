@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head><meta charset="UTF-8"><title>shot-launcher</title></head>
+<body>
+<script>
+try {
+  localStorage.setItem('pbs_intro_video_policy_v1', JSON.stringify({ enabled: false, autoPlayFirstVisit: false, allowClose: true }));
+  localStorage.setItem('pbs_intro_video_seen_v1_guest', '2026-09-17');
+} catch (e) {}
+var target = new URLSearchParams(location.search).get('to');
+location.href = target || '结项归档列表 - PBS留学CRM系统.html';
+</script>
+</body>
+</html>

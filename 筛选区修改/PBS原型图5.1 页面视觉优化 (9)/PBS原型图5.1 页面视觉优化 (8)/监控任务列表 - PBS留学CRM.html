@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="zh-CN" class="light" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>监控任务列表 - PBS留学CRM</title>
+  <script src="./assets/vendor/tailwind-runtime.js"></script>
+  <link rel="stylesheet" href="./assets/css/pbs-theme.css?v=6.3">
+  <link rel="stylesheet" href="./assets/css/pbs-monitor-v2.css?v=1.4">
+<link rel="stylesheet" href="./assets/css/pbs-filter.css?v=6.4">
+<script src="./assets/js/pbs-filter.js?v=6.4"></script>
+</head>
+<body class="min-h-screen" data-monitor-page="list">
+  <header class="bg-white border-b border-gray-200 sticky top-0 z-50">
+    <div class="h-16 flex items-center justify-between px-6">
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 bg-white overflow-hidden">
+          <img src="./PRD参考文件/导航栏图标参考.jpg" alt="PBS" class="w-full h-full object-contain">
+        </div>
+        <span class="text-xl font-semibold text-gray-800">PBS留学CRM系统</span>
+      </div>
+      <div class="flex items-center gap-5">
+        <button class="relative p-2 text-gray-500 hover:text-gray-700" data-dom-id="btn-notification" aria-label="通知消息">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.4-1.4A2 2 0 0118 14.2V11a6 6 0 00-4-5.7V5a2 2 0 10-4 0v.3A6 6 0 006 11v3.2a2 2 0 01-.6 1.4L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/></svg>
+          <span class="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full"></span>
+        </button>
+        <div class="flex items-center gap-3 pl-5 border-l border-gray-200 relative" id="userMenuContainer">
+          <span class="pbs-role-badge hidden sm:inline-block text-xs px-2.5 py-1 bg-blue-50 text-blue-700 rounded-full font-medium">超级管理员</span>
+          <div class="w-8 h-8 bg-gradient-to-br from-blue-500 to-purple-500 rounded-full flex items-center justify-center cursor-pointer" onclick="toggleUserMenu()"><span class="text-white text-sm font-medium">测</span></div>
+          <span class="text-sm text-gray-700">测试账号</span>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <div class="monitor-layout">
+    <aside id="pbs-sidebar" class="bg-white border-r border-gray-200 min-h-screen"></aside>
+    <main class="monitor-main">
+      <div class="monitor-page-head">
+        <div>
+          <h1>监控任务列表</h1>
+          <p>每名学生仅保留一条监控任务；院校及各院校的邮件、官网监控内容统一进入详情查看。</p>
+        </div>
+      </div>
+
+      <section class="monitor-summary" aria-label="监控概览">
+        <div class="monitor-summary-card"><span>学生监控任务</span><strong>5</strong><small>每名学生仅保留 1 条记录</small></div>
+        <div class="monitor-summary-card"><span>存在待办</span><strong id="monitorActionCount">3</strong><small>至少有一项未关闭任务</small></div>
+        <div class="monitor-summary-card"><span>紧急或逾期</span><strong id="monitorUrgentCount">2</strong><small>需要优先进入详情处理</small></div>
+        <div class="monitor-summary-card"><span>无待办</span><strong id="monitorClearCount">2</strong><small>当前无需人工操作</small></div>
+      </section>
+
+      <section class="monitor-filter" aria-label="任务筛选">
+        <div class="monitor-field is-wide">
+          <label for="monitorKeyword">关键词</label>
+          <input id="monitorKeyword" type="search" placeholder="搜索客户姓名或学生姓名">
+        </div>
+        <div id="pbsFilterRoot" style="flex:1 1 100%"></div>
+        <button class="monitor-btn secondary" onclick="pbsMonitor.resetListFilters()">重置</button>
+      </section>
+
+      <section class="monitor-table-card" aria-label="学生监控任务">
+        <div class="monitor-table-wrap">
+          <table class="monitor-table">
+            <thead>
+              <tr>
+                <th>客户姓名</th>
+                <th>学生姓名</th>
+                <th>监控频率</th>
+                <th>监控状态</th>
+                <th>上次监控时间</th>
+                <th>操作</th>
+              </tr>
+            </thead>
+            <tbody id="monitorTaskRows"></tbody>
+          </table>
+        </div>
+        <div class="monitor-table-foot">
+          <span id="monitorResultCount">共 5 个学生监控任务</span>
+          <span>1 / 1 页</span>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <div id="monitorToast" class="monitor-toast" role="status" aria-live="polite"></div>
+  <script src="./assets/js/pbs-app.js?v=6.0"></script>
+  <script src="./assets/js/pbs-monitor-v2.js?v=1.4"></script>
+</body>
+</html>

@@ -1,0 +1,106 @@
+[9096:13704:0917/101600.873:ERROR:chrome\browser\component_updater\edge_language_detection_model_installer.cc:97] Edge Language Detection Model: On-demand update failed with error: 5
+[9096:15112:0917/101601.304:ERROR:chrome\browser\importer\edge_china_browsers\edge_qqbrowser_importer_utils_win.cc:165] QQBrowser user data path not found.
+[9096:13704:0917/101601.790:ERROR:components\edge_auth\edge_auth_errors.cc:553] EDGE_IDENTITY: Image Fetch FAILED: Error: Primary Error: kUrlRequestError, Secondary Error: kURLResponseNot200, Platform error: 0, Error string: [empty]
+
+[9096:15112:0917/101601.826:ERROR:components\sync\engine\get_updates_processor.cc:426] PostClientToServerMessage() failed during GetUpdates with error Network error (ERR_PROXY_CONNECTION_FAILED)
+[9096:13704:0917/101601.943:ERROR:chrome\browser\task_manager\providers\fallback_task_provider.cc:126] Every renderer should have at least one task provided by a primary task provider. If a "Renderer" fallback task is shown, it is a bug. If you have repro steps, please file a new bug and tag it as a dependency of crbug.com/40528867.
+[9096:13704:0917/101602.515:ERROR:chrome\browser\task_manager\providers\fallback_task_provider.cc:126] Every renderer should have at least one task provided by a primary task provider. If a "Renderer" fallback task is shown, it is a bug. If you have repro steps, please file a new bug and tag it as a dependency of crbug.com/40528867.
+[9096:18448:0917/101604.335:ERROR:components\sync\engine\get_updates_processor.cc:426] PostClientToServerMessage() failed during GetUpdates with error Network error (ERR_PROXY_CONNECTION_FAILED)
+<!DOCTYPE html>
+<html lang="zh-CN"><head><meta charset="UTF-8"><title>filter-harness</title></head>
+<body>
+<pre id="results">START
+学生档案列表页 - 留学申请管理系统.html =&gt; bar=N groups=2 dd=3 collapse=NA filter=restore-ok(5-&gt;2-&gt;5)
+项目池列表页 - 留学申请管理系统.html =&gt; bar=N groups=3 dd=4 collapse=NA filter=restore-ok(6-&gt;3-&gt;6)
+我的项目列表页 - 留学申请管理系统.html =&gt; bar=N groups=3 dd=4 collapse=NA filter=restore-ok(5-&gt;2-&gt;5)
+任务列表页 - 文书交付系统.html =&gt; bar=N groups=4 dd=5 collapse=NA filter=restore-ok(6-&gt;2-&gt;6)
+模板库列表 - 文书交付系统.html =&gt; bar=N groups=3 dd=0 collapse=OK filter=restore-ok(6-&gt;1-&gt;6)
+案例库 - 文书交付系统.html =&gt; bar=N groups=5 dd=5 collapse=NA filter=restore-ok(8-&gt;4-&gt;8)
+文书审核列表页 - 留学申请管理系统.html =&gt; bar=N groups=4 dd=4 collapse=NA filter=restore-ok(6-&gt;2-&gt;6)
+网申任务列表页 - 留学申请管理系统.html =&gt; bar=N groups=5 dd=5 collapse=NA filter=restore-ok(6-&gt;1-&gt;6)
+网申模板库 - 留学申请管理系统.html =&gt; bar=N groups=1 dd=0 collapse=OK filter=restore-ok(9-&gt;6-&gt;9)
+监控任务列表 - PBS留学CRM.html =&gt; bar=N groups=5 dd=2 collapse=OK filter=restore-ok(5-&gt;2-&gt;5)
+结项归档列表 - PBS留学CRM系统.html =&gt; bar=N groups=3 dd=3 collapse=NA filter=restore-ok(6-&gt;2-&gt;6)
+选校任务列表页 - 留学申请管理系统.html =&gt; bar=N groups=3 dd=4 collapse=NA filter=restore-ok(5-&gt;2-&gt;5)
+机构管理 - PBS留学CRM系统.html =&gt; bar=N groups=1 dd=1 collapse=OK filter=NA
+人员管理 - PBS留学CRM系统.html =&gt; bar=N groups=3 dd=2 collapse=NA filter=restore-ok(2-&gt;2-&gt;2)
+操作日志审计 - 留学申请管理系统.html =&gt; bar=N groups=5 dd=2 collapse=NA filter=restore-ok(20-&gt;4-&gt;20)
+ALL_PAGES_DONE</pre>
+<script>
+var pages = [
+  '学生档案列表页 - 留学申请管理系统.html',
+  '项目池列表页 - 留学申请管理系统.html',
+  '我的项目列表页 - 留学申请管理系统.html',
+  '任务列表页 - 文书交付系统.html',
+  '模板库列表 - 文书交付系统.html',
+  '案例库 - 文书交付系统.html',
+  '文书审核列表页 - 留学申请管理系统.html',
+  '网申任务列表页 - 留学申请管理系统.html',
+  '网申模板库 - 留学申请管理系统.html',
+  '监控任务列表 - PBS留学CRM.html',
+  '结项归档列表 - PBS留学CRM系统.html',
+  '选校任务列表页 - 留学申请管理系统.html',
+  '机构管理 - PBS留学CRM系统.html',
+  '人员管理 - PBS留学CRM系统.html',
+  '操作日志审计 - 留学申请管理系统.html'
+];
+var special = { '人员管理 - PBS留学CRM系统.html': '?org=ORG-100001' };
+function log(s) { document.getElementById('results').textContent += '\n' + s; }
+function testPage(i) {
+  if (i >= pages.length) { log('ALL_PAGES_DONE'); return; }
+  var name = pages[i];
+  var iframe = document.createElement('iframe');
+  iframe.style.width = '1280px'; iframe.style.height = '800px';
+  var done = false;
+  function finish(msg) {
+    if (done) return; done = true;
+    log(name + ' => ' + msg);
+    if (iframe.parentNode) document.body.removeChild(iframe);
+    setTimeout(function () { testPage(i + 1); }, 50);
+  }
+  var guard = setTimeout(function () { finish('LOAD_TIMEOUT'); }, 10000);
+  iframe.onload = function () {
+    setTimeout(function () {
+      try {
+        var doc = iframe.contentDocument;
+        var root = doc.querySelector('#pbsFilterRoot');
+        if (!root) { clearTimeout(guard); finish('NO_ROOT'); return; }
+        var bar = root.querySelector('.pbs-filter-bar');
+        var groups = root.querySelectorAll('.pbs-filter-group').length;
+        var dds = root.querySelectorAll('.pbs-filter-dd').length;
+        var body = root.querySelector('.pbs-filter-body');
+        var toggle = root.querySelector('.pbs-filter-collapse-btn');
+        var collapse = 'NA';
+        if (body && toggle) {
+          var b = body.style.display; toggle.click();
+          var a = body.style.display; toggle.click();
+          var c = body.style.display;
+          collapse = (b !== a && c === b) ? 'OK' : ('FAIL[' + b + '/' + a + '/' + c + ']');
+        }
+        function visCount() {
+          var rows = [].slice.call(doc.querySelectorAll('tbody tr')).filter(function (tr) { return tr.offsetParent !== null; });
+          if (rows.length) return rows.length;
+          var cards = [].slice.call(doc.querySelectorAll('.grid > *')).filter(function (el) { return el.offsetParent !== null; });
+          return cards.length;
+        }
+        var cb = root.querySelector('.pbs-filter-checks input[type=checkbox]');
+        var filter = 'NA';
+        if (cb) {
+          var c0 = visCount(); cb.click();
+          var c1 = visCount(); cb.click();
+          var c2 = visCount();
+          filter = (c2 === c0 ? 'restore-ok' : 'restore-FAIL') + '(' + c0 + '->' + c1 + '->' + c2 + ')';
+        }
+        clearTimeout(guard);
+        finish('bar=' + (bar ? 'Y' : 'N') + ' groups=' + groups + ' dd=' + dds + ' collapse=' + collapse + ' filter=' + filter);
+      } catch (e) { clearTimeout(guard); finish('ERR:' + e.message); }
+    }, 1600);
+  };
+  iframe.src = name + (special[name] || '');
+  document.body.appendChild(iframe);
+}
+testPage(0);
+</script>
+
+
+</body></html>

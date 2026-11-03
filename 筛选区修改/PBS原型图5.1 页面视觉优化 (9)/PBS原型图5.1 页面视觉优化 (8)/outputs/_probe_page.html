@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head><meta charset="UTF-8"><title>probe3</title></head>
+<body>
+<pre id="out">PENDING</pre>
+<iframe id="f" src="结项归档列表 - PBS留学CRM系统.html" style="width:1280px;height:800px"></iframe>
+<script>
+var f = document.getElementById('f');
+f.onload = function () {
+  setTimeout(function () {
+    var w = f.contentWindow;
+    var src = String(w.PBSFilter && w.PBSFilter.init);
+    var doc = f.contentDocument;
+    var root = doc.querySelector('#pbsFilterRoot');
+    var head = root ? root.querySelector('.pbs-filter-collapse-bar') : null;
+    var info = {
+      srcHasBtnCreate: src.indexOf('collapse-btn') >= 0,
+      srcLen: src.length,
+      srcAroundBtn: src.indexOf('collapse-btn') >= 0 ? src.slice(src.indexOf('collapse-btn') - 120, src.indexOf('collapse-btn') + 120) : 'N/A',
+      headChildren: head ? [].map.call(head.childNodes, function (n) { return n.nodeName + '.' + (n.className || ''); }) : 'no-head',
+      resetBtn: root ? root.querySelectorAll('.pbs-filter-reset').length : -1
+    };
+    document.getElementById('out').textContent = JSON.stringify(info);
+  }, 1500);
+};
+</script>
+</body>
+</html>

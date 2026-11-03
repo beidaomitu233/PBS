@@ -1,0 +1,6 @@
+[10132:27360:1022/143024.282:INFO:components\enterprise\browser\controller\chrome_browser_cloud_management_controller.cc:241] No machine level policy manager exists.
+[10132:18808:1022/143024.347:ERROR:chrome\browser\extensions\external_registry_loader_win.cc:147] Missing value path for key Software\Google\Chrome\Extensions\dngcpimnedloihjnnfngkgjoidhnaolf.
+[10132:18808:1022/143024.348:ERROR:chrome\browser\extensions\external_registry_loader_win.cc:147] Missing value path for key Software\Google\Chrome\Extensions\fcoeoabgfenejglbffodgkkbkcdhcgfn.
+[10132:27360:1022/143024.796:WARNING:extensions\browser\load_error_reporter.cc:73] Extension error: 无法安装扩展程序，因为它使用了不受支持的清单版本。
+[10132:27360:1022/143024.883:INFO:CONSOLE:64] "cdn.tailwindcss.com should not be used in production. To use Tailwind CSS in production, install it as a PostCSS plugin or use the Tailwind CLI: https://tailwindcss.com/docs/installation", source: http://127.0.0.1:8099/assets/vendor/tailwind-runtime.js (64)
+303422 bytes written to file D:\留学\PBS\HTML原型\PBS原型图5.1 页面视觉优化\_shots\org_now.png

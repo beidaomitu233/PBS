@@ -1,0 +1,320 @@
+/* ============================================================
+ * PBS 筛选区共享组件样式（原型图 5.1）
+ * 复选框组 / 单选按钮组 / 可搜索多选下拉 / 双滑块
+ * ============================================================ */
+
+.pbs-filter-bar {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.pbs-filter-group {
+  background: #fff;
+  border: 1px solid #ececf3;
+  border-radius: 10px;
+  padding: 10px 14px;
+}
+
+.pbs-filter-group-title {
+  font-size: 12px;
+  font-weight: 600;
+  color: #6b7280;
+  margin-bottom: 8px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+/* ---------- 复选框组 / 单选按钮组 ---------- */
+.pbs-filter-checks {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.pbs-filter-check {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 12px;
+  color: #4b5563;
+  background: #f6f6fb;
+  border: 1px solid transparent;
+  border-radius: 999px;
+  padding: 4px 12px;
+  cursor: pointer;
+  user-select: none;
+  transition: all .15s ease;
+}
+
+.pbs-filter-check:hover { border-color: #c4b5fd; }
+
+.pbs-filter-check input { display: none; }
+
+.pbs-filter-check.checked,
+.pbs-filter-check:has(input:checked) {
+  background: #f1edfd;
+  border-color: #7c5cd6;
+  color: #6d28d9;
+  font-weight: 600;
+}
+
+.pbs-filter-check .dot {
+  width: 6px; height: 6px; border-radius: 50%;
+  background: #d1d5db; flex-shrink: 0;
+}
+
+.pbs-filter-check.checked .dot,
+.pbs-filter-check:has(input:checked) .dot { background: #7c5cd6; }
+
+/* ---------- 可搜索多选下拉 ---------- */
+.pbs-filter-dd {
+  position: relative;
+  display: inline-block;
+  min-width: 150px;
+}
+
+.pbs-filter-dd-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  width: 100%;
+  font-size: 12px;
+  color: #4b5563;
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  padding: 6px 10px;
+  cursor: pointer;
+  transition: border-color .15s ease;
+}
+
+.pbs-filter-dd-btn:hover { border-color: #c4b5fd; }
+
+.pbs-filter-dd-btn .sel-text {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 160px;
+}
+
+.pbs-filter-dd-btn.has-selection {
+  border-color: #7c5cd6;
+  color: #6d28d9;
+  font-weight: 600;
+  background: #f8f6fe;
+}
+
+.pbs-filter-dd-btn .caret {
+  flex-shrink: 0;
+  font-size: 10px;
+  color: #9ca3af;
+}
+
+.pbs-filter-dd-panel {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  z-index: 60;
+  width: 230px;
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+  box-shadow: 0 10px 30px rgba(76, 42, 133, .12);
+  padding: 8px;
+  display: none;
+}
+
+.pbs-filter-dd.open .pbs-filter-dd-panel { display: block; }
+
+.pbs-filter-dd-search {
+  width: 100%;
+  font-size: 12px;
+  border: 1px solid #e5e7eb;
+  border-radius: 6px;
+  padding: 5px 8px;
+  margin-bottom: 6px;
+  outline: none;
+}
+
+.pbs-filter-dd-search:focus { border-color: #7c5cd6; }
+
+.pbs-filter-dd-actions {
+  display: flex;
+  gap: 10px;
+  font-size: 11px;
+  margin-bottom: 4px;
+  padding: 0 2px;
+}
+
+.pbs-filter-dd-actions a { color: #7c5cd6; cursor: pointer; }
+
+.pbs-filter-dd-list {
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+.pbs-filter-dd-item {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 12px;
+  color: #374151;
+  padding: 5px 6px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.pbs-filter-dd-item:hover { background: #f6f6fb; }
+
+.pbs-filter-dd-item input {
+  accent-color: #7c5cd6;
+  width: 13px; height: 13px;
+  flex-shrink: 0;
+}
+
+.pbs-filter-dd-empty {
+  font-size: 12px;
+  color: #9ca3af;
+  text-align: center;
+  padding: 10px 0;
+}
+
+.pbs-filter-dd-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: flex-end;
+}
+
+.pbs-filter-dd-field { display: flex; flex-direction: column; gap: 5px; }
+
+.pbs-filter-dd-field > label {
+  font-size: 12px;
+  font-weight: 600;
+  color: #6b7280;
+}
+
+/* ---------- 双滑块 ---------- */
+.pbs-filter-range { min-width: 240px; }
+
+.pbs-filter-range-values {
+  font-size: 12px;
+  color: #6d28d9;
+  font-weight: 600;
+  margin-bottom: 6px;
+}
+
+.pbs-filter-range-track {
+  position: relative;
+  height: 4px;
+  background: #ede9fe;
+  border-radius: 2px;
+  margin: 10px 4px 4px;
+}
+
+.pbs-filter-range-fill {
+  position: absolute;
+  top: 0; bottom: 0;
+  background: #7c5cd6;
+  border-radius: 2px;
+}
+
+.pbs-filter-range input[type="range"] {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  left: 0;
+  width: 100%;
+  -webkit-appearance: none;
+  appearance: none;
+  background: transparent;
+  pointer-events: none;
+  margin: 0;
+  height: 4px;
+}
+
+.pbs-filter-range input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 14px; height: 14px;
+  border-radius: 50%;
+  background: #fff;
+  border: 2.5px solid #7c5cd6;
+  pointer-events: auto;
+  cursor: grab;
+  box-shadow: 0 1px 4px rgba(0,0,0,.15);
+}
+
+.pbs-filter-range input[type="range"]::-moz-range-thumb {
+  width: 12px; height: 12px;
+  border-radius: 50%;
+  background: #fff;
+  border: 2.5px solid #7c5cd6;
+  pointer-events: auto;
+  cursor: grab;
+}
+
+.pbs-filter-range-scale {
+  display: flex;
+  justify-content: space-between;
+  font-size: 10px;
+  color: #9ca3af;
+  padding: 0 2px;
+}
+
+/* ---------- 行内工具 ---------- */
+.pbs-filter-reset {
+  font-size: 12px;
+  color: #7c5cd6;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 4px 6px;
+  align-self: flex-start;
+}
+
+.pbs-filter-reset:hover { text-decoration: underline; }
+
+/* ---------- 可收缩筛选区 ---------- */
+.pbs-filter-body {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.pbs-filter-collapse-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.pbs-filter-collapse-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: #6b7280;
+}
+
+.pbs-filter-collapse-btn {
+  font-size: 12px;
+  color: #7c5cd6;
+  background: #f6f3fd;
+  border: 1px solid #e4dcf7;
+  border-radius: 999px;
+  padding: 3px 12px;
+  cursor: pointer;
+  transition: all .15s ease;
+}
+
+.pbs-filter-collapse-btn:hover {
+  background: #efe9fb;
+  border-color: #c4b5fd;
+}
+
+.pbs-filter-collapse-btn i {
+  font-style: normal;
+  margin-left: 4px;
+}

@@ -1,7 +1,7 @@
 (function () {
   'use strict';
   if (new URLSearchParams(location.search).get('mode') === 'catalog') return;
-  var root, records, state, timer, countrySelect;
+  var root, records, state, timer, countrySelect, schoolSelect;
   var filterLabels=['地区与学校','专业与课程','申请与预算','就业偏好'];
   var activeTab=0;
   var schoolGroups=[],expandedSchool=null,programPageSize=5;
@@ -76,12 +76,16 @@
   function makeRecords(){
     return Array.from(document.querySelectorAll('#schoolList [data-school]')).map(function(card){
       var d=card.dataset,info=window.SCHOOL_INFO[d.school] || {},extra=extras[d.institution || d.school] || {};
-      var record=Object.assign({id:d.school,card:card,name:info.name,country:d.country,continent:['美国','加拿大'].indexOf(d.country)>=0?'北美洲':['英国','德国','法国'].indexOf(d.country)>=0?'欧洲':['澳大利亚','新西兰'].indexOf(d.country)>=0?'大洋洲':'亚洲',stage:/BS|学士|本科/.test(d.degree)?'本科':'硕士',years:Math.max.apply(null,(d.duration.match(/[\d.]+/g)||[0]).map(Number)),rank:d.rank?Number(d.rank):null,language:info.language,tuition:Number(d.tuition),start:info.appStart,end:info.appDeadline,keyword:[d.kw,info.name,info.major,info.degree,info.intro].join(' ').toLowerCase(),scores:{'雅思':d.ielts,'新托福':d.toefl,'GPA':d.gpa},careers:[],employers:[]},extra);
+      var record=Object.assign({id:d.school,card:card,name:info.name,country:d.country,continent:['美国','加拿大'].indexOf(d.country)>=0?'北美洲':['英国','德国','法国'].indexOf(d.country)>=0?'欧洲':['澳大利亚','新西兰'].indexOf(d.country)>=0?'大洋洲':'亚洲',stage:/BS|学士|本科/.test(d.degree)?'本科':'硕士',years:Math.max.apply(null,(d.duration.match(/[\d.]+/g)||[0]).map(Number)),rank:d.rank?Number(d.rank):null,language:info.language,tuition:Number(d.tuition),start:info.appStart,end:info.appDeadline,keyword:[d.kw,info.name,info.major,info.degree,info.intro].join(' ').toLowerCase(),scores:{},careers:[],employers:[]},extra);
+      if(info.classification){record.category=info.classification[0];record.discipline=info.classification[1];record.direction=info.classification[2];}
+      var requirements=info.requirements || {};
+      record.scores={'雅思':info.ielts,'老托福':info.toefl,'新托福':requirements.toeflIbt,'GPA':info.gpa,'IB':requirements.ib,'A-Level':requirements.aLevel,'AP':requirements.ap,'SAT':requirements.sat,'高考总分':requirements.gaokao};
       record.schoolId=d.institution || d.school;
       if(d.direction) record.direction=d.direction;
-      record.tuition=info.tuition?window.pbsSelectionMoney.tuition(info)/10000:null;
-      record.life=info.living?window.pbsSelectionMoney.living(info)/10000:null;
-      record.total=info.tuition && info.living?window.pbsSelectionMoney.total(info)/10000:null;
+      var tuition=window.pbsSelectionMoney.tuition(info),life=window.pbsSelectionMoney.living(info),total=window.pbsSelectionMoney.total(info);
+      record.tuition=tuition==null?null:tuition/10000;
+      record.life=life==null?null:life/10000;
+      record.total=total==null?null:total/10000;
       record.searchText=normalize([info.name,info.major,info.degree,record.category,record.discipline,record.direction,schoolAliases[record.schoolId] || ''].join(' '));
       var aliases={Google:'谷歌',Microsoft:'微软',Amazon:'亚马逊',HSBC:'汇丰'};
       record.employers=(info.employers || '').split(/[、,，]/).map(function(name){name=name.trim();return aliases[name] || name;}).filter(Boolean);
@@ -173,7 +177,7 @@
     if(available.length===1) expandedSchool=available[0].id;
     paintSchoolGroups();
   }
-  function multi(key,label){if(key==='countries')return '<div class="sc-field"><label for="scCountries">'+label+'</label><select id="scCountries" multiple aria-label="国家 / 地区"></select></div>';return '<div class="sc-field"><span id="sc-label-'+key+'">'+label+'</span><details class="sc-multi" data-multi="'+key+'"><summary aria-labelledby="sc-label-'+key+' sc-value-'+key+'"><span id="sc-value-'+key+'" data-summary>不限</span>'+chevron+'</summary><div class="sc-options"><input type="search" aria-label="搜索'+label+'" placeholder="搜索'+label+'" data-option-search="'+key+'"><div data-options="'+key+'"></div></div></details></div>';}
+  function multi(key,label){if(key==='schools')return '<div class="sc-field"><label for="scSchools">'+label+'</label><select id="scSchools" multiple aria-label="学校"></select></div>';if(key==='countries')return '<div class="sc-field"><label for="scCountries">'+label+'</label><select id="scCountries" multiple aria-label="国家 / 地区"></select></div>';return '<div class="sc-field"><span id="sc-label-'+key+'">'+label+'</span><details class="sc-multi" data-multi="'+key+'"><summary aria-labelledby="sc-label-'+key+' sc-value-'+key+'"><span id="sc-value-'+key+'" data-summary>不限</span>'+chevron+'</summary><div class="sc-options"><input type="search" aria-label="搜索'+label+'" placeholder="搜索'+label+'" data-option-search="'+key+'"><div data-options="'+key+'"></div></div></details></div>';}
   function select(key,label,options){return '<label class="sc-field"><span>'+label+'</span><select data-field="'+key+'">'+options.map(function(item){return '<option value="'+esc(item[0])+'">'+esc(item[1])+'</option>';}).join('')+'</select></label>';}
   function mount(){
     document.body.classList.add('sc-workbench');
@@ -189,6 +193,14 @@
       '<div class="sc-filter-panel" id="sc-panel-3" role="tabpanel" aria-labelledby="sc-tab-3" hidden><div class="sc-grid two">'+multi('careers','求职领域')+multi('employers','适配雇主')+'<div class="sc-field sc-salary"><span>起薪预期（万元 / 年 · 人民币）</span><div class="sc-range"><input type="number" min="0" max="100" data-field="salaryMin" aria-label="最低起薪"><span>—</span><input type="number" min="0" max="100" data-field="salaryMax" aria-label="最高起薪"></div><div class="sc-salary-sliders"><input type="range" min="0" max="100" data-salary="salaryMin" aria-label="最低起薪滑块"><input type="range" min="0" max="100" data-salary="salaryMax" aria-label="最高起薪滑块"></div></div></div></div></div><p class="sc-error" id="scFilterError" role="alert" hidden></p><p class="sc-match-result" id="scAiResult" role="status" hidden></p>';
     document.getElementById('schoolWorkspace').before(root);
     countrySelect=window.pbsCountrySelect.mount(document.getElementById('scCountries'),{continent:state.continent,values:state.countries,placeholder:'不限，可搜索国家 / 地区',onChange:function(values){state.countries=values;change();}});
+    schoolSelect=new TomSelect(document.getElementById('scSchools'),{
+      options:choices('schools').map(function(option){return Object.assign({aliases:schoolAliases[option.value] || ''},option);}),items:state.schools,
+      valueField:'value',labelField:'label',searchField:['label','aliases'],maxItems:null,create:false,closeAfterSelect:false,
+      plugins:{remove_button:{title:'移除'}},placeholder:'不限，可输入学校名称',
+      render:{option:function(option,escape){return '<div class="pbs-country-option"><span>'+escape(option.label)+'</span><small>'+option.count+'个专业</small></div>';},no_results:function(){return '<div class="no-results">未找到学校</div>';}},
+      onChange:function(){state.schools=this.items.slice();change();}
+    });
+    schoolSelect.wrapper.classList.add('pbs-country-select');
     document.getElementById('scFilterBody').insertAdjacentHTML('beforeend','<div class="sc-condition-footer"><label class="sc-null"><input type="checkbox" id="scIncludeUnknown">包含筛选项无数据的专业</label><div class="sc-condition-actions"><button type="button" class="sc-btn" data-previous hidden>上一步</button><button type="button" class="sc-btn" data-next>下一步：专业与课程</button><button type="button" class="sc-btn primary" data-results>筛选</button></div></div>');
     document.getElementById('schoolWorkspace').tabIndex=-1;
     root.querySelector('.sc-refine-heading').before(document.getElementById('scAiResult'));
@@ -221,6 +233,7 @@
   var keys={countries:'country',schools:'schoolId',categories:'category',disciplines:'discipline',directions:'direction',languages:'language',careers:'careers',employers:'employers'};
   function choices(key){
     if(key==='countries')return window.pbsCountrySelect.options(state.continent).map(function(country){return {value:country.value,label:country.value};});
+    if(key==='languages')return window.pbsSchoolCatalog.languages;
     var map={};candidateRows(key).forEach(function(r){var values=Array.isArray(r[keys[key]])?r[keys[key]]:[r[keys[key]]];values.filter(Boolean).forEach(function(value){if(!map[value]) map[value]={value:value,label:key==='schools'?r.name:value,count:0};map[value].count++;});});return key==='categories'?categories.map(function(value){return map[value] || {value:value,label:value,count:0};}):Object.values(map);
   }
   function prune(){['countries','schools','categories','disciplines','directions','languages','careers','employers'].forEach(function(key){var valid=choices(key).map(function(o){return o.value;});state[key]=state[key].filter(function(value){return valid.indexOf(value)>=0;});});}
@@ -228,6 +241,11 @@
     var active=document.activeElement,focus=active && active.dataset.multiKey?{key:active.dataset.multiKey,value:active.value}:null;
     Object.keys(keys).forEach(function(key){
       if(key==='countries'){countrySelect.setRegion(state.continent,state.countries);return;}
+      if(key==='schools'){
+        schoolSelect.clear(true);schoolSelect.clearOptions();
+        schoolSelect.addOptions(choices(key).map(function(option){return Object.assign({aliases:schoolAliases[option.value] || ''},option);}));
+        schoolSelect.setValue(state.schools,true);schoolSelect.refreshOptions(false);return;
+      }
       var box=root.querySelector('[data-multi="'+key+'"]'),options=choices(key),summary=box.querySelector('[data-summary]');
       var labels=options.filter(function(o){return state[key].indexOf(o.value)>=0;}).map(function(o){return o.label;});summary.textContent=labels.length?labels.join('、'):'不限';summary.title=summary.textContent;
       box.querySelector('[data-options]').innerHTML=options.length?options.map(function(o){return '<label><input type="checkbox" data-multi-key="'+key+'" value="'+esc(o.value)+'" aria-label="'+esc(o.label)+'" '+(state[key].indexOf(o.value)>=0?'checked':'')+'><span>'+esc(o.label)+'</span><small>'+o.count+'</small></label>';}).join(''):'<p class="sc-options-empty">暂无可选项</p>';
@@ -237,7 +255,7 @@
   }
   function rankOptions(){
     var select=root.querySelector('[data-field="rank"]');select.disabled=!state.board;
-    var values=state.board==='qs'?[[0,10],[11,30],[31,50],[51,100],[101,9999]]:[[0,50],[51,100],[101,200],[201,9999]];
+    var values=[[0,50],[51,100],[101,200],[201,500],[501,9999]];
     select.innerHTML='<option value="">'+(state.board?'不限':'先选择榜单')+'</option>'+values.map(function(pair){return '<option value="'+pair.join('-')+'">'+(pair[0]===0?'前 '+pair[1]+' 名':pair[1]===9999?(pair[0]-1)+' 名以后':pair[0]+'–'+pair[1]+' 名')+'</option>';}).join('');
     if(state.board && /^0-\d{1,3}$/.test(state.rank) && !Array.from(select.options).some(function(option){return option.value===state.rank;})) select.add(new Option('前 '+state.rank.split('-')[1]+' 名',state.rank));
     select.value=state.rank;
@@ -259,7 +277,7 @@
     if(state.continent && r.continent!==state.continent || !selected(r.country,state.countries) || !selected(r.schoolId,state.schools)) return false;
     if(state.stage && r.stage!==state.stage) return false;
     if(state.duration){var ends=state.duration.split('-').map(Number);if(state.duration==='1'?r.years!==1:state.duration==='3+'?r.years<3:!(r.years>=ends[0] && r.years<=ends[1])) return false;}
-    if(!selected(r.category,state.categories) || !selected(r.discipline,state.disciplines) || !selected(r.direction,state.directions) || !selected(r.language,state.languages)) return false;
+    if(!selected(r.category,state.categories) || !selected(r.discipline,state.disciplines) || !selected(r.direction,state.directions) || !any(String(r.language || '').split(/[、,，;；/]+/).filter(Boolean),state.languages)) return false;
     if(state.board && state.rank){var rank=state.board==='qs'?r.rank:r.softRank,range=state.rank.split('-').map(Number);if(!accepts(rank,function(v){return v>=range[0] && v<=range[1];})) return false;}
     if(!state.scores.every(function(row){if(row.value==='') return true;return accepts(r.scores[row.type],function(value){return row.type==='A-Level'?grade(value)<=grade(row.value):parseFloat(value)<=Number(row.value);});})) return false;
     var fee=state.feeType==='firstLife'?(r.tuition===null || r.life===null?null:r.tuition+r.life):state.feeType==='total'?r.total:r.tuition;
@@ -359,7 +377,7 @@
       if(el.hasAttribute('data-score-type')){state.scores[Number(el.dataset.scoreType)]={type:el.value,value:''};scoreRows();apply(true);}
       if(el.id==='scIncludeUnknown'){state.includeUnknown=el.checked;apply(true);}
     };
-    root.oninput=function(e){var el=e.target;
+    root.oninput=function(e){var el=e.target;if(el.id==='scSchools-ts-control') return;
       if(el.dataset.optionSearch){var q=el.value.toLowerCase();el.parentElement.querySelectorAll('label').forEach(function(label){label.hidden=label.textContent.toLowerCase().indexOf(q)<0;});return;}
       if(el.id==='scQuery'){el.removeAttribute('aria-invalid');root.querySelector('[data-clear]').disabled=!el.value.trim() && !state.prompt && !state.keyword && !Number(root.dataset.activeFilters);return;}
       if(el.dataset.field && el.tagName==='INPUT'){state[el.dataset.field]=el.value;if(el.dataset.field==='salaryMin' || el.dataset.field==='salaryMax') root.querySelector('[data-salary="'+el.dataset.field+'"]').value=el.value;}

@@ -140,8 +140,9 @@
 <link rel="stylesheet" href="./assets/css/pbs-selection.css?v=1.3">
 <link rel="stylesheet" href="./assets/vendor/tom-select.default.min.css">
 <link rel="stylesheet" href="./assets/css/pbs-country-select.css?v=1.0">
-<script src="./assets/js/pbs-selection-money.js?v=1.1"></script>
-<link rel="stylesheet" href="./assets/css/pbs-school-filters.css?v=2.2">
+<script src="./assets/js/pbs-school-catalog.js?v=1.0"></script>
+<script src="./assets/js/pbs-selection-money.js?v=1.2"></script>
+<link rel="stylesheet" href="./assets/css/pbs-school-filters.css?v=2.3">
 </head>
 <body class="min-h-screen pbs-primary-page">
   <!-- 顶部导航栏 -->
@@ -439,6 +440,8 @@
             </div>
             <div class="border border-gray-200 rounded-xl p-3.5 cursor-pointer bg-white" draggable="true" data-school="EUDE00016-B00030" data-kw="达姆施塔特工业大学 政治学" data-country="德国" data-rank="250" data-degree="本科 · 文学士" data-duration="3 年" data-majorcat="文科" data-schooltype="" data-teachtype="" data-stem="" data-ielts="" data-toefl="" data-gpa="" data-gre="" data-interview="未收录" data-tuition="" data-scholarship="" data-deadline="2026-08-31" data-enroll="未收录" onclick="selectSchool('EUDE00016-B00030')" ondragstart="dragStart(event,'EUDE00016-B00030')"><p class="text-sm font-semibold text-gray-900">达姆施塔特工业大学</p><p class="text-xs text-gray-500 mt-1">政治学</p><p class="text-xs text-gray-400 mt-1">德国 · 3 年 · 德语授课</p><div class="school-list-actions"></div></div>
             <div class="border border-gray-200 rounded-xl p-3.5 cursor-pointer bg-white" draggable="true" data-school="EUFR00008-M00074" data-kw="格勒诺布尔国立计算机科学与应用数学学院(工程师学院) 格勒诺布尔国立理工学院工业工程专业——产品工程方向（IdP）工程师" data-country="法国" data-rank="" data-degree="硕士 · 工程师文凭" data-duration="3 年" data-majorcat="工科" data-schooltype="" data-teachtype="" data-stem="" data-ielts="" data-toefl="" data-gpa="" data-gre="" data-interview="FALSE" data-tuition="" data-scholarship="" data-deadline="2026-04-12" data-enroll="2026-09-07" onclick="selectSchool('EUFR00008-M00074')" ondragstart="dragStart(event,'EUFR00008-M00074')"><p class="text-sm font-semibold text-gray-900">格勒诺布尔国立计算机科学与应用数学学院(工程师学院)</p><p class="text-xs text-gray-500 mt-1">格勒诺布尔国立理工学院工业工程专业——产品工程方向（IdP）工程师</p><p class="text-xs text-gray-400 mt-1">法国 · 3 年 · 法语授课</p><div class="school-list-actions"></div></div>
+            <div class="border border-gray-200 rounded-xl p-3.5 cursor-pointer bg-white" draggable="true" data-school="ASSG00001-B00001" data-kw="新加坡国立大学 建筑学" data-country="新加坡" data-rank="10" data-degree="建筑学文学学士" data-duration="4 年" data-ielts="6.5" data-toefl="92" data-gpa="" data-tuition="" data-institution="nus" onclick="selectSchool('ASSG00001-B00001')" ondragstart="dragStart(event,'ASSG00001-B00001')"><p class="text-sm font-semibold text-gray-900">新加坡国立大学</p><p class="text-xs text-gray-500 mt-1">建筑学</p><div class="school-list-actions"></div></div>
+            <div class="border border-gray-200 rounded-xl p-3.5 cursor-pointer bg-white" draggable="true" data-school="EUUK00052-M01189" data-kw="诺桑比亚大学 高级计算机科学理学硕士" data-country="英国" data-rank="528" data-degree="理学硕士" data-duration="1 年" data-ielts="6.5" data-toefl="79.0" data-gpa="" data-tuition="" onclick="selectSchool('EUUK00052-M01189')" ondragstart="dragStart(event,'EUUK00052-M01189')"><p class="text-sm font-semibold text-gray-900">诺桑比亚大学</p><p class="text-xs text-gray-500 mt-1">高级计算机科学理学硕士</p><div class="school-list-actions"></div></div>
             <p id="school-empty" class="hidden text-xs text-gray-400 text-center py-6">暂无符合筛选条件的院校，请调整筛选条件</p>
           </div>
         </div>
@@ -729,6 +732,7 @@
         intro:'MDASC由统计及精算学系与计算机科学系合办，一年制紧凑项目，香港金融科技就业资源丰富。',
         profs:'推荐关注：Prof. Stephen M.S. Lee（统计学习方向）' }
     };
+    Object.assign(SCHOOL_INFO, window.pbsSchoolCatalog.programs);
     var currentSchool = 'cmu';
     var zoneNames = { reach: '冲刺区', match: '匹配区', safe: '保底区' };
 
@@ -766,6 +770,51 @@
       }).join('');
       return '<div class="col-span-2"><p class="text-xs text-gray-400 mb-2">其他要求</p><div class="sc-requirements-copy">' + content + '</div></div>';
     }
+    function requirementRow(label, value, memo) {
+      var text = value == null || value === '' ? '未收录' : value;
+      return '<div class="sc-requirement-row"><dt>' + detailText(label) + '</dt><dd><p>' + detailText(text) + '</p>' +
+        (memo && String(memo).trim() !== String(text).trim() ? '<p class="sc-score-memo">' + detailText(memo) + '</p>' : '') + '</dd></div>';
+    }
+    function admissionHTML(d) {
+      var r = d.requirements || {ielts:d.ielts,toefl:d.toefl,gpa:d.gpa,gre:d.gre,undergraduateBackground:d.bgReq,workExperience:d.workYears};
+      var bachelor = d.degreeType === 'bachelor' || /学士|本科/.test(d.degree);
+      var fields = bachelor ? [['A-Level','aLevel'],['IB','ib'],['SAT','sat'],['AP','ap'],['高考总分','gaokao'],['文理要求','subjectRequirement']] :
+        [['GRE','gre'],['GMAT','gmat'],['GPA','gpa'],['文理要求','subjectRequirement'],['本科背景要求','undergraduateBackground']];
+      return '<div class="mb-5">' + secTitle('bg-purple-600', '录取要求') +
+        '<div class="sc-admission-group"><h4>语言成绩要求</h4><dl class="sc-requirement-list">' +
+          requirementRow('雅思 IELTS',r.ielts,r.ieltsMemo) + requirementRow('托福 TOEFL',r.toefl,r.toeflMemo) +
+          requirementRow('新托福 TOEFL',r.toeflIbt,r.toeflIbtMemo) + '</dl></div>' +
+        '<div class="sc-admission-group"><h4>背景要求</h4><dl class="sc-requirement-list">' +
+          fields.map(function(field){return requirementRow(field[0],r[field[1]],r[field[1]+'Memo']);}).join('') +
+          requirementRow('工作年限要求',r.workExperience) + requirementRow('面试要求',d.interview) +
+        '</dl></div>' + otherRequirementsHTML(d) + '</div>';
+    }
+    function feeNumber(value) {
+      var number = parseFloat(String(value == null ? '' : value).replace(/,/g, ''));
+      return Number.isFinite(number) ? number : null;
+    }
+    function feeText(currency, value) {
+      return currency && value != null ? detailText(currency) + ' ' + value.toLocaleString('zh-CN', {maximumFractionDigits:2}) : '未收录';
+    }
+    function budgetHTML(d) {
+      var tuition = feeNumber(d.tuition), living = feeNumber(d.living), application = feeNumber(d.appFee);
+      var tuitionRmb = tuition == null ? null : pbsSelectionMoney.tuition(d);
+      var livingRmb = living == null ? null : pbsSelectionMoney.living(d);
+      var totalRmb = tuitionRmb == null || livingRmb == null ? null : tuitionRmb + livingRmb;
+      var originalTotal = tuition == null || living == null ? '未收录' : d.tuitionCcy === d.livingCcy ? feeText(d.tuitionCcy, tuition + living) :
+        feeText(d.tuitionCcy, tuition) + ' + ' + feeText(d.livingCcy, living);
+      var appCurrency = d.appFeeCcy || (!d.requirements ? d.tuitionCcy : null);
+      function row(label, original, rmb, className) {
+        return '<tr' + (className ? ' class="' + className + '"' : '') + '><th scope="row">' + label + '</th><td>' + original + '</td><td>' + feeText('CNY', rmb) + '</td></tr>';
+      }
+      return '<section class="sc-annual-costs"><h3>预算准备</h3><table class="sc-costs-table"><thead><tr><th scope="col">项目</th><th scope="col">原币种金额</th><th scope="col">人民币金额</th></tr></thead><tbody>' +
+        row('首年学费',feeText(d.tuitionCcy,tuition),tuitionRmb) + row('年均生活费',feeText(d.livingCcy,living),livingRmb) +
+        row('首年预算',originalTotal,totalRmb,'sc-first-year') +
+        row('申请费',appCurrency ? feeText(appCurrency,application) : detailText(d.appFee == null || d.appFee === '' ? '未收录' : d.appFee),appCurrency && application != null ? pbsSelectionMoney.amount(application,appCurrency) : null) +
+        '</tbody></table><div class="sc-cost-total"><div><span>全学制总金额</span><small>学制 ' + detailText(d.duration) + '</small></div><strong>' +
+        (totalRmb != null ? pbsSelectionMoney.totalLabel(d) : '未收录') + '</strong></div><p class="sc-rate-date">汇率日期：' +
+        detailText(window.pbsSchoolCatalog.rateDate) + '</p></section>';
+    }
     function detailHTML(d, sid) {
       return '' +
         '<div class="flex flex-col items-start gap-2 mb-4"><div><h2 class="text-xl font-semibold text-gray-900">' + d.name + '</h2>' +
@@ -776,11 +825,7 @@
           '<div class="bg-gray-50 rounded-xl p-3"><p class="text-xs text-gray-400 mb-1">申请截止</p><p class="text-sm font-medium text-gray-900">' + d.appDeadline + '</p><p class="text-xs text-gray-500 mt-0.5">入学：' + d.enroll + '</p></div>' +
           '<div class="bg-gray-50 rounded-xl p-3 col-span-2"><p class="text-xs text-gray-400 mb-1">STEM / 工签</p><p class="text-sm font-medium text-gray-900">STEM：' + d.stem + '</p><p class="text-xs text-gray-500 mt-0.5">' + d.visaHelp + '</p></div>' +
         '</div>' +
-        '<section class="sc-annual-costs"><h3>每年费用参考</h3>' +
-          '<table class="sc-costs-table"><thead><tr><th scope="col">项目</th><th scope="col">原币种金额</th><th scope="col">人民币金额</th></tr></thead><tbody>' +
-            '<tr><th scope="row">学费</th><td>' + (d.tuition ? d.tuitionCcy + ' ' + d.tuition.replace('/年','') : '未收录') + '</td><td>' + (d.tuition ? pbsSelectionMoney.cny(pbsSelectionMoney.tuition(d)) : '未收录') + '</td></tr>' +
-            '<tr><th scope="row">生活费</th><td>' + (d.living ? d.livingCcy + ' ' + d.living.replace('/年','') : '未收录') + '</td><td>' + (d.living ? pbsSelectionMoney.cny(pbsSelectionMoney.living(d)) : '未收录') + '</td></tr>' +
-          '</tbody></table><div class="sc-cost-total"><div><span>全学制总金额</span><small>学制 ' + d.duration + '</small></div><strong>' + (d.tuition && d.living ? pbsSelectionMoney.totalLabel(d) : '未收录') + '</strong></div></section>' +
+        budgetHTML(d) +
         '<div class="mb-5">' + secTitle('bg-blue-600', '申请时间') +
           '<div class="grid grid-cols-2 gap-x-4 gap-y-3 pl-3">' +
             kv('学院 / 系', [d.college, d.dept].filter(Boolean).join(' · ') || '未收录') + kv('官网课程编号', d.major) +
@@ -788,18 +833,9 @@
             kv('申请节点', d.nodes) + kv('录取发放', [d.admitStart, d.admitEnd].filter(Boolean).join(' ~ ') || '未收录') +
             kv('入学时间', d.enroll) + kv('校区', d.campus) +
           '</div></div>' +
-        '<div class="mb-5">' + secTitle('bg-purple-600', '录取要求') +
-          '<div class="grid grid-cols-2 gap-x-4 gap-y-3 pl-3">' +
-            kvReq('雅思', d.ielts, sid, 'ielts') + kvReq('托福', d.toefl, sid, 'toefl') +
-            kvReq('GPA', d.gpa, sid, 'gpa') + kvReq('GRE/GMAT', d.gre, sid, 'gre') +
-            kv('本科背景要求', d.bgReq) + kv('工作年限要求', d.workYears) +
-            kv('面试要求', d.interview) + otherRequirementsHTML(d) +
-          '</div></div>' +
-        '<div class="mb-5">' + secTitle('bg-orange-500', '费用与奖学金') +
-          '<div class="grid grid-cols-2 gap-x-4 gap-y-3 pl-3">' +
-            kv('申请费', d.tuitionCcy + ' ' + d.appFee) +
-            kv('奖学金', d.scholarship) +
-          '</div></div>' +
+        admissionHTML(d) +
+        '<div class="mb-5">' + secTitle('bg-orange-500', '奖学金') +
+          '<p class="sc-requirements-copy" style="white-space:pre-line">' + detailText(d.scholarship) + '</p></div>' +
         '<div class="mb-5">' + secTitle('bg-green-600', '就业与薪资') +
           '<div class="grid grid-cols-2 gap-x-4 gap-y-3 pl-3">' +
             kv('就业领域', d.career) + kv('主要雇主', d.employers) +
@@ -1650,7 +1686,7 @@
   <script src="./assets/vendor/tom-select.complete.min.js"></script>
   <script src="./assets/js/pbs-countries-data.js"></script>
   <script src="./assets/js/pbs-country-select.js?v=1.0"></script>
-  <script src="./assets/js/pbs-school-filters.js?v=2.3"></script>
+  <script src="./assets/js/pbs-school-filters.js?v=2.5"></script>
 
 
       

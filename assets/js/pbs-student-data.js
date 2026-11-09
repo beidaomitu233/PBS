@@ -40,7 +40,7 @@
     var now = new Date().toISOString();
     target.student = payload.student; target.customer = payload.customer; target.sections = Object.assign({},payload.sections,{selectionBinding:target.sections.selectionBinding});
     target.supplement = [target.supplement,source.supplement].filter(Boolean).filter(function(v,i,a) { return a.indexOf(v) === i; }).join('\n');
-    target.preImports = (target.preImports || []).concat([{sourceId:source.id,serviceId:payload.serviceId,orderKey:payload.orderKey,files:payload.files || [],name:source.name,at:now,conflicts:payload.conflicts,student:source.student,customer:source.customer,sections:source.sections}]);
+    target.preImports = (target.preImports || []).concat([{sourceId:source.id,serviceId:payload.serviceId,orderKey:payload.orderKey,files:payload.files || [],name:source.name,at:now,conflicts:payload.conflicts,modules:payload.counts,summary:payload.summary,moduleMergeVersion:1,student:source.student,customer:source.customer,sections:source.sections}]);
     target.pendingParseFiles = (target.pendingParseFiles || []).concat(payload.files || []);
     target.updatedAt = now;
     target.logs.push({id:id(),actor:pbsGetSession().name,role:pbsGetSession().role,at:now,section:'preBinding',action:'绑定选校单并追加资料',changes:[{field:'选校单',before:'',after:payload.serviceId},{field:'预档案',before:'',after:source.name + ' · ' + source.id},{field:'追加资料',before:'',after:payload.summary}]});

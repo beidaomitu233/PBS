@@ -25,7 +25,8 @@
       currentMeta = { name: storedMetadata.name, school: storedMetadata.school || '', college: storedMetadata.college || '', program: storedMetadata.program || '', boundPrograms: storedMetadata.boundPrograms || [], region: storedMetadata.region || '', applicationUrl:storedMetadata.applicationUrl || '', version: String(storedCurrent.version || 'v1.0').toUpperCase(), fieldCount: storedCurrent.fields || 0, materialCount: storedCurrent.materials || 0 };
     }
   } catch (error) {}
-  var scanResultsAvailable = false, loadedScanTime = storedMetadata && storedMetadata.scannedAt || '';
+  if (!centerMode && storedMetadata && storedMetadata.sourcePlatformTemplateId) { location.replace('网申模板库 - 留学申请管理系统.html'); return; }
+  var scanResultsAvailable = false, loadedScanTime = storedMetadata && storedMetadata.scannedAt || '', savedContentSignature = '';
   var availableSchools = ['卡内基梅隆大学', '斯坦福大学', '哥伦比亚大学', '剑桥大学', '香港大学', '纽约大学', '波士顿大学'];
   var defaultPrograms = { 1: ['计算机科学', '人工智能', '软件工程'], 2: ['计算机科学'], 3: ['金融工程'], 4: ['金融学'], 5: ['数据科学'], 6: ['中国哲学'] };
   var boundPrograms = Array.isArray(currentMeta.boundPrograms) ? currentMeta.boundPrograms.slice() : (defaultPrograms[templateId] || (currentMeta.program ? [currentMeta.program] : [])).slice();
@@ -111,6 +112,7 @@
     return 'V' + Math.floor(serial / 10) + '.' + (serial % 10);
   }
   function nextVersion(version) {
+    if (centerMode) return pbsTemplatePublishing.nextVersion([{version:version}]);
     var matched = String(version).match(/V(\d+)\.(\d+)/i);
     if (!matched) return 'V1.0';
     return 'V' + matched[1] + '.' + (Number(matched[2]) + 1);
@@ -309,9 +311,10 @@
   window.selectHistoryVersion = function (index) { selectedVersion = index; renderVersionList(); };
   window.openVersionHistory = function () { selectedVersion = 0; renderVersionList(); document.getElementById('versionModal').classList.add('show'); };
   window.closeVersionHistory = function () { document.getElementById('versionModal').classList.remove('show'); };
-  function persistTemplate(createVersion, forScan) {
+  function contentSignature() { return JSON.stringify([document.getElementById('templateName').value.trim(),document.getElementById('templateSchool').value.trim(),document.getElementById('templateCollege').value.trim(),document.getElementById('templateRegion').value.trim(),document.getElementById('templateUrl').value.trim(),boundPrograms,fields,pages,materials,entrances]); }
+  function persistTemplate(createVersion, forScan, afterSave, destination) {
     if (scanResultsAvailable) { showToast('请先加载插件保存的扫描结果'); return false; }
-    if (centerMode && !pbsTemplatePublishing.isPublisher()) { showToast('无权维护平台模板'); return false; }
+    if (centerMode && !pbsTemplatePublishing.isPublisher(isNew ? 'create' : 'edit')) { showToast('无权维护平台模板'); return false; }
     syncRows();
     var name = document.getElementById('templateName').value.trim();
     var school = document.getElementById('templateSchool').value.trim();
@@ -328,21 +331,40 @@
     var applicationUrl=document.getElementById('templateUrl').value.trim();
     if(!forScan && applicationUrl && !/^https?:\/\/[^\s/]+/i.test(applicationUrl)){showToast('请填写有效的申请入口网址');return false;}
     entrances.find(function(entry){return entry.isDefault;}).url=applicationUrl;
+    if (centerMode && isNew && destination === undefined && pbsTemplatePublishing.overwriteCandidates(school,college).length) {
+      choosePlatformTemplateDestination([{id:'draft',name:name,school:school,college:college}],'确认保存',function(choices){if(persistTemplate(createVersion,forScan,null,choices.draft) && afterSave)afterSave();}); return false;
+    }
+    var stored = [];
+    try { stored = JSON.parse(localStorage.getItem(templateStoreKey) || '[]'); } catch (error) {}
+    var overwriting = centerMode && isNew && !!destination;
+    if (overwriting) {
+      var target = stored.find(function(item) { return Number(item.id) === Number(destination) && item.school === school && item.college === college; });
+      if (!target || !pbsTemplatePublishing.isPublisher('edit')) { showToast('请选择同校同学院的有效覆盖模板'); return false; }
+      savedTemplateId = target.id; createVersion = true; document.getElementById('currentVersion').textContent = target.versions[0].version;
+      histories = target.versions.map(function(item){return {version:item.version,time:item.savedAt || item.updated || '',editor:item.editor || '王志强',fields:item.fields,materials:item.materials,fieldDetails:item.fieldDetails || [],pageDetails:item.pageDetails || [],materialDetails:item.materialDetails || [],entranceDetails:item.entranceDetails || []};});
+    }
+    var existing = stored.find(function(item) { return Number(item.id) === Number(savedTemplateId); });
+    if (centerMode && existing && !createVersion) {
+      var published = pbsTemplatePublishing.publications().some(function(item) { return Number(item.templateId) === Number(existing.id) && item.version === existing.versions[0].version; });
+      if (published) {
+        var changed = forScan || contentSignature() !== savedContentSignature;
+        if (!changed) { showToast('当前版本已保存'); return true; }
+        createVersion = true;
+      }
+    }
     var current = document.getElementById('currentVersion').textContent;
-    var version = current === '未保存' ? 'V1.0' : (createVersion ? nextVersion(current) : current);
+    var version = current === '未保存' ? (centerMode ? 'V1' : 'V1.0') : (createVersion ? nextVersion(current) : current);
     document.getElementById('currentVersion').textContent = version;
     var savedAt = new Date().toLocaleString('sv-SE').slice(0,16);
     var historyItem = { version: version, time: savedAt, editor: '王志强', fields: fields.length, materials: materials.length, change: '', fieldDetails: JSON.parse(JSON.stringify(fields)), pageDetails: JSON.parse(JSON.stringify(pages)), materialDetails:JSON.parse(JSON.stringify(materials)), entranceDetails:JSON.parse(JSON.stringify(entrances)) };
     if (createVersion || !histories.length) histories.unshift(historyItem); else histories[0] = historyItem;
-    var stored = [];
-    try { stored = JSON.parse(localStorage.getItem(templateStoreKey) || '[]'); } catch (error) { stored = []; }
     var session = window.pbsGetSession ? window.pbsGetSession() : { org: 'PBS留学总部' };
-    var existing = stored.find(function (item) { return Number(item.id) === Number(savedTemplateId); });
     var versions = existing && Array.isArray(existing.versions) ? existing.versions.slice() : histories.slice(1).map(function (item) {
-      return { version: String(item.version).toLowerCase(), fields: item.fields, materials: item.materials, updated: item.time.slice(0, 10), fieldDetails:item.fieldDetails, pageDetails:item.pageDetails, materialDetails:item.materialDetails, entranceDetails:item.entranceDetails };
+      return { version: centerMode ? item.version : String(item.version).toLowerCase(), fields: item.fields, materials: item.materials, updated: item.time.slice(0, 10), fieldDetails:item.fieldDetails, pageDetails:item.pageDetails, materialDetails:item.materialDetails, entranceDetails:item.entranceDetails };
     });
+    if (existing && existing.sourceTemplateId && versions[0]) versions[0] = Object.assign({},versions[0],{sourceTemplateId:existing.sourceTemplateId,sourceOrg:existing.sourceOrg,sourceTemplateVersion:existing.sourceTemplateVersion});
     var versionPayload = {
-      version: version.toLowerCase(),
+      version: centerMode ? version : version.toLowerCase(),
       fields: fields.length,
       materials: materials.length,
       updated: new Date().toISOString().slice(0, 10),
@@ -355,8 +377,9 @@
     };
     if (existing && versions.length && !createVersion) versions[0] = versionPayload; else versions.unshift(versionPayload);
     stored = stored.filter(function (item) { return Number(item.id) !== Number(savedTemplateId); });
-    stored.push({ id: savedTemplateId, updatedAt:new Date().toISOString(), name: name, school: school, college: college, boundPrograms: boundPrograms, program: boundPrograms[0] || '', region: document.getElementById('templateRegion').value.trim(), applicationUrl:applicationUrl, scannedAt: existing && existing.scannedAt, org: centerMode ? '平台' : existing && existing.org || session.org || 'PBS留学总部', versions: versions, publicationId: existing && existing.publicationId, sourcePlatformTemplateId: existing && existing.sourcePlatformTemplateId, sourceVersion: existing && existing.sourceVersion, sourceTemplateId: existing && existing.sourceTemplateId, sourceOrg: existing && existing.sourceOrg, sourceTemplateVersion:existing && existing.sourceTemplateVersion });
+    stored.push({ id: savedTemplateId, updatedAt:new Date().toISOString(), name: name, school: school, college: college, boundPrograms: boundPrograms, program: boundPrograms[0] || '', region: document.getElementById('templateRegion').value.trim(), applicationUrl:applicationUrl, scannedAt: existing && existing.scannedAt, org: centerMode ? '平台' : existing && existing.org || session.org || 'PBS留学总部', versions: versions, publicationId: existing && existing.publicationId, sourcePlatformTemplateId: existing && existing.sourcePlatformTemplateId, sourceVersion: existing && existing.sourceVersion, sourceTemplateId: !overwriting && existing && existing.sourceTemplateId, sourceOrg: overwriting || published && createVersion ? '平台' : existing && existing.sourceOrg, sourceTemplateVersion:!overwriting && existing && existing.sourceTemplateVersion });
     localStorage.setItem(templateStoreKey, JSON.stringify(stored));
+    savedContentSignature = contentSignature();
     var scanButton=document.querySelector('[data-template-scan]');
     if(scanButton){var scanState=pbsTemplateScan.status(savedTemplateId,version);scanButton.textContent=['待扫描','待确认'].includes(scanState)?scanState:'新增扫描任务';}
     if(isNew){params.delete('mode');params.set('id',savedTemplateId);history.replaceState(null,'',location.pathname+'?'+params.toString());isNew=false;document.getElementById('pageTitle').textContent=centerMode?'编辑平台网申模板':'修改网申模板';document.getElementById('breadcrumbMode').textContent='修改模板';}
@@ -364,6 +387,7 @@
     return true;
   }
   window.saveTemplate = function () { return persistTemplate(false); };
+  window.publishCurrentTemplate = function() { function done(){openPublishTemplate(savedTemplateId);} if(persistTemplate(false,false,done))done(); };
   window.getTemplateDraftId = function() { return savedTemplateId; };
   window.saveNewVersion = function () { persistTemplate(true); };
 
@@ -407,12 +431,9 @@
   });
   window.scanTemplatePage = function() {
     if (scanResultsAvailable) { location.reload(); return; }
-    if (!centerMode || !pbsTemplatePublishing.isPublisher() || !persistTemplate(false, true)) return;
-    var result = pbsTemplateScan.request(savedTemplateId);
-    if (result.error) { showToast(result.error); return; }
-    showToast('已加入待扫描任务，请在插件中使用管理员账号扫描');
-    var button = document.querySelector('[data-template-scan]');
-    if (button) button.textContent = result.status;
+    if (!centerMode || !pbsTemplatePublishing.isPublisher()) return;
+    function done(){var result=pbsTemplateScan.request(savedTemplateId);if(result.error){showToast(result.error);return;}showToast('已加入待扫描任务，请在插件中使用同一账号扫描');var button=document.querySelector('[data-template-scan]');if(button)button.textContent=result.status;}
+    if(persistTemplate(false,true,done))done();
   };
   window.addEventListener('storage', function(event) {
     if (!centerMode || event.key !== templateStoreKey) return;
@@ -424,6 +445,7 @@
     }
   });
   initialize();
+  savedContentSignature = contentSignature();
   document.addEventListener('DOMContentLoaded',function(){
     if(!centerMode)return;
     if(!pbsTemplatePublishing.isPublisher()){location.replace('网申模板库 - 留学申请管理系统.html');return;}
@@ -432,6 +454,6 @@
     document.querySelector('.pbs-detail-topbar__actions').insertAdjacentHTML('afterbegin','<button class="btn" data-template-scan onclick="scanTemplatePage()">新增扫描任务</button>');
     var scanStatus = pbsTemplateScan.status(savedTemplateId);
     if (scanStatus === '待扫描' || scanStatus === '待确认') document.querySelector('[data-template-scan]').textContent = scanStatus;
-    document.querySelector('.pbs-detail-topbar__actions').insertAdjacentHTML('beforeend','<button class="btn primary" onclick="if(saveTemplate())openPublishTemplate(getTemplateDraftId())">发布</button>');
+    document.querySelector('.pbs-detail-topbar__actions').insertAdjacentHTML('beforeend','<button class="btn primary" onclick="publishCurrentTemplate()">发布</button>');
   });
 })();

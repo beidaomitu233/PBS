@@ -76,11 +76,13 @@
       heading.closest('.pbs-detail-topbar').after(guide); addSupplement(profile,guide);
       var back = document.querySelector('[data-dom-id="btn-back-list"]'); if (back) { back.setAttribute('aria-label','返回选校任务列表'); back.setAttribute('title','返回选校任务列表'); back.dataset.backLabel = '选校列表'; back.addEventListener('click',function(event) { event.stopImmediatePropagation(); location.href = '选校任务列表页 - 留学申请管理系统.html'; },true); }
       if (profile.boundTo) document.querySelectorAll('main button[title="AI 解析"]').forEach(function(button) { button.hidden = true; });
-    } else if (profile.supplement) {
-      var apply = document.getElementById('secbody-apply'), existing = apply.querySelector('.pa-intake'); if (existing) existing.remove();
-      var marker = document.createElement('div'); apply.appendChild(marker); addSupplement(profile,marker); marker.remove();
+    } else {
+      repairImports(profile); profile = api.find(profile.id);
+      document.querySelectorAll('#secbody-apply .pa-intake').forEach(function(node) { node.remove(); });
+      if (profile.supplement) addSupplement(profile,document.getElementById('studentInfoCard').parentElement);
     }
-    if (new URLSearchParams(location.search).get('section') === 'apply') requestAnimationFrame(function() { document.getElementById('sec-apply').scrollIntoView({block:'start'}); });
+    var section = new URLSearchParams(location.search).get('section'), destination = document.getElementById('sec-' + section);
+    if (destination) requestAnimationFrame(function() { destination.scrollIntoView({block:'start'}); });
   }
   function adaptSalesArchive(profile) {
     document.body.classList.add('pa-sales');
@@ -112,16 +114,63 @@
       if (empty(source[key])) return;
       if (Array.isArray(source[key])) { result[key] = (result[key] || []).slice(); source[key].forEach(function(item) { if (!result[key].some(function(row) { return JSON.stringify(row) === JSON.stringify(item); })) result[key].push(item); }); }
       else if (empty(result[key])) result[key] = source[key];
-      else if (String(result[key]) !== String(source[key])) conflicts.push({field:labels[scope] + ' · ' + (identityLabels[key] || key),current:result[key],incoming:source[key]});
+      else if (String(result[key]) !== String(source[key])) conflicts.push({scope:scope,key:key,field:labels[scope] + ' · ' + (identityLabels[key] || key),current:result[key],incoming:source[key]});
     }); return result;
   }
   function validFields(root) { return Array.from(root.querySelectorAll('[data-v]')).filter(function(node) { return !node.parentElement.closest('[data-v]') && !empty(node.textContent.trim()); }); }
   function signature(record) { return validFields(record).map(function(node) { return node.dataset.v + ':' + node.textContent.trim(); }).sort().join('|'); }
-  function appendExtra(host,key,label,value) {
-    var extra = host.querySelector('.pa-import-values');
-    if (!extra) { extra = document.createElement('div'); extra.className = 'pa-import-values'; extra.innerHTML = '<h4>补充资料</h4>'; host.appendChild(extra); }
-    if (extra.querySelector('[data-v="' + key + '"]')) return;
-    var cell = document.createElement('div'); cell.dataset.f = key; cell.innerHTML = '<span>' + esc(label) + '</span><p data-v="' + esc(key) + '">' + esc(value) + '</p>'; extra.appendChild(cell);
+  var recordKeys = {edu:['school','major','start'],qual:['qn','org','date'],work:['co','post','start'],practice:['org','role','start'],honor:['hn','org','date'],pub:['title','doi']};
+  var scoreLabels = {ieltsT:'雅思总分',ieltsL:'雅思听力',ieltsR:'雅思阅读',ieltsW:'雅思写作',ieltsS:'雅思口语',toeflT:'托福总分',toeflL:'托福听力',toeflR:'托福阅读',toeflW:'托福写作',toeflS:'托福口语',gpa:'GPA',sat:'SAT',ap:'AP',alevel:'A-Level',ib:'IB',gre:'GRE',gmat:'GMAT'};
+  function fieldLabel(section,node) {
+    var definition = ((window.PBSProfileFieldLabels || {})[section] || []).find(function(field) { return field[0] === node.dataset.v; });
+    return definition ? definition[1] : scoreLabels[node.dataset.v] || (node.previousElementSibling ? node.previousElementSibling.textContent.trim() : node.dataset.v);
+  }
+  function snapshot(host) {
+    var values = {}, names = {};
+    validFields(host).forEach(function(node,index) { var key = node.dataset.v + ':' + index; values[key] = node.textContent.trim(); names[key] = node.dataset.v; });
+    return {html:host.innerHTML,values:values,labels:names};
+  }
+  function sameRecord(a,b,section) {
+    var keys = recordKeys[section] || [], matches = 0;
+    return keys.length && keys.every(function(key,index) {
+      var av = a.querySelector('[data-v="' + key + '"]'), bv = b.querySelector('[data-v="' + key + '"]');
+      av = av ? av.textContent.trim() : ''; bv = bv ? bv.textContent.trim() : '';
+      if (!index && (empty(av) || empty(bv))) return false;
+      if (!empty(av) && !empty(bv)) { matches++; return av === bv; }
+      return true;
+    }) && matches > 0;
+  }
+  function appendField(host,node,section) {
+    var wrapper = node.closest('[data-f], [data-custom-field-id]');
+    var grid = host.querySelector('.grid');
+    if (!wrapper || !grid) return null;
+    var clone = wrapper.cloneNode(true); grid.appendChild(clone);
+    return clone.querySelector('[data-v]');
+  }
+  function mergeFields(destination,incoming,section,conflicts,root) {
+    var count = 0;
+    validFields(incoming).forEach(function(node) {
+      var key = node.dataset.v, value = node.textContent.trim();
+      var field = Array.from(destination.querySelectorAll('[data-v]')).find(function(item) { return item.dataset.v === key && (destination !== root || !item.closest('[data-record],tr')); });
+      if (!field) { if (appendField(destination,node,section)) count++; return; }
+      if (empty(field.textContent.trim())) { field.textContent = value; count++; }
+      else if (field.textContent.trim() !== value) {
+        var titleKey = (recordKeys[section] || [])[0], title = titleKey && destination.querySelector('[data-v="' + titleKey + '"]');
+        conflicts.push({scope:section,key:key,index:Array.from(root.querySelectorAll('[data-v]')).indexOf(field),field:labels[section] + (title ? ' · ' + title.textContent.trim() : '') + ' · ' + fieldLabel(section,node),current:field.textContent.trim(),incoming:value});
+      }
+    });
+    return count;
+  }
+  function mergeRecord(container,record,section,conflicts,root) {
+    var records = Array.from(container.children);
+    if (!signature(record) || records.some(function(row) { return signature(row) === signature(record); })) return 0;
+    var existing = records.find(function(row) { return sameRecord(row,record,section); });
+    if (existing) return mergeFields(existing,record,section,conflicts,root);
+    var clone = record.cloneNode(true); clone.removeAttribute('data-audit-record');
+    clone.dataset.recordKey = 'import-' + Math.random().toString(36).slice(2);
+    container.appendChild(clone);
+    Array.from(container.children).forEach(function(row,index) { var number = row.querySelector(':scope > div:first-child > span'); if (number) number.textContent = index + 1; });
+    return 1;
   }
   function mergeSections(source,conflicts) {
     var result = {}, counts = [];
@@ -133,42 +182,35 @@
       incoming.querySelectorAll('[id^="records-"],tbody').forEach(function(container,index) {
         var destination = container.id ? merged.querySelector('[id="' + container.id + '"]') : merged.querySelectorAll('tbody')[index]; if (!destination) return;
         Array.from(container.children).forEach(function(record) {
-          if (!signature(record) || Array.from(destination.children).some(function(row) { return signature(row) === signature(record); })) return;
-          var clone = record.cloneNode(true); clone.removeAttribute('data-audit-record');
-          clone.dataset.recordKey = 'pre-' + source.id + '-' + section + '-' + count;
-          destination.appendChild(clone); count++;
+          count += mergeRecord(destination,record,section,conflicts,merged);
         });
       });
-      validFields(incoming).forEach(function(node,index) {
-        if (node.closest('[data-record],tr')) return;
-        var key = node.dataset.v, destination = Array.from(merged.querySelectorAll('[data-v]')).find(function(item) { return item.dataset.v === key && !item.closest('[data-record],tr'); });
-        var definition = ((window.PBSProfileFieldLabels || {})[section] || []).find(function(field) { return field[0] === key; });
-        var label = definition ? definition[1] : node.previousElementSibling ? node.previousElementSibling.textContent.trim() : key;
-        if (destination && empty(destination.textContent.trim())) { destination.textContent = node.textContent; count++; }
-        else if (destination && destination.textContent.trim() !== node.textContent.trim()) { conflicts.push({field:labels[section] + ' · ' + label,current:destination.textContent.trim(),incoming:node.textContent.trim()}); appendExtra(merged,'pre-' + source.id + '-' + index,label,node.textContent.trim()); count++; }
-        else if (!destination) { appendExtra(merged,'pre-' + source.id + '-' + index,label,node.textContent.trim()); count++; }
-      });
-      if (count) {
-        var values = {}, fieldLabels = {}; validFields(merged).forEach(function(node,index) { values[node.dataset.v + ':' + index] = node.textContent.trim(); fieldLabels[node.dataset.v + ':' + index] = node.dataset.v; });
-        result[section] = {html:merged.innerHTML,values:values,labels:fieldLabels}; counts.push((labels[section] || section) + ' ' + count + ' 项');
-      }
+      var flat = incoming.cloneNode(true); flat.querySelectorAll('[id^="records-"],table,.pa-import-values').forEach(function(node) { node.remove(); });
+      count += mergeFields(merged,flat,section,conflicts,merged);
+      if (count || conflicts.some(function(row) { return row.scope === section; })) result[section] = snapshot(merged);
+      if (count) counts.push({section:section,label:labels[section] || section,count:count});
     });
     return {sections:result,counts:counts};
   }
   function preview(target,source,files) {
     var conflicts = [], student = mergeIdentity(target.student,source.student,'student',conflicts), customer = mergeIdentity(target.customer,source.customer,'customer',conflicts), merged = mergeSections(source,conflicts);
     var sections = Object.assign({},target.sections,merged.sections);
-    var basicConflicts = conflicts.filter(function(row) { return /^(学生信息|客户信息)/.test(row.field); });
-    if (basicConflicts.length) {
-      var apply = document.getElementById('secbody-apply').cloneNode(true), bindings = apply.querySelector('#studentSelectionBindings'); if (bindings) bindings.remove();
-      if (merged.sections.apply) apply.innerHTML = merged.sections.apply.html;
-      basicConflicts.forEach(function(row,index) { appendExtra(apply,'pre-' + source.id + '-identity-' + index,row.field,row.incoming); });
-      sections.apply = {html:apply.innerHTML,values:Object.assign({},(sections.apply || {}).values),labels:Object.assign({},(sections.apply || {}).labels)};
-    }
-    return {student:student,customer:customer,sections:sections,conflicts:conflicts,files:files.map(function(item) { return item.id; }),counts:merged.counts,summary:merged.counts.concat(files.length ? files.length + ' 份文件' : [],source.supplement ? '学生补充信息' : []).join('、') || '学生基本信息'};
+    return {student:student,customer:customer,sections:sections,conflicts:conflicts,files:files.map(function(item) { return item.id; }),counts:merged.counts,summary:merged.counts.map(function(item) { return item.label + ' ' + item.count + ' 项'; }).concat(files.length ? files.length + ' 份文件' : [],source.supplement ? '学生补充信息' : []).join('、') || '学生基本信息'};
   }
-  function conflictTable(conflicts) {
-    return conflicts.length ? '<table class="pa-conflicts"><thead><tr><th>存在不同内容的字段</th><th>当前档案</th><th>预档案</th></tr></thead><tbody>' + conflicts.map(function(row) { return '<tr><td>' + esc(row.field) + '</td><td>' + esc(row.current) + '</td><td>' + esc(row.incoming) + '</td></tr>'; }).join('') + '</tbody></table><p class="pa-caption">当前字段保留原值，预档案中的不同内容保留在补充资料和绑定记录中，可继续核对。</p>' : '';
+  function conflictTable(conflicts,editable) {
+    return conflicts.length ? '<table class="pa-conflicts"><thead><tr><th>存在不同内容的字段</th><th>当前档案</th><th>预档案</th><th>采用内容</th></tr></thead><tbody>' + conflicts.map(function(row,index) { return '<tr><td>' + esc(row.field) + '</td><td>' + esc(row.current) + '</td><td>' + esc(row.incoming) + '</td><td>' + (editable ? '<select aria-label="' + esc(row.field) + '采用内容" data-conflict="' + index + '"><option value="current">保留当前</option><option value="incoming">使用预档案</option></select>' : row.choice === 'incoming' ? '预档案' : '当前档案') + '</td></tr>'; }).join('') + '</tbody></table>' : '';
+  }
+  function resolveConflicts(payload,dialog) {
+    var sections = {};
+    payload.conflicts.forEach(function(row,index) {
+      row.choice = dialog.querySelector('[data-conflict="' + index + '"]').value;
+      if (row.choice !== 'incoming') return;
+      if (row.scope === 'student' || row.scope === 'customer') { payload[row.scope][row.key] = row.incoming; return; }
+      var host = sections[row.scope];
+      if (!host) { host = document.createElement('div'); host.innerHTML = payload.sections[row.scope].html; sections[row.scope] = host; }
+      var field = host.querySelectorAll('[data-v]')[row.index]; if (field) field.textContent = row.incoming;
+    });
+    Object.keys(sections).forEach(function(key) { payload.sections[key] = snapshot(sections[key]); });
   }
   async function bindSelection(id,orderKey,serviceId) {
     var error = pbsSelection.bindingError(id,orderKey,serviceId);
@@ -185,13 +227,14 @@
     var target = api.find(id), payload = preview(target,source,files);
     payload.serviceId = serviceId; payload.orderKey = orderKey;
     var dialog = modal('绑定选校单并追加资料',task.student + ' · ' + serviceId,
-      '<div class="pa-flow"><div><small>选校单预档案</small><strong>' + esc(source.name) + '</strong></div><span>→</span><div><small>当前学生档案</small><strong>' + esc(target.name) + '</strong></div></div><div class="pa-summary">追加内容：' + esc(payload.summary) + '。已有记录保留，相同记录跳过。' + (files.length ? '绑定后可点击追加解析，直接填入识别结果。' : '') + '</div>' + conflictTable(payload.conflicts),
+      '<div class="pa-flow"><div><small>选校单预档案</small><strong>' + esc(source.name) + '</strong></div><span>→</span><div><small>当前学生档案</small><strong>' + esc(target.name) + '</strong></div></div><div class="pa-summary">资料将分别追加到对应模块，相同记录跳过。</div><div class="pa-merge-modules">' + payload.counts.map(function(item) { return '<div><span>' + esc(item.label) + '</span><strong>' + item.count + ' 项</strong></div>'; }).join('') + (files.length ? '<div><span>资产文件</span><strong>' + files.length + ' 份</strong></div>' : '') + '</div>' + conflictTable(payload.conflicts,true),
       '<span class="pa-dialog-error" role="alert"></span><button class="pa-button" data-pa-close>取消</button><button class="pa-button primary" data-confirm>绑定并追加</button>');
     dialog.querySelector('[data-confirm]').onclick = async function() {
       var button = dialog.querySelector('[data-confirm]'); button.disabled = true; button.textContent = '正在追加…';
       var error = pbsSelection.bindingError(id,orderKey,serviceId);
       if (error) { dialog.querySelector('[role="alert"]').textContent = error; button.disabled = false; button.textContent = '绑定并追加'; return; }
       try {
+        resolveConflicts(payload,dialog);
         payload.files = await assets(function(all,store) {
           return all.filter(function(item) { return item.owner === source.id; }).map(function(item) {
             var copy = Object.assign({},item,{id:'bound-' + id + '-' + item.id,owner:id,preSourceId:source.id,selectionId:serviceId}); store.put(copy); return copy.id;
@@ -199,13 +242,13 @@
         });
         var result = pbsSelection.bind(id,orderKey,serviceId); if (result.error) throw new Error(result.error);
         if (!api.bindPre(id,source.id,payload)) { pbsSelection.unbind(id,orderKey); throw new Error('资料追加失败'); }
-        location.href = profileUrl(id) + '&section=apply&bound=1';
+        location.href = profileUrl(id) + '&section=' + (payload.counts[0] ? payload.counts[0].section : 'apply') + '&bound=1';
       } catch(e) { button.disabled = false; button.textContent = '绑定并追加'; dialog.querySelector('[role="alert"]').textContent = e.message || '追加失败，请重试'; }
     };
   }
   function showImports(id) {
     var profile = api.find(id);
-    modal('已绑定的预档案','选校阶段资料已追加到当前档案。',(profile.preImports || []).map(function(item) { return '<div class="pa-summary">' + esc(item.name) + ' · ' + esc(item.at.slice(0,10)) + '</div>' + conflictTable(item.conflicts || []); }).join(''),'<button class="pa-button" data-pa-close>关闭</button>');
+    modal('已绑定的预档案','选校阶段资料已追加到对应模块。',(profile.preImports || []).map(function(item) { return '<div class="pa-summary">' + esc(item.name) + ' · ' + esc(item.at.slice(0,10)) + '<br>' + esc(item.summary || '') + '</div>' + conflictTable(item.conflicts || []); }).join(''),'<button class="pa-button" data-pa-close>关闭</button>');
   }
   var parsing = false;
   async function openParse(id,serviceId) {
@@ -226,8 +269,8 @@
       if (serviceId && !notes.length && task && task.supplement) notes.push({id:'note-' + serviceId,name:'选校补充信息',kind:'text',text:task.supplement,category:'score',selectionId:serviceId});
       files = notes.concat(files);
       if (!files.length) { notify('暂无可解析资料，请先上传文件或完善预档案'); return; }
-      var count = parseResults(id,files);
-      notify(count ? '已追加 ' + count + ' 项解析内容' : '解析完成，暂无新增内容');
+      var result = parseResults(id,files);
+      notify(result.count || result.pending ? '已填入 ' + result.count + ' 项' + (result.pending ? '，' + result.pending + ' 项差异请在对应字段确认' : '，可在对应模块查看') : '解析完成，暂无新增内容');
     } catch(e) { notify('追加解析失败，请重试'); }
     finally {
       parsing = false;
@@ -240,23 +283,109 @@
     [[/(?:雅思|IELTS)\s*(?:总分|成绩)?\s*[:：]?\s*(\d(?:\.\d)?)/i,'#sec-lang [data-v="ieltsT"]','雅思总分','lang'],[/(?:托福|TOEFL)\s*(?:总分|成绩)?\s*[:：]?\s*(\d{2,3})/i,'#sec-lang [data-v="toeflT"]','托福总分','lang'],[/GPA\s*[:：]?\s*(\d(?:\.\d+)?(?:\s*\/\s*\d(?:\.\d+)?)?)/i,'#sec-score [data-v="gpa"]','GPA','score']].forEach(function(definition) { match = text.match(definition[0]); if (match) fields.push({sel:definition[1],label:definition[2],value:match[1].replace(/\s+/g,''),section:definition[3]}); });
     return fields;
   }
+  function parsedRoute(field,file) {
+    var match = String(field.sel || '').match(/data-v=["']([^"']+)/), key = field.key || match && match[1];
+    if (!key) return null;
+    var sectionMatch = String(field.sel || '').match(/#(?:secbody-|sec-|records-)([a-z]+)/);
+    var section = sectionMatch ? sectionMatch[1] : /^ielts|^toefl/.test(key) ? 'lang' : scoreLabels[key] ? 'score' : field.section || file.category;
+    return document.getElementById('secbody-' + section) ? {section:section,key:key,label:field.label || scoreLabels[key] || key,value:String(field.value == null ? '' : field.value),record:field.recordId || ''} : null;
+  }
+  function nativeField(host,key,label,value) {
+    var cell = document.createElement('div'); cell.dataset.f = key;
+    cell.innerHTML = '<p class="text-xs text-gray-400 mb-1">' + esc(label) + '</p><p class="text-sm font-medium text-gray-900" data-v="' + esc(key) + '">' + esc(value) + '</p>';
+    (host.querySelector('.grid') || host).appendChild(cell); return cell.querySelector('[data-v]');
+  }
+  function parsedRecord(section,fields) {
+    var record = document.createElement('div'); record.className = 'border border-gray-200 rounded-xl p-4'; record.dataset.record = '';
+    record.innerHTML = '<div class="flex items-center justify-between mb-3"><span class="text-sm text-gray-500"></span><div class="flex items-center gap-3"><button class="pa-text-button" onclick="editRecord(this)">编辑</button><button class="pa-text-button" onclick="delRecord(this)">删除</button></div></div><div class="grid grid-cols-3 gap-x-6 gap-y-4"></div>';
+    var definitions = ((window.PBSProfileFieldLabels || {})[section] || []).slice();
+    fields.forEach(function(field) { if (!definitions.some(function(item) { return item[0] === field.key; })) definitions.push([field.key,field.label]); });
+    definitions.forEach(function(definition) { var field = fields.find(function(item) { return item.key === definition[0]; }); nativeField(record,definition[0],definition[1],field ? field.value : '—'); });
+    return record;
+  }
+  function pendingField(field,value,label) {
+    var cell = field.closest('[data-f]') || field.parentElement;
+    if (/^ielts|^toefl/.test(field.dataset.v)) cell = cell.closest('.border.rounded-xl') || cell;
+    if ((field.dataset.paIgnored || '').split('\n').indexOf(value) >= 0) return false;
+    var duplicate = Array.from(cell.querySelectorAll('[data-pa-value]')).some(function(node) { return node.dataset.paValue === value && node.dataset.paKey === field.dataset.v; });
+    if (duplicate) return false;
+    var choice = document.createElement('div'); choice.className = 'pa-field-choice'; choice.dataset.paValue = value; choice.dataset.paKey = field.dataset.v;
+    choice.innerHTML = '<span>' + esc(label) + '解析值：<strong>' + esc(value) + '</strong></span><div><button class="pa-text-button" data-use-parsed>采用</button><button class="pa-text-button" data-keep-current>保留当前</button></div>';
+    cell.appendChild(choice); return true;
+  }
   function parseResults(id,files) {
-    var rows = [], seen = {};
+    var sections = {}, count = 0, pending = 0;
     files.forEach(function(file) {
       var fields = file.kind === 'text' ? supplementFields(file.text) : file.parseFields || (/雅思/i.test(file.name) ? (window.PARSE_RESULTS || {}).ielts : /成绩单/.test(file.name) ? (window.PARSE_RESULTS || {}).transcript : []) || [];
-      fields.forEach(function(field,index) { var hash = 0; String(field.value).split('').forEach(function(c) { hash = (hash * 31 + c.charCodeAt(0)) | 0; }); var extraKey = 'parse-' + file.id + '-' + index + '-' + Math.abs(hash).toString(36), element = document.querySelector('[data-v="' + extraKey + '"]') || document.querySelector(field.sel), current = element ? element.textContent.trim() : '', signature = field.sel + '|' + field.value; var duplicate = !!seen[signature]; seen[signature] = true; rows.push({file:file,field:field,element:element,current:current,extraKey:extraKey,duplicate:duplicate,same:duplicate || current === field.value}); });
-    });
-    var sections = {}, count = 0;
-    rows.filter(function(row) { return !row.same; }).forEach(function(row) {
-      var field = row.field, section = row.element && row.element.closest('section[data-section]');
-      var key = section ? section.dataset.section : field.section || row.file.category, host = document.getElementById('secbody-' + key); if (!host) return;
-      if (row.element && empty(row.current)) row.element.textContent = field.value;
-      else appendExtra(host,row.extraKey,field.label,field.value);
-      sections[key] = true; count++;
+      var records = {};
+      fields.forEach(function(field) {
+        var row = parsedRoute(field,file); if (!row || empty(row.value)) return;
+        var host = document.getElementById('secbody-' + row.section), container = host.querySelector('#records-' + row.section);
+        if (container) { var group = row.section + ':' + row.record; (records[group] || (records[group] = [])).push(row); return; }
+        var element = Array.from(host.querySelectorAll('[data-v]')).find(function(node) { return node.dataset.v === row.key; });
+        if (!element) { nativeField(host,row.key,row.label,row.value); count++; sections[row.section] = true; }
+        else if (empty(element.textContent.trim())) { element.textContent = row.value; count++; sections[row.section] = true; }
+        else if (element.textContent.trim() !== row.value && pendingField(element,row.value,row.label)) { pending++; sections[row.section] = true; }
+      });
+      Object.keys(records).forEach(function(key) {
+        var fields = records[key], section = fields[0].section, host = document.getElementById('secbody-' + section), conflicts = [];
+        var added = mergeRecord(host.querySelector('#records-' + section),parsedRecord(section,fields),section,conflicts,host);
+        count += added;
+        conflicts.forEach(function(row) { if (pendingField(host.querySelectorAll('[data-v]')[row.index],row.incoming,row.field)) pending++; });
+        if (added || conflicts.length) sections[section] = true;
+      });
     });
     Object.keys(sections).forEach(function(section) { pbsCommitStudentSection(section,'追加解析选校资料'); });
-    var profile = api.find(id), selectedIds = files.map(function(item) { return item.id; }); profile.pendingParseFiles = (profile.pendingParseFiles || []).filter(function(value) { return selectedIds.indexOf(value) < 0; }); profile.preParseStates = profile.preParseStates || {}; selectedIds.forEach(function(key) { profile.preParseStates[key] = new Date().toISOString(); }); saveProfile(profile);
-    return count;
+    var profile = api.find(id), selectedIds = files.map(function(item) { return item.id; });
+    Object.keys(sections).forEach(function(section) { var host = document.getElementById('secbody-' + section); profile.sections[section] = profile.sections[section] || snapshot(host); profile.sections[section].html = host.innerHTML; });
+    profile.pendingParseFiles = (profile.pendingParseFiles || []).filter(function(value) { return selectedIds.indexOf(value) < 0; }); profile.preParseStates = profile.preParseStates || {}; selectedIds.forEach(function(key) { profile.preParseStates[key] = new Date().toISOString(); }); saveProfile(profile);
+    return {count:count,pending:pending};
+  }
+  document.addEventListener('click',function(event) {
+    var button = event.target.closest('[data-use-parsed],[data-keep-current]'); if (!button || !api.canEdit(window.PBS_STUDENT_ID)) return;
+    var choice = button.closest('[data-pa-value]'), cell = choice.parentElement, section = choice.closest('section[data-section]');
+    var field = Array.from(cell.querySelectorAll('[data-v]')).find(function(node) { return node.dataset.v === choice.dataset.paKey; });
+    if (field) {
+      if (button.hasAttribute('data-use-parsed')) field.textContent = choice.dataset.paValue;
+      else field.dataset.paIgnored = (field.dataset.paIgnored ? field.dataset.paIgnored + '\n' : '') + choice.dataset.paValue;
+    }
+    choice.remove();
+    if (section) {
+      pbsCommitStudentSection(section.dataset.section,'确认选校资料解析结果');
+      var profile = api.find(window.PBS_STUDENT_ID); profile.sections[section.dataset.section].html = document.getElementById('secbody-' + section.dataset.section).innerHTML; saveProfile(profile);
+    }
+  });
+  function repairImports(profile) {
+    var imports = (profile.preImports || []).filter(function(item) { return !item.moduleMergeVersion; });
+    if (!imports.length || !api.canEdit(profile.id)) return;
+    var changed = {}, parsed = [];
+    document.querySelectorAll('.pa-import-values').forEach(function(extra) {
+      var body = extra.closest('[id^="secbody-"]'), section = body && body.id.replace('secbody-','');
+      if (section && (recordKeys[section] || section === 'lang' || section === 'score')) {
+        var fields = [];
+        extra.querySelectorAll('[data-f]').forEach(function(cell) {
+          var label = cell.querySelector('span'), value = cell.querySelector('[data-v]'); if (!label || !value) return;
+          var name = label.textContent.trim(), definitions = (window.PBSProfileFieldLabels || {})[section] || [];
+          var definition = definitions.find(function(item) { return item[1] === name; });
+          var key = definition ? definition[0] : Object.keys(scoreLabels).find(function(key) { return scoreLabels[key] === name; });
+          if (key) fields.push({section:section,key:key,label:name,value:value.textContent.trim()});
+        });
+        if (fields.length) parsed.push({id:'import-repair-' + section,category:section,parseFields:fields});
+      }
+      if (section) changed[section] = true; extra.remove();
+    });
+    imports.forEach(function(item) {
+      var source = {sections:item.sections || {}}, merged = mergeSections(source,[]);
+      Object.keys(merged.sections).forEach(function(section) { document.getElementById('secbody-' + section).innerHTML = merged.sections[section].html; changed[section] = true; });
+      item.modules = merged.counts; item.moduleMergeVersion = 1;
+    });
+    Object.keys(changed).forEach(function(section) { pbsCommitStudentSection(section,'追加预档案资料'); });
+    var current = api.find(profile.id); current.preImports = profile.preImports;
+    Object.keys(changed).forEach(function(section) {
+      var host = document.getElementById('secbody-' + section).cloneNode(true), bindings = host.querySelector('#studentSelectionBindings'); if (bindings) bindings.remove();
+      current.sections[section] = current.sections[section] || snapshot(host); current.sections[section].html = host.innerHTML;
+    });
+    saveProfile(current); if (parsed.length) parseResults(profile.id,parsed);
   }
   function afterProjectCreated(project) {
     var profile = api.find(project.studentId); if (!profile) return;

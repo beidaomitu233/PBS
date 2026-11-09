@@ -80,7 +80,7 @@
     PERMISSION_TREE.push({module:module,id:id,name:name,file:file || '',parent:parent || '',items:items.map(function(item,index) { return {id:item[0],label:item[1],kind:index ? 'action' : 'view',hint:item[2] || ''}; })});
   }
   var PLATFORM_ONLY_SYSTEM_ROLES = ['机构管理员','PMO','销售人员管理员','销售人员','项目经理','文书人员','网申人员','文书审核','文书机构管理员'];
-  var PLATFORM_ONLY_PAGE_GROUPS = ['org_list','app_template_publish','ai_admin','video_admin','platform_personnel','school_profession'];
+  var PLATFORM_ONLY_PAGE_GROUPS = ['org_list','app_template_publish','app_template_plugin','ai_admin','video_admin','platform_personnel','school_profession'];
   definePermissionPage('工作台','wb_home','工作台首页','','',[["workbench_platform","平台运维工作台"],["workbench_pmo","PMO工作台"],["workbench_org_admin","机构管理员工作台"],["workbench_sales_manager","销售人员管理员工作台"],["workbench_pm","项目经理工作台"],["workbench_sales","销售人员工作台"],["workbench_writer","文书人员工作台"],["workbench_apply","网申人员工作台"],["workbench_audit","文书审核工作台"],["workbench_docadmin","文书机构管理员工作台"]]);
   definePermissionPage("学生档案","student_list","学生档案列表","学生档案列表页 - 留学申请管理系统.html","",[["customer_view","查询"],["customer_export","导出"]]);
   definePermissionPage("学生档案","student_detail","学生档案详情","学生档案详情页 - 留学申请管理系统.html","student_list",[["customer_view_detail","查询"],["customer_edit","修改"]]);
@@ -109,13 +109,14 @@
   definePermissionPage("用户与权限","op_log","操作日志","操作日志审计 - 留学申请管理系统.html","",[["sys_log","查询"],["sys_log_export","导出"]]);
   definePermissionPage("用户与权限","role_perm","角色权限管理","角色权限管理 - 留学申请管理系统.html","",[["sys_role","查询"],["sys_role_save","修改","含角色维护与权限配置"]]);
   definePermissionPage("机构管理","org_list","机构管理","机构管理 - PBS留学CRM系统.html","",[["sys_org","查询"],["sys_org_edit","修改","含机构成员与隐私协议配置"]]);
-  definePermissionPage("网申管理","app_template_publish","网申模板发布中心","网申模板发布中心 - 留学申请管理系统.html","",[["app_template_publish","查询"]]);
+  definePermissionPage("网申管理","app_template_publish","网申模板发布中心","网申模板发布中心 - 留学申请管理系统.html","",[["app_template_publish","查询"],["app_template_publish_create","新增","含新建与提取机构模板"],["app_template_publish_edit","修改","含版本维护、覆盖与发布"],["app_template_publish_delete","删除"]]);
+  definePermissionPage("网申管理","app_template_plugin","插件","","",[["app_template_plugin","使用","含模板查询、扫描、录入与保存"]]);
   definePermissionPage("系统管理","ai_admin","AI管理","AI管理 - 留学申请管理系统.html","",[["ai_view","查询"],["ai_manage","修改"]]);
   definePermissionPage("系统管理","video_admin","视频管理","视频管理 - 留学申请管理系统.html","",[["video_view","查询"],["video_manage","修改"]]);
   definePermissionPage("系统管理","platform_personnel","平台人员管理","用户管理 - 留学申请管理系统.html","",[["platform_personnel_view","查询"],["platform_personnel_create","新增"],["platform_personnel_edit","修改","含账号状态与角色分配"],["platform_personnel_delete","删除"]]);
   definePermissionPage("院校管理","school_profession","专业管理","","",[["profession_view","查询"],["profession_edit","修改"]]);
 
-  var PLATFORM_PERMISSION_PAGES = ['wb_home','doc_template_list','doc_case_list','app_template_list','app_template_detail','student_list','student_detail','project_pool','project_detail','org_list','ai_admin','video_admin','platform_personnel','op_log','school_profession','role_perm'];
+  var PLATFORM_PERMISSION_PAGES = ['wb_home','doc_template_list','doc_case_list','app_template_list','app_template_detail','app_template_publish','app_template_plugin','student_list','student_detail','project_pool','project_detail','org_list','ai_admin','video_admin','platform_personnel','op_log','school_profession','role_perm'];
   var PLATFORM_READONLY_PAGES = ['doc_template_list','doc_case_list','app_template_list','app_template_detail','student_list','student_detail','project_pool','project_detail'];
   function requiredRolePermissions(role) {
     return ['机构管理员','平台运维人员','超级管理员'].indexOf(role)>=0 ? ['sys_role','sys_role_save'] : [];
@@ -455,6 +456,7 @@
       'workbench_platform',
       'library_view', 'case_view', 'case_export',
       'app_library_view', 'app_template_detail_view',
+      'app_template_publish','app_template_publish_create','app_template_publish_edit','app_template_publish_delete','app_template_plugin',
       'customer_view', 'customer_view_detail', 'customer_export',
       'project_view', 'project_view_detail',
       'sys_org', 'sys_org_edit',
@@ -684,6 +686,8 @@
   };
   /* 当前页面结构中已移除或合并的权限项：读取旧保存数据时迁移到保留能力。 */
   var REMOVED_PERMISSION_ALIASES = {
+    app_template_plugin_view: ['app_template_plugin'],
+    app_template_plugin_edit: ['app_template_plugin'],
     wb_urge: [],
     wb_message: [],
     customer_add: ['customer_manage'],

@@ -57,6 +57,16 @@
 .pa-conflicts th { color:#8290a4; font-weight:500; background:#f8fafc; }
 .pa-conflicts td { color:#53647b; }
 .pa-conflicts th:first-child { width:27%; }
+.pa-conflicts th:last-child { width:140px; }
+.pa-conflicts select { width:100%; padding:7px 6px; border:1px solid #d8e1ef; border-radius:7px; color:#475569; background:#fff; font-size:12px; }
+.pa-merge-modules { display:grid; grid-template-columns:1fr 1fr; gap:0 24px; margin-bottom:16px; }
+.pa-merge-modules > div { display:flex; justify-content:space-between; padding:12px 0; border-bottom:1px solid #edf1f6; font-size:13px; color:#64748b; }
+.pa-merge-modules strong { font-weight:500; color:#334155; }
+.pa-field-choice { margin-top:10px; padding:10px 12px; border:1px solid #d9e6ff; background:#f3f7ff; border-radius:8px; font-size:12px; color:#64748b; }
+.pa-field-choice strong { color:#35578d; font-weight:500; }
+.pa-field-choice > div { display:flex; gap:14px; margin-top:7px; }
+.pa-module-links { display:flex; flex-wrap:wrap; gap:6px 16px; margin-top:8px; }
+.pa-module-links a { font-size:13px; color:#2563eb; }
 .pa-caption { margin:14px 0 0; color:#8694a8; font-size:12px; line-height:1.8; }
 .pa-empty { padding:36px 12px; text-align:center; color:#8b99ab; font-size:13px; }
 .pa-form-note { color:#8190a6; font-size:12px; line-height:1.8; margin-top:12px; }

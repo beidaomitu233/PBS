@@ -75,7 +75,7 @@
     return html + group.templates.map(function (item) {
       var programCount = item.boundPrograms.length;
       var version=latestVersion(item);
-      return '<tr class="hover:bg-slate-50" data-template="' + item.id + '"><td class="px-5 py-4 pl-12"><p class="text-sm font-medium text-gray-900">' + escapeHtml(item.college) + '</p></td><td class="px-5 py-4"><p class="text-sm text-gray-800">' + escapeHtml(item.name || '') + '</p><p class="text-xs text-gray-400 mt-2">' + escapeHtml(version.version) + ' · ' + version.fields + ' 个字段 · ' + version.materials + ' 项材料</p></td><td class="px-5 py-4 text-sm text-gray-500" title="' + escapeHtml(item.boundPrograms.join('、')) + '">' + (programCount ? programCount + ' 个专业' : '未绑定专业') + '</td><td class="px-5 py-4 text-sm text-gray-500">' + escapeHtml(item.org) + '</td><td class="px-5 py-4 whitespace-nowrap"><button class="text-sm text-blue-600 font-medium hover:text-blue-800 mr-4" onclick="openTemplateDetail(' + item.id + ')">查看</button><button class="text-sm text-gray-600 font-medium hover:text-gray-900" onclick="openTemplateEditor(' + item.id + ')">编辑</button></td></tr>';
+      return '<tr class="hover:bg-slate-50" data-template="' + item.id + '"><td class="px-5 py-4 pl-12"><p class="text-sm font-medium text-gray-900">' + escapeHtml(item.college) + '</p></td><td class="px-5 py-4"><p class="text-sm text-gray-800">' + escapeHtml(item.name || '') + '</p><p class="text-xs text-gray-400 mt-2">' + escapeHtml(version.version) + ' · ' + version.fields + ' 个字段 · ' + version.materials + ' 项材料</p></td><td class="px-5 py-4 text-sm text-gray-500" title="' + escapeHtml(item.boundPrograms.join('、')) + '">' + (programCount ? programCount + ' 个专业' : '未绑定专业') + '</td><td class="px-5 py-4 text-sm text-gray-500">' + (item.sourcePlatformTemplateId ? '平台发布' : escapeHtml(item.org)) + '</td><td class="px-5 py-4 whitespace-nowrap"><button class="text-sm text-blue-600 font-medium hover:text-blue-800 mr-4" onclick="openTemplateDetail(' + item.id + ')">查看</button>' + (item.sourcePlatformTemplateId ? '' : '<button class="text-sm text-gray-600 font-medium hover:text-gray-900" onclick="openTemplateEditor(' + item.id + ')">编辑</button>') + '</td></tr>';
     }).join('');
   }
   function currentFilters() {
@@ -87,7 +87,9 @@
   }
   function renderTemplates() {
     var filters = currentFilters();
-    var filtered = programTemplates.filter(function (item) {
+    var session = window.pbsGetSession ? pbsGetSession() : {role:'超级管理员'}, org = session.org === 'PBS留学' ? 'PBS留学总部' : session.org;
+    var available = programTemplates.filter(function(item) { return ['超级管理员','平台运维人员'].includes(session.role) || item.org === org; });
+    var filtered = available.filter(function (item) {
       var schoolName = item.school || '未绑定院校';
       var search = (schoolName + (item.college || '') + item.boundPrograms.join('') + (item.name || '')).toLowerCase();
       return (!filters.keyword || search.indexOf(filters.keyword) >= 0) && (!filters.region || String(item.region || '').toLowerCase().indexOf(filters.region) >= 0) && (!filters.org || item.org === filters.org);
@@ -95,8 +97,8 @@
     visibleGroups = groupTemplates(filtered);
     document.getElementById('templateRows').innerHTML = visibleGroups.map(function (group, index) { return groupRows(group, index, Boolean(filters.keyword)); }).join('');
     document.getElementById('templateEmpty').classList.toggle('hidden', filtered.length !== 0);
-    document.getElementById('templateCount').textContent = programTemplates.length;
-    var schoolCount = programTemplates.reduce(function (list, item) { if (item.school && list.indexOf(item.school) < 0) list.push(item.school); return list; }, []).length;
+    document.getElementById('templateCount').textContent = available.length;
+    var schoolCount = available.reduce(function (list, item) { if (item.school && list.indexOf(item.school) < 0) list.push(item.school); return list; }, []).length;
     document.getElementById('templateSchoolCount').textContent = schoolCount;
   }
   window.toggleSchoolGroup = function (index) { var group = visibleGroups[index]; if (!group) return; expandedSchools[group.school] = !expandedSchools[group.school]; renderTemplates(); };
@@ -146,17 +148,19 @@
     currentVersionIndex = 0;
     currentPageIndex = 0;
     document.getElementById('templateDetailTitle').textContent = currentTemplate.school;
+    var edit = document.querySelector('[onclick="editCurrentTemplate()"]'); if (edit) edit.hidden = !!currentTemplate.sourcePlatformTemplateId;
     renderTemplateVersion();
     document.getElementById('templateDetailModal').classList.add('show');
   };
   window.closeTemplateDetail = function () { document.getElementById('templateDetailModal').classList.remove('show'); };
-  window.openTemplateEditor = function (id) { location.href = '网申模板编辑 - 留学申请管理系统.html' + (id ? '?id=' + id : '?mode=new'); };
+  window.openTemplateEditor = function (id) { var item=programTemplates.find(function(row){return Number(row.id)===Number(id);}); if(item && item.sourcePlatformTemplateId){openTemplateDetail(id);return;} location.href = '网申模板编辑 - 留学申请管理系统.html' + (id ? '?id=' + id : '?mode=new'); };
   window.editCurrentTemplate = function () { if (currentTemplate) openTemplateEditor(currentTemplate.id); };
   document.addEventListener('keydown', function (event) { if (event.key === 'Escape') closeTemplateDetail(); });
 
   mergeStoredTemplates();
   renderTemplates();
   document.addEventListener('DOMContentLoaded', function () {
+    if (window.pbsTemplatePublishing) { pbsTemplatePublishing.syncInstitutionTemplates(); mergeStoredTemplates(); }
     var session = window.pbsGetSession ? window.pbsGetSession() : { role: '超级管理员', org: 'PBS留学总部' };
     var isPlatformScope = session.role === '超级管理员' || session.role === '平台运维人员';
     var organizations = ['PBS留学总部', '上海启明留学', '北京知行教育'];

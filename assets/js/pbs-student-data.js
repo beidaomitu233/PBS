@@ -10,9 +10,10 @@
     var profile = find(value), session = window.pbsGetSession();
     if (!profile) return false;
     if (session.role === '超级管理员') return true;
-    if (!window.pbsHasPermission('customer_view')) return false;
     var org = session.org === 'PBS留学' ? 'PBS留学总部' : session.org;
     if (profile.org && org && profile.org !== org && session.role !== '平台运维人员') return false;
+    if (profile.kind === 'preliminary') return (pbsHasPermission('customer_view_detail') || pbsHasPermission('school_task')) && ['机构管理员','销售人员管理员','销售人员','PMO'].indexOf(session.role) >= 0;
+    if (!window.pbsHasPermission('customer_view')) return false;
     if (session.role === 'PMO') return projects(value).some(function(project) { return window.pbsOrders && pbsOrders.canManage(project); });
     if (session.role === '机构管理员' || session.role === '平台运维人员' || session.role === '销售人员') return true;
     var name = session.account === 'demo_admin' ? '张老师' : session.name;
@@ -26,16 +27,40 @@
       });
     });
   }
-  function canEdit(value) { return canView(value) && window.pbsHasPermission('customer_edit'); }
+  function canEdit(value) { var profile = find(value); return canView(value) && !profile.boundTo && (window.pbsHasPermission('customer_edit') || profile.kind === 'preliminary' && window.pbsHasPermission('school_task_create')); }
+  function createPre(values) {
+    if (!pbsHasPermission('school_task_create')) return null;
+    var session = pbsGetSession(), now = new Date().toISOString();
+    var profile = {id:id(),kind:'preliminary',name:values.student,org:session.org === 'PBS留学' ? 'PBS留学总部' : session.org,createdBy:session.name,student:{name:values.student,level:values.level,gender:values.gender,birth:values.birth,phone:values.phone,address:values.address,country:values.country,major:values.major},customer:{},sections:{},supplement:values.supplement || '',orderNos:[],logs:[],createdAt:now,updatedAt:now};
+    var list = read(); list.unshift(profile); save(list); return profile;
+  }
+  function bindPre(value, sourceId, payload) {
+    var list = read(), target = list.find(function(item) { return item.id === value; }), source = list.find(function(item) { return item.id === sourceId; });
+    if (!target || !source || !canEdit(value) || target.kind === 'preliminary' || source.kind !== 'preliminary' || source.boundTo || source.org !== target.org) return false;
+    var now = new Date().toISOString();
+    target.student = payload.student; target.customer = payload.customer; target.sections = Object.assign({},payload.sections,{selectionBinding:target.sections.selectionBinding});
+    target.supplement = [target.supplement,source.supplement].filter(Boolean).filter(function(v,i,a) { return a.indexOf(v) === i; }).join('\n');
+    target.preImports = (target.preImports || []).concat([{sourceId:source.id,serviceId:payload.serviceId,orderKey:payload.orderKey,files:payload.files || [],name:source.name,at:now,conflicts:payload.conflicts,student:source.student,customer:source.customer,sections:source.sections}]);
+    target.pendingParseFiles = (target.pendingParseFiles || []).concat(payload.files || []);
+    target.updatedAt = now;
+    target.logs.push({id:id(),actor:pbsGetSession().name,role:pbsGetSession().role,at:now,section:'preBinding',action:'绑定选校单并追加资料',changes:[{field:'选校单',before:'',after:payload.serviceId},{field:'预档案',before:'',after:source.name + ' · ' + source.id},{field:'追加资料',before:'',after:payload.summary}]});
+    source.boundTo = value; source.boundAt = now; save(list);
+    var tasks; try { tasks = JSON.parse(localStorage.getItem('pbs_selection_services_v1') || '[]'); } catch(e) { tasks = []; }
+    tasks.forEach(function(task) { if (task.preStudentId === sourceId || task.studentId === sourceId) { task.preStudentId = sourceId; task.studentId = value; } });
+    localStorage.setItem('pbs_selection_services_v1',JSON.stringify(tasks));
+    var linked = pbsProjects.all(); linked.forEach(function(project) { if (project.studentId === value) { project.studentData = Object.assign({},target.student); project.customerData = Object.assign({},target.customer); } }); pbsProjects.save(linked);
+    window.dispatchEvent(new CustomEvent('pbs-student-updated',{detail:value})); return true;
+  }
   function attach(project) {
     var list = read(), profile = list.find(function(item) { return item.id === project.studentId; });
-    if (!profile && project.studentData && project.studentData.idcard) profile = list.find(function(item) { return item.org === (project.org || 'PBS留学总部') && item.student.idcard === project.studentData.idcard && item.student.identity === project.studentData.identity; });
+    if (profile && profile.kind === 'preliminary') { profile = null; project.studentId = ''; }
+    if (!profile && project.studentData && project.studentData.idcard) profile = list.find(function(item) { return item.kind !== 'preliminary' && item.org === (project.org || 'PBS留学总部') && item.student.idcard === project.studentData.idcard && item.student.identity === project.studentData.identity; });
     if (!profile && project.orderNo) profile = list.find(function(item) { return item.org === (project.org || 'PBS留学总部') && (item.orderNos || []).indexOf(project.orderNo) >= 0; });
     if (!profile && project.orderNo) {
       var peer = window.pbsProjects.all().find(function(item) { return item.orderNo === project.orderNo && item.studentId && item.projectNo !== project.projectNo; });
       if (peer) profile = list.find(function(item) { return item.id === peer.studentId; });
     }
-    if (!profile && /^PRJ-[MO]-2607-00[0-9][0-9]$/.test(project.projectNo) && !project.manualCreated) profile = list.find(function(item) { return item.demo && item.org === (project.org || 'PBS留学总部') && item.name === project.student; });
+    if (!profile && /^PRJ-[MO]-2607-00[0-9][0-9]$/.test(project.projectNo) && !project.manualCreated) profile = list.find(function(item) { return item.kind !== 'preliminary' && item.demo && item.org === (project.org || 'PBS留学总部') && item.name === project.student; });
     if (!profile) {
       var now = new Date().toISOString();
       profile = { id: id(), name: project.student, org: project.org || 'PBS留学总部', demo: !project.manualCreated && /^PRJ-[MO]-2607-00[0-9][0-9]$/.test(project.projectNo), student: Object.assign({ name: project.student, level: project.level }, project.studentData || {}), customer: Object.assign({ name: project.customer }, project.customerData || {}), orderNos: project.orderNo ? [project.orderNo] : [], sections: {}, logs: [], createdAt: now, updatedAt: now };
@@ -87,6 +112,15 @@
         else { project.customer = payload.name; project.customerData = Object.assign({}, payload); }
       });
       window.pbsProjects.save(linked);
+      if (section === 'student' && profile.kind === 'preliminary') {
+        var tasks = JSON.parse(localStorage.getItem('pbs_selection_services_v1') || '[]');
+        tasks.forEach(function(task) {
+          if (task.preStudentId !== value && task.studentId !== value) return;
+          task.student = payload.name;
+          ['gender','birth','phone','address','level','country','major'].forEach(function(key) { task[key] = payload[key] || ''; });
+        });
+        localStorage.setItem('pbs_selection_services_v1',JSON.stringify(tasks));
+      }
     }
     save(list);
     window.dispatchEvent(new CustomEvent('pbs-student-updated', { detail: value }));
@@ -136,7 +170,7 @@
     });
     if (changed) save(list);
   }
-  window.pbsStudents = { all: read, find: find, projects: projects, attachProject: attach, canView: canView, canEdit: canEdit, commit: commit, visible: function() { return read().filter(function(item) { return canView(item.id); }); } };
+  window.pbsStudents = { all: read, find: find, projects: projects, attachProject: attach, canView: canView, canEdit: canEdit, commit: commit, createPre:createPre, bindPre:bindPre, preliminary: function() { return read().filter(function(item) { return item.kind === 'preliminary' && canView(item.id); }); }, visible: function() { return read().filter(function(item) { return item.kind !== 'preliminary' && canView(item.id); }); } };
   var linked = window.pbsProjects.all();
   linked.forEach(attach); window.pbsProjects.save(linked);
   seedDemoLogs();

@@ -5,7 +5,15 @@
   function save(list, store) { localStorage.setItem(store || key, JSON.stringify(list)); }
   function orgName(value) { return !value || value === 'PBS留学' ? 'PBS留学总部' : value; }
   function find(id) { return read().find(function(item) { return item.id === id; }); }
-  function update(id, values) { var list = read(), item = list.find(function(row) { return row.id === id; }); if (!item) return null; Object.assign(item, values); save(list); return item; }
+  function update(id, values) {
+    var list = read(), item = list.find(function(row) { return row.id === id; }); if (!item) return null;
+    Object.assign(item, values); save(list);
+    if (Object.prototype.hasOwnProperty.call(values,'supplement') && item.preStudentId) {
+      var profiles = pbsStudents.all(), profile = profiles.find(function(row) { return row.id === item.preStudentId; });
+      if (profile && !profile.boundTo) { profile.supplement = values.supplement; profile.updatedAt = new Date().toISOString(); localStorage.setItem('pbs_student_profiles_v1',JSON.stringify(profiles)); }
+    }
+    return item;
+  }
   function bindings() { return read(bindingKey); }
   function orders(includeHidden) {
     var groups = [];
@@ -19,8 +27,30 @@
   }
   function create(values) {
     var now = new Date(), session = pbsGetSession();
+    if (!values.preStudentId) {
+      var profile = pbsStudents.createPre(values);
+      if (!profile) return null;
+      values = Object.assign({},values,{preStudentId:profile.id});
+    } else {
+      var existing = pbsStudents.find(values.preStudentId);
+      if (!existing || existing.kind !== 'preliminary' || existing.selectionId || !pbsStudents.canView(existing.id)) return null;
+    }
     var item = Object.assign({}, values, {id:'SEL-' + String(now.getFullYear()).slice(2) + String(now.getMonth()+1).padStart(2,'0') + '-' + now.getTime().toString().slice(-7) + Math.random().toString(36).slice(2,4), org:orgName(session.org), sales:session.name, status:'未选校', createdAt:now.toISOString(), visits:[], shares:[]});
+    linkProfile(item.preStudentId,item.id);
     var list = read(); list.push(item); save(list); return item;
+  }
+  function linkProfile(profileId, serviceId) {
+    var list = pbsStudents.all(), profile = list.find(function(item) { return item.id === profileId; });
+    if (profile) { profile.selectionId = serviceId; localStorage.setItem('pbs_student_profiles_v1',JSON.stringify(list)); }
+  }
+  function ensurePre(serviceId) {
+    var task = find(serviceId); if (!task) return null;
+    var profile = pbsStudents.find(task.preStudentId || task.studentId);
+    if (!profile || profile.kind !== 'preliminary') profile = pbsStudents.preliminary().find(function(item) { return item.selectionId === serviceId; }) || pbsStudents.createPre(task);
+    if (!profile) return null;
+    linkProfile(profile.id,serviceId);
+    update(serviceId,{preStudentId:profile.id,studentId:task.studentId === profile.id ? profile.boundTo || '' : task.studentId || ''});
+    return pbsStudents.find(profile.id);
   }
   function visible() {
     var session = pbsGetSession();
@@ -32,7 +62,7 @@
   function candidates(studentId) {
     var profile = pbsStudents.find(studentId);
     if (!profile || !pbsStudents.canView(studentId)) return [];
-    return read().filter(function(item) { return orgName(item.org) === orgName(profile.org); });
+    return read().filter(function(item) { var pre = pbsStudents.find(item.preStudentId); return orgName(item.org) === orgName(profile.org) && (!pre || !pre.boundTo || pre.boundTo === studentId); });
   }
   function audit(studentId, action, previous) {
     var profiles = JSON.parse(localStorage.getItem('pbs_student_profiles_v1') || '[]'), profile = profiles.find(function(item) { return item.id === studentId; });
@@ -50,13 +80,18 @@
     });
     pbsStudents.commit(studentId, 'selectionBinding', {values:values}, labels, action);
   }
-  function bind(studentId, selectedOrder, serviceId) {
-    if (!pbsStudents.canEdit(studentId)) return {error:'无权修改该学生档案'};
+  function bindingError(studentId, selectedOrder, serviceId) {
+    if (!pbsStudents.canEdit(studentId)) return '无权修改该学生档案';
     var order = orders().find(function(item) { return item.key === selectedOrder && item.studentId === studentId; });
     var service = candidates(studentId).find(function(item) { return item.id === serviceId; });
-    if (!order || !service) return {error:'请选择有效的申请订单和选校任务'};
+    if (!order || !service) return '请选择有效的申请订单和选校单';
+    if (bindings().some(function(item) { return item.orderKey === order.key; })) return '该申请订单已绑定选校单';
+    return '';
+  }
+  function bind(studentId, selectedOrder, serviceId) {
+    var error = bindingError(studentId,selectedOrder,serviceId); if (error) return {error:error};
+    var order = orders().find(function(item) { return item.key === selectedOrder; });
     var list = bindings();
-    if (list.some(function(item) { return item.orderKey === order.key; })) return {error:'该申请订单已关联选校任务'};
     var item = {orderKey:order.key, orderNo:order.orderNo, projectNo:order.projectNo, studentId:studentId, serviceId:serviceId, boundAt:new Date().toISOString(), boundBy:pbsGetSession().name};
     var previous = list.slice();
     list.push(item); save(list, bindingKey); audit(studentId, '关联选校任务', previous); return item;
@@ -123,5 +158,5 @@
     save(list);
   }
   migrateBindings();
-  window.pbsSelection = {all:function(){return read();}, find:find, update:update, orders:orders, create:create, visible:visible, candidates:candidates, bindings:bindings, bind:bind, unbind:unbind, transition:transition, recordView:recordView, seed:seed, seedDemoHistory:seedDemoHistory};
+  window.pbsSelection = {all:function(){return read();}, find:find, update:update, orders:orders, create:create, ensurePre:ensurePre, visible:visible, candidates:candidates, bindings:bindings, bindingError:bindingError, bind:bind, unbind:unbind, transition:transition, recordView:recordView, seed:seed, seedDemoHistory:seedDemoHistory};
 })();

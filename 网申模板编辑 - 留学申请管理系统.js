@@ -22,25 +22,25 @@
     var storedMetadata = isNew ? null : JSON.parse(localStorage.getItem(templateStoreKey) || '[]').find(function (item) { return Number(item.id) === Number(templateId); });
     if (storedMetadata && storedMetadata.versions && storedMetadata.versions.length) {
       var storedCurrent = storedMetadata.versions[0];
-      currentMeta = { name: storedMetadata.name, school: storedMetadata.school || '', college: storedMetadata.college || '', program: storedMetadata.program || '', boundPrograms: storedMetadata.boundPrograms || [], region: storedMetadata.region || '', version: String(storedCurrent.version || 'v1.0').toUpperCase(), fieldCount: storedCurrent.fields || 0, materialCount: storedCurrent.materials || 0 };
+      currentMeta = { name: storedMetadata.name, school: storedMetadata.school || '', college: storedMetadata.college || '', program: storedMetadata.program || '', boundPrograms: storedMetadata.boundPrograms || [], region: storedMetadata.region || '', applicationUrl:storedMetadata.applicationUrl || '', version: String(storedCurrent.version || 'v1.0').toUpperCase(), fieldCount: storedCurrent.fields || 0, materialCount: storedCurrent.materials || 0 };
     }
   } catch (error) {}
   var scanResultsAvailable = false, loadedScanTime = storedMetadata && storedMetadata.scannedAt || '';
   var availableSchools = ['卡内基梅隆大学', '斯坦福大学', '哥伦比亚大学', '剑桥大学', '香港大学', '纽约大学', '波士顿大学'];
-  var availablePrograms = ['计算机科学', '人工智能', '软件工程', '数据科学', '金融工程', '金融学', '中国哲学'];
   var defaultPrograms = { 1: ['计算机科学', '人工智能', '软件工程'], 2: ['计算机科学'], 3: ['金融工程'], 4: ['金融学'], 5: ['数据科学'], 6: ['中国哲学'] };
   var boundPrograms = Array.isArray(currentMeta.boundPrograms) ? currentMeta.boundPrograms.slice() : (defaultPrograms[templateId] || (currentMeta.program ? [currentMeta.program] : [])).slice();
   if (isNew) boundPrograms = [];
-  var activeProgramScope = 'common';
-  var pages = isNew ? [{ id: 'page-1', name: '个人信息' }] : [
+  var activeProgramScope = 'all', editingPageId = '';
+  var selectedSchool = isNew ? '' : currentMeta.school;
+  var pages = isNew ? [{ id: 'page-1', name: '申请信息', programScope:'common' }] : [
     { id: 'page-1', name: '个人信息' },
     { id: 'page-2', name: '教育背景' },
     { id: 'page-3', name: '经历与成绩' },
     { id: 'page-4', name: '项目问题' }
   ];
   var activePageId = pages[0].id;
-  var entrances = [{ id:'entry-main', name:'院校申请入口', url:'https://apply.cmu.edu', isDefault:true }];
-  var activeEntranceId = 'entry-main', entranceDraft = [], editingFields = {};
+  var entrances = [{ id:'entry-main', name:'默认入口', url:'https://apply.cmu.edu', stage:'不限', channel:'直申', isDefault:true }];
+  var activeEntranceId = 'entry-main', editingEntranceId = null, editingFields = {}, selectedPrograms = [];
   var fields = isNew ? [] : [
     { name: 'First Name', type: '文本', required: true, note: '与护照英文名保持一致' },
     { name: 'Last Name', type: '文本', required: true, note: '与护照英文姓保持一致' },
@@ -100,7 +100,8 @@
   else if (isNew) entrances[0].url = '';
   else if (templateId !== 1) entrances[0].url = '';
   activeEntranceId = (entrances.find(function (entry) { return entry.isDefault; }) || entrances[0]).id;
-  pages.forEach(function (page) { if (!page.entranceId) page.entranceId = activeEntranceId; });
+  entrances.forEach(function(entry){entry.stage=entry.stage || '不限';entry.channel=entry.channel || '直申';});
+  pages.forEach(function (page) { if (!page.entranceId) page.entranceId = activeEntranceId; if (!page.programScope) page.programScope='common'; });
   activePageId = (pages.find(function (page) { return page.entranceId === activeEntranceId; }) || pages[0]).id;
 
   function previousVersion(version, offset) {
@@ -157,56 +158,72 @@
       materials[index] = { name: row.querySelector('.material-name').value.trim(), required: row.querySelector('.material-required').value === '1', note: row.querySelector('.material-note').value.trim() };
     });
   }
+  function visiblePages() {
+    return pages.filter(function(page){return page.entranceId === activeEntranceId && (activeProgramScope === 'all' || (page.programScope || 'common') === activeProgramScope || fields.some(function(field){return field.pageId === page.id && field.programScope === activeProgramScope;}));});
+  }
   function renderPages() {
-    document.getElementById('applicationPageTabs').innerHTML = pages.filter(function(page){ return page.entranceId === activeEntranceId; }).map(function (page) {
-      var count = fields.filter(function (field) { return field.pageId === page.id && (field.programScope || 'common') === activeProgramScope; }).length;
-      return '<button type="button" class="page-tab ' + (page.id === activePageId ? 'active' : '') + '" onclick="selectApplicationPage(\'' + page.id + '\')"><strong>' + escapeHtml(page.name) + '</strong><small>' + count + ' 个字段</small></button>';
+    document.getElementById('applicationPageTabs').innerHTML = visiblePages().map(function(page){
+      var count = fields.filter(function(field){return field.pageId === page.id && (activeProgramScope === 'all' || (field.programScope || 'common') === activeProgramScope);}).length;
+      return '<button type="button" class="page-tab ' + (page.id === activePageId ? 'active' : '') + '" onclick="selectApplicationPage(\'' + page.id + '\')"><strong>' + escapeHtml(page.name) + '</strong><small><em>' + escapeHtml(page.programScope === 'common' ? '通用' : page.programScope) + '</em><span>' + count + ' 个字段</span></small></button>';
     }).join('');
-    var activePage = pages.find(function (page) { return page.id === activePageId; });
+    var activePage = pages.find(function(page){return page.id === activePageId;});
     document.getElementById('activePageName').textContent = activePage ? activePage.name : '当前页面';
     document.getElementById('applicationPageName').value = activePage ? activePage.name : '';
+    document.getElementById('pageManager').hidden = !activePage || (!fields.some(function(field){return field.pageId === activePageId;}) && editingPageId !== activePageId);
+    document.getElementById('entranceTabRow').hidden = entrances.length < 2;
     document.getElementById('entranceTabs').innerHTML = entrances.map(function(entry,index){return '<button type="button" class="scope-tab ' + (entry.id === activeEntranceId ? 'active' : '') + '" onclick="selectEntrance(' + index + ')">' + escapeHtml(entry.name) + '</button>';}).join('');
   }
   function renderRows() {
-    var visibleFields = fields.map(function (item, index) { return { item: item, index: index }; }).filter(function (entry) { return entry.item.pageId === activePageId && (entry.item.programScope || 'common') === activeProgramScope; });
-    document.getElementById('fieldRows').innerHTML = visibleFields.length ? visibleFields.map(function (entry, order) { return fieldRow(entry.item, entry.index, order); }).join('') : '<div class="col-span-2 py-10 text-center text-sm text-gray-400">当前页面暂无字段</div>';
-    document.getElementById('materialRows').innerHTML = materials.length ? materials.map(materialRow).join('') : '<div class="py-10 text-center text-sm text-gray-400">暂无材料，请点击“添加材料”</div>';
-    document.getElementById('fieldCount').textContent = visibleFields.length;
-    document.getElementById('materialCount').textContent = materials.length;
-    renderProgramScopes();
-    renderPages();
+    var list=visiblePages();
+    if(!list.some(function(page){return page.id === activePageId;}))activePageId=list.length ? list[0].id : '';
+    var visibleFields = fields.map(function(item,index){return {item:item,index:index};}).filter(function(entry){return entry.item.pageId === activePageId && (activeProgramScope === 'all' || (entry.item.programScope || 'common') === activeProgramScope);});
+    document.getElementById('fieldRows').innerHTML = visibleFields.length ? visibleFields.map(function(entry,order){return fieldRow(entry.item,entry.index,order);}).join('') : '<div class="col-span-2 py-10 text-center text-sm text-gray-400">当前页面暂无字段</div>';
+    document.getElementById('materialRows').innerHTML = materials.length ? materials.map(materialRow).join('') : '<div class="py-10 text-center text-sm text-gray-400">暂无材料</div>';
+    document.getElementById('fieldCount').textContent=visibleFields.length;
+    document.getElementById('materialCount').textContent=materials.length;
+    renderProgramScopes(); renderPages(); filterMaterials();
   }
+  window.filterMaterials = function(){
+    var keyword=document.getElementById('materialSearch').value.trim().toLowerCase();
+    document.querySelectorAll('#materialRows [data-material-index]').forEach(function(row){var item=materials[Number(row.dataset.materialIndex)];row.hidden=!!keyword && !(item.name+' '+item.note).toLowerCase().includes(keyword);});
+  };
   window.selectApplicationPage = function (pageId) { syncRows(); activePageId = pageId; renderRows(); };
-  window.addApplicationPage = function () { syncRows(); var page = { id: 'page-' + Date.now(), name: '申请页面 ' + (pages.length + 1), entranceId:activeEntranceId }; pages.push(page); activePageId = page.id; renderRows(); };
+  window.addApplicationPage = function () { syncRows(); var page = { id: 'page-' + Date.now(), name: '申请页面 ' + (pages.length + 1), entranceId:activeEntranceId, programScope:activeProgramScope === 'all' ? 'common' : activeProgramScope }; pages.push(page); activePageId = page.id; editingPageId=page.id; renderRows(); document.getElementById('applicationPageName').focus(); };
   window.renameApplicationPage = function(value) { var page = pages.find(function(item){return item.id === activePageId;}); if (page && value.trim()) page.name = value.trim(); renderPages(); };
   window.deleteApplicationPage = function() { if (pages.filter(function(page){return page.entranceId === activeEntranceId;}).length <= 1) { showToast('每个入口至少保留一个页面'); return; } if (!confirm('删除页面及其字段？')) return; syncRows(); fields = fields.filter(function(field){return field.pageId !== activePageId;}); pages = pages.filter(function(page){return page.id !== activePageId;}); activePageId = pages.find(function(page){return page.entranceId === activeEntranceId;}).id; editingFields = {}; renderRows(); };
-  window.addFieldRow = function () { syncRows(); fields.push({ id:'field-' + Date.now(), name: '', type: '文本', required: true, note: '', pageId: activePageId, programScope: activeProgramScope }); editingFields[fields.length - 1] = true; renderRows(); var inputs = document.querySelectorAll('.field-name'); if (inputs.length) inputs[inputs.length - 1].focus(); };
+  window.addFieldRow = function () { syncRows(); if(!activePageId)window.addApplicationPage(); fields.push({ id:'field-' + Date.now(), name: '', type: '文本', required: true, note: '', pageId: activePageId, programScope: activeProgramScope === 'all' ? (pages.find(function(page){return page.id === activePageId;}).programScope || 'common') : activeProgramScope }); editingFields[fields.length - 1] = true; renderRows(); var inputs = document.querySelectorAll('.field-name'); if (inputs.length) inputs[inputs.length - 1].focus(); };
   window.removeFieldRow = function (index) { syncRows(); fields.splice(index, 1); editingFields = {}; renderRows(); };
   window.selectEntrance = function(index) { syncRows(); activeEntranceId = entrances[index].id; var page = pages.find(function(item){return item.entranceId === activeEntranceId;}); if (!page) { page = {id:'page-' + Date.now(),name:'个人信息',entranceId:activeEntranceId}; pages.push(page); } activePageId = page.id; renderRows(); };
   function renderEntranceRows() {
-    document.getElementById('entranceRows').innerHTML = entranceDraft.map(function(entry,index){ return '<div class="entrance-row" data-entrance-index="' + index + '"><input class="input" aria-label="入口名称" placeholder="入口名称" value="' + escapeHtml(entry.name) + '"><input class="input" aria-label="入口网址" placeholder="https://" value="' + escapeHtml(entry.url) + '"><button class="text-xs text-gray-400" onclick="removeEntranceRow(' + index + ')">删除</button><label class="entrance-default"><input type="radio" name="defaultEntrance" value="' + index + '"' + (entry.isDefault ? ' checked' : '') + '>默认入口</label></div>'; }).join('');
+    document.getElementById('entranceCount').textContent=entrances.length;
+    document.getElementById('entranceRows').innerHTML=entrances.map(function(entry,index){
+      var entryPages=pages.filter(function(page){return page.entranceId === entry.id;});
+      var programs=Array.from(new Set(entryPages.map(function(page){return page.programScope;}).filter(function(scope){return scope && scope!=='common';})));
+      return '<div class="drawer-record"><div><strong>'+escapeHtml(entry.name)+(entry.isDefault?'<small>默认</small>':'')+'</strong><p>'+escapeHtml(entry.stage+' · '+entry.channel)+' · '+entryPages.length+' 页 · '+programs.length+' 个专业</p></div><div class="flex gap-3"><button onclick="editEntrance('+index+')">编辑</button>'+(!entry.isDefault?'<button onclick="removeEntranceRow('+index+')">删除</button>':'')+'</div></div>';
+    }).join('');
   }
-  function syncEntranceRows() { document.querySelectorAll('[data-entrance-index]').forEach(function(row){ var index = Number(row.dataset.entranceIndex), inputs = row.querySelectorAll('input'); entranceDraft[index].name = inputs[0].value.trim(); entranceDraft[index].url = inputs[1].value.trim(); entranceDraft[index].isDefault = inputs[2].checked; }); }
-  window.openEntranceManager = function() { syncRows(); entranceDraft = entrances.map(function(entry){return Object.assign({}, entry);}); renderEntranceRows(); document.getElementById('entranceError').textContent = ''; document.getElementById('entranceModal').classList.add('show'); };
-  window.closeEntranceManager = function() { document.getElementById('entranceModal').classList.remove('show'); };
-  window.addEntranceRow = function() { syncEntranceRows(); entranceDraft.push({id:'entry-' + Date.now(),name:'',url:'',isDefault:false}); renderEntranceRows(); };
-  window.removeEntranceRow = function(index) { if (entranceDraft.length <= 1) { document.getElementById('entranceError').textContent = '至少保留一个申请入口'; return; } syncEntranceRows(); entranceDraft.splice(index,1); renderEntranceRows(); };
-  window.saveEntrances = function() { syncEntranceRows(); if (entranceDraft.some(function(entry){return !entry.name || (entry.url && !/^https?:\/\//i.test(entry.url));})) { document.getElementById('entranceError').textContent = '请填写入口名称和有效的网址'; return; } if (!entranceDraft.some(function(entry){return entry.isDefault;})) entranceDraft[0].isDefault = true; entrances = entranceDraft.map(function(entry){return Object.assign({},entry);}); pages.forEach(function(page){if (!entrances.some(function(entry){return entry.id === page.entranceId;})) page.entranceId = entrances[0].id;}); if (!entrances.some(function(entry){return entry.id === activeEntranceId;})) activeEntranceId = entrances[0].id; window.selectEntrance(entrances.findIndex(function(entry){return entry.id === activeEntranceId;})); closeEntranceManager(); };
-  window.addMaterialRow = function () { syncRows(); materials.push({ name: '', required: true, note: '' }); renderRows(); var inputs = document.querySelectorAll('.material-name'); if (inputs.length) inputs[inputs.length - 1].focus(); };
+  window.resetEntranceEditor=function(){editingEntranceId=null;document.getElementById('entranceEditorTitle').textContent='新增入口';document.getElementById('entranceName').value='';document.getElementById('entranceStage').value='不限';document.getElementById('entranceChannel').value='直申';document.getElementById('entranceUrl').value='';document.getElementById('entranceError').textContent='';document.getElementById('saveEntranceButton').textContent='添加入口';document.getElementById('cancelEntranceEdit').hidden=true;};
+  window.openEntranceManager=function(){syncRows();var entry=entrances.find(function(item){return item.isDefault;});entry.url=document.getElementById('templateUrl').value.trim();renderEntranceRows();resetEntranceEditor();document.getElementById('entranceModal').hidden=false;};
+  window.closeEntranceManager=function(){document.getElementById('entranceModal').hidden=true;};
+  window.editEntrance=function(index){var entry=entrances[index];editingEntranceId=entry.id;document.getElementById('entranceEditorTitle').textContent='编辑入口';document.getElementById('entranceName').value=entry.name;document.getElementById('entranceStage').value=entry.stage;document.getElementById('entranceChannel').value=entry.channel;document.getElementById('entranceUrl').value=entry.url;document.getElementById('saveEntranceButton').textContent='保存入口';document.getElementById('cancelEntranceEdit').hidden=false;document.getElementById('entranceName').focus();};
+  window.saveEntranceEntry=function(){
+    var name=document.getElementById('entranceName').value.trim(),url=document.getElementById('entranceUrl').value.trim();
+    if(!name || url && !/^https?:\/\/[^\s/]+/i.test(url)){document.getElementById('entranceError').textContent='请填写入口名称和有效的网址';return;}
+    var entry=entrances.find(function(item){return item.id===editingEntranceId;});
+    if(!entry){entry={id:'entry-'+Date.now(),isDefault:false};entrances.push(entry);pages.push({id:'page-'+Date.now(),name:'申请信息',entranceId:entry.id,programScope:'common'});}
+    Object.assign(entry,{name:name,url:url,stage:document.getElementById('entranceStage').value,channel:document.getElementById('entranceChannel').value});
+    if(entry.isDefault)document.getElementById('templateUrl').value=entry.url;
+    renderEntranceRows();resetEntranceEditor();renderRows();
+  };
+  window.removeEntranceRow=function(index){var entry=entrances[index];if(entry.isDefault)return;if(!confirm('删除此入口及其页面、字段？'))return;var removed=pages.filter(function(page){return page.entranceId===entry.id;}).map(function(page){return page.id;});fields=fields.filter(function(field){return !removed.includes(field.pageId);});pages=pages.filter(function(page){return page.entranceId!==entry.id;});entrances.splice(index,1);if(activeEntranceId===entry.id)activeEntranceId=entrances[0].id;renderEntranceRows();resetEntranceEditor();renderRows();};
+  window.addMaterialRow = function () { syncRows(); document.getElementById('materialSearch').value=''; materials.push({ name: '', required: true, note: '' }); renderRows(); var inputs = document.querySelectorAll('.material-name'); if (inputs.length) inputs[inputs.length - 1].focus(); };
   window.removeMaterialRow = function (index) { syncRows(); materials.splice(index, 1); renderRows(); };
   function closeSearchSelectors(exceptPanel) {
     var schoolPanel = document.getElementById('schoolSelectorPanel');
-    var programPanel = document.getElementById('programSelectorPanel');
     var schoolInput = document.getElementById('templateSchool');
-    var programButton = document.getElementById('programSelectorButton');
     if (schoolPanel !== exceptPanel) {
       schoolPanel.classList.remove('show');
       schoolInput.setAttribute('aria-expanded', 'false');
-    }
-    if (programPanel !== exceptPanel) {
-      programPanel.classList.remove('show');
-      programButton.classList.remove('open');
-      programButton.setAttribute('aria-expanded', 'false');
     }
   }
   function renderSchoolOptions() {
@@ -225,56 +242,47 @@
   };
   window.filterSchoolOptions = window.openSchoolSelector;
   window.selectSchool = function (index) {
-    document.getElementById('templateSchool').value = availableSchools[index];
+    var school=availableSchools[index];
+    if(selectedSchool!==school){boundPrograms=[];activeProgramScope='all';fields.forEach(function(field){field.programScope='common';});pages.forEach(function(page){page.programScope='common';});}
+    document.getElementById('templateSchool').value = school;
+    selectedSchool=school;
+    renderProgramSelector();renderRows();
     closeSearchSelectors();
   };
-  function renderProgramOptions() {
-    var searchInput = document.getElementById('programSearch');
-    var keyword = searchInput ? searchInput.value.trim().toLowerCase() : '';
-    var matched = availablePrograms.map(function (program, index) { return { program: program, index: index }; }).filter(function (item) { return !keyword || item.program.toLowerCase().indexOf(keyword) >= 0; });
-    document.getElementById('programOptions').innerHTML = matched.length ? matched.map(function (item) {
-      return '<label class="program-option"><input type="checkbox" ' + (boundPrograms.indexOf(item.program) >= 0 ? 'checked ' : '') + 'onchange="toggleBoundProgram(' + item.index + ', this.checked)"><span>' + escapeHtml(item.program) + '</span></label>';
-    }).join('') : '<div class="px-3 py-4 text-center text-xs text-gray-400">无匹配专业</div>';
-  }
-  function renderProgramSelector() {
-    document.getElementById('boundProgramSummary').textContent = boundPrograms.length ? boundPrograms.length + ' 个专业：' + boundPrograms.join('、') : '请选择专业';
-    renderProgramOptions();
-  }
-  window.filterProgramOptions = renderProgramOptions;
-  function renderProgramScopes() {
-    document.getElementById('programScopeTabs').innerHTML = '<span class="text-xs text-gray-400 mr-1">字段范围</span><button type="button" class="scope-tab ' + (activeProgramScope === 'common' ? 'active' : '') + '" onclick="selectProgramScope(-1)">通用字段</button>' + boundPrograms.map(function (program, index) {
-      return '<button type="button" class="scope-tab ' + (activeProgramScope === program ? 'active' : '') + '" onclick="selectProgramScope(' + index + ')">' + escapeHtml(program) + '</button>';
-    }).join('');
-  }
-  window.toggleProgramSelector = function () {
-    var panel = document.getElementById('programSelectorPanel');
-    var button = document.getElementById('programSelectorButton');
-    if (panel.classList.contains('show')) {
-      closeSearchSelectors();
-      return;
-    }
-    closeSearchSelectors(panel);
-    document.getElementById('programSearch').value = '';
-    renderProgramOptions();
-    panel.classList.add('show');
-    button.classList.add('open');
-    button.setAttribute('aria-expanded', 'true');
-    document.getElementById('programSearch').focus();
+  var schoolPrograms={
+    '香港大学':[{name:'东亚研究文学硕士',degree:'文学硕士',code:'MAEAS'},{name:'中医学士',degree:'中医学士',code:'BChinMed'},{name:'中国历史学文学硕士',degree:'硕士',code:'MACH'},{name:'中国发展研究硕士',degree:'硕士',code:'MCDS'},{name:'中国法法学硕士',degree:'硕士',code:'LLM'},{name:'数据科学',degree:'硕士',code:'MDASC'},{name:'人工智能',degree:'硕士',code:'MSAI'}],
+    '卡内基梅隆大学':[{name:'计算机科学',degree:'硕士',code:'MSCS'},{name:'人工智能',degree:'硕士',code:'MSAI'},{name:'软件工程',degree:'硕士',code:'MSE'},{name:'数据科学',degree:'硕士',code:'MCDS'},{name:'中国哲学',degree:'人文学院',code:'PHIL'}],
+    '斯坦福大学':[{name:'计算机科学',degree:'硕士',code:'MSCS'},{name:'数据科学',degree:'硕士',code:'MSDS'},{name:'电气工程',degree:'硕士',code:'MSEE'}],
+    '哥伦比亚大学':[{name:'金融工程',degree:'硕士',code:'MSFE'},{name:'计算机科学',degree:'硕士',code:'MSCS'}],
+    '剑桥大学':[{name:'金融学',degree:'硕士',code:'MFIN'},{name:'高级计算机科学',degree:'硕士',code:'ACS'}]
   };
-  window.toggleBoundProgram = function (index, checked) {
-    syncRows();
-    var program = availablePrograms[index];
-    if (checked && boundPrograms.indexOf(program) < 0) boundPrograms.push(program);
-    if (!checked) boundPrograms = boundPrograms.filter(function (item) { return item !== program; });
-    if (activeProgramScope !== 'common' && boundPrograms.indexOf(activeProgramScope) < 0) activeProgramScope = 'common';
-    renderProgramSelector();
-    renderRows();
-  };
-  window.selectProgramScope = function (index) {
-    syncRows();
-    activeProgramScope = index < 0 ? 'common' : boundPrograms[index];
-    renderRows();
-  };
+  var catalogKey='pbs_institution_program_catalog_v1';
+  function programCatalogKey(){return (window.pbsGetSession?pbsGetSession().org:'PBS留学总部')+'|'+document.getElementById('templateSchool').value.trim();}
+  function organizationPrograms(){return JSON.parse(localStorage.getItem(catalogKey)||'{}')[programCatalogKey()]||[];}
+  function programsForSchool(){return schoolPrograms[document.getElementById('templateSchool').value.trim()]||[];}
+  function programOption(item){var bound=boundPrograms.includes(item.name);return '<label class="drawer-program-option"><input type="checkbox" value="'+escapeHtml(item.name)+'"'+(selectedPrograms.includes(item.name)?' checked':'')+(bound?' disabled':'')+'><span><strong>'+escapeHtml(item.name)+'</strong><p>'+escapeHtml([item.degree,item.code].filter(Boolean).join(' · '))+(bound?' · 已绑定':'')+'</p></span></label>';}
+  function renderProgramOptions(){
+    var keyword=document.getElementById('programSearch').value.trim().toLowerCase(),list=programsForSchool();
+    document.getElementById('programSchoolName').textContent=document.getElementById('templateSchool').value.trim();document.getElementById('schoolProgramCount').textContent=list.length;
+    document.getElementById('programOptions').innerHTML=list.filter(function(item){return !keyword||(item.name+' '+item.code).toLowerCase().includes(keyword);}).map(programOption).join('')||'<div class="drawer-empty">暂无匹配专业</div>';
+    document.getElementById('organizationProgramOptions').innerHTML=organizationPrograms().map(programOption).join('')||'<div class="drawer-empty">暂无可选专业</div>';
+    document.getElementById('programSelectedCount').textContent='已选 '+selectedPrograms.length+' 项';document.getElementById('addSelectedPrograms').disabled=!selectedPrograms.length;
+  }
+  function renderProgramSelector(){document.getElementById('boundProgramSummary').textContent=boundPrograms.length?boundPrograms.join('、'):'尚未绑定专业';}
+  function renderBoundPrograms(){document.getElementById('boundProgramCount').textContent=boundPrograms.length;document.getElementById('boundProgramList').innerHTML=boundPrograms.length?boundPrograms.map(function(name,index){return '<div class="drawer-record"><strong>'+escapeHtml(name)+'</strong><button onclick="removeBoundProgram('+index+')">解除绑定</button></div>';}).join(''):'<div class="drawer-empty">暂无绑定专业</div>';}
+  window.filterProgramOptions=renderProgramOptions;
+  function renderProgramScopes(){
+    document.getElementById('programScopeTabs').innerHTML='<span class="text-xs text-gray-400 mr-1">页面筛选</span><button type="button" class="scope-tab '+(activeProgramScope==='all'?'active':'')+'" onclick="selectProgramScope(-2)">全部页面</button><button type="button" class="scope-tab '+(activeProgramScope==='common'?'active':'')+'" onclick="selectProgramScope(-1)">学院通用</button>'+boundPrograms.map(function(program,index){return '<button type="button" class="scope-tab '+(activeProgramScope===program?'active':'')+'" onclick="selectProgramScope('+index+')">'+escapeHtml(program)+'</button>';}).join('');
+  }
+  window.openProgramManager=function(){if(!document.getElementById('templateSchool').value.trim()){showToast('请先选择学校');return;}syncRows();selectedPrograms=[];document.getElementById('programSearch').value='';document.getElementById('programCatalogEditor').hidden=true;renderBoundPrograms();renderProgramOptions();document.getElementById('programModal').hidden=false;};
+  window.closeProgramManager=function(){document.getElementById('programModal').hidden=true;};
+  window.addSelectedPrograms=function(){selectedPrograms.forEach(function(name){if(!boundPrograms.includes(name))boundPrograms.push(name);});selectedPrograms=[];renderBoundPrograms();renderProgramOptions();renderProgramSelector();renderRows();};
+  window.removeBoundProgram=function(index){var name=boundPrograms[index];boundPrograms.splice(index,1);if(activeProgramScope===name)activeProgramScope='all';fields.forEach(function(field){if(field.programScope===name)field.programScope='common';});pages.forEach(function(page){if(page.programScope===name)page.programScope='common';});renderBoundPrograms();renderProgramOptions();renderProgramSelector();renderRows();};
+  window.selectProgramScope=function(index){syncRows();activeProgramScope=index===-2?'all':index<0?'common':boundPrograms[index];renderRows();};
+  window.toggleProgramCatalogEditor=function(){var form=document.getElementById('programCatalogEditor');form.hidden=!form.hidden;if(!form.hidden)document.getElementById('catalogProgramName').focus();};
+  window.addCatalogProgram=function(){var name=document.getElementById('catalogProgramName').value.trim(),code=document.getElementById('catalogProgramCode').value.trim(),all=JSON.parse(localStorage.getItem(catalogKey)||'{}'),key=programCatalogKey(),list=all[key]||[];if(!name){document.getElementById('programCatalogError').textContent='请填写专业名称';return;}if(list.some(function(item){return item.name===name;})||programsForSchool().some(function(item){return item.name===name;})){document.getElementById('programCatalogError').textContent='该专业已在目录中';return;}list.push({name:name,code:code});all[key]=list;localStorage.setItem(catalogKey,JSON.stringify(all));document.getElementById('catalogProgramName').value='';document.getElementById('catalogProgramCode').value='';document.getElementById('programCatalogError').textContent='';renderProgramOptions();};
+  document.getElementById('programModal').addEventListener('change',function(event){var input=event.target;if(input.matches('.drawer-program-option input')){selectedPrograms=selectedPrograms.filter(function(name){return name!==input.value;});if(input.checked)selectedPrograms.push(input.value);document.getElementById('programSelectedCount').textContent='已选 '+selectedPrograms.length+' 项';document.getElementById('addSelectedPrograms').disabled=!selectedPrograms.length;}});
+  ['entranceModal','programModal'].forEach(function(id){document.getElementById(id).addEventListener('click',function(event){if(event.target===this)this.hidden=true;});});
 
   function renderVersionDetail() {
     var item = histories[selectedVersion];
@@ -308,10 +316,18 @@
     var name = document.getElementById('templateName').value.trim();
     var school = document.getElementById('templateSchool').value.trim();
     var college = document.getElementById('templateCollege').value.trim();
-    if (!name || !school || !college) { showToast('请完整填写模板名称、绑定院校和学院'); return; }
-    if (availableSchools.indexOf(school) < 0) { showToast('请从搜索结果中选择绑定院校'); return; }
-    if ((!forScan && !fields.length) || fields.some(function (item) { return !item.name; })) { showToast('请至少添加一个完整的官网字段'); return; }
-    if (materials.some(function (item) { return !item.name; })) { showToast('请填写材料名称'); return; }
+    if (forScan) {
+      if (!school || !college) { showToast('请填写学校和学院'); return false; }
+      if (!name) { name = school + ' · ' + college + '网申模板'; document.getElementById('templateName').value = name; }
+    } else {
+      if (!name || !school || !college) { showToast('请完整填写模板名称、绑定院校和学院'); return false; }
+      if (availableSchools.indexOf(school) < 0) { showToast('请从搜索结果中选择绑定院校'); return false; }
+      if (fields.some(function (item) { return !item.name; })) { showToast('请填写完整的官网字段名称'); return false; }
+      if (materials.some(function (item) { return !item.name; })) { showToast('请填写材料名称'); return false; }
+    }
+    var applicationUrl=document.getElementById('templateUrl').value.trim();
+    if(!forScan && applicationUrl && !/^https?:\/\/[^\s/]+/i.test(applicationUrl)){showToast('请填写有效的申请入口网址');return false;}
+    entrances.find(function(entry){return entry.isDefault;}).url=applicationUrl;
     var current = document.getElementById('currentVersion').textContent;
     var version = current === '未保存' ? 'V1.0' : (createVersion ? nextVersion(current) : current);
     document.getElementById('currentVersion').textContent = version;
@@ -339,8 +355,11 @@
     };
     if (existing && versions.length && !createVersion) versions[0] = versionPayload; else versions.unshift(versionPayload);
     stored = stored.filter(function (item) { return Number(item.id) !== Number(savedTemplateId); });
-    stored.push({ id: savedTemplateId, name: name, school: school, college: college, boundPrograms: boundPrograms, program: boundPrograms[0] || '', region: currentMeta.region || '', scannedAt: existing && existing.scannedAt, org: centerMode ? '平台' : existing && existing.org || session.org || 'PBS留学总部', versions: versions, publicationId: existing && existing.publicationId, sourcePlatformTemplateId: existing && existing.sourcePlatformTemplateId, sourceVersion: existing && existing.sourceVersion, sourceTemplateId: existing && existing.sourceTemplateId, sourceOrg: existing && existing.sourceOrg });
+    stored.push({ id: savedTemplateId, updatedAt:new Date().toISOString(), name: name, school: school, college: college, boundPrograms: boundPrograms, program: boundPrograms[0] || '', region: document.getElementById('templateRegion').value.trim(), applicationUrl:applicationUrl, scannedAt: existing && existing.scannedAt, org: centerMode ? '平台' : existing && existing.org || session.org || 'PBS留学总部', versions: versions, publicationId: existing && existing.publicationId, sourcePlatformTemplateId: existing && existing.sourcePlatformTemplateId, sourceVersion: existing && existing.sourceVersion, sourceTemplateId: existing && existing.sourceTemplateId, sourceOrg: existing && existing.sourceOrg, sourceTemplateVersion:existing && existing.sourceTemplateVersion });
     localStorage.setItem(templateStoreKey, JSON.stringify(stored));
+    var scanButton=document.querySelector('[data-template-scan]');
+    if(scanButton){var scanState=pbsTemplateScan.status(savedTemplateId,version);scanButton.textContent=['待扫描','待确认'].includes(scanState)?scanState:'新增扫描任务';}
+    if(isNew){params.delete('mode');params.set('id',savedTemplateId);history.replaceState(null,'',location.pathname+'?'+params.toString());isNew=false;document.getElementById('pageTitle').textContent=centerMode?'编辑平台网申模板':'修改网申模板';document.getElementById('breadcrumbMode').textContent='修改模板';}
     showToast(createVersion ? version + ' 已另存为新版本' : version + ' 已保存');
     return true;
   }
@@ -370,6 +389,8 @@
         }
       }
     });
+    document.getElementById('templateUrl').value=isNew?'':currentMeta.applicationUrl || entrances.find(function(entry){return entry.isDefault;}).url;
+    document.getElementById('templateRegion').value=isNew?'':currentMeta.region || '';
     renderProgramSelector();
     renderRows();
   }
@@ -380,6 +401,7 @@
   document.addEventListener('keydown', function (event) {
     if (event.key !== 'Escape') return;
     closeEntranceManager();
+    closeProgramManager();
     closeVersionHistory();
     closeSearchSelectors();
   });
@@ -407,9 +429,9 @@
     if(!pbsTemplatePublishing.isPublisher()){location.replace('网申模板库 - 留学申请管理系统.html');return;}
     document.getElementById('pageTitle').textContent=isNew?'新建平台网申模板':'编辑平台网申模板';
     document.querySelector('.pbs-detail-back').href='网申模板发布中心 - 留学申请管理系统.html';
-    document.querySelector('.pbs-detail-topbar__actions').insertAdjacentHTML('afterbegin','<button class="btn" data-template-scan onclick="scanTemplatePage()">扫描页面</button>');
+    document.querySelector('.pbs-detail-topbar__actions').insertAdjacentHTML('afterbegin','<button class="btn" data-template-scan onclick="scanTemplatePage()">新增扫描任务</button>');
     var scanStatus = pbsTemplateScan.status(savedTemplateId);
     if (scanStatus === '待扫描' || scanStatus === '待确认') document.querySelector('[data-template-scan]').textContent = scanStatus;
-    document.querySelector('.pbs-detail-topbar__actions').insertAdjacentHTML('beforeend','<button class="btn primary" onclick="if(saveTemplate())location.href=\'网申模板发布中心 - 留学申请管理系统.html?publish=\'+getTemplateDraftId()">发布</button>');
+    document.querySelector('.pbs-detail-topbar__actions').insertAdjacentHTML('beforeend','<button class="btn primary" onclick="if(saveTemplate())openPublishTemplate(getTemplateDraftId())">发布</button>');
   });
 })();

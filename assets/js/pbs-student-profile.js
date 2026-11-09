@@ -23,6 +23,8 @@
     table.querySelector('thead tr').innerHTML = ['序号', '关联商城订单', '关联项目与院校目标', '学生姓名', '客户姓名', '申请层次', '最近修改时间', '操作'].map(function(label) { return '<th>' + label + '</th>'; }).join('');
     listBody.innerHTML = profiles.map(function(profile, index) {
       var linked = api.projects(profile.id), orders = Array.from(new Set(linked.map(function(p) { return p.orderNo; }).filter(Boolean))), levels = Array.from(new Set(linked.map(function(p) { return p.level; }))), targets = linked.reduce(function(total, p) { return total + (p.packages || []).length; }, 0), customers = Array.from(new Set(linked.map(function(p) { return p.customer; })));
+      if (!levels.length) levels = [profile.student.level || '—'];
+      if (!customers.length) customers = [profile.customer.name || '—'];
       var related = relatedProjectsHtml(linked);
       var sharedOrder = orders.some(function(order) { return linked.filter(function(project) { return project.orderNo === order; }).length > 1; });
       return '<tr data-kw="' + esc([profile.name, profile.id, customers.join(' '), orders.join(' '), linked.map(function(p) { return p.projectNo + ' ' + (p.packages || []).map(function(item) { return item.school + ' ' + item.major; }).join(' '); }).join(' ')].join(' ')) + '" data-name="' + esc(customers.join('、')) + '" data-applicant="' + esc(profile.name) + '" data-project="' + esc(linked.map(function(p) { return p.projectNo; }).join('、')) + '" data-level="' + esc(levels.join('、')) + '" data-targets="' + targets + '"><td>' + (index + 1) + '</td><td class="pbs-profile-order-cell' + (sharedOrder ? ' pbs-profile-order-shared' : '') + '">' + (orders.length ? orders.map(esc).join('<br>') : '—') + '</td><td>' + related + '</td><td><a href="' + url(profile.id) + '">' + esc(profile.name) + '</a></td><td>' + esc(customers.join('、')) + '</td><td>' + esc(levels.join('、')) + '</td><td>' + time(profile.updatedAt) + '</td><td><a href="' + url(profile.id) + '">查看档案</a></td></tr>';
@@ -31,7 +33,7 @@
     if (pager) { pager.className = 'pbs-profile-list-count'; pager.textContent = '共 ' + profiles.length + ' 名学生'; }
     if (window.applyFilter) window.applyFilter();
   }
-  var sectionNames = { edu: '教育背景', lang: '语言成绩', score: '学业信息', qual: '专业资质', work: '工作经历', practice: '实践经历', honor: '荣誉奖项', pub: '学术发表', apply: '申请记录', selectionBinding: '申请记录', account: '账号管理', asset: '资产文件', delivered: '交付文件', student: '学生信息', customer: '客户信息' };
+  var sectionNames = { edu: '教育背景', lang: '语言成绩', score: '学业信息', qual: '专业资质', work: '工作经历', practice: '实践经历', honor: '荣誉奖项', pub: '学术发表', apply: '申请记录', selectionBinding: '申请记录', preBinding:'预档案绑定', intake:'学生补充信息', account: '账号管理', asset: '资产文件', delivered: '交付文件', student: '学生信息', customer: '客户信息' };
   var baseline = {}, linkBound = false;
   function capture(section) {
     var body = document.getElementById('secbody-' + section);
@@ -45,7 +47,8 @@
       var labelNode = body.querySelector('th[data-f="' + key + '"]');
       var custom = node.closest('[data-custom-field-id]'), customLabel = custom && custom.querySelector('p > span');
       var definition = ((window.PBSProfileFieldLabels || {})[section] || []).find(function(item) { return item[0] === key; });
-      var label = definition ? definition[1] : labelNode ? labelNode.textContent.trim() : customLabel ? customLabel.textContent.trim() : key;
+      var importedLabel = node.closest('.pa-import-values') && node.parentElement.querySelector('span');
+      var label = definition ? definition[1] : labelNode ? labelNode.textContent.trim() : customLabel ? customLabel.textContent.trim() : importedLabel ? importedLabel.textContent.trim() : key;
       var value = /pwd|password/i.test(key) ? node.innerHTML : node.textContent.trim();
       values[fieldKey + ':' + index] = value; labels[fieldKey + ':' + index] = label;
     });
@@ -165,6 +168,9 @@
       });
     }
   }
+  window.pbsRenderStudentList = renderList;
+  window.pbsCaptureStudentSection = capture;
+  window.pbsCommitStudentSection = commitSection;
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init); else init();
   window.addEventListener('pbs-student-updated', function(event) { if (listBody) renderList(); if (detail && event.detail === profileId) renderLogs(); syncProjectProfile(); });
   window.addEventListener('storage', function(event) { if (event.key !== 'pbs_student_profiles_v1' && event.key !== 'pbs_selection_services_v1') return; if (listBody) renderList(); if (detail) restoreDetail(); syncProjectProfile(); });

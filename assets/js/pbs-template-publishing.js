@@ -36,21 +36,41 @@
   function extract(id) {
     if (!isPublisher()) return null;
     var source = institutions().find(function(item){return Number(item.id)===Number(id);}); if(!source)return null;
-    var draft = clone(source); draft.id = Date.now(); draft.org = '平台'; draft.sourceTemplateId = source.id; draft.sourceOrg = source.org;
+    var list = read(platformKey), version = source.versions[0].version;
+    var existing = list.find(function(item){return item.sourceTemplateId === source.id && item.sourceOrg === source.org && item.sourceTemplateVersion === version;});
+    if(existing)return existing;
+    var draft = clone(source); draft.id = Date.now(); while(list.some(function(item){return item.id === draft.id;}))draft.id++;
+    draft.org = '平台'; draft.sourceTemplateId = source.id; draft.sourceOrg = source.org; draft.sourceTemplateVersion = version;
+    draft.updatedAt=new Date().toISOString();
     draft.versions = draft.versions.slice(0,1); draft.versions[0].version = 'v1.0';
-    var list = read(platformKey);list.push(draft);localStorage.setItem(platformKey,JSON.stringify(list));return draft;
+    list.push(draft);localStorage.setItem(platformKey,JSON.stringify(list));return draft;
   }
   function publish(id, scope) {
+    var result=publishMany([id],scope);return result.error?result:result[0];
+  }
+  function publishMany(ids, scope) {
     if (!isPublisher()) return {error:'无权发布模板'};
-    var draft = read(platformKey).find(function(item){return Number(item.id)===Number(id);});
-    if(!draft || !draft.versions.length || !(draft.versions[0].fieldDetails || []).length)return {error:'请先编辑并保存完整模板'};
+    var drafts=read(platformKey),selected=Array.from(new Set(ids.map(Number))).map(function(id){return drafts.find(function(item){return Number(item.id)===id;});});
+    if(!selected.length || selected.some(function(item){return !item;}))return {error:'请选择有效的模板'};
+    var incomplete=selected.filter(function(item){return !item.name || !item.school || !item.college || !item.versions.length;});
+    if(incomplete.length)return {error:'请填写模板名称、学校和学院：'+incomplete.map(function(item){return item.name || '未命名模板';}).join('、')};
     if(!scope.length)return {error:'请选择发布范围'};
-    var list=read(publicationKey), version=draft.versions[0].version;
-    if(list.some(function(item){return item.templateId===draft.id && item.version===version;}))return {error:'该版本已发布，请另存新版本后发布'};
-    var item={id:'PUB-'+Date.now(),templateId:draft.id,version:version,scope:scope.slice(),at:new Date().toISOString(),publisher:pbsGetSession().name,snapshot:clone(draft)};
-    item.snapshot.versions=item.snapshot.versions.slice(0,1);list.push(item);localStorage.setItem(publicationKey,JSON.stringify(list));return item;
+    var list=read(publicationKey);
+    var created=selected.map(function(draft,index){var serial=Date.now()+index;while(list.some(function(item){return item.id==='PUB-'+serial;}))serial++;var item={id:'PUB-'+serial,templateId:draft.id,version:draft.versions[0].version,scope:scope.slice(),at:new Date().toISOString(),publisher:pbsGetSession().name,snapshot:clone(draft)};item.snapshot.versions=item.snapshot.versions.slice(0,1);list.push(item);return item;});
+    localStorage.setItem(publicationKey,JSON.stringify(list));return created;
   }
   function available() { var org = pbsGetSession().org; if(org==='PBS留学')org='PBS留学总部';return read(publicationKey).filter(function(item){return isPublisher() || item.scope.includes('*') || item.scope.includes(org);}); }
+  function seedPublications() {
+    if(!isPublisher() || localStorage.getItem('pbs_template_publication_examples_v2'))return;
+    var drafts=read(platformKey),releases=read(publicationKey);
+    [{id:61001,name:'斯坦福大学 · 硕士网申模板',school:'斯坦福大学',college:'工程学院',sourceOrg:'PBS留学总部',version:'v1.1',scope:['*']},{id:61002,name:'香港大学 · 商学院网申模板',school:'香港大学',college:'商学院',sourceOrg:'上海启明留学',version:'v1.2',scope:['上海启明留学','北京知行教育']},{id:61003,name:'CMU 计算机学院网申模板',school:'卡内基梅隆大学',college:'计算机学院',sourceOrg:'PBS留学总部',version:'v1.0',scope:null},{id:61004,name:'CMU 人文学院网申模板',school:'卡内基梅隆大学',college:'人文学院',sourceOrg:'PBS留学总部',version:'v1.0',scope:['*']}].forEach(function(example){
+      if(drafts.some(function(item){return Number(item.id)===example.id;}))return;
+      var version={version:example.version,fields:2,materials:1,updated:'2026-11-06',fieldDetails:[{name:'First Name',type:'文本',required:true,note:'与护照姓名一致',pageId:'page-1',programScope:'common'},{name:'Email',type:'邮箱',required:true,note:'填写申请邮箱',pageId:'page-1',programScope:'common'}],materialDetails:[{name:'简历（CV）',required:true,note:'PDF 格式'}],pageDetails:[{id:'page-1',name:'个人信息',entranceId:'entry-main',programScope:'common'}],entranceDetails:[{id:'entry-main',name:'默认入口',url:'',stage:'硕士',channel:'直申',isDefault:true}]};
+      var draft={id:example.id,name:example.name,school:example.school,college:example.college,org:'平台',sourceOrg:example.sourceOrg,boundPrograms:[],versions:[version],updatedAt:'2026-11-06T10:00:00+08:00'};
+      draft.region=example.school==='香港大学'?'中国香港':'美国';drafts.push(draft);if(example.scope)releases.push({id:'PUB-'+example.id+'-'+example.version,templateId:example.id,version:example.version,scope:example.scope,at:'2026-11-06T10:00:00+08:00',publisher:pbsGetSession().name,snapshot:clone(draft)});
+    });
+    localStorage.setItem(platformKey,JSON.stringify(drafts));localStorage.setItem(publicationKey,JSON.stringify(releases));localStorage.setItem('pbs_template_publication_examples_v2','1');
+  }
   function adopt(id) {
     var publication=available().find(function(item){return item.id===id;});if(!publication)return {error:'无权引用该模板'};
     if(!pbsHasPermission('app_template_save') && pbsGetSession().role !== '机构管理员')return {error:'无权保存机构模板'};
@@ -60,5 +80,5 @@
     var item=clone(publication.snapshot);item.id=Date.now();item.org=org;item.publicationId=id;item.sourcePlatformTemplateId=publication.templateId;item.sourceVersion=publication.version;
     delete item.sourceTemplateId;delete item.sourceOrg;list.push(item);localStorage.setItem(institutionKey,JSON.stringify(list));return item;
   }
-  window.pbsTemplatePublishing={platformKey:platformKey,isPublisher:isPublisher,institutions:institutions,extract:extract,publish:publish,available:available,adopt:adopt,drafts:function(){return read(platformKey);},publications:function(){return read(publicationKey);}};
+  window.pbsTemplatePublishing={platformKey:platformKey,isPublisher:isPublisher,institutions:institutions,extract:extract,publish:publish,publishMany:publishMany,seedPublications:seedPublications,available:available,adopt:adopt,drafts:function(){return read(platformKey);},publications:function(){return read(publicationKey);}};
 })();

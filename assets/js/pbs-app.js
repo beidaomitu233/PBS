@@ -956,6 +956,7 @@
   /* 重定向页：boot() 会先跳转，这里保留兜底权限点 */
   PAGE_PERM_KEYS['用户管理 - 留学申请管理系统.html'] = ['platform_personnel_view'];
   PAGE_PERM_KEYS['选校订单池页 - 留学申请管理系统.html'] = ['school_task'];
+  PAGE_PERM_KEYS['选校预档案详情页 - 留学申请管理系统.html'] = ['school_task'];
 
   /* ---------------- 会话 ---------------- */
   function getSession() {
@@ -2651,6 +2652,7 @@
     "视频管理 - 留学申请管理系统.html": [{"permission":"video_manage","texts":["上传视频","保存设置","重置播放状态","保存"]},{"permission":"video_manage","selector":"#videoFileInput,#videoEnabled,#autoPlayFirstVisit","mode":"disable"}]
   };
 
+  ACTION_PERMISSION_RULES['选校预档案详情页 - 留学申请管理系统.html'] = ACTION_PERMISSION_RULES['学生档案详情页 - 留学申请管理系统.html'];
   function normalizedActionText(element) {
     return String(element && element.textContent || '').replace(/\s+/g, '').replace(/[→↗＋+✎📤⚡]/g, '').trim();
   }
@@ -2681,6 +2683,8 @@
     });
     (ACTION_PERMISSION_RULES[file] || []).forEach(function (rule) {
       var permission = file === '模板库编辑 - 文书交付系统.html' && new URLSearchParams(location.search).get('mode') === 'new' ? 'library_create' : rule.permission;
+      var profile = /^(学生档案详情页|选校预档案详情页)/.test(file) && window.pbsStudents && pbsStudents.find(window.PBS_STUDENT_ID);
+      if (profile && profile.kind === 'preliminary' && (permission === 'customer_edit' || permission === 'customer_export') && pbsStudents.canEdit(profile.id)) return;
       if (sessionHasPermission(session, permission)) return;
       document.querySelectorAll(rule.selector || 'button,a').forEach(function (element) {
         if (matchesActionText(element, rule.texts)) restrictAction(element, rule.mode);
@@ -2829,7 +2833,7 @@
     link.href = './assets/css/pbs-advanced-filter.css?v=6.6';
     document.head.appendChild(link);
     var script = document.createElement('script');
-    script.src = './assets/js/pbs-advanced-filter.js?v=6.8';
+    script.src = './assets/js/pbs-advanced-filter.js?v=6.9';
     script.onload = function () {
       if (window.PBSAdvancedFilter) {
         window.PBSAdvancedFilter.mount({ file: file, controlSelector: FILTER_PAGE_CONTROLS[file] });
@@ -3144,6 +3148,8 @@
     var perms = PAGE_PERMS[file];
     var permKeys = PAGE_PERM_KEYS[file];
     if (file === '选校工作台页 - 留学申请管理系统.html' && new URLSearchParams(location.search).get('mode') === 'catalog') permKeys = ['school_catalog_view'];
+    var preProfile = file === '学生档案详情页 - 留学申请管理系统.html' && window.pbsStudents && pbsStudents.find(window.PBS_STUDENT_ID);
+    if (preProfile && preProfile.kind === 'preliminary' && pbsStudents.canView(preProfile.id)) permKeys = ['school_task','customer_view_detail'];
     var activeRoles = sessionRoles(session);
     var denied = false;
     if (activeRoles.indexOf('超级管理员') < 0 && !permKeys && perms && !roleCanAccess(activeRoles, perms)) {
@@ -3157,7 +3163,7 @@
       return;
     }
     ensureDetailSidebar(file);
-    renderSidebar(session, file);
+    renderSidebar(session, file === '选校预档案详情页 - 留学申请管理系统.html' ? '选校任务列表页 - 留学申请管理系统.html' : file);
     bindHeader(session);
     mountRoleWorkbench(session, file);
     var w = PAGE_WIRING[file];
@@ -3199,6 +3205,7 @@
   var page = decodeURIComponent((location.pathname || '').split('/').pop() || '');
   var enabledPages = [
     '学生档案详情页 - 留学申请管理系统.html',
+    '选校预档案详情页 - 留学申请管理系统.html',
     '文书审核详情页 - 留学申请管理系统.html',
     '网申任务详情页 - 留学申请管理系统.html',
     '结项详情页 - 留学申请管理系统.html',

@@ -22,7 +22,7 @@
     '案例库 - 文书交付系统.html': [field('文书类型', 'checks', ['PS', 'CV', 'RL', 'RP', 'CL', '推荐信']), field('申请层次', 'checks', levels.slice(0, 3)), field('解析状态', 'checks', ['已解析', '解析中', '未解析', '解析失败', '已归档']), field('所属机构', 'checks', organizations), field('作者', 'multi', null, { dataKeys: ['uploader', 'author'] }), field('机构', 'multi', null, { dataKeys: ['org'] }), field('申请方向', 'multi', null, { dataKeys: ['direction'] }), field('录取院校', 'multi', null, { dataKeys: ['school'] }), field('来源学生', 'multi', null, { dataKeys: ['student'] }), field('关联模板', 'multi', null, { dataKeys: ['template'] })],
     '文书审核列表页 - 留学申请管理系统.html': [field('文书类型', 'checks', ['PS', 'CV', 'RL', 'RP', 'CL']), field('文书状态', 'checks', ['审核中', '已完成']), countdown('DDL倒计时'), field('客户姓名', 'multi'), field('学生姓名', 'multi'), field('文书审核人员', 'multi'), field('提交人', 'multi')],
     '网申任务列表页 - 留学申请管理系统.html': [field('网申状态', 'checks', ['未开始', '待领取', '进行中', '审核中', '已提交']), field('申请轮次', 'checks', ['Round 1', 'Round 2', 'Round 3', 'Round 4', 'Round 5', '更多']), countdown('DDL倒计时'), field('客户姓名', 'multi'), field('学生姓名', 'multi'), field('专业', 'multi'), field('学校', 'multi'), field('网申人员', 'multi'), field('当前环节滞留时长', 'range', null, { min: 0, max: 30, unit: '天', aliases: ['任务停留时长'] }), field('材料缺失数量', 'missing', ['<20%', '<40%', '其他'], { aliases: ['材料齐备度'] })],
-    '网申模板库 - 留学申请管理系统.html': [field('所属机构', 'checks', organizations)],
+    '网申模板库 - 留学申请管理系统.html': [field('所属机构', 'checks', organizations, { aliases: ['归属机构'] })],
     '监控任务列表 - PBS留学CRM.html': [field('客户姓名', 'multi'), field('学生姓名', 'multi'), field('监控频率', 'checks', ['每小时', '每6小时', '每12小时', '每天', '每周']), field('监控状态', 'checks', ['监控中', '已暂停', '异常']), field('上次监控时间', 'date')],
     '结项归档列表 - PBS留学CRM系统.html': [field('项目号', 'multi'), field('客户姓名', 'multi'), field('学生姓名', 'multi'), field('申请层次', 'checks', levels.slice(0, 3)), field('结项状态', 'radios', ['待结项', '已结项'])],
     '选校任务列表页 - 留学申请管理系统.html': [field('项目号', 'multi'), field('销售人员', 'multi'), field('学生姓名', 'multi'), field('意向国家', 'multi'), field('意向专业', 'multi'), field('申请层次', 'checks', levels.slice(0, 3)), field('咨询状态', 'checks', ['咨询中', '已结单'])],
@@ -421,7 +421,7 @@
 
     var sourceRows = rows();
     var map = headers();
-    configs.forEach(function (config, index) { container.appendChild(createRow(config, sourceRows, map, index > 0)); });
+    configs.forEach(function (config, index) { container.appendChild(createRow(config, sourceRows, map, index > 0 || card.hasAttribute('data-collapse-filters'))); });
 
     var footer = card.querySelector('.pbs-filter-footer');
     if (!footer) return;

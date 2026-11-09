@@ -15,7 +15,8 @@
       var student = item.student;
       var data = {project:item.id,sales:item.sales,student:student,level:item.level,country:item.country,major:item.major,status:item.status,time:item.createdAt.slice(0,10)};
       data.kw = Object.values(data).join(' ') + ' ' + orderLabel(item);
-      return '<tr class="hover:bg-gray-50" ' + Object.keys(data).map(function(key) { return 'data-' + key + '="' + esc(data[key]) + '"'; }).join(' ') + '><td class="px-5 py-4 text-sm">' + (index+1) + '</td><td class="px-5 py-4 text-sm font-medium">' + esc(item.id) + '</td><td class="px-5 py-4 text-sm text-center">' + esc(orderLabel(item)) + '</td><td class="px-5 py-4 text-sm">' + esc(item.sales) + '</td><td class="px-5 py-4 text-sm">' + esc(student) + '</td><td class="px-5 py-4 text-sm">' + esc(item.level) + '</td><td class="px-5 py-4 text-sm">' + esc(item.country) + '</td><td class="px-5 py-4 text-sm">' + esc(item.major) + '</td><td class="px-5 py-4 text-sm">' + esc(item.status) + '</td><td class="px-5 py-4 text-sm">' + time(item.createdAt) + '</td><td class="px-5 py-4 text-sm whitespace-nowrap">' + (canWork(item) ? '<a class="text-blue-600 mr-3" href="' + link(item,'选校工作台页 - 留学申请管理系统.html') + '">进入工作台</a>' : '') + '<a class="text-blue-600" href="' + link(item,'选校方案未生成 - 留学申请管理系统.html') + '">查看方案</a></td></tr>';
+      var pre = item.preStudentId ? '<a class="text-blue-600 mr-3" href="选校预档案详情页 - 留学申请管理系统.html?service=' + encodeURIComponent(item.id) + '&studentId=' + encodeURIComponent(item.preStudentId) + '">预档案</a>' : '';
+      return '<tr class="hover:bg-gray-50" ' + Object.keys(data).map(function(key) { return 'data-' + key + '="' + esc(data[key]) + '"'; }).join(' ') + '><td class="px-5 py-4 text-sm">' + (index+1) + '</td><td class="px-5 py-4 text-sm font-medium">' + esc(item.id) + '</td><td class="px-5 py-4 text-sm text-center">' + esc(orderLabel(item)) + '</td><td class="px-5 py-4 text-sm">' + esc(item.sales) + '</td><td class="px-5 py-4 text-sm">' + esc(student) + '</td><td class="px-5 py-4 text-sm">' + esc(item.level) + '</td><td class="px-5 py-4 text-sm">' + esc(item.country) + '</td><td class="px-5 py-4 text-sm">' + esc(item.major) + '</td><td class="px-5 py-4 text-sm">' + esc(item.status) + '</td><td class="px-5 py-4 text-sm">' + time(item.createdAt) + '</td><td class="px-5 py-4 text-sm whitespace-nowrap">' + pre + (canWork(item) ? '<a class="text-blue-600 mr-3" href="' + link(item,'选校工作台页 - 留学申请管理系统.html') + '">进入工作台</a>' : '') + '<a class="text-blue-600" href="' + link(item,'选校方案未生成 - 留学申请管理系统.html') + '">查看方案</a></td></tr>';
     }).join('') + '<tr id="flt-empty" class="hidden"><td colspan="11" class="p-8 text-center text-sm text-gray-400">暂无符合条件的选校服务单</td></tr>';
     if (window.applyFilter) applyFilter();
   }
@@ -30,8 +31,11 @@
         ids.forEach(function(id) { var input = document.getElementById(id); if (!input.value.trim()) { showFieldError(input, '请填写' + ({'stu-name':'学生姓名','stu-level':'申请层次','stu-country':'意向国家','stu-major':'意向专业'})[id]); ok = false; } });
         if (!ok) return;
         var level = document.getElementById('stu-level').value;
-        api.create({student:document.getElementById('stu-name').value.trim(), level:level.includes('申请')?level:level+'申请', gender:document.getElementById('stu-gender').value, birth:document.getElementById('stu-birth').value, phone:document.getElementById('stu-phone').value.trim(), address:document.getElementById('stu-address').value.trim(), country:document.getElementById('stu-country').value.trim(), major:document.getElementById('stu-major').value.trim(), supplement:document.getElementById('stu-supplement')?.value.trim() || '', note:document.getElementById('order-remark').value.trim()});
-        closeCreateModal(); renderList(); toast('选校任务已创建');
+        var values = {student:document.getElementById('stu-name').value.trim(), level:level.includes('申请')?level:level+'申请', gender:document.getElementById('stu-gender').value, birth:document.getElementById('stu-birth').value, phone:document.getElementById('stu-phone').value.trim(), address:document.getElementById('stu-address').value.trim(), country:document.getElementById('stu-country').value.trim(), major:document.getElementById('stu-major').value.trim(), note:document.getElementById('order-remark').value.trim()};
+        var created = api.create(values);
+        if (!created) { toast('请选择有效的学生档案'); return; }
+        closeCreateModal(); renderList();
+        if (window.pbsPreArchive) pbsPreArchive.taskCreated(created); else toast('选校任务已创建');
       };
     }
     renderList();
@@ -43,7 +47,9 @@
     workbenchCommunications = api.seedDemoHistory(id);
     var bar = document.getElementById('schoolTaskContextBar'), summary = bar.firstElementChild;
     summary.className = 'selection-task-heading';
-    summary.innerHTML = '<div class="selection-task-summary"><button class="pbs-detail-back" onclick="location.href=\'选校任务列表页 - 留学申请管理系统.html\'">‹</button><strong>' + esc(item.id) + '</strong><span>' + esc(item.student) + '</span><span>' + esc(item.level) + '</span><span>' + esc(item.country) + '</span><span id="selectionStatus">' + esc(item.status) + '</span></div><div class="selection-task-actions"><button class="selection-text-button" onclick="openStudentSupplement()">学生补充信息</button><button id="closeSelectionTask" class="selection-secondary-button" onclick="completeSelectionTask()">结单</button></div>';
+    summary.innerHTML = '<div class="selection-task-summary"><button class="pbs-detail-back" onclick="location.href=\'选校任务列表页 - 留学申请管理系统.html\'">‹</button><strong>' + esc(item.id) + '</strong><span>' + esc(item.student) + '</span><span>' + esc(item.level) + '</span><span>' + esc(item.country) + '</span><span id="selectionStatus">' + esc(item.status) + '</span></div><div class="selection-task-actions"><button id="closeSelectionTask" class="selection-secondary-button" onclick="completeSelectionTask()">结单</button></div>';
+    api.ensurePre(id); item = api.find(id);
+    if (item.preStudentId && window.pbsPreArchive) pbsPreArchive.taskArchiveLink(item,summary.querySelector('.selection-task-actions'));
     document.getElementById('workbenchHistoryContext').textContent = [item.student,item.level,item.country].join(' · ');
     document.getElementById('taskNoteText').textContent = item.note || '—';
     var versions = JSON.parse(localStorage.getItem('pbs_selection_plan_versions_' + id) || '[]'), latest = versions[versions.length-1];
@@ -95,5 +101,6 @@
     if (/选校任务列表|选校订单池/.test(file)) initList();
     if (/选校工作台/.test(file)) initWorkbench();
   });
+  window.pbsRenderSelectionTasks = renderList;
   window.addEventListener('storage',function(event){ if(event.key === 'pbs_selection_services_v1' || event.key === 'pbs_selection_order_bindings_v1') { if(/选校任务列表|选校订单池/.test(file)) renderList(); if(/选校工作台/.test(file) && window.renderWorkbenchCommunications && !document.getElementById('workbenchHistoryModal').classList.contains('hidden')) renderWorkbenchCommunications(); } });
 })();

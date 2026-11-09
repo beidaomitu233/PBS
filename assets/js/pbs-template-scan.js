@@ -10,8 +10,8 @@
     if (!window.pbsTemplatePublishing || !pbsTemplatePublishing.isPublisher()) return { error: '无权提交扫描任务' };
     var templates = read(templateKey), template = templates.find(function (item) { return Number(item.id) === Number(id); });
     if (!template) return { error: '请先保存模板' };
+    if (!String(template.school || '').trim() || !String(template.college || '').trim()) return { error: '请填写学校和学院' };
     var version = template.versions[0], entrances = version.entranceDetails || [];
-    if (!entrances.some(function (entry) { return /^https?:\/\//i.test(entry.url || ''); })) return { error: '请在申请入口中填写有效网址' };
     var tasks = read(taskKey), pending = tasks.find(function (task) { return task.templateId === template.id && task.status !== '已扫描'; });
     if (pending && pending.version === version.version) return pending;
     if (pending) tasks = tasks.filter(function (task) { return task.id !== pending.id; });
@@ -35,9 +35,10 @@
       version.pageDetails = [{ id: pageId, name: '申请页面', entranceId: entry.id, url: entry.url }];
       version.fields = version.fieldDetails.length; version.materials = version.materialDetails.length; version.savedAt = task.updatedAt; version.updated = task.updatedAt.slice(0, 10);
       template.scannedAt = task.updatedAt;
+      template.updatedAt = task.updatedAt;
       write(templateKey, templates);
     }
     write(taskKey, tasks); return task;
   }
-  window.pbsTemplateScan = { key: taskKey, request: request, save: save, pluginAdmin: pluginAdmin, tasks: function () { return pluginAdmin() || window.pbsTemplatePublishing && pbsTemplatePublishing.isPublisher() ? read(taskKey) : []; }, status: function (id) { var task = read(taskKey).find(function (item) { return Number(item.templateId) === Number(id); }); return task ? task.status : '未扫描'; } };
+  window.pbsTemplateScan = { key: taskKey, request: request, save: save, pluginAdmin: pluginAdmin, tasks: function () { return pluginAdmin() || window.pbsTemplatePublishing && pbsTemplatePublishing.isPublisher() ? read(taskKey) : []; }, status: function (id,version) { if (!version) { var template=read(templateKey).find(function(item){return Number(item.id)===Number(id);}); version=template&&template.versions[0].version; } var task = read(taskKey).find(function (item) { return Number(item.templateId) === Number(id) && (!version || String(item.version).toLowerCase()===String(version).toLowerCase()); }); return task ? task.status : '未扫描'; } };
 })();

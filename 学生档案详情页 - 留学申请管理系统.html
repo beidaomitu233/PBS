@@ -563,30 +563,30 @@
             <div class="bg-gray-50 rounded-xl p-4 border border-gray-100" data-f="ib">
             <div class="flex items-center justify-between mb-2">
               <p class="text-xs text-gray-400">IB</p>
-              <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-500">未考</span>
+              <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-700">已录入</span>
             </div>
-            <p class="text-lg font-semibold text-gray-900" data-v="ib">—</p>
+            <p class="text-lg font-semibold text-gray-900" data-v="ib">40</p>
               <div class="mt-3 score-sub-list" data-sub="ib"></div>
             </div>
             <div class="bg-gray-50 rounded-xl p-4 border border-gray-100" data-f="gre">
               <div class="flex items-center justify-between mb-2">
                 <p class="text-xs text-gray-400">GRE</p>
-                <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-500">未考</span>
+                <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-700">已录入</span>
               </div>
-              <p class="text-lg font-semibold text-gray-900" data-v="gre">—</p>
+              <p class="text-lg font-semibold text-gray-900" data-v="gre">326</p>
               <div class="mt-3 score-sub-list" data-sub="gre"></div>
             </div>
             <div class="bg-gray-50 rounded-xl p-4 border border-gray-100" data-f="gmat">
               <div class="flex items-center justify-between mb-2">
                 <p class="text-xs text-gray-400">GMAT</p>
-                <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-500">未考</span>
+                <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-700">已录入</span>
               </div>
-              <p class="text-lg font-semibold text-gray-900" data-v="gmat">—</p>
+              <p class="text-lg font-semibold text-gray-900" data-v="gmat">720</p>
               <div class="mt-3 score-sub-list" data-sub="gmat"></div>
             </div>
           </div>
         </div>
-        <p class="mt-4 text-xs text-gray-400">总分按小分自动汇总；A-Level 按单科成绩由高到低拼接。</p>
+        <p class="mt-4 text-xs text-gray-400">GRE 总分汇总 Verbal 与 Quant；GMAT 总分按成绩单录入；A-Level 按单科成绩排序展示。</p>
         </div>
       </section>      <!-- 板块四：专业资质 -->
       <section id="sec-qual" data-section="qual" class="bg-white rounded-xl shadow-sm border border-gray-100 scroll-mt-24">
@@ -1101,9 +1101,6 @@
               <input type="checkbox" class="w-4 h-4 text-blue-600 rounded border-gray-300" checked="" data-cfg-field="round" onchange="applyFieldVisibility(&#39;apply&#39;)">
               申请轮次
             </label><label class="flex items-center gap-2 px-4 py-2 hover:bg-gray-50 cursor-pointer text-sm text-gray-700">
-              <input type="checkbox" class="w-4 h-4 text-blue-600 rounded border-gray-300" checked="" data-cfg-field="status" onchange="applyFieldVisibility(&#39;apply&#39;)">
-              学生状态
-            </label><label class="flex items-center gap-2 px-4 py-2 hover:bg-gray-50 cursor-pointer text-sm text-gray-700">
               <input type="checkbox" class="w-4 h-4 text-blue-600 rounded border-gray-300" checked="" data-cfg-field="time" onchange="applyFieldVisibility(&#39;apply&#39;)">
               申请时间
             </label><label class="flex items-center gap-2 px-4 py-2 hover:bg-gray-50 cursor-pointer text-sm text-gray-700">
@@ -1123,7 +1120,7 @@
         <div id="secbody-apply" class="p-6 pt-5">
         <table class="w-full">
           <thead class="bg-gray-50">
-            <tr><th class="px-4 py-3 text-left text-sm font-medium text-gray-500" data-f="school">申请学校</th><th class="px-4 py-3 text-left text-sm font-medium text-gray-500" data-f="major">申请专业</th><th class="px-4 py-3 text-left text-sm font-medium text-gray-500" data-f="round">申请轮次</th><th class="px-4 py-3 text-left text-sm font-medium text-gray-500" data-f="status">学生状态</th><th class="px-4 py-3 text-left text-sm font-medium text-gray-500" data-f="time">申请时间</th><th class="px-4 py-3 text-left text-sm font-medium text-gray-500" data-f="result">结果</th>
+            <tr><th class="px-4 py-3 text-left text-sm font-medium text-gray-500" data-f="school">申请学校</th><th class="px-4 py-3 text-left text-sm font-medium text-gray-500" data-f="major">申请专业</th><th class="px-4 py-3 text-left text-sm font-medium text-gray-500" data-f="round">申请轮次</th><th class="px-4 py-3 text-left text-sm font-medium text-gray-500" data-f="time">申请时间</th><th class="px-4 py-3 text-left text-sm font-medium text-gray-500" data-f="result">结果</th>
             </tr>
           </thead>
           <tbody class="divide-y divide-gray-100">
@@ -1131,7 +1128,6 @@
               <td class="px-4 py-4 text-sm text-gray-900 font-medium" data-f="school">卡内基梅隆大学</td>
               <td class="px-4 py-4 text-sm text-gray-600" data-f="major">计算机科学</td>
               <td class="px-4 py-4 text-sm text-gray-600" data-f="round">常规（RD）</td>
-              <td class="px-4 py-4" data-f="status"><span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">已完成</span></td>
               <td class="px-4 py-4 text-sm text-gray-500" data-f="time">2026-01-15</td>
               <td class="px-4 py-4" data-f="result"><span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">录取</span></td>
             </tr>
@@ -1139,7 +1135,6 @@
               <td class="px-4 py-4 text-sm text-gray-900 font-medium" data-f="school">帝国理工学院</td>
               <td class="px-4 py-4 text-sm text-gray-600" data-f="major">计算机科学</td>
               <td class="px-4 py-4 text-sm text-gray-600" data-f="round">常规（RD）</td>
-              <td class="px-4 py-4" data-f="status"><span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">交付中</span></td>
               <td class="px-4 py-4 text-sm text-gray-500" data-f="time">2026-02-01</td>
               <td class="px-4 py-4" data-f="result"><span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-500">待公布</span></td>
             </tr>
@@ -2253,9 +2248,9 @@
       sat: { total: '1520', items: [{name:'阅读', score:'380'}, {name:'文法', score:'370'}, {name:'数学', score:'770'}] },
       ap: { total: '25', items: [{name:'微积分BC', score:'5'}, {name:'物理C力学', score:'5'}, {name:'物理C电磁学', score:'5'}, {name:'化学', score:'5'}, {name:'计算机科学A', score:'5'}] },
       alevel: { total: 'A*AA', items: [{name:'数学', score:'A*'}, {name:'物理', score:'A'}, {name:'化学', score:'A'}] },
-      ib: { total: '', items: [] },
-      gre: { total: '', items: [{name:'Verbal', score:''}, {name:'Quant', score:''}, {name:'Analytical Writing', score:''}] },
-      gmat: { total: '', items: [{name:'Verbal', score:''}, {name:'Quant', score:''}, {name:'IR', score:''}, {name:'AWA', score:''}] }
+      ib: { total: '40', items: [{name:'数学 AA HL', score:'7'}, {name:'物理 HL', score:'6'}, {name:'化学 HL', score:'6'}, {name:'中文 A SL', score:'6'}, {name:'英语 B SL', score:'6'}, {name:'经济 SL', score:'6'}, {name:'TOK / EE 核心加分', score:'3'}] },
+      gre: { total: '326', items: [{name:'Verbal', score:'158'}, {name:'Quant', score:'168'}, {name:'Analytical Writing', score:'4.5'}] },
+      gmat: { total: '720', items: [{name:'Verbal', score:'40'}, {name:'Quant', score:'49'}, {name:'IR', score:'7'}, {name:'AWA', score:'5.0'}] }
     };
     var FIXED_SUB_KEYS = ['sat', 'gre', 'gmat'];
     var scoreSubData = {};
@@ -2282,8 +2277,9 @@
       if (key === 'alevel') {
         data.items.sort(function(a, b) { return aLevelScoreWeight(b.score) - aLevelScoreWeight(a.score); });
         data.total = data.items.map(function(item) { return String(item.score || '').trim(); }).filter(Boolean).join('');
-      } else {
-        var scores = data.items.map(function(item) { return String(item.score || '').trim(); }).filter(Boolean);
+      } else if (key !== 'gmat') {
+        var items = key === 'gre' ? data.items.slice(0, 2) : data.items;
+        var scores = items.map(function(item) { return String(item.score || '').trim(); }).filter(Boolean);
         data.total = scores.length ? String(scores.reduce(function(sum, value) { return sum + (Number(value) || 0); }, 0)) : '';
       }
       return data;
@@ -2302,8 +2298,10 @@
           html += '<div class="space-y-2">';
           if (key === 'alevel') {
             html += '<p class="text-[11px] text-gray-400">总成绩将按单科成绩由高到低自动拼接</p>';
+          } else if (key === 'gmat') {
+            html += '<div class="flex items-center gap-2 mb-2"><span class="w-12 text-xs text-gray-500">总分</span><input type="number" data-sub-total value="' + escapeHtml(data.total) + '" class="w-20 px-2 py-1 text-xs border border-gray-300 rounded" placeholder="总分"></div>';
           } else {
-            html += '<div class="flex items-center gap-2"><span class="w-12 text-xs text-gray-500">总分</span><output class="text-sm font-semibold">' + escapeHtml(data.total || '—') + '</output><span class="text-xs text-gray-400">按小分自动汇总</span></div>';
+            html += '<div class="flex items-center gap-2"><span class="w-12 text-xs text-gray-500">总分</span><output class="text-sm font-semibold">' + escapeHtml(data.total || '—') + '</output><span class="text-xs text-gray-400">' + (key === 'gre' ? 'Verbal + Quant' : '按小分自动汇总') + '</span></div>';
           }
           data.items.forEach(function (item, idx) {
             html += '<div class="flex items-center gap-2">' +
@@ -2975,7 +2973,7 @@
     <div id="pbs-toast" class="fixed bottom-6 left-1/2 -translate-x-1/2 bg-gray-900 text-white text-sm px-4 py-2 rounded-lg shadow-lg z-[999] transition-opacity" style="opacity: 0;"></div>  <script src="./assets/js/pbs-selection-data.js?v=1.4"></script>
   <script src="./assets/js/pbs-archive-merge-demo.js?v=1.0"></script>
   <script src="./assets/js/pbs-student-profile.js?v=2.3"></script>
-  <script src="./assets/js/pbs-selection-binding.js?v=3.1"></script>
+  <script src="./assets/js/pbs-selection-binding.js?v=3.2"></script>
 <script src="./assets/vendor/html2pdf.bundle.min.js"></script>
 <script src="./assets/js/pbs-student-export.js?v=1.1"></script>
 <script src="./assets/js/pbs-pre-archive.js?v=3.1"></script>

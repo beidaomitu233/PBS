@@ -296,7 +296,7 @@
             </button>
             <div class="pbs-detail-topbar__copy">
               <div class="project-heading-line"><h1 id="myProjectTitle" class="pbs-detail-topbar__title">李雪 · 硕士申请</h1><span id="myProjectStateLabel" class="text-[11px] px-2 py-0.5 rounded-full bg-blue-50 text-blue-700 font-medium">交付中</span></div>
-              <p id="myProjectNo" class="pbs-detail-topbar__subtitle font-mono">PRJ-M-2607-0002</p>
+              <p id="myProjectNo" class="pbs-detail-topbar__subtitle font-mono">PRJ-M-2611-1204</p>
             </div>
             <div class="project-school-target">
               <span>院校目标</span>
@@ -361,7 +361,7 @@
           <div class="flex items-start gap-3 p-2 bg-white rounded-lg">
             <div class="w-2 h-2 bg-red-500 rounded-full mt-1.5 flex-shrink-0"></div>
             <div>
-              <p class="text-sm text-gray-900">项目 PRJ-M-2607-0002 状态已更新为"交付中"</p>
+              <p class="text-sm text-gray-900">项目 PRJ-M-2611-1204 状态已更新为"交付中"</p>
               <p class="text-xs text-gray-400 mt-0.5">2 分钟前</p>
             </div>
           </div>
@@ -491,7 +491,7 @@
   <!-- 页面提示 Toast -->
   <div id="pageToast" class="hidden fixed top-6 left-1/2 transform -translate-x-1/2 z-[70] px-4 py-2.5 bg-red-500 text-white text-sm rounded-lg shadow-lg"></div>
 
-  <script src="./assets/js/pbs-app.js?v=9.0"></script>
+  <script src="./assets/js/pbs-app.js?v=9.2"></script>
   <script src="./assets/js/pbs-identity.js?v=1.0"></script>
   <script src="./assets/js/pbs-student-data.js?v=1.5"></script>
   <script>
@@ -506,14 +506,14 @@
       { name: '郑老师', role: '网申专员', color: 'from-cyan-500 to-blue-500' }
     ];
     var MY_PROJECT_CONTEXTS = {
-      'PRJ-M-2607-0002': { projectNo: 'PRJ-M-2607-0002', customer: '李慧敏', student: '李雪', level: '硕士申请', manager: '张老师', direction: '计算机科学 · 人工智能', state: '交付中', allStaffAssigned: true, taskNote: '请优先核对学生科研经历与人工智能方向的匹配度，文书交付前同步项目经理确认。' },
-      'PRJ-O-2607-0008': { projectNo: 'PRJ-O-2607-0008', customer: '刘洋', student: '刘晓', level: '本科申请', manager: '张老师', direction: '计算机科学 · 数据科学', state: '人员待分配', allStaffAssigned: false },
-      'PRJ-M-2607-0001': { projectNo: 'PRJ-M-2607-0001', customer: '张建国', student: '张明', level: '本科申请', manager: '张老师', direction: '计算机科学 · 软件工程', state: '人员待分配', allStaffAssigned: false }
+      'PRJ-M-2611-1204': { projectNo: 'PRJ-M-2611-1204', customer: '李慧敏', student: '李雪', level: '硕士申请', manager: '张老师', direction: '计算机科学 · 人工智能', state: '交付中', allStaffAssigned: true, taskNote: '请优先核对学生科研经历与人工智能方向的匹配度，文书交付前同步项目经理确认。' },
+      'PRJ-O-2611-1211': { projectNo: 'PRJ-O-2611-1211', customer: '刘洋', student: '刘晓', level: '本科申请', manager: '张老师', direction: '计算机科学 · 数据科学', state: '人员待分配', allStaffAssigned: false },
+      'PRJ-M-2611-1201': { projectNo: 'PRJ-M-2611-1201', customer: '张建国', student: '张明', level: '本科申请', manager: '张老师', direction: '计算机科学 · 软件工程', state: '人员待分配', allStaffAssigned: false }
     };
     var MY_PROJECT_PARAMS = new URLSearchParams(window.location.search);
-    var requestedMyProjectNo = window.pbsProjects.canonicalNo(MY_PROJECT_PARAMS.get('project') || 'PRJ-M-2607-0002');
+    var requestedMyProjectNo = window.pbsProjects.canonicalNo(MY_PROJECT_PARAMS.get('project') || 'PRJ-M-2611-1204');
     var sharedMyProject = window.pbsProjects.find(requestedMyProjectNo);
-    var MY_PROJECT_CONTEXT = Object.assign({}, MY_PROJECT_CONTEXTS[requestedMyProjectNo] || MY_PROJECT_CONTEXTS['PRJ-M-2607-0002']);
+    var MY_PROJECT_CONTEXT = Object.assign({}, MY_PROJECT_CONTEXTS[requestedMyProjectNo] || MY_PROJECT_CONTEXTS['PRJ-M-2611-1204']);
     if (sharedMyProject) {
       MY_PROJECT_CONTEXT = Object.assign(MY_PROJECT_CONTEXT, {
         projectNo: sharedMyProject.projectNo,

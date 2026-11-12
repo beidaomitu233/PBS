@@ -53,7 +53,7 @@
     profiles.push(source);
   }
   localStorage.setItem('pbs_student_profiles_v1',JSON.stringify(profiles));
-  if (!projects.find('PRJ-M-2611-0901')) projects.upsert({projectNo:'PRJ-M-2611-0901',orderNo:'20261109901',subOrderNo:'SUB-MERGE-001',studentId:formalId,customer:name,student:name,level:'硕士申请',source:'线上',sourceChannel:'商城订单',org:target.org,projectManager:'张老师',pmAccepted:true,status:'进行中',createdAt:'2026-11-09 09:00',packages:[{id:'cmu',school:'卡内基梅隆大学',major:'人工智能',name:'院校申请套餐',services:[{name:'PS',price:1800},{name:'网申提交证明',price:1200}]}],serviceStages:['文书','网申','结项']});
+  if (!projects.find('PRJ-M-2611-1210')) projects.upsert({projectNo:'PRJ-M-2611-1210',orderNo:'20261109901',subOrderNo:'SUB-MERGE-001',studentId:formalId,customer:name,student:name,level:'硕士申请',source:'线上',sourceChannel:'商城订单',org:target.org,projectManager:'张老师',pmAccepted:true,status:'进行中',createdAt:'2026-11-09 09:00',packages:[{id:'cmu',school:'卡内基梅隆大学',major:'人工智能',name:'院校申请套餐',services:[{name:'PS',price:1800},{name:'网申提交证明',price:1200}]}],serviceStages:['文书','网申','结项']});
   if (window.pbsSelection) pbsSelection.seed();
   var tasksKey = 'pbs_selection_services_v1', storedTasks = localStorage.getItem(tasksKey);
   if (storedTasks) {

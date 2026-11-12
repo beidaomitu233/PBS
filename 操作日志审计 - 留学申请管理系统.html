@@ -308,7 +308,7 @@
       新增
     </span>
   </td>
-  <td class="px-5 py-4 text-sm text-gray-600 max-w-xs truncate">新增学生档案：张明（PRJ20260701001）</td>
+  <td class="px-5 py-4 text-sm text-gray-600 max-w-xs truncate">新增学生档案：张明（PRJ-M-2611-1201）</td>
   <td class="px-5 py-4 text-sm text-gray-600">192.168.1.101</td>
   <td class="px-5 py-4">
     <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
@@ -324,7 +324,7 @@
       修改
     </span>
   </td>
-  <td class="px-5 py-4 text-sm text-gray-600 max-w-xs truncate">修改项目信息：PRJ20260701002 申请进度更新</td>
+  <td class="px-5 py-4 text-sm text-gray-600 max-w-xs truncate">修改项目信息：PRJ-M-2611-1204 申请进度更新</td>
   <td class="px-5 py-4 text-sm text-gray-600">192.168.1.102</td>
   <td class="px-5 py-4">
     <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
@@ -340,7 +340,7 @@
       删除
     </span>
   </td>
-  <td class="px-5 py-4 text-sm text-gray-600 max-w-xs truncate">删除无效学生档案：PRJ20260701005</td>
+  <td class="px-5 py-4 text-sm text-gray-600 max-w-xs truncate">删除无效学生档案：PRJ-O-2611-1211</td>
   <td class="px-5 py-4 text-sm text-gray-600">192.168.1.103</td>
   <td class="px-5 py-4">
     <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
@@ -466,7 +466,7 @@
           <div class="flex items-start gap-3 p-2 bg-white rounded-lg">
             <div class="w-2 h-2 bg-red-500 rounded-full mt-1.5 flex-shrink-0"></div>
             <div>
-              <p class="text-sm text-gray-900">项目 PRJ20260701001 状态已更新为"分配中"</p>
+              <p class="text-sm text-gray-900">项目 PRJ-M-2611-1201 状态已更新为"分配中"</p>
               <p class="text-xs text-gray-400 mt-0.5">2 分钟前</p>
             </div>
           </div>
@@ -537,16 +537,16 @@
 
     // 模拟数据
     var allLogs = loadAiOperationLogs().concat([
-      { time: '2026-08-21 10:42:16', user: '王志强', organization: '北京总部', module: '项目管理', type: '分配', content: '为项目 PRJ-M-2607-0000 分配项目经理：张老师', ip: '192.168.1.100', result: '成功' },
+      { time: '2026-08-21 10:42:16', user: '王志强', organization: '北京总部', module: '项目管理', type: '分配', content: '为项目 PRJ-O-2611-1224 分配项目经理：张老师', ip: '192.168.1.100', result: '成功' },
       { time: '2026-08-21 10:36:08', user: '王志强', organization: '北京总部', module: '套餐与支付', type: '新增', content: '新建线下项目档案 PRJ-O-2608-1042；购买 2 个院校项目套餐，合同总价 ¥68,000', ip: '192.168.1.100', result: '成功' },
-      { time: '2026-08-21 10:28:41', user: '张老师', organization: '上海分部', module: '项目管理', type: '更换', content: '项目 PRJ-M-2607-0002 项目经理由王老师更换为张老师', ip: '192.168.1.108', result: '成功' },
+      { time: '2026-08-21 10:28:41', user: '张老师', organization: '上海分部', module: '项目管理', type: '更换', content: '项目 PRJ-M-2611-1204 项目经理由王老师更换为张老师', ip: '192.168.1.108', result: '成功' },
       { time: '2026-08-21 10:15:27', user: '刘老师', organization: '上海分部', module: '文书交付', type: '提交', content: '提交卡内基梅隆大学 PS 个人陈述终稿，进入文书审核', ip: '192.168.1.121', result: '成功' },
       { time: '2026-08-21 10:08:54', user: '孙老师', organization: '上海分部', module: '文书审核', type: '审核', content: '审核 PS 个人陈述 V3：退回修改并填写 3 条审核意见', ip: '192.168.1.122', result: '成功' },
       { time: '2026-08-21 09:54:12', user: '吴老师', organization: '广州分部', module: '网申管理', type: '提交', content: '提交纽约大学网申表单；36 个字段完成校验', ip: '192.168.1.132', result: '成功' },
       { time: '2026-08-21 09:40:33', user: '郑老师', organization: '广州分部', module: '监控管理', type: '新增', content: '创建官网与邮箱监控任务：纽约大学 · 每 6 小时执行', ip: '192.168.1.134', result: '成功' },
       { time: '2026-08-21 09:24:09', user: '周老师', organization: '北京总部', module: '学生档案', type: '上传', content: '上传学生护照扫描件并更新材料完整度', ip: '192.168.1.115', result: '成功' },
       { time: '2026-08-21 09:10:47', user: '机构管理员', organization: '北京总部', module: '账号与权限', type: '修改', content: '调整项目经理角色权限：开启项目池与分配人员权限', ip: '192.168.1.100', result: '成功' },
-      { time: '2026-08-21 08:58:21', user: '李老师', organization: '北京总部', module: '结项归档', type: '导出', content: '导出客户项目结项报告：PRJ-O-2607-0003', ip: '192.168.1.119', result: '成功' },
+      { time: '2026-08-21 08:58:21', user: '李老师', organization: '北京总部', module: '结项归档', type: '导出', content: '导出客户项目结项报告：PRJ-O-2611-1210', ip: '192.168.1.119', result: '成功' },
       {
         time: '2026-08-12 16:20:31',
         user: '平台运营人员',
@@ -581,7 +581,7 @@
         user: '张三',
         organization: '上海分部',
         type: '新增',
-        content: '新增学生档案：张明（PRJ20260701001）',
+        content: '新增学生档案：张明（PRJ-M-2611-1201）',
         ip: '192.168.1.101',
         result: '成功'
       },
@@ -590,7 +590,7 @@
         user: '李四',
         organization: '广州分部',
         type: '修改',
-        content: '修改项目信息：PRJ20260701002 申请进度更新',
+        content: '修改项目信息：PRJ-M-2611-1204 申请进度更新',
         ip: '192.168.1.102',
         result: '成功'
       },
@@ -599,7 +599,7 @@
         user: '王五',
         organization: '北京总部',
         type: '删除',
-        content: '删除无效学生档案：PRJ20260701005',
+        content: '删除无效学生档案：PRJ-O-2611-1211',
         ip: '192.168.1.103',
         result: '失败'
       },
@@ -898,7 +898,7 @@
       renderTable();
     });
   </script>
-  <script src="./assets/js/pbs-app.js?v=9.0"></script>
+  <script src="./assets/js/pbs-app.js?v=9.2"></script>
 
 
   

@@ -103,6 +103,7 @@
   cursor: pointer;
 }
 .pbs-filter-inline-select-item:hover { background: #F5F7FA; }
+.pbs-filter-inline-select-item[hidden] { display: none; }
 .pbs-filter-inline-select-item input { width: 14px; height: 14px; accent-color: #6B829A; }
 .pbs-filter-inline-empty { padding: 12px 8px; color: #94A3B8; font-size: 12px; text-align: center; }
 

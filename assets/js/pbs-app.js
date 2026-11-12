@@ -1048,7 +1048,63 @@
      保证「分配 → 接收 → 执行」状态跨页面闭环。
      ============================================================ */
   var PROJECT_STORE_KEY = 'pbs_projects_v1';
-  var PROJECT_NUMBERS = { PRJ20260701001: 'PRJ-M-2607-0001', PRJ20260701002: 'PRJ-M-2607-0002', PRJ20260701005: 'PRJ-O-2607-0008', PRJ20260701008: 'PRJ-M-2607-0007', PRJ20260701012: 'PRJ-M-2607-0009', PRJ20260701018: 'PRJ-M-2607-0010' };
+  var PROJECT_NUMBERS = Object.assign({
+    "PRJ20260701001": "PRJ-M-2611-1201",
+    "PRJ20260701002": "PRJ-M-2611-1204",
+    "PRJ20260701005": "PRJ-O-2611-1211",
+    "PRJ20260701008": "PRJ-M-2611-1215",
+    "PRJ20260701012": "PRJ-M-2611-1220",
+    "PRJ20260701018": "PRJ-M-2611-1299",
+    "PRJ-M-2607-0001": "PRJ-M-2611-1201",
+    "PRJ-M-2607-7011": "PRJ-M-2611-1202",
+    "PRJ-M-2607-7012": "PRJ-M-2611-1203",
+    "PRJ-O-2607-0005": "PRJ-O-2611-1201",
+    "PRJ-O-2607-7051": "PRJ-O-2611-1202",
+    "PRJ-O-2607-7052": "PRJ-O-2611-1203",
+    "PRJ-M-2607-0002": "PRJ-M-2611-1204",
+    "PRJ-M-2607-0006": "PRJ-M-2611-1205",
+    "PRJ-M-2607-7021": "PRJ-M-2611-1206",
+    "PRJ-M-2607-7022": "PRJ-M-2611-1207",
+    "PRJ-M-2607-7023": "PRJ-M-2611-1208",
+    "PRJ-M-2607-7024": "PRJ-M-2611-1209",
+    "PRJ-O-2611-4100": "PRJ-O-2611-1204",
+    "PRJ-O-2611-7091": "PRJ-O-2611-1205",
+    "PRJ-O-2611-7092": "PRJ-O-2611-1206",
+    "PRJ-O-2611-7093": "PRJ-O-2611-1207",
+    "PRJ-O-2611-7094": "PRJ-O-2611-1208",
+    "PRJ-O-2611-7095": "PRJ-O-2611-1209",
+    "PRJ-M-2611-0901": "PRJ-M-2611-1210",
+    "PRJ-O-2607-0003": "PRJ-O-2611-1210",
+    "PRJ-M-2607-0004": "PRJ-M-2611-1211",
+    "PRJ-M-2607-7041": "PRJ-M-2611-1212",
+    "PRJ-M-2607-7042": "PRJ-M-2611-1213",
+    "PRJ-M-2607-7043": "PRJ-M-2611-1214",
+    "PRJ-O-2607-0008": "PRJ-O-2611-1211",
+    "PRJ-O-2607-7070": "PRJ-O-2611-1212",
+    "PRJ-O-2607-7071": "PRJ-O-2611-1213",
+    "PRJ-O-2607-7072": "PRJ-O-2611-1214",
+    "PRJ-M-2607-0007": "PRJ-M-2611-1215",
+    "PRJ-M-2607-7061": "PRJ-M-2611-1216",
+    "PRJ-M-2607-7062": "PRJ-M-2611-1217",
+    "PRJ-M-2607-7063": "PRJ-M-2611-1218",
+    "PRJ-M-2607-7064": "PRJ-M-2611-1219",
+    "PRJ-O-2611-4120": "PRJ-O-2611-1215",
+    "PRJ-O-2611-7101": "PRJ-O-2611-1216",
+    "PRJ-O-2611-7102": "PRJ-O-2611-1217",
+    "PRJ-O-2611-7103": "PRJ-O-2611-1218",
+    "PRJ-O-2611-7104": "PRJ-O-2611-1219",
+    "PRJ-M-2607-0009": "PRJ-M-2611-1220",
+    "PRJ-M-2607-7080": "PRJ-M-2611-1221",
+    "PRJ-M-2607-7081": "PRJ-M-2611-1222",
+    "PRJ-O-2611-4140": "PRJ-O-2611-1220",
+    "PRJ-O-2611-7111": "PRJ-O-2611-1221",
+    "PRJ-O-2611-7112": "PRJ-O-2611-1222",
+    "PRJ-O-2611-7113": "PRJ-O-2611-1223",
+    "PRJ-M-2607-0000": "PRJ-O-2611-1224",
+    "PRJ-M-2607-0010": "PRJ-M-2611-1299",
+    "PRJ-M-2607-0003": "PRJ-O-2611-1210",
+    "PRJ-M-2607-0005": "PRJ-O-2611-1211"
+  }, readStore('pbs_project_number_aliases_v1', {}));
   var ACCOUNT_STORE_KEY = 'pbs_managed_accounts_v2';
   var ROLE_PERMS_KEY = 'pbs_role_perms_v1';
 
@@ -1065,16 +1121,55 @@
     localStorage.setItem(key, JSON.stringify(value));
   }
 
-  function nextOfflineOrderNo(value, records) {
+  function numberingDate(value) {
     var date = new Date(value || Date.now());
-    var parts = new Intl.DateTimeFormat('en-GB', {timeZone:'Asia/Shanghai',year:'2-digit',month:'2-digit'}).formatToParts(date);
-    var prefix = 'O-' + parts.find(function(part) { return part.type === 'year'; }).value + parts.find(function(part) { return part.type === 'month'; }).value + '-';
+    if (isNaN(date.getTime())) date = new Date();
+    var parts = new Intl.DateTimeFormat('en-GB', {timeZone:'Asia/Shanghai',year:'numeric',month:'2-digit',day:'2-digit'}).formatToParts(date);
+    return ['year','month','day'].map(function(type) { return parts.find(function(part) { return part.type === type; }).value; }).join('');
+  }
+  function nextOfflineOrderNo(value, records) {
+    var prefix = 'O-' + numberingDate(value);
     var sequence = (records || readStore(PROJECT_STORE_KEY, [])).reduce(function(max, project) {
       var number = String(project.orderNo || '');
       return number.indexOf(prefix) === 0 ? Math.max(max, Number(number.slice(prefix.length)) || 0) : max;
     }, 0) + 1;
-    return prefix + String(sequence).padStart(4, '0');
+    return prefix + String(sequence).padStart(3, '0');
   }
+  function schoolNumberPrefix(source, value) {
+    var date = numberingDate(value);
+    return 'PRJ-' + (source === '线上' || source === 'M' ? 'M' : 'O') + '-' + date.slice(2,6) + '-' + date.slice(6,8);
+  }
+  function nextSchoolNo(source, value, records) {
+    var prefix = schoolNumberPrefix(source,value);
+    var sequence = (records || readStore(PROJECT_STORE_KEY, [])).reduce(function(max, project) {
+      var number = String(project.projectNo || '');
+      return number.indexOf(prefix) === 0 ? Math.max(max, Number(number.slice(prefix.length)) || 0) : max;
+    },0) + 1;
+    return prefix + String(sequence).padStart(2,'0');
+  }
+  (function migrateProjectNumbers() {
+    var list = readStore(PROJECT_STORE_KEY, []), replacements = Object.assign({},PROJECT_NUMBERS,{"O-2607-0001":"O-20261112001","O-2611-0001":"O-20261112002","O-2606-0001":"O-20261112003","O-2607-0002":"O-20261112004","O-2611-0002":"O-20261112005","O-2611-0003":"O-20261112006","O-2607-0003":"O-20261112007"});
+    var used = list.map(function(project) { return Object.assign({},project,{projectNo:PROJECT_NUMBERS[project.projectNo] || project.projectNo,orderNo:replacements[project.orderNo] || project.orderNo}); });
+    list.forEach(function(project,index) {
+      if (!PROJECT_NUMBERS[project.projectNo] && project.projectNo.indexOf(schoolNumberPrefix(project.source,project.createdAt)) !== 0) {
+        replacements[project.projectNo] = used[index].projectNo = nextSchoolNo(project.source,project.createdAt,used);
+        PROJECT_NUMBERS[project.projectNo] = replacements[project.projectNo];
+      }
+      if (project.source === '线下' && !/^O-\d{11}$/.test(project.orderNo || '')) {
+        if (!replacements[project.orderNo]) replacements[project.orderNo] = nextOfflineOrderNo(project.createdAt,used);
+        used[index].orderNo = replacements[project.orderNo];
+      }
+    });
+    function replace(text) { return text.replace(/PRJ-[MO]-\d{4}-\d{4}|PRJ\d{11}|O-\d{4}-\d{4}/g,function(number) { return replacements[number] || number; }); }
+    Object.keys(localStorage).filter(function(key) { return key.indexOf('pbs_') === 0 && key !== 'pbs_project_number_aliases_v1'; }).forEach(function(key) {
+      var value = localStorage.getItem(key), nextKey = replace(key), nextValue = replace(value);
+      if (nextKey !== key || nextValue !== value) { localStorage.setItem(nextKey,nextValue); if (nextKey !== key) localStorage.removeItem(key); }
+    });
+    writeStore('pbs_project_number_aliases_v1',PROJECT_NUMBERS);
+    var params = new URLSearchParams(location.search), changed = false;
+    params.forEach(function(value,key) { var next = replace(value); if (value !== next) { params.set(key,next); changed = true; } });
+    if (changed) history.replaceState(null,'',location.pathname + '?' + params.toString() + location.hash);
+  })();
 
   function ensureProjectOrderNo(record, records) {
     if (record.orderNo) return record.orderNo;
@@ -1124,6 +1219,7 @@
                  status, createdAt, assignedAt, acceptedAt, org } */
   window.pbsProjects = {
     nextOfflineOrderNo: nextOfflineOrderNo,
+    nextSchoolNo: nextSchoolNo,
     canonicalNo: function (value) { return PROJECT_NUMBERS[value] || value; },
     legacyNo: function (value) { return Object.keys(PROJECT_NUMBERS).filter(function(key) { return PROJECT_NUMBERS[key] === value; })[0] || value; },
     all: function () { return readStore(PROJECT_STORE_KEY, []); },
@@ -1142,6 +1238,7 @@
     },
     upsert: function (record) {
       var list = this.all();
+      record.projectNo = this.canonicalNo(record.projectNo) || nextSchoolNo(record.source,record.createdAt,list);
       ensureProjectOrderNo(record, list);
       if (window.pbsStudents) window.pbsStudents.attachProject(record);
       var idx = -1;
@@ -1205,19 +1302,19 @@
     var have = {};
     existing.forEach(function (p) { if (p && p.projectNo) have[p.projectNo] = true; });
     var seeds = [
-      { projectNo: 'PRJ-M-2607-0000', customer: '周海宁', student: '周妍', level: '硕士申请', source: '线上', projectManager: '', pmAccepted: false, status: '待分配', org: 'PBS留学总部', createdAt: '2026-07-01 10:00' },
-      { projectNo: 'PRJ-M-2607-0001', customer: '张建国', student: '张明', level: '本科申请', source: '线上', projectManager: '', pmAccepted: false, status: '待接收', org: 'PBS留学总部', createdAt: '2026-07-03 14:30' },
-      { projectNo: 'PRJ-M-2607-0002', customer: '李慧敏', student: '李雪', level: '硕士申请', source: '线上', projectManager: '张老师', pmAccepted: true, status: '进行中', org: 'PBS留学总部', createdAt: '2026-07-05 09:20' },
-      { projectNo: 'PRJ-O-2607-0003', customer: '王建军', student: '王伟', level: '博士申请', source: '线下', projectManager: '李老师', pmAccepted: true, status: '已结项', org: 'PBS留学总部', createdAt: '2026-06-12 16:40' },
-      { projectNo: 'PRJ-M-2607-0004', customer: '赵文华', student: '赵婷', level: '硕士申请', source: '线上', projectManager: '王老师', pmAccepted: true, status: '进行中', org: 'PBS留学总部', createdAt: '2026-06-28 11:15' },
-      { projectNo: 'PRJ-O-2607-0005', customer: '陈国平', student: '陈晓', level: '本科申请', source: '线下', projectManager: '', pmAccepted: false, status: '待分配', org: 'PBS留学总部', createdAt: '2026-07-08 15:05' }
+      { projectNo: 'PRJ-O-2611-1224', orderNo: 'O-20261112007', customer: '周海宁', student: '周妍', level: '硕士申请', source: '线上', projectManager: '', pmAccepted: false, status: '待分配', org: 'PBS留学总部', createdAt: '2026-07-01 10:00' },
+      { projectNo: 'PRJ-M-2611-1201', orderNo: '20260701001', customer: '张建国', student: '张明', level: '本科申请', source: '线上', projectManager: '', pmAccepted: false, status: '待接收', org: 'PBS留学总部', createdAt: '2026-07-03 14:30' },
+      { projectNo: 'PRJ-M-2611-1204', orderNo: '20260705002', customer: '李慧敏', student: '李雪', level: '硕士申请', source: '线上', projectManager: '张老师', pmAccepted: true, status: '进行中', org: 'PBS留学总部', createdAt: '2026-07-05 09:20' },
+      { projectNo: 'PRJ-O-2611-1210', orderNo: 'O-20261112003', customer: '王建军', student: '王伟', level: '博士申请', source: '线下', projectManager: '李老师', pmAccepted: true, status: '已结项', org: 'PBS留学总部', createdAt: '2026-06-12 16:40' },
+      { projectNo: 'PRJ-M-2611-1211', orderNo: '20260701004', customer: '赵文华', student: '赵婷', level: '硕士申请', source: '线上', projectManager: '王老师', pmAccepted: true, status: '进行中', org: 'PBS留学总部', createdAt: '2026-06-28 11:15' },
+      { projectNo: 'PRJ-O-2611-1201', orderNo: 'O-20261112001', customer: '陈国平', student: '陈晓', level: '本科申请', source: '线下', projectManager: '', pmAccepted: false, status: '待分配', org: 'PBS留学总部', createdAt: '2026-07-08 15:05' }
     ];
     seeds.push(
-      { projectNo: 'PRJ-M-2607-0006', customer: '李慧敏', student: '李雪', level: '硕士申请', source: '线上', projectManager: '张老师', pmAccepted: true, status: '进行中', org: 'PBS留学总部', createdAt: '2026-07-05 09:20' },
-      { projectNo: 'PRJ-M-2607-0007', customer: '陈晨', student: '陈雨桐', level: '硕士申请', source: '线上', projectManager: '张老师', pmAccepted: false, status: '待接收', org: 'PBS留学总部', createdAt: '2026-07-15 14:00' },
-      { projectNo: 'PRJ-O-2607-0008', customer: '刘洋', student: '刘晓', level: '本科申请', source: '线下', projectManager: '张老师', pmAccepted: true, status: '进行中', org: 'PBS留学总部', createdAt: '2026-07-17 11:20' },
-      { projectNo: 'PRJ-M-2607-0009', customer: '王磊', student: '王梓豪', level: '博士申请', source: '线上', projectManager: '李老师', pmAccepted: true, status: '进行中', org: 'PBS留学总部', createdAt: '2026-07-16 10:15' },
-      { projectNo: 'PRJ-M-2607-0010', customer: '赵敏', student: '赵欣怡', level: '本科申请', source: '线上', projectManager: '张老师', pmAccepted: true, status: '已结项', org: 'PBS留学总部', createdAt: '2026-07-10 08:00' }
+      { projectNo: 'PRJ-M-2611-1205', orderNo: '20260705002', customer: '李慧敏', student: '李雪', level: '硕士申请', source: '线上', projectManager: '张老师', pmAccepted: true, status: '进行中', org: 'PBS留学总部', createdAt: '2026-07-05 09:20' },
+      { projectNo: 'PRJ-M-2611-1215', orderNo: '20260701007', customer: '陈晨', student: '陈雨桐', level: '硕士申请', source: '线上', projectManager: '张老师', pmAccepted: false, status: '待接收', org: 'PBS留学总部', createdAt: '2026-07-15 14:00' },
+      { projectNo: 'PRJ-O-2611-1211', orderNo: 'O-20261112004', customer: '刘洋', student: '刘晓', level: '本科申请', source: '线下', projectManager: '张老师', pmAccepted: true, status: '进行中', org: 'PBS留学总部', createdAt: '2026-07-17 11:20' },
+      { projectNo: 'PRJ-M-2611-1220', orderNo: '20260701009', customer: '王磊', student: '王梓豪', level: '博士申请', source: '线上', projectManager: '李老师', pmAccepted: true, status: '进行中', org: 'PBS留学总部', createdAt: '2026-07-16 10:15' },
+      { projectNo: 'PRJ-M-2611-1299', customer: '赵敏', student: '赵欣怡', level: '本科申请', source: '线上', projectManager: '张老师', pmAccepted: true, status: '已结项', org: 'PBS留学总部', createdAt: '2026-07-10 08:00' }
     );
     var added = false;
     seeds.forEach(function (seed) {
@@ -1228,24 +1325,24 @@
     existing.forEach(function(project) {
       var before = project.orderNo || '';
       ensureProjectOrderNo(project, existing);
-      if (/^PRJ-M-2607-/.test(project.projectNo) && !project.orderNo) project.orderNo = '20260701' + project.projectNo.slice(-3);
+      if (project.source === '线上' && !project.orderNo) project.orderNo = '20260701' + String(Number(project.projectNo.slice(-2))).padStart(3,'0');
       if (project.orderNo === 'MERGE-20261109-001') project.orderNo = '20261109901';
-      if (!project.manualCreated && project.source !== '线下' && (project.projectNo === 'PRJ-M-2607-0002' || project.projectNo === 'PRJ-M-2607-0006')) { if (project.orderNo !== '20260705002') { project.orderNo = '20260705002'; added = true; } }
+      if (!project.manualCreated && project.source !== '线下' && (project.projectNo === 'PRJ-M-2611-1204' || project.projectNo === 'PRJ-M-2611-1205')) { if (project.orderNo !== '20260705002') { project.orderNo = '20260705002'; added = true; } }
       if (before !== project.orderNo) { added = true; orderChanges.push({project:project,before:before}); }
       if (!project.subOrderNo) { project.subOrderNo = 'SUB-' + project.projectNo; added = true; }
       if (!project.packages || !project.packages.length) {
-        var second = ['PRJ-M-2607-0006','PRJ-O-2607-0008','PRJ-O-2607-0003'].indexOf(project.projectNo) >= 0;
+        var second = ['PRJ-M-2611-1205','PRJ-O-2611-1211','PRJ-O-2611-1210'].indexOf(project.projectNo) >= 0;
         project.packages = [{ id: second ? 'stanford' : 'cmu', school: second ? '斯坦福大学' : '卡内基梅隆大学', major: second ? '计算机科学' : '人工智能', name: second ? '院校申请套餐' : '尊享申请套餐', services: serviceNames.map(function(name) { return { name: name, price: 0 }; }) }];
         added = true;
       }
       if (project.assignedAt === undefined) { project.assignedAt = project.projectManager ? project.createdAt : ''; added = true; }
-      if (project.projectNo === 'PRJ-M-2607-0002' && !project.goalAssignments && !readStore('pbs_project_assignment_v3_' + project.projectNo, null) && !readStore('pbs_pm_staff_assignment_v3_' + project.projectNo, null) && !readStore('pbs_pm_staff_assignment_v3_' + window.pbsProjects.legacyNo(project.projectNo), null)) {
+      if (project.projectNo === 'PRJ-M-2611-1204' && !project.goalAssignments && !readStore('pbs_project_assignment_v3_' + project.projectNo, null) && !readStore('pbs_pm_staff_assignment_v3_' + project.projectNo, null) && !readStore('pbs_pm_staff_assignment_v3_' + window.pbsProjects.legacyNo(project.projectNo), null)) {
         var docs = {}, reviewers = {}, dates = { CV: '2026-10-08', PS: '2026-10-15', RL: '2026-10-12', RP: '2026-10-20', TCX: '2026-11-01' };
         Object.keys(dates).forEach(function(key) { docs[key] = { person: key === 'RL' ? '陈老师' : '刘老师', ddl: dates[key] }; reviewers[key] = key === 'RL' || key === 'RP' ? '周老师' : '孙老师'; });
         project.goalAssignments = { cmu: { docs: docs, reviewers: reviewers, network: '吴老师', networkMatDdl: '2026-09-25', networkDdl: '2026-11-01', assignedBy: '机构管理员', locked: true } };
         added = true;
       }
-      if (project.projectNo === 'PRJ-M-2607-0002') {
+      if (project.projectNo === 'PRJ-M-2611-1204') {
         if (project.allStaffAssigned === undefined) { project.allStaffAssigned = true; added = true; }
         if (!project.direction) project.direction = '计算机科学 · 人工智能';
       }
@@ -1524,7 +1621,7 @@
     projects.saveAssignment = function(projectNo,goals,note) { var project = this.find(projectNo); if (!project || project.status === '已结项') return null; var allowed = (project.packages || []).filter(function(goal) { return manager(project,goal.id).accepted && (canManage(project) || canHandleGoal(project,goal.id,true)); }); if (!allowed.length) return null; var merged = Object.assign({},this.getAssignment(projectNo).goalAssignments), changed = {}; allowed.forEach(function(goal) { if (goals[goal.id]) { merged[goal.id] = goals[goal.id]; changed[goal.id] = goals[goal.id]; } }); var result = saveAssignment.call(this,projectNo,merged,note); if (result && window.pbsTaskReturn) pbsTaskReturn.resolveProject(result,changed); return result; };
     [{u:'pmo',name:'林老师',role:'PMO',phone:'13800000005'},{u:'pmo_zhou',name:'周老师',role:'PMO',phone:'13800000009'},{u:'pm',name:'张老师',role:'项目经理',phone:'13800000006'},{u:'pm_wang',name:'王老师',role:'项目经理',phone:'13800000007'},{u:'pm_li',name:'李老师',role:'项目经理',phone:'13800000008'}].forEach(function(account) { if (!window.pbsAccounts.find(account.u)) window.pbsAccounts.upsert(Object.assign({},account,{roles:[account.role],org:'PBS留学总部',status:'正常',accountStatus:'启用',accountExpiry:'长期有效',phash:window.pbsAccounts.hashPassword('pbs123456')})); });
     var seeded = readStore(key,{}), changed = false;
-    projects.all().forEach(function(project) { var id = orderKey(project); if (seeded[id] || project.manualCreated || !/^PRJ-[MO]-2607-/.test(project.projectNo)) return; seeded[id] = {events:[]}; if (['PRJ-M-2607-0000','PRJ-O-2607-0005'].indexOf(project.projectNo) < 0) Object.assign(seeded[id],{pmoAccount:'pmo',pmoName:'林老师',assignedBy:'王志强',assignedAt:'2026-10-15T01:00:00.000Z'}); changed = true; });
+    projects.all().forEach(function(project) { var id = orderKey(project); if (seeded[id] || project.manualCreated || !/^PRJ-[MO]-2607-/.test(project.projectNo)) return; seeded[id] = {events:[]}; if (['PRJ-O-2611-1224','PRJ-O-2611-1201'].indexOf(project.projectNo) < 0) Object.assign(seeded[id],{pmoAccount:'pmo',pmoName:'林老师',assignedBy:'王志强',assignedAt:'2026-10-15T01:00:00.000Z'}); changed = true; });
     if (changed) writeStore(key,seeded);
     if (!readStore('pbs_assignment_examples_v4',false)) {
       var examples = [
@@ -1585,6 +1682,7 @@
 
   (function seedOrderExamples() {
     var projects = window.pbsProjects, list = projects.all(), before = JSON.stringify(list), owners = readStore('pbs_order_management_v1', {});
+    var seedPmoPending = !readStore('pbs_pmo_pending_examples_v1',false);
     var pools = {
       us:[['卡内基梅隆大学','人工智能'],['伊利诺伊大学厄巴纳-香槟分校','计算机科学'],['佐治亚理工学院','计算机科学'],['纽约大学','数据科学'],['波士顿大学','计算机科学'],['斯坦福大学','计算机科学']],
       hk:[['香港大学','计算机科学'],['香港中文大学','信息工程'],['香港科技大学','数据科学'],['香港城市大学','计算机科学'],['香港理工大学','人工智能'],['香港浸会大学','计算机科学']],
@@ -1592,21 +1690,21 @@
       sg:[['新加坡国立大学','电子工程'],['南洋理工大学','电子工程'],['新加坡科技设计大学','工程系统与设计'],['新加坡管理大学','信息系统'],['新加坡理工大学','计算机工程'],['新跃社科大学','商业分析']]
     };
     var definitions = [
-      {no:'PRJ-M-2607-0000',count:1,source:'线下',pool:'us'},
-      {no:'PRJ-M-2607-0001',count:3,source:'线上',pool:'us'},
-      {no:'PRJ-M-2607-0002',count:6,source:'线上',pool:'us'},
-      {no:'PRJ-O-2607-0003',count:1,source:'线下',pool:'us'},
-      {no:'PRJ-M-2607-0004',count:4,source:'线上',pool:'us'},
-      {no:'PRJ-O-2607-0005',count:3,source:'线下',pool:'us'},
-      {no:'PRJ-M-2607-0007',count:5,source:'线上',pool:'us'},
-      {no:'PRJ-O-2607-0008',count:4,source:'线下',pool:'au'},
-      {no:'PRJ-M-2607-0009',count:3,source:'线上',pool:'hk'},
-      {no:'PRJ-O-2611-4100',count:6,source:'线下',pool:'us',student:'林瑞安',customer:'林建章',manager:'张老师',accepted:true},
-      {no:'PRJ-O-2611-4120',count:5,source:'线下',pool:'hk',student:'周景然',customer:'周启明',manager:'张老师',accepted:false},
-      {no:'PRJ-O-2611-4140',count:4,source:'线下',pool:'sg',student:'沈星禾',customer:'沈文清',manager:'李老师',accepted:true},
-      {no:'PRJ-M-2611-0901',count:1,source:'线上',pool:'us',student:'档案合并测试',customer:'档案合并测试',manager:'张老师',accepted:true,orderNo:'20261109901',studentId:'STU-ARCHIVE-MERGE'}
+      {"no":"PRJ-M-2611-1201","count":3,"source":"线上","pool":"us","orderNo":"20260701001","pmoPending":true},
+      {"no":"PRJ-O-2611-1201","count":3,"source":"线下","pool":"us","orderNo":"O-20261112001","pmoPending":true},
+      {"no":"PRJ-M-2611-1204","count":6,"source":"线上","pool":"us","orderNo":"20260705002"},
+      {"no":"PRJ-O-2611-1204","count":6,"source":"线下","pool":"us","orderNo":"O-20261112002","student":"林瑞安","customer":"林建章","manager":"张老师","accepted":true},
+      {"no":"PRJ-M-2611-1210","count":1,"source":"线上","pool":"us","orderNo":"20261109901","student":"档案合并测试","customer":"档案合并测试","manager":"张老师","accepted":true,"studentId":"STU-ARCHIVE-MERGE"},
+      {"no":"PRJ-O-2611-1210","count":1,"source":"线下","pool":"us","orderNo":"O-20261112003"},
+      {"no":"PRJ-M-2611-1211","count":4,"source":"线上","pool":"us","orderNo":"20260701004"},
+      {"no":"PRJ-O-2611-1211","count":4,"source":"线下","pool":"au","orderNo":"O-20261112004"},
+      {"no":"PRJ-M-2611-1215","count":5,"source":"线上","pool":"us","orderNo":"20260701007"},
+      {"no":"PRJ-O-2611-1215","count":5,"source":"线下","pool":"hk","orderNo":"O-20261112005","student":"周景然","customer":"周启明","manager":"张老师","accepted":false},
+      {"no":"PRJ-M-2611-1220","count":3,"source":"线上","pool":"hk","orderNo":"20260701009"},
+      {"no":"PRJ-O-2611-1220","count":4,"source":"线下","pool":"sg","orderNo":"O-20261112006","student":"沈星禾","customer":"沈文清","manager":"李老师","accepted":true},
+      {"no":"PRJ-O-2611-1224","count":1,"source":"线下","pool":"us","orderNo":"O-20261112007"}
     ];
-    function example(record) { return !record.manualCreated && (record.orderDemo || /^PRJ-[MO]-2607-\d{4}$/.test(record.projectNo) || /^PRJ-M-2610-(?:00[234]\d|6\d{3})$/.test(record.projectNo) || /^PRJ-O-2611-41\d{2}$/.test(record.projectNo) || record.projectNo === 'PRJ-M-2611-0901'); }
+    function example(record) { return !record.manualCreated && (record.orderDemo || Object.values(PROJECT_NUMBERS).indexOf(record.projectNo) >= 0 || /^PRJ-M-2610-(?:00[234]\d|6\d{3})$/.test(record.projectNo)); }
     function services(index) {
       var names = index % 3 === 0 ? ['CV','PS','RP','RL','套磁信'] : index % 3 === 1 ? ['CV','PS','RL'] : ['CV','PS','RP','RL'];
       return names.map(function(name,i) { return {name:name,price:1800 + i * 600 + index * 200,paid:index % 3 !== 2 || i === 0}; }).concat([{name:'网申提交证明',price:3800 + index * 400,paid:index % 3 !== 2},{name:'网申结果',price:1200,paid:index % 3 === 0},{name:'结项报告',price:1000,paid:index % 3 === 0}]);
@@ -1622,35 +1720,41 @@
     definitions.forEach(function(def,index) {
       var anchor = list.find(function(record) { return record.projectNo === def.no; });
       if (!anchor) {
-        var created = def.no === 'PRJ-M-2611-0901' ? '2026-11-09 09:00' : '2026-11-12 ' + String(10 + index % 3).padStart(2,'0') + ':00';
+        var created = '2026-11-12 ' + String(9 + Math.floor(index / 6)).padStart(2,'0') + ':' + String(index % 6 * 10).padStart(2,'0');
         anchor = {projectNo:def.no,orderNo:def.orderNo || nextOfflineOrderNo(created,list),studentId:def.studentId,customer:def.customer,student:def.student,level:'硕士申请',source:def.source,org:'PBS留学总部',createdAt:created,assignedAt:created,projectManager:def.manager || '',pmAccepted:!!def.accepted,status:def.accepted ? '进行中' : def.manager ? '待接收' : '待分配',orderDemo:true,packages:[goal(pools[def.pool][0],0,def.pool + '-1')]};
         staff(anchor); list.push(anchor);
       }
-      var previous = anchor.orderNo, orderNo = def.source === '线下' ? /^O-/.test(previous) ? previous : nextOfflineOrderNo(anchor.createdAt,list) : /^\d+$/.test(previous) ? previous : def.orderNo || '20261112' + String(200 + index);
+      var previous = anchor.orderNo, orderNo = def.source === '线下' ? def.orderNo : /^\d+$/.test(previous) ? previous : def.orderNo;
       var members = list.filter(function(record) { return record.org === anchor.org && record.orderNo === previous && !record.manualCreated; });
       members.sort(function(a,b) { return a.projectNo === def.no ? -1 : b.projectNo === def.no ? 1 : a.projectNo.localeCompare(b.projectNo); });
       var selected = [], schools = {};
       members.forEach(function(record) { var item = (record.packages || [])[0]; if (selected.length >= def.count || !item || schools[item.school]) return; record.packages = [item]; if (!item.services || !item.services.length) item.services = services(selected.length); schools[item.school] = true; selected.push(record); });
       pools[def.pool].forEach(function(target,i) {
         if (selected.length >= def.count || schools[target[0]]) return;
-        var projectNo = def.no.slice(0,-4) + String(7000 + index * 10 + i), existing = list.find(function(record) { return record.projectNo === projectNo; });
+        var projectNo = def.no.slice(0,-2) + String(Number(def.no.slice(-2)) + selected.length).padStart(2,'0'), existing = list.find(function(record) { return record.projectNo === projectNo; });
         var record = existing || {projectNo:projectNo,orderNo:previous,studentId:anchor.studentId,customer:anchor.customer,student:anchor.student,studentData:anchor.studentData,customerData:anchor.customerData,level:anchor.level,org:anchor.org,createdAt:anchor.createdAt,assignedAt:anchor.assignedAt,projectManager:anchor.projectManager || '',pmAccepted:!!anchor.pmAccepted,status:anchor.status,orderDemo:true,packages:[goal(target,i,def.pool + '-' + (i + 1))]};
         if (!existing) { staff(record); list.push(record); }
         schools[target[0]] = true; selected.push(record);
       });
       selected.forEach(function(record) {
         if (record.orderNo !== orderNo) sourceChanges.push({project:record,before:record.orderNo});
-        record.orderNo = orderNo; record.source = def.source; record.sourceChannel = def.source === '线上' ? '商城订单' : '线下签约'; record.orderDemo = true; keep[record.projectNo] = true;
+        record.orderNo = orderNo; record.source = def.source; record.sourceChannel = def.source === '线上' ? '商城订单' : '线下签约'; record.orderDemo = true; record.demoOrder = index; record.createdAt = '2026-11-12 ' + String(9 + Math.floor(index / 6)).padStart(2,'0') + ':' + String(index % 6 * 10).padStart(2,'0'); keep[record.projectNo] = true;
         if (record.customerData) record.customerData.source = record.sourceChannel;
         if (def.source === '线上') record.packages.forEach(function(item,i) { if (item.materialDdl === undefined) item.materialDdl = record.projectNo.indexOf('2607-') >= 0 && item.id === 'cmu' ? '2026-09-28' : record.projectNo.indexOf('2607-') >= 0 && item.id === 'stanford' ? '2026-11-10' : new Date(Date.UTC(2026,11,15 + i)).toISOString().slice(0,10); if (item.appDdl === undefined) item.appDdl = record.projectNo.indexOf('2607-') >= 0 && item.id === 'cmu' ? '2026-10-25' : record.projectNo.indexOf('2607-') >= 0 && item.id === 'stanford' ? '2027-01-05' : new Date(Date.UTC(2027,0,15 + i)).toISOString().slice(0,10); });
       });
       var ownerKey = anchor.org + '::ORDER:' + orderNo;
       if (!owners[ownerKey]) owners[ownerKey] = anchor.projectManager ? {pmoAccount:'pmo',pmoName:'林老师',pmoAccepted:true,assignedBy:'王志强',assignedAt:anchor.createdAt,events:[]} : {events:[]};
+      if (def.pmoPending && seedPmoPending) {
+        var assignedAt = index === 0 ? '2026-11-12T02:00:00.000Z' : '2026-11-12T02:15:00.000Z';
+        Object.assign(owners[ownerKey],{pmoAccount:'pmo',pmoName:'林老师',pmoAccepted:false,acceptedAt:'',assignedBy:'王志强',assignedAt:assignedAt});
+        selected.forEach(function(record) { if (record.status !== '已结项') record.status = '待接收'; });
+      }
     });
     var removed = list.filter(function(record) { return example(record) && !keep[record.projectNo]; });
     list = list.filter(function(record) { return !example(record) || keep[record.projectNo]; });
     if (JSON.stringify(list) !== before) projects.save(list);
     writeStore('pbs_order_management_v1',owners); migrateProjectOrderLinks(sourceChanges);
+    if (seedPmoPending) writeStore('pbs_pmo_pending_examples_v1',true);
     var profiles = readStore('pbs_student_profiles_v1',[]), activeIds = list.map(function(record) { return record.studentId; }), removedIds = removed.map(function(record) { return record.studentId; }).filter(Boolean);
     profiles = profiles.filter(function(profile) { return profile.kind === 'preliminary' || removedIds.indexOf(profile.id) < 0 || activeIds.indexOf(profile.id) >= 0; });
     if (!profiles.some(function(profile) { return profile.id === 'STU-ARCHIVE-MERGE'; })) profiles.push({id:'STU-ARCHIVE-MERGE',name:'档案合并测试',org:'PBS留学总部',demo:true,student:{name:'档案合并测试',level:'硕士申请',gender:'女',birth:'2003-05-18',phone:'13800007001',country:'美国',major:'人工智能'},customer:{name:'档案合并测试',relation:'本人',phone:'13800007001',source:'商城订单'},orderNos:['20261109901'],sections:{},logs:[],createdAt:'2026-11-09T09:00:00+08:00',updatedAt:'2026-11-09T09:00:00+08:00'});
@@ -2343,7 +2447,7 @@
   var NOTIFICATION_STORE_KEY = 'pbs_notifications_v2';
   var NOTIFICATION_READ_KEY = 'pbs_notification_read_v3';
   var NOTIFICATION_SEEDS = [
-    { id: 'order-created-prj-m-2607-0000', kind: 'order_created', type: '新项目待分配', title: '新项目进入项目池，等待分配', business: 'PRJ-M-2607-0000 · 周海宁 / 周妍', detail: '线上订单创建成功，请为项目分配项目经理。', time: '10 分钟前', triggeredAt: '2026-08-21 10:30:00', level: 'warning', recipientRoles: ['机构管理员'], organization: 'PBS留学总部', href: '项目池列表页 - 留学申请管理系统.html' },
+    { id: 'order-created-prj-m-2607-0000', kind: 'order_created', type: '新项目待分配', title: '新项目进入项目池，等待分配', business: 'PRJ-O-2611-1224 · 周海宁 / 周妍', detail: '线上订单创建成功，请为项目分配项目经理。', time: '10 分钟前', triggeredAt: '2026-08-21 10:30:00', level: 'warning', recipientRoles: ['机构管理员'], organization: 'PBS留学总部', href: '项目池列表页 - 留学申请管理系统.html' },
     { id: 'task-assigned-writer-cmu-ps', kind: 'task_assigned', type: '任务派发提醒', title: '新的 PS 文书任务已分配给你', business: '李雪 · 卡内基梅隆大学 · PS 个人陈述', detail: '项目经理王强已完成任务派发，请查看任务要求与交付 DDL。', time: '18 分钟前', triggeredAt: '2026-08-21 10:22:00', level: 'primary', recipientRoles: ['文书人员'], organization: 'PBS留学总部', href: '任务列表页 - 文书交付系统.html' },
     { id: 'task-assigned-review-cmu-ps', kind: 'task_assigned', type: '任务派发提醒', title: '新的文书审核任务已分配给你', business: '李雪 · 卡内基梅隆大学 · PS 个人陈述', detail: '请在文书交付人员提交后完成审核。', time: '22 分钟前', triggeredAt: '2026-08-21 10:18:00', level: 'primary', recipientRoles: ['文书审核'], organization: 'PBS留学总部', href: '文书审核列表页 - 留学申请管理系统.html' },
     { id: 'task-assigned-apply-cmu', kind: 'task_assigned', type: '任务派发提醒', title: '新的网申任务已分配给你', business: '李雪 · 卡内基梅隆大学 · 网申提交', detail: '请预扫描申请官网，并核对字段与申请材料。', time: '25 分钟前', triggeredAt: '2026-08-21 10:15:00', level: 'primary', recipientRoles: ['网申人员'], organization: 'PBS留学总部', href: '网申任务列表页 - 留学申请管理系统.html' },
@@ -2970,11 +3074,11 @@
     var projectList = document.body.classList.contains('pbs-project-list-page');
     var link = document.createElement('link');
     link.rel = 'stylesheet';
-    link.href = './assets/css/pbs-advanced-filter.css?v=6.6';
+    link.href = './assets/css/pbs-advanced-filter.css?v=6.7';
     var styleReady = new Promise(function(resolve) { link.onload = resolve; link.onerror = resolve; });
     document.head.appendChild(link);
     var script = document.createElement('script');
-    script.src = './assets/js/pbs-advanced-filter.js?v=7.2';
+    script.src = './assets/js/pbs-advanced-filter.js?v=7.8';
     script.onload = function () {
       if (window.PBSAdvancedFilter) {
         window.PBSAdvancedFilter.mount({ file: file, controlSelector: FILTER_PAGE_CONTROLS[file] });

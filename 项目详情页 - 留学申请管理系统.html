@@ -213,7 +213,7 @@
           </div>
           <div>
             <span class="text-sm text-gray-500">院校号</span>
-            <p id="projectContextNo" class="text-lg font-semibold text-gray-900">PRJ-M-2607-0002</p>
+            <p id="projectContextNo" class="text-lg font-semibold text-gray-900">PRJ-M-2611-1204</p>
           </div>
           <div>
             <span class="text-sm text-gray-500">客户姓名</span>
@@ -262,7 +262,7 @@
           <div class="grid grid-cols-2 gap-x-6 gap-y-3 text-sm">
             <div><p class="text-blue-200 text-xs mb-0.5">联系电话</p><p id="projectContextCustomerPhone" class="font-medium">139****1111</p></div>
             <div><p class="text-blue-200 text-xs mb-0.5">微信号</p><p id="projectContextWechat" class="font-medium">zjg2026</p></div>
-            <div><p class="text-blue-200 text-xs mb-0.5">院校号</p><p id="projectContextNoCard" class="font-medium">PRJ-M-2607-0002</p></div>
+            <div><p class="text-blue-200 text-xs mb-0.5">院校号</p><p id="projectContextNoCard" class="font-medium">PRJ-M-2611-1204</p></div>
             <div><p class="text-blue-200 text-xs mb-0.5">来源渠道</p><p id="projectContextSource" class="font-medium">官网表单</p></div>
             <div><p class="text-blue-200 text-xs mb-0.5">创建时间</p><p id="projectContextCreated" class="font-medium">2026-07-01</p></div>
           </div>
@@ -559,7 +559,7 @@
           <div class="flex items-start gap-3 p-2 bg-white rounded-lg">
             <div class="w-2 h-2 bg-red-500 rounded-full mt-1.5 flex-shrink-0"></div>
             <div>
-              <p class="text-sm text-gray-900">项目 PRJ20260701001 状态已更新为"分配中"</p>
+              <p class="text-sm text-gray-900">项目 PRJ-M-2611-1201 状态已更新为"分配中"</p>
               <p class="text-xs text-gray-400 mt-0.5">2 分钟前</p>
             </div>
           </div>
@@ -587,7 +587,7 @@
     </div>
   </div>
 
-  <script src="./assets/js/pbs-app.js?v=9.0"></script>
+  <script src="./assets/js/pbs-app.js?v=9.8"></script>
   <script src="./assets/js/pbs-identity.js?v=1.0"></script>
   <script src="./assets/js/pbs-student-data.js?v=1.5"></script>
   <script>
@@ -891,16 +891,16 @@
     }
 
     var PROJECT_CONTEXTS = {
-      'PRJ-M-2607-0000': { projectNo: 'PRJ-M-2607-0000', customer: '周海宁', student: '周妍', level: '硕士申请', defaultManager: '' },
-      'PRJ-M-2607-0001': { projectNo: 'PRJ-M-2607-0001', customer: '张建国', student: '张明', level: '本科申请', defaultManager: '王老师' },
-      'PRJ-M-2607-0002': { projectNo: 'PRJ-M-2607-0002', customer: '李慧敏', student: '李雪', level: '硕士申请', defaultManager: '张老师' },
-      'PRJ-O-2607-0003': { projectNo: 'PRJ-O-2607-0003', customer: '王建军', student: '王伟', level: '博士申请', defaultManager: '李老师' },
-      'PRJ-M-2607-0004': { projectNo: 'PRJ-M-2607-0004', customer: '赵文华', student: '赵婷', level: '硕士申请', defaultManager: '王老师' },
-      'PRJ-O-2607-0005': { projectNo: 'PRJ-O-2607-0005', customer: '陈国平', student: '陈晓', level: '本科申请', defaultManager: '' }
+      'PRJ-O-2611-1224': { projectNo: 'PRJ-O-2611-1224', customer: '周海宁', student: '周妍', level: '硕士申请', defaultManager: '' },
+      'PRJ-M-2611-1201': { projectNo: 'PRJ-M-2611-1201', customer: '张建国', student: '张明', level: '本科申请', defaultManager: '王老师' },
+      'PRJ-M-2611-1204': { projectNo: 'PRJ-M-2611-1204', customer: '李慧敏', student: '李雪', level: '硕士申请', defaultManager: '张老师' },
+      'PRJ-O-2611-1210': { projectNo: 'PRJ-O-2611-1210', customer: '王建军', student: '王伟', level: '博士申请', defaultManager: '李老师' },
+      'PRJ-M-2611-1211': { projectNo: 'PRJ-M-2611-1211', customer: '赵文华', student: '赵婷', level: '硕士申请', defaultManager: '王老师' },
+      'PRJ-O-2611-1201': { projectNo: 'PRJ-O-2611-1201', customer: '陈国平', student: '陈晓', level: '本科申请', defaultManager: '' }
     };
-    var requestedProjectNo = window.pbsProjects.canonicalNo(new URLSearchParams(location.search).get('project') || 'PRJ-M-2607-0002');
+    var requestedProjectNo = window.pbsProjects.canonicalNo(new URLSearchParams(location.search).get('project') || 'PRJ-M-2611-1204');
     var sharedProject = window.pbsProjects.find(requestedProjectNo);
-    var PROJECT_CONTEXT = Object.assign({}, PROJECT_CONTEXTS[requestedProjectNo] || PROJECT_CONTEXTS['PRJ-M-2607-0002']);
+    var PROJECT_CONTEXT = Object.assign({}, PROJECT_CONTEXTS[requestedProjectNo] || PROJECT_CONTEXTS['PRJ-M-2611-1204']);
     if (sharedProject) {
       PROJECT_CONTEXT = Object.assign(PROJECT_CONTEXT, sharedProject, { defaultManager: sharedProject.projectManager || '' });
     }

@@ -11,20 +11,20 @@
     return field(label, 'countdown', ['剩3天', '剩7天', '剩14天', '其他']);
   }
 
-  var levels = ['本科申请', '硕士申请', '博士申请', '本硕连读申请'];
+  var levels = ['本科申请', '硕士申请', '博士申请'];
   var organizations = ['PBS留学总部', '上海启明留学', '北京知行教育'];
   var documentStatus = field('文书状态', 'checks', ['待撰写', '撰写中', '待审核', '审核中', '需修改', '已完成', '已结项']);
   var PAGES = {
-    '学生档案列表页 - 留学申请管理系统.html': [field('申请层次', 'checks', levels), field('项目号', 'multi'), field('院校号', 'multi'), field('客户姓名', 'multi'), field('学生姓名', 'multi'), field('院校目标数', 'range', null, { min: 0, max: 10, unit: '所' })],
-    '项目池列表页 - 留学申请管理系统.html': [field('项目状态', 'checks', ['待分配', '待接收', '进行中', '已结项']), field('申请层次', 'checks', levels), field('项目号', 'multi'), field('院校号', 'multi'), field('项目经理', 'multi'), field('客户姓名', 'multi'), field('学生姓名', 'multi'), field('分配时间', 'date'), field('订单创建时间', 'date')],
-    '我的项目列表页 - 留学申请管理系统.html': [field('申请层次', 'checks', levels), field('项目状态', 'checks', ['待分配', '待接收', '进行中', '已结项']), field('项目经理', 'multi'), field('项目号', 'multi'), field('院校号', 'multi'), field('客户姓名', 'multi'), field('学生姓名', 'multi'), field('分配时间', 'date')],
+    '学生档案列表页 - 留学申请管理系统.html': [field('申请层次', 'checks', levels.slice(0, 3)), field('项目号', 'multi'), field('院校号', 'multi'), field('客户姓名', 'multi'), field('学生姓名', 'multi'), field('院校目标数', 'range', null, { min: 0, max: 10, unit: '所' })],
+    '项目池列表页 - 留学申请管理系统.html': [field('项目状态', 'checks', ['待分配', '待接收', '进行中', '已结项']), field('申请层次', 'checks', levels.slice(0, 3)), field('项目号', 'multi'), field('院校号', 'multi'), field('PMO', 'multi'), field('项目经理', 'multi'), field('客户姓名', 'multi'), field('学生姓名', 'multi'), field('分配时间', 'date'), field('订单创建时间', 'date')],
+    '我的项目列表页 - 留学申请管理系统.html': [field('申请层次', 'checks', levels), field('项目状态', 'checks', ['待分配', '待接收', '进行中', '已结项']), field('PMO', 'multi'), field('项目经理', 'multi'), field('项目号', 'multi'), field('院校号', 'multi'), field('客户姓名', 'multi'), field('学生姓名', 'multi'), field('分配时间', 'date')],
     '任务列表页 - 文书交付系统.html': [documentStatus, field('文书类型', 'checks', ['PS', 'CV', 'RL', 'RP', 'CL']), countdown('DDL倒计时'), field('文书交付人员', 'multi'), field('客户姓名', 'multi'), field('学生姓名', 'multi'), field('学校', 'multi'), field('专业', 'multi'), field('当前环节滞留时长', 'range', null, { min: 0, max: 30, unit: '天', aliases: ['任务停留时长'] })],
     '模板库列表 - 文书交付系统.html': [field('文书类型', 'checks', ['PS', 'CV', 'RL', 'RP', 'CL']), field('申请层次', 'checks', levels.slice(0, 3)), field('所属机构', 'checks', organizations)],
     '案例库 - 文书交付系统.html': [field('文书类型', 'checks', ['PS', 'CV', 'RL', 'RP', 'CL', '推荐信']), field('申请层次', 'checks', levels.slice(0, 3)), field('解析状态', 'checks', ['已解析', '解析中', '未解析', '解析失败', '已归档']), field('所属机构', 'checks', organizations), field('作者', 'multi', null, { dataKeys: ['uploader', 'author'] }), field('机构', 'multi', null, { dataKeys: ['org'] }), field('申请方向', 'multi', null, { dataKeys: ['direction'] }), field('录取院校', 'multi', null, { dataKeys: ['school'] }), field('来源学生', 'multi', null, { dataKeys: ['student'] }), field('关联模板', 'multi', null, { dataKeys: ['template'] })],
     '文书审核列表页 - 留学申请管理系统.html': [documentStatus, field('文书类型', 'checks', ['PS', 'CV', 'RL', 'RP', 'CL']), countdown('DDL倒计时'), field('客户姓名', 'multi'), field('学生姓名', 'multi'), field('文书审核人员', 'multi'), field('提交人', 'multi')],
     '网申任务列表页 - 留学申请管理系统.html': [field('网申状态', 'checks', ['未开始', '待领取', '进行中', '审核中', '已提交']), field('申请轮次', 'checks', ['Round 1', 'Round 2', 'Round 3', 'Round 4', 'Round 5', '更多']), countdown('DDL倒计时'), field('客户姓名', 'multi'), field('学生姓名', 'multi'), field('专业', 'multi'), field('学校', 'multi'), field('网申人员', 'multi'), field('当前环节滞留时长', 'range', null, { min: 0, max: 30, unit: '天', aliases: ['任务停留时长'] }), field('材料缺失数量', 'missing', ['<20%', '<40%', '其他'], { aliases: ['材料齐备度'] })],
     '网申模板库 - 留学申请管理系统.html': [field('所属机构', 'checks', organizations, { aliases: ['归属机构'] })],
-    '监控任务列表 - PBS留学CRM.html': [field('客户姓名', 'multi'), field('学生姓名', 'multi'), field('监控频率', 'checks', ['每小时', '每6小时', '每12小时', '每天', '每周']), field('监控状态', 'checks', ['监控中', '已暂停', '异常']), field('上次监控时间', 'date')],
+    '监控任务列表 - PBS留学CRM.html': [field('项目号', 'multi'), field('院校号', 'multi'), field('客户姓名', 'multi'), field('学生姓名', 'multi'), field('监控频率', 'checks', ['每小时', '每6小时', '每12小时', '每天', '每周']), field('监控状态', 'checks', ['监控中', '已暂停', '异常']), field('上次监控时间', 'date')],
     '结项归档列表 - PBS留学CRM系统.html': [field('项目号', 'multi'), field('院校号', 'multi'), field('客户姓名', 'multi'), field('学生姓名', 'multi'), field('申请层次', 'checks', levels.slice(0, 3)), field('结项状态', 'radios', ['待结项', '已结项'])],
     '选校任务列表页 - 留学申请管理系统.html': [field('咨询状态', 'checks', ['未选校', '咨询中', '已发送', '已结单']), field('项目号', 'multi'), field('销售人员', 'multi'), field('学生姓名', 'multi'), field('意向国家', 'multi'), field('意向专业', 'multi'), field('申请层次', 'checks', levels.slice(0, 3)), field('创建时间段', 'date', null, { aliases: ['创建时间'], dataKeys: ['time'] })],
     '机构管理 - PBS留学CRM系统.html': [field('机构名称', 'multi'), field('机构成员', 'range', null, { min: 0, max: 100, unit: '人' }), field('创建时间', 'date')],
@@ -34,7 +34,7 @@
 
   var DATA_KEYS = {
     '院校号': ['project'], '项目号': ['order'], '服务单号': ['project'], '客户姓名': ['customer', 'name'], '学生姓名': ['student', 'applicant', 'name'],
-    '项目经理': ['pm'], '文书交付人员': ['writer'], '学校': ['school'], '专业': ['major'],
+    'PMO': ['pmo'], '项目经理': ['pm'], '文书交付人员': ['writer'], '学校': ['school'], '专业': ['major'],
     '文书审核人员': ['reviewer'], '提交人': ['person'], '网申人员': ['person'], '销售人员': ['sales'],
     '意向国家': ['country'], '意向专业': ['major'], '所属机构': ['org', 'organization'], '姓名': ['name']
   };
@@ -65,7 +65,7 @@
   }
   function valueOf(row, config, map) {
     if (global.pbsProjectList) {
-      var projectKey = { '院校号': 'project', '项目号': 'order', '客户姓名': 'name', '学生姓名': 'student', '项目经理': 'pm', '项目状态': 'status', '申请层次': 'level', '分配时间': 'time', '订单创建时间': 'created' }[config.label];
+      var projectKey = { '院校号': 'project', '项目号': 'order', '客户姓名': 'name', '学生姓名': 'student', 'PMO': 'pmo', '项目经理': 'pm', '项目状态': 'status', '申请层次': 'level', '分配时间': 'time', '订单创建时间': 'created' }[config.label];
       if (projectKey) return row.dataset[projectKey] || '';
     }
     var numberKey = { '项目号':'order', '院校号':'project', '服务单号':'project' }[config.label];
@@ -83,6 +83,11 @@
     var values = (config.options || []).slice();
     if (!values.length) sourceRows.forEach(function (row) {
       var value = valueOf(row, config, map);
+      var numberKey = { '项目号': 'order', '院校号': 'project' }[config.label];
+      if (numberKey && row.hasAttribute('data-' + numberKey)) {
+        String(value || '').split(/\s+/).forEach(function (number) { if (number && values.indexOf(number) < 0) values.push(number); });
+        return;
+      }
       if (value && value.length < 80 && values.indexOf(value) < 0) values.push(value);
     });
     return values;

@@ -335,7 +335,7 @@
           <div class="flex items-start gap-3 p-2 bg-white rounded-lg">
             <div class="w-2 h-2 bg-red-500 rounded-full mt-1.5 flex-shrink-0"></div>
             <div>
-              <p class="text-sm text-gray-900">项目 PRJ-M-2607-0001 状态已更新为"进行中"</p>
+              <p class="text-sm text-gray-900">项目 PRJ-M-2611-1201 状态已更新为"进行中"</p>
               <p class="text-xs text-gray-400 mt-0.5">2 分钟前</p>
             </div>
           </div>
@@ -743,10 +743,7 @@
       if (!ok) return;
 
       var now = new Date();
-      var yy = String(now.getFullYear()).slice(2);
-      var mm = String(now.getMonth() + 1).padStart(2, '0');
-      var seq = String(Math.floor(Math.random() * 9000) + 1000);
-      var projectNo = 'PRJ-O-' + yy + mm + '-' + seq;
+      var projectNo = window.pbsProjects.nextSchoolNo('线下',now);
       var createdAt = now.getFullYear() + '-' + String(now.getMonth() + 1).padStart(2, '0') + '-' + String(now.getDate()).padStart(2, '0') + ' ' + String(now.getHours()).padStart(2, '0') + ':' + String(now.getMinutes()).padStart(2, '0');
       var projectManager = currentProjectManagerName();
       var projects = readOfflineProjects();
@@ -774,8 +771,12 @@
         packages: packages,
         createdAt: createdAt
       };
-      projects.push(project);
-      window.pbsProjects.upsert(project);
+      packages.forEach(function(item,index) {
+        var number = index ? window.pbsProjects.nextSchoolNo('线下',now) : projectNo;
+        var record = Object.assign({},project,{projectNo:number,subOrderNo:'SUB-' + number,packages:[Object.assign({id:'goal-' + (index + 1)},item)]});
+        window.pbsProjects.upsert(record);
+        projects.push(record);
+      });
       localStorage.setItem(OFFLINE_PROJECTS_KEY, JSON.stringify(projects));
       if (window.pbsRecordOperation) {
         window.pbsRecordOperation('项目管理', '新增', '新建线下项目档案：' + projectNo);
@@ -787,16 +788,16 @@
       renderOrderReferences();
       if (window.pbsPreArchive) pbsPreArchive.afterProjectCreated(window.pbsProjects.find(projectNo));
       applyFilter();
-      showToast('项目号：' + project.orderNo + '，院校号：' + projectNo);
+      showToast('项目号：' + project.orderNo + '，已创建 ' + packages.length + ' 个院校目标');
     }
     function closeNotificationModal() {
       document.getElementById('notificationModal').classList.add('hidden');
     }
   </script>
-  <script src="./assets/js/pbs-app.js?v=9.0"></script>
+  <script src="./assets/js/pbs-app.js?v=9.8"></script>
   <script src="./assets/js/pbs-identity.js?v=1.0"></script>
   <script src="./assets/js/pbs-student-data.js?v=1.6"></script>
-  <script src="./assets/js/pbs-project-list.js?v=3.0"></script>
+  <script src="./assets/js/pbs-project-list.js?v=3.3"></script>
 
 
 

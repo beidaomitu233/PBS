@@ -205,7 +205,7 @@
         if (schools.size > 1) shared = true;
         return '<div class="monitor-order-summary"><span>' + esc(order) + '</span><small>共 ' + schools.size + ' 个院校</small></div>';
       }).join('');
-      return '<tr>' +
+      return '<tr data-order="' + esc(orders.filter(function(order) { return order !== '—'; }).join(' ')) + '" data-project="' + esc(projects.map(function(project) { return project.projectNo; }).join(' ')) + '">' +
         '<td class="monitor-order' + (shared ? ' is-shared' : '') + '">' + (orderNumbers || '—') + '</td>' +
         '<td class="monitor-project-number">' + (projects.length ? projects.map(function(project) { return esc(project.projectNo); }).join('<br>') : '—') + '</td>' +
         '<td><div class="monitor-person"><strong>' + esc(item.customer) + '</strong></div></td>' +
@@ -216,6 +216,7 @@
         '<td><button class="monitor-link" onclick="pbsMonitor.openDetail(' + item.id + ')">进入监控详情</button></td>' +
       '</tr>';
     }).join('');
+    if (window.PBSAdvancedFilter && window.PBSAdvancedFilter.refresh) window.PBSAdvancedFilter.refresh();
   }
 
   function resetListFilters() {

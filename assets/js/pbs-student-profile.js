@@ -15,19 +15,25 @@
     var groups = {};
     linked.forEach(function(project) { var key = project.orderNo || ''; (groups[key] || (groups[key] = [])).push(project); });
     var keys = Object.keys(groups);
-    return keys.map(function(key) { return (keys.length > 1 ? '<p class="pbs-profile-order">' + esc(key ? '商城订单 ' + key : '线下项目') + '</p>' : '') + groups[key].map(projectHtml).join(''); }).join('');
+    return keys.map(function(key) { return (keys.length > 1 ? '<p class="pbs-profile-order">' + esc(key ? '项目号 ' + key : '—') + '</p>' : '') + groups[key].map(projectHtml).join(''); }).join('');
   }
   function renderList() {
     var profiles = api.visible(), table = listBody.closest('table');
     table.classList.add('pbs-profile-table');
-    table.querySelector('thead tr').innerHTML = ['序号', '关联商城订单', '关联项目与院校目标', '学生姓名', '客户姓名', '申请层次', '最近修改时间', '操作'].map(function(label) { return '<th>' + label + '</th>'; }).join('');
+    table.querySelector('thead tr').innerHTML = ['序号', '项目号', '院校号', '学生姓名', '客户姓名', '申请层次', '最近修改时间', '操作'].map(function(label) { return '<th>' + label + '</th>'; }).join('');
     listBody.innerHTML = profiles.map(function(profile, index) {
       var linked = api.projects(profile.id), orders = Array.from(new Set(linked.map(function(p) { return p.orderNo; }).filter(Boolean))), levels = Array.from(new Set(linked.map(function(p) { return p.level; }))), targets = linked.reduce(function(total, p) { return total + (p.packages || []).length; }, 0), customers = Array.from(new Set(linked.map(function(p) { return p.customer; })));
       if (!levels.length) levels = [profile.student.level || '—'];
       if (!customers.length) customers = [profile.customer.name || '—'];
       var related = relatedProjectsHtml(linked);
-      var sharedOrder = orders.some(function(order) { return linked.filter(function(project) { return project.orderNo === order; }).length > 1; });
-      return '<tr data-kw="' + esc([profile.name, profile.id, customers.join(' '), orders.join(' '), linked.map(function(p) { return p.projectNo + ' ' + (p.packages || []).map(function(item) { return item.school + ' ' + item.major; }).join(' '); }).join(' ')].join(' ')) + '" data-name="' + esc(customers.join('、')) + '" data-applicant="' + esc(profile.name) + '" data-project="' + esc(linked.map(function(p) { return p.projectNo; }).join('、')) + '" data-level="' + esc(levels.join('、')) + '" data-targets="' + targets + '"><td>' + (index + 1) + '</td><td class="pbs-profile-order-cell' + (sharedOrder ? ' pbs-profile-order-shared' : '') + '">' + (orders.length ? orders.map(esc).join('<br>') : '—') + '</td><td>' + related + '</td><td><a href="' + url(profile.id) + '">' + esc(profile.name) + '</a></td><td>' + esc(customers.join('、')) + '</td><td>' + esc(levels.join('、')) + '</td><td>' + time(profile.updatedAt) + '</td><td><a href="' + url(profile.id) + '">查看档案</a></td></tr>';
+      var sharedOrder = false;
+      var orderNumbers = orders.map(function(order) {
+        var schools = new Set();
+        linked.filter(function(project) { return project.orderNo === order; }).forEach(function(project) { (project.packages || []).forEach(function(goal) { if (goal.school) schools.add(goal.school); }); });
+        if (schools.size > 1) sharedOrder = true;
+        return '<div class="pbs-profile-order-summary"><span>' + esc(order) + '</span><small>共 ' + schools.size + ' 个院校</small></div>';
+      }).join('');
+      return '<tr data-kw="' + esc([profile.name, profile.id, customers.join(' '), orders.join(' '), linked.map(function(p) { return p.projectNo + ' ' + (p.packages || []).map(function(item) { return item.school + ' ' + item.major; }).join(' '); }).join(' ')].join(' ')) + '" data-name="' + esc(customers.join('、')) + '" data-applicant="' + esc(profile.name) + '" data-order="' + esc(orders.join('、')) + '" data-project="' + esc(linked.map(function(p) { return p.projectNo; }).join('、')) + '" data-level="' + esc(levels.join('、')) + '" data-targets="' + targets + '"><td>' + (index + 1) + '</td><td class="pbs-profile-order-cell' + (sharedOrder ? ' pbs-profile-order-shared' : '') + '">' + (orderNumbers || '—') + '</td><td>' + related + '</td><td><a href="' + url(profile.id) + '">' + esc(profile.name) + '</a></td><td>' + esc(customers.join('、')) + '</td><td>' + esc(levels.join('、')) + '</td><td>' + time(profile.updatedAt) + '</td><td><a href="' + url(profile.id) + '">查看档案</a></td></tr>';
     }).join('') + '<tr id="flt-empty" class="hidden"><td colspan="8" class="pbs-profile-empty">暂无符合条件的学生档案</td></tr>';
     var pager = table.parentElement.nextElementSibling;
     if (pager) { pager.className = 'pbs-profile-list-count'; pager.textContent = '共 ' + profiles.length + ' 名学生'; }
@@ -54,6 +60,7 @@
     });
     body.querySelectorAll('[data-file]').forEach(function(node) { var key = '文件:' + node.dataset.file; values[key] = node.textContent.replace(/\s+/g, ' ').trim(); labels[key] = key; });
     var snapshot = body.cloneNode(true), bindings = snapshot.querySelector('#studentSelectionBindings'); if (bindings) bindings.remove();
+    snapshot.querySelectorAll('[data-selection-service],[data-selection-actions]').forEach(function(node) { node.remove(); });
     return { values: values, labels: labels, html: snapshot.innerHTML };
   }
   function commitSection(section, action) {
@@ -133,6 +140,8 @@
     var project = window.pbsProjects.find(context.projectNo), profile = project && api.find(project.studentId);
     if (!profile || !api.canView(profile.id)) return;
     var student = profile.student;
+    var number = document.getElementById('myProjectNo');
+    if (number) number.textContent = '项目号：' + (project.orderNo || '—') + '　院校号：' + project.projectNo;
     context.student = student.name; context.level = student.level;
     var mapping = { projectContextStudent: student.name, projectContextLevel: student.level, 'apply-level-text': student.level, 'apply-level-badge': student.level, myProjectTitle: student.name + ' · ' + student.level, myProjectProfileLevel: student.level, myProjectStudentProfileName: student.name, myProjectStudentSummary: [student.name, student.level, student.country, student.major].filter(Boolean).join(' · ') };
     Object.keys(mapping).forEach(function(key) { var node = document.getElementById(key); if (node) node.textContent = mapping[key] || '—'; });

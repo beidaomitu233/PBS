@@ -126,6 +126,11 @@
     if (project) {
       Object.assign(window.projectData, { projectNo: project.projectNo, customer: project.customer, student: project.student, level: project.level });
     }
+    var grid = document.querySelector('#basic-info .grid');
+    var orderNumber = grid.firstElementChild.cloneNode(true);
+    orderNumber.querySelector('span').textContent = '项目号';
+    orderNumber.querySelector('p').textContent = project && project.orderNo || '—';
+    grid.appendChild(orderNumber);
     var values = [window.projectData.projectNo, window.projectData.customer, window.projectData.student, window.projectData.level];
     document.querySelectorAll('#basic-info .grid > div').forEach(function(node, index) { if (index < 4) node.querySelector('p').textContent = values[index]; });
     document.querySelectorAll('#confirmModal .bg-gray-50 .flex > span:last-child').forEach(function(node, index) { if (index < 3) node.textContent = [values[0], values[1] + ' / ' + values[2], values[3]][index]; });

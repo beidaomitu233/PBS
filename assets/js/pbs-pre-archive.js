@@ -45,24 +45,20 @@
     if (!task.preStudentId) return;
     var link = document.createElement('a'); link.className = 'selection-text-button'; link.href = preUrl(task); link.textContent = '学生预档案'; host.prepend(link);
   }
-  function addSupplement(profile,host) {
-    var box = document.createElement('section'); box.className = 'pa-intake';
-    box.innerHTML = '<div><h3>学生补充信息</h3>' + (api.canEdit(profile.id) ? '<button class="pa-text-button" data-edit>编辑</button>' : '') + '</div><p>' + esc(profile.supplement || '—') + '</p>';
-    var button = box.querySelector('[data-edit]');
-    if (button) button.onclick = function() {
-      if (!box.querySelector('textarea')) { var field = document.createElement('textarea'); field.value = profile.supplement || ''; box.querySelector('p').replaceWith(field); button.textContent = '保存'; field.focus(); }
-      else { profile = api.find(profile.id); profile.supplement = box.querySelector('textarea').value.trim(); profile.updatedAt = new Date().toISOString(); saveProfile(profile); if (profile.selectionId) pbsSelection.update(profile.selectionId,{supplement:profile.supplement}); var p = document.createElement('p'); p.textContent = profile.supplement || '—'; box.querySelector('textarea').replaceWith(p); button.textContent = '编辑'; notify('补充信息已保存'); }
-    };
-    host.after(box);
-  }
   function detailGuide() {
     if (!document.getElementById('studentInfoCard')) return;
     var profile = api.find(window.PBS_STUDENT_ID); if (!profile || !api.canView(profile.id)) return;
     var preliminary = profile.kind === 'preliminary', task = window.pbsSelection && pbsSelection.find(profile.selectionId);
     if (preliminary && file !== '选校预档案详情页 - 留学申请管理系统.html') { location.replace(task ? preUrl(task) : '选校任务列表页 - 留学申请管理系统.html'); return; }
     var heading = document.querySelector('main h1'); heading.textContent = profile.name + (preliminary ? ' · 学生预档案' : ' · 学生档案');
-    var projectLabel = Array.from(document.querySelectorAll('#customerInfoCard p')).find(function(node) { return node.textContent.trim() === '项目号'; });
+    var projectLabel = Array.from(document.querySelectorAll('#customerInfoCard p')).find(function(node) { return node.textContent.trim() === '院校号'; });
     if (projectLabel) { if (preliminary) projectLabel.textContent = '选校单号'; projectLabel.nextElementSibling.textContent = preliminary ? profile.selectionId || '—' : api.projects(profile.id).map(function(project) { return project.projectNo; }).join('、') || '—'; }
+    if (!preliminary && projectLabel) {
+      var orderRow = projectLabel.parentElement.cloneNode(true);
+      orderRow.querySelector('p').textContent = '项目号';
+      orderRow.querySelector('p').nextElementSibling.textContent = Array.from(new Set(api.projects(profile.id).map(function(project) { return project.orderNo; }).filter(Boolean))).join('、') || '—';
+      projectLabel.parentElement.before(orderRow);
+    }
     var createdLabel = Array.from(document.querySelectorAll('#customerInfoCard p')).find(function(node) { return node.textContent.trim() === '创建时间'; });
     if (createdLabel) createdLabel.nextElementSibling.textContent = profile.createdAt.slice(0,10);
     if (!document.getElementById('profile-customer-name').textContent.trim()) document.getElementById('profile-customer-name').textContent = '—';
@@ -73,13 +69,12 @@
       var subtitle = heading.nextElementSibling; if (subtitle) subtitle.textContent = '所属选校单：' + (profile.selectionId || '—');
       var guide = document.createElement('section'); guide.className = 'pa-guide'; guide.id = 'preArchiveGuide';
       guide.innerHTML = icon + '<div class="pa-guide-copy"><strong>' + (profile.boundTo ? '已绑定正式档案' : '选校单的学生预档案') + '</strong><p>' + (profile.boundTo ? '本次选校资料已追加到正式档案，可在正式档案中继续完善。' : '可完善背景、上传文件并解析。下单后，在正式档案的“申请记录”中绑定本选校单，追加这些资料。') + '</p></div>' + (profile.boundTo ? '<a class="pa-button" href="' + profileUrl(profile.boundTo) + '&section=apply">查看学生档案</a>' : task ? '<a class="pa-button" href="选校工作台页 - 留学申请管理系统.html?service=' + encodeURIComponent(task.id) + '">进入选校工作台</a>' : '');
-      heading.closest('.pbs-detail-topbar').after(guide); addSupplement(profile,guide);
+      heading.closest('.pbs-detail-topbar').after(guide);
       var back = document.querySelector('[data-dom-id="btn-back-list"]'); if (back) { back.setAttribute('aria-label','返回选校任务列表'); back.setAttribute('title','返回选校任务列表'); back.dataset.backLabel = '选校列表'; back.addEventListener('click',function(event) { event.stopImmediatePropagation(); location.href = '选校任务列表页 - 留学申请管理系统.html'; },true); }
       if (profile.boundTo) document.querySelectorAll('main button[title="AI 解析"]').forEach(function(button) { button.hidden = true; });
     } else {
       repairImports(profile); profile = api.find(profile.id);
-      document.querySelectorAll('#secbody-apply .pa-intake').forEach(function(node) { node.remove(); });
-      if (profile.supplement) addSupplement(profile,document.getElementById('studentInfoCard').parentElement);
+      document.querySelectorAll('.pa-intake').forEach(function(node) { node.remove(); });
     }
     var section = new URLSearchParams(location.search).get('section'), destination = document.getElementById('sec-' + section);
     if (destination) requestAnimationFrame(function() { destination.scrollIntoView({block:'start'}); });
@@ -89,7 +84,7 @@
     var student = document.getElementById('studentInfoCard'), contact = document.getElementById('customerInfoCard');
     var summary = student.parentElement; summary.classList.add('pa-sales-summary'); summary.insertBefore(student,contact);
     var title = contact.querySelector('h2'); title.lastChild.textContent = '咨询联系人';
-    Array.from(contact.querySelectorAll('p')).filter(function(node) { return ['项目号','选校单号','创建时间'].indexOf(node.textContent.trim()) >= 0; }).forEach(function(node) { node.parentElement.hidden = true; });
+    Array.from(contact.querySelectorAll('p')).filter(function(node) { return ['院校号','选校单号','创建时间'].indexOf(node.textContent.trim()) >= 0; }).forEach(function(node) { node.parentElement.hidden = true; });
     [document.getElementById('profile-student-identity'),student.querySelector('[data-v="idcard"]')].forEach(function(node) { if (node) node.parentElement.hidden = true; });
     ['apply','account','delivered','logs'].forEach(function(key) { var section = document.querySelector('section[data-section="' + key + '"]') || document.getElementById(key === 'logs' ? 'pbsStudentLogs' : 'sec-' + key); if (section) section.hidden = true; });
     var assetsTitle = document.querySelector('#sec-asset h2'); if (assetsTitle) assetsTitle.lastChild.textContent = '资料文件';
@@ -241,7 +236,7 @@
           });
         });
         var result = pbsSelection.bind(id,orderKey,serviceId); if (result.error) throw new Error(result.error);
-        if (!api.bindPre(id,source.id,payload)) { pbsSelection.unbind(id,orderKey); throw new Error('资料追加失败'); }
+        if (!api.bindPre(id,source.id,payload)) { pbsSelection.unbind(id,orderKey,serviceId); throw new Error('资料追加失败'); }
         location.href = profileUrl(id) + '&section=' + (payload.counts[0] ? payload.counts[0].section : 'apply') + '&bound=1';
       } catch(e) { button.disabled = false; button.textContent = '绑定并追加'; dialog.querySelector('[role="alert"]').textContent = e.message || '追加失败，请重试'; }
     };
@@ -436,7 +431,7 @@
         try {
           var stored = await assets(function(all) { return all.find(function(item) { return item.id === fileId && item.owner === window.PBS_STUDENT_ID; }); });
           if (stored && stored.parseFields) window.PARSE_RESULTS[fileId] = stored.parseFields;
-          parse(button);
+          return parse(button);
         } catch(e) { notify('文件读取失败，请重试'); }
       };
     }

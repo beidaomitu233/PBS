@@ -197,9 +197,16 @@
     body.innerHTML = rows.map(function (item) {
       var projects = linkedProjects(item);
       var orders = Array.from(new Set(projects.map(function(project) { return project.orderNo || '—'; })));
-      var shared = projects.length > 1 && orders.length === 1 && orders[0] !== '—';
+      var shared = false;
+      var orderNumbers = orders.map(function(order) {
+        if (order === '—') return '—';
+        var schools = new Set();
+        projects.filter(function(project) { return project.orderNo === order; }).forEach(function(project) { (project.packages || []).forEach(function(goal) { if (goal.school) schools.add(goal.school); }); });
+        if (schools.size > 1) shared = true;
+        return '<div class="monitor-order-summary"><span>' + esc(order) + '</span><small>共 ' + schools.size + ' 个院校</small></div>';
+      }).join('');
       return '<tr>' +
-        '<td class="monitor-order' + (shared ? ' is-shared' : '') + '">' + (orders.length ? orders.map(esc).join('<br>') : '—') + '</td>' +
+        '<td class="monitor-order' + (shared ? ' is-shared' : '') + '">' + (orderNumbers || '—') + '</td>' +
         '<td class="monitor-project-number">' + (projects.length ? projects.map(function(project) { return esc(project.projectNo); }).join('<br>') : '—') + '</td>' +
         '<td><div class="monitor-person"><strong>' + esc(item.customer) + '</strong></div></td>' +
         '<td><div class="monitor-person"><strong>' + esc(item.student) + '</strong></div></td>' +

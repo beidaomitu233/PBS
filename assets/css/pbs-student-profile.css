@@ -9,6 +9,8 @@
 .pbs-profile-table th:nth-child(8) { width: 10%; }
 .pbs-profile-table th:nth-child(2), .pbs-profile-table th:nth-child(3), .pbs-profile-table td:nth-child(2), .pbs-profile-table td:nth-child(3) { text-align: center; }
 .pbs-profile-table .pbs-profile-order-shared { background: #eff6ff; box-shadow: inset 0 0 0 1px #dbeafe; }
+.pbs-profile-order-summary + .pbs-profile-order-summary { margin-top: 14px; }
+.pbs-profile-table .pbs-profile-order-summary small { color: #3b82f6; }
 .pbs-profile-table .pbs-profile-project { min-width: 0; padding: 6px 0; }
 .pbs-profile-table .pbs-profile-project > div { justify-content: center; }
 .pbs-profile-table a { color: #2563eb; }

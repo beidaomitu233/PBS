@@ -4,8 +4,15 @@
   function read(store) { try { return JSON.parse(localStorage.getItem(store || key) || '[]'); } catch(e) { return []; } }
   function save(list, store) { localStorage.setItem(store || key, JSON.stringify(list)); }
   function orgName(value) { return !value || value === 'PBS留学' ? 'PBS留学总部' : value; }
-  function find(id) { return read().find(function(item) { return item.id === id; }); }
+  function canonicalId(id) { return read('pbs_selection_id_aliases_v1')[id] || String(id || '').replace(/^SEL-(\d{4})-/, 'SEL-20$1-'); }
+  function find(id) { id = canonicalId(id); return read().find(function(item) { return item.id === id; }); }
+  function nextServiceId(date,list) {
+    var month = new Date(date.getTime() + 8 * 60 * 60 * 1000).toISOString().slice(0,7).replace('-',''), prefix = 'SEL-' + month + '-';
+    var maximum = (list || read()).reduce(function(max,item) { return item.id.indexOf(prefix) === 0 ? Math.max(max,Number(item.id.slice(prefix.length)) || 0) : max; },0);
+    return prefix + String(maximum + 1).padStart(4,'0');
+  }
   function update(id, values) {
+    id = canonicalId(id);
     var list = read(), item = list.find(function(row) { return row.id === id; }); if (!item) return null;
     Object.assign(item, values); save(list);
     if (Object.prototype.hasOwnProperty.call(values,'supplement') && item.preStudentId) {
@@ -35,7 +42,7 @@
       var existing = pbsStudents.find(values.preStudentId);
       if (!existing || existing.kind !== 'preliminary' || existing.selectionId || !pbsStudents.canView(existing.id)) return null;
     }
-    var item = Object.assign({}, values, {id:'SEL-' + String(now.getFullYear()).slice(2) + String(now.getMonth()+1).padStart(2,'0') + '-' + now.getTime().toString().slice(-7) + Math.random().toString(36).slice(2,4), org:orgName(session.org), sales:session.name, status:'未选校', createdAt:now.toISOString(), visits:[], shares:[]});
+    var item = Object.assign({}, values, {id:nextServiceId(now), org:orgName(session.org), sales:session.name, status:'未选校', createdAt:now.toISOString(), visits:[], shares:[]});
     linkProfile(item.preStudentId,item.id);
     var list = read(); list.push(item); save(list); return item;
   }
@@ -68,15 +75,15 @@
     var profiles = JSON.parse(localStorage.getItem('pbs_student_profiles_v1') || '[]'), profile = profiles.find(function(item) { return item.id === studentId; });
     if (profile && !profile.sections.selectionBinding) {
       var before = {};
-      previous.filter(function(item) { return item.studentId === studentId; }).forEach(function(item) { before[item.orderKey] = item.serviceId; });
+      previous.filter(function(item) { return item.studentId === studentId; }).forEach(function(item) { before[item.orderKey] = before[item.orderKey] ? before[item.orderKey] + '、' + item.serviceId : item.serviceId; });
       profile.sections.selectionBinding = {values:before};
       localStorage.setItem('pbs_student_profiles_v1',JSON.stringify(profiles));
     }
     var values = {}, labels = {};
-    orders().filter(function(item) { return item.studentId === studentId; }).forEach(function(item) { labels[item.key] = '申请订单 ' + (item.orderNo || item.projectNo) + ' · 选校任务'; });
+    orders().filter(function(item) { return item.studentId === studentId; }).forEach(function(item) { labels[item.key] = '项目号 ' + (item.orderNo || item.projectNo) + ' · 选校任务'; });
     bindings().filter(function(item) { return item.studentId === studentId; }).forEach(function(item) {
-      values[item.orderKey] = item.serviceId;
-      labels[item.orderKey] = '申请订单 ' + (item.orderNo || item.projectNo) + ' · 选校任务';
+      values[item.orderKey] = values[item.orderKey] ? values[item.orderKey] + '、' + item.serviceId : item.serviceId;
+      labels[item.orderKey] = '项目号 ' + (item.orderNo || item.projectNo) + ' · 选校任务';
     });
     pbsStudents.commit(studentId, 'selectionBinding', {values:values}, labels, action);
   }
@@ -84,8 +91,9 @@
     if (!pbsStudents.canEdit(studentId)) return '无权修改该学生档案';
     var order = orders().find(function(item) { return item.key === selectedOrder && item.studentId === studentId; });
     var service = candidates(studentId).find(function(item) { return item.id === serviceId; });
-    if (!order || !service) return '请选择有效的申请订单和选校单';
-    if (bindings().some(function(item) { return item.orderKey === order.key; })) return '该申请订单已绑定选校单';
+    if (!order || !service) return '请选择有效的项目和选校单';
+    var existing = bindings().find(function(item) { return item.serviceId === serviceId; });
+    if (existing) return existing.orderKey === order.key ? '该项目已关联此选校任务' : '该选校订单已绑定项目号 ' + (existing.orderNo || '—') + '，请先解除原关联';
     return '';
   }
   function bind(studentId, selectedOrder, serviceId) {
@@ -96,9 +104,9 @@
     var previous = list.slice();
     list.push(item); save(list, bindingKey); audit(studentId, '关联选校任务', previous); return item;
   }
-  function unbind(studentId, selectedOrder) {
+  function unbind(studentId, selectedOrder, serviceId) {
     if (!pbsStudents.canEdit(studentId)) return false;
-    var list = bindings(), item = list.find(function(row) { return row.studentId === studentId && row.orderKey === selectedOrder; });
+    var list = bindings(), item = list.find(function(row) { return row.studentId === studentId && row.orderKey === selectedOrder && (!serviceId || row.serviceId === serviceId); });
     if (!item) return false;
     save(list.filter(function(row) { return row !== item; }), bindingKey); audit(studentId, '解除选校任务关联', list); return true;
   }
@@ -117,12 +125,12 @@
   function seedDemoHistory(id) {
     var store = 'pbs_selection_communications_' + id, messages = read(store), marker = 'pbs_selection_demo_history_v1_' + id;
     var item = find(id);
-    if (!item || !/^SEL-2607-000[1-5]$/.test(id) || localStorage.getItem(marker)) return messages;
+    if (!item || !/^SEL-202607-000[1-5]$/.test(id) || localStorage.getItem(marker)) return messages;
     var examples = [
       {id:-101,time:'2026-10-11T10:20',content:'电话确认申请需求：以美国计算机科学硕士为主，重点关注人工智能方向、科研机会和毕业后的就业资源。'},
       {id:-102,time:'2026-10-12T11:10',content:'向学生说明冲刺、匹配和保底的院校梯度。学生希望保留卡内基梅隆大学，同时增加实践课程较多的项目作为匹配选择。'},
       {id:-103,time:'2026-10-13T15:40',content:'学生反馈已查看 H5 方案，认可当前院校梯度，希望进一步了解伊利诺伊大学的课程安排及波士顿大学的学费。'},
-      {id:-104,time:'2026-10-13T21:00',content:'已回复课程与费用问题，学生准备与家长确认申请预算。最终下单后，再将该选校任务与学生档案中的申请订单关联。'}
+      {id:-104,time:'2026-10-13T21:00',content:'已回复课程与费用问题，学生准备与家长确认申请预算。最终下单后，再将该选校任务与学生档案中的项目关联。'}
     ];
     if (item.status === '未选校') examples = examples.slice(0,1);
     examples.forEach(function(message) { if (!messages.some(function(row) { return row.id === message.id; })) messages.push(Object.assign({actor:item.sales},message)); });
@@ -138,16 +146,29 @@
     list.forEach(function(item) {
       if (!item.orderKey || !item.studentId) return;
       var order = item.orderKey.replace(/^PBS留学\|/, 'PBS留学总部|');
-      if (!linked.some(function(row) { return row.orderKey === order; })) linked.push({orderKey:order, orderNo:item.orderNo || '', projectNo:item.projectNo, studentId:item.studentId, serviceId:item.id, boundAt:item.createdAt, boundBy:item.sales});
+      if (!linked.some(function(row) { return row.serviceId === item.id; })) linked.push({orderKey:order, orderNo:item.orderNo || '', projectNo:item.projectNo, studentId:item.studentId, serviceId:item.id, boundAt:item.createdAt, boundBy:item.sales});
       ['orderKey','orderNo','projectNo','studentId'].forEach(function(field) { delete item[field]; }); changed = true;
     });
-    if (changed) { save(linked, bindingKey); save(list); }
+    var profiles = read('pbs_student_profiles_v1'), projects = window.pbsProjects.all(), unique = [];
+    function matchScore(binding) {
+      var task = list.find(function(item) { return item.id === binding.serviceId; });
+      if (!task) return 0;
+      var pre = profiles.find(function(profile) { return profile.id === task.preStudentId; });
+      var project = projects.find(function(item) { return orgName(item.org) + '|' + (item.orderNo || item.projectNo) === binding.orderKey; });
+      return (pre && pre.boundTo === binding.studentId ? 2 : 0) + (project && project.student === task.student ? 4 : 0);
+    }
+    linked.forEach(function(binding) {
+      var index = unique.findIndex(function(item) { return binding.serviceId && item.serviceId === binding.serviceId; });
+      if (index < 0) unique.push(binding);
+      else { if (matchScore(binding) > matchScore(unique[index])) unique[index] = binding; changed = true; }
+    });
+    if (changed) { save(unique, bindingKey); save(list); }
   }
   function seed() {
     if (localStorage.getItem(key)) return;
     var session = pbsGetSession(), names = ['陈雨桐','李雪','王伟','赵婷','陈晓'], states = ['未选校','咨询中','已发送','已结单','未选校'];
     var list = names.map(function(name,index) {
-      return {id:'SEL-2607-000' + (index+1), org:orgName(session.org), student:name, level:index===2?'博士申请':'硕士申请', country:'美国', major:index===3?'经济学':'计算机科学', sales:session.role === '销售人员' ? session.name : '陈晨', status:states[index], note:'学生关注课程设置、科研机会与就业资源。', createdAt:'2026-07-' + (15+index) + 'T09:00:00+08:00', visits:index===2 ? [{id:'demo-view-1', at:'2026-10-12T14:30:00+08:00', version:'V1', kind:'查看方案'}] : [], shares:[]};
+      return {id:'SEL-202607-000' + (index+1), org:orgName(session.org), student:name, level:index===2?'博士申请':'硕士申请', country:'美国', major:index===3?'经济学':'计算机科学', sales:session.role === '销售人员' ? session.name : '陈晨', status:states[index], note:'学生关注课程设置、科研机会与就业资源。', createdAt:'2026-07-' + (15+index) + 'T09:00:00+08:00', visits:index===2 ? [{id:'demo-view-1', at:'2026-10-12T14:30:00+08:00', version:'V1', kind:'查看方案'}] : [], shares:[]};
     });
     list.forEach(function(item) {
       if (item.status === '未选校') return;
@@ -157,6 +178,37 @@
     });
     save(list);
   }
+  function migrateServiceIds() {
+    var list = read(), aliases = read('pbs_selection_id_aliases_v1'), used = {};
+    if (Array.isArray(aliases)) aliases = {};
+    list.forEach(function(item) { var match = /^SEL-(\d{4}|\d{6})-(\d{4})$/.exec(item.id); if (match) used['SEL-' + (match[1].length === 4 ? '20' : '') + match[1] + '-' + match[2]] = true; });
+    var changes = {};
+    list.forEach(function(item) {
+      if (/^SEL-\d{6}-\d{4}$/.test(item.id)) return;
+      var old = item.id, match = /^SEL-(\d{4}|\d{6})-(\d{4})$/.exec(old), next;
+      if (match) next = 'SEL-' + (match[1].length === 4 ? '20' : '') + match[1] + '-' + match[2];
+      else { var date = new Date(item.createdAt || Date.now()); if (!isFinite(date.getTime())) date = new Date(); next = nextServiceId(date,Object.keys(used).map(function(id) { return {id:id}; })); }
+      changes[old] = next; aliases[old] = next; used[next] = true;
+    });
+    var oldIds = Object.keys(changes).sort(function(a,b) { return b.length-a.length; });
+    if (!oldIds.length) return;
+    function replace(value) { oldIds.forEach(function(old) { value = value.split(old).join(changes[old]); }); return value; }
+    Object.keys(localStorage).filter(function(key) { return key.indexOf('pbs_') === 0 && key !== 'pbs_selection_id_aliases_v1'; }).forEach(function(key) {
+      var value = localStorage.getItem(key), nextKey = replace(key), nextValue = replace(value);
+      if (nextKey !== key || nextValue !== value) { localStorage.setItem(nextKey,nextValue); if (nextKey !== key) localStorage.removeItem(key); }
+    });
+    localStorage.setItem('pbs_selection_id_aliases_v1',JSON.stringify(aliases));
+  }
+  migrateServiceIds();
   migrateBindings();
-  window.pbsSelection = {all:function(){return read();}, find:find, update:update, orders:orders, create:create, ensurePre:ensurePre, visible:visible, candidates:candidates, bindings:bindings, bindingError:bindingError, bind:bind, unbind:unbind, transition:transition, recordView:recordView, seed:seed, seedDemoHistory:seedDemoHistory};
+  window.pbsSelection = {all:function(){return read();}, canonicalId:canonicalId, find:find, update:update, orders:orders, create:create, ensurePre:ensurePre, visible:visible, candidates:candidates, bindings:bindings, bindingError:bindingError, bind:bind, unbind:unbind, transition:transition, recordView:recordView, seed:seed, seedDemoHistory:seedDemoHistory};
+  var pageUrl = new URL(location.href), pageChanged = false, savedAliases = read('pbs_selection_id_aliases_v1');
+  pageUrl.searchParams.forEach(function(value,key) {
+    var next = value;
+    Object.keys(savedAliases).sort(function(a,b) { return b.length-a.length; }).forEach(function(old) { next = next.split(old).join(savedAliases[old]); });
+    next = next.replace(/SEL-(\d{4})-/g,'SEL-20$1-');
+    if (next !== value) { pageUrl.searchParams.set(key,next); pageChanged = true; }
+  });
+  if (pageChanged) history.replaceState(null,'',pageUrl);
+  if (window.TASK_PROJECT_NO) window.TASK_PROJECT_NO = canonicalId(window.TASK_PROJECT_NO);
 })();

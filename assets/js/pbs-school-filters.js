@@ -178,6 +178,7 @@
     paintSchoolGroups();
   }
   function multi(key,label){if(key==='schools')return '<div class="sc-field"><label for="scSchools">'+label+'</label><select id="scSchools" multiple aria-label="学校"></select></div>';if(key==='countries')return '<div class="sc-field"><label for="scCountries">'+label+'</label><select id="scCountries" multiple aria-label="国家 / 地区"></select></div>';return '<div class="sc-field"><span id="sc-label-'+key+'">'+label+'</span><details class="sc-multi" data-multi="'+key+'"><summary aria-labelledby="sc-label-'+key+' sc-value-'+key+'"><span id="sc-value-'+key+'" data-summary>不限</span>'+chevron+'</summary><div class="sc-options"><input type="search" aria-label="搜索'+label+'" placeholder="搜索'+label+'" data-option-search="'+key+'"><div data-options="'+key+'"></div></div></details></div>';}
+  function textSearch(key,label){return '<label class="sc-field"><span>'+label+'</span><input type="search" data-text-search="'+key+'" aria-label="'+label+'" placeholder="搜索'+label+'"></label>';}
   function select(key,label,options){return '<label class="sc-field"><span>'+label+'</span><select data-field="'+key+'">'+options.map(function(item){return '<option value="'+esc(item[0])+'">'+esc(item[1])+'</option>';}).join('')+'</select></label>';}
   function mount(){
     document.body.classList.add('sc-workbench');
@@ -187,10 +188,10 @@
       '<div class="sc-start"><div class="sc-step-heading"><span class="sc-step-number">1</span><label for="scQuery">输入选校需求</label></div><div class="sc-query-row"><div class="sc-query-box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m16 16 5 5"/></svg><input type="search" id="scQuery" aria-label="学校、专业或选校需求" aria-describedby="scQueryHint" placeholder="例如：美国计算机硕士，QS前100，学费预算30–50万"></div><button type="button" class="sc-btn primary" data-ai>'+spark+'AI 匹配</button></div><div class="sc-query-examples" id="scQueryHint"><span>可输入学校、专业或一段需求。试试：</span><button type="button" data-example="美国计算机硕士，QS前100">美国计算机硕士</button><button type="button" data-example="香港数据科学硕士，1年制">香港一年制硕士</button></div></div>'+
       '<div class="sc-refine-heading"><div class="sc-step-heading"><span class="sc-step-number">2</span><h3>调整筛选条件</h3></div><button type="button" class="sc-btn" data-fold aria-expanded="false" aria-controls="scFilterBody">展开条件'+chevron+'</button></div>'+
       '<div class="sc-tabs" role="tablist" aria-label="筛选条件分组">'+filterLabels.map(function(label,i){return '<button type="button" id="sc-tab-'+i+'" role="tab" data-tab="'+i+'" aria-selected="'+(i===0)+'" aria-controls="sc-panel-'+i+'" tabindex="'+(i===0?'0':'-1')+'">'+label+'</button>';}).join('')+'</div><div id="scFilterBody" hidden>'+
-      '<div class="sc-filter-panel" id="sc-panel-0" role="tabpanel" aria-labelledby="sc-tab-0"><div class="sc-wide">'+pills('continent','大洲',[['','不限'],['亚洲','亚洲'],['欧洲','欧洲'],['北美洲','北美洲'],['南美洲','南美洲'],['大洋洲','大洋洲'],['非洲','非洲']])+'</div><div class="sc-grid two">'+multi('countries','国家 / 地区')+multi('schools','学校')+'</div></div>'+
+      '<div class="sc-filter-panel" id="sc-panel-0" role="tabpanel" aria-labelledby="sc-tab-0"><div class="sc-region-grid">'+pills('continent','大洲',[['','不限'],['亚洲','亚洲'],['欧洲','欧洲'],['北美洲','北美洲'],['南美洲','南美洲'],['大洋洲','大洋洲'],['非洲','非洲']])+multi('countries','国家 / 地区')+multi('schools','学校')+'</div></div>'+
       '<div class="sc-filter-panel" id="sc-panel-1" role="tabpanel" aria-labelledby="sc-tab-1" hidden><div class="sc-grid two sc-course-level">'+pills('stage','学术阶段',[['','不限'],['本科','本科'],['硕士','硕士']])+pills('duration','学制时长',[['','不限'],['1','1年'],['1-2','1-2年'],['1-3','1-3年'],['2-3','2-3年'],['3+','3年以上']])+'</div><div class="sc-grid">'+multi('categories','学科门类')+multi('disciplines','二级学科')+multi('directions','具体方向')+select('board','排名榜单',[['','不限'],['qs','QS排名'],['sh','软科排名']])+select('rank','名次区间',[['','先选择榜单']])+multi('languages','教学语言')+'</div></div>'+
-      '<div class="sc-filter-panel" id="sc-panel-2" role="tabpanel" aria-labelledby="sc-tab-2" hidden><div class="sc-grid">'+select('feeType','费用类型',[['firstLife','首年费用＋单年生活费'],['first','首年费用'],['total','全部学制总费用']])+'<div class="sc-field"><span>费用预算（万元 · 人民币）</span><div class="sc-range"><div class="sc-money-input"><span>￥</span><input type="number" min="0" step="0.1" data-field="feeMin" aria-label="最低费用预算（人民币万元）" placeholder="最低"></div><span>—</span><div class="sc-money-input"><span>￥</span><input type="number" min="0" step="0.1" data-field="feeMax" aria-label="最高费用预算（人民币万元）" placeholder="最高"></div></div><small>查询上限按输入金额上浮 10%</small></div><div class="sc-field"><span>可申请时间</span><button type="button" class="sc-period" data-period><span id="scPeriodLabel">不限</span>'+chevron+'</button></div></div><div class="sc-score-heading"><span>成绩要求</span><button type="button" data-add-score>＋ 添加成绩</button></div><div id="scScores"></div></div>'+
-      '<div class="sc-filter-panel" id="sc-panel-3" role="tabpanel" aria-labelledby="sc-tab-3" hidden><div class="sc-grid two">'+multi('careers','求职领域')+multi('employers','适配雇主')+'<div class="sc-field sc-salary"><span>起薪预期（万元 / 年 · 人民币）</span><div class="sc-range"><input type="number" min="0" max="100" data-field="salaryMin" aria-label="最低起薪"><span>—</span><input type="number" min="0" max="100" data-field="salaryMax" aria-label="最高起薪"></div><div class="sc-salary-sliders"><input type="range" min="0" max="100" data-salary="salaryMin" aria-label="最低起薪滑块"><input type="range" min="0" max="100" data-salary="salaryMax" aria-label="最高起薪滑块"></div></div></div></div></div><p class="sc-error" id="scFilterError" role="alert" hidden></p><p class="sc-match-result" id="scAiResult" role="status" hidden></p>';
+      '<div class="sc-filter-panel" id="sc-panel-2" role="tabpanel" aria-labelledby="sc-tab-2" hidden><div class="sc-grid">'+select('feeType','费用类型',[['firstLife','首年费用＋单年生活费'],['first','首年费用'],['total','全部学制总费用']])+'<div class="sc-field"><span>费用预算（万元 · 人民币）</span><div class="sc-range"><div class="sc-money-input"><span class="sc-money-prefix">￥</span><input type="number" min="0" step="0.1" data-field="feeMin" aria-label="最低费用预算（人民币万元）" placeholder="最低"><span class="sc-money-suffix">万元</span></div><span>—</span><div class="sc-money-input"><span class="sc-money-prefix">￥</span><input type="number" min="0" step="0.1" data-field="feeMax" aria-label="最高费用预算（人民币万元）" placeholder="最高"><span class="sc-money-suffix">万元</span></div></div><small>查询上限按输入金额上浮 10%</small></div><div class="sc-field"><span>可申请时间</span><button type="button" class="sc-period" data-period><span id="scPeriodLabel">不限</span>'+chevron+'</button></div></div><div class="sc-score-heading"><span>成绩要求</span><button type="button" data-add-score>＋ 添加成绩</button></div><div id="scScores"></div></div>'+
+      '<div class="sc-filter-panel" id="sc-panel-3" role="tabpanel" aria-labelledby="sc-tab-3" hidden><div class="sc-grid two">'+textSearch('careers','求职领域')+textSearch('employers','适配雇主')+'<div class="sc-field sc-salary"><span>起薪预期（万元 / 年 · 人民币）</span><div class="sc-range"><div class="sc-money-input"><span class="sc-money-prefix">￥</span><input type="number" min="0" max="100" data-field="salaryMin" aria-label="最低起薪（人民币万元 / 年）" placeholder="最低"><span class="sc-money-suffix">万元</span></div><span>—</span><div class="sc-money-input"><span class="sc-money-prefix">￥</span><input type="number" min="0" max="100" data-field="salaryMax" aria-label="最高起薪（人民币万元 / 年）" placeholder="最高"><span class="sc-money-suffix">万元</span></div></div><div class="sc-salary-sliders"><input type="range" min="0" max="100" data-salary="salaryMin" aria-label="最低起薪滑块"><input type="range" min="0" max="100" data-salary="salaryMax" aria-label="最高起薪滑块"></div></div></div></div></div><p class="sc-error" id="scFilterError" role="alert" hidden></p><p class="sc-match-result" id="scAiResult" role="status" hidden></p>';
     document.getElementById('schoolWorkspace').before(root);
     countrySelect=window.pbsCountrySelect.mount(document.getElementById('scCountries'),{continent:state.continent,values:state.countries,placeholder:'不限，可搜索国家 / 地区',onChange:function(values){state.countries=values;change();}});
     schoolSelect=new TomSelect(document.getElementById('scSchools'),{
@@ -219,7 +220,7 @@
     info.innerHTML='<strong>'+esc(item.id)+'</strong><span>申请人：<b>'+esc(item.student)+'</b></span><span>申请层次：<b>'+esc(item.level)+'</b></span><span>意向国家：<b>'+esc(item.country)+'</b></span>';
     info.appendChild(status);heading.replaceChildren(back,info,actions);heading.className='sc-task-heading';
     var supplement=actions.querySelector('[onclick="openStudentSupplement()"]');
-    if(supplement){supplement.className='sc-supplement';supplement.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path stroke-linejoin="round" d="M9 4H5v17h14V4h-4M9 2h6v5H9zM12 10v7m-3-3h6"/></svg>补充信息';}
+    if(supplement){supplement.className='sc-supplement';supplement.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path stroke-linejoin="round" d="M9 4H5v17h14V4h-4M9 2h6v5H9zM12 10v7m-3-3h6"/></svg>学生补充信息';}
   }
   function candidateRows(key){
     return records.filter(function(r){
@@ -236,10 +237,11 @@
     if(key==='languages')return window.pbsSchoolCatalog.languages;
     var map={};candidateRows(key).forEach(function(r){var values=Array.isArray(r[keys[key]])?r[keys[key]]:[r[keys[key]]];values.filter(Boolean).forEach(function(value){if(!map[value]) map[value]={value:value,label:key==='schools'?r.name:value,count:0};map[value].count++;});});return key==='categories'?categories.map(function(value){return map[value] || {value:value,label:value,count:0};}):Object.values(map);
   }
-  function prune(){['countries','schools','categories','disciplines','directions','languages','careers','employers'].forEach(function(key){var valid=choices(key).map(function(o){return o.value;});state[key]=state[key].filter(function(value){return valid.indexOf(value)>=0;});});}
+  function prune(){['countries','schools','categories','disciplines','directions','languages'].forEach(function(key){var valid=choices(key).map(function(o){return o.value;});state[key]=state[key].filter(function(value){return valid.indexOf(value)>=0;});});}
   function multiFields(){
     var active=document.activeElement,focus=active && active.dataset.multiKey?{key:active.dataset.multiKey,value:active.value}:null;
     Object.keys(keys).forEach(function(key){
+      if(key==='careers' || key==='employers'){var search=root.querySelector('[data-text-search="'+key+'"]');if(search!==document.activeElement) search.value=state[key].join('、');return;}
       if(key==='countries'){countrySelect.setRegion(state.continent,state.countries);return;}
       if(key==='schools'){
         schoolSelect.clear(true);schoolSelect.clearOptions();
@@ -272,6 +274,7 @@
     document.getElementById('scPeriodLabel').textContent=state.period?[state.period.start,state.period.end].join(' 至 '):'不限';
   }
   function grade(value){var grades=String(value).toUpperCase().match(/A\*|[ABCDE]/g);return grades?grades.reduce(function(sum,g){return sum+({'A*':6,A:5,B:4,C:3,D:2,E:1}[g] || 0);},0):NaN;}
+  function textMatches(values,queries){return !queries.length || accepts(values.length?values.join(' '):null,function(value){return queries.some(function(query){return value.toLowerCase().indexOf(query.toLowerCase())>=0;});});}
   function passes(r){
     if(state.keyword && r.keyword.indexOf(state.keyword.toLowerCase())<0) return false;
     if(state.continent && r.continent!==state.continent || !selected(r.country,state.countries) || !selected(r.schoolId,state.schools)) return false;
@@ -283,7 +286,7 @@
     var fee=state.feeType==='firstLife'?(r.tuition===null || r.life===null?null:r.tuition+r.life):state.feeType==='total'?r.total:r.tuition;
     if((state.feeMin!=='' || state.feeMax!=='') && !accepts(fee,function(v){return (state.feeMin==='' || v>=Number(state.feeMin)) && (state.feeMax==='' || v<=Number(state.feeMax)*1.1);})) return false;
     if(state.period && !accepts(r.start && r.end,function(){return r.start<=periodDate(state.period.end,true) && r.end>=periodDate(state.period.start,false);})) return false;
-    if(!any(r.careers,state.careers) || !any(r.employers,state.employers)) return false;
+    if(!textMatches(r.careers,state.careers) || !textMatches(r.employers,state.employers)) return false;
     if((state.salaryMin>0 || state.salaryMax<100) && !accepts(r.salary,function(v){return v>=Number(state.salaryMin) && v<=Number(state.salaryMax);})) return false;
     return true;
   }
@@ -378,6 +381,7 @@
       if(el.id==='scIncludeUnknown'){state.includeUnknown=el.checked;apply(true);}
     };
     root.oninput=function(e){var el=e.target;if(el.id==='scSchools-ts-control') return;
+      if(el.dataset.textSearch){state[el.dataset.textSearch]=el.value.trim()?[el.value.trim()]:[];}
       if(el.dataset.optionSearch){var q=el.value.toLowerCase();el.parentElement.querySelectorAll('label').forEach(function(label){label.hidden=label.textContent.toLowerCase().indexOf(q)<0;});return;}
       if(el.id==='scQuery'){el.removeAttribute('aria-invalid');root.querySelector('[data-clear]').disabled=!el.value.trim() && !state.prompt && !state.keyword && !Number(root.dataset.activeFilters);return;}
       if(el.dataset.field && el.tagName==='INPUT'){state[el.dataset.field]=el.value;if(el.dataset.field==='salaryMin' || el.dataset.field==='salaryMax') root.querySelector('[data-salary="'+el.dataset.field+'"]').value=el.value;}

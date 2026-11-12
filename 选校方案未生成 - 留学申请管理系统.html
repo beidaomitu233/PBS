@@ -6,7 +6,7 @@
   <title>方案未生成 - 留学申请管理系统</title>
   <script src="./assets/vendor/tailwind-runtime.js"></script>
   <link rel="stylesheet" href="./assets/css/pbs-theme.css?v=6.7">
-<script src="./assets/js/pbs-selection-data.js?v=1.2"></script>
+<script src="./assets/js/pbs-selection-data.js?v=1.7"></script>
 </head>
 <body class="bg-gray-50 min-h-screen">
   <header class="h-16 bg-white border-b border-gray-200 sticky top-0 z-40">
@@ -41,7 +41,7 @@
           <h1 class="text-2xl font-semibold text-gray-900">尚未生成第一版选校方案</h1>
           <p class="text-sm text-gray-500 mt-3 leading-7"><span id="missingStudent">当前学生</span>的选校任务已创建，但尚未保存任何方案。完成院校筛选并首次保存后，“查看方案”将直接打开客户分享页面。</p>
           <div class="mt-6 rounded-xl bg-gray-50 border border-gray-100 px-5 py-4 text-left text-sm">
-            <div class="flex justify-between gap-6"><span class="text-gray-500">项目号</span><span id="missingProject" class="font-medium text-gray-900">—</span></div>
+            <div class="flex justify-between gap-6"><span class="text-gray-500">院校号</span><span id="missingProject" class="font-medium text-gray-900">—</span></div>
             <div class="flex justify-between gap-6 mt-3"><span class="text-gray-500">当前状态</span><span class="font-medium text-amber-700">等待生成第一版方案</span></div>
           </div>
           <div class="flex justify-center gap-3 mt-7">
@@ -62,11 +62,11 @@
         document.querySelector('[data-pbs-permission="school_plan"]').onclick=function(){location.href='选校工作台页 - 留学申请管理系统.html?service='+encodeURIComponent(service.id);};
         params.set('project',service.id); params.set('student',service.student);
       }
-      document.getElementById('missingProject').textContent = params.get('project') || '暂未关联项目号';
+      document.getElementById('missingProject').textContent = params.get('project') || '暂未关联院校号';
       document.getElementById('missingStudent').textContent = (params.get('student') || '当前学生') + '同学';
     })();
   </script>
   <script src="./assets/js/pbs-workbench.js"></script>
-  <script src="./assets/js/pbs-app.js?v=8.2"></script>
+  <script src="./assets/js/pbs-app.js?v=9.0"></script>
 </body>
 </html>

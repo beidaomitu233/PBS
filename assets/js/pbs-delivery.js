@@ -158,14 +158,15 @@
     section.dataset.section = 'delivered';
     section.className = 'pbs-delivery-section bg-white rounded-xl shadow-sm border border-gray-100 scroll-mt-24';
     section.innerHTML = '<div class="pbs-delivery-head"><div><h2 class="pbs-delivery-title"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l5 5v11a2 2 0 0 1-2 2Z"/></svg>交付文件</h2></div></div><div class="pbs-delivery-body"><div id="pbsDeliverySchools" class="pbs-delivery-schools"></div><div id="pbsDeliveryNodes"></div></div>';
-    asset.parentNode.insertBefore(section, asset);
+    asset.parentNode.insertBefore(section, document.getElementById('pbsStudentLogs'));
     var assetLink = document.querySelector('[data-target="sec-asset"]');
     if (assetLink) {
       var link = assetLink.cloneNode(true);
       link.dataset.target = 'sec-delivered';
       link.textContent = '交付文件';
       link.href = '#sec-delivered';
-      assetLink.parentNode.insertBefore(link, assetLink);
+      link.classList.remove('bg-blue-50','text-blue-700','font-medium');
+      assetLink.parentNode.insertBefore(link, document.querySelector('[data-target="pbsStudentLogs"]'));
     }
     renderArchive();
   }
@@ -277,10 +278,14 @@
     return '<div class="pbs-delivery-preview"><svg width="46" height="46" viewBox="0 0 24 24" fill="none" stroke="#64748b" stroke-width="1.6"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8Z"/><path d="M14 2v6h6M8 13h8M8 17h6"/></svg><strong>' + record.fileName + '</strong><p>来源：' + record.source + '　归档时间：' + record.createdAt + '</p></div>';
   }
 
-  function currentPackageSchool() {
+  function currentPackageGoal() {
     var packageId = window.selectedPackageId || window.currentSchoolCockpit;
     var context = window.PROJECT_CONTEXT || window.MY_PROJECT_CONTEXT;
-    var selected = context && (context.packages || []).find(function(item) { return item.id === packageId; });
+    return (window.PROJECT_PACKAGE_TARGETS || context && context.packages || []).find(function(item) { return item.id === packageId; });
+  }
+
+  function currentPackageSchool() {
+    var selected = currentPackageGoal(), packageId = window.selectedPackageId || window.currentSchoolCockpit;
     if (selected) return selected.school;
     return packageId === 'ic' ? '帝国理工学院' : packageId === 'stanford' ? '斯坦福大学' : '卡内基梅隆大学';
   }
@@ -297,11 +302,16 @@
   }
 
   function nodeAmount(packageId, nodeId) {
+    var selected = currentPackageGoal(), services = selected && selected.services || [];
+    if (services.some(function(service) { return Number(service.price) > 0; })) {
+      var patterns = {document:/^(CV|PS|RP|RL|TCX|套磁信|文书)/,application:/网申/,closure:/结项/,interview:/面试/};
+      return services.reduce(function(sum,service) { return sum + (patterns[nodeId].test(service.name) ? Number(service.price) || 0 : 0); },0);
+    }
     var amounts = {
       cmu: { document: 32000, application: 20000, interview: 6000, closure: 0 },
       ic: { document: 22000, application: 12000, interview: 0, closure: 4000 }
     };
-    return (amounts[packageId] || amounts.cmu)[nodeId] || 0;
+    return (amounts[selected && selected.goalId || packageId] || amounts.cmu)[nodeId] || 0;
   }
 
   function money(value) { return value ? '¥' + Number(value).toLocaleString('en-US') : '套餐内'; }
@@ -345,14 +355,21 @@
   function renderPaymentNodes() {
     var root = document.getElementById('paymentInfo');
     if (!root) return;
-    var records = readRecords();
+    var records = forStudent(currentStudentId());
     var school = currentPackageSchool();
+    var selected = currentPackageGoal(), services = selected && selected.services || [], hasPrices = services.some(function(service) { return Number(service.price) > 0; });
     var packageId = window.selectedPackageId || window.currentSchoolCockpit || 'cmu';
-    var packageRecords = records.filter(function (item) { return item.school === school; });
-    var documents = documentPayments[packageId] || documentPayments.cmu;
+    var packageRecords = records.filter(function (item) { return item.school === school && (!selected || !item.major || item.major === selected.major); });
+    var documents = documentPayments[selected && selected.goalId || packageId] || documentPayments.cmu;
+    if (hasPrices) {
+      var documentNames = {CV:'学术简历',PS:'个人陈述',RP:'研究计划',RL:'推荐信',TCX:'套磁信','套磁信':'套磁信'};
+      documents = services.filter(function(service) { return documentNames[service.name]; }).map(function(service) { return {label:service.name,recordName:documentNames[service.name],amount:Number(service.price) || 0,paid:service.paid !== false}; });
+      if (!documents.length && services.some(function(service) { return /文书/.test(service.name); })) documents = [{label:'文书',recordName:'个人陈述',amount:nodeAmount(packageId,'document'),paid:true}];
+    }
     var applicationPayment = nodeAmount(packageId, 'application');
     var paymentTotal = documents.reduce(function (sum, item) { return sum + item.amount; }, 0) + applicationPayment + nodeAmount(packageId, 'closure');
     var paidTotal = documents.reduce(function (sum, item) { return sum + (item.paid ? item.amount : 0); }, 0) + applicationPayment;
+    if (hasPrices) { paymentTotal = services.reduce(function(sum,item) { return sum + (Number(item.price) || 0); },0); paidTotal = services.reduce(function(sum,item) { return sum + (item.paid !== false ? Number(item.price) || 0 : 0); },0); }
     var myProject = document.body.classList.contains('my-project-detail');
     var paidSummary = myProject ? '' : '<div><strong>' + money(paidTotal) + '</strong><span>已支付金额</span></div>';
     var html = '<div class="pbs-payment-summary">' + paidSummary + '<div style="text-align:right"><strong>' + money(paymentTotal) + '</strong><span>支付总额</span></div></div><div class="pbs-payment-groups">';
@@ -385,9 +402,10 @@
   function openSubmit(nodeId, recordName) {
     if (nodeId === 'closure' && document.body.classList.contains('my-project-detail')) return;
     var school = currentPackageSchool();
-    var records = readRecords();
+    var selected = currentPackageGoal();
+    var records = forStudent(currentStudentId());
     var grouped = {};
-    records.filter(function (item) { return item.school === school && item.node === nodeId && (!recordName || item.name === recordName); }).forEach(function (item) {
+    records.filter(function (item) { return item.school === school && (!selected || !item.major || item.major === selected.major) && item.node === nodeId && (!recordName || item.name === recordName); }).forEach(function (item) {
       if (!grouped[item.name]) grouped[item.name] = [];
       grouped[item.name].push(item);
     });

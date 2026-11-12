@@ -56,6 +56,8 @@ body[data-monitor-page="list"] .monitor-table th:first-child { text-align: cente
 .monitor-table .monitor-order, .monitor-table .monitor-project-number { white-space: nowrap; line-height: 1.8; }
 .monitor-table .monitor-order { text-align: center; }
 .monitor-table .monitor-order.is-shared { background: #eff6ff; color: #26344a; }
+.monitor-order-summary + .monitor-order-summary { margin-top: 14px; }
+.monitor-order-summary small { display: block; margin-top: 5px; color: #3b82f6; font-size: 11px; line-height: 1.5; }
 .monitor-empty { padding: 56px 20px; color: #94a3b8; text-align: center; }
 
 .status-pill { display: inline-flex; align-items: center; gap: 6px; padding: 5px 9px; border-radius: 999px; font-size: 12px; line-height: 1; font-weight: 700; white-space: nowrap; }

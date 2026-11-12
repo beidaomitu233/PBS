@@ -723,6 +723,11 @@ span.rounded-full { letter-spacing: 0.01em; }
 .project-ddl-title { color: #4B5563; font-size: 11px; font-weight: 650; }
 .project-ddl-line { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-top: 3px; color: #9CA3AF; font-size: 10px; }
 .project-ddl-line strong { color: #1F2937; font-size: 11px; font-weight: 650; }
+.pbs-mall-deadlines { margin-bottom: 14px; padding: 12px; border: 1px solid #e5eaf0; border-radius: 8px; background: #f8fafc; }
+.pbs-mall-deadlines h4 { margin: 0 0 10px; color: #475569; font-size: 12px; font-weight: 600; }
+.pbs-mall-deadlines dl { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 12px; margin: 0; }
+.pbs-mall-deadlines dt { margin-bottom: 5px; color: #94a3b8; font-size: 11px; }
+.pbs-mall-deadlines dd { margin: 0; color: #334155; font-size: 13px; font-weight: 500; font-variant-numeric: tabular-nums; }
 .project-cockpit-shell {
   display: grid; grid-template-columns: 246px minmax(0, 1fr); min-height: 560px;
   overflow: hidden; border: 1px solid var(--pbs-border); border-radius: 12px;

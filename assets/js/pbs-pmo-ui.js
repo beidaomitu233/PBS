@@ -90,19 +90,18 @@
       return projects.map(function(project,projectIndex) {
         var first = projectIndex === 0;
         var attributes = ' data-archive-order="' + esc(order.id) + '"';
-        if (first) attributes += ' data-project="' + esc(p.projectNo) + '" data-name="' + esc(p.customer) + '" data-student="' + esc(p.student) +
+        if (first) attributes += ' data-order="' + esc(p.orderNo) + '" data-project="' + esc(projects.map(function(item) { return item.projectNo; }).join('、')) + '" data-name="' + esc(p.customer) + '" data-student="' + esc(p.student) +
           '" data-level="' + esc(p.level) + '" data-levels="' + esc(projects.map(function(item) { return item.level; }).join('|')) +
           '" data-endtime="' + esc(closedAt || '') + '" data-status="' + closureStatus +
           '" data-kw="' + esc([keyword,p.orderNo,order.owner.pmoName,closureStatus].join(' ')) + '"';
         var row = '<tr' + attributes + '>';
-        if (first) row += '<td' + span + '>' + (index + 1) + '</td><td' + span + ' class="archive-order' + (p.orderNo && projects.length > 1 ? ' is-shared' : '') + '"><strong>' + esc(p.orderNo || '—') + '</strong>' + (p.orderNo && projects.length > 1 ? '<small>共 ' + projects.length + ' 个子订单</small>' : '') + '</td>';
+        if (first) row += '<td' + span + '>' + (index + 1) + '</td><td' + span + ' class="archive-order' + (p.orderNo && projects.length > 1 ? ' is-shared' : '') + '"><strong>' + esc(p.orderNo || '—') + '</strong>' + (p.orderNo && projects.length > 1 ? '<small>共 ' + projects.length + ' 个院校</small>' : '') + '</td>';
         row += '<td class="archive-project-number">' + esc(project.projectNo) + '</td>';
         if (first) row += '<td' + span + '>' + esc(p.student) + '</td><td' + span + '>' + esc(order.owner.pmoName || '—') + '</td>';
-        row += '<td>' + (project.packages || []).filter(function(goal) { return api.canReadGoal(project,goal.id); }).length + '</td>';
         if (first) row += '<td' + span + '>' + closureStatus + '</td><td' + span + '>' + esc(time(closedAt)) + '</td><td' + span + '><a class="pmo-link" href="' + href + '">' + (canOrder ? '查看详情' : '查看材料') + '</a></td>';
         return row + '</tr>';
       }).join('');
-    }).join('') + '<tr id="flt-empty" class="hidden"><td colspan="9" class="pmo-empty">暂无符合条件的结项记录</td></tr>';
+    }).join('') + '<tr id="flt-empty" class="hidden"><td colspan="8" class="pmo-empty">暂无符合条件的结项记录</td></tr>';
     if (window.applyFilter) window.applyFilter();
   }
   window.pbsPmoClosure = { review:reviewDialog, confirm:function() { var order = currentOrder(); if (order && api.canManage(order.project)) closeDialog(order); } };

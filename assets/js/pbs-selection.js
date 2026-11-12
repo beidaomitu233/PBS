@@ -6,23 +6,24 @@
   function time(value) { return value ? new Date(value).toLocaleString('sv-SE').slice(0,16) : '—'; }
   function toast(value) { (window.planToast || window.showToast || window.alert)(value); }
   function link(item, page) { return page + '?service=' + encodeURIComponent(item.id); }
-  function orderLabel(item) { var orders = api.bindings().filter(function(row) { return row.serviceId === item.id; }).map(function(row) { return row.orderNo || '—'; }); return orders.length ? Array.from(new Set(orders)).join('、') : '—'; }
+  function statusClass(value) { return 'selection-status selection-status-' + ({'未选校':'pending','咨询中':'active','已发送':'shared','已结单':'closed'}[value] || 'pending'); }
+  function orderLabel(item) { var binding = api.bindings().find(function(row) { return row.serviceId === item.id; }); return binding && binding.orderNo || '—'; }
   function canWork(item) { var role = pbsGetSession().role; return role === '超级管理员' || role === '销售人员' && item.sales === pbsGetSession().name; }
   function renderList() {
     var body = document.getElementById('selTaskTbody') || document.querySelector('main tbody');
     if (!body) return;
     body.innerHTML = api.visible().map(function(item,index) {
       var student = item.student;
-      var data = {project:item.id,sales:item.sales,student:student,level:item.level,country:item.country,major:item.major,status:item.status,time:item.createdAt.slice(0,10)};
+      var data = {project:item.id,order:orderLabel(item),sales:item.sales,student:student,level:item.level,country:item.country,major:item.major,status:item.status,time:item.createdAt.slice(0,10)};
       data.kw = Object.values(data).join(' ') + ' ' + orderLabel(item);
       var pre = item.preStudentId ? '<a class="text-blue-600 mr-3" href="选校预档案详情页 - 留学申请管理系统.html?service=' + encodeURIComponent(item.id) + '&studentId=' + encodeURIComponent(item.preStudentId) + '">预档案</a>' : '';
-      return '<tr class="hover:bg-gray-50" ' + Object.keys(data).map(function(key) { return 'data-' + key + '="' + esc(data[key]) + '"'; }).join(' ') + '><td class="px-5 py-4 text-sm">' + (index+1) + '</td><td class="px-5 py-4 text-sm font-medium">' + esc(item.id) + '</td><td class="px-5 py-4 text-sm text-center">' + esc(orderLabel(item)) + '</td><td class="px-5 py-4 text-sm">' + esc(item.sales) + '</td><td class="px-5 py-4 text-sm">' + esc(student) + '</td><td class="px-5 py-4 text-sm">' + esc(item.level) + '</td><td class="px-5 py-4 text-sm">' + esc(item.country) + '</td><td class="px-5 py-4 text-sm">' + esc(item.major) + '</td><td class="px-5 py-4 text-sm">' + esc(item.status) + '</td><td class="px-5 py-4 text-sm">' + time(item.createdAt) + '</td><td class="px-5 py-4 text-sm whitespace-nowrap">' + pre + (canWork(item) ? '<a class="text-blue-600 mr-3" href="' + link(item,'选校工作台页 - 留学申请管理系统.html') + '">进入工作台</a>' : '') + '<a class="text-blue-600" href="' + link(item,'选校方案未生成 - 留学申请管理系统.html') + '">查看方案</a></td></tr>';
+      return '<tr class="hover:bg-gray-50" ' + Object.keys(data).map(function(key) { return 'data-' + key + '="' + esc(data[key]) + '"'; }).join(' ') + '><td class="px-5 py-4 text-sm">' + (index+1) + '</td><td class="px-5 py-4 text-sm font-medium">' + esc(item.id) + '</td><td class="px-5 py-4 text-sm text-center">' + esc(orderLabel(item)) + '</td><td class="px-5 py-4 text-sm">' + esc(item.sales) + '</td><td class="px-5 py-4 text-sm">' + esc(student) + '</td><td class="px-5 py-4 text-sm">' + esc(item.level) + '</td><td class="px-5 py-4 text-sm">' + esc(item.country) + '</td><td class="px-5 py-4 text-sm">' + esc(item.major) + '</td><td class="px-5 py-4 text-sm">' + '<span class="' + statusClass(item.status) + '">' + esc(item.status) + '</span></td><td class="px-5 py-4 text-sm">' + time(item.createdAt) + '</td><td class="px-5 py-4 text-sm whitespace-nowrap">' + pre + (canWork(item) ? '<a class="text-blue-600 mr-3" href="' + link(item,'选校工作台页 - 留学申请管理系统.html') + '">进入工作台</a>' : '') + '<a class="text-blue-600" href="' + link(item,'选校方案未生成 - 留学申请管理系统.html') + '">查看方案</a></td></tr>';
     }).join('') + '<tr id="flt-empty" class="hidden"><td colspan="11" class="p-8 text-center text-sm text-gray-400">暂无符合条件的选校服务单</td></tr>';
     if (window.applyFilter) applyFilter();
   }
   function initList() {
     var table = document.querySelector('main table');
-    table.querySelector('thead tr').innerHTML = ['序号','服务单号','关联申请订单','销售人员','学生姓名','申请层次','意向国家','意向专业','咨询状态','创建时间','操作'].map(function(label){return '<th class="px-5 py-4 text-left text-sm font-medium text-gray-500">' + label + '</th>';}).join('');
+    table.querySelector('thead tr').innerHTML = ['序号','服务单号','项目号','销售人员','学生姓名','申请层次','意向国家','意向专业','咨询状态','创建时间','操作'].map(function(label){return '<th class="px-5 py-4 text-left text-sm font-medium text-gray-500">' + label + '</th>';}).join('');
     var filter = document.getElementById('flt-status'); filter.innerHTML = '<option value="">全部</option>' + ['未选校','咨询中','已发送','已结单'].map(function(s){return '<option>' + s + '</option>';}).join('');
     if (document.getElementById('stu-name')) {
       window.submitCreateTask = function() {
@@ -31,7 +32,7 @@
         ids.forEach(function(id) { var input = document.getElementById(id); if (!input.value.trim()) { showFieldError(input, '请填写' + ({'stu-name':'学生姓名','stu-level':'申请层次','stu-country':'意向国家','stu-major':'意向专业'})[id]); ok = false; } });
         if (!ok) return;
         var level = document.getElementById('stu-level').value;
-        var values = {student:document.getElementById('stu-name').value.trim(), level:level.includes('申请')?level:level+'申请', gender:document.getElementById('stu-gender').value, birth:document.getElementById('stu-birth').value, phone:document.getElementById('stu-phone').value.trim(), address:document.getElementById('stu-address').value.trim(), country:document.getElementById('stu-country').value.trim(), major:document.getElementById('stu-major').value.trim(), note:document.getElementById('order-remark').value.trim()};
+        var values = {student:document.getElementById('stu-name').value.trim(), level:level.includes('申请')?level:level+'申请', gender:document.getElementById('stu-gender').value, birth:document.getElementById('stu-birth').value, phone:document.getElementById('stu-phone').value.trim(), address:document.getElementById('stu-address').value.trim(), country:document.getElementById('stu-country').value.trim(), major:document.getElementById('stu-major').value.trim(), supplement:document.getElementById('stu-supplement').value.trim(), note:document.getElementById('order-remark').value.trim()};
         var created = api.create(values);
         if (!created) { toast('请选择有效的学生档案'); return; }
         closeCreateModal(); renderList();
@@ -47,7 +48,7 @@
     workbenchCommunications = api.seedDemoHistory(id);
     var bar = document.getElementById('schoolTaskContextBar'), summary = bar.firstElementChild;
     summary.className = 'selection-task-heading';
-    summary.innerHTML = '<div class="selection-task-summary"><button class="pbs-detail-back" onclick="location.href=\'选校任务列表页 - 留学申请管理系统.html\'">‹</button><strong>' + esc(item.id) + '</strong><span>' + esc(item.student) + '</span><span>' + esc(item.level) + '</span><span>' + esc(item.country) + '</span><span id="selectionStatus">' + esc(item.status) + '</span></div><div class="selection-task-actions"><button id="closeSelectionTask" class="selection-secondary-button" onclick="completeSelectionTask()">结单</button></div>';
+    summary.innerHTML = '<div class="selection-task-summary"><button class="pbs-detail-back" onclick="location.href=\'选校任务列表页 - 留学申请管理系统.html\'">‹</button><strong>' + esc(item.id) + '</strong><span>' + esc(item.student) + '</span><span>' + esc(item.level) + '</span><span>' + esc(item.country) + '</span><span id="selectionStatus" class="' + statusClass(item.status) + '">' + esc(item.status) + '</span></div><div class="selection-task-actions"><button type="button" class="selection-secondary-button" onclick="openStudentSupplement()">学生补充信息</button><button id="closeSelectionTask" class="selection-secondary-button" onclick="completeSelectionTask()">结单</button></div>';
     api.ensurePre(id); item = api.find(id);
     if (item.preStudentId && window.pbsPreArchive) pbsPreArchive.taskArchiveLink(item,summary.querySelector('.selection-task-actions'));
     document.getElementById('workbenchHistoryContext').textContent = [item.student,item.level,item.country].join(' · ');
@@ -61,10 +62,24 @@
       ['reach','match','safe'].forEach(function(zone) { document.getElementById('zone-'+zone).innerHTML = ''; if(latest) (latest.zones[zone] || []).forEach(function(school){ if(window.SCHOOL_INFO[school.id]) addToZone(zone,school.id); }); });
       refreshCounts();
     }
+    window.openStudentSupplement = function() {
+      var current = api.find(id), editable = canWork(current) && current.status !== '已结单';
+      var value = window.readStudentSupplement ? readStudentSupplement() : current.supplement || '';
+      var dialog = document.createElement('dialog'); dialog.className = 'selection-share-dialog';
+      dialog.setAttribute('aria-labelledby','selectionSupplementTitle');
+      dialog.innerHTML = '<header><h3 id="selectionSupplementTitle">学生补充信息</h3><button type="button" data-close aria-label="关闭">×</button></header><div class="selection-share-body"><textarea class="selection-supplement-input" aria-label="学生补充信息" placeholder="填写学生的背景补充、申请偏好或特殊要求" '+(editable?'':'readonly')+'>'+esc(value)+'</textarea><div class="selection-share-actions"><button type="button" class="selection-secondary-button" data-close>'+(editable?'取消':'关闭')+'</button>'+(editable?'<button type="button" class="selection-primary-button" data-save>保存</button>':'')+'</div></div>';
+      dialog.querySelectorAll('[data-close]').forEach(function(button) { button.onclick = function() { dialog.close(); }; });
+      var save = dialog.querySelector('[data-save]');
+      if (save) save.onclick = function() { api.update(id,{supplement:dialog.querySelector('textarea').value.trim()}); dialog.close(); toast('学生补充信息已保存'); };
+      dialog.addEventListener('click',function(event) { if (event.target === dialog) dialog.close(); });
+      dialog.addEventListener('close',function() { dialog.remove(); });
+      document.body.appendChild(dialog); dialog.showModal();
+    };
     var action = document.getElementById('schoolActionBar');
     function status() {
       var closed = api.find(id).status === '已结单';
       document.getElementById('selectionStatus').textContent = api.find(id).status;
+      document.getElementById('selectionStatus').className = statusClass(api.find(id).status);
       document.getElementById('closeSelectionTask').hidden = !canWork(item) || closed;
       action.querySelectorAll('[data-selection-write]').forEach(function(button) { button.disabled = closed; button.hidden = !canWork(item); });
     }

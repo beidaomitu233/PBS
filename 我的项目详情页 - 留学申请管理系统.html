@@ -1,7 +1,8 @@
 ﻿<!DOCTYPE html>
-<html lang="zh-CN" class="light" data-theme="light"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<html lang="zh-CN" class="light pbs-page-loading" data-theme="light"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>我的项目详情页 - 留学申请管理系统</title>
+  <style>html.pbs-page-loading body { visibility: hidden; }</style>
   <script src="./assets/vendor/tailwind-runtime.js"></script>
   <style data-vd-inlined-stylesheet="../colors_and_type.css">
 /* PBS留学CRM系统 - 企业级设计规范 */
@@ -59,8 +60,6 @@
     .doc-flow-table tr:last-child td { border-bottom: 0; }
     .mall-tag { display: inline-flex; align-items: center; gap: 2px; padding: 1px 6px; border-radius: 999px; background: #FFF7ED; color: #8C6F4E; font-size: 10px; font-weight: 600; border: 1px solid #F5EBDA; }
     .stage-iframe-note { font-size: 11px; color: #9A96A5; }
-    .school-assignment-badge { display:inline-flex; align-items:center; padding:6px 9px; border-radius:999px; background:#FFF7ED; color:#9A6B32; font-size:11px; font-weight:650; white-space:nowrap; }
-    .school-assignment-badge.hidden { display:none; }
     .score-compare { display:grid; grid-template-columns:1fr 88px 88px; gap:8px; align-items:center; margin-bottom:14px; padding:10px 12px; border-radius:12px; background:#F8FAFC; font-size:12px; }
     .score-compare__head { color:#94A3B8; font-size:11px; text-align:center; }
     .score-compare__label { color:#64748B; }
@@ -76,9 +75,9 @@
     .monitor-dot { position:absolute; left:1px; top:24px; width:13px; height:13px; border:3px solid white; border-radius:999px; background:#60A5FA; box-shadow:0 0 0 2px #BFDBFE; }
     .monitor-shot-preview { height:118px; background:linear-gradient(180deg,#F8FAFC,#F1F5F9); }
   </style>
-  <link rel="stylesheet" href="./assets/css/pbs-theme.css?v=6.7">
+  <link rel="stylesheet" href="./assets/css/pbs-theme.css?v=8.5">
   <link rel="stylesheet" href="./assets/css/pbs-student-profile.css?v=1.5">
-  <link rel="stylesheet" href="./assets/css/pbs-my-project.css?v=1.7">
+  <link rel="stylesheet" href="./assets/css/pbs-my-project.css?v=2.0">
 </head>
 <body class="min-h-screen my-project-detail">
   <!-- 顶部导航栏 -->
@@ -296,19 +295,15 @@
               <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
             </button>
             <div class="pbs-detail-topbar__copy">
-              <div class="flex items-center gap-2"><h1 id="myProjectTitle" class="pbs-detail-topbar__title">李雪 · 硕士申请</h1><div class="project-overview-meta"><div class="project-overview-item"><span>申请方向</span><strong id="myProjectDirection">计算机科学 · 人工智能</strong></div><div class="project-overview-item"><span>院校目标</span><strong id="myProjectGoalCount">2 个</strong></div></div><span id="myProjectStateLabel" class="text-[11px] px-2 py-0.5 rounded-full bg-blue-50 text-blue-700 font-medium">交付中</span></div>
+              <div class="project-heading-line"><h1 id="myProjectTitle" class="pbs-detail-topbar__title">李雪 · 硕士申请</h1><span id="myProjectStateLabel" class="text-[11px] px-2 py-0.5 rounded-full bg-blue-50 text-blue-700 font-medium">交付中</span></div>
               <p id="myProjectNo" class="pbs-detail-topbar__subtitle font-mono">PRJ-M-2607-0002</p>
+            </div>
+            <div class="project-school-target">
+              <span>院校目标</span>
+              <strong id="schoolCockpitTarget">卡内基梅隆大学 · 人工智能</strong>
             </div>
           </div>
           <div class="pbs-detail-topbar__actions">
-            <div class="project-school-selector">
-              <label for="schoolCockpitSelect">院校目标</label>
-              <select id="schoolCockpitSelect" onchange="switchSchoolCockpit(this.value); if (window.renderPaymentInfo) window.renderPaymentInfo();" aria-label="切换院校目标">
-                <option value="cmu">卡内基梅隆大学 · 人工智能</option>
-                <option value="stanford">斯坦福大学 · 计算机科学（未分配）</option>
-              </select>
-            </div>
-            <span id="schoolAssignmentBadge" class="school-assignment-badge hidden">项目经理和成员未分配</span>
             <button id="assignStaffButton" type="button" class="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition-colors shadow-sm" onclick="openAssignDrawer()">分配</button>
             <button id="changeStaffButton" type="button" class="px-4 py-2 text-sm font-medium text-orange-600 bg-white border border-orange-300 rounded-lg hover:bg-orange-50 transition-colors" onclick="openChangeDrawer()">更换人员</button>
           </div>
@@ -319,7 +314,7 @@
       <section id="schoolCockpitSection" class="order-3 mb-6">
         <div class="project-cockpit-shell">
           <section class="project-flow-ddl" aria-label="项目关键 DDL">
-            <div class="project-ddl-heading"><h2>项目关键 DDL</h2><span id="schoolCockpitMeta"></span></div>
+            <div class="project-ddl-heading"><h2>项目关键 DDL</h2></div>
             <div id="projectDdlStrip" class="project-ddl-strip"></div>
           <div id="projectTaskNoteBar" class="hidden col-span-2 border-t border-gray-100 pt-3">
             <div class="flex items-start gap-2 rounded-lg bg-gray-50 px-3 py-2.5">
@@ -335,7 +330,6 @@
             <button type="button" class="project-flow-button" data-project-stage="essay" onclick="switchProjectStage('essay',this)"><span class="project-flow-index">2</span><span class="project-flow-copy"><span class="block text-sm font-medium">文书交付</span><span class="project-flow-meta"><span data-stage-status>—</span><span data-stage-duration>—</span></span></span></button>
             <button type="button" class="project-flow-button" data-project-stage="apply" onclick="switchProjectStage('apply',this)"><span class="project-flow-index">3</span><span class="project-flow-copy"><span class="block text-sm font-medium">网申提交</span><span class="project-flow-meta"><span data-stage-status>—</span><span data-stage-duration>—</span></span></span></button>
             <button type="button" class="project-flow-button" data-project-stage="monitor" onclick="switchProjectStage('monitor',this)"><span class="project-flow-index">4</span><span class="project-flow-copy"><span class="block text-sm font-medium">监控阶段</span><span class="project-flow-meta"><span data-stage-status>—</span><span data-stage-duration>—</span></span></span></button>
-            <button type="button" class="project-flow-button" data-project-stage="archive" onclick="switchProjectStage('archive',this)"><span class="project-flow-index">5</span><span class="project-flow-copy"><span class="block text-sm font-medium">目标结项</span><span class="project-flow-meta"><span data-stage-status>—</span><span data-stage-duration>—</span></span></span></button>
             <button type="button" class="project-flow-button project-flow-submit" data-project-stage="submission" onclick="switchProjectStage('submission',this)"><span class="project-flow-index"><svg width="15" height="15" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M12 16V4m-4 4 4-4 4 4M4 15v4a1 1 0 001 1h14a1 1 0 001-1v-4"/></svg></span><span class="project-flow-copy"><span class="block text-sm font-medium">材料提交</span></span></button>
           </aside>
           <div id="projectStageContent" class="project-flow-content" aria-live="polite"></div>
@@ -497,7 +491,7 @@
   <!-- 页面提示 Toast -->
   <div id="pageToast" class="hidden fixed top-6 left-1/2 transform -translate-x-1/2 z-[70] px-4 py-2.5 bg-red-500 text-white text-sm rounded-lg shadow-lg"></div>
 
-  <script src="./assets/js/pbs-app.js?v=8.2"></script>
+  <script src="./assets/js/pbs-app.js?v=9.0"></script>
   <script src="./assets/js/pbs-identity.js?v=1.0"></script>
   <script src="./assets/js/pbs-student-data.js?v=1.5"></script>
   <script>
@@ -527,6 +521,7 @@
         student: sharedMyProject.student,
         level: sharedMyProject.level,
         manager: sharedMyProject.projectManager || '—',
+        source: sharedMyProject.source,
         direction: sharedMyProject.direction || (sharedMyProject.packages || []).map(function(item) { return item.school + ' · ' + item.major; }).join('；') || '待定方向',
         state: window.pbsProjects.statusOf(sharedMyProject),
         allStaffAssigned: !!sharedMyProject.allStaffAssigned,
@@ -543,9 +538,7 @@
         myProjectStudentAvatar: MY_PROJECT_CONTEXT.student.slice(0, 1),
         myProjectTitle: MY_PROJECT_CONTEXT.student + ' · ' + MY_PROJECT_CONTEXT.level,
         myProjectStateLabel: MY_PROJECT_CONTEXT.state,
-        myProjectNo: MY_PROJECT_CONTEXT.projectNo,
-        myProjectDirection: MY_PROJECT_CONTEXT.direction,
-        myProjectGoalCount: Object.keys(SCHOOL_COCKPITS).length + ' 个',
+        myProjectNo: '项目号：' + (MY_PROJECT_CONTEXT.orderNo || '—') + '　院校号：' + MY_PROJECT_CONTEXT.projectNo,
         myProjectStudentProfileName: MY_PROJECT_CONTEXT.student,
         myProjectProfileLevel: MY_PROJECT_CONTEXT.level,
         myProjectStudentSummary: MY_PROJECT_CONTEXT.student + ' · 北京理工大学 计算机科学与技术 · GPA 3.8/4.0 · 雅思 7.5 / 托福 105 · 项目共用基础资料，同步自学生档案详情页'
@@ -640,12 +633,14 @@
         item.id = id;
         var target = JSON.parse(JSON.stringify(SCHOOL_COCKPITS[id] || SCHOOL_COCKPITS.stanford));
         target.name = item.school + ' · ' + item.major;
+        target.materialDdl.merchant = sharedMyProject.source === '线上' ? item.materialDdl || null : null;
+        target.applyDdl.merchant = sharedMyProject.source === '线上' ? item.appDdl || null : null;
+        var requested = (item.services || []).map(function(service) { return service.name === '套磁信' ? 'TCX' : service.name; }).filter(function(name) { return /^(CV|PS|RP|RL|TCX)$/.test(name); });
+        if (requested.length) target.docs = target.docs.filter(function(doc) { return requested.indexOf(doc.key) >= 0; });
         projectTargets[id] = target;
       });
       SCHOOL_COCKPITS = projectTargets;
-      var schoolSelect = document.getElementById('schoolCockpitSelect');
-      schoolSelect.innerHTML = '';
-      Object.keys(SCHOOL_COCKPITS).forEach(function(id) { var option = document.createElement('option'); option.value = id; option.textContent = SCHOOL_COCKPITS[id].name; schoolSelect.appendChild(option); });
+
     }
     function readPmStaffAssignments() {
       try { return JSON.parse(localStorage.getItem(PM_STAFF_ASSIGNMENT_KEY) || localStorage.getItem('pbs_pm_staff_assignment_v3_' + window.pbsProjects.legacyNo(MY_PROJECT_CONTEXT.projectNo)) || '{}') || {}; } catch (e) { return {}; }
@@ -741,18 +736,18 @@
         setTimeout(function () { row.classList.remove('pbs-assignment-focus'); }, 2200);
       }
     }
-    function ddlSummaryCard(title, primaryDate, color, extraHtml, near, task) {
+    function ddlSummaryCard(title, primaryDate, color, extraHtml, near, task, merchant) {
       return '<div class="project-ddl-card' + (near ? ' is-near' : '') + '">' +
         '<p class="project-ddl-title flex items-center gap-1.5"><span class="inline-block w-1.5 h-1.5 rounded-full" style="background:' + color + '"></span>' + title + '</p>' +
-        (task ? '<p class="project-ddl-primary"><strong>' + ddlValue(primaryDate, task) + '</strong></p>' : '') + (extraHtml || '') + '</div>';
+        (task ? '<p class="project-ddl-primary"><span>团队配置</span><strong>' + ddlValue(primaryDate, task) + '</strong></p>' : '') + (merchant !== undefined ? '<p class="project-ddl-line"><span>商城传入</span><strong data-mall-ddl="' + task + '">' + (merchant || '—') + '</strong></p>' : '') + (extraHtml || '') + '</div>';
     }
     function documentTypeLabel(doc) { return doc.key === 'TCX' ? '套磁信' : doc.key; }
     function renderProjectDdls(s) {
       var detailRows = s.docs.map(function(d) { return '<div class="project-ddl-document"><span>' + documentTypeLabel(d) + '</span><strong>' + ddlValue(d.ddl, d.key) + '</strong></div>'; }).join('');
       var docDetails = '<div class="project-ddl-document-list">' + detailRows + '</div>';
-      return ddlSummaryCard('材料准备', s.materialDdl.managed, '#C9A87C', '', false, 'material') +
+      return ddlSummaryCard('材料准备', s.materialDdl.managed, '#C9A87C', '', false, 'material', MY_PROJECT_CONTEXT.source === '线上' ? s.materialDdl.merchant : undefined) +
         ddlSummaryCard('文书交付', null, '#7D869A', docDetails, s.docs.some(function(doc) { return doc.near && doc.status !== '已完成'; }), '') +
-        ddlSummaryCard('网申提交', s.applyDdl.managed, '#6D9A7E', '', false, 'apply');
+        ddlSummaryCard('网申提交', s.applyDdl.managed, '#6D9A7E', '', false, 'apply', MY_PROJECT_CONTEXT.source === '线上' ? s.applyDdl.merchant : undefined);
     }
 
     /* ==================== 院校申请流程：五个阶段 ==================== */
@@ -1105,6 +1100,7 @@
     }
     function assignmentFormHtml(s, prefix, isChange) {
       var goal = { docs: s.docs.map(function(doc) { return { key: doc.key, name: doc.name, ddl: doc.ddl || doc.mall }; }), materialDdl: s.materialDdl.managed || s.materialDdl.merchant, appDdl: s.applyDdl.managed || s.applyDdl.merchant };
+      goal.merchantDeadlines = MY_PROJECT_CONTEXT.source === '线上' ? {material:s.materialDdl.merchant,apply:s.applyDdl.merchant} : null;
       var assignment = { docs: {}, reviewers: {}, network: s.network.owner, networkMatDdl: s.materialDdl.managed, networkDdl: s.applyDdl.managed };
       s.docs.forEach(function(doc) { assignment.docs[doc.key] = { person: doc.owner, ddl: doc.ddl }; assignment.reviewers[doc.key] = doc.reviewer; });
       var html = window.pbsStaffAssignmentFormHtml(goal, assignment, prefix, selectedPersons);
@@ -1282,27 +1278,17 @@
 
     function refreshCockpit() {
       var s = school();
-      var staffAssigned = isSchoolStaffAssigned(s);
       var allProjectStaffAssigned = window.pbsProjects.assignmentComplete(MY_PROJECT_CONTEXT.projectNo);
       var projectStateLabel = document.getElementById('myProjectStateLabel');
       if (projectStateLabel) projectStateLabel.textContent = window.pbsProjects.statusOf(window.pbsProjects.find(MY_PROJECT_CONTEXT.projectNo));
-      var assignmentBadge = document.getElementById('schoolAssignmentBadge');
       var assignButton = document.getElementById('assignStaffButton');
       var changeButton = document.getElementById('changeStaffButton');
-      if (assignmentBadge) {
-        assignmentBadge.textContent = '项目经理和成员未分配';
-        assignmentBadge.classList.toggle('hidden', staffAssigned);
-      }
       if (assignButton) {
         assignButton.textContent = '分配';
         assignButton.classList.toggle('hidden', allProjectStaffAssigned);
       }
       if (changeButton) { changeButton.textContent = '更换人员'; changeButton.classList.toggle('hidden', !allProjectStaffAssigned); }
-      document.querySelectorAll('#schoolCockpitSelect option').forEach(function(schoolOption) {
-        var target = SCHOOL_COCKPITS[schoolOption.value];
-        if (target) schoolOption.textContent = target.name + (isSchoolStaffAssigned(target) ? '' : '（未分配）');
-      });
-      document.getElementById('schoolCockpitMeta').textContent = '申请轮次 ' + s.round + ' · 当前阶段 ' + s.current;
+      document.getElementById('schoolCockpitTarget').textContent = s.name;
       document.getElementById('projectDdlStrip').innerHTML = renderProjectDdls(s);
       /* 阶段按钮状态 */
       var materialStats = getMaterialStats(s);
@@ -1333,8 +1319,6 @@
       var active = document.querySelector('[data-project-stage].is-active');
       var keepSubmission = active && active.dataset.projectStage === 'submission';
       currentSchoolCockpit = schoolId;
-      var selector = document.getElementById('schoolCockpitSelect');
-      if (selector) { selector.value = schoolId; }
       refreshCockpit();
       if (keepSubmission) switchProjectStage('submission', document.querySelector('[data-project-stage="submission"]'));
       if (window.pbsRefreshProjectNotes) window.pbsRefreshProjectNotes();
@@ -1349,6 +1333,7 @@
       var requestedSchool = MY_PROJECT_PARAMS.get('school');
       if (!SCHOOL_COCKPITS[requestedSchool]) requestedSchool = Object.keys(SCHOOL_COCKPITS)[0];
       switchSchoolCockpit(requestedSchool);
+      document.documentElement.classList.remove('pbs-page-loading');
       var action = MY_PROJECT_PARAMS.get('action');
       if (action === 'change' && pbsHasPermission('my_project_team_manage')) openChangeDrawer();
       if (action === 'assign' && pbsHasPermission('my_project_team_manage')) { openAssignDrawer(); pbsFocusPendingAssignment('m'); }

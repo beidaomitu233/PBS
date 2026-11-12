@@ -2,7 +2,7 @@
   'use strict';
   var api = window.pbsStudents, projects = window.pbsProjects;
   if (!api || !projects) return;
-  var formalId = 'STU-ARCHIVE-MERGE', preId = 'PRE-ARCHIVE-MERGE', serviceId = 'SEL-2611-0901';
+  var formalId = 'STU-ARCHIVE-MERGE', preId = 'PRE-ARCHIVE-MERGE', serviceId = 'SEL-202611-0901';
   var name = '档案合并测试', now = '2026-11-09T09:00:00+08:00', session = pbsGetSession();
   var org = session.org === 'PBS留学' ? 'PBS留学总部' : session.org || 'PBS留学总部';
   var definitions = {
@@ -28,13 +28,14 @@
   }
   function scores(values) { return saved('<div class="grid grid-cols-2 gap-4">' + [['sat','SAT'],['ap','AP'],['alevel','A-Level'],['ib','IB'],['gre','GRE'],['gmat','GMAT']].map(function(item) { return '<div class="bg-gray-50 border border-gray-100 rounded-xl p-4">' + field(item[0],item[1],values[item[0]]) + '</div>'; }).join('') + '</div>'); }
   var profiles = api.all(), target = api.find(formalId), source = api.find(preId);
-  if (!target) {
-    target = {id:formalId,name:name,org:org,student:{name:name,level:'硕士申请',gender:'女',birth:'2003-05-18',phone:'13800007001',address:'南京市鼓楼区',country:'美国',major:'人工智能'},customer:{name:name,relation:'本人',phone:'13800007001',wechat:'archive_merge',source:'线下咨询'},orderNos:['MERGE-20261109-001'],sections:{},logs:[],createdAt:now,updatedAt:now};
+  if (!target || !Object.keys(target.sections || {}).length) {
+    target = {id:formalId,name:name,org:org,student:{name:name,level:'硕士申请',gender:'女',birth:'2003-05-18',phone:'13800007001',address:'南京市鼓楼区',country:'美国',major:'人工智能'},customer:{name:name,relation:'本人',phone:'13800007001',wechat:'archive_merge',source:'线下咨询'},orderNos:['20261109901'],sections:{},logs:[],createdAt:now,updatedAt:now};
     target.sections.edu = records('edu',[{school:'南京大学',major:'计算机科学与技术',start:'2021-09',end:'2025-06',grade:'3.5 / 4.0',education:'本科',duration:'4 年'}]);
     target.sections.lang = language({ieltsT:'6.5',ieltsL:'7.0',ieltsR:'6.5',ieltsW:'6.0',ieltsS:'6.5'});
     target.sections.score = scores({});
     target.sections.work = records('work',[{co:'南京大学智能计算实验室',post:'科研助理',start:'2024-03',end:'2024-12',desc:'整理实验数据并参与模型评估。'}]);
-    profiles.unshift(target);
+    var targetIndex = profiles.findIndex(function(profile) { return profile.id === formalId; });
+    if (targetIndex >= 0) profiles[targetIndex] = target; else profiles.unshift(target);
   }
   if (!source) {
     source = {id:preId,kind:'preliminary',name:name,org:target.org,selectionId:serviceId,createdBy:session.name,student:{name:name,level:'硕士申请',gender:'女',birth:'2003-05-18',phone:'13800007002',address:'南京市鼓楼区',country:'美国',major:'人工智能'},customer:{name:name,relation:'本人',phone:'13800007001'},supplement:'GPA 3.8 / 4.0，希望申请人工智能方向，关注科研机会，年度预算45万元人民币。',sections:{},orderNos:[],logs:[],createdAt:now,updatedAt:now};
@@ -52,7 +53,7 @@
     profiles.push(source);
   }
   localStorage.setItem('pbs_student_profiles_v1',JSON.stringify(profiles));
-  if (!projects.find('PRJ-M-2611-0901')) projects.upsert({projectNo:'PRJ-M-2611-0901',orderNo:'MERGE-20261109-001',subOrderNo:'SUB-MERGE-001',studentId:formalId,customer:name,student:name,level:'硕士申请',source:'线上',sourceChannel:'商城订单',org:target.org,projectManager:'张老师',pmAccepted:true,status:'进行中',createdAt:'2026-11-09 09:00',packages:[{id:'cmu',school:'卡内基梅隆大学',major:'人工智能',name:'院校申请套餐',services:[{name:'PS',price:1800},{name:'网申提交证明',price:1200}]}],serviceStages:['文书','网申','结项']});
+  if (!projects.find('PRJ-M-2611-0901')) projects.upsert({projectNo:'PRJ-M-2611-0901',orderNo:'20261109901',subOrderNo:'SUB-MERGE-001',studentId:formalId,customer:name,student:name,level:'硕士申请',source:'线上',sourceChannel:'商城订单',org:target.org,projectManager:'张老师',pmAccepted:true,status:'进行中',createdAt:'2026-11-09 09:00',packages:[{id:'cmu',school:'卡内基梅隆大学',major:'人工智能',name:'院校申请套餐',services:[{name:'PS',price:1800},{name:'网申提交证明',price:1200}]}],serviceStages:['文书','网申','结项']});
   if (window.pbsSelection) pbsSelection.seed();
   var tasksKey = 'pbs_selection_services_v1', storedTasks = localStorage.getItem(tasksKey);
   if (storedTasks) {

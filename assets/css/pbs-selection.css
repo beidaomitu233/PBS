@@ -31,6 +31,19 @@
 .selection-binding-heading{justify-content:space-between;margin-bottom:16px}
 .selection-binding-heading h3{font-size:14px;font-weight:600;color:#334155}
 .selection-binding-scroll{overflow:auto}
+.selection-bindings,.selection-history-scroll{min-width:0;max-width:100%}
+.selection-history-scroll{overflow-x:auto}
+.selection-binding-task-table{min-width:1080px}
+.selection-binding-task-table td{line-height:1.7}
+.selection-binding-task-table td:first-child{white-space:nowrap}
+.selection-binding-task-table th:last-child,.selection-binding-task-table td:last-child{white-space:nowrap}
+.selection-binding-actions .selection-text-button{margin-left:0;margin-right:14px}
+.selection-binding-actions .selection-text-button:last-child{margin-right:0}
+.selection-binding-date{white-space:nowrap;font-variant-numeric:tabular-nums}
+.selection-application-table{min-width:850px}
+.selection-application-table [data-selection-service],.selection-application-table [data-selection-actions]{padding:12px 14px;text-align:left;white-space:nowrap;font-size:13px;font-weight:400}
+.selection-application-table th[data-selection-service],.selection-application-table th[data-selection-actions]{color:#64748b;font-weight:500}
+.selection-application-table td[data-selection-service] a{color:#2563eb;line-height:1.8}
 .selection-binding-scroll table{width:100%;border-collapse:collapse;font-size:13px;text-align:left}
 .selection-binding-scroll th{font-weight:500;color:#64748b;background:#f8fafc;white-space:nowrap}
 .selection-binding-scroll th,.selection-binding-scroll td{padding:12px 14px;border-bottom:1px solid #eef2f6;vertical-align:top}
@@ -55,6 +68,14 @@
 .selection-binding-dialog th{position:sticky;top:0}
 #selectionBindingError{padding:12px 24px;font-size:13px;color:#dc2626}
 .selection-share-actions{justify-content:flex-end;margin-top:20px}
+.selection-supplement-input{display:block;width:100%;min-height:180px;padding:12px 14px;border:1px solid #dbe1e9;border-radius:8px;background:#fff;color:#334155;font:inherit;font-size:14px;line-height:1.8;resize:vertical}
+.selection-supplement-input:focus{outline:2px solid #dbeafe;border-color:#93b4ff}
+.selection-supplement-input:read-only{background:#f8fafc}
+.selection-status{display:inline-flex;align-items:center;padding:3px 10px;border-radius:12px;font-size:12px;font-weight:500;line-height:1.6;white-space:nowrap}
+.selection-status-pending{color:#64748b;background:#f1f5f9}
+.selection-status-active{color:#2563eb;background:#eff6ff}
+.selection-status-shared{color:#7c3aed;background:#f5f0ff}
+.selection-status-closed{color:#16a34a;background:#f0fdf4}
 html:has(.selection-binding-dialog[open],.selection-share-dialog[open],.selection-schools-dialog[open]){overflow:hidden;scrollbar-gutter:stable}
 #schoolZoneColumn{gap:14px;min-height:0}
 .selection-zones-toolbar,.selection-zones-tools{display:flex;align-items:center;justify-content:space-between;gap:12px}

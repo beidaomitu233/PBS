@@ -1,0 +1,28 @@
+.pbs-asset-toolbar { display:flex; flex-wrap:wrap; justify-content:flex-end; gap:10px; margin-bottom:20px; }
+.pbs-asset-button { display:inline-flex; align-items:center; justify-content:center; gap:7px; min-height:38px; padding:0 14px; border:1px solid #dbe2ec; border-radius:8px; background:#fff; color:#475569; font-family:inherit; font-size:14px; font-weight:500; line-height:1.4; cursor:pointer; white-space:nowrap; }
+.pbs-asset-button svg { width:18px; height:18px; flex-shrink:0; }
+.pbs-asset-button:hover { border-color:#9bb7fd; color:#2563eb; background:#f8faff; }
+.pbs-asset-button.pbs-asset-parse { border-color:#dbe7ff; background:#eff5ff; color:#2563eb; }
+.pbs-asset-button.pbs-asset-upload { border-color:#2563eb; background:#2563eb; color:#fff; }
+.pbs-asset-button.pbs-asset-upload:hover { border-color:#1d4ed8; background:#1d4ed8; }
+.pbs-asset-button:disabled { opacity:.55; cursor:default; }
+.pbs-asset-button[hidden] { display:none; }
+.pbs-asset-button:focus-visible { outline:2px solid #2563eb; outline-offset:3px; }
+.pbs-asset-review { width:min(940px,calc(100vw - 40px)); max-width:none; max-height:85vh; padding:0; border:1px solid #e5eaf1; border-radius:16px; color:#1f2937; background:#fff; box-shadow:0 24px 70px #0f172a33; }
+.pbs-asset-review::backdrop { background:#0f172a66; }
+.pbs-asset-review-panel { display:flex; flex-direction:column; max-height:85vh; }
+.pbs-asset-review header { display:flex; align-items:center; justify-content:space-between; padding:22px 26px; border-bottom:1px solid #edf0f5; }
+.pbs-asset-review h2 { margin:0; font-size:20px; font-weight:600; }
+.pbs-asset-review header button { width:32px; height:32px; border:0; border-radius:8px; background:transparent; color:#94a3b8; font-size:25px; cursor:pointer; }
+.pbs-asset-review header button:hover { background:#f1f5f9; color:#475569; }
+.pbs-asset-review-body { overflow:auto; padding:20px 26px; }
+.pbs-asset-review table { width:100%; border-collapse:collapse; font-size:13px; }
+.pbs-asset-review th { padding:12px; text-align:left; color:#94a3b8; background:#f8fafc; font-weight:500; white-space:nowrap; }
+.pbs-asset-review td { padding:14px 12px; border-bottom:1px solid #edf0f5; vertical-align:middle; }
+.pbs-asset-review td:first-child { width:100px; }
+.pbs-asset-review td:last-child { width:36%; }
+.pbs-asset-review small { display:block; margin-top:5px; color:#94a3b8; font-size:11px; }
+.pbs-asset-review input { width:100%; min-width:140px; padding:9px 10px; border:1px solid #dbe2ec; border-radius:7px; font:inherit; color:#334155; background:#fff; }
+.pbs-asset-review input:focus { outline:2px solid #dbeafe; border-color:#93b4ff; }
+.pbs-asset-review footer { display:flex; justify-content:flex-end; gap:10px; padding:18px 26px; border-top:1px solid #edf0f5; }
+.pbs-asset-review-empty { margin:38px 0; text-align:center; color:#94a3b8; font-size:14px; }
